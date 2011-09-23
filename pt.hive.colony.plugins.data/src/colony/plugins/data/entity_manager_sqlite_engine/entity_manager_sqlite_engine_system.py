@@ -635,72 +635,73 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+        try:
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
-        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+            # retrieves all the valid class attribute names, removes method values and the name exceptions
+            entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
-        # retrieves all the valid class attribute values
-        entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
+            # retrieves all the valid class attribute values
+            entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
-        # creates the query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+            # creates the query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # creates the initial query string buffer
-        query_string_buffer.write("create table " + entity_class_name + "(")
+            # creates the initial query string buffer
+            query_string_buffer.write("create table " + entity_class_name + "(")
 
-        # creates the initial index value
-        index = 0
+            # creates the initial index value
+            index = 0
 
-        # the first flag to control the first field to be processed
-        is_first = True
+            # the first flag to control the first field to be processed
+            is_first = True
 
-        # iterates over all the entity class valid attribute names
-        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-            # retrieves the entity class valid attribute value
-            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+            # iterates over all the entity class valid attribute names
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                # retrieves the entity class valid attribute value
+                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
-            # retrieves the entity class valid attribute data type
-            entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+                # retrieves the entity class valid attribute data type
+                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-            # retrieves the valid sqlite data type from the formal entity data type
-            entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
+                # retrieves the valid sqlite data type from the formal entity data type
+                entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
 
-            # in case is the first field to be processed
-            if is_first:
-                # sets the is flag to false to start adding commas
-                is_first = False
-            else:
-                # adds a comma to the query string buffer
-                query_string_buffer.write(", ")
+                # in case is the first field to be processed
+                if is_first:
+                    # sets the is flag to false to start adding commas
+                    is_first = False
+                else:
+                    # adds a comma to the query string buffer
+                    query_string_buffer.write(", ")
 
-            # extends the query string buffer
-            query_string_buffer.write(entity_class_valid_attribute_name + " " + entity_class_valid_attribute_target_data_type)
+                # extends the query string buffer
+                query_string_buffer.write(entity_class_valid_attribute_name + " " + entity_class_valid_attribute_target_data_type)
 
-            # increments the index value
-            index += 1
+                # increments the index value
+                index += 1
 
-        # closes the query string buffer
-        query_string_buffer.write(")")
+            # closes the query string buffer
+            query_string_buffer.write(")")
 
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
 
-        # retrieves the entity id attribute name
-        entity_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            # retrieves the entity id attribute name
+            entity_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-        # creates the initial query string value
-        query_string_value = "create index " + entity_class_name + entity_id_attribute_name + "index on " + entity_class_name + "(" + entity_id_attribute_name + ")"
+            # creates the initial query string value
+            query_string_value = "create index " + entity_class_name + entity_id_attribute_name + "index on " + entity_class_name + "(" + entity_id_attribute_name + ")"
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # creates the entity relations definition
         self.create_update_entity_relations_definition(connection, entity_class)
@@ -724,53 +725,54 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class valid indirect attribute names
-        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+        try:
+            # retrieves the entity class valid indirect attribute names
+            entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
 
-        # iterates over all the entity class valid indirect attribute names
-        for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
-            # retrieves the relation attributes for the given attribute name in the given entity class
-            relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
+            # iterates over all the entity class valid indirect attribute names
+            for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
+                # retrieves the relation attributes for the given attribute name in the given entity class
+                relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
 
-            # retrieves the relation type field
-            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+                # retrieves the relation type field
+                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation is of type many-to-many
-            if relation_type_field == MANY_TO_MANY_RELATION:
-                # retrieves the join table field
-                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+                # in case the relation is of type many-to-many
+                if relation_type_field == MANY_TO_MANY_RELATION:
+                    # retrieves the join table field
+                    join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-                # retrieves the attribute column name field
-                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+                    # retrieves the attribute column name field
+                    attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                # retrieves the id attribute name
-                id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                    # retrieves the id attribute name
+                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-                # retrieves the id attribute value
-                id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+                    # retrieves the id attribute value
+                    id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-                # retrieves the id attribute data type
-                id_attribute_data_type = self.get_attribute_data_type(id_attribute_value, entity_class, id_attribute_name)
+                    # retrieves the id attribute data type
+                    id_attribute_data_type = self.get_attribute_data_type(id_attribute_value, entity_class, id_attribute_name)
 
-                # retrieves the valid sqlite data type from the formal id attribute data type
-                id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
+                    # retrieves the valid sqlite data type from the formal id attribute data type
+                    id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
 
-                if self.exists_table_definition(connection, join_table_field):
-                    if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                    if self.exists_table_definition(connection, join_table_field):
+                        if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                            # creates the query string value
+                            query_string_value = "alter table " + join_table_field + " add column " + attribute_column_name_field + " " + id_attribute_target_data_type
+
+                            # executes the query altering the table
+                            self.execute_query(cursor, query_string_value)
+                    else:
                         # creates the query string value
-                        query_string_value = "alter table " + join_table_field + " add column " + attribute_column_name_field + " " + id_attribute_target_data_type
+                        query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
 
-                        # executes the query altering the table
+                        # executes the query creating the table
                         self.execute_query(cursor, query_string_value)
-                else:
-                    # creates the query string value
-                    query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
-
-                    # executes the query creating the table
-                    self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def remove_entity_definition(self, connection, entity_class):
         # retrieves the database connection from the connection object
@@ -854,29 +856,30 @@ class EntityManagerSqliteEngine:
             # creates the cursor for the given connection
             cursor = database_connection.cursor()
 
-            # iterates over all the unsynced attributes
-            for unsynced_attribute in unsynced_attributes_list:
-                # retrieves the unsynced attribute name and reason
-                unsynced_attribute_name, unsynced_attribute_reason = unsynced_attribute
+            try:
+                # iterates over all the unsynced attributes
+                for unsynced_attribute in unsynced_attributes_list:
+                    # retrieves the unsynced attribute name and reason
+                    unsynced_attribute_name, unsynced_attribute_reason = unsynced_attribute
 
-                # retrieves the unsynced attribute value
-                unsynced_attribute_value = getattr(entity_class, unsynced_attribute_name)
+                    # retrieves the unsynced attribute value
+                    unsynced_attribute_value = getattr(entity_class, unsynced_attribute_name)
 
-                # retrieves the unsynced attribute data type
-                unsynced_attribute_data_type = self.get_attribute_data_type(unsynced_attribute_value, entity_class, unsynced_attribute_name)
+                    # retrieves the unsynced attribute data type
+                    unsynced_attribute_data_type = self.get_attribute_data_type(unsynced_attribute_value, entity_class, unsynced_attribute_name)
 
-                # retrieves the valid sqlite data type from the formal unsynced attribute data type
-                unsynced_attribute_target_data_type = DATA_TYPE_MAP[unsynced_attribute_data_type]
+                    # retrieves the valid sqlite data type from the formal unsynced attribute data type
+                    unsynced_attribute_target_data_type = DATA_TYPE_MAP[unsynced_attribute_data_type]
 
-                if unsynced_attribute_reason == INEXISTING_ATTRIBUTE_REASON_CODE:
-                    # creates the query string value
-                    query_string_value = "alter table " + entity_class_name + " add column " + unsynced_attribute_name + " " + unsynced_attribute_target_data_type
+                    if unsynced_attribute_reason == INEXISTING_ATTRIBUTE_REASON_CODE:
+                        # creates the query string value
+                        query_string_value = "alter table " + entity_class_name + " add column " + unsynced_attribute_name + " " + unsynced_attribute_target_data_type
 
-                    # executes the query altering the table
-                    self.execute_query(cursor, query_string_value)
-
-            # closes the cursor
-            cursor.close()
+                        # executes the query altering the table
+                        self.execute_query(cursor, query_string_value)
+            finally:
+                # closes the cursor
+                cursor.close()
 
         # tries to create (update) the entity relations definition (to update the many to many relations)
         self.create_update_entity_relations_definition(connection, entity_class)
@@ -895,14 +898,15 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the query for the creation of the generator table
-        query_string_value = "create table generator (name numeric, next_id numeric)"
+        try:
+            # creates the query for the creation of the generator table
+            query_string_value = "create table generator (name numeric, next_id numeric)"
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def exists_table_generator(self, connection):
         # retrieves the database connection from the connection object
@@ -1011,61 +1015,62 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        try:
+            # creates the query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # in case there is already a valid next id
-        if previous_next_name_id:
-            # creates the query for the update of the data
-            query_string_buffer.write("update generator set next_id = ")
+            # in case there is already a valid next id
+            if previous_next_name_id:
+                # creates the query for the update of the data
+                query_string_buffer.write("update generator set next_id = ")
 
-            # retrieves the next id type
-            next_id_type = type(next_id)
+                # retrieves the next id type
+                next_id_type = type(next_id)
 
-            # in case the next id type is string
-            if next_id_type == types.StringType:
-                # writes the next
-                query_string_buffer.write("'" + next_id + "'")
-            # otherwise it must be a string convertible value
-            # and a numeric one
+                # in case the next id type is string
+                if next_id_type == types.StringType:
+                    # writes the next
+                    query_string_buffer.write("'" + next_id + "'")
+                # otherwise it must be a string convertible value
+                # and a numeric one
+                else:
+                    # converts the next id to string
+                    next_id_string = str(next_id)
+
+                    # writes the next id in string mode
+                    query_string_buffer.write(next_id_string)
+
+                # writes the where clause to the query string buffer
+                query_string_buffer.write(" where name = '" + name + "'")
+            # otherwise its a new next id value
             else:
-                # converts the next id to string
-                next_id_string = str(next_id)
+                # creates the query for the insertion of the data
+                query_string_buffer.write("insert into generator(name, next_id) values('" + name + "', ")
 
-                # writes the next id in string mode
-                query_string_buffer.write(next_id_string)
+                # retrieves the next id type
+                next_id_type = type(next_id)
 
-            # writes the where clause to the query string buffer
-            query_string_buffer.write(" where name = '" + name + "'")
-        # otherwise its a new next id value
-        else:
-            # creates the query for the insertion of the data
-            query_string_buffer.write("insert into generator(name, next_id) values('" + name + "', ")
+                # in case the next id type is string
+                if next_id_type == types.StringType:
+                    # writes the next
+                    query_string_buffer.write("'" + next_id + "')")
+                # otherwise it must be a string convertible value
+                # and a numeric one
+                else:
+                    # converts the next id to string
+                    next_id_string = str(next_id)
 
-            # retrieves the next id type
-            next_id_type = type(next_id)
+                    # writes the next id in string mode
+                    query_string_buffer.write(next_id_string + ")")
 
-            # in case the next id type is string
-            if next_id_type == types.StringType:
-                # writes the next
-                query_string_buffer.write("'" + next_id + "')")
-            # otherwise it must be a string convertible value
-            # and a numeric one
-            else:
-                # converts the next id to string
-                next_id_string = str(next_id)
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-                # writes the next id in string mode
-                query_string_buffer.write(next_id_string + ")")
-
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
-
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def increment_next_name_id(self, connection, name, id_increment = 1):
         # retrieves the previous next name id
@@ -1318,179 +1323,180 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class for the entity
-        entity_class = entity.__class__
+        try:
+            # retrieves the entity class for the entity
+            entity_class = entity.__class__
 
-        # retrieves all the valid indirect attribute names, removes method values and the name exceptions
-        entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
+            # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+            entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
 
-        # retrieves all the valid attribute values
-        entity_valid_indirect_attribute_values = self.get_entity_indirect_attribute_values(entity)
+            # retrieves all the valid attribute values
+            entity_valid_indirect_attribute_values = self.get_entity_indirect_attribute_values(entity)
 
-        # creates the initial index value
-        index = 0
+            # creates the initial index value
+            index = 0
 
-        # iterates over all the entity valid indirect attribute names
-        for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
-            # retrieves the entity valid indirect attribute value
-            entity_valid_indirect_attribute_value = entity_valid_indirect_attribute_values[index]
+            # iterates over all the entity valid indirect attribute names
+            for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+                # retrieves the entity valid indirect attribute value
+                entity_valid_indirect_attribute_value = entity_valid_indirect_attribute_values[index]
 
-            # in case the entity valid indirect attribute value is not lazy loaded
-            if not entity_valid_indirect_attribute_value == "%lazy-loaded%":
-                # retrieves the relation attributes for the given attribute name in the given entity class
-                relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+                # in case the entity valid indirect attribute value is not lazy loaded
+                if not entity_valid_indirect_attribute_value == "%lazy-loaded%":
+                    # retrieves the relation attributes for the given attribute name in the given entity class
+                    relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
 
-                # retrieves the relation type field
-                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+                    # retrieves the relation type field
+                    relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-                # in case the relation is of type one-to-many or one-to-one with an entity valid indirect attribute value
-                if relation_type_field == ONE_TO_MANY_RELATION or (relation_type_field == ONE_TO_ONE_RELATION and entity_valid_indirect_attribute_value):
-                    if relation_type_field == ONE_TO_ONE_RELATION:
-                        entity_valid_indirect_attribute_value = [entity_valid_indirect_attribute_value]
+                    # in case the relation is of type one-to-many or one-to-one with an entity valid indirect attribute value
+                    if relation_type_field == ONE_TO_MANY_RELATION or (relation_type_field == ONE_TO_ONE_RELATION and entity_valid_indirect_attribute_value):
+                        if relation_type_field == ONE_TO_ONE_RELATION:
+                            entity_valid_indirect_attribute_value = [entity_valid_indirect_attribute_value]
 
-                    # retrieves the target entity field
-                    target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+                        # retrieves the target entity field
+                        target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                    # retrieves the join attribute name field
-                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+                        # retrieves the join attribute name field
+                        join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-                    # retrieves the target entity name
-                    target_entity_name_field = target_entity_field.__name__
+                        # retrieves the target entity name
+                        target_entity_name_field = target_entity_field.__name__
 
-                    # retrieves the id attribute name
-                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                        # retrieves the id attribute name
+                        id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-                    # retrieves the id attribute value
-                    id_attribute_value = self.get_entity_id_attribute_value(entity)
+                        # retrieves the id attribute value
+                        id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                    # retrieves the class id attribute value
-                    class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+                        # retrieves the class id attribute value
+                        class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-                    # retrieves the id attribute value data type
-                    id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
+                        # retrieves the id attribute value data type
+                        id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
 
-                    # retrieves the target entity id attribute name
-                    target_entity_id_attribute_name = self.get_entity_class_id_attribute_name(target_entity_field)
+                        # retrieves the target entity id attribute name
+                        target_entity_id_attribute_name = self.get_entity_class_id_attribute_name(target_entity_field)
 
-                    # retrieves the target entity id attribute value
-                    target_entity_id_attribute_value = self.get_entity_class_id_attribute_value(target_entity_field)
-
-                    # retrieves the target entity id attribute value data type
-                    target_entity_id_attribute_value_data_type = self.get_attribute_data_type(target_entity_id_attribute_value, target_entity_field, target_entity_id_attribute_name)
-
-                    # iterates over all the objects in the entity valid indirect attribute value (list)
-                    for object_value in entity_valid_indirect_attribute_value:
                         # retrieves the target entity id attribute value
-                        target_entity_id_attribute_value = self.get_entity_id_attribute_value(object_value)
+                        target_entity_id_attribute_value = self.get_entity_class_id_attribute_value(target_entity_field)
 
-                        # creates the query string buffer
-                        query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
+                        # retrieves the target entity id attribute value data type
+                        target_entity_id_attribute_value_data_type = self.get_attribute_data_type(target_entity_id_attribute_value, target_entity_field, target_entity_id_attribute_name)
 
-                        # creates the initial query string buffer
-                        query_string_buffer.write("update " + target_entity_name_field + " set " + join_attribute_name_field + " = ")
+                        # iterates over all the objects in the entity valid indirect attribute value (list)
+                        for object_value in entity_valid_indirect_attribute_value:
+                            # retrieves the target entity id attribute value
+                            target_entity_id_attribute_value = self.get_entity_id_attribute_value(object_value)
 
-                        # retrieves the id attribute sqlite string value
-                        id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
+                            # creates the query string buffer
+                            query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
 
-                        # writes the id attribute value sqlite string value
-                        query_string_buffer.write(id_attribute_value_sqlite_string_value)
+                            # creates the initial query string buffer
+                            query_string_buffer.write("update " + target_entity_name_field + " set " + join_attribute_name_field + " = ")
 
-                        # writes the where clause in the query string buffer
-                        query_string_buffer.write(" where " + target_entity_id_attribute_name + " = ")
+                            # retrieves the id attribute sqlite string value
+                            id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
 
-                        # retrieves the id attribute sqlite string value
-                        target_entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_entity_id_attribute_value, target_entity_id_attribute_value_data_type)
+                            # writes the id attribute value sqlite string value
+                            query_string_buffer.write(id_attribute_value_sqlite_string_value)
 
-                        # writes the target entity id attribute value sqlite string value
-                        query_string_buffer.write(target_entity_id_attribute_value_sqlite_string_value)
+                            # writes the where clause in the query string buffer
+                            query_string_buffer.write(" where " + target_entity_id_attribute_name + " = ")
 
-                        # retrieves the query string value
-                        query_string_value = query_string_buffer.get_value()
+                            # retrieves the id attribute sqlite string value
+                            target_entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_entity_id_attribute_value, target_entity_id_attribute_value_data_type)
 
-                        # executes the query updating the values
-                        self.execute_query(cursor, query_string_value)
+                            # writes the target entity id attribute value sqlite string value
+                            query_string_buffer.write(target_entity_id_attribute_value_sqlite_string_value)
 
-                # in case the relation is of type many-to-many
-                elif relation_type_field == MANY_TO_MANY_RELATION:
-                    # retrieves the join table field
-                    join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+                            # retrieves the query string value
+                            query_string_value = query_string_buffer.get_value()
 
-                    # retrieves the target entity field
-                    target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+                            # executes the query updating the values
+                            self.execute_query(cursor, query_string_value)
 
-                    # retrieves the join attribute name field
-                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+                    # in case the relation is of type many-to-many
+                    elif relation_type_field == MANY_TO_MANY_RELATION:
+                        # retrieves the join table field
+                        join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-                    # retrieves the join attribute column name field
-                    join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
+                        # retrieves the target entity field
+                        target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                    # retrieves the attribute column name field
-                    attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+                        # retrieves the join attribute name field
+                        join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-                    # retrieves the target entity name
-                    target_entity_name_field = target_entity_field.__name__
+                        # retrieves the join attribute column name field
+                        join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                    # retrieves the join attribute
-                    join_attribute_field = getattr(target_entity_field, join_attribute_name_field)
+                        # retrieves the attribute column name field
+                        attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                    # retrieves the target attribute value data type
-                    target_attribute_value_data_type = self.get_attribute_data_type(join_attribute_field, target_entity_field, join_attribute_name_field)
+                        # retrieves the target entity name
+                        target_entity_name_field = target_entity_field.__name__
 
-                    # retrieves the id attribute name
-                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                        # retrieves the join attribute
+                        join_attribute_field = getattr(target_entity_field, join_attribute_name_field)
 
-                    # retrieves the id attribute value
-                    id_attribute_value = self.get_entity_id_attribute_value(entity)
+                        # retrieves the target attribute value data type
+                        target_attribute_value_data_type = self.get_attribute_data_type(join_attribute_field, target_entity_field, join_attribute_name_field)
 
-                    # retrieves the class id attribute value
-                    class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+                        # retrieves the id attribute name
+                        id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-                    # retrieves the id attribute value data type
-                    id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
+                        # retrieves the id attribute value
+                        id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                    # iterates over all the objects in the entity valid indirect attribute value (list)
-                    for object_value in entity_valid_indirect_attribute_value:
-                        # retrieves the target attribute value
-                        target_attribute_value = getattr(object_value, join_attribute_name_field)
+                        # retrieves the class id attribute value
+                        class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-                        # creates the query string buffer
-                        query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
+                        # retrieves the id attribute value data type
+                        id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
 
-                        # creates the initial query string value
-                        query_string_buffer.write(
-                            "insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
-                            join_attribute_column_name_field + ") values("
-                        )
+                        # iterates over all the objects in the entity valid indirect attribute value (list)
+                        for object_value in entity_valid_indirect_attribute_value:
+                            # retrieves the target attribute value
+                            target_attribute_value = getattr(object_value, join_attribute_name_field)
 
-                        # retrieves the id attribute sqlite string value
-                        id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
+                            # creates the query string buffer
+                            query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
 
-                        # writes the id attribute value sqlite string value to the query string buffer
-                        query_string_buffer.write(id_attribute_value_sqlite_string_value)
+                            # creates the initial query string value
+                            query_string_buffer.write(
+                                "insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
+                                join_attribute_column_name_field + ") values("
+                            )
 
-                        # adds a comma to the query string buffer
-                        query_string_buffer.write(", ")
+                            # retrieves the id attribute sqlite string value
+                            id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
 
-                        # retrieves the target attribute sqlite string value
-                        target_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_attribute_value, target_attribute_value_data_type)
+                            # writes the id attribute value sqlite string value to the query string buffer
+                            query_string_buffer.write(id_attribute_value_sqlite_string_value)
 
-                        # writes the target attribute value sqlite string value
-                        query_string_buffer.write(target_attribute_value_sqlite_string_value)
+                            # adds a comma to the query string buffer
+                            query_string_buffer.write(", ")
 
-                        # adds the closing brace to the query string buffer
-                        query_string_buffer.write(")")
+                            # retrieves the target attribute sqlite string value
+                            target_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_attribute_value, target_attribute_value_data_type)
 
-                        # retrieves the query string value
-                        query_string_value = query_string_buffer.get_value()
+                            # writes the target attribute value sqlite string value
+                            query_string_buffer.write(target_attribute_value_sqlite_string_value)
 
-                        # executes the query inserting the values
-                        self.execute_query(cursor, query_string_value)
+                            # adds the closing brace to the query string buffer
+                            query_string_buffer.write(")")
 
-            # increments the index value
-            index += 1
+                            # retrieves the query string value
+                            query_string_value = query_string_buffer.get_value()
 
-        # closes the cursor
-        cursor.close()
+                            # executes the query inserting the values
+                            self.execute_query(cursor, query_string_value)
+
+                # increments the index value
+                index += 1
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def update_entity(self, connection, entity):
         """
@@ -1508,107 +1514,108 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class for the entity
-        entity_class = entity.__class__
+        try:
+            # retrieves the entity class for the entity
+            entity_class = entity.__class__
 
-        # retrieves the entity class id attribute value
-        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+            # retrieves the entity class id attribute value
+            entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-        # retrieves the entity class id attribute name
-        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            # retrieves the entity class id attribute name
+            entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-        # retrieves the entity class id attribute value data type
-        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+            # retrieves the entity class id attribute value data type
+            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
 
-        # retrieves the entity id attribute value
-        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+            # retrieves the entity id attribute value
+            entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # retrieves all the valid attribute names, removes method values and the name exceptions
-        entity_valid_attribute_names = self.get_entity_attribute_names(entity)
+            # retrieves all the valid attribute names, removes method values and the name exceptions
+            entity_valid_attribute_names = self.get_entity_attribute_names(entity)
 
-        # retrieves all the valid attribute values
-        entity_valid_attribute_values = self.get_entity_attribute_values(entity)
+            # retrieves all the valid attribute values
+            entity_valid_attribute_values = self.get_entity_attribute_values(entity)
 
-        # retrieves all the valid class attribute values
-        entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
+            # retrieves all the valid class attribute values
+            entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
-        # creates the query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+            # creates the query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # creates the initial query string buffer
-        query_string_buffer.write("update " + entity_class_name + " set ")
+            # creates the initial query string buffer
+            query_string_buffer.write("update " + entity_class_name + " set ")
 
-        # creates the initial index value
-        index = 0
+            # creates the initial index value
+            index = 0
 
-        # the first flag to control the first field to be processed
-        is_first = True
+            # the first flag to control the first field to be processed
+            is_first = True
 
-        # iterates over all the entity valid attribute names and valid attribute values
-        for entity_valid_attribute_name, entity_valid_attribute_value in zip(entity_valid_attribute_names, entity_valid_attribute_values):
-            # in case the entity valid attribute value is lazy loaded
-            if entity_valid_attribute_value == "%lazy-loaded%":
+            # iterates over all the entity valid attribute names and valid attribute values
+            for entity_valid_attribute_name, entity_valid_attribute_value in zip(entity_valid_attribute_names, entity_valid_attribute_values):
+                # in case the entity valid attribute value is lazy loaded
+                if entity_valid_attribute_value == "%lazy-loaded%":
+                    # increments the index value
+                    index += 1
+
+                    # continues the loop
+                    continue
+
+                # retrieves the current entity class valid attribute value
+                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+
+                # retrieves the entity class valid attribute value data type
+                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+
+                # checks if the attribute is of type relation
+                is_attribute_relation = self.is_attribute_relation(entity_class_valid_attribute_value)
+
+                # in case the attribute is of type relation
+                if is_attribute_relation:
+                    # retrieves the relation attribute value using the current entity class, the relation attribute
+                    # resolution system uses the join attribute to find the correct attribute value
+                    entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+
+                # in case is the first field to be processed
+                if is_first:
+                    # sets the is flag to false to start adding commas
+                    is_first = False
+                else:
+                    # adds a comma to the query string buffer
+                    query_string_buffer.write(", ")
+
+                # extends the query string buffer
+                query_string_buffer.write(entity_valid_attribute_name + " = ")
+
+                # retrieves the entity valid attribute value sqlite string value
+                entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+                # writes the entity valid attribute value sqlite string value
+                query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
+
                 # increments the index value
                 index += 1
 
-                # continues the loop
-                continue
-
-            # retrieves the current entity class valid attribute value
-            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
-
-            # retrieves the entity class valid attribute value data type
-            entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
-
-            # checks if the attribute is of type relation
-            is_attribute_relation = self.is_attribute_relation(entity_class_valid_attribute_value)
-
-            # in case the attribute is of type relation
-            if is_attribute_relation:
-                # retrieves the relation attribute value using the current entity class, the relation attribute
-                # resolution system uses the join attribute to find the correct attribute value
-                entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
-
-            # in case is the first field to be processed
-            if is_first:
-                # sets the is flag to false to start adding commas
-                is_first = False
-            else:
-                # adds a comma to the query string buffer
-                query_string_buffer.write(", ")
-
             # extends the query string buffer
-            query_string_buffer.write(entity_valid_attribute_name + " = ")
+            query_string_buffer.write(" where " + entity_class_id_attribute_name + " = ")
 
-            # retrieves the entity valid attribute value sqlite string value
-            entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+            # retrieves the entity id attribute value sqlite string value
+            entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
 
-            # writes the entity valid attribute value sqlite string value
-            query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
+            # writes the entity id attribute value sqlite string value
+            query_string_buffer.write(entity_id_attribute_value_sqlite_string_value)
 
-            # increments the index value
-            index += 1
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-        # extends the query string buffer
-        query_string_buffer.write(" where " + entity_class_id_attribute_name + " = ")
-
-        # retrieves the entity id attribute value sqlite string value
-        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
-
-        # writes the entity id attribute value sqlite string value
-        query_string_buffer.write(entity_id_attribute_value_sqlite_string_value)
-
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
-
-        # executes the query updating the values
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query updating the values
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # removes the current entity indirect relations (except the lazy loaded ones)
         self.remove_entity_indirect_relations(connection, entity, False)
@@ -1635,37 +1642,38 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class for the entity
-        entity_class = entity.__class__
+        try:
+            # retrieves the entity class for the entity
+            entity_class = entity.__class__
 
-        # retrieves the entity class id attribute value
-        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+            # retrieves the entity class id attribute value
+            entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # retrieves the entity class id attribute name
-        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            # retrieves the entity class id attribute name
+            entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-        # retrieves the entity class id attribute value
-        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+            # retrieves the entity class id attribute value
+            entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-        # retrieves the entity class id attribute value data type
-        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+            # retrieves the entity class id attribute value data type
+            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
 
-        # creates the initial query string value
-        query_string_value = "delete from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
+            # creates the initial query string value
+            query_string_value = "delete from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
 
-        # retrieves the entity id attribute value sqlite string value
-        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
+            # retrieves the entity id attribute value sqlite string value
+            entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
 
-        query_string_value += entity_id_attribute_value_sqlite_string_value
+            query_string_value += entity_id_attribute_value_sqlite_string_value
 
-        # executes the query removing the values
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query removing the values
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # removes entity indirect relations
         self.remove_entity_indirect_relations(connection, entity)
@@ -1680,78 +1688,79 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class for the entity
-        entity_class = entity.__class__
+        try:
+            # retrieves the entity class for the entity
+            entity_class = entity.__class__
 
-        # retrieves the entity class id attribute name
-        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            # retrieves the entity class id attribute name
+            entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-        # retrieves the entity class id attribute value
-        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+            # retrieves the entity class id attribute value
+            entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-        # retrieves the entity class id attribute value data type
-        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+            # retrieves the entity class id attribute value data type
+            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
 
-        # retrieves the id attribute value
-        id_attribute_value = self.get_entity_id_attribute_value(entity)
+            # retrieves the id attribute value
+            id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-        # retrieves all the valid indirect attribute names, removes method values and the name exceptions
-        entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
+            # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+            entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
 
-        # iterates over all the entity valid indirect attribute names
-        for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
-            # retrieves the entity valid indirect attribute
-            entity_valid_indirect_attribute = getattr(entity, entity_valid_indirect_attribute_name)
+            # iterates over all the entity valid indirect attribute names
+            for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+                # retrieves the entity valid indirect attribute
+                entity_valid_indirect_attribute = getattr(entity, entity_valid_indirect_attribute_name)
 
-            if remove_lazy or not entity_valid_indirect_attribute == "%lazy-loaded%":
-                # retrieves the relation attributes for the given attribute name in the given entity class
-                relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+                if remove_lazy or not entity_valid_indirect_attribute == "%lazy-loaded%":
+                    # retrieves the relation attributes for the given attribute name in the given entity class
+                    relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
 
-                # retrieves the relation type field
-                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+                    # retrieves the relation type field
+                    relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-                if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == ONE_TO_MANY_RELATION:
-                    # retrieves the target entity
-                    target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+                    if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == ONE_TO_MANY_RELATION:
+                        # retrieves the target entity
+                        target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                    # retrieves the join attribute name field
-                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+                        # retrieves the join attribute name field
+                        join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-                    # retrieves the target entity name
-                    target_entity_name_field = target_entity_field.__name__
+                        # retrieves the target entity name
+                        target_entity_name_field = target_entity_field.__name__
 
-                    # creates the initial query string value
-                    query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = null where " + join_attribute_name_field + " = "
+                        # creates the initial query string value
+                        query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = null where " + join_attribute_name_field + " = "
 
-                    # retrieves the entity id attribute value sqlite string value
-                    entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+                        # retrieves the entity id attribute value sqlite string value
+                        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
 
-                    query_string_value += entity_id_attribute_value_sqlite_string_value
+                        query_string_value += entity_id_attribute_value_sqlite_string_value
 
-                    # executes the query removing the values
-                    self.execute_query(cursor, query_string_value)
+                        # executes the query removing the values
+                        self.execute_query(cursor, query_string_value)
 
-                # in case the relation is of type many-to-many
-                elif relation_type_field == MANY_TO_MANY_RELATION:
-                    # retrieves the join table field
-                    join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+                    # in case the relation is of type many-to-many
+                    elif relation_type_field == MANY_TO_MANY_RELATION:
+                        # retrieves the join table field
+                        join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-                    # retrieves the attribute column name field
-                    attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+                        # retrieves the attribute column name field
+                        attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                    # creates the initial query string value
-                    query_string_value = "delete from " + join_table_field + " where " + attribute_column_name_field + " = "
+                        # creates the initial query string value
+                        query_string_value = "delete from " + join_table_field + " where " + attribute_column_name_field + " = "
 
-                    # retrieves the entity id attribute value sqlite string value
-                    entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+                        # retrieves the entity id attribute value sqlite string value
+                        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
 
-                    query_string_value += entity_id_attribute_value_sqlite_string_value
+                        query_string_value += entity_id_attribute_value_sqlite_string_value
 
-                    # executes the query removing the values
-                    self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+                        # executes the query removing the values
+                        self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def find_entity(self, connection, entity_class, id_value, search_field_name = None, retrieved_entities_list = None):
         """
@@ -1831,302 +1840,303 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity sub classes
-        entity_sub_classes = self.get_entity_sub_classes(entity_class)
+        try:
+            # retrieves the entity sub classes
+            entity_sub_classes = self.get_entity_sub_classes(entity_class)
 
-        # appends the entity class to the entity sub classes
-        entity_sub_classes.append(entity_class)
+            # appends the entity class to the entity sub classes
+            entity_sub_classes.append(entity_class)
 
-        # creates the entity sub classes map
-        entity_sub_classes_map = {}
+            # creates the entity sub classes map
+            entity_sub_classes_map = {}
 
-        # creates the entity class valid attribute names list
-        entity_class_valid_attribute_names = []
+            # creates the entity class valid attribute names list
+            entity_class_valid_attribute_names = []
 
-        # iterates over all the entity sub classes
-        for entity_sub_class in entity_sub_classes:
-            # retrieves the entity sub class name
-            entity_sub_class_name = entity_sub_class.__name__
+            # iterates over all the entity sub classes
+            for entity_sub_class in entity_sub_classes:
+                # retrieves the entity sub class name
+                entity_sub_class_name = entity_sub_class.__name__
 
-            # adds the entity sub class to the entity sub classes map
-            entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
+                # adds the entity sub class to the entity sub classes map
+                entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
 
-            # retrieves the entity sub class valid attribute names
-            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+                # retrieves the entity sub class valid attribute names
+                entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
-            # extends the entity class valid attribute names with the new entity sub class valid attribute names
-            entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
+                # extends the entity class valid attribute names with the new entity sub class valid attribute names
+                entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
 
-        # the first flag to control the sub class to be processed
-        is_first_sub_class = True
+            # the first flag to control the sub class to be processed
+            is_first_sub_class = True
 
-        # creates the initial query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+            # creates the initial query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # iterates over all the entity sub classes
-        for entity_sub_class in entity_sub_classes:
-            # retrieves the entity sub class name
-            entity_sub_class_name = entity_sub_class.__name__
+            # iterates over all the entity sub classes
+            for entity_sub_class in entity_sub_classes:
+                # retrieves the entity sub class name
+                entity_sub_class_name = entity_sub_class.__name__
 
-            # in case is the first sub class to be processed
-            if is_first_sub_class:
-                # sets the is flag to false to start adding union all
-                is_first_sub_class = False
-            else:
-                # adds a union all to the query string value
-                query_string_buffer.write(" union all ")
-
-            # creates the select query string value
-            query_string_buffer.write("select ")
-
-            query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
-
-            # @todo cache this value it's to painful to use
-            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
-
-            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                # adds a comma to the query string value
-                query_string_buffer.write(", ")
-
-                if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
-                    query_string_buffer.write(entity_class_valid_attribute_name)
+                # in case is the first sub class to be processed
+                if is_first_sub_class:
+                    # sets the is flag to false to start adding union all
+                    is_first_sub_class = False
                 else:
-                    query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
+                    # adds a union all to the query string value
+                    query_string_buffer.write(" union all ")
 
-            query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
+                # creates the select query string value
+                query_string_buffer.write("select ")
 
-            # retrieves the id value sqlite string value
-            id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
+                query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
-            query_string_buffer.write(id_value_sqlite_string_value)
+                # @todo cache this value it's to painful to use
+                entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
+                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                    # adds a comma to the query string value
+                    query_string_buffer.write(", ")
 
-        # executes the query retrieving the values
-        self.execute_query(cursor, query_string_value)
+                    if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
+                        query_string_buffer.write(entity_class_valid_attribute_name)
+                    else:
+                        query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
 
-        # selects the values from the cursor
-        values_list = [value for value in cursor]
+                query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
 
-        # in case there is at least one selection
-        if len(values_list):
-            # retrieves the first value from the values list
-            first_value = values_list[0]
+                # retrieves the id value sqlite string value
+                id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
 
-            # retrieves the entity class name
-            entity_class_name = first_value[0]
+                query_string_buffer.write(id_value_sqlite_string_value)
 
-            # sets the current entity class
-            entity_class = entity_sub_classes_map[entity_class_name]
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-            # creates a new entity
-            entity = entity_class()
+            # executes the query retrieving the values
+            self.execute_query(cursor, query_string_value)
 
-            # changes the first value to start one step forward
-            first_value = first_value[1:]
+            # selects the values from the cursor
+            values_list = [value for value in cursor]
 
-            # creates the initial index value
-            index = 0
+            # in case there is at least one selection
+            if len(values_list):
+                # retrieves the first value from the values list
+                first_value = values_list[0]
 
-            # creates the relation attributes list
-            # this list is used for relation attributes post-processing
-            relation_attributes_list = []
+                # retrieves the entity class name
+                entity_class_name = first_value[0]
 
-            # iterates over all the attribute values of the first value
-            for attribute_value in first_value:
-                # retrieves the entity class attribute name
-                entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+                # sets the current entity class
+                entity_class = entity_sub_classes_map[entity_class_name]
 
-                # in case the attribute exists for the current entity class
-                if hasattr(entity_class, entity_class_valid_attribute_name):
-                    # in case the attribute is a relation
-                    if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                        # in case the relation attribute is not meant to be eager loaded
-                        if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
-                            # sets the lazy loaded attribute in the instance
-                            setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
-                        # otherwise it's not a relation (simple attribute)
+                # creates a new entity
+                entity = entity_class()
+
+                # changes the first value to start one step forward
+                first_value = first_value[1:]
+
+                # creates the initial index value
+                index = 0
+
+                # creates the relation attributes list
+                # this list is used for relation attributes post-processing
+                relation_attributes_list = []
+
+                # iterates over all the attribute values of the first value
+                for attribute_value in first_value:
+                    # retrieves the entity class attribute name
+                    entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                    # in case the attribute exists for the current entity class
+                    if hasattr(entity_class, entity_class_valid_attribute_name):
+                        # in case the attribute is a relation
+                        if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                            # in case the relation attribute is not meant to be eager loaded
+                            if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
+                                # sets the lazy loaded attribute in the instance
+                                setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                            # otherwise it's not a relation (simple attribute)
+                            else:
+                                # creates the relation attribute tuple
+                                relation_attribute_tuple = (
+                                    entity_class_valid_attribute_name,
+                                    attribute_value
+                                )
+
+                                # adds the relation attribute tuple to the list of relation attributes
+                                relation_attributes_list.append(relation_attribute_tuple)
                         else:
-                            # creates the relation attribute tuple
-                            relation_attribute_tuple = (
-                                entity_class_valid_attribute_name,
-                                attribute_value
-                            )
+                            # retrieves the entity class attribute value
+                            entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
-                            # adds the relation attribute tuple to the list of relation attributes
-                            relation_attributes_list.append(relation_attribute_tuple)
-                    else:
-                        # retrieves the entity class attribute value
-                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+                            # retrieves the attribute data type
+                            attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-                        # retrieves the attribute data type
-                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+                            # retrieves the processed attribute value
+                            processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
 
-                        # retrieves the processed attribute value
-                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
+                            # sets the processed attribute value in the instance
+                            setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
-                        # sets the processed attribute value in the instance
-                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
+                    # increments the index value
+                    index += 1
 
-                # increments the index value
-                index += 1
+                # retrieves all the mapped by other names
+                mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
 
-            # retrieves all the mapped by other names
-            mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
-
-            # iterates over all the mapped by other names
-            for mapped_by_other_name in mapped_by_other_names:
-                # in case the mapped by other name is a lazy relation and is not set in the eager
-                # loading relations
-                if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
-                    # sets the lazy loaded attribute in the instance
-                    setattr(entity, mapped_by_other_name, "%lazy-loaded%")
-                # otherwise it's an eager relation and should be loaded
-                else:
-                    # creates the mapped by other attribute tuple
-                    mapped_by_other_attribute_tuple = (
-                        mapped_by_other_name,
-                        None
-                    )
-
-                    # adds the mapped by other attribute tuple to the list of relation attributes
-                    relation_attributes_list.append(mapped_by_other_attribute_tuple)
-
-            # retrieves the id attribute value
-            id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-            # retrieves the already buffered entity
-            buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
-
-            # in case the entity is already buffered
-            if buffered_entity:
-                # unsets the lazy loaded flag
-                lazy_loaded_flag = False
-
-                # iterates over all the eager loading relations
-                # to make sure that they are correctly loaded
-                for key in eager_loading_relations:
-                    # retrieves the eager loading relation
-                    eager_loading_relation = getattr(buffered_entity, key)
-
-                    # in case the eager loading relation is lazy loaded
-                    if eager_loading_relation == "%lazy-loaded%":
-                        # sets the lazy loaded flag
-                        # because one of the eager loading relations
-                        # in the buffered entities is lazy loaded
-                        lazy_loaded_flag = True
-
-                # in case the lazy loaded flag is not set
-                if not lazy_loaded_flag:
-                    # closes the cursor
-                    cursor.close()
-
-                    # returns the buffered entity
-                    return buffered_entity
-            # otherwise the entity is not buffered
-            else:
-                # adds the entity to the list of retrieved entities
-                retrieved_entities_list.add_entity(id_attribute_value, entity)
-
-                # iterates over all the relation attributes list
-                for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
-                    # retrieves the relation options
-                    relation_options = eager_loading_relations.get(entity_class_valid_attribute_name, {})
-
-                    # retrieves the relation attribute value
-                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_value, retrieved_entities_list, relation_options)
-
-                    # sets the relation attribute in the instance
-                    setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
-
-            # retrieves all the valid indirect attribute names, removes method values and the name exceptions
-            entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
-
-            # iterates over all the entity valid indirect attribute names
-            for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
-                # retrieves the relation options
-                relation_options = eager_loading_relations.get(entity_valid_indirect_attribute_name, {})
-
-                # retrieves the relation attributes for the given attribute name in the given entity class
-                relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
-
-                # retrieves the relation type field
-                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
-
-                # in case the relation is of type many-to-many
-                if relation_type_field == MANY_TO_MANY_RELATION:
-                    # in case the relation attribute is not meant to be eager loaded
-                    if self.is_attribute_name_lazy_relation(entity_valid_indirect_attribute_name, entity_class) and not entity_valid_indirect_attribute_name in eager_loading_relations:
+                # iterates over all the mapped by other names
+                for mapped_by_other_name in mapped_by_other_names:
+                    # in case the mapped by other name is a lazy relation and is not set in the eager
+                    # loading relations
+                    if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
                         # sets the lazy loaded attribute in the instance
-                        setattr(entity, entity_valid_indirect_attribute_name, "%lazy-loaded%")
+                        setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                    # otherwise it's an eager relation and should be loaded
                     else:
-                        # retrieves the join table field
-                        join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+                        # creates the mapped by other attribute tuple
+                        mapped_by_other_attribute_tuple = (
+                            mapped_by_other_name,
+                            None
+                        )
 
-                        # retrieves the target entity field
-                        target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+                        # adds the mapped by other attribute tuple to the list of relation attributes
+                        relation_attributes_list.append(mapped_by_other_attribute_tuple)
 
-                        # retrieves the join attribute column name field
-                        join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                        # retrieves the attribute column name field
-                        attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+                # retrieves the already buffered entity
+                buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
 
-                        # retrieves the id attribute value
-                        id_attribute_value = self.get_entity_id_attribute_value(entity)
+                # in case the entity is already buffered
+                if buffered_entity:
+                    # unsets the lazy loaded flag
+                    lazy_loaded_flag = False
 
-                        # retrieves the entity class id attribute name
-                        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                    # iterates over all the eager loading relations
+                    # to make sure that they are correctly loaded
+                    for key in eager_loading_relations:
+                        # retrieves the eager loading relation
+                        eager_loading_relation = getattr(buffered_entity, key)
 
-                        # retrieves the entity class id attribute value
-                        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+                        # in case the eager loading relation is lazy loaded
+                        if eager_loading_relation == "%lazy-loaded%":
+                            # sets the lazy loaded flag
+                            # because one of the eager loading relations
+                            # in the buffered entities is lazy loaded
+                            lazy_loaded_flag = True
 
-                        # retrieves the entity class id attribute value data type
-                        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+                    # in case the lazy loaded flag is not set
+                    if not lazy_loaded_flag:
+                        # closes the cursor
+                        cursor.close()
 
-                        # creates the initial query string value
-                        query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = "
+                        # returns the buffered entity
+                        return buffered_entity
+                # otherwise the entity is not buffered
+                else:
+                    # adds the entity to the list of retrieved entities
+                    retrieved_entities_list.add_entity(id_attribute_value, entity)
 
-                        # retrieves the entity id attribute value sqlite string value
-                        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+                    # iterates over all the relation attributes list
+                    for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
+                        # retrieves the relation options
+                        relation_options = eager_loading_relations.get(entity_class_valid_attribute_name, {})
 
-                        query_string_value += entity_id_attribute_value_sqlite_string_value
-
-                        # executes the query removing the values
-                        self.execute_query(cursor, query_string_value)
-
-                        # selects the values from the cursor
-                        values_list = [value for value in cursor]
-
-                        # creates the target entities list
-                        target_entities_list = []
-
-                        # iterates over the values list
-                        for value in values_list:
-                            # retrieves the target attribute value
-                            target_attribute_value = value[0]
-
-                            # retrieves the target entity
-                            target_entity = self.find_entity_options(connection, target_entity_field, target_attribute_value, retrieved_entities_list = retrieved_entities_list, options = relation_options)
-
-                            # appends the target entity to the list of target entities
-                            target_entities_list.append(target_entity)
+                        # retrieves the relation attribute value
+                        relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_value, retrieved_entities_list, relation_options)
 
                         # sets the relation attribute in the instance
-                        setattr(entity, entity_valid_indirect_attribute_name, target_entities_list)
+                        setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
 
-            # sets the entity fields
-            entity = self._set_entity_fields(entity, fields)
+                # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+                entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
 
+                # iterates over all the entity valid indirect attribute names
+                for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+                    # retrieves the relation options
+                    relation_options = eager_loading_relations.get(entity_valid_indirect_attribute_name, {})
+
+                    # retrieves the relation attributes for the given attribute name in the given entity class
+                    relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+
+                    # retrieves the relation type field
+                    relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+
+                    # in case the relation is of type many-to-many
+                    if relation_type_field == MANY_TO_MANY_RELATION:
+                        # in case the relation attribute is not meant to be eager loaded
+                        if self.is_attribute_name_lazy_relation(entity_valid_indirect_attribute_name, entity_class) and not entity_valid_indirect_attribute_name in eager_loading_relations:
+                            # sets the lazy loaded attribute in the instance
+                            setattr(entity, entity_valid_indirect_attribute_name, "%lazy-loaded%")
+                        else:
+                            # retrieves the join table field
+                            join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+                            # retrieves the target entity field
+                            target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+
+                            # retrieves the join attribute column name field
+                            join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
+
+                            # retrieves the attribute column name field
+                            attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+
+                            # retrieves the id attribute value
+                            id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                            # retrieves the entity class id attribute name
+                            entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                            # retrieves the entity class id attribute value
+                            entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+                            # retrieves the entity class id attribute value data type
+                            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
+                            # creates the initial query string value
+                            query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = "
+
+                            # retrieves the entity id attribute value sqlite string value
+                            entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+
+                            query_string_value += entity_id_attribute_value_sqlite_string_value
+
+                            # executes the query removing the values
+                            self.execute_query(cursor, query_string_value)
+
+                            # selects the values from the cursor
+                            values_list = [value for value in cursor]
+
+                            # creates the target entities list
+                            target_entities_list = []
+
+                            # iterates over the values list
+                            for value in values_list:
+                                # retrieves the target attribute value
+                                target_attribute_value = value[0]
+
+                                # retrieves the target entity
+                                target_entity = self.find_entity_options(connection, target_entity_field, target_attribute_value, retrieved_entities_list = retrieved_entities_list, options = relation_options)
+
+                                # appends the target entity to the list of target entities
+                                target_entities_list.append(target_entity)
+
+                            # sets the relation attribute in the instance
+                            setattr(entity, entity_valid_indirect_attribute_name, target_entities_list)
+
+                # sets the entity fields
+                entity = self._set_entity_fields(entity, fields)
+
+                # closes the cursor
+                cursor.close()
+
+                # returns the created entity
+                return entity
+        finally:
             # closes the cursor
             cursor.close()
-
-            # returns the created entity
-            return entity
-
-        # closes the cursor
-        cursor.close()
 
     def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
         """
@@ -2199,399 +2209,494 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity sub classes
-        entity_sub_classes = self.get_entity_sub_classes(entity_class)
+        try:
+            # retrieves the entity sub classes
+            entity_sub_classes = self.get_entity_sub_classes(entity_class)
 
-        # appends the entity class to the entity sub classes
-        entity_sub_classes.append(entity_class)
+            # appends the entity class to the entity sub classes
+            entity_sub_classes.append(entity_class)
 
-        # creates the entity sub classes map
-        entity_sub_classes_map = {}
+            # creates the entity sub classes map
+            entity_sub_classes_map = {}
 
-        # creates the entity class valid attribute names list
-        entity_class_valid_attribute_names = []
+            # creates the entity class valid attribute names list
+            entity_class_valid_attribute_names = []
 
-        # iterates over all the entity sub classes
-        for entity_sub_class in entity_sub_classes:
-            # retrieves the entity sub class name
-            entity_sub_class_name = entity_sub_class.__name__
+            # iterates over all the entity sub classes
+            for entity_sub_class in entity_sub_classes:
+                # retrieves the entity sub class name
+                entity_sub_class_name = entity_sub_class.__name__
 
-            # adds the entity sub class to the entity sub classes map
-            entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
+                # adds the entity sub class to the entity sub classes map
+                entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
 
-            # retrieves the entity sub class valid attribute names
-            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+                # retrieves the entity sub class valid attribute names
+                entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
-            # extends the entity class valid attribute names with the new entity sub class valid attribute names
-            entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
+                # extends the entity class valid attribute names with the new entity sub class valid attribute names
+                entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
 
-        # the first flag to control the sub class to be processed
-        is_first_sub_class = True
+            # the first flag to control the sub class to be processed
+            is_first_sub_class = True
 
-        # creates the query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-        # in case it's a count select
-        if count:
-            query_string_buffer.write(" select sum(counter) from (")
-
-        # iterates over all the entity sub classes
-        for entity_sub_class in entity_sub_classes:
-            # retrieves the entity sub class name
-            entity_sub_class_name = entity_sub_class.__name__
-
-            # in case is the first sub class to be processed
-            if is_first_sub_class:
-                # sets the is flag to false to start adding union all
-                is_first_sub_class = False
-            else:
-                # adds a union all to the query string value
-                query_string_buffer.write(" union all ")
-
-            # creates the select query string value
-            query_string_buffer.write("select ")
+            # creates the query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
             # in case it's a count select
             if count:
-                query_string_buffer.write(" count(1) as counter ")
-            # in case it's a normal select
-            else:
-                query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
+                query_string_buffer.write(" select sum(counter) from (")
 
-                # @todo cache this value it's to painful to use
-                entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+            # iterates over all the entity sub classes
+            for entity_sub_class in entity_sub_classes:
+                # retrieves the entity sub class name
+                entity_sub_class_name = entity_sub_class.__name__
 
-                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                    # adds a comma to the query string value
-                    query_string_buffer.write(", ")
-
-                    if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
-                        query_string_buffer.write(entity_class_valid_attribute_name)
-                    else:
-                        query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
-
-            # sets the is first where clause flag
-            is_first_where = True
-
-            if field_value == None:
-                query_string_buffer.write(" from " + entity_sub_class_name)
-            else:
-                query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
-
-                # retrieves the field value value sqlite string value
-                field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
-
-                query_string_buffer.write(field_value_sqlite_string_value)
-
-                # unsets the is first where clause flag
-                is_first_where = False
-
-
-
-
-
-
-
-
-
-
-
-            # ESTA E A PARTE DOS FILTERS (ISOLATE !!!!!)
-
-
-
-
-            # iterates over all the filters
-            for filter in filters:
-                if is_first_where:
-                    query_string_buffer.write(" where (")
-                    is_first_where = False
+                # in case is the first sub class to be processed
+                if is_first_sub_class:
+                    # sets the is flag to false to start adding union all
+                    is_first_sub_class = False
                 else:
-                    query_string_buffer.write(" and (")
+                    # adds a union all to the query string value
+                    query_string_buffer.write(" union all ")
 
-                filter_type = filter["filter_type"]
+                # creates the select query string value
+                query_string_buffer.write("select ")
 
-                if filter_type == "equals":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
+                # in case it's a count select
+                if count:
+                    query_string_buffer.write(" count(1) as counter ")
+                # in case it's a normal select
+                else:
+                    query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
-                    is_first_field = True
+                    # @todo cache this value it's to painful to use
+                    entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
+                    for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                        # adds a comma to the query string value
+                        query_string_buffer.write(", ")
+
+                        if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
+                            query_string_buffer.write(entity_class_valid_attribute_name)
                         else:
-                            query_string_buffer.write(" or ")
+                            query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
+                # sets the is first where clause flag
+                is_first_where = True
 
-                        # retrieves the filter field value
-                        filter_field_value = filter_field["field_value"]
+                if field_value == None:
+                    query_string_buffer.write(" from " + entity_sub_class_name)
+                else:
+                    query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
 
-                        # retrieves the filter field class value
-                        filter_field_class_value = getattr(entity_class, filter_field_name)
+                    # retrieves the field value value sqlite string value
+                    field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
 
-                        # retrieves the entity class id attribute value data type
-                        filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+                    query_string_buffer.write(field_value_sqlite_string_value)
 
-                        # retrieves the filter field value value sqlite string value
-                        filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+                    # unsets the is first where clause flag
+                    is_first_where = False
 
-                        query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
 
-                # in case the filter is of type like
-                elif filter_type == "like":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
 
-                    like_filter_type = filter.get("like_filter_type", "both")
 
-                    is_first_field = True
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
-                        else:
-                            query_string_buffer.write(" or ")
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
 
-                        # retrieves the filter field value
-                        filter_field_value = filter_field["field_value"]
 
-                        # creates a new buffer for the filter field value
-                        filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-                        is_first_filter_field_value = True
 
-                        for splitted_filter_value in filter_field_value.split():
-                            if is_first_filter_field_value:
-                                is_first_filter_field_value = False
+
+                # ESTA E A PARTE DOS FILTERS (ISOLATE !!!!!)
+
+
+
+
+                # iterates over all the filters
+                for filter in filters:
+                    if is_first_where:
+                        query_string_buffer.write(" where (")
+                        is_first_where = False
+                    else:
+                        query_string_buffer.write(" and (")
+
+                    filter_type = filter["filter_type"]
+
+                    if filter_type == "equals":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
+
+                        is_first_field = True
+
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
                             else:
-                                filter_field_value_buffer.write("%")
-                            filter_field_value_buffer.write(splitted_filter_value)
+                                query_string_buffer.write(" or ")
 
-                        query_string_buffer.write(filter_field_name + " like ")
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
 
-                        if like_filter_type in ("left", "both"):
-                            query_string_buffer.write("'%")
-                        else:
-                            query_string_buffer.write("'")
+                            # retrieves the filter field value
+                            filter_field_value = filter_field["field_value"]
 
-                        # retieves the filter field value string
-                        filter_field_value_string = filter_field_value_buffer.get_value()
+                            # retrieves the filter field class value
+                            filter_field_class_value = getattr(entity_class, filter_field_name)
 
-                        query_string_buffer.write(filter_field_value_string)
+                            # retrieves the entity class id attribute value data type
+                            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
 
-                        if like_filter_type in ("right", "both"):
-                            query_string_buffer.write("%'")
-                        else:
-                            query_string_buffer.write("'")
+                            # retrieves the filter field value value sqlite string value
+                            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
 
-                # in case the filter is of type greater
-                elif filter_type == "greater":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
+                            query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
 
-                    is_first_field = True
+                    # in case the filter is of type like
+                    elif filter_type == "like":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
-                        else:
-                            query_string_buffer.write(" or ")
+                        like_filter_type = filter.get("like_filter_type", "both")
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
+                        is_first_field = True
 
-                        # retrieves the filter field value
-                        filter_field_value = filter_field["field_value"]
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
 
-                        # retrieves the filter field class value
-                        filter_field_class_value = getattr(entity_class, filter_field_name)
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
 
-                        # retrieves the entity class id attribute value data type
-                        filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+                            # retrieves the filter field value
+                            filter_field_value = filter_field["field_value"]
 
-                        # retrieves the filter field value value sqlite string value
-                        filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+                            # creates a new buffer for the filter field value
+                            filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-                        query_string_buffer.write(filter_field_name + " > " + filter_field_value_sqlite_string_value)
+                            is_first_filter_field_value = True
 
-                # in case the filter is of type lesser
-                elif filter_type == "lesser":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
+                            for splitted_filter_value in filter_field_value.split():
+                                if is_first_filter_field_value:
+                                    is_first_filter_field_value = False
+                                else:
+                                    filter_field_value_buffer.write("%")
+                                filter_field_value_buffer.write(splitted_filter_value)
 
-                    is_first_field = True
+                            query_string_buffer.write(filter_field_name + " like ")
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
-                        else:
-                            query_string_buffer.write(" or ")
+                            if like_filter_type in ("left", "both"):
+                                query_string_buffer.write("'%")
+                            else:
+                                query_string_buffer.write("'")
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
+                            # retieves the filter field value string
+                            filter_field_value_string = filter_field_value_buffer.get_value()
 
-                        # retrieves the filter field value
-                        filter_field_value = filter_field["field_value"]
+                            query_string_buffer.write(filter_field_value_string)
 
-                        # retrieves the filter field class value
-                        filter_field_class_value = getattr(entity_class, filter_field_name)
+                            if like_filter_type in ("right", "both"):
+                                query_string_buffer.write("%'")
+                            else:
+                                query_string_buffer.write("'")
 
-                        # retrieves the entity class id attribute value data type
-                        filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+                    # in case the filter is of type greater
+                    elif filter_type == "greater":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
 
-                        # retrieves the filter field value value sqlite string value
-                        filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+                        is_first_field = True
 
-                        query_string_buffer.write(filter_field_name + " < " + filter_field_value_sqlite_string_value)
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
 
-                # in case the filter is of type is null
-                elif filter_type == "is_null":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
 
-                    is_first_field = True
+                            # retrieves the filter field value
+                            filter_field_value = filter_field["field_value"]
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
-                        else:
-                            query_string_buffer.write(" or ")
+                            # retrieves the filter field class value
+                            filter_field_class_value = getattr(entity_class, filter_field_name)
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
+                            # retrieves the entity class id attribute value data type
+                            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
 
-                        query_string_buffer.write(filter_field_name + " is null")
+                            # retrieves the filter field value value sqlite string value
+                            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
 
-                # in case the filter is of type is not null
-                elif filter_type == "is_not_null":
-                    # retrieves the filter fields
-                    filter_fields = filter["filter_fields"]
+                            query_string_buffer.write(filter_field_name + " > " + filter_field_value_sqlite_string_value)
 
-                    is_first_field = True
+                    # in case the filter is of type lesser
+                    elif filter_type == "lesser":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
 
-                    for filter_field in filter_fields:
-                        if is_first_field:
-                            is_first_field = False
-                        else:
-                            query_string_buffer.write(" or ")
+                        is_first_field = True
 
-                        # retrieves the filter field name
-                        filter_field_name = filter_field["field_name"]
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
 
-                        query_string_buffer.write(filter_field_name + " is not null")
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
 
+                            # retrieves the filter field value
+                            filter_field_value = filter_field["field_value"]
+
+                            # retrieves the filter field class value
+                            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+                            # retrieves the entity class id attribute value data type
+                            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+
+                            # retrieves the filter field value value sqlite string value
+                            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+                            query_string_buffer.write(filter_field_name + " < " + filter_field_value_sqlite_string_value)
+
+                    # in case the filter is of type is null
+                    elif filter_type == "is_null":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
+
+                        is_first_field = True
+
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
+
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
+
+                            query_string_buffer.write(filter_field_name + " is null")
+
+                    # in case the filter is of type is not null
+                    elif filter_type == "is_not_null":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
+
+                        is_first_field = True
+
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
+
+                            # retrieves the filter field name
+                            filter_field_name = filter_field["field_name"]
+
+                            query_string_buffer.write(filter_field_name + " is not null")
+
+                    query_string_buffer.write(")")
+
+            # in case it's a count select
+            if count:
                 query_string_buffer.write(")")
 
-        # in case it's a count select
-        if count:
-            query_string_buffer.write(")")
+            # in case there is at least one order by definition
+            if len(order_by):
+                query_string_buffer.write(" order by ")
 
-        # in case there is at least one order by definition
-        if len(order_by):
-            query_string_buffer.write(" order by ")
+                is_first_order_by = True
 
-            is_first_order_by = True
+                # iterates over all the order by values
+                for order_by_value in order_by:
+                    order_by_name, order_by_order = order_by_value
 
-            # iterates over all the order by values
-            for order_by_value in order_by:
-                order_by_name, order_by_order = order_by_value
+                    if is_first_order_by:
+                        is_first_order_by = False
+                    else:
+                        # adds a comma to the query string value
+                        query_string_buffer.write(", ")
+                    query_string_buffer.write(order_by_name)
 
-                if is_first_order_by:
-                    is_first_order_by = False
-                else:
-                    # adds a comma to the query string value
-                    query_string_buffer.write(", ")
-                query_string_buffer.write(order_by_name)
+                    if order_by_order == "ascending":
+                        query_string_buffer.write(" asc")
+                    elif order_by_order == "descending":
+                        query_string_buffer.write(" desc")
 
-                if order_by_order == "ascending":
-                    query_string_buffer.write(" asc")
-                elif order_by_order == "descending":
-                    query_string_buffer.write(" desc")
+            query_string_buffer.write(" limit " + str(start_record) + ", " + str(number_records))
 
-        query_string_buffer.write(" limit " + str(start_record) + ", " + str(number_records))
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
+            # executes the query retrieving the values
+            self.execute_query(cursor, query_string_value)
 
-        # executes the query retrieving the values
-        self.execute_query(cursor, query_string_value)
+            # selects the values from the cursor
+            values_list = cursor.fetchall()
 
-        # selects the values from the cursor
-        values_list = cursor.fetchall()
+            # in case it's a count select
+            if count:
+                # starts the count value
+                count_value = 0
 
-        # in case it's a count select
-        if count:
-            # starts the count value
-            count_value = 0
+                for value in values_list[0]:
+                    count_value += value
 
-            for value in values_list[0]:
-                count_value += value
+                # returns the count value
+                return count_value
 
-            # returns the count value
-            return count_value
+            # creates the list of entities
+            entities_list = []
 
-        # creates the list of entities
-        entities_list = []
+            # in case the eager loading relations should be retrieved
+            if retrieve_eager_loading_relations:
+                # iterates over all the values in the values list
+                for value in values_list:
+                    # retrieves the entity class name
+                    entity_class_name = value[0]
 
-        # in case the eager loading relations should be retrieved
-        if retrieve_eager_loading_relations:
-            # iterates over all the values in the values list
-            for value in values_list:
-                # retrieves the entity class name
-                entity_class_name = value[0]
+                    # sets the current entity class
+                    entity_class = entity_sub_classes_map[entity_class_name]
 
-                # sets the current entity class
-                entity_class = entity_sub_classes_map[entity_class_name]
+                    # creates a new entity
+                    entity = entity_class()
 
-                # creates a new entity
-                entity = entity_class()
+                    # changes the value to start one step forward
+                    value = value[1:]
 
-                # changes the value to start one step forward
-                value = value[1:]
+                    # retrieves the id attribute value
+                    id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                # retrieves the id attribute value
-                id_attribute_value = self.get_entity_id_attribute_value(entity)
+                    # adds the entity to the list of retrieved entities
+                    retrieved_entities_list.add_entity(id_attribute_value, entity)
 
-                # adds the entity to the list of retrieved entities
-                retrieved_entities_list.add_entity(id_attribute_value, entity)
+                    # creates the initial index value
+                    index = 0
 
-                # creates the initial index value
-                index = 0
+                    # creates the relation attributes list
+                    # this list is used for relation attributes post-processing
+                    relation_attributes_list = []
 
-                # creates the relation attributes list
-                # this list is used for relation attributes post-processing
-                relation_attributes_list = []
+                    # iterates over all the attribute values of the value
+                    for attribute_value in value:
+                        # retrieves the entity class attribute name
+                        entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
-                # iterates over all the attribute values of the value
-                for attribute_value in value:
-                    # retrieves the entity class attribute name
-                    entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+                        # in case the attribute exists for the current entity class
+                        if hasattr(entity_class, entity_class_valid_attribute_name):
+                            # in case the attribute is a relation
+                            if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                                # in case the attribute is lazy and is not in the eager loading relations map
+                                if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
+                                    # sets the lazy loaded attribute in the instance
+                                    setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                                else:
+                                    # creates the relation attribute tuple
+                                    relation_attribute_tuple = (
+                                        entity_class_valid_attribute_name,
+                                        attribute_value
+                                    )
 
-                    # in case the attribute exists for the current entity class
-                    if hasattr(entity_class, entity_class_valid_attribute_name):
-                        # in case the attribute is a relation
-                        if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                            # in case the attribute is lazy and is not in the eager loading relations map
-                            if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
-                                # sets the lazy loaded attribute in the instance
-                                setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                                    # adds the relation attribute tuple to the list of relation attributes
+                                    relation_attributes_list.append(relation_attribute_tuple)
+                            # otherwise it's not a relation (simple attribute)
                             else:
-                                # creates the relation attribute tuple
-                                relation_attribute_tuple = (
-                                    entity_class_valid_attribute_name,
-                                    attribute_value
-                                )
+                                # retrieves the entity class attribute value
+                                entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
-                                # adds the relation attribute tuple to the list of relation attributes
-                                relation_attributes_list.append(relation_attribute_tuple)
-                        # otherwise it's not a relation (simple attribute)
+                                # retrieves the attribute data type
+                                attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                                # retrieves the processed attribute value
+                                processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
+
+                                # sets the processed attribute value in the instance
+                                setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
+
+                        # increments the index value
+                        index += 1
+
+                    # retrieves all the mapped by other names
+                    mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
+
+                    # iterates over all the mapped by other names
+                    for mapped_by_other_name in mapped_by_other_names:
+                        # in case the mapped by other name is a lazy relation and is not set in the eager
+                        # loading relations
+                        if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
+                            # sets the lazy loaded attribute in the instance
+                            setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                        # otherwise it's an eager relation and should be loaded
                         else:
+                            # creates the mapped by other attribute tuple
+                            mapped_by_other_attribute_tuple = (
+                                mapped_by_other_name,
+                                None
+                            )
+
+                            # adds the mapped by other attribute tuple to the list of relation attributes
+                            relation_attributes_list.append(mapped_by_other_attribute_tuple)
+
+                    # retrieves the id attribute value
+                    id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                    # retrieves the already buffered entity
+                    buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
+
+                    # in case the entity is already buffered
+                    if buffered_entity:
+                        # closes the cursor
+                        cursor.close()
+
+                        # sets the entity as the buffered entity
+                        entity = buffered_entity
+                    else:
+                        # adds the entity to the list of retrieved entities
+                        retrieved_entities_list.add_entity(id_attribute_value, entity)
+
+                        # iterates over all the relation attributes list
+                        for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
+                            # retrieves the relation options
+                            relation_options = eager_loading_relations.get(entity_class_valid_attribute_name, {})
+
+                            # retrieves the relation attribute value
+                            relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_attribute_value, retrieved_entities_list, options = relation_options)
+
+                            # sets the relation attribute in the instance
+                            setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+
+                    # sets the entity fields
+                    entity = self._set_entity_fields(entity, fields)
+
+                    # adds the entity to the list of entities
+                    entities_list.append(entity)
+            else:
+                # iterates over all the values in the values list
+                for value in values_list:
+                    # retrieves the entity class name
+                    entity_class_name = value[0]
+
+                    # sets the current entity class
+                    entity_class = entity_sub_classes_map[entity_class_name]
+
+                    # creates a new entity
+                    entity = entity_class()
+
+                    # changes the value to start one step forward
+                    value = value[1:]
+
+                    # creates the initial index value
+                    index = 0
+
+                    # iterates over all the attribute values of the value
+                    for attribute_value in value:
+                        # retrieves the entity class attribute name
+                        entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                        # in case the attribute exists for the current entity class
+                        if hasattr(entity_class, entity_class_valid_attribute_name):
                             # retrieves the entity class attribute value
                             entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
@@ -2601,114 +2706,20 @@ class EntityManagerSqliteEngine:
                             # retrieves the processed attribute value
                             processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
 
-                            # sets the processed attribute value in the instance
+                            # sets the attribute value in the entity
                             setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
-                    # increments the index value
-                    index += 1
+                        # increments the index value
+                        index += 1
 
-                # retrieves all the mapped by other names
-                mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
+                    # sets the entity fields
+                    entity = self._set_entity_fields(entity, fields)
 
-                # iterates over all the mapped by other names
-                for mapped_by_other_name in mapped_by_other_names:
-                    # in case the mapped by other name is a lazy relation and is not set in the eager
-                    # loading relations
-                    if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
-                        # sets the lazy loaded attribute in the instance
-                        setattr(entity, mapped_by_other_name, "%lazy-loaded%")
-                    # otherwise it's an eager relation and should be loaded
-                    else:
-                        # creates the mapped by other attribute tuple
-                        mapped_by_other_attribute_tuple = (
-                            mapped_by_other_name,
-                            None
-                        )
-
-                        # adds the mapped by other attribute tuple to the list of relation attributes
-                        relation_attributes_list.append(mapped_by_other_attribute_tuple)
-
-                # retrieves the id attribute value
-                id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-                # retrieves the already buffered entity
-                buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
-
-                # in case the entity is already buffered
-                if buffered_entity:
-                    # closes the cursor
-                    cursor.close()
-
-                    # sets the entity as the buffered entity
-                    entity = buffered_entity
-                else:
-                    # adds the entity to the list of retrieved entities
-                    retrieved_entities_list.add_entity(id_attribute_value, entity)
-
-                    # iterates over all the relation attributes list
-                    for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
-                        # retrieves the relation options
-                        relation_options = eager_loading_relations.get(entity_class_valid_attribute_name, {})
-
-                        # retrieves the relation attribute value
-                        relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_attribute_value, retrieved_entities_list, options = relation_options)
-
-                        # sets the relation attribute in the instance
-                        setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
-
-                # sets the entity fields
-                entity = self._set_entity_fields(entity, fields)
-
-                # adds the entity to the list of entities
-                entities_list.append(entity)
-        else:
-            # iterates over all the values in the values list
-            for value in values_list:
-                # retrieves the entity class name
-                entity_class_name = value[0]
-
-                # sets the current entity class
-                entity_class = entity_sub_classes_map[entity_class_name]
-
-                # creates a new entity
-                entity = entity_class()
-
-                # changes the value to start one step forward
-                value = value[1:]
-
-                # creates the initial index value
-                index = 0
-
-                # iterates over all the attribute values of the value
-                for attribute_value in value:
-                    # retrieves the entity class attribute name
-                    entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
-
-                    # in case the attribute exists for the current entity class
-                    if hasattr(entity_class, entity_class_valid_attribute_name):
-                        # retrieves the entity class attribute value
-                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
-
-                        # retrieves the attribute data type
-                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
-
-                        # retrieves the processed attribute value
-                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
-
-                        # sets the attribute value in the entity
-                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
-
-                    # increments the index value
-                    index += 1
-
-                # sets the entity fields
-                entity = self._set_entity_fields(entity, fields)
-
-                # adds the entity to the list of entities
-                entities_list.append(entity)
-
-        # closes the cursor
-        cursor.close()
+                    # adds the entity to the list of entities
+                    entities_list.append(entity)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # returns the entities list
         return entities_list
@@ -3688,70 +3699,71 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+        try:
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # creates the query string buffer
-        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+            # creates the query string buffer
+            query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # writes the initial select statement
-        query_string_buffer.write("select ")
+            # writes the initial select statement
+            query_string_buffer.write("select ")
 
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
-        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+            # retrieves all the valid class attribute names, removes method values and the name exceptions
+            entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
-        missing_attributes_list = self._get_missing_attributes(connection, entity_class)
+            missing_attributes_list = self._get_missing_attributes(connection, entity_class)
 
-        entity_class_valid_attribute_names = [value for value in entity_class_valid_attribute_names if not value in missing_attributes_list]
+            entity_class_valid_attribute_names = [value for value in entity_class_valid_attribute_names if not value in missing_attributes_list]
 
-        # sets the is first flag
-        is_first = True
-
-        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-            if is_first:
-                is_first = False
-            else:
-                query_string_buffer.write(", ")
-
-            query_string_buffer.write(entity_class_valid_attribute_name)
-
-        query_string_buffer.write(" from " + entity_class_name)
-
-        # retrieves the query string value
-        query_string_value = query_string_buffer.get_value()
-
-        # executes the query selecting the table
-        self.execute_query(cursor, query_string_value)
-
-        # selects the values from the cursor
-        values_list = [value for value in cursor]
-
-        for value in values_list:
-            # creates a new entity
-            entity = entity_class()
-
-            # starts the index
-            index = 0
+            # sets the is first flag
+            is_first = True
 
             for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                entity_class_valid_attribute_value = value[index]
+                if is_first:
+                    is_first = False
+                else:
+                    query_string_buffer.write(", ")
 
-                setattr(entity, entity_class_valid_attribute_name, entity_class_valid_attribute_value)
+                query_string_buffer.write(entity_class_valid_attribute_name)
 
-                # increments the index
-                index += 1
+            query_string_buffer.write(" from " + entity_class_name)
 
-            # iterates over all the missing attributes and sets them to invalid
-            # none value
-            for missing_attribute in missing_attributes_list:
-                # sets the none value in the missing attribute
-                setattr(entity, missing_attribute, None)
+            # retrieves the query string value
+            query_string_value = query_string_buffer.get_value()
 
-            # adds the entity to the entities list
-            entities_list.append(entity)
+            # executes the query selecting the table
+            self.execute_query(cursor, query_string_value)
 
-        # closes the cursor
-        cursor.close()
+            # selects the values from the cursor
+            values_list = [value for value in cursor]
+
+            for value in values_list:
+                # creates a new entity
+                entity = entity_class()
+
+                # starts the index
+                index = 0
+
+                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                    entity_class_valid_attribute_value = value[index]
+
+                    setattr(entity, entity_class_valid_attribute_name, entity_class_valid_attribute_value)
+
+                    # increments the index
+                    index += 1
+
+                # iterates over all the missing attributes and sets them to invalid
+                # none value
+                for missing_attribute in missing_attributes_list:
+                    # sets the none value in the missing attribute
+                    setattr(entity, missing_attribute, None)
+
+                # adds the entity to the entities list
+                entities_list.append(entity)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # returns the entities list
         return entities_list
@@ -3807,9 +3819,13 @@ class EntityManagerSqliteEngine:
                         # retrieves the entity valid attribute sqlite string value
                         entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
 
+                        # in case the it's the first
+                        # attribute
                         if is_first:
+                            # unsets the is first flag
                             is_first = False
                         else:
+                            # writes a comma to the query string
                             query_string_buffer.write(", ")
 
                         query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
@@ -3844,71 +3860,72 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the initial query string value
-        query_string_value = "pragma table_info(" + entity_class_name + ")"
+        try:
+            # creates the initial query string value
+            query_string_value = "pragma table_info(" + entity_class_name + ")"
 
-        # executes the query retrieving the values
-        self.execute_query(cursor, query_string_value)
+            # executes the query retrieving the values
+            self.execute_query(cursor, query_string_value)
 
-        # selects the table information from the cursor
-        table_information_list = [value for value in cursor]
+            # selects the table information from the cursor
+            table_information_list = [value for value in cursor]
 
-        # creates the table information map
-        table_information_map = {}
+            # creates the table information map
+            table_information_map = {}
 
-        # iterates over all the table information
-        for table_information_item in table_information_list:
-            # retrieves the attribute name
-            attribute_name = table_information_item[1]
+            # iterates over all the table information
+            for table_information_item in table_information_list:
+                # retrieves the attribute name
+                attribute_name = table_information_item[1]
 
-            # retrieves the attribute data type
-            attribute_data_type = table_information_item[2]
-
-            # sets the attribute data type in the table information map
-            table_information_map[attribute_name] = attribute_data_type
-
-        # starts the index value
-        index = 0
-
-        # iterates over all the entity class valid attribute names
-        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-            # in case the entity class valid attribute name is not defined
-            # in the table information map (attribute does not exists in the data source)
-            if not entity_class_valid_attribute_name in table_information_map:
-                # in case the attribute missing is of type relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                    # adds the attribute to the unsynced attributes with reason
-                    # relation attribute inexistent
-                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_RELATION_ATTRIBUTE_REASON_CODE))
-                else:
-                    # adds the attribute to the unsynced attributes with reason
-                    # attribute inexistent
-                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
-            # the attribute exists in the data source
-            else:
                 # retrieves the attribute data type
-                attribute_data_type = table_information_map[entity_class_valid_attribute_name]
+                attribute_data_type = table_information_item[2]
 
-                # retrieves the entity class valid attribute value
-                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+                # sets the attribute data type in the table information map
+                table_information_map[attribute_name] = attribute_data_type
 
-                # retrieves the entity class valid attribute data type
-                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+            # starts the index value
+            index = 0
 
-                # retrieves the entity class valid attribute target data type
-                entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
+            # iterates over all the entity class valid attribute names
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                # in case the entity class valid attribute name is not defined
+                # in the table information map (attribute does not exists in the data source)
+                if not entity_class_valid_attribute_name in table_information_map:
+                    # in case the attribute missing is of type relation
+                    if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                        # adds the attribute to the unsynced attributes with reason
+                        # relation attribute inexistent
+                        unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_RELATION_ATTRIBUTE_REASON_CODE))
+                    else:
+                        # adds the attribute to the unsynced attributes with reason
+                        # attribute inexistent
+                        unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
+                # the attribute exists in the data source
+                else:
+                    # retrieves the attribute data type
+                    attribute_data_type = table_information_map[entity_class_valid_attribute_name]
 
-                # checks if the data type in both the data source and schema are the same
-                if not entity_class_valid_attribute_target_data_type == attribute_data_type:
-                    # adds the attribute to the unsynced attributes with reason
-                    # attribute type mismatch
-                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INVALID_ATTRIBUTE_TYPE_REASON_CODE))
+                    # retrieves the entity class valid attribute value
+                    entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
-            # increments the index
-            index += 1
+                    # retrieves the entity class valid attribute data type
+                    entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-        # closes the cursor
-        cursor.close()
+                    # retrieves the entity class valid attribute target data type
+                    entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
+
+                    # checks if the data type in both the data source and schema are the same
+                    if not entity_class_valid_attribute_target_data_type == attribute_data_type:
+                        # adds the attribute to the unsynced attributes with reason
+                        # attribute type mismatch
+                        unsynced_attributes_list.append((entity_class_valid_attribute_name, INVALID_ATTRIBUTE_TYPE_REASON_CODE))
+
+                # increments the index
+                index += 1
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # returns unsynced attributes list
         return unsynced_attributes_list
