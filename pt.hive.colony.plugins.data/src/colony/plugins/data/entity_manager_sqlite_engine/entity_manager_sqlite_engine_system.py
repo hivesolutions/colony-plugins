@@ -1793,8 +1793,6 @@ class EntityManagerSqliteEngine:
         return self.find_entity_options(connection, entity_class, id_value, search_field_name, retrieved_entities_list)
 
     def find_entity_options(self, connection, entity_class, id_value, search_field_name = None, retrieved_entities_list = None, options = {}):
-        # ZONA 0 BEGIN 15 MS
-
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
 
@@ -1851,12 +1849,7 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # ZONA 0 END 15MS
-
-
         try:
-            # ZONA 1 BEGIN (40 MS)
-
             # retrieves the entity sub classes
             entity_sub_classes = self.get_entity_sub_classes(entity_class)
 
@@ -1929,33 +1922,14 @@ class EntityManagerSqliteEngine:
             # retrieves the query string value
             query_string_value = query_string_buffer.get_value()
 
-
-            # ZONA 1 END (40 MS)
-
-            # ZONA 2 BEGIN (40 MS)
-
             # executes the query retrieving the values
             self.execute_query(cursor, query_string_value)
-
-            # ZONA 2 END (40 MS)
-
-
-            # ZONA 3 BEGIN (9 MS)
 
             # selects the values from the cursor
             values_list = [value for value in cursor]
 
-            # ZONA 3 END (9 MS)
-
-
-
-
             # in case there is at least one selection
             if len(values_list):
-                # ZONA 4 BEGIN (140 MS) --> PODE TER DUPLICADOS DE TEMPO
-
-
-
                 # retrieves the first value from the values list
                 first_value = values_list[0]
 
@@ -2017,12 +1991,6 @@ class EntityManagerSqliteEngine:
 
                     # increments the index value
                     index += 1
-
-                # ZONA 4 END (60 MS) --> PODE TER DUPLICADOS DE TEMPO
-
-                # ZONA 5 START (287 MS)
-
-                init = time.clock()
 
                 # retrieves all the mapped by other names
                 mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
@@ -2089,15 +2057,6 @@ class EntityManagerSqliteEngine:
                         # sets the relation attribute in the instance
                         setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
 
-                delta = time.clock() - init
-
-                self._aux += delta
-
-                print self._aux
-
-                # END ZONA 5 (287 MS)
-
-
                 # retrieves all the valid indirect attribute names, removes method values and the name exceptions
                 entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
 
@@ -2143,13 +2102,11 @@ class EntityManagerSqliteEngine:
                             # retrieves the entity class id attribute value data type
                             entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
 
-                            # creates the initial query string value
-                            query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = "
-
                             # retrieves the entity id attribute value sqlite string value
                             entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
 
-                            query_string_value += entity_id_attribute_value_sqlite_string_value
+                            # creates the query string value
+                            query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = " + entity_id_attribute_value_sqlite_string_value
 
                             # executes the query removing the values
                             self.execute_query(cursor, query_string_value)
@@ -2341,21 +2298,6 @@ class EntityManagerSqliteEngine:
 
                     # unsets the is first where clause flag
                     is_first_where = False
-
-
-
-
-
-
-
-
-
-
-
-                # ESTA E A PARTE DOS FILTERS (ISOLATE !!!!!)
-
-
-
 
                 # iterates over all the filters
                 for filter in filters:
