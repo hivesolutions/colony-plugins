@@ -1156,8 +1156,8 @@ class EntityManagerSqliteEngine:
 
             # in case the relation entity id does not matches
             if not _relation_entity_id == relation_entity_id:
-                # continues the loop
-                continue
+                # returns false (validation failed)
+                return False
 
             # returns true (validation succeeded)
             return True
