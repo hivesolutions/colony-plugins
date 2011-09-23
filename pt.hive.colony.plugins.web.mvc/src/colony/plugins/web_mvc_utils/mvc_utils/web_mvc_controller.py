@@ -502,7 +502,7 @@ def set_entity_relation(self, entity, relation_name, relation_value):
     # sets the relation value in entity
     setattr(entity, relation_name, relation_value)
 
-def save_entity_relations(self, rest_request, entity_map, entity, relations_map, persist_type):
+def save_entity_relations(self, rest_request, entity_map, entity, relations_map, persist_type = PERSIST_ALL_TYPE):
     """
     Saves the entity relations in the in the entity with the given map and values.
     The relations map describes the various entity relation with a tuple
