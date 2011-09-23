@@ -42,9 +42,6 @@ import datetime
 
 import colony.libs.string_util
 
-PERSIST_ALL_TYPE = 0x0f
-""" The persist all persist type """
-
 PERSIST_UPDATE_TYPE = 0x01
 """ The persist only on update (or save) persist type """
 
@@ -53,6 +50,9 @@ PERSIST_SAVE_TYPE = 0x02
 
 PERSIST_ASSOCIATE_TYPE = 0x04
 """ The persist associate persist type """
+
+PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
+""" The persist all persist type """
 
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """

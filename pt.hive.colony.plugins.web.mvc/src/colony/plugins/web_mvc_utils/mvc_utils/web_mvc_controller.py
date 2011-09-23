@@ -187,9 +187,6 @@ TO_ONE_RELATION_VALUE = 1
 TO_MANY_RELATION_VALUE = 2
 """ The to many relation value """
 
-PERSIST_ALL_TYPE = 0x0f
-""" The persist all persist type """
-
 PERSIST_UPDATE_TYPE = 0x01
 """ The persist only on update (or save) persist type """
 
@@ -198,6 +195,9 @@ PERSIST_SAVE_TYPE = 0x02
 
 PERSIST_ASSOCIATE_TYPE = 0x04
 """ The persist associate persist type """
+
+PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
+""" The persist all persist type """
 
 ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
