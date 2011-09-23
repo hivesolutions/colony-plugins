@@ -244,6 +244,12 @@ class EntityManagerSqliteEngine:
     entity_manager_sqlite_engine_plugin = None
     """ The entity manager sqlite engine plugin """
 
+    _query_counter = None
+    """ The counter that control the number of executed queries """
+
+    _query_time = None
+    """ The value that control the time spent in query execution """
+
     def __init__(self, entity_manager_sqlite_engine_plugin):
         """
         Constructor of the class
@@ -253,6 +259,9 @@ class EntityManagerSqliteEngine:
         """
 
         self.entity_manager_sqlite_engine_plugin = entity_manager_sqlite_engine_plugin
+
+        self._query_counter = 0
+        self._query_time = 0.0
 
     def get_engine_name(self):
         """
@@ -1851,8 +1860,8 @@ class EntityManagerSqliteEngine:
         # the first flag to control the sub class to be processed
         is_first_sub_class = True
 
-        # creates the initial query string value
-        query_string_value = str()
+        # creates the initial query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # iterates over all the entity sub classes
         for entity_sub_class in entity_sub_classes:
@@ -1865,31 +1874,34 @@ class EntityManagerSqliteEngine:
                 is_first_sub_class = False
             else:
                 # adds a union all to the query string value
-                query_string_value += " union all "
+                query_string_buffer.write(" union all ")
 
             # creates the select query string value
-            query_string_value += "select "
+            query_string_buffer.write("select ")
 
-            query_string_value += "'" + entity_sub_class_name + "' as class_data_type"
+            query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
             # @todo cache this value it's to painful to use
             entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
             for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
                 # adds a comma to the query string value
-                query_string_value += ", "
+                query_string_buffer.write(", ")
 
                 if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
-                    query_string_value += entity_class_valid_attribute_name
+                    query_string_buffer.write(entity_class_valid_attribute_name)
                 else:
-                    query_string_value += "'' as " + entity_class_valid_attribute_name
+                    query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
 
-            query_string_value += " from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = "
+            query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
 
             # retrieves the id value sqlite string value
             id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
 
-            query_string_value += id_value_sqlite_string_value
+            query_string_buffer.write(id_value_sqlite_string_value)
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
@@ -2105,7 +2117,7 @@ class EntityManagerSqliteEngine:
                         setattr(entity, entity_valid_indirect_attribute_name, target_entities_list)
 
             # sets the entity fields
-            entity = self.set_fields(entity, fields)
+            entity = self._set_entity_fields(entity, fields)
 
             # closes the cursor
             cursor.close()
@@ -2115,41 +2127,6 @@ class EntityManagerSqliteEngine:
 
         # closes the cursor
         cursor.close()
-
-    def set_fields(self, entity, fields):
-        """
-        Sets the given fields into the entity.
-        In order to avoid problems while setting fields into an
-        entity a new entity is created and the fields are set
-        into the entity that does not inherit from object
-        and so does not protected the field setting.
-
-        @type entity: Entity
-        @param entity: The entity to set the fields.
-        @type fields: List
-        @param fields: The list of fields to be set.
-        @rtype: Entity
-        @return: The entity with the fields set.
-        """
-
-        # in case no field are defined
-        if not fields:
-            # returns the entity itself
-            return entity
-
-        # creates a new (default) entity
-        new_entity = DefaultEntity()
-
-        # iterates over all the field to populate
-        # the entity
-        for field in fields:
-            # retrieve the field value
-            # and sets it into the new entity
-            field_value = getattr(entity, field)
-            setattr(new_entity, field, field_value)
-
-        # returns the new entity
-        return new_entity
 
     def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
         """
@@ -2251,12 +2228,12 @@ class EntityManagerSqliteEngine:
         # the first flag to control the sub class to be processed
         is_first_sub_class = True
 
-        # creates the initial query string value
-        query_string_value = str()
+        # creates the query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # in case it's a count select
         if count:
-            query_string_value += " select sum(counter) from ("
+            query_string_buffer.write(" select sum(counter) from (")
 
         # iterates over all the entity sub classes
         for entity_sub_class in entity_sub_classes:
@@ -2269,51 +2246,68 @@ class EntityManagerSqliteEngine:
                 is_first_sub_class = False
             else:
                 # adds a union all to the query string value
-                query_string_value += " union all "
+                query_string_buffer.write(" union all ")
 
             # creates the select query string value
-            query_string_value += "select "
+            query_string_buffer.write("select ")
 
             # in case it's a count select
             if count:
-                query_string_value += " count(1) as counter "
+                query_string_buffer.write(" count(1) as counter ")
             # in case it's a normal select
             else:
-                query_string_value += "'" + entity_sub_class_name + "' as class_data_type"
+                query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
                 # @todo cache this value it's to painful to use
                 entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
                 for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
                     # adds a comma to the query string value
-                    query_string_value += ", "
+                    query_string_buffer.write(", ")
 
                     if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
-                        query_string_value += entity_class_valid_attribute_name
+                        query_string_buffer.write(entity_class_valid_attribute_name)
                     else:
-                        query_string_value += "'' as " + entity_class_valid_attribute_name
+                        query_string_buffer.write("'' as " + entity_class_valid_attribute_name)
 
+            # sets the is first where clause flag
             is_first_where = True
 
             if field_value == None:
-                query_string_value += " from " + entity_sub_class_name
+                query_string_buffer.write(" from " + entity_sub_class_name)
             else:
-                query_string_value += " from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = "
+                query_string_buffer.write(" from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = ")
 
                 # retrieves the field value value sqlite string value
                 field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
 
-                query_string_value += field_value_sqlite_string_value
+                query_string_buffer.write(field_value_sqlite_string_value)
 
+                # unsets the is first where clause flag
                 is_first_where = False
+
+
+
+
+
+
+
+
+
+
+
+            # ESTA E A PARTE DOS FILTERS (ISOLATE !!!!!)
+
+
+
 
             # iterates over all the filters
             for filter in filters:
                 if is_first_where:
-                    query_string_value += " where ("
+                    query_string_buffer.write(" where (")
                     is_first_where = False
                 else:
-                    query_string_value += " and ("
+                    query_string_buffer.write(" and (")
 
                 filter_type = filter["filter_type"]
 
@@ -2327,7 +2321,7 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
@@ -2344,7 +2338,7 @@ class EntityManagerSqliteEngine:
                         # retrieves the filter field value value sqlite string value
                         filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
 
-                        query_string_value += filter_field_name + " = " + filter_field_value_sqlite_string_value
+                        query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
 
                 # in case the filter is of type like
                 elif filter_type == "like":
@@ -2359,7 +2353,7 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
@@ -2367,8 +2361,8 @@ class EntityManagerSqliteEngine:
                         # retrieves the filter field value
                         filter_field_value = filter_field["field_value"]
 
-                        # creates a new string for the filter field value
-                        filter_field_value_string = str()
+                        # creates a new buffer for the filter field value
+                        filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
                         is_first_filter_field_value = True
 
@@ -2376,22 +2370,25 @@ class EntityManagerSqliteEngine:
                             if is_first_filter_field_value:
                                 is_first_filter_field_value = False
                             else:
-                                filter_field_value_string += "%"
-                            filter_field_value_string += splitted_filter_value
+                                filter_field_value_buffer.write("%")
+                            filter_field_value_buffer.write(splitted_filter_value)
 
-                        query_string_value += filter_field_name + " like "
+                        query_string_buffer.write(filter_field_name + " like ")
 
-                        if like_filter_type in ["left", "both"]:
-                            query_string_value += "'%"
+                        if like_filter_type in ("left", "both"):
+                            query_string_buffer.write("'%")
                         else:
-                            query_string_value += "'"
+                            query_string_buffer.write("'")
 
-                        query_string_value += filter_field_value_string
+                        # retieves the filter field value string
+                        filter_field_value_string = filter_field_value_buffer.get_value()
 
-                        if like_filter_type in ["right", "both"]:
-                            query_string_value += "%'"
+                        query_string_buffer.write(filter_field_value_string)
+
+                        if like_filter_type in ("right", "both"):
+                            query_string_buffer.write("%'")
                         else:
-                            query_string_value += "'"
+                            query_string_buffer.write("'")
 
                 # in case the filter is of type greater
                 elif filter_type == "greater":
@@ -2404,7 +2401,7 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
@@ -2421,7 +2418,7 @@ class EntityManagerSqliteEngine:
                         # retrieves the filter field value value sqlite string value
                         filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
 
-                        query_string_value += filter_field_name + " > " + filter_field_value_sqlite_string_value
+                        query_string_buffer.write(filter_field_name + " > " + filter_field_value_sqlite_string_value)
 
                 # in case the filter is of type lesser
                 elif filter_type == "lesser":
@@ -2434,7 +2431,7 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
@@ -2451,7 +2448,7 @@ class EntityManagerSqliteEngine:
                         # retrieves the filter field value value sqlite string value
                         filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
 
-                        query_string_value += filter_field_name + " < " + filter_field_value_sqlite_string_value
+                        query_string_buffer.write(filter_field_name + " < " + filter_field_value_sqlite_string_value)
 
                 # in case the filter is of type is null
                 elif filter_type == "is_null":
@@ -2464,12 +2461,12 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
 
-                        query_string_value += filter_field_name + " is null"
+                        query_string_buffer.write(filter_field_name + " is null")
 
                 # in case the filter is of type is not null
                 elif filter_type == "is_not_null":
@@ -2482,22 +2479,22 @@ class EntityManagerSqliteEngine:
                         if is_first_field:
                             is_first_field = False
                         else:
-                            query_string_value += " or "
+                            query_string_buffer.write(" or ")
 
                         # retrieves the filter field name
                         filter_field_name = filter_field["field_name"]
 
-                        query_string_value += filter_field_name + " is not null"
+                        query_string_buffer.write(filter_field_name + " is not null")
 
-                query_string_value += ")"
+                query_string_buffer.write(")")
 
         # in case it's a count select
         if count:
-            query_string_value += ")"
+            query_string_buffer.write(")")
 
         # in case there is at least one order by definition
         if len(order_by):
-            query_string_value += " order by "
+            query_string_buffer.write(" order by ")
 
             is_first_order_by = True
 
@@ -2509,15 +2506,18 @@ class EntityManagerSqliteEngine:
                     is_first_order_by = False
                 else:
                     # adds a comma to the query string value
-                    query_string_value += ", "
-                query_string_value += order_by_name
+                    query_string_buffer.write(", ")
+                query_string_buffer.write(order_by_name)
 
                 if order_by_order == "ascending":
-                    query_string_value += " asc"
+                    query_string_buffer.write(" asc")
                 elif order_by_order == "descending":
-                    query_string_value += " desc"
+                    query_string_buffer.write(" desc")
 
-        query_string_value += " limit " + str(start_record) + ", " + str(number_records)
+        query_string_buffer.write(" limit " + str(start_record) + ", " + str(number_records))
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
@@ -2657,7 +2657,7 @@ class EntityManagerSqliteEngine:
                         setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
 
                 # sets the entity fields
-                entity = self.set_fields(entity, fields)
+                entity = self._set_entity_fields(entity, fields)
 
                 # adds the entity to the list of entities
                 entities_list.append(entity)
@@ -2702,7 +2702,7 @@ class EntityManagerSqliteEngine:
                     index += 1
 
                 # sets the entity fields
-                entity = self.set_fields(entity, fields)
+                entity = self._set_entity_fields(entity, fields)
 
                 # adds the entity to the list of entities
                 entities_list.append(entity)
@@ -3498,6 +3498,7 @@ class EntityManagerSqliteEngine:
     def execute_query(self, cursor, query_string_value):
         """
         Executes a query in the given cursor using the query string value provided.
+        This method provides automatic logging features.
 
         @type cursor: Cursor
         @param cursor: The cursor where the query is going to be executed.
@@ -3505,14 +3506,27 @@ class EntityManagerSqliteEngine:
         @param query_string_value: The string value of the query to be executed.
         """
 
+        # retrieves the start time
+        # for time measurement
+        start_time = time.clock()
+
         # logs the query string value
         self.log_query(query_string_value)
 
-        # converts the query string to unicode
-        query_string_value_unicode = unicode(query_string_value)
-
         # executes the query in the database
-        cursor.execute(query_string_value_unicode)
+        cursor.execute(query_string_value)
+
+        # increments the query counter
+        self._query_counter += 1
+
+        # calculates the delta time based on the
+        # final time
+        end_time = time.clock()
+        delta_time = end_time - start_time
+
+        # increments the query time with the
+        # current query execution time
+        self._query_time += delta_time
 
     def execute_script(self, cursor, script_string_value):
         """
@@ -3677,8 +3691,11 @@ class EntityManagerSqliteEngine:
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
 
-        # creates the query string value
-        query_string_value = "select "
+        # creates the query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # writes the initial select statement
+        query_string_buffer.write("select ")
 
         # retrieves all the valid class attribute names, removes method values and the name exceptions
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
@@ -3694,11 +3711,14 @@ class EntityManagerSqliteEngine:
             if is_first:
                 is_first = False
             else:
-                query_string_value += ", "
+                query_string_buffer.write(", ")
 
-            query_string_value += entity_class_valid_attribute_name
+            query_string_buffer.write(entity_class_valid_attribute_name)
 
-        query_string_value += " from " + entity_class_name
+        query_string_buffer.write(" from " + entity_class_name)
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query selecting the table
         self.execute_query(cursor, query_string_value)
@@ -3743,60 +3763,67 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+        try:
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # iterates over all the entities in the entities list
-        for entity in entities_list:
-            # creates the query string value
-            query_string_value = "insert into " + entity_class_name + "("
+            # iterates over all the entities in the entities list
+            for entity in entities_list:
+                # creates the query string buffer
+                query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-            # retrieves all the valid class attribute names, removes method values and the name exceptions
-            entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+                # writes the insert into statement
+                query_string_buffer.write("insert into " + entity_class_name + "(")
 
-            # sets the is first flag
-            is_first = True
+                # retrieves all the valid class attribute names, removes method values and the name exceptions
+                entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
-            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                if hasattr(entity, entity_class_valid_attribute_name):
-                    if is_first:
-                        is_first = False
-                    else:
-                        query_string_value += ", "
+                # sets the is first flag
+                is_first = True
 
-                    query_string_value += entity_class_valid_attribute_name
+                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                    if hasattr(entity, entity_class_valid_attribute_name):
+                        if is_first:
+                            is_first = False
+                        else:
+                            query_string_buffer.write(", ")
 
-            query_string_value += ") values ("
+                        query_string_buffer.write(entity_class_valid_attribute_name)
 
-            # sets the is first flag
-            is_first = True
+                query_string_buffer.write(") values (")
 
-            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                if hasattr(entity, entity_class_valid_attribute_name):
-                    entity_valid_attribute_value = getattr(entity, entity_class_valid_attribute_name)
+                # sets the is first flag
+                is_first = True
 
-                    entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                    if hasattr(entity, entity_class_valid_attribute_name):
+                        entity_valid_attribute_value = getattr(entity, entity_class_valid_attribute_name)
 
-                    # retrieves the entity class valid attribute value data type
-                    entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
-                    # retrieves the entity valid attribute sqlite string value
-                    entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+                        # retrieves the entity class valid attribute value data type
+                        entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-                    if is_first:
-                        is_first = False
-                    else:
-                        query_string_value += ", "
+                        # retrieves the entity valid attribute sqlite string value
+                        entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
 
-                    query_string_value += entity_valid_attribute_value_sqlite_string_value
+                        if is_first:
+                            is_first = False
+                        else:
+                            query_string_buffer.write(", ")
 
-            query_string_value += ")"
+                        query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
 
-            # executes the query inserting the record into the table
-            self.execute_query(cursor, query_string_value)
+                query_string_buffer.write(")")
 
-        # closes the cursor
-        cursor.close()
+                # retrieves the query string value
+                query_string_value = query_string_buffer.get_value()
+
+                # executes the query inserting the record into the table
+                self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def _get_unsynced_attributes(self, connection, entity_class):
         # creates the unsynced attributes list
@@ -3955,6 +3982,41 @@ class EntityManagerSqliteEngine:
 
         # returns the missing attributes list
         return missing_attributes_list
+
+    def _set_entity_fields(self, entity, fields):
+        """
+        Sets the given fields into the entity.
+        In order to avoid problems while setting fields into an
+        entity a new entity is created and the fields are set
+        into the entity that does not inherit from object
+        and so does not protected the field setting.
+
+        @type entity: Entity
+        @param entity: The entity to set the fields.
+        @type fields: List
+        @param fields: The list of fields to be set.
+        @rtype: Entity
+        @return: The entity with the fields set.
+        """
+
+        # in case no field are defined
+        if not fields:
+            # returns the entity itself
+            return entity
+
+        # creates a new (default) entity
+        new_entity = DefaultEntity()
+
+        # iterates over all the field to populate
+        # the entity
+        for field in fields:
+            # retrieve the field value
+            # and sets it into the new entity
+            field_value = getattr(entity, field)
+            setattr(new_entity, field, field_value)
+
+        # returns the new entity
+        return new_entity
 
 class BufferedEntities:
     """
