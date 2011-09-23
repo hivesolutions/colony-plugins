@@ -260,6 +260,11 @@ class EntityManagerSqliteEngine:
     _indirect_attribute_names_cache_map = {}
     """ The map that holds cache data related with indirect attribute names for the entity classes """
 
+    _tobias1 = {}
+    _tobias2 = {}
+    _tobias3 = {}
+
+
     def __init__(self, entity_manager_sqlite_engine_plugin):
         """
         Constructor of the class
@@ -275,6 +280,9 @@ class EntityManagerSqliteEngine:
         self._attribute_names_cache_map = {}
         self._mapped_by_other_names_cache_map = {}
         self._indirect_attribute_names_cache_map = {}
+        self._tobias1 = {}
+        self._tobias2 = {}
+        self._tobias3 = {}
 
     def get_engine_name(self):
         """
@@ -628,6 +636,14 @@ class EntityManagerSqliteEngine:
         else:
             # returns true (the class is synced)
             return True
+
+
+    def has_relation(self, attribute_name, entity, target_entity):
+
+
+
+        pass
+
 
     def create_entity_definition(self, connection, entity_class):
         """
@@ -2886,12 +2902,26 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all the non relational attributes from the given entity class.
         """
 
+
+        entity_class_valid_attribute_values = self._tobias3.get(entity_class, None)
+
+
+        if not entity_class_valid_attribute_values == None:
+            return entity_class_valid_attribute_values
+
+
         # retrieves all the valid class attribute names
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
         # retrieves all the non relation attribute names
         entity_class_non_relation_attribute_names = [attribute_name for attribute_name in entity_class_valid_attribute_names if not attribute_name[DATA_TYPE_FIELD] == RELATION_DATA_TYPE]
 
+
+
+        self._tobias3[entity_class] = entity_class_valid_attribute_values
+
+
+        # returns the entity class non relation attribute names
         return entity_class_non_relation_attribute_names
 
     def get_entity_non_relation_attribute_names(self, entity):
@@ -2919,12 +2949,23 @@ class EntityManagerSqliteEngine:
         @return: The list with the values of all attributes from the given entity class.
         """
 
+        entity_class_valid_attribute_values = self._tobias2.get(entity_class, None)
+
+
+        if not entity_class_valid_attribute_values == None:
+            return entity_class_valid_attribute_values
+
+
         # retrieves all the valid class attribute names
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
         # retrieves all the valid class attribute values
         entity_class_valid_attribute_values = [getattr(entity_class, attribute_name) for attribute_name in entity_class_valid_attribute_names]
 
+
+        self._tobias2[entity_class] = entity_class_valid_attribute_values
+
+        # returns the entity class non relation attribute values
         return entity_class_valid_attribute_values
 
     def get_entity_class_indirect_attribute_values(self, entity_class):
@@ -2937,11 +2978,31 @@ class EntityManagerSqliteEngine:
         @return: The list with the values of all indirect attributes from the given entity class.
         """
 
+
+
+        entity_class_valid_indirect_attribute_values = self._tobias1.get(entity_class, None)
+
+
+        if not entity_class_valid_indirect_attribute_values == None:
+            return entity_class_valid_indirect_attribute_values
+
+
+
+
+
         # retrieves all the valid class indirect attribute names
         entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
 
         # retrieves all the valid class indirect attribute values
         entity_class_valid_indirect_attribute_values = [getattr(entity_class, attribute_name) for attribute_name in entity_class_valid_indirect_attribute_names]
+
+
+        self._tobias1[entity_class] = entity_class_valid_indirect_attribute_values
+
+
+        entity_class_valid_indirect_attribute_values
+
+
 
         return entity_class_valid_indirect_attribute_values
 
