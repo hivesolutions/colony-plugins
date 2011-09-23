@@ -78,6 +78,14 @@ def _start_model(self):
     Starts the model structures.
     """
 
+    # checks if the model has been already
+    # started (avoids duplicate initialization, in
+    # case of sub-classing)
+    if hasattr(self, "model_started"):
+        # returns immediately (model already
+        # started)
+        return
+
     # starts the validation map associating
     # an attribute name with the validation methods
     self.validation_map = {}
@@ -99,6 +107,9 @@ def _start_model(self):
     if hasattr(self, "set_validation"):
         # calls the set validation method (to be implemented)
         self.set_validation()
+
+    # sets the model started flag as true
+    self.model_started = True
 
 def get_attribute_name(self, attribute_name):
     """
