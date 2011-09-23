@@ -276,8 +276,6 @@ class EntityManagerSqliteEngine:
         self._mapped_by_other_names_cache_map = {}
         self._indirect_attribute_names_cache_map = {}
 
-        self._aux = 0.0
-
     def get_engine_name(self):
         """
         Retrieves the name of the engine.
