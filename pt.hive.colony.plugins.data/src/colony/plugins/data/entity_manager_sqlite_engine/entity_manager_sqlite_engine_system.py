@@ -51,6 +51,9 @@ import entity_manager_sqlite_engine_exceptions
 ENGINE_NAME = "sqlite"
 """ The engine name """
 
+DEFAULT_ISOLATION_LEVEL = "DEFERRED"
+""" The default isolation level """
+
 DEFAULT_TIMEOUT_VALUE = 30
 """ The default timeout value """
 
@@ -291,8 +294,8 @@ class EntityManagerSqliteEngine:
         # retrieves the file path parameter value
         file_path = connection_parameters[FILE_PATH_VALUE]
 
-        # sets the isolation level value as deferred
-        isolation_level_value = "DEFERRED"
+        # sets the default isolation level value
+        isolation_level_value = DEFAULT_ISOLATION_LEVEL
 
         # retrieves the autocommit parameter value
         autocommit_value = connection_parameters.get(AUTOCOMMIT_VALUE, False)
