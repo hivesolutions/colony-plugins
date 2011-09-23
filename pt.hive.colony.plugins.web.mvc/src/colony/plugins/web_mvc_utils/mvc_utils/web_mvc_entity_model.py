@@ -207,7 +207,7 @@ def is_saved(self):
 
     # checks if the current data state
     # is saved (value)
-    saved = self._data_state_ == SAVED_STATE_VALUE
+    saved = self.data_state == SAVED_STATE_VALUE
 
     # returns the saved value
     return saved
