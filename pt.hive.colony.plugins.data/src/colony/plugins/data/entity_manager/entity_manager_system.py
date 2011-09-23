@@ -870,12 +870,12 @@ class EntityManager:
         # finds the entity
         return self.entity_manager_engine_plugin.find_entity_options(connection, entity_class, id_value, options)
 
-    def find_a(self, entity_class, options):
+    def find_a(self, entity_class, options = {}):
         # retrieves the connection object
         connection = self.get_connection()
 
         # finds all the entities
-        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, None, None, options)
+        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, options)
 
     def find(self, entity_class, id_value):
         # retrieves the connection object
@@ -891,33 +891,19 @@ class EntityManager:
         # finds the entity
         return self.entity_manager_engine_plugin.find_entity_options(connection, entity_class, id_value, options)
 
-    def find_all(self, entity_class, value, search_field_name):
-        # retrieves the connection object
-        connection = self.get_connection()
-
-        # finds all the entities
-        return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, value, search_field_name)
-
     def _find_all(self, entity_class):
         # retrieves the connection object
         connection = self.get_connection()
 
         # finds all the entities
-        return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
-
-    def find_all_options(self, entity_class, value, search_field_name, options):
-        # retrieves the connection object
-        connection = self.get_connection()
-
-        # finds all the entities
-        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, value, search_field_name, options)
+        return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class)
 
     def _find_all_options(self, entity_class, options):
         # retrieves the connection object
         connection = self.get_connection()
 
         # finds all the entities
-        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, None, None, options)
+        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, options)
 
     def lock(self, entity_class, id_value):
         # retrieves the connection object
