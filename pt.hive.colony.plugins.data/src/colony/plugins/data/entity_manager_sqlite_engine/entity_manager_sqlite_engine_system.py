@@ -572,9 +572,6 @@ class EntityManagerSqliteEngine:
                     # continues the loop
                     continue
 
-                # closes the cursor
-                cursor.close()
-
                 # returns true (valid)
                 return True
         finally:
@@ -978,9 +975,6 @@ class EntityManagerSqliteEngine:
             values_list = [value for value in cursor]
 
             if not values_list:
-                # closes the cursor
-                cursor.close()
-
                 # returns none, no such value
                 return None
         finally:
@@ -2029,9 +2023,6 @@ class EntityManagerSqliteEngine:
 
                     # in case the lazy loaded flag is not set
                     if not lazy_loaded_flag:
-                        # closes the cursor
-                        cursor.close()
-
                         # returns the buffered entity
                         return buffered_entity
                 # otherwise the entity is not buffered
@@ -2128,9 +2119,6 @@ class EntityManagerSqliteEngine:
 
                 # sets the entity fields
                 entity = self._set_entity_fields(entity, fields)
-
-                # closes the cursor
-                cursor.close()
 
                 # returns the created entity
                 return entity
@@ -2647,9 +2635,6 @@ class EntityManagerSqliteEngine:
 
                     # in case the entity is already buffered
                     if buffered_entity:
-                        # closes the cursor
-                        cursor.close()
-
                         # sets the entity as the buffered entity
                         entity = buffered_entity
                     else:
@@ -3940,52 +3925,53 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class valid indirect attribute names
-        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+        try:
+            # retrieves the entity class valid indirect attribute names
+            entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
 
-        # iterates over all the entity class valid indirect attribute names
-        # and checks if any of them is not mapped in a relation table (but only if it is a many-to many relation)
-        for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
-            # retrieves the relation attributes for the given attribute name in the given entity class
-            relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
+            # iterates over all the entity class valid indirect attribute names
+            # and checks if any of them is not mapped in a relation table (but only if it is a many-to many relation)
+            for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
+                # retrieves the relation attributes for the given attribute name in the given entity class
+                relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
 
-            # retrieves the relation type field
-            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+                # retrieves the relation type field
+                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation is not of type many-to-many
-            if not relation_type_field == MANY_TO_MANY_RELATION:
-                # continues the loop
-                continue
+                # in case the relation is not of type many-to-many
+                if not relation_type_field == MANY_TO_MANY_RELATION:
+                    # continues the loop
+                    continue
 
-            # retrieves the join table field
-            join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+                # retrieves the join table field
+                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-            # retrieves the attribute column name field
-            attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+                # retrieves the attribute column name field
+                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-            # tests to check if exists a table definition for the join table
-            exists_table_definition = self.exists_table_definition(connection, join_table_field)
+                # tests to check if exists a table definition for the join table
+                exists_table_definition = self.exists_table_definition(connection, join_table_field)
 
-            # in case there is a table definition for the relation table
-            if exists_table_definition:
-                # tests to check if the join field definition exists in the join table
-                exists_join_field_definition = self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field);
+                # in case there is a table definition for the relation table
+                if exists_table_definition:
+                    # tests to check if the join field definition exists in the join table
+                    exists_join_field_definition = self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field);
 
-                # in case the join field definition does not exist
-                # in the join table it must be created
-                if not exists_join_field_definition:
+                    # in case the join field definition does not exist
+                    # in the join table it must be created
+                    if not exists_join_field_definition:
+                        # adds the attribute to the unsynced attributes with reason
+                        # attribute inexistent
+                        unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
+                # otherwise there is no table definition and it must
+                # be created
+                else:
                     # adds the attribute to the unsynced attributes with reason
                     # attribute inexistent
                     unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
-            # otherwise there is no table definition and it must
-            # be created
-            else:
-                # adds the attribute to the unsynced attributes with reason
-                # attribute inexistent
-                unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
-
-        # closes the cursor
-        cursor.close()
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # returns unsynced attributes list
         return unsynced_attributes_list
