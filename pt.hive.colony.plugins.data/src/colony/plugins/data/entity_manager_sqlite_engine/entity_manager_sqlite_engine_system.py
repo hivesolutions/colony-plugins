@@ -2262,7 +2262,7 @@ class EntityManagerSqliteEngine:
                 else:
                     query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
-                    # @todo cache this value it's to painful to use
+                    # retrieves the entity sub class valid attribute names
                     entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
                     for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
