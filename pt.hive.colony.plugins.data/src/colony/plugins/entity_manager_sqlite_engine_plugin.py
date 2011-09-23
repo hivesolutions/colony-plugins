@@ -163,6 +163,9 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     def increment_next_name_id(self, connection, name, id_increment = 1):
         return self.entity_manager_sqlite_engine.increment_next_name_id(connection, name, id_increment)
 
+    def validate_relation(self, connection, entity, relation_entity_id, relation_attribute_name):
+        return self.entity_manager_sqlite_engine.validate_relation(connection, entity, relation_entity_id, relation_attribute_name)
+
     def save_entity(self, connection, entity):
         return self.entity_manager_sqlite_engine.save_entity(connection, entity)
 

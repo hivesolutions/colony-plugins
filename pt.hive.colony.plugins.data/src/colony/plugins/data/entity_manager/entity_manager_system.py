@@ -74,6 +74,9 @@ TYPE_EXCLUSION_LIST = (
 )
 """ The type exclusion list """
 
+RELATION_ATTRIBUTES_METHOD_PREFIX = "get_relation_attributes_"
+""" The relation attributes method prefix """
+
 RELATION_DATA_TYPE = "relation"
 """ The relation data type """
 
@@ -82,6 +85,12 @@ ID_FIELD = "id"
 
 DATA_TYPE_FIELD = "data_type"
 """ The data type field """
+
+TARGET_ENTITY_FIELD = "target_entity"
+""" The target entity field """
+
+JOIN_ATTRIBUTE_NAME_FIELD = "join_attribute_name"
+""" The join attribute name field """
 
 ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
 """ The id attribute name value """
@@ -743,6 +752,13 @@ class EntityManager:
         # "rollsback" the current cached data
         self.entity_manager_engine_plugin.rollback_connection(connection)
 
+    def validate_relation(self, entity, relation_entity_id, relation_attribute_name):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # validates the relation
+        return self.entity_manager_engine_plugin.validate_relation(connection, entity, relation_entity_id, relation_attribute_name)
+
     def save(self, entity):
         # retrieves the connection object
         connection = self.get_connection()
@@ -1072,6 +1088,64 @@ class EntityManager:
 
             # returns the id attribute name
             return id_attribute_name
+
+    def get_relation_attributes(self, entity_class, relation_attribute_name):
+        # creates the method name with the relation attributes prefix and the relation attribute name
+        method_name = RELATION_ATTRIBUTES_METHOD_PREFIX + relation_attribute_name
+
+        # in case the entity class does not contain the method
+        # for the relation attributes retrieval method
+        if not hasattr(entity_class, method_name):
+            # raises the entity manager missing relation method exception
+            raise entity_manager_exceptions.EntityManagerMissingRelationMethod(method_name)
+
+        # retrieves the relation attributes retrieval method
+        relation_attributes_method = getattr(entity_class, method_name)
+
+        # retrieves the relation attributes
+        relation_attributes = relation_attributes_method()
+
+        # returns the relation attributes
+        return relation_attributes
+
+    def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name):
+        """
+        Retrieves the data type of the give attribute value.
+
+        @type attribute_value: Dictionary
+        @param attribute_value: The attribute value, containing the entity attribute metadata.
+        @type entity_class: Class
+        @param entity_class: The entity class containing the relation.
+        @type relation_attribute_name: String
+        @param relation_attribute_name: The name of the relation attribute.
+        @rtype: String
+        @return: The attribute data type.
+        """
+
+        # retrieves the attribute value data type
+        attribute_value_data_type = attribute_value[DATA_TYPE_FIELD]
+
+        # in case the attribute value data type is of type relation
+        if attribute_value_data_type == RELATION_DATA_TYPE:
+            # retrieves the relation attributes
+            relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
+
+            # retrieves the entity class target entity
+            entity_class_target_entity = relation_attributes[TARGET_ENTITY_FIELD]
+
+            # retrieves the entity class join attribute name
+            entity_class_join_attribute_name = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+            # retrieves the entity class join attribute
+            entity_class_join_attribute = getattr(entity_class_target_entity, entity_class_join_attribute_name)
+
+            # retrieves the data type for the entity class join attribute
+            entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
+
+            return entity_class_join_attribute_data_type
+        # otherwise it must be a "simple" attribute
+        else:
+            return attribute_value_data_type
 
     def get_entity_classes_list(self):
         """

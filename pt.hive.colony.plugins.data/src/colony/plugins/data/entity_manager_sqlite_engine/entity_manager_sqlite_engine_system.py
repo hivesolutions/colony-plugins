@@ -641,25 +641,6 @@ class EntityManagerSqliteEngine:
             # returns true (the class is synced)
             return True
 
-
-    def validate_relation(self, connection, entity, relation_entity, relation_attribute_name):
-        # retrieves the entity class
-        entity_class = entity.__class__
-
-        options = {
-            "eager_loading_relations" : {
-                relation_attribute_name : {}
-            }
-        }
-
-        # retrieves the entity id attribute value (id value)
-        id_value = self.get_entity_id_attribute_value(entity)
-
-        _entity = self.find_entity_options(connection, entity_class, id_value, options = options)
-
-        print "ola mundo"
-
-
     def create_entity_definition(self, connection, entity_class):
         """
         Creates the entity definition in the database from the entity class.
@@ -1128,6 +1109,61 @@ class EntityManagerSqliteEngine:
 
         # sets the next name id
         self._set_next_name_id(connection, name, next_name_id, previous_next_name_id)
+
+    def validate_relation(self, connection, entity, relation_entity_id, relation_attribute_name):
+        # retrieves the entity class
+        entity_class = entity.__class__
+
+        # creates the options map for retrieving
+        # the relation in eager mode
+        options = {
+            "eager_loading_relations" : {
+                relation_attribute_name : {}
+            }
+        }
+
+        # retrieves the entity id attribute value (id value)
+        id_value = self.get_entity_id_attribute_value(entity)
+
+        # retrieves the entity (and the relation in eager mode)
+        _entity = self.find_entity_options(connection, entity_class, id_value, options = options)
+
+        # retrieves the relation attribute from the entity and then
+        # retrieves the type of it
+        relation_attribute = getattr(_entity, relation_attribute_name)
+        relation_attribute_type = type(relation_attribute)
+
+        # in case the relation attribute is of type
+        # list (to many relation)
+        if relation_attribute_type == types.ListType:
+            # iterate over all the items in the relation
+            # attribute
+            for relation_attribute_item in relation_attribute:
+                # retrieves the relation entity id (attribute)
+                _relation_entity_id = self.get_entity_id_attribute_value(relation_attribute_item)
+
+                # in case the relation entity id does not matches
+                if not _relation_entity_id == relation_entity_id:
+                    # continues the loop
+                    continue
+
+                # returns true (validation succeeded)
+                return True
+        # otherwise it must be a to one relation
+        else:
+            # retrieves the relation entity id (attribute)
+            _relation_entity_id = self.get_entity_id_attribute_value(relation_attribute)
+
+            # in case the relation entity id does not matches
+            if not _relation_entity_id == relation_entity_id:
+                # continues the loop
+                continue
+
+            # returns true (validation succeeded)
+            return True
+
+        # returns false (validation failed)
+        return False
 
     def save_entity(self, connection, entity):
         """
