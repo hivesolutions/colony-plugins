@@ -638,11 +638,22 @@ class EntityManagerSqliteEngine:
             return True
 
 
-    def has_relation(self, attribute_name, entity, target_entity):
+    def validate_relation(self, connection, entity, relation_entity, relation_attribute_name):
+        # retrieves the entity class
+        entity_class = entity.__class__
 
+        options = {
+            "eager_loading_relations" : {
+                relation_attribute_name : {}
+            }
+        }
 
+        # retrieves the entity id attribute value (id value)
+        id_value = self.get_entity_id_attribute_value(entity)
 
-        pass
+        _entity = self.find_entity_options(connection, entity_class, id_value, options = options)
+
+        print "ola mundo"
 
 
     def create_entity_definition(self, connection, entity_class):
@@ -2154,7 +2165,7 @@ class EntityManagerSqliteEngine:
             # closes the cursor
             cursor.close()
 
-    def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
+    def find_all_entities(self, connection, entity_class, field_value = None, search_field_name = None, retrieved_entities_list = None):
         """
         Retrieves all entity instances of the declared class type with the given value, using the given connection.
         The search field name is used to find an entity with a value of the given field.
@@ -2175,7 +2186,7 @@ class EntityManagerSqliteEngine:
 
         return self.find_all_entities_options(connection, entity_class, field_value, search_field_name, retrieved_entities_list)
 
-    def find_all_entities_options(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None, options = {}):
+    def find_all_entities_options(self, connection, entity_class, field_value = None, search_field_name = None, retrieved_entities_list = None, options = {}):
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
 
