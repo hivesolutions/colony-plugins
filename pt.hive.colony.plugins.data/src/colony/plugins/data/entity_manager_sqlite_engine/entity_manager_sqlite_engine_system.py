@@ -2786,9 +2786,7 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all attributes from the given entity class.
         """
 
-
-
-        # tries to retrieves the entity class mapped by
+        # tries to retrieve the entity class mapped by
         # other attribute names from the mapped by other
         # names cache map
         entity_class_mapped_by_other_attribute_names = self._mapped_by_other_names_cache_map.get(entity_class, None)
@@ -2806,8 +2804,8 @@ class EntityManagerSqliteEngine:
         # retrieves all the mapped by other attribute names, removes method values, the name exceptions, the indirect attributes and filters the mapped by other attributes
         entity_class_mapped_by_other_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
 
-
-
+        # sets the entity class mapped by other attribute
+        # names in the mapped by other names cache map
         self._mapped_by_other_names_cache_map[entity_class] = entity_class_mapped_by_other_attribute_names
 
         # returns the entity class mapped by other names
@@ -2825,12 +2823,17 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all the indirect attributes from the given entity class.
         """
 
+        # tries to retrieve the entity class valid indirect
+        # attribute names from the indirect attribute names
+        # cache map
         entity_class_valid_indirect_attribute_names = self._indirect_attribute_names_cache_map.get(entity_class, None)
 
+        # in case the entity class valid indirect attribute names
+        # are found and valid
         if not entity_class_valid_indirect_attribute_names == None:
+            # returns the entity class valid indirect attribute
+            # names
             return entity_class_valid_indirect_attribute_names
-
-
 
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
@@ -2838,7 +2841,8 @@ class EntityManagerSqliteEngine:
         # retrieves all the valid class indirect attribute names, removes method values and the name exceptions and the non indirect attributes
         entity_class_valid_indirect_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
 
-
+        # sets the entity valid indirect attribute names
+        # names in the indirect attribute names cache map
         self._indirect_attribute_names_cache_map[entity_class] = entity_class_valid_indirect_attribute_names
 
         # returns the entity class valid indirect attribute names
