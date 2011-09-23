@@ -568,11 +568,14 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         # relation entities
         relation_validation_failed = False
 
+        # sets the associate relation value
+        associate_relation = True
+
         # iterates over all the relation values to
-        # create (or save) the entities
+        # save (or update) the entities
         for relation_value in relation_values:
             try:
-                # invokes the relation method for the entity
+                # calls the relation method for the entity (saving or updating it)
                 relation_entity = relation_value and relation_method(rest_request, relation_value, relation_persist_type) or None
             except web_mvc_utils_exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
@@ -583,9 +586,19 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
                 # failed flag to true
                 relation_validation_failed = True
 
+            # checks if the relation is saved (only if it's a valid instance)
+            is_saved = relation_entity and relation_entity.is_saved() or False
+
+            # checks if the relation should be associated
+            # the association is only granted if either the
+            # relation was saved or the associate type is
+            # set to allow association
+            associate_relation = is_saved or relation_persist_type & PERSIST_ASSOCIATE_TYPE
+
             # adds the relation entity to the list
-            # in case the entity was created
-            relation_entity and relation_entities.append(relation_entity)
+            # in case the entity was created and the
+            # relation in meant to be associated
+            relation_entity and associate_relation and relation_entities.append(relation_entity)
 
         # adds an error to the relation name in case
         # the validation in one of its entities failed
@@ -593,11 +606,13 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
 
         # in case it is a to one relation
         if relation_type == 1:
-            # sets the relation entity in the entity
-            setattr(entity, relation_name, relation_entity)
+            # sets the relation entity in the entity, only
+            # in case the associate relation flag is set
+            associate_relation and setattr(entity, relation_name, relation_entity)
         # in case it is a to many relation
         else:
             # sets the relation entities in the entity
+            # in all cases (it's a list)
             setattr(entity, relation_name, relation_entities)
 
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):

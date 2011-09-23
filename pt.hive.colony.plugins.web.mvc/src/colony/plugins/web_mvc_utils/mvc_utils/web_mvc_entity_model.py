@@ -54,6 +54,24 @@ PERSIST_ASSOCIATE_TYPE = 0x04
 PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
 """ The persist all persist type """
 
+SAVED_STATE_VALUE = 1
+""" The saved state value """
+
+UPDATED_STATE_VALUE = 2
+""" The updated state value """
+
+REMOVED_STATE_VALUE = 3
+""" The removed state value """
+
+DATA_SATE_VALUE = "data_state"
+""" The data state value """
+
+RELATION_VALUE = "relation"
+""" The relation value """
+
+DATE_VALUE = "date"
+""" The date value """
+
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
@@ -179,6 +197,20 @@ def persist(self, persist_type, entity_manager = None):
     elif not is_persisted and persist_type & PERSIST_SAVE_TYPE:
         # saves the entity using the entity manager
         entity_manager.save(self)
+
+def is_saved(self):
+    # in case the current entity model
+    # does not contain the data state value
+    if not hasattr(self, DATA_SATE_VALUE):
+        # returns false
+        return False
+
+    # checks if the current data state
+    # is saved (value)
+    saved = self._data_state_ == SAVED_STATE_VALUE
+
+    # returns the saved value
+    return saved
 
 def is_persisted(self, entity_manager = None):
     """
@@ -331,7 +363,7 @@ def _load_value(self, key, value):
     value_data_type = class_value.get("data_type", None)
 
     # in case the data type of the field is relation (presence of an object relation)
-    if value_data_type == "relation":
+    if value_data_type == RELATION_VALUE:
         # retrieves the value type
         value_type = type(value)
 
@@ -402,7 +434,7 @@ def _load_value(self, key, value):
             # sets the entity instances list in the current object
             setattr(self, key, entity_instances_list)
     # in case its a date attribute (requires conversion)
-    elif value_data_type == "date":
+    elif value_data_type == DATE_VALUE:
         # in case there is a valid value defined
         if value:
             # retrieves the date value from the value (timestamp)
