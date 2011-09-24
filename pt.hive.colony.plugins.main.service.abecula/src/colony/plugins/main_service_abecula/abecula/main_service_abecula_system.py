@@ -641,8 +641,11 @@ class AbeculaClientServiceHandler:
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
+                # retrieves the message value length
+                message_value_length = len(message_value)
+
                 # calculates the message value message length
-                message_value_message_length = len(message_value) - start_message_index
+                message_value_message_length = message_value_length - start_message_index
 
                 # in case the length of the message value message is the same
                 # as the message size
