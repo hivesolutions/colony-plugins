@@ -176,6 +176,17 @@ class MainServiceHttpProxyHandler:
         request_handler_method(request)
 
     def handle_forward_request(self, request):
+        """
+        Handles the given "forward" request.
+        Handling the "forward" request implies changing it
+        and redirecting (externally) it according to the defined rules.
+        Handling this "forward" request implies that the
+        client defines the correct path for the request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         # retrieves the resource base path
         resource_base_path = request.get_resource_path_decoded()
 
@@ -229,7 +240,20 @@ class MainServiceHttpProxyHandler:
         request.write(data)
 
     def handle_reverse_request(self, request):
-        # retrieves the proxy target
+        """
+        Handles the given "reverse" request.
+        Handling the "reverse" request implies changing it
+        and redirecting it (locally) according to the defined rules.
+        Handling this "reverse" request should be considered
+        transparent to the client, the client does not defines
+        any additional path and it should think that the communication
+        his being made with the current host.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
+        # retrieves the (reverse) proxy target
         proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
 
         # retrieves the resource base path
