@@ -339,7 +339,7 @@ class HttpClient:
         # stops the http client
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, contents = None):
+    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, contents = None, save_message = True, yield_response = False, handlers_map = {}):
         """
         Fetches the url for the given url, method and (http) parameters.
 
@@ -361,8 +361,18 @@ class HttpClient:
         @param encode_path: If the path should be encoded.
         @type contents: String
         @param contents: The contents of the message to be sent.
-        @rtype: String
-        @return: The retrieved fetched url contents.
+        @type save_message: bool
+        @param save_message: If the message part of the response
+        should be saved (at the expense of memory).
+        @type yield_response: bool
+        @param yield_response: If the response value should be yielded
+        for progressive retrieval. Setting this flag changes the return
+        value to an iterator that may be used for reponse retrieval.
+        @type handlers_map: Dictionary
+        @param handlers_map: The map of event handlers for the various
+        client events.
+        @rtype: HttpResponse
+        @return: The retrieved response object.
         """
 
         # retrieves the main client http plugin
@@ -426,8 +436,13 @@ class HttpClient:
             # and retrieves the request
             request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, encode_path, contents, url, base_url)
 
-            # retrieves the response
-            response = self.retrieve_response(request)
+            # retrieves the response, controls the saving of the message
+            # and calls the appropriate handlers, the yield state is respected
+            # it the yield response is set
+            response = self.retrieve_response(request, save_message, yield_response, handlers_map)
+
+            # retrieves the response according to the state of the yield response
+            response = yield_response and response or ([value for value in response][0])
         finally:
             # sets the authentication flag
             self.authentication = _authentication
@@ -557,12 +572,21 @@ class HttpClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = None):
+    def retrieve_response(self, request, save_message = True, yield_response = False, handlers_map = {}, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
         @type request: HttpRequest
         @param request: The request that originated the response.
+        @type save_message: bool
+        @param save_message: If the message part of the response
+        should be saved (at the expense of memory).
+        @type yield_response: bool
+        @param yield_response: If the response value should be yielded
+        for progressive retrieval.
+        @type handlers_map: Dictionary
+        @param handlers_map: The map of event handlers for the various
+        client events.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: HttpResponse
@@ -608,6 +632,7 @@ class HttpClient:
                 if message_size == UNDEFINED_CONTENT_LENGTH:
                     # sets the undefined contents length finished flag
                     undefined_content_length_finished = True
+                # otherwise the message size must be defined
                 else:
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
@@ -625,8 +650,17 @@ class HttpClient:
                 # received data size
                 message_size = received_data_size - message_offset_index
 
-            # writes the data to the string buffer
-            message.write(data)
+            # writes the data to the string buffer, only in case
+            # the headers are not yet loaded or the save message is set
+            (not header_loaded or save_message) and message.write(data)
+
+            # calls the data handler (data event)
+            self._call_handler_data("data", handlers_map, response, data)
+            if yield_response: yield "data", response, data
+
+            # calls the message data handler (message data event)
+            header_loaded and self._call_handler_data("message_data", handlers_map, response, data)
+            if header_loaded and yield_response: yield "message_data", response, data
 
             # in case the header is not loaded or the message contents are completely loaded
             if not header_loaded or received_data_size == message_size + message_offset_index:
@@ -634,7 +668,7 @@ class HttpClient:
                 message_value = message.get_value()
             # in case there's no need to inspect the message contents
             else:
-                # continues with the loop
+                # continues the loop
                 continue
 
             # in case the start line is not loaded
@@ -676,6 +710,10 @@ class HttpClient:
 
                     # sets the start line loaded flag
                     start_line_loaded = True
+
+                    # calls the start line (end) handler (start line event)
+                    self._call_handler("start_line", handlers_map, response)
+                    if yield_response: yield "start_line", response
 
             # in case the header is not loaded
             if not header_loaded:
@@ -730,33 +768,48 @@ class HttpClient:
                         # length value
                         message_size = UNDEFINED_CONTENT_LENGTH
 
+                    # calls the headers (end) handler (headers event)
+                    self._call_handler("headers", handlers_map, response)
+                    if yield_response: yield "headers", response
+
                     # retrieves the transfer encoding value
                     transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_VALUE, None)
 
                     # retrieves the transfer encoding value using the lower cased value
                     transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_LOWER_VALUE, transfer_encoding)
 
+                    # retrieves the start message index (the end header
+                    # index plus the newline characters) then uses it
+                    # to retrieve the start message value (initial data)
+                    start_message_index = end_header_index + 4
+                    start_message_value = message_value[start_message_index:]
+
                     # in case the transfer encoding is chunked
                     if transfer_encoding == CHUNKED_VALUE:
-                        # retrieves the start message size
-                        start_message_index = end_header_index + 4
-
-                        # retrieves the start message value
-                        start_message_value = message_value[start_message_index:]
-
-                        # retrieves the response in chunked mode
+                        # retrieves the response in chunked mode, sends the start (initial)
+                        # message value
                         self.retrieve_response_chunked(response, start_message_value, response_timeout)
 
                         # breaks the loop
                         break
+                    # otherwise it's a normal handling but we still have to
+                    # call the message data event handlers with the initial
+                    # data (if any)
+                    else:
+                        # calls the message data handler (message data event)
+                        start_message_value and self._call_handler_data("message_data", handlers_map, response, start_message_value)
+                        if yield_response and start_message_value: yield "message_data", response, start_message_value
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
+                # retrieves the message value length
+                message_value_length = not save_message and received_data_size or len(message_value)
+
                 # calculates the message value message length
-                message_value_message_length = len(message_value) - start_message_index
+                message_value_message_length = message_value_length - start_message_index
 
                 # in case the length of the message value message is the same
                 # or greater as the message size and the message size
@@ -768,8 +821,9 @@ class HttpClient:
                     # sets the message loaded flag
                     message_loaded = True
 
-                    # sets the received message
-                    response.received_message = message_value_message
+                    # sets the received message, taking into account
+                    # the save message flag (empty received message, no saving)
+                    response.received_message = save_message and message_value_message or ""
 
                     # decodes the response if necessary
                     self.decode_response(response)
@@ -780,11 +834,15 @@ class HttpClient:
                     # sets the final response value
                     response = redirection_value or response
 
+                    # calls the message (end) handler (message event)
+                    self._call_handler("message", handlers_map, response)
+                    if yield_response: yield "message", response
+
                     # breaks the loop
                     break
 
         # returns the response
-        return response
+        yield response
 
     def retrieve_response_chunked(self, response, message_value, response_timeout = None):
         # creates the message string buffer
@@ -1177,6 +1235,71 @@ class HttpClient:
         """
 
         return (status_code_integer >= 100 and status_code_integer < 200) or status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
+
+    def _call_handler(self, event_name, handlers_map, response):
+        """
+        Calls an handler for the given event name and
+        using the given map of handlers (methods).
+        For the calling of this type of handler only the
+        response is passed as argument.
+
+        @type event_name: String
+        @param event_name: The name of the event to be used
+        to call the handler.
+        @type handlers_map: Dictionary
+        @param handlers_map: The map of handlers to be used in
+        the calling of the handler.
+        @type response: HttpResponse
+        @param response: The response object to be passed as argument
+        to the handler.
+        """
+
+        # tries to retrieve the handler method from the
+        # handlers map, for the given event name
+        handler_method = handlers_map.get(event_name, None)
+
+        # in case the handler method is not defined
+        if not handler_method:
+            # returns immediately
+            return
+
+        # calls the handler method with the response
+        # as first argument
+        handler_method(response)
+
+    def _call_handler_data(self, handler_name, handlers_map, response, data):
+        """
+        Calls an handler for the given event name and
+        using the given map of handlers (methods).
+        For the calling of this type of handler both the
+        response and the data are passed as arguments.
+
+        @type event_name: String
+        @param event_name: The name of the event to be used
+        to call the handler.
+        @type handlers_map: Dictionary
+        @param handlers_map: The map of handlers to be used in
+        the calling of the handler.
+        @type response: HttpResponse
+        @param response: The response object to be passed as argument
+        to the handler.
+        @type data: String
+        @param data: The data to be to be passed as argument
+        to the handler.
+        """
+
+        # tries to retrieve the handler method from the
+        # handlers map, for the given event name
+        handler_method = handlers_map.get(handler_name, None)
+
+        # in case the handler method is not defined
+        if not handler_method:
+            # returns immediately
+            return
+
+        # calls the handler method with the response
+        # as first argument and the data as second
+        handler_method(response, data)
 
 class HttpRequest:
     """
