@@ -579,9 +579,17 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map,
         # iterates over all the relation values to
         # save (or update) the entities
         for relation_value in relation_values:
-            # validate the given entity for relation with the relation
-            # value in the attribute of name relation name
-            valid_relation = self.validate_entity_relation(entity, relation_value, relation_name)
+            # in case the relation value is set and it's valid
+            # (not empty) it's ready for validation of relations
+            if relation_value:
+                # validate the given entity for relation with the relation
+                # value in the attribute of name relation name
+                valid_relation = self.validate_entity_relation(entity, relation_value, relation_name)
+            # otherwise the validation is not required
+            # the value is not valid, not set
+            else:
+                # sets the relation as (automatically) valid
+                valid_relation = True
 
             # in case the relation is valid (no need to remove update)
             if valid_relation:
@@ -643,6 +651,8 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     Validates the entity relation, checking if the given entity
     and the entity represented by the relation entity map are really
     related in the data source.
+    In case the relation entity map represents an entity that is not
+    yet persisted the relation is considered valid.
 
     @type entity: Entity
     @param entity: The base entity to be used in the validation.
@@ -670,7 +680,8 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     # retrieves the id attribute name for the relation entity class
     id_attribute_name = entity_manager.get_entity_class_id_attribute_name(relation_entity_class)
 
-    # retrieves the value for the id attribute (of the relation)
+    # retrieves the value for the id attribute (of the relation) and then
+    # casts the id attribute value for the "real" relation attribute data type
     id_attribute_value = relation_entity_map.get(id_attribute_name, None)
     id_attribute_value = self._cast_safe(id_attribute_value, relation_attribute_real_type)
 
