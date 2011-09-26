@@ -806,7 +806,12 @@ class ClientConnection(Connection):
                     # returns immediately (no error)
                     return
                 # otherwise the exception is more severe
+                # and it shall be handled properly
                 else:
+                    # calls the callback, with the
+                    # error flag set
+                    callback(True)
+
                     # re-raises the exception
                     raise
 
@@ -823,8 +828,9 @@ class ClientConnection(Connection):
                 self.write_data_buffer.append(pending_data)
             # otherwise in case there is a callback to be called
             elif callback:
-                # calls the callback
-                callback()
+                # calls the callback, with the
+                # error flag unset
+                callback(False)
 
         # unregisters the socket fd for the write event
         self.unregister(self.socket_fd, WRITE)
