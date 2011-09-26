@@ -301,8 +301,10 @@ class MainServiceHttpProxyHandler:
             # fetches the contents from the url
             http_response_generator = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents, save_message = False, yield_response = True)
 
+            print "Entrou get GEnerator"
             # tries to retrieve the generator value for the headers
             generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
+            print "Saiu get generator"
 
             # unpacks the generator value into the value type
             # and the http response
