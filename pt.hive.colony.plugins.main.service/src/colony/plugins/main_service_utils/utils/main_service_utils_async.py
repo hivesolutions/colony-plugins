@@ -728,12 +728,18 @@ class ClientConnection(Connection):
         # sets the connection status to open
         self.connection_status = True
 
+        # handles the open (event) using the client service
+        self.service.client_service.handle_opened(self)
+
     def close(self):
         # removes the socket from the service
         self.service.remove_socket(self.socket)
 
         # sets the connection status to closed
         self.connection_status = False
+
+        # handles the close (event) using the client service
+        self.service.client_service.handle_closed(self)
 
     def read_handler(self, _socket):
         # iterates continuously
@@ -808,8 +814,6 @@ class ClientConnection(Connection):
                 # otherwise the exception is more severe
                 # and it shall be handled properly
                 else:
-                    print "CALLBACK(True)"
-
                     # calls the callback, with the
                     # error flag set (in case it's defined)
                     callback and callback(True)
