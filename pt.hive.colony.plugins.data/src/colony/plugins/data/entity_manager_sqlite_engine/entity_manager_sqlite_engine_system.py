@@ -1141,6 +1141,14 @@ class EntityManagerSqliteEngine:
         relation_attribute = getattr(_entity, relation_attribute_name)
         relation_attribute_type = type(relation_attribute)
 
+        # in case the relation attribute is
+        # not currently set, or invalid
+        if relation_attribute == None:
+            # returns false (validation failed)
+            # there is no relation in the given
+            # relation attribute
+            return False
+
         # in case the relation attribute is of type
         # list (to many relation)
         if relation_attribute_type == types.ListType:
