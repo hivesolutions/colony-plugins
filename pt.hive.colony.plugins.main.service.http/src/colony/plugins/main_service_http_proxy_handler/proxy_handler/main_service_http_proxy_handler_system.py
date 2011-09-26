@@ -342,6 +342,8 @@ class MainServiceHttpProxyHandler:
 
             # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
+
+            print "ACABOU FASE INICIAL"
         except:
             # puts the http client back into the http clients pool
             self.http_clients_pool.put(http_client)

@@ -1441,8 +1441,11 @@ class HttpClientServiceHandler:
                 # closes the mediated handler
                 request.mediated_handler.close()
 
+                # error in the client side
+                self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+
                 # re-raises the exception
-                raise
+                #raise
 
         # retrieves the result value
         result_value = request.get_result()
