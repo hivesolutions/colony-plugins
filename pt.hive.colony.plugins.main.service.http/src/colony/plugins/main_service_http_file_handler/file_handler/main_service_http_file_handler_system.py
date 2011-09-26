@@ -459,6 +459,8 @@ class MainServiceHttpFileHandler:
 
             # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
+        # otherwise it's a small file and may be read
+        # completely on the request handler
         else:
             # reads the file contents
             file_contents = file.read()
