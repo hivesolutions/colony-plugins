@@ -328,8 +328,8 @@ class MainServiceHttpProxyHandler:
             close_handler = lambda: self.http_clients_pool.put(http_client)
 
             # retrieves the http response size by casting
-            # the content length value
-            http_response_size = self._get_size(http_response)
+            # the content length value (if possible)
+            http_response_size = self._get_http_response_size(http_response)
 
             # creates the chunk handler to be used to send the proxy response
             # this is way it's possible to progressively send the message from the
@@ -346,20 +346,6 @@ class MainServiceHttpProxyHandler:
 
             # re-raises the exception
             raise
-
-    def _get_size(self, http_response):
-        # in case the content length is defined in the headers map
-        if CONTENT_LENGTH_VALUE in http_response.headers_map:
-            # retrieves the message size
-            message_size = int(http_response.headers_map[CONTENT_LENGTH_VALUE])
-        elif CONTENT_LENGTH_LOWER_VALUE in http_response.headers_map:
-            # retrieves the message size
-            message_size = int(http_response.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-        else:
-            # sets the message size as undefined
-            message_size = None
-
-        return message_size
 
     def _create_http_client(self, arguments):
         # retrieves the main client http plugin
@@ -476,6 +462,39 @@ class MainServiceHttpProxyHandler:
 
         # returns the headers map
         return headers_map
+
+    def _get_http_response_size(self, http_response):
+        """
+        Retrieves the size of the response (message) based
+        on the content length header value.
+        In case the content length header value is not set
+
+        @type http_response: HttpResponse
+        @param http_response: The http response to retrieve
+        the (target) message size.
+        @rtype: int
+        @return: The message size for the given http response
+        measured in bytes.
+        """
+
+        # retrieves the headers map from the http response
+        headers_map = http_response.headers_map
+
+        # in case the content length is defined in the headers map
+        if CONTENT_LENGTH_VALUE in headers_map:
+            # retrieves the message size
+            http_response_size = int(http_response.headers_map[CONTENT_LENGTH_VALUE])
+        # in case the content length (lower case) is defined in the headers map
+        elif CONTENT_LENGTH_LOWER_VALUE in headers_map:
+            # retrieves the message size
+            http_response_size = int(headers_map[CONTENT_LENGTH_LOWER_VALUE])
+        # otherwise no size is defined in the headers
+        else:
+            # sets the message size as undefined
+            http_response_size = None
+
+        # returns the http response size
+        return http_response_size
 
     def _get_generator_value(self, generator, value_type):
         """
