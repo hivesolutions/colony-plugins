@@ -788,7 +788,13 @@ class HttpClient:
                     if transfer_encoding == CHUNKED_VALUE:
                         # retrieves the response in chunked mode, sends the start (initial)
                         # message value
-                        self.retrieve_response_chunked(response, start_message_value, response_timeout)
+                        chunked_generator = self.retrieve_response_chunked(response, start_message_value, save_message, yield_response, handlers_map, response_timeout)
+
+                        # iterates over all the chunked items in the chunked
+                        # generator to yield them
+                        for chunked_item in chunked_generator:
+                            # yields the current chunked item
+                            if yield_response: yield chunked_item
 
                         # breaks the loop
                         break
@@ -844,7 +850,7 @@ class HttpClient:
         # returns the response
         yield response
 
-    def retrieve_response_chunked(self, response, message_value, response_timeout = None):
+    def retrieve_response_chunked(self, response, message_value, save_message = True, yield_response = False, handlers_map = {}, response_timeout = None):
         # creates the message string buffer
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -874,6 +880,10 @@ class HttpClient:
 
                 # writes the data to the message
                 message.write(data)
+
+                # calls the data handler (data event)
+                self._call_handler_data("data", handlers_map, response, data)
+                if yield_response: yield "data", response, data
 
                 # retrieves the message value
                 message_value = message.get_value()
@@ -932,6 +942,10 @@ class HttpClient:
                 # the data length
                 message_size += data_length
 
+                # calls the data handler (data event)
+                self._call_handler_data("data", handlers_map, response, data)
+                if yield_response: yield "data", response, data
+
             # retrieves the message value
             message_value = message.get_value()
 
@@ -939,7 +953,11 @@ class HttpClient:
             contents_value = message_value[:octet_size]
 
             # writes the contents value in the contents (buffer)
-            contents.write(contents_value)
+            save_message and contents.write(contents_value)
+
+            # calls the message data handler (message data event)
+            self._call_handler_data("message_data", handlers_map, response, contents_value)
+            if yield_response: yield "message_data", response, contents_value
 
             # resets the message (buffer)
             message.reset()
