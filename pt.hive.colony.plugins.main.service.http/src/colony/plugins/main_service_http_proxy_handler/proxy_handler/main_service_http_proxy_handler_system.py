@@ -98,6 +98,9 @@ TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 CONTENT_LENGTH_VALUE = "Content-Length"
 """ The content length value """
 
+CONTENT_LENGTH_LOWER_VALUE = "Content-length"
+""" The content length lower value """
+
 HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
 """ The http protocol prefix value """
 
@@ -326,7 +329,7 @@ class MainServiceHttpProxyHandler:
 
             # retrieves the http response size by casting
             # the content length value
-            http_response_size = int(http_response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
+            http_response_size = self._get_size(http_response)
 
             # creates the chunk handler to be used to send the proxy response
             # this is way it's possible to progressively send the message from the
@@ -343,6 +346,20 @@ class MainServiceHttpProxyHandler:
 
             # re-raises the exception
             raise
+
+    def _get_size(self, http_response):
+        # in case the content length is defined in the headers map
+        if CONTENT_LENGTH_VALUE in http_response.headers_map:
+            # retrieves the message size
+            message_size = int(http_response.headers_map[CONTENT_LENGTH_VALUE])
+        elif CONTENT_LENGTH_LOWER_VALUE in http_response.headers_map:
+            # retrieves the message size
+            message_size = int(http_response.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+        else:
+            # sets the message size as undefined
+            message_size = None
+
+        return message_size
 
     def _create_http_client(self, arguments):
         # retrieves the main client http plugin
