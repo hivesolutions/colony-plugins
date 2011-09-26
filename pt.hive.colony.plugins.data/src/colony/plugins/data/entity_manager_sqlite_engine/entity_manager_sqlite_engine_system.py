@@ -1165,7 +1165,8 @@ class EntityManagerSqliteEngine:
 
                 # returns true (validation succeeded)
                 return True
-        # otherwise it must be a to one relation
+        # otherwise it must be a to one relation, and there
+        # must be a valid value set there
         else:
             # retrieves the relation entity id (attribute)
             _relation_entity_id = self.get_entity_id_attribute_value(relation_attribute)
