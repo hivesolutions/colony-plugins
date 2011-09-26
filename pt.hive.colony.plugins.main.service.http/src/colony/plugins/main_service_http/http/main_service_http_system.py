@@ -1384,31 +1384,48 @@ class HttpClientServiceHandler:
             self.send_request_mediated_sync(service_connection, request)
 
     def send_request_mediated_async(self, service_connection, request):
-        def request_mediated_writer():
-            # retrieves the mediated value
-            mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
+        def request_mediated_writer(send_error = False):
+            # in case there was an error sending
+            # the data
+            if send_error:
+                # closes the mediated handler
+                request.mediated_handler.close()
 
-            # in case the read is complete
-            if not mediated_value:
-                # prints a debug message
-                self.service_plugin.debug("Completed transfer of request mediated")
-
-                # closes the mediated file
-                request.mediated_handler.close_file()
-
-                # returns (no more writing)
+                # returns immediately
                 return
 
             try:
-                # sends the mediated value to the client (writes in front of the others)
-                # and sets the callback as the current writer
-                service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
-            except self.service_utils_exception_class, exception:
-                # error in the client side
-                self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+                # retrieves the mediated value
+                mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
 
-                # raises the http data sending exception
-                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+                # in case the read is complete (time to close
+                # the currently open mediated handler)
+                if not mediated_value:
+                    # prints a debug message
+                    self.service_plugin.debug("Completed transfer of request mediated")
+
+                    # closes the mediated handler
+                    request.mediated_handler.close()
+
+                    # returns (no more writing)
+                    return
+
+                try:
+                    # sends the mediated value to the client (writes in front of the others)
+                    # and sets the callback as the current writer
+                    service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
+                except self.service_utils_exception_class, exception:
+                    # error in the client side
+                    self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+
+                    # raises the http data sending exception
+                    raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+            except:
+                # closes the mediated handler
+                request.mediated_handler.close()
+
+                # re-raises the exception
+                raise
 
         # retrieves the result value
         result_value = request.get_result()
@@ -1420,6 +1437,9 @@ class HttpClientServiceHandler:
         except self.service_utils_exception_class, exception:
             # error in the client side
             self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+
+            # closes the mediated handler
+            request.mediated_handler.close()
 
             # raises the http data sending exception
             raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
@@ -1435,34 +1455,45 @@ class HttpClientServiceHandler:
             # error in the client side
             self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
 
+            # closes the mediated handler
+            request.mediated_handler.close()
+
             # raises the http data sending exception
             raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
         # continuous loop
         while True:
-            # retrieves the mediated value
-            mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
-
-            # in case the read is complete
-            if not mediated_value:
-                # prints a debug message
-                self.service_plugin.debug("Completed transfer of request mediated")
-
-                # closes the mediated file
-                request.mediated_handler.close_file()
-
-                # breaks the cycle
-                break
-
             try:
-                # sends the mediated value to the client
-                service_connection.send(mediated_value)
-            except self.service_utils_exception_class, exception:
-                # error in the client side
-                self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+                # retrieves the mediated value
+                mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
 
-                # raises the http data sending exception
-                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+                # in case the read is complete (time to close
+                # the currently open mediated handler)
+                if not mediated_value:
+                    # prints a debug message
+                    self.service_plugin.debug("Completed transfer of request mediated")
+
+                    # closes the mediated handler
+                    request.mediated_handler.close()
+
+                    # breaks the cycle
+                    break
+
+                try:
+                    # sends the mediated value to the client
+                    service_connection.send(mediated_value)
+                except self.service_utils_exception_class, exception:
+                    # error in the client side
+                    self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+
+                    # raises the http data sending exception
+                    raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+            except:
+                # closes the mediated handler
+                request.mediated_handler.close()
+
+                # re-raises the exception
+                raise
 
     def send_request_chunked(self, service_connection, request):
         # checks if the service connection is of type asynchronous
@@ -1479,44 +1510,64 @@ class HttpClientServiceHandler:
             self.send_request_chunked_sync(service_connection, request)
 
     def send_request_chunked_async(self, service_connection, request):
-        def request_chunked_writer():
-            # retrieves the chunk value
-            chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
-
-            # in case the read is complete
-            if not chunk_value:
-                try:
-                    # sends the final empty chunk
-                    service_connection.send("0\r\n\r\n")
-                except self.service_utils_exception_class, exception:
-                    # error in the client side
-                    self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
-
-                    # raises the http data sending exception
-                    raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+        def request_chunked_writer(send_error = False):
+            # in case there was an error sending
+            # the data
+            if send_error:
+                # closes the chunk handler
+                request.chunk_handler.close()
 
                 # returns immediately
                 return
 
             try:
-                # retrieves the length of the chunk value
-                length_chunk_value = len(chunk_value)
+                # retrieves the chunk value
+                chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
 
-                # sets the value for the hexadecimal length part of the chunk
-                length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+                # in case the read is complete (time to close
+                # the currently open chunk handler)
+                if not chunk_value:
+                    # closes the chunk handler
+                    request.chunk_handler.close()
 
-                # sets the message value
-                message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+                    try:
+                        # sends the final empty chunk
+                        service_connection.send("0\r\n\r\n")
+                    except self.service_utils_exception_class, exception:
+                        # error in the client side
+                        self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
 
-                # sends the message value to the client (writes in front of the others)
-                # and sets the callback as the current writer
-                service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
-            except self.service_utils_exception_class, exception:
-                # error in the client side
-                self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+                        # raises the http data sending exception
+                        raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
-                # raises the http data sending exception
-                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+                    # returns immediately
+                    return
+
+                try:
+                    # retrieves the length of the chunk value
+                    length_chunk_value = len(chunk_value)
+
+                    # sets the value for the hexadecimal length part of the chunk
+                    length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+
+                    # sets the message value
+                    message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+
+                    # sends the message value to the client (writes in front of the others)
+                    # and sets the callback as the current writer
+                    service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
+                except self.service_utils_exception_class, exception:
+                    # error in the client side
+                    self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+
+                    # raises the http data sending exception
+                    raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+            except:
+                # closes the chunk handler
+                request.chunk_handler.close()
+
+                # re-raises the exception
+                raise
 
         # retrieves the result value
         result_value = request.get_result()
@@ -1528,6 +1579,9 @@ class HttpClientServiceHandler:
         except self.service_utils_exception_class, exception:
             # error in the client side
             self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+
+            # closes the chunk handler
+            request.chunk_handler.close()
 
             # raises the http data sending exception
             raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
@@ -1547,47 +1601,61 @@ class HttpClientServiceHandler:
             # error in the client side
             self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
+            # closes the chunk handler
+            request.chunk_handler.close()
+
             # raises the http data sending exception
             raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
         # continuous loop
         while True:
-            # retrieves the chunk value
-            chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
+            try:
+                # retrieves the chunk value
+                chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
 
-            # in case the read is complete
-            if not chunk_value:
+                # in case the read is complete (time to close
+                # the currently open chunk handler)
+                if not chunk_value:
+                    # closes the chunk handler
+                    request.chunk_handler.close()
+
+                    try:
+                        # sends the final empty chunk
+                        service_connection.send("0\r\n\r\n")
+                    except self.service_utils_exception_class, exception:
+                        # error in the client side
+                        self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
+
+                        # raises the http data sending exception
+                        raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+
+                    # breaks the cycle
+                    break
+
                 try:
-                    # sends the final empty chunk
-                    service_connection.send("0\r\n\r\n")
+                    # retrieves the length of the chunk value
+                    length_chunk_value = len(chunk_value)
+
+                    # sets the value for the hexadecimal length part of the chunk
+                    length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+
+                    # sets the message value
+                    message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+
+                    # sends the message value to the client
+                    service_connection.send(message_value)
                 except self.service_utils_exception_class, exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
+                    self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
                     # raises the http data sending exception
                     raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+            finally:
+                # closes the chunk handler
+                request.chunk_handler.close()
 
-                # breaks the cycle
-                break
-
-            try:
-                # retrieves the length of the chunk value
-                length_chunk_value = len(chunk_value)
-
-                # sets the value for the hexadecimal length part of the chunk
-                length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
-
-                # sets the message value
-                message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
-
-                # sends the message value to the client
-                service_connection.send(message_value)
-            except self.service_utils_exception_class, exception:
-                # error in the client side
-                self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
-
-                # raises the http data sending exception
-                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+                # re-raises the exception
+                raise
 
     def keep_alive(self, request):
         """
@@ -2706,7 +2774,7 @@ class HttpRequest:
             headers_ordered_map[CONTENT_ENCODING_VALUE] = self.encoding_name
         if self.chunked_encoding:
             headers_ordered_map[TRANSFER_ENCODING_VALUE] = CHUNKED_VALUE
-        if not self.chunked_encoding and self.contains_message:
+        if not self.chunked_encoding and self.contains_message and not self.content_length == None:
             headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
         if self.upgrade_mode:
             headers_ordered_map[UPGRADE_VALUE] = self.upgrade_mode
