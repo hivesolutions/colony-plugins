@@ -1125,6 +1125,14 @@ class EntityManagerSqliteEngine:
         # retrieves the entity id attribute value (id value)
         id_value = self.get_entity_id_attribute_value(entity)
 
+        # in case the id value for the base entity
+        # is not yet set (not persisted)
+        if id_value == None:
+            # returns false (validation failed)
+            # the base entity for validation is not
+            # yet persisted
+            return False
+
         # retrieves the entity (and the relation in eager mode)
         _entity = self.find_entity_options(connection, entity_class, id_value, options = options)
 
