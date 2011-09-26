@@ -409,8 +409,12 @@ class HttpClient:
         # retrieves the corresponding (http) client connection
         self.client_connection = self._http_client.get_client_connection(connection_parameters)
 
+        print "fez acquire"
+
         # acquires the http client lock
         self._http_client_lock.acquire()
+
+        print "passou acquire"
 
         # saves the old authentication
         # values for later restore
@@ -454,6 +458,8 @@ class HttpClient:
 
             # releases the http client lock
             self._http_client_lock.release()
+
+            print "fez release"
 
         # returns the response
         return response
