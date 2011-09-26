@@ -644,6 +644,8 @@ class HttpClient:
                     undefined_content_length_finished = True
                 # otherwise the message size must be defined
                 else:
+                    print "RECEBEU EMPTY DATA !!!!!!!"
+
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
 
