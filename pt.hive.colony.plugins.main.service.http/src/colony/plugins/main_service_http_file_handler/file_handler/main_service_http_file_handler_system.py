@@ -852,9 +852,9 @@ class ChunkHandler:
 
         return self.file.read(chunk_size)
 
-    def close_file(self):
+    def close(self):
         """
-        Closes the file being chunked.
+        Closes the chunked handler.
         """
 
         # closes the file
