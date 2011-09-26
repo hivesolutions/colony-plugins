@@ -692,7 +692,27 @@ class HttpClientServiceHandler:
         pass
 
     def handle_closed(self, service_connection):
-        pass
+        # retrieves the current request (being handled)
+        request = service_connection.request_data.get("_request", None)
+
+        # in case the request is not defined
+        # (no request pending)
+        if not request:
+            # returns immediately
+            return
+
+        # in case the request is mediated (there
+        # must be a mediated handler)
+        if request.is_mediated():
+            # closes the mediated handler in order
+            # to avoid possible resource leak
+            request.mediated_handler.close()
+        # in case the request is mediated (there
+        # must be a chunk handler)
+        elif request.is_chunked_encoded():
+            # closes the chunk handler in order
+            # to avoid possible resource leak
+            request.chunk_handler.close()
 
     def handle_request(self, service_connection, request = None):
         # retrieves the request handler using the service connection request handler map
@@ -760,6 +780,8 @@ class HttpClientServiceHandler:
 
             # handles the request by the request handler
             http_service_handler_plugin.handle_request(request)
+
+            service_connection.request_data["_request"] = request
 
             # checks if the request is delayed
             request_delayed = request.delayed
@@ -1302,11 +1324,6 @@ class HttpClientServiceHandler:
         @param exception: The exception to be sent.
         """
 
-        print "Exception in user code:"
-        print '-'*60
-        traceback.print_exc(file=sys.stdout)
-        print '-'*60
-
         # retrieves the preferred error handlers list
         preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 
@@ -1393,8 +1410,6 @@ class HttpClientServiceHandler:
             # in case there was an error sending
             # the data
             if send_error:
-                print "RECEBEU SEND ERROR"
-
                 # closes the mediated handler
                 request.mediated_handler.close()
 
@@ -1402,20 +1417,14 @@ class HttpClientServiceHandler:
                 return
 
             try:
-                print "GET_CHUNK"
-
                 # retrieves the mediated value
                 mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
-
-                print "GET_CHUNK END"
 
                 # in case the read is complete (time to close
                 # the currently open mediated handler)
                 if not mediated_value:
                     # prints a debug message
                     self.service_plugin.debug("Completed transfer of request mediated")
-
-                    print "Completou mediated"
 
                     # closes the mediated handler
                     request.mediated_handler.close()
@@ -1431,21 +1440,14 @@ class HttpClientServiceHandler:
                     # error in the client side
                     self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
 
-                    print "Problem sending request mediated"
-
                     # raises the http data sending exception
                     raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
             except:
-                print "Fechou mediated exception"
-
                 # closes the mediated handler
                 request.mediated_handler.close()
 
-                # error in the client side
-                self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
-
                 # re-raises the exception
-                #raise
+                raise
 
         # retrieves the result value
         result_value = request.get_result()
@@ -1457,8 +1459,6 @@ class HttpClientServiceHandler:
         except self.service_utils_exception_class, exception:
             # error in the client side
             self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
-
-            print "Problem sending request mediated2"
 
             # closes the mediated handler
             request.mediated_handler.close()
@@ -1486,18 +1486,12 @@ class HttpClientServiceHandler:
         # continuous loop
         while True:
             try:
-                print "FEZ GET CHUNK"
-
                 # retrieves the mediated value
                 mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
-
-                print "SAIU GET CHUNK"
 
                 # in case the read is complete (time to close
                 # the currently open mediated handler)
                 if not mediated_value:
-                    print "Completou transferecia do mediated"
-
                     # prints a debug message
                     self.service_plugin.debug("Completed transfer of request mediated")
 
@@ -1514,13 +1508,9 @@ class HttpClientServiceHandler:
                     # error in the client side
                     self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
 
-                    print "Problema a enviar mediated"
-
                     # raises the http data sending exception
                     raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
             except:
-                print "FECHOU MEDIATED excepcao"
-
                 # closes the mediated handler
                 request.mediated_handler.close()
 
@@ -1548,8 +1538,6 @@ class HttpClientServiceHandler:
             if send_error:
                 # closes the chunk handler
                 request.chunk_handler.close()
-
-                print "fez SEND ERROR"
 
                 # returns immediately
                 return
@@ -1594,13 +1582,9 @@ class HttpClientServiceHandler:
                     # error in the client side
                     self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
-                    print "excepcao chunked"
-
                     # raises the http data sending exception
                     raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
             except:
-                print "fechou chunk exception"
-
                 # closes the chunk handler
                 request.chunk_handler.close()
 
@@ -1617,8 +1601,6 @@ class HttpClientServiceHandler:
         except self.service_utils_exception_class, exception:
             # error in the client side
             self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
-
-            print "fechou chunk exception 2"
 
             # closes the chunk handler
             request.chunk_handler.close()

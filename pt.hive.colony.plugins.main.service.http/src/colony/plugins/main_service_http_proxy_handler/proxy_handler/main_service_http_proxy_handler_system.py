@@ -293,18 +293,17 @@ class MainServiceHttpProxyHandler:
         complete_path = proxy_target + path
 
         # retrieves the http client from the http clients pool
-        http_client = self.http_clients_pool.pop()
+        http_client = self.http_clients_pool.pop(True)
 
-        print "fez POP do cliente: " + str(http_client)
+        if not http_client:
+            raise Exception("No client available")
 
         try:
             # fetches the contents from the url
             http_response_generator = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents, save_message = False, yield_response = True)
 
-            print "Entrou get GEnerator"
             # tries to retrieve the generator value for the headers
             generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
-            print "Saiu get generator"
 
             # unpacks the generator value into the value type
             # and the http response
@@ -329,7 +328,16 @@ class MainServiceHttpProxyHandler:
             request.response_headers_map = headers_map
 
             # creates the handler to be used to close the sending of the response
-            close_handler = lambda: self.http_clients_pool.put(http_client)
+            # this handler ensures that the client is put back to the http clients
+            # pool and that the connection is kept clean (avoids pipe pollution)
+            def close_handler(empty_connection):
+                # in case the connection is not empty closes the
+                # client connection in the http client (avoid pipe pollution)
+                not empty_connection and http_client.client_connection.close()
+
+                # puts the http client back into the http
+                # clients pool
+                self.http_clients_pool.put(http_client)
 
             # retrieves the http response size by casting
             # the content length value (if possible)
@@ -344,13 +352,14 @@ class MainServiceHttpProxyHandler:
 
             # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
-
-            print "ACABOU FASE INICIAL"
         except:
+            # closes the http client connection, there's
+            # probably data pending in the connection
+            # (avoids pipe pollution)
+            http_client.client_connection.close()
+
             # puts the http client back into the http clients pool
             self.http_clients_pool.put(http_client)
-
-            print "fez PUT do cliente: " + str(http_client)
 
             # re-raises the exception
             raise
@@ -557,6 +566,9 @@ class ChunkHandler:
     close_handler = None
     """ The handler to be called on closing """
 
+    _empty_connection = False
+    """ The flag controlling if the connection is empty (all data parsed) """
+
     def __init__(self, http_response_generator, http_response_size, close_handler):
         """
         Constructor of the class.
@@ -604,6 +616,9 @@ class ChunkHandler:
                 # the response generator
                 value = self.http_response_generator.next()
             except StopIteration:
+                # set the empty connection flag
+                self._empty_connection = True
+
                 # returns none (nothing found)
                 return None
 
@@ -644,8 +659,8 @@ class ChunkHandler:
         Closes the chunked handler.
         """
 
-        print "fez PUT: "
-
         # calls the close handler (in case
-        # the handler is set)
-        self.close_handler and self.close_handler()
+        # the handler is set) the empty connection
+        # argument ensures that the handler may take
+        # measures to avoid pipe pollution
+        self.close_handler and self.close_handler(self._empty_connection)
