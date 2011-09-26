@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import colony.libs.map_util
 
 HANDLER_NAME = "proxy"
@@ -50,6 +52,9 @@ DEFAULT_PROXY_TARGET = ""
 
 DEFAULT_ELEMENT_POOL_SIZE = 10
 """ The default element pool size """
+
+CHUNK_SIZE = 4096
+""" The chunk size """
 
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
@@ -72,6 +77,12 @@ FORWARD_VALUE = "forward"
 REVERSE_VALUE = "reverse"
 """ The reverse value """
 
+HEADERS_VALUE = "headers"
+""" The headers value """
+
+MESSAGE_DATA_VALUE = "message_data"
+""" The message data value """
+
 VIA_VALUE = "Via"
 """ The via value """
 
@@ -83,6 +94,9 @@ LOCATION_VALUE = "Location"
 
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transer encoding value """
+
+CONTENT_LENGTH_VALUE = "Content-Length"
+""" The content length value """
 
 HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
 """ The http protocol prefix value """
@@ -280,34 +294,55 @@ class MainServiceHttpProxyHandler:
 
         try:
             # fetches the contents from the url
-            http_response = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents)
-        finally:
+            http_response_generator = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents, save_message = False, yield_response = True)
+
+            # tries to retrieve the generator value for the headers
+            generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
+
+            # unpacks the generator value into the value type
+            # and the http response
+            _generator_value_type, http_response = generator_value
+
+            # retrieves the status code form the http response
+            status_code = http_response.status_code
+
+            # retrieves the status message from the http response
+            status_message = http_response.status_message
+
+            # creates the headers map from the http response
+            headers_map = self._create_headers_map(request, http_response)
+
+            # sets the request status code
+            request.status_code = status_code
+
+            # sets the request status message
+            request.status_message = status_message
+
+            # sets the response headers map
+            request.response_headers_map = headers_map
+
+            # creates the handler to be used to close the sending of the response
+            close_handler = lambda: self.http_clients_pool.put(http_client)
+
+            # retrieves the http response size by casting
+            # the content length value
+            http_response_size = int(http_response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
+
+            # creates the chunk handler to be used to send the proxy response
+            # this is way it's possible to progressively send the message from the
+            chunk_handler = ChunkHandler(http_response_generator, http_response_size, close_handler)
+
+            # sets the request as mediated
+            request.mediated = True
+
+            # sets the mediated handler in the request
+            request.mediated_handler = chunk_handler
+        except:
             # puts the http client back into the http clients pool
             self.http_clients_pool.put(http_client)
 
-        # retrieves the status code form the http response
-        status_code = http_response.status_code
-
-        # retrieves the status message from the http response
-        status_message = http_response.status_message
-
-        # retrieves the data from the http response
-        data = http_response.received_message
-
-        # creates the headers map from the http response
-        headers_map = self._create_headers_map(request, http_response)
-
-        # sets the request status code
-        request.status_code = status_code
-
-        # sets the request status message
-        request.status_message = status_message
-
-        # sets the response headers map
-        request.response_headers_map = headers_map
-
-        # writes the (received) data to the request
-        request.write(data)
+            # re-raises the exception
+            raise
 
     def _create_http_client(self, arguments):
         # retrieves the main client http plugin
@@ -424,3 +459,147 @@ class MainServiceHttpProxyHandler:
 
         # returns the headers map
         return headers_map
+
+    def _get_generator_value(self, generator, value_type):
+        """
+        Retrieves the generator value for the given generator
+        and for the given (target) value type.
+
+        @type generator: Generator
+        @param generator: The generator to be used to
+        retrieves the "target" value.
+        @type value_type: String
+        @param value_type: The type of the value to be retrieved.
+        @rtype: Object
+        @return: The retrieved object according to the value type.
+        """
+
+        # iterates continuously
+        while True:
+            try:
+                # retrieves the "next" value from
+                # the generator
+                value = generator.next()
+            except StopIteration:
+                # returns none (nothing found)
+                return None
+
+            # retrieves the value type
+            type = value[0]
+
+            # in case the type matches the request
+            # value type
+            if type == value_type:
+                # breaks the loop (found
+                # the target item)
+                break
+
+        # returns the value
+        return value
+
+class ChunkHandler:
+    """
+    The chunk handler class.
+    Used to send a progressive response
+    to the client.
+    """
+
+    http_response_generator = None
+    """ The generator to be used to progressively retrieve the http response """
+
+    http_response_size = 0
+    """ The size of the http response """
+
+    close_handler = None
+    """ The handler to be called on closing """
+
+    def __init__(self, http_response_generator, http_response_size, close_handler):
+        """
+        Constructor of the class.
+
+        @type http_response_generator: Generator
+        @param http_response_generator: The generator to be
+        used in the http response.
+        @type http_response_size: int
+        @param http_response_size: The size in bytes of the
+        http reponse.
+        @type close_handler: Function
+        @param close_handler: The handler to be called on
+        closing.
+        """
+
+        self.http_response_generator = http_response_generator
+        self.http_response_size = http_response_size
+        self.close_handler = close_handler
+
+    def get_size(self):
+        """
+        Retrieves the size of the response being chunked.
+
+        @rtype: int
+        @return: The size of the response being chunked.
+        """
+
+        return self.http_response_size
+
+    def get_chunk(self, chunk_size = CHUNK_SIZE):
+        """
+        Retrieves the a chunk with the given size.
+
+        @rtype: chunk_size
+        @return: The size of the chunk to be retrieved.
+        @rtype: String
+        @return: A chunk with the given size.
+        """
+
+        # iterates continuously, searching
+        # for message data
+        while True:
+            try:
+                # retrieves the "next" value from
+                # the response generator
+                value = self.http_response_generator.next()
+            except StopIteration:
+                # returns none (nothing found)
+                return None
+
+            # in case an invalid value
+            # was retrieved
+            if not value:
+                # returns the value
+                return value
+
+            # retrieves the type of the value
+            # in order to check if it's valid
+            value_type = type(value)
+
+            # in case the value is not of type tuple
+            # (not important for now)
+            if not value_type == types.TupleType:
+                # continues the loop
+                continue
+
+            # retrieves the value type
+            _type = value[0]
+
+            # in case the type is message
+            # data
+            if _type == MESSAGE_DATA_VALUE:
+                # breaks the loop (found data)
+                break
+
+        # retrieves the message data
+        # value (buffer)
+        message_data = value[2]
+
+        # returns the message data
+        return message_data
+
+    def close(self):
+        """
+        Closes the chunked handler.
+        """
+
+        # calls the close handler (in case
+        # the handler is set)
+        self.close_handler and self.close_handler()
