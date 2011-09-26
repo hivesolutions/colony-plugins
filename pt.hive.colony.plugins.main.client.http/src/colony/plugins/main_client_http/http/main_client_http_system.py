@@ -629,8 +629,12 @@ class HttpClient:
 
         # continuous loop
         while True:
+            print "entrou receive"
+
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
+
+            print "saiu receive"
 
             # in case no valid data was received
             if data == "":
@@ -873,11 +877,17 @@ class HttpClient:
         while True:
             # iterates while the end of octets part is not found
             while octet_end_index == -1:
+                print "entrou receive 2"
+
                 # receives the data
                 data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
+                print "saiu receive 2"
+
                 # in case no valid data was received
                 if data == "":
+                    print "fez raise de excepcao 1"
+
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
 
@@ -930,11 +940,17 @@ class HttpClient:
             # iterates while the message size is lower
             # than the octet size plus the extra end of chunk characters
             while message_size < octet_end:
+                print "entrou receive 3"
+
                 # receives the data
                 data = self.client_connection.receive(response_timeout)
 
+                print "saiu receive 3"
+
                 # in case no valid data was received
                 if data == "":
+                    print "raise excepcao 3"
+
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
 
