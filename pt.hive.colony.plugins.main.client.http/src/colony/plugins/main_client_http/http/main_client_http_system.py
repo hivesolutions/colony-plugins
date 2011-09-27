@@ -625,6 +625,8 @@ class HttpClient:
 
         # continuous loop
         while True:
+            print "VAI RECEBER..."
+
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
@@ -1560,6 +1562,9 @@ class HttpRequest:
         for header_name, header_value in headers_ordered_map.items():
             # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
+
+        result.write("DAV: http://subversion.tigris.org/xmlns/dav/svn/depth\r\n")
+        result.write("DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo\r\n")
 
         # writes the end of the headers and the message
         # values into the result
