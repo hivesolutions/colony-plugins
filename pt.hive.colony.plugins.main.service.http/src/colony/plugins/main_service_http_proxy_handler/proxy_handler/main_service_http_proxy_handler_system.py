@@ -362,8 +362,6 @@ class MainServiceHttpProxyHandler:
             # (avoids pipe pollution)
             http_client.client_connection.close()
 
-            print "fez PUT"
-
             # puts the http client back into the http clients pool
             self.http_clients_pool.put(http_client)
 
