@@ -900,6 +900,8 @@ class ClientConnection:
                 # prints a debug message
                 self.client_plugin.debug("Received empty data (in read buffer), reconnecting socket")
 
+                print "VAI RECONECTAR"
+
                 # reconnects the connection socket
                 self._reconnect_connection_socket()
 
@@ -912,6 +914,8 @@ class ClientConnection:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [self.connection_socket], [], 1)
             except:
+                print "FExOU CONEXAO"
+
                 # closes the connection
                 self.close()
 
@@ -984,6 +988,8 @@ class ClientConnection:
                 # in case the number of bytes (pending)
                 # is zero (the transfer is complete)
                 if number_bytes == 0:
+                    print "FEZ BREAK (ENVIOU TODOS OS BYTES)"
+
                     # breaks the cycle
                     break
                 else:
