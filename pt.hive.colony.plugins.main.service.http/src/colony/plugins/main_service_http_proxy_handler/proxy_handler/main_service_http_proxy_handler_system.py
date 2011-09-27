@@ -94,9 +94,6 @@ HOST_VALUE = "Host"
 LOCATION_VALUE = "Location"
 """ The location value """
 
-TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
-""" The transer encoding value """
-
 CONTENT_LENGTH_VALUE = "Content-Length"
 """ The content length value """
 
@@ -111,9 +108,7 @@ REMOVAL_HEADERS = (
 )
 """ The removal headers list """
 
-REMOVAL_RESPONSE_HEADERS = (
-    TRANSFER_ENCODING_VALUE,
-)
+REMOVAL_RESPONSE_HEADERS = ()
 """ The removal response headers list """
 
 class MainServiceHttpProxyHandler:
