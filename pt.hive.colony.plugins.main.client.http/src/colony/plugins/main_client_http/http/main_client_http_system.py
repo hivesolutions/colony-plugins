@@ -569,8 +569,6 @@ class HttpClient:
         # sends the result value
         self.client_connection.send(result_value)
 
-        print "ENVIOU: %s" % result_value
-
         # returns the request
         return request
 
@@ -594,8 +592,6 @@ class HttpClient:
         @rtype: HttpResponse
         @return: The response from the sent request.
         """
-
-        print "RETRIEVEING RESPONSE..."
 
         # creates the string buffer for the message
         message = colony.libs.string_buffer_util.StringBuffer()
@@ -627,12 +623,8 @@ class HttpClient:
 
         # continuous loop
         while True:
-            print "VAI RECEBER..."
-
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
-
-            print "RECEBEU_A_B_C_D_E_F_g:_I %s" % data
 
             # in case no valid data was received
             if data == "":
@@ -642,8 +634,6 @@ class HttpClient:
                     undefined_content_length_finished = True
                 # otherwise the message size must be defined
                 else:
-                    print "RECEBEU EMPTY DATA !!!!!!!"
-
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
 
@@ -856,8 +846,6 @@ class HttpClient:
 
                     # breaks the loop
                     break
-
-        print "CHEGOU A PARTE FINAL DO YIELD"
 
         # returns the response
         yield response
