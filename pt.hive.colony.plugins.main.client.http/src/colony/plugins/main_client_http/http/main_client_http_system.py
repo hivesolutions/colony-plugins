@@ -160,9 +160,6 @@ CONTENT_TYPE_VALUE = "Content-Type"
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
 
-KEEP_ALIVE_LOWER_VALUE = "keep-alive"
-""" The keep alive value """
-
 CONNECTION_VALUE = "Connection"
 """ The connection value """
 
@@ -1562,7 +1559,7 @@ class HttpRequest:
         headers_ordered_map[HOST_VALUE] = real_host
         headers_ordered_map[USER_AGENT_VALUE] = USER_AGENT_IDENTIFIER
         headers_ordered_map[KEEP_ALIVE_VALUE] = str(DEFAULT_KEEP_ALIVE_TIMEOUT)
-        headers_ordered_map[CONNECTION_VALUE] = KEEP_ALIVE_LOWER_VALUE
+        headers_ordered_map[CONNECTION_VALUE] = KEEP_ALIVE_VALUE
 
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
