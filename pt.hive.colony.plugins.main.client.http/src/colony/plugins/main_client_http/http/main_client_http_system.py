@@ -1558,7 +1558,7 @@ class HttpRequest:
         # sets the base request header values
         headers_ordered_map[HOST_VALUE] = real_host
         headers_ordered_map[USER_AGENT_VALUE] = USER_AGENT_IDENTIFIER
-        headers_ordered_map[KEEP_ALIVE_VALUE] = str(DEFAULT_KEEP_ALIVE_TIMEOUT)
+        #headers_ordered_map[KEEP_ALIVE_VALUE] = str(DEFAULT_KEEP_ALIVE_TIMEOUT)
         headers_ordered_map[CONNECTION_VALUE] = KEEP_ALIVE_VALUE
 
         # extends the headers ordered map with the headers map
