@@ -859,6 +859,8 @@ class HttpClient:
                     # breaks the loop
                     break
 
+        print "CHEGOU A PARTE FINAL DO YIELD"
+
         # returns the response
         yield response
 
