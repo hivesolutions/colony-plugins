@@ -570,6 +570,9 @@ class ChunkHandler:
     close_handler = None
     """ The handler to be called on closing """
 
+    _closed = False
+    """ The falg that controls the close state of the chunk handler """
+
     _empty_connection = False
     """ The flag controlling if the connection is empty (all data parsed) """
 
@@ -611,6 +614,13 @@ class ChunkHandler:
         @rtype: String
         @return: A chunk with the given size.
         """
+
+        # in case the chunk handler is
+        # currently closed
+        if self._closed:
+            # returns none (nothing to be retrieved
+            # from a closed chunk handler)
+            return None
 
         # iterates continuously, searching
         # for message data
@@ -662,6 +672,14 @@ class ChunkHandler:
         """
         Closes the chunked handler.
         """
+
+        # in case the chunk handler is already closed
+        if self._closed:
+            # returns immediately
+            return
+
+        # sets the closed flag
+        self._closed = True
 
         # calls the close handler (in case
         # the handler is set) the empty connection
