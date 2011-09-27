@@ -1324,11 +1324,6 @@ class HttpClientServiceHandler:
         @param exception: The exception to be sent.
         """
 
-        print "Exception in user code:"
-        print '-'*60
-        traceback.print_exc(file=sys.stdout)
-        print '-'*60
-
         # retrieves the preferred error handlers list
         preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 

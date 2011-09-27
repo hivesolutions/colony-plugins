@@ -364,12 +364,8 @@ class MainServiceHttpProxyHandler:
         # target and the path
         complete_path = proxy_target + path
 
-        print "vai Tentar fazer POP"
-
         # retrieves the http client from the http clients pool
         http_client = self.http_clients_pool.pop(True)
-
-        print "fez POP"
 
         # in case no http client is available an http client
         # unavailable exception is raised
@@ -417,8 +413,6 @@ class MainServiceHttpProxyHandler:
                 # in case the connection is not empty closes the
                 # client connection in the http client (avoid pipe pollution)
                 http_client.client_connection.close()
-
-                print "fez PUTI"
 
                 # puts the http client back into the http
                 # clients pool
