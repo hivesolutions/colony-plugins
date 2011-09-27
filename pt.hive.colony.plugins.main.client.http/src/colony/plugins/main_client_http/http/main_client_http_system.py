@@ -181,6 +181,9 @@ LOCATION_VALUE = "Location"
 BASIC_VALUE = "Basic"
 """ The basic value """
 
+NO_CACHE_VALUE = "no-cache"
+""" The no cache value """
+
 PROTOCOL_VERSION_VALUE = "protocol_version"
 """ The protocol version value """
 
@@ -1523,7 +1526,7 @@ class HttpRequest:
 
         # in case no cache is set
         if self.no_cache:
-            headers_ordered_map[CACHE_CONTROL_VALUE] = "no-cache"
+            headers_ordered_map[CACHE_CONTROL_VALUE] = NO_CACHE_VALUE
 
         # sets the base request header values
         headers_ordered_map[HOST_VALUE] = real_host
