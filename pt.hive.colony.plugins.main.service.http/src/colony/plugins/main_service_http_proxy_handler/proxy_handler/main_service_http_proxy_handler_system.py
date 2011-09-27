@@ -111,10 +111,10 @@ REMOVAL_HEADERS = (
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transfer encoding value """
 
-REMOVAL_RESPONSE_HEADERS = (
-    TRANSFER_ENCODING_VALUE,
-)
-#REMOVAL_RESPONSE_HEADERS = ()
+#REMOVAL_RESPONSE_HEADERS = (
+#    TRANSFER_ENCODING_VALUE,
+#)
+REMOVAL_RESPONSE_HEADERS = ()
 """ The removal response headers list """
 
 class MainServiceHttpProxyHandler:
@@ -259,7 +259,7 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
-    def handle_reverse_request(self, request):
+    def _handle_reverse_request(self, request):
         """
         Handles the given "reverse" request.
         Handling the "reverse" request implies changing it
@@ -329,7 +329,7 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
-    def _handle_reverse_request(self, request):
+    def handle_reverse_request(self, request):
         """
         Handles the given "reverse" request.
         Handling the "reverse" request implies changing it
