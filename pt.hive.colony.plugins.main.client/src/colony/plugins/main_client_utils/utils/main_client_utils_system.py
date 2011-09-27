@@ -769,7 +769,7 @@ class ClientConnection:
         """
 
         # retrieves the request timeout
-        request_timeout = request_timeout and request_timeout or 60
+        request_timeout = request_timeout and request_timeout or self.connection_request_timeout
 
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
