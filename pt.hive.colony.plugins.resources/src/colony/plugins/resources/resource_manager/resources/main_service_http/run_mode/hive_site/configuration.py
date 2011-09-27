@@ -356,6 +356,7 @@ configuration = {
             "allow_redirection" : False,
             "request_properties" : {
                 "proxy_type" : "reverse",
+                "proxy_service_type" : "async",
                 "proxy_target" : "http://svn.hive.pt:8080"
             }
         },
@@ -364,6 +365,7 @@ configuration = {
             "allow_redirection" : False,
             "request_properties" : {
                 "proxy_type" : "reverse",
+                "proxy_service_type" : "async",
                 "proxy_target" : "http://trac.hive.pt:8080"
             }
         }
