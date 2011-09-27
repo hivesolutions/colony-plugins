@@ -409,7 +409,7 @@ class MainServiceHttpProxyHandler:
                 # TODO TENHO DE VER MUITO BEM ISTO
                 # E TER EM CONSIDERACAO isto no cliente de http
                 # SE connection: close entao fecho a conexao
-                # -----------------------------------
+                # ------------------------------------
 
                 # in case the connection is not empty closes the
                 # client connection in the http client (avoid pipe pollution)
