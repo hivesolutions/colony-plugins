@@ -626,6 +626,8 @@ class HttpClient:
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
+            print "RECEBEU: %s" % data
+
             # in case no valid data was received
             if data == "":
                 # in case the message size is undefined
