@@ -73,6 +73,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.0.0")
     ]
     main_modules = [
+        "main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_exceptions",
         "main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_system"
     ]
 

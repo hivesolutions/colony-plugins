@@ -41,6 +41,8 @@ import types
 
 import colony.libs.map_util
 
+import main_service_http_proxy_handler_exceptions
+
 HANDLER_NAME = "proxy"
 """ The handler name """
 
@@ -50,7 +52,7 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_PROXY_TARGET = ""
 """ The default proxy target """
 
-DEFAULT_ELEMENT_POOL_SIZE = 10
+DEFAULT_ELEMENT_POOL_SIZE = 64
 """ The default element pool size """
 
 CHUNK_SIZE = 4096
@@ -295,8 +297,9 @@ class MainServiceHttpProxyHandler:
         # retrieves the http client from the http clients pool
         http_client = self.http_clients_pool.pop(True)
 
-        if not http_client:
-            raise Exception("No client available")
+        # in case no http client is available an http client
+        # unavailable exception is raised
+        if not http_client: raise main_service_http_proxy_handler_exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
