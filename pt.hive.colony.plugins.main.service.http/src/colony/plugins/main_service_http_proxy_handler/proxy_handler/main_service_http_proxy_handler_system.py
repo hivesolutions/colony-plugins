@@ -163,14 +163,14 @@ class MainServiceHttpProxyHandler:
             REVERSE_VALUE : self.handle_reverse_request
         }
 
-        #self.forward_handler_methods_map = {
-        #    SYNC_VALUE : self.handle_reverse_request_sync,
-        #    ASYNC_VALUE : self.handle_reverse_request_async
-        #}
+        self.forward_handler_methods_map = {
+            SYNC_VALUE : self._handle_forward_request_sync,
+            ASYNC_VALUE : self._handle_forward_request_async
+        }
 
         self.reverse_handler_methods_map = {
-            SYNC_VALUE : self.handle_reverse_request_sync,
-            ASYNC_VALUE : self.handle_reverse_request_async
+            SYNC_VALUE : self._handle_reverse_request_sync,
+            ASYNC_VALUE : self._handle_reverse_request_async
         }
 
     def load_handler(self):
@@ -235,6 +235,33 @@ class MainServiceHttpProxyHandler:
         and redirecting (externally) it according to the defined rules.
         Handling this "forward" request implies that the
         client defines the correct path for the request.
+        The forward proxy is useful for things like traffic tracking
+        publicity and other manipulations to the normal web traffic.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
+        # retrieves the proxy service type
+        # (type of handling strategy)
+        proxy_service_type = request.properties.get(PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE)
+
+        # retrieves the forward handler method
+        forward_handler_method = self.forward_handler_methods_map.get(proxy_service_type, None)
+
+        # in case the forward handler method is not
+        # defined (invalid proxy type)
+        if not forward_handler_method:
+            # raises an invalid http proxy runtime exception
+            raise main_service_http_proxy_handler_exceptions.HttpProxyRuntimeException("invalid proxy service type (for forward proxy)")
+
+        # calls the forward handler method
+        forward_handler_method(request)
+
+    def _handle_forward_request_sync(self, request):
+        """
+        Handles the given "forward" request using a
+        synchronous strategy (more memory usage).
 
         @type request: HttpRequest
         @param request: The http request to be handled.
@@ -259,7 +286,11 @@ class MainServiceHttpProxyHandler:
         complete_path = path
 
         # retrieves the http client from the http clients pool
-        http_client = self.http_clients_pool.pop()
+        http_client = self.http_clients_pool.pop(True)
+
+        # in case no http client is available an http client
+        # unavailable exception is raised
+        if not http_client: raise main_service_http_proxy_handler_exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -292,7 +323,120 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
+    def _handle_forward_request_async(self, request):
+        """
+        Handles the given "forward" request using an
+        asynchronous strategy (less memory usage).
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
+        # retrieves the resource base path
+        resource_base_path = request.get_resource_path_decoded()
+
+        # calculates the real path difference
+        path = resource_base_path
+
+        # retrieves the request attributes map
+        request_attributes_map = request.attributes_map
+
+        # creates the request headers from the request
+        request_headers = self._create_request_headers(request)
+
+        # reads the request contents
+        request_contents = request.read()
+
+        # creates the complete path from the proxy path
+        complete_path = path
+
+        # retrieves the http client from the http clients pool
+        http_client = self.http_clients_pool.pop(True)
+
+        # in case no http client is available an http client
+        # unavailable exception is raised
+        if not http_client: raise main_service_http_proxy_handler_exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
+
+        try:
+            # fetches the contents from the url
+            http_response_generator = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents, save_message = False, yield_response = True)
+
+            # tries to retrieve the generator value for the headers
+            generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
+
+            # unpacks the generator value into the value type
+            # and the http response
+            _generator_value_type, http_response = generator_value
+
+            # retrieves the status code form the http response
+            status_code = http_response.status_code
+
+            # retrieves the status message from the http response
+            status_message = http_response.status_message
+
+            # creates the headers map from the http response
+            headers_map = http_response.headers_map
+
+            # sets the request status code
+            request.status_code = status_code
+
+            # sets the request status message
+            request.status_message = status_message
+
+            # sets the response headers map
+            request.response_headers_map = headers_map
+
+            # creates the handler to be used to close the sending of the response
+            # this handler ensures that the client is put back to the http clients
+            # pool and that the connection is kept clean (avoids pipe pollution)
+            def close_handler(empty_connection):
+                # closes the client connection in the http
+                # client (avoids pipe pollution)
+                http_client.client_connection.close()
+
+                # puts the http client back into the http
+                # clients pool
+                self.http_clients_pool.put(http_client)
+
+            # retrieves the http response size by casting
+            # the content length value (if possible)
+            http_response_size = self._get_http_response_size(http_response)
+
+            # creates the chunk handler to be used to send the proxy response
+            # this is way it's possible to progressively send the message from the
+            chunk_handler = ChunkHandler(http_response_generator, http_response_size, close_handler)
+
+            # sets the request as mediated
+            request.mediated = True
+
+            # sets the mediated handler in the request
+            request.mediated_handler = chunk_handler
+        except:
+            # closes the http client connection, there's
+            # probably data pending in the connection
+            # (avoids pipe pollution)
+            http_client.client_connection.close()
+
+            # puts the http client back into the http clients pool
+            self.http_clients_pool.put(http_client)
+
+            # re-raises the exception
+            raise
+
     def handle_reverse_request(self, request):
+        """
+        Handles the given "reverse" request.
+        Handling the "reverse" request implies changing it
+        and redirecting it (locally) according to the defined rules.
+        Handling this "reverse" request should be considered
+        transparent to the client, the client does not defines
+        any additional path and it should think that the communication
+        his being made with the current host.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         # retrieves the proxy service type
         # (type of handling strategy)
         proxy_service_type = request.properties.get(PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE)
@@ -309,15 +453,10 @@ class MainServiceHttpProxyHandler:
         # calls the reverse handler method
         reverse_handler_method(request)
 
-    def handle_reverse_request_sync(self, request):
+    def _handle_reverse_request_sync(self, request):
         """
-        Handles the given "reverse" request.
-        Handling the "reverse" request implies changing it
-        and redirecting it (locally) according to the defined rules.
-        Handling this "reverse" request should be considered
-        transparent to the client, the client does not defines
-        any additional path and it should think that the communication
-        his being made with the current host.
+        Handles the given "reverse" request using a
+        synchronous strategy (more memory usage).
 
         @type request: HttpRequest
         @param request: The http request to be handled.
@@ -346,7 +485,11 @@ class MainServiceHttpProxyHandler:
         complete_path = proxy_target + path
 
         # retrieves the http client from the http clients pool
-        http_client = self.http_clients_pool.pop()
+        http_client = self.http_clients_pool.pop(True)
+
+        # in case no http client is available an http client
+        # unavailable exception is raised
+        if not http_client: raise main_service_http_proxy_handler_exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -379,15 +522,10 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
-    def handle_reverse_request_async(self, request):
+    def _handle_reverse_request_async(self, request):
         """
-        Handles the given "reverse" request.
-        Handling the "reverse" request implies changing it
-        and redirecting it (locally) according to the defined rules.
-        Handling this "reverse" request should be considered
-        transparent to the client, the client does not defines
-        any additional path and it should think that the communication
-        his being made with the current host.
+        Handles the given "reverse" request using an
+        asynchronous strategy (less memory usage).
 
         @type request: HttpRequest
         @param request: The http request to be handled.
