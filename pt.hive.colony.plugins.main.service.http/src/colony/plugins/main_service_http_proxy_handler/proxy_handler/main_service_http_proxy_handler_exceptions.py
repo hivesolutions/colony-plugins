@@ -47,6 +47,32 @@ class MainServiceHttpProxyHandlerException(colony.base.plugin_system_exceptions.
     message = None
     """ The exception's message """
 
+class HttpProxyRuntimeException(MainServiceHttpProxyHandlerException):
+    """
+    The http proxy runtime exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpProxyHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Http proxy runtime: %s" % self.message
+
 class HttpClientUnavailableException(MainServiceHttpProxyHandlerException):
     """
     The http client unavailable exception class.

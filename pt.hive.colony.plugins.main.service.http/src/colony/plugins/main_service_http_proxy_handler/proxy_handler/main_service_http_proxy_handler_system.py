@@ -52,6 +52,9 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_PROXY_TARGET = ""
 """ The default proxy target """
 
+DEFAULT_PROXY_SERVICE_TYPE = "sync"
+""" The default proxy target """
+
 DEFAULT_ELEMENT_POOL_SIZE = 64
 """ The default element pool size """
 
@@ -73,6 +76,9 @@ PROXY_TYPE_VALUE = "proxy_type"
 PROXY_TARGET_VALUE = "proxy_target"
 """ The proxy target value """
 
+PROXY_SERVICE_TYPE_VALUE = "proxy_service_type"
+""" The proxy service type value """
+
 FORWARD_VALUE = "forward"
 """ The forward value """
 
@@ -84,6 +90,12 @@ HEADERS_VALUE = "headers"
 
 MESSAGE_DATA_VALUE = "message_data"
 """ The message data value """
+
+SYNC_VALUE = "sync"
+""" The sync value """
+
+ASYNC_VALUE = "async"
+""" The async value """
 
 VIA_VALUE = "Via"
 """ The via value """
@@ -111,10 +123,9 @@ REMOVAL_HEADERS = (
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transfer encoding value """
 
-#REMOVAL_RESPONSE_HEADERS = (
-#    TRANSFER_ENCODING_VALUE,
-#)
-REMOVAL_RESPONSE_HEADERS = ()
+REMOVAL_RESPONSE_HEADERS = (
+    TRANSFER_ENCODING_VALUE,
+)
 """ The removal response headers list """
 
 class MainServiceHttpProxyHandler:
@@ -127,6 +138,12 @@ class MainServiceHttpProxyHandler:
 
     request_handler_methods_map = {}
     """ The request handler method map """
+
+    forward_handler_methods_map = {}
+    """ The forward handler method map """
+
+    reverse_handler_methods_map = {}
+    """ The reverse handler method map """
 
     http_clients_pool = None
     """ The the pool http clients to be used """
@@ -144,6 +161,16 @@ class MainServiceHttpProxyHandler:
         self.request_handler_methods_map = {
             FORWARD_VALUE : self.handle_forward_request,
             REVERSE_VALUE : self.handle_reverse_request
+        }
+
+        #self.forward_handler_methods_map = {
+        #    SYNC_VALUE : self.handle_reverse_request_sync,
+        #    ASYNC_VALUE : self.handle_reverse_request_async
+        #}
+
+        self.reverse_handler_methods_map = {
+            SYNC_VALUE : self.handle_reverse_request_sync,
+            ASYNC_VALUE : self.handle_reverse_request_async
         }
 
     def load_handler(self):
@@ -190,7 +217,13 @@ class MainServiceHttpProxyHandler:
         proxy_type = request.properties.get(PROXY_TYPE_VALUE, FORWARD_VALUE)
 
         # retrieves the request handler method
-        request_handler_method = self.request_handler_methods_map[proxy_type]
+        request_handler_method = self.request_handler_methods_map.get(proxy_type, None)
+
+        # in case the request handler method is not
+        # defined (invalid proxy type)
+        if not request_handler_method:
+            # raises an invalid http proxy runtime exception
+            raise main_service_http_proxy_handler_exceptions.HttpProxyRuntimeException("invalid proxy type")
 
         # calls the request handler method
         request_handler_method(request)
@@ -259,7 +292,24 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
-    def _handle_reverse_request(self, request):
+    def handle_reverse_request(self, request):
+        # retrieves the proxy service type
+        # (type of handling strategy)
+        proxy_service_type = request.properties.get(PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE)
+
+        # retrieves the reverse handler method
+        reverse_handler_method = self.reverse_handler_methods_map.get(proxy_service_type, None)
+
+        # in case the reverse handler method is not
+        # defined (invalid proxy type)
+        if not reverse_handler_method:
+            # raises an invalid http proxy runtime exception
+            raise main_service_http_proxy_handler_exceptions.HttpProxyRuntimeException("invalid proxy service type (for reverse proxy)")
+
+        # calls the reverse handler method
+        reverse_handler_method(request)
+
+    def handle_reverse_request_sync(self, request):
         """
         Handles the given "reverse" request.
         Handling the "reverse" request implies changing it
@@ -315,7 +365,7 @@ class MainServiceHttpProxyHandler:
         data = http_response.received_message
 
         # creates the headers map from the http response
-        headers_map = self._create_headers_map(request, http_response)
+        headers_map = self._create_headers_map(request, http_response, REMOVAL_RESPONSE_HEADERS)
 
         # sets the request status code
         request.status_code = status_code
@@ -329,7 +379,7 @@ class MainServiceHttpProxyHandler:
         # writes the (received) data to the request
         request.write(data)
 
-    def handle_reverse_request(self, request):
+    def handle_reverse_request_async(self, request):
         """
         Handles the given "reverse" request.
         Handling the "reverse" request implies changing it
@@ -405,14 +455,8 @@ class MainServiceHttpProxyHandler:
             # this handler ensures that the client is put back to the http clients
             # pool and that the connection is kept clean (avoids pipe pollution)
             def close_handler(empty_connection):
-                # ------------------------------------
-                # TODO TENHO DE VER MUITO BEM ISTO
-                # E TER EM CONSIDERACAO isto no cliente de http
-                # SE connection: close entao fecho a conexao
-                # ------------------------------------
-
-                # in case the connection is not empty closes the
-                # client connection in the http client (avoid pipe pollution)
+                # closes the client connection in the http
+                # client (avoids pipe pollution)
                 http_client.client_connection.close()
 
                 # puts the http client back into the http
@@ -485,7 +529,7 @@ class MainServiceHttpProxyHandler:
         # returns the request headers
         return request_headers
 
-    def _create_headers_map(self, request, http_response):
+    def _create_headers_map(self, request, http_response, removal_response_headers = ()):
         # retrieves the url parser plugin
         url_parser_plugin = self.main_service_http_proxy_handler_plugin.url_parser_plugin
 
@@ -496,7 +540,7 @@ class MainServiceHttpProxyHandler:
         colony.libs.map_util.map_copy(http_response.headers_map, headers_map)
 
         # iterates over all the response headers to be removed
-        for removal_response_header in REMOVAL_RESPONSE_HEADERS:
+        for removal_response_header in removal_response_headers:
             # in case the removal response header does not exist
             # in the headers map, no need to continue
             if not removal_response_header in headers_map:
