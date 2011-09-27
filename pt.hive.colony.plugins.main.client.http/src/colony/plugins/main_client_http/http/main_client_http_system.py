@@ -917,6 +917,8 @@ class HttpClient:
 
             # in case the octet size is zero (end of chunk encoding)
             if octet_size == 0:
+                print "fez break"
+
                 # breaks the loop
                 break
 
@@ -997,6 +999,8 @@ class HttpClient:
 
             # tries to find the octet end index
             octet_end_index = message_value.find("\r\n")
+
+        print "CHEGOU AO FINAL DO CHUNKED"
 
         # retrieves the contents value
         contents_value = contents.get_value()
