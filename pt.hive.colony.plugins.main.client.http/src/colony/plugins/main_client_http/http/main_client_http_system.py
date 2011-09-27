@@ -874,6 +874,10 @@ class HttpClient:
         # writes the message value to the message
         message.write(message_value)
 
+        # calls the message data handler (message data event)
+        self._call_handler_data("message_data", handlers_map, response, message_value)
+        if yield_response: yield "message_data", response, message_value
+
         # tries to find the octet end index
         octet_end_index = message_value.find("\r\n")
 
@@ -904,6 +908,10 @@ class HttpClient:
                 # calls the data handler (data event)
                 self._call_handler_data("data", handlers_map, response, data)
                 if yield_response: yield "data", response, data
+
+                # calls the message data handler (message data event)
+                self._call_handler_data("message_data", handlers_map, response, data)
+                if yield_response: yield "message_data", response, data
 
                 # retrieves the message value
                 message_value = message.get_value()
@@ -974,6 +982,10 @@ class HttpClient:
                 self._call_handler_data("data", handlers_map, response, data)
                 if yield_response: yield "data", response, data
 
+                # calls the message data handler (message data event)
+                self._call_handler_data("message_data", handlers_map, response, data)
+                if yield_response: yield "message_data", response, data
+
             # retrieves the message value
             message_value = message.get_value()
 
@@ -982,10 +994,6 @@ class HttpClient:
 
             # writes the contents value in the contents (buffer)
             save_message and contents.write(contents_value)
-
-            # calls the message data handler (message data event)
-            self._call_handler_data("message_data", handlers_map, response, contents_value)
-            if yield_response: yield "message_data", response, contents_value
 
             # resets the message (buffer)
             message.reset()
