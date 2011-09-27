@@ -776,8 +776,6 @@ class ClientConnection:
 
         # in case the read buffer is not empty
         if self._read_buffer:
-            print "TEM READ BUFFER"
-
             # retrieves the read buffer element
             read_buffer_element = self._read_buffer.pop(0)
 
@@ -796,8 +794,6 @@ class ClientConnection:
                 # inserts the read buffer element remaining in the read buffer
                 self._read_buffer.insert(0, read_buffer_element_remaining)
 
-            print "VAI RETORNAR READ BUFER"
-
             # returns the read buffer element
             return read_buffer_element
 
@@ -806,8 +802,6 @@ class ClientConnection:
 
         # iterates continuously
         while True:
-            print "VAI ENTRAR NO SELECT"
-
             try:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
@@ -818,8 +812,6 @@ class ClientConnection:
                 # raises the request closed exception
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
-            print "VAI SAIR DO SELECT"
-
             if selected_values == ([], [], []):
                 # closes the connection
                 self.close()
@@ -829,8 +821,6 @@ class ClientConnection:
             try:
                 # iterates continuously
                 while True:
-                    print "vai MESMO ler"
-
                     # receives the data in chunks
                     data = self.connection_socket.recv(chunk_size)
 
@@ -862,8 +852,6 @@ class ClientConnection:
                 # otherwise an exception should be
                 # raised
                 else:
-                    print "ESGOTOU AS RETRIES"
-
                     # processes the exception
                     if hasattr(self.connection_socket, PROCESS_EXCEPTION_VALUE) and self.connection_socket.process_exception(exception):
                         # continues the loop
@@ -912,8 +900,6 @@ class ClientConnection:
                 # prints a debug message
                 self.client_plugin.debug("Received empty data (in read buffer), reconnecting socket")
 
-                print "VAI RECONECTAR"
-
                 # reconnects the connection socket
                 self._reconnect_connection_socket()
 
@@ -926,8 +912,6 @@ class ClientConnection:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [self.connection_socket], [], 1)
             except:
-                print "FExOU CONEXAO"
-
                 # closes the connection
                 self.close()
 
@@ -938,12 +922,8 @@ class ClientConnection:
             # be received
             if not selected_values[0] == []:
                 try:
-                    print "RECEBEU DATA no WRITE !!!!"
-
                     # receives the data from the socket
                     data = self.connection_socket.recv(CHUNK_SIZE)
-
-                    print "A DATA " + str(data)
 
                     # in case the data is invalid
                     if not data:
@@ -1004,8 +984,6 @@ class ClientConnection:
                 # in case the number of bytes (pending)
                 # is zero (the transfer is complete)
                 if number_bytes == 0:
-                    print "FEZ BREAK (ENVIOU TODOS OS BYTES)"
-
                     # breaks the cycle
                     break
                 else:
