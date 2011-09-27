@@ -193,7 +193,7 @@ DEFAULT_PORTS = (80, 443)
 DEFAULT_PERSISTENT = True
 """ The default persistent """
 
-DEFAULT_KEEP_ALIVE_TIMEOUT = 115;
+DEFAULT_KEEP_ALIVE_TIMEOUT = 115
 """ The default keep alive timeout """
 
 DEFAULT_SOCKET_PARAMETERS = {}
