@@ -1554,7 +1554,7 @@ class HttpRequest:
         headers_ordered_map[ACCEPT_VALUE] = "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7"
         headers_ordered_map[ACCEPT_LANGUAGE_VALUE] = "en-us,en;q=0.5"
         headers_ordered_map[ACCEPT_CHARSET_VALUE] = "iso-8859-1,utf-8;q=0.7,*;q=0.7"
-        headers_ordered_map[KEEP_ALIVE_VALUE] = "115"
+        #headers_ordered_map[KEEP_ALIVE_VALUE] = "115"
         headers_ordered_map[CONNECTION_VALUE] = "keep-alive"
 
         # extends the headers ordered map with the headers map
