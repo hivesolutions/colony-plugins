@@ -628,7 +628,7 @@ class HttpClient:
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
-            print "RECEBEU_A: %s" % data
+            print "RECEBEU_A_B: %s" % data
 
             # in case no valid data was received
             if data == "":
