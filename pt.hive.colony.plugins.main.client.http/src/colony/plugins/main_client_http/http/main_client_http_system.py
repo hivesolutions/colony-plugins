@@ -595,6 +595,8 @@ class HttpClient:
         @return: The response from the sent request.
         """
 
+        print "RETRIEVEING RESPONSE..."
+
         # creates the string buffer for the message
         message = colony.libs.string_buffer_util.StringBuffer()
 
