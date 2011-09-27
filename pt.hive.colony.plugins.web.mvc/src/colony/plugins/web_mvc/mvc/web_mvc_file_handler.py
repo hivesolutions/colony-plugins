@@ -231,6 +231,9 @@ class ChunkHandler:
     file_size = None
     """ The file size """
 
+    _closed = False
+    """ The falg that controls the close state of the chunk handler """
+
     def __init__(self, file, file_size):
         """
         Constructor of the class.
@@ -297,12 +300,27 @@ class ChunkHandler:
         @return: A chunk with the given size.
         """
 
+        # in case the chunk handler is
+        # currently closed
+        if self._closed:
+            # returns none (nothing to be retrieved
+            # from a closed chunk handler)
+            return None
+
         return self.file.read(chunk_size)
 
     def close(self):
         """
         Closes the chunked handler.
         """
+
+        # in case the chunk handler is already closed
+        if self._closed:
+            # returns immediately
+            return
+
+        # sets the closed flag
+        self._closed = True
 
         # closes the file
         self.file.close()
