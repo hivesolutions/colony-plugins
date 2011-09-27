@@ -938,8 +938,12 @@ class ClientConnection:
             # be received
             if not selected_values[0] == []:
                 try:
+                    print "RECEBEU DATA no WRITE !!!!"
+
                     # receives the data from the socket
                     data = self.connection_socket.recv(CHUNK_SIZE)
+
+                    print "A DATA " + str(data)
 
                     # in case the data is invalid
                     if not data:
