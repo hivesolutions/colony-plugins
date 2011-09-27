@@ -1525,25 +1525,11 @@ class HttpRequest:
         if self.no_cache:
             headers_ordered_map[CACHE_CONTROL_VALUE] = "no-cache"
 
-        ACCEPT_VALUE = "Accept"
-        """ The accept value """
-
-        ACCEPT_LANGUAGE_VALUE = "Accept-Language"
-        """ The accept language value """
-
-        ACCEPT_CHARSET_VALUE = "Accept-Charset"
-        """ The accept charset value """
-
         # sets the base request header values
         headers_ordered_map[HOST_VALUE] = real_host
         headers_ordered_map[USER_AGENT_VALUE] = USER_AGENT_IDENTIFIER
-        #headers_ordered_map[KEEP_ALIVE_VALUE] = str(DEFAULT_KEEP_ALIVE_TIMEOUT)
-        #headers_ordered_map[CONNECTION_VALUE] = KEEP_ALIVE_VALUE
-        headers_ordered_map[ACCEPT_VALUE] = "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7"
-        headers_ordered_map[ACCEPT_LANGUAGE_VALUE] = "en-us,en;q=0.5"
-        headers_ordered_map[ACCEPT_CHARSET_VALUE] = "iso-8859-1,utf-8;q=0.7,*;q=0.7"
-        #headers_ordered_map[KEEP_ALIVE_VALUE] = "115"
-        headers_ordered_map[CONNECTION_VALUE] = "keep-alive"
+        headers_ordered_map[KEEP_ALIVE_VALUE] = str(DEFAULT_KEEP_ALIVE_TIMEOUT)
+        headers_ordered_map[CONNECTION_VALUE] = KEEP_ALIVE_VALUE
 
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
@@ -1552,9 +1538,6 @@ class HttpRequest:
         for header_name, header_value in headers_ordered_map.items():
             # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
-
-        result.write("DAV: http://subversion.tigris.org/xmlns/dav/svn/depth\r\n")
-        result.write("DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo\r\n")
 
         # writes the end of the headers and the message
         # values into the result
