@@ -108,7 +108,12 @@ REMOVAL_HEADERS = (
 )
 """ The removal headers list """
 
-REMOVAL_RESPONSE_HEADERS = ()
+TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
+""" The transfer encoding value """
+
+REMOVAL_RESPONSE_HEADERS = (
+    TRANSFER_ENCODING_VALUE,
+)
 """ The removal response headers list """
 
 class MainServiceHttpProxyHandler:
@@ -254,6 +259,76 @@ class MainServiceHttpProxyHandler:
         request.write(data)
 
     def handle_reverse_request(self, request):
+        """
+        Handles the given "reverse" request.
+        Handling the "reverse" request implies changing it
+        and redirecting it (locally) according to the defined rules.
+        Handling this "reverse" request should be considered
+        transparent to the client, the client does not defines
+        any additional path and it should think that the communication
+        his being made with the current host.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
+        # retrieves the (reverse) proxy target
+        proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
+
+        # retrieves the resource base path
+        resource_base_path = request.get_resource_path_decoded()
+
+        # calculates the real path difference
+        path = resource_base_path.replace(request.handler_path, "", 1)
+
+        # retrieves the request attributes map
+        request_attributes_map = request.attributes_map
+
+        # creates the request headers from the request
+        request_headers = self._create_request_headers(request)
+
+        # reads the request contents
+        request_contents = request.read()
+
+        # creates the complete path from the proxy
+        # target and the path
+        complete_path = proxy_target + path
+
+        # retrieves the http client from the http clients pool
+        http_client = self.http_clients_pool.pop()
+
+        try:
+            # fetches the contents from the url
+            http_response = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, encode_path = True, contents = request_contents)
+        finally:
+            # puts the http client back into the http clients pool
+            self.http_clients_pool.put(http_client)
+
+        # retrieves the status code form the http response
+        status_code = http_response.status_code
+
+        # retrieves the status message from the http response
+        status_message = http_response.status_message
+
+        # retrieves the data from the http response
+        data = http_response.received_message
+
+        # creates the headers map from the http response
+        headers_map = self._create_headers_map(request, http_response)
+
+        # sets the request status code
+        request.status_code = status_code
+
+        # sets the request status message
+        request.status_message = status_message
+
+        # sets the response headers map
+        request.response_headers_map = headers_map
+
+        # writes the (received) data to the request
+        request.write(data)
+
+    def _handle_reverse_request(self, request):
         """
         Handles the given "reverse" request.
         Handling the "reverse" request implies changing it
