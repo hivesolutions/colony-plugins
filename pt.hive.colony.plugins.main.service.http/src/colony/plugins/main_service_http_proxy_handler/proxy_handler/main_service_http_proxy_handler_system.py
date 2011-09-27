@@ -333,11 +333,17 @@ class MainServiceHttpProxyHandler:
             # this handler ensures that the client is put back to the http clients
             # pool and that the connection is kept clean (avoids pipe pollution)
             def close_handler(empty_connection):
+                # ------------------------------------
+                # TODO TENHO DE VER MUITO BEM ISTO
+                # E TER EM CONSIDERACAO isto no cliente de http
+                # SE connection: close entao fecho a conexao
+                # -----------------------------------
+
                 # in case the connection is not empty closes the
                 # client connection in the http client (avoid pipe pollution)
                 http_client.client_connection.close()
 
-                print "fez PUT"
+                print "fez PUTI"
 
                 # puts the http client back into the http
                 # clients pool
