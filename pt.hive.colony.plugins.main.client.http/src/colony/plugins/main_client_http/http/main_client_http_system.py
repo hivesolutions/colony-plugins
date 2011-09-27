@@ -569,6 +569,8 @@ class HttpClient:
         # sends the result value
         self.client_connection.send(result_value)
 
+        print "ENVIOU: %s" % result_value
+
         # returns the request
         return request
 
