@@ -335,7 +335,7 @@ class MainServiceHttpProxyHandler:
             def close_handler(empty_connection):
                 # in case the connection is not empty closes the
                 # client connection in the http client (avoid pipe pollution)
-                not empty_connection and http_client.client_connection.close()
+                http_client.client_connection.close()
 
                 print "fez PUT"
 
