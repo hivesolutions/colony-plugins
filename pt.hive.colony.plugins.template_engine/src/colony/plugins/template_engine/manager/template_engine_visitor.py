@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import os
+import time
 import types
 import datetime
 
@@ -1273,6 +1274,13 @@ class Visitor:
         self.string_buffer.write(date_value)
 
     def process_datetime(self, node):
+        """
+        Processes the datetime node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as datetime.
+        """
+
         # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
@@ -1366,6 +1374,48 @@ class Visitor:
 
         # writes the attribute value formatted
         self.string_buffer.write(attribute_value_formatted)
+
+    def process_timestamp(self, node):
+        """
+        Processes the timestamp node.
+        This node provides a way to print the a timestamp
+        representation of a given date time value.
+        In case no date time is provided the current date
+        is used.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as timestamp.
+        """
+
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # in case the format exists in the attributes map
+        if VALUE_VALUE in attributes_map:
+            # retrieves the attributes map values
+            attribute_value = attributes_map[VALUE_VALUE]
+            attribute_value_value = self.get_value(attribute_value)
+        # otherwise
+        else:
+            # sets the current data time as the attribute
+            # value value
+            attribute_value_value = datetime.datetime.now()
+
+        # in case the attribute value value
+        # is not valid
+        if not attribute_value_value:
+            # return immediately no write
+            return
+
+        # retrieves the time tuple from the date time
+        # attribute and then converts it to timestamp
+        # and then into a string
+        time_tuple_value = attribute_value_value.utctimetuple()
+        timestamp_value = time.mktime(time_tuple_value)
+        timestamp_string_value = str(timestamp_value)
+
+        # writes the timestamp string value
+        self.string_buffer.write(timestamp_string_value)
 
     def get_value(self, attribute_value, process_literal = False):
         """
