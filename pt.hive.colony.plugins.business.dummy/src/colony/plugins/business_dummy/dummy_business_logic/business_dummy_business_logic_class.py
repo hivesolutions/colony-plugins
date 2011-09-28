@@ -175,8 +175,8 @@ class DummyBusinessLogic:
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_instance_1)
 
-        # creates the find options map
-        find_options = {
+        # creates the get options map
+        get_options = {
             "eager_loading_relations" : {
                 "entity_relation" : {},
                 "entity_to_many_relation" : {
@@ -188,7 +188,7 @@ class DummyBusinessLogic:
         }
 
         # finds the entity bundle instance
-        dummy_entity_bundle_instance = self.entity_manager.get(dummy_entity_bundle_class, "test", find_options)
+        dummy_entity_bundle_instance = self.entity_manager.get(dummy_entity_bundle_class, "test", get_options)
 
         # sets the entity to many as empty
         dummy_entity_bundle_instance.entity_to_many_relation = []
