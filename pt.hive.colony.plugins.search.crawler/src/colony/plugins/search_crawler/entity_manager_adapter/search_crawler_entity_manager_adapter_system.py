@@ -187,7 +187,7 @@ class SearchCrawlerEntityManagerAdapter:
         for entity_class in entity_classes_list:
             # retrieves the full set of entities for the class
             # and the provided index
-            entities = entity_manager._find_all_options(entity_class, options)
+            entities = entity_manager.find_a(entity_class, options)
 
             # crawls across the entities for tokens
             for entity in entities:

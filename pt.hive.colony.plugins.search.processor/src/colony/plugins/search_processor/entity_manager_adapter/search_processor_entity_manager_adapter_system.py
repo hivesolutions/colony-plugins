@@ -160,7 +160,7 @@ class SearchProcessorEntityManagerAdapter:
             entity_class = entity_manager.get_entity_class(entity_class_name)
 
             # retrieves the entity using the provided document id
-            entity = entity_manager.find_options(entity_class, entity_object_id, find_options)
+            entity = entity_manager.get(entity_class, entity_object_id, find_options)
 
             # appends the retrieved entity to the entity list
             entities.append(entity)
