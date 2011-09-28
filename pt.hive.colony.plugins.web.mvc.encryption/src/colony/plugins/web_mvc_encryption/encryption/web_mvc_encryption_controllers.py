@@ -44,6 +44,21 @@ import colony.libs.importer_util
 
 import web_mvc_encryption_exceptions
 
+FIELD_NAME_VALUE = "field_name"
+""" The field name value """
+
+FIELD_VALUE_VALUE = "field_value"
+""" The field value value """
+
+FILTER_FIELDS_VALUE = "filter_fields"
+""" The filter fields value """
+
+FILTER_TYPE_VALUE = "filter_type"
+""" The filter type value """
+
+FILTERS_VALUE = "filters"
+""" The filters value """
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -67,6 +82,18 @@ DEFAULT_ENCODING = "utf-8"
 
 DEFAULT_ALGORITHM_NAME = "sha1"
 """ The default algorithm name """
+
+PERSIST_UPDATE_TYPE = 0x01
+""" The persist only on update (or save) persist type """
+
+PERSIST_SAVE_TYPE = 0x02
+""" The persist only on save persist type """
+
+PERSIST_ASSOCIATE_TYPE = 0x04
+""" The persist associate persist type """
+
+PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
+""" The persist all persist type """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
@@ -329,7 +356,7 @@ class ConsumerController:
         self._save_consumer(rest_request, consumer)
 
     @web_mvc_utils.transaction_method("web_mvc_encryption.web_mvc_encryption_entity_models.entity_manager")
-    def _save_consumer(self, rest_request, consumer):
+    def _save_consumer(self, rest_request, consumer, persist_type = PERSIST_ALL_TYPE):
         # retrieves the web mvc encryption entity models
         web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
 
@@ -345,8 +372,8 @@ class ConsumerController:
         # validates the consumer entity
         self.validate_model_exception(consumer_entity, "consumer validation failed")
 
-        # saves the consumer entity
-        consumer_entity.save_update()
+        # persists the consumer entity
+        consumer_entity.persist(persist_type)
 
         # returns the consumer entity
         return consumer_entity
@@ -359,7 +386,7 @@ class ConsumerController:
         entity_manager = web_mvc_encryption_entity_models.entity_manager
 
         # retrieves the consumer entities with the specified api key
-        consumer_entities = entity_manager._find_all_options(web_mvc_encryption_entity_models.Consumer, filter)
+        consumer_entities = entity_manager.find_a(web_mvc_encryption_entity_models.Consumer, filter)
 
         # returns the consumer entities
         return consumer_entities
@@ -367,26 +394,26 @@ class ConsumerController:
     def _validate_api_key(self, rest_request, api_key):
         # creates the filter map
         filter = {
-            "filters" : [
+            FILTERS_VALUE : (
                 {
-                    "filter_type" : "equals",
-                    "filter_fields" : [
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
                         {
-                            "field_name" : "api_key",
-                            "field_value" : api_key
-                        }
-                    ]
+                            FIELD_NAME_VALUE : "api_key",
+                            FIELD_VALUE_VALUE : api_key
+                        },
+                    )
                 },
                 {
-                    "filter_type" : "equals",
-                    "filter_fields" : [
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
                         {
-                            "field_name" : "status",
-                            "field_value" : VALID_STATUS_VALUE
-                        }
-                    ]
+                            FIELD_NAME_VALUE : "status",
+                            FIELD_VALUE_VALUE : VALID_STATUS_VALUE
+                        },
+                    )
                 }
-            ]
+            )
         }
 
         # retrieves the consumer entities with the api key
