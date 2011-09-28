@@ -162,7 +162,7 @@ class MainAuthenticationEntityManagerHandler:
         }
 
         # retrieves the users that match the authentication parameters
-        user_entities = entity_manager._find_all_options(login_entity_class, filter)
+        user_entities = entity_manager.find_a(login_entity_class, filter)
 
         # retrieves the user
         user_entity = user_entities and user_entities[0] or None
