@@ -268,7 +268,7 @@ def get_id_attribute_value(self, entity_manager = None):
     # returns the id attribute value
     return id_attribute_value
 
-def get_attribute_data_type(self, attribute_name, entity_manager = None):
+def get_attribute_data_type(self, attribute_name, resolve_relations = False, entity_manager = None):
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
@@ -280,7 +280,7 @@ def get_attribute_data_type(self, attribute_name, entity_manager = None):
 
     # using the attribute value the entity class and the attribute
     # name retrieves the real data type of the attribute
-    attribute_data_type = entity_manager.get_attribute_data_type(attribute_value, entity_class, attribute_name)
+    attribute_data_type = entity_manager.get_attribute_data_type(attribute_value, entity_class, attribute_name, resolve_relations)
 
     # returns the (real) data type of the attribute
     return attribute_data_type

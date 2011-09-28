@@ -672,9 +672,9 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     # retrieves the relation entity class
     relation_entity_class = entity.get_relation_entity_class(relation_name)
 
-    # retrieves the relation attribute type and
+    # retrieves the relation attribute type (resolving relations) and
     # the converts it into the real (python) data type
-    relation_attribute_type = entity.get_attribute_data_type(relation_name)
+    relation_attribute_type = entity.get_attribute_data_type(relation_name, True)
     relation_attribute_real_type = DATA_TYPE_CAST_TYPES_MAP[relation_attribute_type]
 
     # retrieves the id attribute name for the relation entity class
