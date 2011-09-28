@@ -188,7 +188,7 @@ class DummyBusinessLogic:
         }
 
         # finds the entity bundle instance
-        dummy_entity_bundle_instance = self.entity_manager.find_options(dummy_entity_bundle_class, "test", find_options)
+        dummy_entity_bundle_instance = self.entity_manager.get(dummy_entity_bundle_class, "test", find_options)
 
         # sets the entity to many as empty
         dummy_entity_bundle_instance.entity_to_many_relation = []
@@ -239,7 +239,7 @@ class DummyBusinessLogic:
         }
 
         # finds all the dummy entity bundle entities with the given filter
-        self.entity_manager._find_all_options(dummy_entity_bundle_class, find_options)
+        self.entity_manager.find_a(dummy_entity_bundle_class, find_options)
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_new_instance)
