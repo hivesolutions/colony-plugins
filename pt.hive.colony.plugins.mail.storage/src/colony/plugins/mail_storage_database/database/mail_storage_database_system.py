@@ -267,7 +267,7 @@ class MailStorageDatabaseClient:
         }
 
         # retrieves the valid messages
-        messages = entity_manager._find_all_options(message_class, find_options)
+        messages = entity_manager.find_a(message_class, find_options)
 
         # in case there are retrieved messages
         if len(messages):
@@ -348,7 +348,7 @@ class MailStorageDatabaseClient:
         }
 
         # retrieves the valid messages
-        messages = entity_manager._find_all_options(message_class, find_options)
+        messages = entity_manager.find_a(message_class, find_options)
 
         if len(messages):
             return messages[0]
@@ -385,7 +385,7 @@ class MailStorageDatabaseClient:
         }
 
         # retrieves the valid mailboxes
-        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
+        mailboxes = entity_manager.find_a(mailbox_class, find_options)
 
         if len(mailboxes):
             return mailboxes[0]
@@ -425,7 +425,7 @@ class MailStorageDatabaseClient:
         }
 
         # retrieves the valid mailboxes
-        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
+        mailboxes = entity_manager.find_a(mailbox_class, find_options)
 
         if len(mailboxes):
             return mailboxes[0]
