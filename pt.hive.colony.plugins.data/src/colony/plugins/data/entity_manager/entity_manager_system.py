@@ -1120,7 +1120,7 @@ class EntityManager:
         @param relation_attribute_name: The name of the relation attribute.
         @type resolve_relations: bool
         @param resolve_relations: If the mapped by other relations should be
-        resolved. This is important if the final goal is to allways retrieve
+        resolved. This is important if the final goal is to always retrieve
         the primitive data type of the attribute.
         @rtype: String
         @return: The attribute data type.
