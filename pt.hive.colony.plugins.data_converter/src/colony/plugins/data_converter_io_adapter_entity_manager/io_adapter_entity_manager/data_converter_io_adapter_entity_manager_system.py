@@ -203,7 +203,7 @@ class IoAdapterEntityManager:
 
             # retrieves all objects of the specified class
             find_options = {FIELDS_VALUE : ["object_id"]}
-            entities = entity_manager._find_all_options(entity_class, find_options)
+            entities = entity_manager.find_a(entity_class, find_options)
 
             # retrieves the names of the attributes that must be loaded
             attribute_names = []
@@ -244,7 +244,7 @@ class IoAdapterEntityManager:
                 entity_object_id_intermediate_entity_object_id_map[entity.object_id] = intermediate_entity_object_id
 
                 # retrieves the entity again but now fully loaded and indexes it by its object id for use in the load relations step
-                entity = entity_manager.find_options(entity_class, entity.object_id, find_options)
+                entity = entity_manager.get(entity_class, entity.object_id, find_options)
                 entity_object_id_entity_map[entity.object_id] = entity
 
                 # injects the entity class in the entity
