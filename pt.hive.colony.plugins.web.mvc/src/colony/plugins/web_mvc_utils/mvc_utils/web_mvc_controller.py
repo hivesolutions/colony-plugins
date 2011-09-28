@@ -413,7 +413,7 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
         entity_model_id_casted = self._cast_safe(entity_model_id, cast_type, -1)
 
         # retrieves the entity
-        entity = entity_manager.find(entity_model, entity_model_id_casted)
+        entity = entity_manager.get(entity_model, entity_model_id_casted)
 
         # in case the entity is not defined
         if not entity:
