@@ -590,10 +590,22 @@ class WebMvcUtils:
             # retrieves the item value type
             item_value_type = type(item_value)
 
-            # in case the item value type is function
-            if item_value_type == types.FunctionType:
-                # sets the item in the
-                setattr(target_class, item, item_value)
+            # in case the item value type is not function
+            if not item_value_type == types.FunctionType:
+                # continues the loop
+                continue
+
+            # in case the items starts with class reference
+            # the item is meant to be referenced as class method
+            if item.startswith("_class_"):
+                # retrieves the initial part of the item (name)
+                # and then converts the item value (instance method)
+                # to a class method (receives class as first argument)
+                item = item[7:]
+                item_value = classmethod(item_value)
+
+            # sets the item in the target class
+            setattr(target_class, item, item_value)
 
     def _get_target_module(self, target_module_name, globals):
         # tries to retrieve the target module

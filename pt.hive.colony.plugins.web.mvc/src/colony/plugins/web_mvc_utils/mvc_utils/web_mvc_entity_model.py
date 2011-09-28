@@ -90,6 +90,88 @@ TO_MANY_RELATIONS = (
 )
 """ The tuple containing the "to-many" relations """
 
+def _class_get(class_reference, id_value, options = {}, entity_manager = None):
+    """
+    Class method that retrieves an entity model for
+    the given id value and using the given options.
+    This method allows the indirect access to the entity
+    manager for the usage of the get method.
+
+    @type id_value: Object
+    @param id_value: The value for the identifier attribute
+    of the entity model to be retrieved.
+    @type options: Dictionary
+    @param options: The map of options for the retrieval
+    of the entity model.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    @rtype: Entity
+    @return: The retrieved retrieved entity model.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # retrieves the entity model for the given class, id value
+    # and using the given options
+    entity_model = entity_manager.get(class_reference, id_value, options)
+
+    # returns the retrieved entity model
+    return entity_model
+
+def _class_find(class_reference, options = {}, entity_manager = None):
+    """
+    Class method that retrieves a set of entity models
+    using the given options.
+    This method allows the indirect access to the entity
+    manager for the usage of the find method.
+
+    @type options: Dictionary
+    @param options: The map of options for the retrieval
+    of the set of entity models.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    @rtype: List
+    @return: The retrieved set of entity models.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # finds the entity models for the given class and using
+    # the given options
+    entity_models = entity_manager.find_a(class_reference, options)
+
+    # returns the retrieved entity models
+    return entity_models
+
+def _class_lock(class_reference, id_value, entity_manager = None):
+    """
+    Class method that retrieves a locks the entity manager
+    data source for the entity model with the given id value.
+    This method allows the indirect access to the entity
+    manager for the usage of the find method.
+
+    @type id_value: Object
+    @param id_value: The value for the identifier attribute
+    of the entity model to be "locked".
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # locks the entity manager data source for the given
+    # class and the given id value
+    entity_manager.lock(class_reference, id_value)
+
 def save(self, entity_manager = None):
     """
     Saves the current instance into the data source
