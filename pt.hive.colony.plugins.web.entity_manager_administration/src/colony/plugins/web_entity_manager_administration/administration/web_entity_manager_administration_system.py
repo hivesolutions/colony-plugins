@@ -174,7 +174,7 @@ class WebEntityManagerAdministration:
         options_map["number_records"] = DEFAULT_NUMBER_RECORDS
 
         # retrieves the entity objects for the given filter
-        entity_objects = entity_manager._find_all_options(entity_class, options_map)
+        entity_objects = entity_manager.find_a(entity_class, options_map)
 
         # in case the encoder name is defined
         if encoder_name:
