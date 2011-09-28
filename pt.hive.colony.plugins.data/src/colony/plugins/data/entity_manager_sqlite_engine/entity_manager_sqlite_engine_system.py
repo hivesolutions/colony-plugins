@@ -3565,7 +3565,7 @@ class EntityManagerSqliteEngine:
         # returns the relation attribute value
         return relation_attribute_value
 
-    def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name):
+    def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name, resolve_relations = False):
         """
         Retrieves the data type of the give attribute value.
 
@@ -3575,6 +3575,10 @@ class EntityManagerSqliteEngine:
         @param entity_class: The entity class containing the relation.
         @type relation_attribute_name: String
         @param relation_attribute_name: The name of the relation attribute.
+        @type resolve_relations: bool
+        @param resolve_relations: If the mapped by other relations should be
+        resolved. This is important if the final goal is to allways retrieve
+        the primitive data type of the attribute.
         @rtype: String
         @return: The attribute data type.
         """
@@ -3584,24 +3588,41 @@ class EntityManagerSqliteEngine:
 
         # in case the attribute value data type is of type relation
         if attribute_value_data_type == RELATION_DATA_TYPE:
-            # retrieves the relation attributes
+            # retrieves the relation attributes from the entity class
             relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
 
-            # retrieves the entity class target entity
+            # retrieves the entity class target entity and
+            # join attribute name fields
             entity_class_target_entity = relation_attributes[TARGET_ENTITY_FIELD]
-
-            # retrieves the entity class join attribute name
             entity_class_join_attribute_name = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-            # retrieves the entity class join attribute
+            # retrieves the entity class join attribute and then uses it
+            # to retrieve the entity class join attribute data type
             entity_class_join_attribute = getattr(entity_class_target_entity, entity_class_join_attribute_name)
-
-            # retrieves the data type for the entity class join attribute
             entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
 
+            # in case the entity class join attribute data type is relation
+            # (mapped by other situation)
+            if resolve_relations and entity_class_join_attribute_data_type == RELATION_DATA_TYPE:
+                # retrieves the relation attributes from the entity class
+                # target entity (class mapping the relation)
+                relation_attributes = self.get_relation_attributes(entity_class_target_entity, entity_class_join_attribute_name)
+
+                # retrieves the entity class target entity and
+                # join attribute name fields
+                entity_class_target_entity = relation_attributes[TARGET_ENTITY_FIELD]
+                entity_class_join_attribute_name = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                # retrieves the entity class join attribute and then uses it
+                # to retrieve the entity class join attribute data type
+                entity_class_join_attribute = getattr(entity_class_target_entity, entity_class_join_attribute_name)
+                entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
+
+            # returns the entity class join attribute data type
             return entity_class_join_attribute_data_type
         # otherwise it must be a "simple" attribute
         else:
+            # returns the attribute value data type
             return attribute_value_data_type
 
     def get_relation_value(self, connection, relation_attribute_name, entity_class, relation_attribute_value, id_value, retrieved_entities_list, options):
