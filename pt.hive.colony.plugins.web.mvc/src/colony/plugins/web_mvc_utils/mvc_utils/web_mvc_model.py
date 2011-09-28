@@ -170,11 +170,11 @@ def loads(self, serializer, data):
     """
 
     # unserializes the data (loads)
-    object = serializer.loads(data)
+    _object = serializer.loads(data)
 
     # iterates over all the dictionary items
     # to load the values
-    for key, value in object.items():
+    for key, value in _object.items():
         # loads the given value in the current object
         self._load_value(key, value)
 
