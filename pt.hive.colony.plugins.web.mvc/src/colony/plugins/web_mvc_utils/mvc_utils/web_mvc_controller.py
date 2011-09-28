@@ -622,9 +622,9 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map,
 
             # checks if the relation should be associated
             # the association is only granted if either the
-            # relation was saved or the associate type is
-            # set to allow association
-            associate_relation = is_saved or relation_persist_type & PERSIST_ASSOCIATE_TYPE
+            # relation was saved or the relation is valid
+            # or the associate type is set to allow association
+            associate_relation = is_saved or valid_relation or relation_persist_type & PERSIST_ASSOCIATE_TYPE
 
             # adds the relation entity to the list
             # in case the entity was created and the
