@@ -136,7 +136,7 @@ class DummyEntityManager:
             self.dummy_entity_manager_plugin.info("Error saving: " + unicode(exception))
 
         # finds the entity
-        entity_manager.find(dummy_entity_class, "dummy")
+        entity_manager.get(dummy_entity_class, "dummy")
 
         # removes the entity from the database
         entity_manager.remove(dummy_entity)
@@ -182,7 +182,7 @@ class DummyEntityManager:
             self.dummy_entity_manager_plugin.info("Error saving: " + unicode(exception))
 
         # retrieves the dummy entity bundle class with test_name key
-        entity_manager.find(dummy_entity_bundle_class, "test_name")
+        entity_manager.get(dummy_entity_bundle_class, "test_name")
 
         # commits the transaction
         entity_manager.commit_transaction("test_transaction")
