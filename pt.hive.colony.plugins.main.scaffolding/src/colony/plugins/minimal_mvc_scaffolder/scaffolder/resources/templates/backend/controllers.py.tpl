@@ -13,7 +13,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         self.entity_manager = self.entity_models.entity_manager
 
     def handle_list(self, rest_request, parameters = {}):
-        ${out value=scaffold_attributes.model.variable_name /}_entities = self.entity_manager._find_all(self.entity_models.${out value=scaffold_attributes.model.class_name /})
+        ${out value=scaffold_attributes.model.variable_name /}_entities = self.entity_manager.find_a(self.entity_models.${out value=scaffold_attributes.model.class_name /})
         template_file = self.retrieve_template_file("list.html.tpl")
         self.apply_base_path_template_file(rest_request, template_file)
         template_file.assign("${out value=scaffold_attributes.model.variable_name_plural /}", ${out value=scaffold_attributes.model.variable_name /}_entities)
@@ -22,7 +22,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
 
     def handle_show(self, rest_request, parameters = {}):
         ${out value=scaffold_attributes.model.variable_name /}_object_id = int(parameters["pattern_names"]["id"])
-        ${out value=scaffold_attributes.model.variable_name /}_entity = self.entity_manager.find(self.entity_models.${out value=scaffold_attributes.model.class_name /}, ${out value=scaffold_attributes.model.variable_name /}_object_id)
+        ${out value=scaffold_attributes.model.variable_name /}_entity = self.entity_manager.get(self.entity_models.${out value=scaffold_attributes.model.class_name /}, ${out value=scaffold_attributes.model.variable_name /}_object_id)
         template_file = self.retrieve_template_file("show.html.tpl")
         template_file.assign("${out value=scaffold_attributes.model.variable_name /}", ${out value=scaffold_attributes.model.variable_name /}_entity)
         self.apply_base_path_template_file(rest_request, template_file)
@@ -43,7 +43,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
 
     def handle_edit(self, rest_request, parameters = {}):
         ${out value=scaffold_attributes.model.variable_name /}_object_id = int(parameters["pattern_names"]["id"])
-        ${out value=scaffold_attributes.model.variable_name /}_entity = self.entity_manager.find(self.entity_models.${out value=scaffold_attributes.model.class_name /}, ${out value=scaffold_attributes.model.variable_name /}_object_id)
+        ${out value=scaffold_attributes.model.variable_name /}_entity = self.entity_manager.get(self.entity_models.${out value=scaffold_attributes.model.class_name /}, ${out value=scaffold_attributes.model.variable_name /}_object_id)
         template_file = self.retrieve_template_file("edit.html.tpl")
         template_file.assign("${out value=scaffold_attributes.model.variable_name /}", ${out value=scaffold_attributes.model.variable_name /}_entity)
         self.apply_base_path_template_file(rest_request, template_file)
