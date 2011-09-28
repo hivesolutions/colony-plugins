@@ -311,7 +311,7 @@ def validate(self):
     """
 
     # retrieves the context validation map for the current validation context
-    context_validation_map = self.validation_map.get(self.validation_context, [])
+    context_validation_map = self.validation_map.get(self.validation_context, {})
 
     # iterates over all the items in the context validation map
     for attribute_name, validation_tuple_list in context_validation_map.items():
