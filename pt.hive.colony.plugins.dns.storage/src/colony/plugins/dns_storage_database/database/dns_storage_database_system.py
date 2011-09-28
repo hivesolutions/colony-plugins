@@ -232,7 +232,7 @@ class DnsStorageDatabaseClient:
         }
 
         # retrieves the valid records
-        records = entity_manager._find_all_options(record_class, find_options)
+        records = entity_manager.find_a(record_class, find_options)
 
         return records
 
@@ -268,7 +268,7 @@ class DnsStorageDatabaseClient:
         }
 
         # retrieves the valid zones
-        zones = entity_manager._find_all_options(zone_class, find_options)
+        zones = entity_manager.find_a(zone_class, find_options)
 
         if len(zones):
             return zones[0]
