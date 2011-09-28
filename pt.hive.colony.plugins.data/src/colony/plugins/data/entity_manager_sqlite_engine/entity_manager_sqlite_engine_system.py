@@ -779,6 +779,7 @@ class EntityManagerSqliteEngine:
                     # retrieves the valid sqlite data type from the formal id attribute data type
                     id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
 
+                    # in case the table definition already exists (need to alter the table)
                     if self.exists_table_definition(connection, join_table_field):
                         if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
                             # creates the query string value
@@ -786,6 +787,7 @@ class EntityManagerSqliteEngine:
 
                             # executes the query altering the table
                             self.execute_query(cursor, query_string_value)
+                    # otherwise no table definition exits (a table must be created)
                     else:
                         # creates the query string value
                         query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
