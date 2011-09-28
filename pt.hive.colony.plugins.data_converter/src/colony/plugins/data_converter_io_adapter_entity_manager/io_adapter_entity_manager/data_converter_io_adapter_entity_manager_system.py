@@ -210,8 +210,8 @@ class IoAdapterEntityManager:
             if entity_class_name in load_entity_name_attribute_names_map:
                 attribute_names = load_entity_name_attribute_names_map[entity_class_name]
 
-            # initializes the find options
-            find_options = {}
+            # initializes the get options
+            get_options = {}
 
             # figures out which non relation attribute names must be loaded
             non_relation_attribute_names = entity_manager.get_entity_class_non_relation_attribute_names(entity_class)
@@ -221,7 +221,7 @@ class IoAdapterEntityManager:
             # sets the attributes that must be loaded in the find options
             # in case they were specified
             if attribute_names:
-                find_options[FIELDS_VALUE] = ["object_id"] + attribute_names
+                get_options[FIELDS_VALUE] = ["object_id"] + attribute_names
 
             # figures out which relation attribute names must be loaded
             relation_attribute_names = entity_manager.get_entity_class_relation_attribute_names(entity_class)
@@ -231,9 +231,9 @@ class IoAdapterEntityManager:
             # injects the relation attribute names that must be loaded
             # in the find options, if there are any
             if relation_attribute_names:
-                find_options[EAGER_LOADING_RELATIONS_VALUE] = {}
+                get_options[EAGER_LOADING_RELATIONS_VALUE] = {}
                 for relation_attribute_name in relation_attribute_names:
-                    find_options[EAGER_LOADING_RELATIONS_VALUE][relation_attribute_name] = {}
+                    get_options[EAGER_LOADING_RELATIONS_VALUE][relation_attribute_name] = {}
 
             # creates an intermediate entity for each entity and populates it with the entity's attributes
             for entity in entities:
@@ -244,7 +244,7 @@ class IoAdapterEntityManager:
                 entity_object_id_intermediate_entity_object_id_map[entity.object_id] = intermediate_entity_object_id
 
                 # retrieves the entity again but now fully loaded and indexes it by its object id for use in the load relations step
-                entity = entity_manager.get(entity_class, entity.object_id, find_options)
+                entity = entity_manager.get(entity_class, entity.object_id, get_options)
                 entity_object_id_entity_map[entity.object_id] = entity
 
                 # injects the entity class in the entity
