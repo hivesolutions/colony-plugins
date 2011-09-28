@@ -230,6 +230,19 @@ def is_persisted(self, entity_manager = None):
     return persisted
 
 def lock(self, entity_manager = None):
+    """
+    Locks the entity reference in the current data source
+    to avoid possible persistence in the data reference.
+    This method is important to avoid corrupt data states
+    in critical sections.
+    Any usage of this method should be made careful at the
+    risk of creating a dead lock in the data source.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
