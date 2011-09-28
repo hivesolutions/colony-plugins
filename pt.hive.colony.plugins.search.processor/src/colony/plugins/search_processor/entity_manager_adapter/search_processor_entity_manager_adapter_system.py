@@ -143,7 +143,7 @@ class SearchProcessorEntityManagerAdapter:
         entity_manager.load_entity_manager()
 
         # tries to retrieve query options from the processor options
-        find_options = properties.get(QUERY_OPTIONS_VALUE, {})
+        get_options = properties.get(QUERY_OPTIONS_VALUE, {})
 
         # retrieves the list of entities, from the search results
         for search_result in search_results:
@@ -160,7 +160,7 @@ class SearchProcessorEntityManagerAdapter:
             entity_class = entity_manager.get_entity_class(entity_class_name)
 
             # retrieves the entity using the provided document id
-            entity = entity_manager.get(entity_class, entity_object_id, find_options)
+            entity = entity_manager.get(entity_class, entity_object_id, get_options)
 
             # appends the retrieved entity to the entity list
             entities.append(entity)
