@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import colony.libs.crypt_util
 import colony.libs.control_util
 
 import web_mvc_utils_exceptions
@@ -924,3 +925,27 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
 
     # in case the validation failed adds an error to the attribute
     validation_failed and self.add_error(attribute_name, "value has duplicates")
+
+def password_strength_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates the specified password has a strength
+    greater than or equal to the specified value.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # calculates the password strength
+    password_strength = colony.libs.crypt_util.password_strength(attribute_value)
+
+    # in case the password strength is less than the target value
+    if password_strength < target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "password is weak")
