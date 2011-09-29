@@ -948,4 +948,4 @@ def password_strength_validate(self, attribute_name, attribute_value, properties
     # in case the password strength is less than the target value
     if password_strength < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "password is weak")
+        self.add_error(attribute_name, "password is not safe")
