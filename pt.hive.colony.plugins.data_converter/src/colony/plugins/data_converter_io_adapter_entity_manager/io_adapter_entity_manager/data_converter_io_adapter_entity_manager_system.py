@@ -203,7 +203,7 @@ class IoAdapterEntityManager:
 
             # retrieves all objects of the specified class
             find_options = {FIELDS_VALUE : ["object_id"]}
-            entities = entity_manager.find_a(entity_class, find_options)
+            entities = entity_manager.find(entity_class, find_options)
 
             # retrieves the names of the attributes that must be loaded
             attribute_names = []
