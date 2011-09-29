@@ -201,7 +201,7 @@ class MailQueueDatabaseClient:
         }
 
         # retrieves the valid mail queues
-        mail_queues = entity_manager.find_a(mail_queue_class, find_options)
+        mail_queues = entity_manager.find(mail_queue_class, find_options)
 
         if len(mail_queues):
             return mail_queues[0]
@@ -242,7 +242,7 @@ class MailQueueDatabaseClient:
         }
 
         # retrieves the valid mail queues
-        mail_queues = entity_manager.find_a(mail_queue_class, find_options)
+        mail_queues = entity_manager.find(mail_queue_class, find_options)
 
         if len(mail_queues):
             return mail_queues[0]
