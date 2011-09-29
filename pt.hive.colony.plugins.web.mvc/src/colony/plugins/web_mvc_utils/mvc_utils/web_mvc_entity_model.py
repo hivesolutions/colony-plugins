@@ -144,7 +144,7 @@ def _class_find(class_reference, options = {}, entity_manager = None):
 
     # finds the entity models for the given class and using
     # the given options
-    entity_models = entity_manager.find_a(class_reference, options)
+    entity_models = entity_manager.find(class_reference, options)
 
     # returns the retrieved entity models
     return entity_models
