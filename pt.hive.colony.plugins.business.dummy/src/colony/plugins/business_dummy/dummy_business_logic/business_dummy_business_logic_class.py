@@ -239,7 +239,7 @@ class DummyBusinessLogic:
         }
 
         # finds all the dummy entity bundle entities with the given filter
-        self.entity_manager.find_a(dummy_entity_bundle_class, find_options)
+        self.entity_manager.find(dummy_entity_bundle_class, find_options)
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_new_instance)
