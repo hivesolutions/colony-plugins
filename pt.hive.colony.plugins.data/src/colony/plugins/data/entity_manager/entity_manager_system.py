@@ -886,21 +886,21 @@ class EntityManager:
         # finds the entity
         return self.entity_manager_engine_plugin.find_entity_options(connection, entity_class, id_value, options)
 
-    def find_a(self, entity_class, options = {}):
+    def find(self, entity_class, options = {}):
         # retrieves the connection object
         connection = self.get_connection()
 
         # finds all the entities
         return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, options)
 
-    def find(self, entity_class, id_value):
+    def _find(self, entity_class, id_value):
         # retrieves the connection object
         connection = self.get_connection()
 
         # finds the entity
         return self.entity_manager_engine_plugin.find_entity(connection, entity_class, id_value)
 
-    def find_options(self, entity_class, id_value, options):
+    def _find_options(self, entity_class, id_value, options):
         # retrieves the connection object
         connection = self.get_connection()
 
