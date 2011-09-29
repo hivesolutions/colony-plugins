@@ -382,11 +382,8 @@ class ConsumerController:
         # retrieves the web mvc encryption entity models
         web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
 
-        # retrieves the entity manager
-        entity_manager = web_mvc_encryption_entity_models.entity_manager
-
         # retrieves the consumer entities with the specified api key
-        consumer_entities = entity_manager.find_a(web_mvc_encryption_entity_models.Consumer, filter)
+        consumer_entities = web_mvc_encryption_entity_models.Consumer.find(filter)
 
         # returns the consumer entities
         return consumer_entities
