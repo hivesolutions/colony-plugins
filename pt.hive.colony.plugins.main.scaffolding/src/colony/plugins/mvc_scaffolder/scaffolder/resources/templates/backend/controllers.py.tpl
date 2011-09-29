@@ -222,7 +222,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         ${out value=scaffold_attributes.variable_name /}_entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
 
         # retrieves the specified ${out value=scaffold_attributes.model.name_lowercase /} entities
-        ${out value=scaffold_attributes.model.variable_name /}_entities = ${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager.find_a(${out value=scaffold_attributes.variable_name /}_entity_models.${out value=scaffold_attributes.model.class_name /}, filter)
+        ${out value=scaffold_attributes.model.variable_name /}_entities = ${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager.find(${out value=scaffold_attributes.variable_name /}_entity_models.${out value=scaffold_attributes.model.class_name /}, filter)
 
         # returns the ${out value=scaffold_attributes.model.name_lowercase /} entities
         return ${out value=scaffold_attributes.model.variable_name /}_entities

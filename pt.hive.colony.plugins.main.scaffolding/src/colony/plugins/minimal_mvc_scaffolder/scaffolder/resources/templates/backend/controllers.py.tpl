@@ -13,7 +13,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         self.entity_manager = self.entity_models.entity_manager
 
     def handle_list(self, rest_request, parameters = {}):
-        ${out value=scaffold_attributes.model.variable_name /}_entities = self.entity_manager.find_a(self.entity_models.${out value=scaffold_attributes.model.class_name /})
+        ${out value=scaffold_attributes.model.variable_name /}_entities = self.entity_manager.find(self.entity_models.${out value=scaffold_attributes.model.class_name /})
         template_file = self.retrieve_template_file("list.html.tpl")
         self.apply_base_path_template_file(rest_request, template_file)
         template_file.assign("${out value=scaffold_attributes.model.variable_name_plural /}", ${out value=scaffold_attributes.model.variable_name /}_entities)
