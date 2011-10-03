@@ -2204,10 +2204,28 @@ def _cast_attribute_value(self, attribute_value):
     return file_attribute_tuple
 
 def _get_path(self, rest_request):
+    """
+    Retrieves the "real" path from the rest request
+    this method takes into account the base path.
+    In case a redirection is made by rules in the http
+    server the "original" path is not the one present
+    in the path attribute, in this situation the base
+    path attribute must be used to retrieve the "real"
+    path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to
+    retrieve the "real" url path.
+    @rtype: String
+    @return: The "original" base path from the http
+    url, taking into account the base path.
+    """
+
     # retrieves the base path as the path from the request
     path = rest_request.request.base_path
 
-    # in case the (base) path is not valid (no http server redirection)
+    # in case the (base) path is not valid (no
+    # http server redirection)
     if not path:
         # sets the request path as the path
         path = rest_request.request.path
