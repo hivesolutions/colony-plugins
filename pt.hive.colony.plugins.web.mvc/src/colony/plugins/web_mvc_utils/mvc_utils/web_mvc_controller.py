@@ -154,6 +154,15 @@ LOCALE_VALUE = "locale"
 RELATIVE_VALUE_VALUE = "relative_value"
 """ The relative value value """
 
+FORM_DATA_VALUE = "form-data"
+""" The form data value """
+
+CONTENTS_VALUE = "contents"
+""" The contents value """
+
+FILENAME_VALUE = "filename"
+""" The filename value """
+
 HOST_VALUE = "Host"
 """ The host value """
 
@@ -1777,7 +1786,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     """
 
     # retrieves the attribute value from the attribute name
-    attribute_value = rest_request.get_attribute(attribute_name)
+    # using the rest (sub) system
+    attribute_value = self._get_attribute(rest_request, attribute_name)
 
     # in case the attribute value is valid
     if attribute_value:
@@ -1792,8 +1802,14 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
             # iterates over all the attribute value
             # items in the attribute value
             for attribute_value_item in attribute_value:
-                # decodes the attribute value item
-                attribute_value_item_decoded = attribute_value_item.decode(encoding)
+                # "casts" the attribute value item and retrieves
+                # the attribute value item type
+                attribute_value_item = self._cast_attribute_value(attribute_value_item)
+                attribute_value_item_type = type(attribute_value_item)
+
+                # decodes the attribute value item, only in case
+                # it's a valid string
+                attribute_value_item_decoded = attribute_value_item_type == types.StringType and attribute_value_item.decode(encoding) or attribute_value_item
 
                 # adds the attribute value item to the attribute
                 # value decoded
@@ -1806,8 +1822,14 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
             # iterates over all the attribute value
             # items in the attribute value
             for attribute_value_key, attribute_value_value in attribute_value.items():
-                # decodes the attribute value value
-                attribute_value_value_decoded = attribute_value_value.decode(encoding)
+                # "casts" the attribute value value and retrieves
+                # the attribute value value type
+                attribute_value_value = self._cast_attribute_value(attribute_value_value)
+                attribute_value_value_type = type(attribute_value_value)
+
+                # decodes the attribute value value, only in case
+                # it's a valid string
+                attribute_value_value_decoded = attribute_value_value_type == types.StringType and attribute_value_value.decode(encoding) or attribute_value_value
 
                 # sets the attribute value value in the attribute value decoded map
                 attribute_value_decoded[attribute_value_key] = attribute_value_value_decoded
@@ -2102,6 +2124,84 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
     """
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
+
+def _get_attribute(self, rest_request, attribute_name):
+    """
+    Retrieves an attribute from the rest request in a safe
+    manner (casting it according to form data).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to retrieve the
+    attribute.
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be retrieved.
+    @rtype: Object
+    @return: The retrieved attribute (safely casted).
+    """
+
+    # retrieves the attribute value from the
+    # attribute name
+    attribute_value = rest_request.get_attribute(attribute_name)
+
+    # casts the attribute value (avoids form data problems)
+    attribute_value = self._cast_attribute_value(attribute_value)
+
+    # returns the attribute value
+    return attribute_value
+
+def _cast_attribute_value(self, attribute_value):
+    """
+    "Casts" the attribute value in case the type
+    of the attribute value is form data.
+    This method provides a safe way to use the attribute
+    value from the rest request.
+
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute
+    to be "casted".
+    @rtype: Object´
+    @return: The attribute value, safely "casted".
+    """
+
+    # in case the attribute value is
+    # not valid (or not set)
+    if not attribute_value:
+        # returns the attribute value
+        # (immediately)
+        return attribute_value
+
+    # retrieves the attribute value type
+    attribute_value_type = type(attribute_value)
+
+    # in case the attribute value type is not
+    # dictionary (map)
+    if not attribute_value_type == types.DictionaryType:
+        # returns the attribute value
+        # (immediately)
+        return attribute_value
+
+    # in case the form data value is not defined
+    # in the attribute value
+    if not FORM_DATA_VALUE in attribute_value:
+        # returns the attribute value
+        return attribute_value
+
+    # in case the filename does not exists in the
+    # attribute value (normal field)
+    if not FILENAME_VALUE in attribute_value:
+        # returns the "contents" from the attribute
+        # value (form data value)
+        return attribute_value[CONTENTS_VALUE]
+
+    # retrieves the filename and the contents
+    # from the attribute to create the file attribute
+    # tuple (filename and contents)
+    filename = attribute_value[FILENAME_VALUE]
+    contents = attribute_value[CONTENTS_VALUE]
+    file_attribute_tuple = (filename, contents)
+
+    # returns the file attribute tuple
+    return file_attribute_tuple
 
 def _get_path(self, rest_request):
     # retrieves the base path as the path from the request
