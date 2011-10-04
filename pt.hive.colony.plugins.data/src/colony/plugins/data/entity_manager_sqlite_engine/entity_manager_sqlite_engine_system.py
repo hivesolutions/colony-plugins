@@ -125,7 +125,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "__sizeof__",
     "__subclasshook__",
     "data_state",
-    "data_reference"
+    "data_reference",
     "mapping_options",
     "id_attribute_name"
 )
