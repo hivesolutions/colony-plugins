@@ -60,8 +60,8 @@ DEFAULT_TIMEOUT_VALUE = 30
 DATA_TYPE_MAP = {
     "text" : "text",
     "numeric" : "numeric",
-    "integer" : "numeric",
-    "float" : "numeric",
+    "integer" : "integer",
+    "float" : "real",
     "date" : "numeric",
     "relation" : "relation"
 }
