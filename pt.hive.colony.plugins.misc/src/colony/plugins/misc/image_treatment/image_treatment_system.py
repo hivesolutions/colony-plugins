@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import cStringIO
-
 import PIL.Image
+
+import colony.libs.string_buffer_util
 
 RGBA_VALUE = "RGBA"
 """ The rgba value """
@@ -72,6 +72,23 @@ class ImageTreatment:
         self.image_treatment_plugin = image_treatment_plugin
 
     def resize_image(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made stretching it if necessary.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         # opens the image file
         image = PIL.Image.open(image_path)
 
@@ -79,7 +96,7 @@ class ImageTreatment:
         image_resize = image.resize((width, height), PIL.Image.ANTIALIAS)
 
         # creates a new string buffer for the image
-        string_buffer = cStringIO.StringIO()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # saves the image into the string buffer
         image_resize.save(string_buffer, JPEG_VALUE)
@@ -91,6 +108,24 @@ class ImageTreatment:
         return string_buffer
 
     def resize_image_aspect(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made respecting the original image
+        aspect ratio.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         # opens the image file
         image = PIL.Image.open(image_path)
 
@@ -115,6 +150,25 @@ class ImageTreatment:
         return self.resize_image(image_path, resize_width, resize_height)
 
     def resize_image_aspect_background(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made respecting the original image
+        aspect ratio.
+        The (unused) background is set as transparent.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         # retrieves the resized image
         resized_image_file = self.resize_image_aspect(image_path, width, height)
 
@@ -131,7 +185,7 @@ class ImageTreatment:
         new_image.paste(resized_image, ((width - resized_image_width) / 2, (height - resized_image_height) / 2))
 
         # creates a new string buffer for the image
-        string_buffer = cStringIO.StringIO()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # saves the new image into the string buffer
         new_image.save(string_buffer, PNG_VALUE)

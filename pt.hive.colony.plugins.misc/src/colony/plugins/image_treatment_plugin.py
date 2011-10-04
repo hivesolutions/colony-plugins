@@ -95,10 +95,64 @@ class ImageTreatmentPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def resize_image(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made stretching it if necessary.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         return self.image_treatment.resize_image(image_path, width, height)
 
     def resize_image_aspect(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made respecting the original image
+        aspect ratio.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         return self.image_treatment.resize_image_aspect(image_path, width, height)
 
     def resize_image_aspect_background(self, image_path, width, height):
+        """
+        Resizes the image in the given file path (or buffer)
+        to the target width and height.
+        The resizing is made respecting the original image
+        aspect ratio.
+        The (unused) background is set as transparent.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        resized according to the specification.
+        @type width: int
+        @param width: The target width to the resize image.
+        @type height: int
+        @param height: The target height to the resize image.
+        @rtype: File
+        @return: The file object containing the buffer information
+        on the resized image.
+        """
+
         return self.image_treatment.resize_image_aspect_background(image_path, width, height)
