@@ -61,6 +61,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "__sizeof__",
     "__subclasshook__",
     "data_state",
+    "data_reference",
     "mapping_options",
     "id_attribute_name"
 )
@@ -103,6 +104,9 @@ ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
 
 ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 """ The entity classes map value """
+
+DATA_REFERENCE_VALUE = "data_reference"
+""" The data reference value """
 
 class DataEntityManager:
     """
@@ -591,6 +595,13 @@ class EntityManager:
         # iterates over all the entity classes in the entity
         # classes list (to update or create the entity definition)
         for entity_class in self.entity_classes_list:
+            # in case the entity class is a reference (external
+            # reference) there's no need for registration
+            if hasattr(entity_class, DATA_REFERENCE_VALUE) and entity_class.data_reference:
+                # continues the loop (no need to register
+                # a reference entity)
+                continue
+
             # in case the registration of classes does not require flushing
             # and the entity class is already registered (no need to use
             # data source resources)
