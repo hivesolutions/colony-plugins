@@ -1837,7 +1837,7 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
         else:
             # decodes the attribute value, only in case
             # it's a valid string
-            attribute_value_decoded = attribute_value_value_type == types.StringType and attribute_value.decode(encoding) or attribute_value_value
+            attribute_value_decoded = attribute_value_type == types.StringType and attribute_value.decode(encoding) or attribute_value
 
         # the attribute value decoded
         return attribute_value_decoded
