@@ -50,6 +50,9 @@ JPEG_VALUE = "jpeg"
 PNG_VALUE = "png"
 """ The png value """
 
+MAXIMUM_SIZE = 2147483647
+""" The maximum size value """
+
 class ImageTreatment:
     """
     The image treatment class.
@@ -94,11 +97,9 @@ class ImageTreatment:
         # retrieves the image width and the image height
         image_width, image_height = image.size
 
-        # calculates the width ratio
-        ratio_width = float(width) / float(image_width)
-
-        # calculates the height ratio
-        ratio_height = float(height) / float(image_height)
+        # calculates the width and height ratios
+        ratio_width = width and float(width) / float(image_width) or MAXIMUM_SIZE
+        ratio_height = height and float(height) / float(image_height) or MAXIMUM_SIZE
 
         # checks if the image is landscape or portrait
         if ratio_width < ratio_height:
@@ -106,42 +107,16 @@ class ImageTreatment:
         else:
             ratio = ratio_height
 
-        # calculates the resize image width
+        # calculates the resize image dimensions
         resize_width = int(image_width * ratio)
-
-        # calculates the resize image height
         resize_height = int(image_height * ratio)
 
         # returns the resized image
         return self.resize_image(image_path, resize_width, resize_height)
 
     def resize_image_aspect_background(self, image_path, width, height):
-        # opens the image file
-        image = PIL.Image.open(image_path)
-
-        # retrieves the image width and the image height
-        image_width, image_height = image.size
-
-        # calculates the width ratio
-        ratio_width = float(width) / float(image_width)
-
-        # calculates the height ratio
-        ratio_height = float(height) / float(image_height)
-
-        # checks if the image is landscape or portrait
-        if ratio_width < ratio_height:
-            ratio = ratio_width
-        else:
-            ratio = ratio_height
-
-        # calculates the resize image width
-        resize_width = int(image_width * ratio)
-
-        # calculates the resize image height
-        resize_height = int(image_height * ratio)
-
         # retrieves the resized image
-        resized_image_file = self.resize_image(image_path, resize_width, resize_height)
+        resized_image_file = self.resize_image_aspect(image_path, width, height)
 
         # opens the resized image file
         resized_image = PIL.Image.open(resized_image_file)
