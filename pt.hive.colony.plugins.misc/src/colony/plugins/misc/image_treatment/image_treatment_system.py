@@ -37,9 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import PIL.Image
 
 import colony.libs.string_buffer_util
+
+SEEK_VALUE = "seek"
+""" The seeek value """
 
 RGBA_VALUE = "RGBA"
 """ The rgba value """
@@ -89,6 +94,9 @@ class ImageTreatment:
         on the resized image.
         """
 
+        # resets the image path
+        self._reset_image_path(image_path)
+
         # opens the image file
         image = PIL.Image.open(image_path)
 
@@ -125,6 +133,9 @@ class ImageTreatment:
         @return: The file object containing the buffer information
         on the resized image.
         """
+
+        # resets the image path
+        self._reset_image_path(image_path)
 
         # opens the image file
         image = PIL.Image.open(image_path)
@@ -172,6 +183,9 @@ class ImageTreatment:
         # retrieves the resized image
         resized_image_file = self.resize_image_aspect(image_path, width, height)
 
+        # resets the image path
+        self._reset_image_path(image_path)
+
         # opens the resized image file
         resized_image = PIL.Image.open(resized_image_file)
 
@@ -195,3 +209,29 @@ class ImageTreatment:
 
         # returns the new image
         return string_buffer
+
+    def _reset_image_path(self, image_path):
+        """
+        Resets the image path in order to make it ready
+        for file opening.
+
+        @type image_path: String/File
+        @param image_path: The image path (or file) to be
+        set ready for file opening.
+        """
+
+        # retrieves the image path type
+        image_path_type = type(image_path)
+
+        # in case the image path is of type string
+        if image_path_type == types.StringType:
+            # returns immediately (nothing
+            # to do)
+            return
+
+        # in case the image path contains the seek
+        # attribute (file object)
+        if hasattr(image_path, SEEK_VALUE):
+            # sets the image (path) to
+            # the original position
+            image_path.seek(0)
