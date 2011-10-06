@@ -2034,6 +2034,28 @@ def resolve_relative_path(self, relative_path, extra_path = None):
     # returns the resolved path
     return resolved_path
 
+def resolve_resource_path(self, resource_path):
+    """
+    Resolves the given absolute path for the given
+    (relative) resource path.
+    This resolution implies the previous setting of
+    the resources path.
+
+    @type resource_path: String
+    @param resource_path: The relative path to the
+    resource, to be converted into absolute path.
+    @rtype: String
+    @return: The resolved absolute path to the resource.
+    """
+
+    # joins the current (absolute) resources path
+    # with the given (relative) resource path, creating
+    # the resource absolute path
+    resource_absolute_path = os.path.join(self.resources_path, resource_path)
+
+    # returns the resource absolute path
+    return resource_absolute_path
+
 def get_plugin(self):
     """
     Retrieves the plugin.
