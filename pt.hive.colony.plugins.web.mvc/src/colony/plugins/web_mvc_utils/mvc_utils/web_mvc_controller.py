@@ -1537,6 +1537,25 @@ def process_template_file(self, rest_request, template_file, variable_encoding =
     return processed_template_file
 
 def retrieve_template_file(self, file_path = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING, locale = None):
+    """
+    Retrieves a template file object for the given
+    (relative) file path and locale and uses the
+    given encoding to decode the template file.
+
+    @type file_path: String
+    @param file_path: The relative template file path to
+    retrieve the template file object.
+    @type encoding: String
+    @param encoding: The encoding charset to be used
+    to decode the template file.
+    @param locale: String
+    @param locale: The locate string that is going to be
+    used to retrieve the appropriate template file.
+    @rtype: TemplateFile
+    @return: The "parsed" template file object ready
+    to be used for file generation.
+    """
+
     # processes the file path according to the locale
     file_path = self._process_file_path_locale(file_path, locale)
 
