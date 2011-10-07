@@ -978,6 +978,19 @@ class ColonyPackingInstaller:
                 # sets the duplicate file count in the duplicate files structure
                 duplicate_files_structure[resource_relative_path] = duplicate_file_count
 
+            # in case the container sub type is plugin system
+            if container_sub_type == PLUGIN_SYSTEM_VALUE:
+                # installs the plugin system
+                self._install_plugin_system(file_path, properties, file_context)
+            # in case the container sub type is library
+            elif container_sub_type == LIBRARY_VALUE:
+                # installs the library
+                self._install_library(file_path, properties, file_context)
+            # in case the container sub type is configuration
+            elif container_sub_type == CONFIGURATION_VALUE:
+                # installs the configuration
+                self._install_configuration(file_path, properties, file_context)
+
             # persists the duplicates structure
             self._persist_duplicates_structure(duplicates_structure, file_context)
 
@@ -998,19 +1011,6 @@ class ColonyPackingInstaller:
 
             # adds the container item
             self._add_container_item(container_item_key, container_item_value, file_context)
-
-            # in case the container sub type is plugin system
-            if container_sub_type == PLUGIN_SYSTEM_VALUE:
-                # installs the plugin system
-                self._install_plugin_system(file_path, properties, file_context)
-            # in case the container sub type is library
-            elif container_sub_type == LIBRARY_VALUE:
-                # installs the library
-                self._install_library(file_path, properties, file_context)
-            # in case the container sub type is configuration
-            elif container_sub_type == CONFIGURATION_VALUE:
-                # installs the configuration
-                self._install_configuration(file_path, properties, file_context)
 
             # commits the transaction
             file_context.commit()
@@ -1715,6 +1715,19 @@ class ColonyPackingInstaller:
                     # directory path list
                     directory_path_list.append(resource_file_directory_path)
 
+            # in case the container sub type is plugin system
+            if container_sub_type == PLUGIN_SYSTEM_VALUE:
+                # uninstalls the plugin system
+                self._uninstall_plugin_system(container_id, container_version, container, properties, file_context)
+            # in case the container sub type is library
+            elif container_sub_type == LIBRARY_VALUE:
+                # uninstalls the library
+                self._uninstall_library(container_id, container_version, container, properties, file_context)
+            # in case the container sub type is configuration
+            elif container_sub_type == CONFIGURATION_VALUE:
+                # uninstalls the configuration
+                self._uninstall_configuration(container_id, container_version, container, properties, file_context)
+
             # persists the duplicates structure
             self._persist_duplicates_structure(duplicates_structure, file_context)
 
@@ -1734,19 +1747,6 @@ class ColonyPackingInstaller:
 
             # removes the container item
             self._remove_container_item(container_id, file_context)
-
-            # in case the container sub type is plugin system
-            if container_sub_type == PLUGIN_SYSTEM_VALUE:
-                # uninstalls the plugin system
-                self._uninstall_plugin_system(container_id, container_version, container, properties, file_context)
-            # in case the container sub type is library
-            elif container_sub_type == LIBRARY_VALUE:
-                # uninstalls the library
-                self._uninstall_library(container_id, container_version, container, properties, file_context)
-            # in case the container sub type is configuration
-            elif container_sub_type == CONFIGURATION_VALUE:
-                # uninstalls the configuration
-                self._uninstall_configuration(container_id, container_version, container, properties, file_context)
 
             # commits the transaction
             file_context.commit()
