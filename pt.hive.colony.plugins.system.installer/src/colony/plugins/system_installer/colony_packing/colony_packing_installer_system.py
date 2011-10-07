@@ -1034,7 +1034,67 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the containers directory path
+        containers_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_CONTAINERS_PATH)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
+
+            # retrieves the plugin system id
+            plugin_system_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the plugin system version
+            plugin_system_version = packing_information.get_property(VERSION_VALUE)
+
+            # retrieves the manager path
+            manager_path = plugin_manager.get_manager_path()
+
+            # reads the plugin system file contents
+            plugin_system_file_contents = file_context.read_file(file_path)
+
+            # creates the plugin system descriptor file path
+            plugin_system_file_path = os.path.join(containers_directory_path, plugin_system_id + "_" + plugin_system_version + COLONY_CONTAINER_FILE_EXTENSION)
+
+            # writes the plugin system file contents to the plugin system file path
+            file_context.write_file(plugin_system_file_path, plugin_system_file_contents)
+
+            # retrieves the "virtual" manager path from the file context
+            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
+            manager_virtual_path = file_context.get_file_path(manager_path, True)
+
+            # deploys the package using the manager "virtual" path
+            self._deploy_package(real_file_path, manager_virtual_path)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def _install_library(self, file_path, properties, file_context = None):
         """
@@ -1714,7 +1774,116 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the plugin system version as the plugin system version
+            # or from the plugin system structure
+            plugin_system_version = plugin_system_version or plugin_system[VERSION_VALUE]
+
+            # creates the library file name from the library
+            # id and version
+            plugin_system_file_name = plugin_system_id + "_" + plugin_system_version + COLONY_CONTAINER_FILE_EXTENSION
+
+            # creates the plugin system file path from the
+            plugin_system_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + plugin_system_file_name)
+
+            # resolves the plugin system path
+            real_plugin_system_path = file_context.resolve_file_path(plugin_system_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_plugin_system_path, {}, COLONY_VALUE)
+
+            # retrieves the plugin system resources
+            plugin_system_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the plugin system keep resources
+            plugin_system_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
+            # retrieves the plugin system extra resources
+            plugin_system_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
+
+            # filters the plugin system resources that are meant to be kept in
+            # the system and then extends the plugin system resources list with
+            # the plugin system extra resources
+            plugin_system_resources = [value for value in plugin_system_resources if not value in plugin_system_keep_resources]
+            plugin_system_resources.extend(plugin_system_extra_resources)
+
+            # creates the list of directory paths for (possible)
+            # later removal
+            directory_path_list = []
+
+            # iterates over all the resources to remove them
+            for plugin_system_resource in plugin_system_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(manager_path, plugin_system_resource)
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
+
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
+
+                # in case the resource file path exists
+                if not file_context.exists_file_path(resource_file_path):
+                    # continues the loop
+                    continue
+
+                # removes the resource file in the resource file path
+                file_context.remove_file(resource_file_path)
+
+                # retrieves the resource file directory path
+                resource_file_directory_path = os.path.dirname(resource_file_path)
+
+                # in case the resource file directory path is not yet
+                # present in the directory path list
+                if not resource_file_directory_path in directory_path_list:
+                    # adds the file directory path to the
+                    # directory path list
+                    directory_path_list.append(resource_file_directory_path)
+
+            # iterates over all the directory paths
+            for directory_path in directory_path_list:
+                # in case the directory path does not refers
+                # a directory
+                if not file_context.is_directory_path(directory_path):
+                    # continues the loop
+                    continue
+
+                # removes the directories in the directory path
+                file_context.remove_directory(directory_path)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def _uninstall_library(self, library_id, library_version, library, properties, file_context = None):
         """
