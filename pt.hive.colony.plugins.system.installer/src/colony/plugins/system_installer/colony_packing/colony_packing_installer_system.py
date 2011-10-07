@@ -1082,7 +1082,7 @@ class ColonyPackingInstaller:
 
             # retrieves the "virtual" manager path from the file context
             # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            manager_virtual_path = file_context.get_file_path(manager_path, True)
+            manager_virtual_path = file_context.get_file_path(manager_path, False)
 
             # deploys the package using the manager "virtual" path
             self._deploy_package(real_file_path, manager_virtual_path)
