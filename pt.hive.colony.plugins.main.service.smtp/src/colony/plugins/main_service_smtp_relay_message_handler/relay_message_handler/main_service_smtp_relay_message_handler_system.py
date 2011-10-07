@@ -244,9 +244,9 @@ class MainServiceSmtpRelayMessageHandler:
         try:
             # resolves the queries and retrieves the result
             response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
-        except:
+        except BaseException, exception:
             # raises the host resolution error
-            raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain: " + domain)
+            raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain '" + domain + "':" + unicode(exception))
 
         # in case no answers are retrieved
         if not response.answers:
