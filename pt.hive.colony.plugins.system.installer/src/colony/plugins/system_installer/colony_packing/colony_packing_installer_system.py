@@ -1537,7 +1537,7 @@ class ColonyPackingInstaller:
                     continue
 
                 # removes the directories in the directory path
-                file_context.remove_directory(directory_path)
+                file_context.remove_directory(directory_path, True)
 
             # removes the plugin file
             file_context.remove_file(real_plugin_path)
@@ -1740,7 +1740,7 @@ class ColonyPackingInstaller:
                     continue
 
                 # removes the directories in the directory path
-                file_context.remove_directory(directory_path)
+                file_context.remove_directory(directory_path, True)
 
             # removes the container file
             file_context.remove_file(real_container_path)
@@ -1874,7 +1874,7 @@ class ColonyPackingInstaller:
                     continue
 
                 # removes the directories in the directory path
-                file_context.remove_directory(directory_path)
+                file_context.remove_directory(directory_path, True)
 
             # commits the transaction
             file_context.commit()
@@ -2005,7 +2005,7 @@ class ColonyPackingInstaller:
                     continue
 
                 # removes the directories in the directory path
-                file_context.remove_directory(directory_path)
+                file_context.remove_directory(directory_path, True)
 
             # commits the transaction
             file_context.commit()
