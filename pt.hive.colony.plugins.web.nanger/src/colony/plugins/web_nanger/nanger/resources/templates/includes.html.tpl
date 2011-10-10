@@ -22,3 +22,25 @@
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/templates.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/plugins.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/main.js"></script>
+
+<!--  metadata inclusion -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!-- css inclusion -->
+<!--<link rel="stylesheet" type="text/css" href="http://lib.hive:8080/jquery_util_ui/ux/css/ux.css" />-->
+<link rel="stylesheet" type="text/css" href="http://localhost:8080/colony_dynamic/rest/mvc/omni_web_adm/resources/libs/jquery_util_ui/ux/css/ux.css" />
+<link rel="stylesheet" type="text/css" href="styles/base/css/ux.css" />
+<link rel="stylesheet" type="text/css" href="styles/omni/css/ux.css" />
+<link rel="stylesheet" type="text/css" href="extras/css/prettify.css" />
+
+<!-- favicon inclusion -->
+<link rel="shortcut icon" href="http://localhost:8080/colony_dynamic/rest/mvc/omni_web_adm/resources/libs/jquery_util_ui/ux/images/ux.ico" />
+
+<!-- javascript inclusion -->
+<script type="text/javascript" src="http://lib.hive:8080/jquery/jquery-1.4.2-min.js"></script>
+<!--<script type="text/javascript" src="http://lib.hive:8080/jquery_util_ui/ux/js/ux.js"></script>-->
+<script type="text/javascript" src="http://localhost:8080/colony_dynamic/rest/mvc/omni_web_adm/resources/libs/jquery_util_ui/ux/js/ux.js"></script>
+<script type="text/javascript" src="extras/js/prettify.js"></script>
+<script type="text/javascript" src="ux_demo.js"></script>
+
+<link rel="stylesheet" type="text/css" href="${out_none value=base_path /}resources/css/ux.css" />

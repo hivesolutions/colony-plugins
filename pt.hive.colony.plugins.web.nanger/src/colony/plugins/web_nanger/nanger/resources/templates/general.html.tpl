@@ -3,7 +3,7 @@ ${include file="doctype.html.tpl" /}
     <title>Colony Nanger</title>
     ${include file="includes.html.tpl" /}
 </head>
-<body>
+<body class="ux base-style">
     ${include file="header.html.tpl" /}
     <div id="main-container">
         <div id="content-body">

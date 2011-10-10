@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_NANGER_RESOURCES_PATH = "web_nanger/manager/resources"
+WEB_NANGER_RESOURCES_PATH = "web_nanger/nanger/resources"
 """ The web mvc manager resources path """
 
 EXTRAS_PATH = WEB_NANGER_RESOURCES_PATH + "/extras"
