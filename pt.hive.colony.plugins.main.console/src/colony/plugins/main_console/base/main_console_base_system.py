@@ -529,29 +529,6 @@ class MainConsoleBase:
         # closes the file
         file.close()
 
-    def process_upgrade(self, arguments, arguments_map, output_method, console_context):
-        """
-        Processes the upgrade command, with the given
-        arguments and output method.
-
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
-        """
-
-        # retrieves the plugin manager
-        plugin_manager = self.main_console_base_plugin.manager
-
-        # reloads the plugins manager system, then
-        # flushes the contents of the deploy directory
-        # (exits the process and then launches it again)
-        plugin_manager.reload_system(flush_deploy = True)
-
     def process_restart(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the restart command, with the given
@@ -876,10 +853,6 @@ class MainConsoleBase:
                         "mandatory" : True
                     }
                 ]
-            },
-            "upgrade" : {
-                "handler" : self.process_upgrade,
-                "help" : "upgrades the system, flushing the deploy directory"
             },
             "restart" : {
                 "handler" : self.process_restart,
