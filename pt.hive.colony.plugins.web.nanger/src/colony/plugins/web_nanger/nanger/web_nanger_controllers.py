@@ -108,6 +108,8 @@ class MainController:
         # retrieves the template file
         template_file = self.retrieve_template_file("general.html.tpl")
 
+        template_file.assign("page_include", "index.html.tpl")
+
         # applies the base path to the template file
         self.apply_base_path_template_file(rest_request, template_file)
 
