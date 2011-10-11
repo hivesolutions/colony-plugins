@@ -64,40 +64,88 @@ class Gzip:
 
         self.gzip_plugin = gzip_plugin
 
-    def gzip_contents(self, contents_string):
+    def gzip_contents(self, contents_string, file_name = None):
+        """
+        Compresses the given contents using the deflate compression
+        algorithm and encapsulating it into the gzip file format.
+
+        @type contents_string: String
+        @param contents_string: A string containing the contents
+        to be compressed.
+        @type file_name: String
+        @param file_name: The name to be set to the file in the
+        generated compressed buffer.
+        @rtype: String
+        @return: The string containing the compressed buffer.
+        """
+
         # creates a new string buffer
         string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the magic header
-        string_buffer.write("\037\213")
+        string_buffer.write("\x1f\x8b")
 
         # writes the compression method
-        string_buffer.write("\010")
+        string_buffer.write("\x08")
 
         # writes the flag values
-        string_buffer.write(chr(0))
+        file_name and string_buffer.write("\x08") or string_buffer.write("\x00")
 
         # writes the timestamp value
         string_buffer.write(struct.pack("<L", long(time.time())))
 
-        # writes some heading values
-        string_buffer.write("\002")
-        string_buffer.write("\377")
+        # writes some extra heading values
+        # (includes operating system)
+        string_buffer.write("\x02")
+        string_buffer.write("\xff")
+
+        # writes the file name
+        file_name and string_buffer.write(file_name + "\0")
 
         # compresses the contents with the zlib
         contents_string_compressed = zlib.compress(contents_string, DEFAULT_COMPRESSION_LEVEL)
 
         # writes the the contents string compressed into the string buffer
-        string_buffer.write(contents_string_compressed[2:])
+        string_buffer.write(contents_string_compressed[2:-4])
 
         # computes the contents string crc 32
+        # and convert it to unsigned number
         contents_string_crc32 = zlib.crc32(contents_string)
+        contents_string_crc32_unsigned = self._unsigned(contents_string_crc32)
 
         # writes the crc 32 lower values
-        string_buffer.write(struct.pack("<L", contents_string_crc32))
+        string_buffer.write(struct.pack("<L", contents_string_crc32_unsigned))
+
+        # retrieves the contents string size
+        # and the writes the size lower values
+        contents_string_length = len(contents_string)
+        contents_string_length_unsigned = self._unsigned(contents_string_length)
+        string_buffer.write(struct.pack("<L", contents_string_length_unsigned))
 
         # retrieves the string value from the string buffer
         string_value = string_buffer.get_value()
 
         # returns the string value
         return string_value
+
+    def _unsigned(self, number):
+        """
+        Converts the given number to unsigned assuming
+        a 32 bit value.
+
+        @type number: int
+        @param number: The number to be converted to unsigned.
+        @rtype: int
+        @return: The given number converted to unsigned.
+        """
+
+        # in case the number is positive or zero
+        # (no need to convert)
+        if number >= 0:
+            # returns the immediately with
+            # the current number value
+            return number
+
+        # runs the modulus in the number
+        # to convert it to unsigned
+        return number + 4294967296
