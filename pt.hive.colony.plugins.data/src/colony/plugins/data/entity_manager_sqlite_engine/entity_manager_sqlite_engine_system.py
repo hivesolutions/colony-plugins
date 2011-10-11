@@ -2475,7 +2475,7 @@ class EntityManagerSqliteEngine:
                             filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
                             filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
 
-                            query_string_buffer.write("in " + filter_field_value_sqlite_string_value)
+                            query_string_buffer.write(filter_field_name + " in " + filter_field_value_sqlite_string_value)
 
                     elif filter_type == "not_in":
                         # retrieves the filter fields
@@ -2504,7 +2504,7 @@ class EntityManagerSqliteEngine:
                             filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
                             filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
 
-                            query_string_buffer.write("not in " + filter_field_value_sqlite_string_value)
+                            query_string_buffer.write("not " + filter_field_name + " in " + filter_field_value_sqlite_string_value)
 
                     # in case the filter is of type like
                     elif filter_type == "like":
