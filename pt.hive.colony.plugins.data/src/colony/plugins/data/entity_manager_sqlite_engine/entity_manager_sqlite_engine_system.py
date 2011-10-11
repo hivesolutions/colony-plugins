@@ -2406,10 +2406,8 @@ class EntityManagerSqliteEngine:
                             else:
                                 query_string_buffer.write(" or ")
 
-                            # retrieves the filter field name
+                            # retrieves the filter field name and value
                             filter_field_name = filter_field["field_name"]
-
-                            # retrieves the filter field value
                             filter_field_value = filter_field["field_value"]
 
                             # retrieves the filter field class value
@@ -2423,6 +2421,35 @@ class EntityManagerSqliteEngine:
 
                             query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
 
+                    elif filter_type == "in":
+                        # retrieves the filter fields
+                        filter_fields = filter["filter_fields"]
+
+                        is_first_field = True
+
+                        for filter_field in filter_fields:
+                            if is_first_field:
+                                is_first_field = False
+                            else:
+                                query_string_buffer.write(" or ")
+
+                            # retrieves the filter field name and value
+                            filter_field_name = filter_field["field_name"]
+                            filter_field_value = filter_field["field_value"]
+
+                            # retrieves the filter field class value
+                            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+                            # retrieves the entity class id attribute value data type
+                            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+
+                            # retrieves the filter field value value sqlite string value list to then
+                            # convert into an sql sequence representation
+                            filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
+                            filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
+
+                            query_string_buffer.write("in " + filter_field_value_sqlite_string_value)
+
                     elif filter_type == "not_equals":
                         # retrieves the filter fields
                         filter_fields = filter["filter_fields"]
@@ -2435,10 +2462,8 @@ class EntityManagerSqliteEngine:
                             else:
                                 query_string_buffer.write(" or ")
 
-                            # retrieves the filter field name
+                            # retrieves the filter field name and value
                             filter_field_name = filter_field["field_name"]
-
-                            # retrieves the filter field value
                             filter_field_value = filter_field["field_value"]
 
                             # retrieves the filter field class value
@@ -2467,10 +2492,8 @@ class EntityManagerSqliteEngine:
                             else:
                                 query_string_buffer.write(" or ")
 
-                            # retrieves the filter field name
+                            # retrieves the filter field name and value
                             filter_field_name = filter_field["field_name"]
-
-                            # retrieves the filter field value
                             filter_field_value = filter_field["field_value"]
 
                             # creates a new buffer for the filter field value
@@ -2515,10 +2538,8 @@ class EntityManagerSqliteEngine:
                             else:
                                 query_string_buffer.write(" or ")
 
-                            # retrieves the filter field name
+                            # retrieves the filter field name and value
                             filter_field_name = filter_field["field_name"]
-
-                            # retrieves the filter field value
                             filter_field_value = filter_field["field_value"]
 
                             # retrieves the filter field class value
@@ -2545,10 +2566,8 @@ class EntityManagerSqliteEngine:
                             else:
                                 query_string_buffer.write(" or ")
 
-                            # retrieves the filter field name
+                            # retrieves the filter field name and value
                             filter_field_name = filter_field["field_name"]
-
-                            # retrieves the filter field value
                             filter_field_value = filter_field["field_value"]
 
                             # retrieves the filter field class value
@@ -3801,33 +3820,45 @@ class EntityManagerSqliteEngine:
         @return: The sqlite string representation of the given attribute.
         """
 
-        # in case the value is none a null is added
+        # in case the value is none a null
         if attribute_value == None:
+            # returns the sql null value
             return "null"
-        else:
-            if attribute_data_type == "text":
-                # retrieves the escaped attribute value
-                escaped_attribute_value = self.escape_text_value(attribute_value)
 
-                return "'" + escaped_attribute_value + "'"
-            elif attribute_data_type == "date":
-                # in case the attribute is given in the date time format
-                if type(attribute_value) == datetime.datetime:
-                    # retrieves the date time tuple
-                    date_time_tuple = attribute_value.utctimetuple()
+        # in case the attribute data type is text, normal
+        # separators must be applied
+        if attribute_data_type == "text":
+            # retrieves the escaped attribute value
+            escaped_attribute_value = self.escape_text_value(attribute_value)
 
-                    # creates the date time timestamp
-                    date_time_timestamp = calendar.timegm(date_time_tuple)
+            # returns the escaped attribute value with the
+            # string separators
+            return "'" + escaped_attribute_value + "'"
+        # in case the attribute data type is date, the date time
+        # structure must be converted to a float value
+        elif attribute_data_type == "date":
+            # retrieves teh attribute value type
+            attribute_value_type = type(attribute_value)
 
-                    return str(date_time_timestamp)
-                elif type(attribute_value) == types.IntType:
-                    float_attribute_value = float(attribute_value)
+            # in case the attribute is given in the date time format
+            if attribute_value_type == datetime.datetime:
+                # retrieves the date time tuple
+                date_time_tuple = attribute_value.utctimetuple()
 
-                    return str(float_attribute_value)
-                else:
-                    return str(attribute_value)
+                # creates the date time timestamp
+                date_time_timestamp = calendar.timegm(date_time_tuple)
+
+                return str(date_time_timestamp)
+            elif attribute_value_type == types.IntType:
+                float_attribute_value = float(attribute_value)
+
+                return str(float_attribute_value)
             else:
                 return str(attribute_value)
+        # otherwise it must be a default value and it is
+        # converted using the default string converter
+        else:
+            return str(attribute_value)
 
     def escape_text_value(self, text_value, escape_double_quotes = False):
         """
