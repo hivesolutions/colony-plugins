@@ -20,6 +20,8 @@
             "web_nanger/nanger/web_nanger_controllers.py",
             "web_nanger/nanger/web_nanger_system.py",
             "web_nanger/nanger/resources/baf.xml",
+            "web_nanger/nanger/resources/extras/css/ux.css",
+            "web_nanger/nanger/resources/extras/images/colony-logo.png",
             "web_nanger/nanger/resources/templates/doctype.html.tpl",
             "web_nanger/nanger/resources/templates/end_doctype.html.tpl",
             "web_nanger/nanger/resources/templates/footer.html.tpl",
