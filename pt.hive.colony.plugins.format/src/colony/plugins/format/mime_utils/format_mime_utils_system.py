@@ -97,7 +97,7 @@ class FormatMimeUtils:
         # adds the mime message attachment part to the mime message
         mime_message.add_part(mime_message_attachment_part)
 
-    def add_mime_message_contents(self, mime_message, contents_path, content_extensions):
+    def add_mime_message_contents(self, mime_message, contents_path, content_extensions, recursive = True):
         # lists the directory, retrieving the directory entries
         directory_entries = os.listdir(contents_path)
 
@@ -111,9 +111,9 @@ class FormatMimeUtils:
             content_extension = os.path.splitext(content_path)[1].lstrip(".")
 
             # in case the content path refers a directory
-            if os.path.isdir(content_path):
+            if recursive and os.path.isdir(content_path):
                 # adds the directory contents
-                self.add_mime_message_contents(mime_message, content_path, content_extensions)
+                self.add_mime_message_contents(mime_message, content_path, content_extensions, recursive)
             elif content_extension in content_extensions:
                 # adds the content to the mime message
                 self._add_mime_message_content(mime_message, content_path)

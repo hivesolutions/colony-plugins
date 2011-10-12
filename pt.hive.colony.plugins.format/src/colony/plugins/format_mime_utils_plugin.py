@@ -110,6 +110,9 @@ class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
     def add_mime_message_contents(self, mime_message, contents_path, content_extensions):
         return self.format_mime_utils.add_mime_message_contents(mime_message, contents_path, content_extensions)
 
+    def add_mime_message_contents_non_recursive(self, mime_message, contents_path, content_extensions):
+        return self.format_mime_utils.add_mime_message_contents(mime_message, contents_path, content_extensions, False)
+
     def get_format_mime_plugin(self):
         return self.format_mime_plugin
 
