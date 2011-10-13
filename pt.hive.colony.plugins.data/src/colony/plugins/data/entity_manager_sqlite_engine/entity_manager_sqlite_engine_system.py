@@ -4297,12 +4297,21 @@ class EntityManagerSqliteEngine:
             # iterates over all the splitted filter
             # field values (separates the words for the like)
             for splitted_filter_value in filter_field_value.split():
+                # in case the is first filter field
+                # value is set
                 if is_first_filter_field_value:
+                    # unsets the is first filter field
+                    # value
                     is_first_filter_field_value = False
+                # otherwise the wildcard operator must
+                # be added to the filter field value
                 else:
+                    # writes the wildcard operator
+                    # in the filter field value buffer
                     filter_field_value_buffer.write("%")
 
-                # writes
+                # writes the splitted filter value into
+                # the filter field value buffer
                 filter_field_value_buffer.write(splitted_filter_value)
 
             query_string_buffer.write(filter_field_name + " like ")
