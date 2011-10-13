@@ -2611,425 +2611,6 @@ class EntityManagerSqliteEngine:
         # returns the entities list
         return entities_list
 
-    def _process_filters(self, query_string_buffer, entity_class, filters, is_first = True):
-        # iterates over all the filters
-        # to process them
-        for filter in filters:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # adds the where operator in the query
-                # string buffer
-                query_string_buffer.write(" where (")
-
-                # unsets the is first flag
-                is_first = False
-            # otherwise the and operator
-            # must be added to the query
-            # string buffer
-            else:
-                # adds the and operator in the query
-                # string buffer
-                query_string_buffer.write(" and (")
-
-            # retrieves the filter type and then uses
-            # it to retrieve the appropriate filter method
-            filter_type = filter["filter_type"]
-            filter_method = getattr(self, "_process_filter_" + filter_type)
-
-            # calls the filter method, updating the contents of the query
-            # string buffer accordingly
-            filter_method(query_string_buffer, entity_class, filter)
-
-            # writes the end of the filter
-            query_string_buffer.write(")")
-
-    def _process_filter_equals(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the equals filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the filter value value data type
-            # and then uses it to convert the value to the appropriate
-            # representation in the sqlite type system
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
-
-            # writes the equals clause in the query string buffer
-            query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_not_equals(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the not equals filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the filter value value data type
-            # and then uses it to convert the value to the appropriate
-            # representation in the sqlite type system
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
-
-            # writes the not equals clause in the query string buffer
-            query_string_buffer.write("not " + filter_field_name + " = " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_in(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the in filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the entity class id attribute value data type
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-
-            # retrieves the filter field value value sqlite string value list to then
-            # convert into an sql sequence representation
-            filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
-            filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
-
-            # writes the in clause in the query string buffer
-            query_string_buffer.write(filter_field_name + " in " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_not_in(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the not in filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the entity class id attribute value data type
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-
-            # retrieves the filter field value value sqlite string value list to then
-            # convert into an sql sequence representation
-            filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
-            filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
-
-            # writes the in clause not in the query string buffer
-            query_string_buffer.write("not " + filter_field_name + " in " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_like(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields and
-        # like filter type
-        filter_fields = filter["filter_fields"]
-        like_filter_type = filter.get("like_filter_type", "both")
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the like filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # creates a new buffer for the filter field value
-            filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-            # sets the is first filter field
-            # value flag
-            is_first_filter_field_value = True
-
-            # iterates over all the splitted filter
-            # field values (separates the words for the like)
-            for splitted_filter_value in filter_field_value.split():
-                if is_first_filter_field_value:
-                    is_first_filter_field_value = False
-                else:
-                    filter_field_value_buffer.write("%")
-
-                # writes
-                filter_field_value_buffer.write(splitted_filter_value)
-
-            query_string_buffer.write(filter_field_name + " like ")
-
-            if like_filter_type in ("left", "both"):
-                query_string_buffer.write("'%")
-            else:
-                query_string_buffer.write("'")
-
-            # retrieves the filter field value string
-            filter_field_value_string = filter_field_value_buffer.get_value()
-
-            query_string_buffer.write(filter_field_value_string)
-
-            if like_filter_type in ("right", "both"):
-                query_string_buffer.write("%'")
-            else:
-                query_string_buffer.write("'")
-
-    def _process_filter_greater(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the greater filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the filter value value data type
-            # and then uses it to convert the value to the appropriate
-            # representation in the sqlite type system
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
-
-            # writes the greater clause not in the query string buffer
-            query_string_buffer.write(filter_field_name + " > " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_lesser(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the lesser filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name and value
-            filter_field_name = filter_field["field_name"]
-            filter_field_value = filter_field["field_value"]
-
-            # retrieves the filter field class value
-            filter_field_class_value = getattr(entity_class, filter_field_name)
-
-            # retrieves the filter value value data type
-            # and then uses it to convert the value to the appropriate
-            # representation in the sqlite type system
-            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
-
-            # writes the lesser clause not in the query string buffer
-            query_string_buffer.write(filter_field_name + " < " + filter_field_value_sqlite_string_value)
-
-    def _process_filter_is_null(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the is null filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name
-            filter_field_name = filter_field["field_name"]
-
-            # writes the is null clause not in the query string buffer
-            query_string_buffer.write(filter_field_name + " is null")
-
-    def _process_filter_is_not_null(self, query_string_buffer, entity_class, filter):
-        # retrieves the filter fields
-        filter_fields = filter["filter_fields"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter fields
-        # to set the is not null filter
-        for filter_field in filter_fields:
-            # in case the is first flag
-            # is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or ")
-
-            # retrieves the filter field name
-            filter_field_name = filter_field["field_name"]
-
-            # writes the is not null clause not in the query string buffer
-            query_string_buffer.write(filter_field_name + " is not null")
-
-    def _process_filter_or(self, query_string_buffer, entity_class, filter):
-        # retrieves the filters
-        filters = filter["filters"]
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the filter
-        # to set the or filter
-        for _filter in filters:
-            # in case the is first flag
-            # is set
-            if is_first:
-                query_string_buffer.write("(")
-
-                # unsets the is first flag
-                is_first = False
-            # otherwise the or operand must
-            # be added to the query string buffer
-            else:
-                # adds the or operator in the query
-                # string buffer
-                query_string_buffer.write(" or (")
-
-            # retrieves the filter type and then uses
-            # it to retrieve the appropriate filter method
-            filter_type = filter["filter_type"]
-            filter_method = getattr(self, "_process_filter_" + filter_type)
-
-            # calls the filter method, updating the contents of the query
-            # string buffer accordingly
-            filter_method(query_string_buffer, entity_class, filter)
-
-            query_string_buffer.write(")")
-
     def lock(self, connection, entity_class, id_value):
         """
         Locks the database using the given connection
@@ -4469,6 +4050,446 @@ class EntityManagerSqliteEngine:
 
         # returns the new entity
         return new_entity
+
+    def _process_filters(self, query_string_buffer, entity_class, filters, is_first = True):
+        """
+        Processes the given list of filters, populating the query
+        string buffer with the appropriate clauses.
+        The population of the query string buffer is made using
+        a recursive descent over the filters.
+
+        @type query_string_buffer: StringBuffer
+        @param query_string_buffer: The query string buffer currently
+        in use, for the query creation.
+        @type entity_class: EntityClass
+        @param entity_class: The entity class to be used as reference
+        for the filters.
+        @param filters: List
+        @param filters: The list of filters to be processed.
+        @type is_first: bool
+        @param is_first: Flag that indicated if this is the first where clause
+        to be present in the buffer.
+        """
+
+        # iterates over all the filters
+        # to process them
+        for filter in filters:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # adds the where operator in the query
+                # string buffer
+                query_string_buffer.write(" where (")
+
+                # unsets the is first flag
+                is_first = False
+            # otherwise the and operator
+            # must be added to the query
+            # string buffer
+            else:
+                # adds the and operator in the query
+                # string buffer
+                query_string_buffer.write(" and (")
+
+            # retrieves the filter type and then uses
+            # it to retrieve the appropriate filter method
+            filter_type = filter["filter_type"]
+            filter_method = getattr(self, "_process_filter_" + filter_type)
+
+            # calls the filter method, updating the contents of the query
+            # string buffer accordingly
+            filter_method(query_string_buffer, entity_class, filter)
+
+            # writes the end of the filter
+            query_string_buffer.write(")")
+
+    def _process_filter_equals(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the equals filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the filter value value data type
+            # and then uses it to convert the value to the appropriate
+            # representation in the sqlite type system
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+            # writes the equals clause in the query string buffer
+            query_string_buffer.write(filter_field_name + " = " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_not_equals(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the not equals filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the filter value value data type
+            # and then uses it to convert the value to the appropriate
+            # representation in the sqlite type system
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+            # writes the not equals clause in the query string buffer
+            query_string_buffer.write("not " + filter_field_name + " = " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_in(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the in filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the entity class id attribute value data type
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+
+            # retrieves the filter field value value sqlite string value list to then
+            # convert into an sql sequence representation
+            filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
+            filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
+
+            # writes the in clause in the query string buffer
+            query_string_buffer.write(filter_field_name + " in " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_not_in(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the not in filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the entity class id attribute value data type
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+
+            # retrieves the filter field value value sqlite string value list to then
+            # convert into an sql sequence representation
+            filter_field_value_sqlite_string_value_list = [self.get_attribute_sqlite_string_value(value, filter_value_data_type) for value in filter_field_value]
+            filter_field_value_sqlite_string_value = "(" + ", ".join(filter_field_value_sqlite_string_value_list) + ")"
+
+            # writes the in clause not in the query string buffer
+            query_string_buffer.write("not " + filter_field_name + " in " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_like(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields and
+        # like filter type
+        filter_fields = filter["filter_fields"]
+        like_filter_type = filter.get("like_filter_type", "both")
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the like filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # creates a new buffer for the filter field value
+            filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+            # sets the is first filter field
+            # value flag
+            is_first_filter_field_value = True
+
+            # iterates over all the splitted filter
+            # field values (separates the words for the like)
+            for splitted_filter_value in filter_field_value.split():
+                if is_first_filter_field_value:
+                    is_first_filter_field_value = False
+                else:
+                    filter_field_value_buffer.write("%")
+
+                # writes
+                filter_field_value_buffer.write(splitted_filter_value)
+
+            query_string_buffer.write(filter_field_name + " like ")
+
+            if like_filter_type in ("left", "both"):
+                query_string_buffer.write("'%")
+            else:
+                query_string_buffer.write("'")
+
+            # retrieves the filter field value string
+            filter_field_value_string = filter_field_value_buffer.get_value()
+
+            query_string_buffer.write(filter_field_value_string)
+
+            if like_filter_type in ("right", "both"):
+                query_string_buffer.write("%'")
+            else:
+                query_string_buffer.write("'")
+
+    def _process_filter_greater(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the greater filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the filter value value data type
+            # and then uses it to convert the value to the appropriate
+            # representation in the sqlite type system
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+            # writes the greater clause not in the query string buffer
+            query_string_buffer.write(filter_field_name + " > " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_lesser(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the lesser filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            filter_field_name = filter_field["field_name"]
+            filter_field_value = filter_field["field_value"]
+
+            # retrieves the filter field class value
+            filter_field_class_value = getattr(entity_class, filter_field_name)
+
+            # retrieves the filter value value data type
+            # and then uses it to convert the value to the appropriate
+            # representation in the sqlite type system
+            filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+            filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+            # writes the lesser clause not in the query string buffer
+            query_string_buffer.write(filter_field_name + " < " + filter_field_value_sqlite_string_value)
+
+    def _process_filter_is_null(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the is null filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name
+            filter_field_name = filter_field["field_name"]
+
+            # writes the is null clause not in the query string buffer
+            query_string_buffer.write(filter_field_name + " is null")
+
+    def _process_filter_is_not_null(self, query_string_buffer, entity_class, filter):
+        # retrieves the filter fields
+        filter_fields = filter["filter_fields"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the is not null filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or ")
+
+            # retrieves the filter field name
+            filter_field_name = filter_field["field_name"]
+
+            # writes the is not null clause not in the query string buffer
+            query_string_buffer.write(filter_field_name + " is not null")
+
+    def _process_filter_or(self, query_string_buffer, entity_class, filter):
+        # retrieves the filters
+        filters = filter["filters"]
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter
+        # to set the or filter
+        for _filter in filters:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # writes the start of the filter
+                query_string_buffer.write("(")
+
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query string buffer
+            else:
+                # adds the or operator in the query
+                # string buffer
+                query_string_buffer.write(" or (")
+
+            # retrieves the filter type and then uses
+            # it to retrieve the appropriate filter method
+            filter_type = filter["filter_type"]
+            filter_method = getattr(self, "_process_filter_" + filter_type)
+
+            # calls the filter method, updating the contents of the query
+            # string buffer accordingly
+            filter_method(query_string_buffer, entity_class, filter)
+
+            # writes the end of the filter
+            query_string_buffer.write(")")
 
 class BufferedEntities:
     """
