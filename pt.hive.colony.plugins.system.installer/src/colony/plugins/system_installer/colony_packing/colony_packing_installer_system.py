@@ -662,7 +662,7 @@ class ColonyPackingInstaller:
             # and then updates the main bundle "virtual" path contents
             # in order to respect the keep resources
             self._deploy_package(real_file_path, main_bundle_virtual_path)
-            self._keep_resources_package(bundle_keep_resources, temporary_bundles_path, main_bundle_virtual_path)
+            self._keep_resources(bundle_keep_resources, temporary_bundles_path, main_bundle_virtual_path)
 
             # iterates over all the plugins
             for plugin in plugins:
@@ -844,7 +844,7 @@ class ColonyPackingInstaller:
             # and then updates the plugins "virtual" path contents
             # in order to respect the keep resources
             self._deploy_package(real_file_path, plugins_virtual_path)
-            self._keep_resources_package(plugin_keep_resources, plugins_path, plugins_virtual_path)
+            self._keep_resources(plugin_keep_resources, plugins_path, plugins_virtual_path)
 
             # retrieves the plugin item key
             plugin_item_key = plugin_id
@@ -1007,7 +1007,7 @@ class ColonyPackingInstaller:
             # and then updates the containers "virtual" path contents
             # in order to respect the keep resources
             self._deploy_package(real_file_path, containers_virtual_path)
-            self._keep_resources_package(container_keep_resources, containers_exclusive_path, containers_virtual_path)
+            self._keep_resources(container_keep_resources, containers_exclusive_path, containers_virtual_path)
 
             # retrieves the container item key
             container_item_key = container_id
@@ -1103,7 +1103,7 @@ class ColonyPackingInstaller:
             # and then updates the manager "virtual" path contents
             # in order to respect the keep resources
             self._deploy_package(real_file_path, manager_virtual_path)
-            self._keep_resources_package(plugin_system_keep_resources, manager_path, manager_virtual_path)
+            self._keep_resources(plugin_system_keep_resources, manager_path, manager_virtual_path)
 
             # commits the transaction
             file_context.commit()
@@ -1184,7 +1184,7 @@ class ColonyPackingInstaller:
             # and then updates the libraries "virtual" path contents
             # in order to respect the keep resources
             self._deploy_package(real_file_path, libraries_virtual_path)
-            self._keep_resources_package(library_keep_resources, libraries_path, libraries_virtual_path)
+            self._keep_resources(library_keep_resources, libraries_path, libraries_virtual_path)
 
             # commits the transaction
             file_context.commit()
