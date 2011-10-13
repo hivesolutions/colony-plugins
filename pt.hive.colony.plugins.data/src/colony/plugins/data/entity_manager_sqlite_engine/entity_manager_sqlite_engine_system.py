@@ -4508,12 +4508,12 @@ class EntityManagerSqliteEngine:
 
             # retrieves the filter type and then uses
             # it to retrieve the appropriate filter method
-            filter_type = filter["filter_type"]
+            filter_type = _filter["filter_type"]
             filter_method = getattr(self, "_process_filter_" + filter_type)
 
             # calls the filter method, updating the contents of the query
             # string buffer accordingly
-            filter_method(query_string_buffer, entity_class, filter)
+            filter_method(query_string_buffer, entity_class, _filter)
 
             # writes the end of the filter
             query_string_buffer.write(")")
