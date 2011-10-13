@@ -633,6 +633,9 @@ class ColonyPackingInstaller:
             # retrieves the bundle version
             bundle_version = packing_information.get_property(VERSION_VALUE)
 
+            # retrieves the bundle keep resources
+            bundle_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+
             # retrieves the plugins
             plugins = packing_information.get_property(PLUGINS_VALUE)
 
@@ -657,6 +660,14 @@ class ColonyPackingInstaller:
 
             # deploys the package using the main bundle "virtual" path
             self._deploy_package(real_file_path, main_bundle_virtual_path)
+
+            # iterates over all the bundle keep resources to remove
+            # them from the temporary directory (avoids file overlap)
+            for bundle_keep_resource in bundle_keep_resources:
+                # creates the bundle keep resource path and removes
+                # it from the file system (avoids file overlap)
+                bundle_keep_resource_path = os.path.join(main_bundle_virtual_path, bundle_keep_resource)
+                os.remove(bundle_keep_resource_path)
 
             # iterates over all the plugins
             for plugin in plugins:
@@ -837,6 +848,14 @@ class ColonyPackingInstaller:
             # deploys the package using the plugins "virtual" path
             self._deploy_package(real_file_path, plugins_virtual_path)
 
+            # iterates over all the plugin keep resources to remove
+            # them from the temporary directory (avoids file overlap)
+            for plugin_keep_resource in plugin_keep_resources:
+                # creates the plugin keep resource path and removes
+                # it from the file system (avoids file overlap)
+                plugin_keep_resource_path = os.path.join(plugins_virtual_path, plugin_keep_resource)
+                os.remove(plugin_keep_resource_path)
+
             # retrieves the plugin item key
             plugin_item_key = plugin_id
 
@@ -997,6 +1016,14 @@ class ColonyPackingInstaller:
             # deploys the package using the containers "virtual" path
             self._deploy_package(real_file_path, containers_virtual_path)
 
+            # iterates over all the container keep resources to remove
+            # them from the temporary directory (avoids file overlap)
+            for container_keep_resource in container_keep_resources:
+                # creates the container keep resource path and removes
+                # it from the file system (avoids file overlap)
+                container_keep_resource_path = os.path.join(containers_virtual_path, container_keep_resource)
+                os.remove(container_keep_resource_path)
+
             # retrieves the container item key
             container_item_key = container_id
 
@@ -1068,6 +1095,9 @@ class ColonyPackingInstaller:
             # retrieves the plugin system version
             plugin_system_version = packing_information.get_property(VERSION_VALUE)
 
+            # retrieves the plugin system keep resources
+            plugin_system_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
 
@@ -1086,6 +1116,14 @@ class ColonyPackingInstaller:
 
             # deploys the package using the manager "virtual" path
             self._deploy_package(real_file_path, manager_virtual_path)
+
+            # iterates over all the plugin system keep resources to remove
+            # them from the temporary directory (avoids file overlap)
+            for plugin_system_keep_resource in plugin_system_keep_resources:
+                # creates the plugin system keep resource path and removes
+                # it from the file system (avoids file overlap)
+                plugin_system_keep_resource_path = os.path.join(manager_virtual_path, plugin_system_keep_resource)
+                os.remove(plugin_system_keep_resource_path)
 
             # commits the transaction
             file_context.commit()
@@ -1143,6 +1181,9 @@ class ColonyPackingInstaller:
             # retrieves the library version
             library_version = packing_information.get_property(VERSION_VALUE)
 
+            # retrieves the library keep resources
+            library_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+
             # retrieves the libraries path
             libraries_path = plugin_manager.get_libraries_path()
 
@@ -1161,6 +1202,14 @@ class ColonyPackingInstaller:
 
             # deploys the package using the libraries "virtual" path
             self._deploy_package(real_file_path, libraries_virtual_path)
+
+            # iterates over all the library keep resources to remove
+            # them from the temporary directory (avoids file overlap)
+            for library_keep_resource in library_keep_resources:
+                # creates the library keep resource path and removes
+                # it from the file system (avoids file overlap)
+                library_keep_resource_path = os.path.join(libraries_virtual_path, library_keep_resource)
+                os.remove(library_keep_resource_path)
 
             # commits the transaction
             file_context.commit()
