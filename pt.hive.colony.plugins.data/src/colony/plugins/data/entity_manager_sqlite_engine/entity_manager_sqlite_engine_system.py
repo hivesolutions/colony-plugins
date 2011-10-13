@@ -4314,21 +4314,39 @@ class EntityManagerSqliteEngine:
                 # the filter field value buffer
                 filter_field_value_buffer.write(splitted_filter_value)
 
+            # writes the initial part of the like operand
+            # in the query string buffer
             query_string_buffer.write(filter_field_name + " like ")
 
+            # in case the like filter type is left
+            # or both, the initial part must be wildcard
             if like_filter_type in ("left", "both"):
+                # writes the wildcard to the query
+                # string buffer
                 query_string_buffer.write("'%")
+            # otherwise no wildcard is set at the
+            # initial (left) part of the string
             else:
+                # writes the initial string to the
+                # query string buffer
                 query_string_buffer.write("'")
 
-            # retrieves the filter field value string
+            # retrieves the filter field value string (from buffer) and
+            # writes it into the query string buffer
             filter_field_value_string = filter_field_value_buffer.get_value()
-
             query_string_buffer.write(filter_field_value_string)
 
+            # in case the like filter type is right
+            # or both, the final part must be wildcard
             if like_filter_type in ("right", "both"):
+                # writes the wildcard to the query
+                # string buffer
                 query_string_buffer.write("%'")
+            # otherwise no wildcard is set at the
+            # final (right) part of the string
             else:
+                # writes the final string to the
+                # query string buffer
                 query_string_buffer.write("'")
 
     def _process_filter_greater(self, query_string_buffer, entity_class, filter):
