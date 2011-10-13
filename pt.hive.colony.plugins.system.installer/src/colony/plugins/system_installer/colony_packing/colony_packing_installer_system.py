@@ -655,19 +655,14 @@ class ColonyPackingInstaller:
             temporary_bundles_path = os.path.join(temporary_path, BUNDLES_VALUE)
 
             # retrieves the "virtual" main bundle path from the file context
-            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            main_bundle_virtual_path = file_context.get_file_path(temporary_bundles_path, False)
+            # this is necessary to ensure a transaction mode
+            main_bundle_virtual_path = file_context.get_file_path(temporary_bundles_path)
 
             # deploys the package using the main bundle "virtual" path
+            # and then updates the main bundle "virtual" path contents
+            # in order to respect the keep resources
             self._deploy_package(real_file_path, main_bundle_virtual_path)
-
-            # iterates over all the bundle keep resources to remove
-            # them from the temporary directory (avoids file overlap)
-            for bundle_keep_resource in bundle_keep_resources:
-                # creates the bundle keep resource path and removes
-                # it from the file system (avoids file overlap)
-                bundle_keep_resource_path = os.path.join(main_bundle_virtual_path, bundle_keep_resource)
-                os.remove(bundle_keep_resource_path)
+            self._keep_resources_package(bundle_keep_resources, temporary_bundles_path, main_bundle_virtual_path)
 
             # iterates over all the plugins
             for plugin in plugins:
@@ -799,8 +794,8 @@ class ColonyPackingInstaller:
             file_context.write_file(plugin_file_path, plugin_file_contents)
 
             # retrieves the "virtual" plugins path from the file context
-            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            plugins_virtual_path = file_context.get_file_path(plugins_path, False)
+            # this is necessary to ensure a transaction mode
+            plugins_virtual_path = file_context.get_file_path(plugins_path)
 
             # retrieves the duplicates structure (from file)
             duplicates_structure = self._get_duplicates_structure(file_context)
@@ -846,15 +841,10 @@ class ColonyPackingInstaller:
             self._persist_duplicates_structure(duplicates_structure, file_context)
 
             # deploys the package using the plugins "virtual" path
+            # and then updates the plugins "virtual" path contents
+            # in order to respect the keep resources
             self._deploy_package(real_file_path, plugins_virtual_path)
-
-            # iterates over all the plugin keep resources to remove
-            # them from the temporary directory (avoids file overlap)
-            for plugin_keep_resource in plugin_keep_resources:
-                # creates the plugin keep resource path and removes
-                # it from the file system (avoids file overlap)
-                plugin_keep_resource_path = os.path.join(plugins_virtual_path, plugin_keep_resource)
-                os.remove(plugin_keep_resource_path)
+            self._keep_resources_package(plugin_keep_resources, plugins_path, plugins_virtual_path)
 
             # retrieves the plugin item key
             plugin_item_key = plugin_id
@@ -954,8 +944,8 @@ class ColonyPackingInstaller:
             file_context.write_file(container_file_path, container_file_contents)
 
             # retrieves the "virtual" containers path from the file context
-            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            containers_virtual_path = file_context.get_file_path(containers_exclusive_path, False)
+            # this is necessary to ensure a transaction mode
+            containers_virtual_path = file_context.get_file_path(containers_exclusive_path)
 
             # retrieves the duplicates structure (from file)
             duplicates_structure = self._get_duplicates_structure(file_context)
@@ -1014,15 +1004,10 @@ class ColonyPackingInstaller:
             self._persist_duplicates_structure(duplicates_structure, file_context)
 
             # deploys the package using the containers "virtual" path
+            # and then updates the containers "virtual" path contents
+            # in order to respect the keep resources
             self._deploy_package(real_file_path, containers_virtual_path)
-
-            # iterates over all the container keep resources to remove
-            # them from the temporary directory (avoids file overlap)
-            for container_keep_resource in container_keep_resources:
-                # creates the container keep resource path and removes
-                # it from the file system (avoids file overlap)
-                container_keep_resource_path = os.path.join(containers_virtual_path, container_keep_resource)
-                os.remove(container_keep_resource_path)
+            self._keep_resources_package(container_keep_resources, containers_exclusive_path, containers_virtual_path)
 
             # retrieves the container item key
             container_item_key = container_id
@@ -1111,19 +1096,14 @@ class ColonyPackingInstaller:
             file_context.write_file(plugin_system_file_path, plugin_system_file_contents)
 
             # retrieves the "virtual" manager path from the file context
-            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            manager_virtual_path = file_context.get_file_path(manager_path, False)
+            # this is necessary to ensure a transaction mode
+            manager_virtual_path = file_context.get_file_path(manager_path)
 
             # deploys the package using the manager "virtual" path
+            # and then updates the manager "virtual" path contents
+            # in order to respect the keep resources
             self._deploy_package(real_file_path, manager_virtual_path)
-
-            # iterates over all the plugin system keep resources to remove
-            # them from the temporary directory (avoids file overlap)
-            for plugin_system_keep_resource in plugin_system_keep_resources:
-                # creates the plugin system keep resource path and removes
-                # it from the file system (avoids file overlap)
-                plugin_system_keep_resource_path = os.path.join(manager_virtual_path, plugin_system_keep_resource)
-                os.remove(plugin_system_keep_resource_path)
+            self._keep_resources_package(plugin_system_keep_resources, manager_path, manager_virtual_path)
 
             # commits the transaction
             file_context.commit()
@@ -1197,19 +1177,14 @@ class ColonyPackingInstaller:
             file_context.write_file(library_file_path, library_file_contents)
 
             # retrieves the "virtual" libraries path from the file context
-            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            libraries_virtual_path = file_context.get_file_path(libraries_path, False)
+            # this is necessary to ensure a transaction mode
+            libraries_virtual_path = file_context.get_file_path(libraries_path)
 
             # deploys the package using the libraries "virtual" path
+            # and then updates the libraries "virtual" path contents
+            # in order to respect the keep resources
             self._deploy_package(real_file_path, libraries_virtual_path)
-
-            # iterates over all the library keep resources to remove
-            # them from the temporary directory (avoids file overlap)
-            for library_keep_resource in library_keep_resources:
-                # creates the library keep resource path and removes
-                # it from the file system (avoids file overlap)
-                library_keep_resource_path = os.path.join(libraries_virtual_path, library_keep_resource)
-                os.remove(library_keep_resource_path)
+            self._keep_resources_package(library_keep_resources, libraries_path, libraries_virtual_path)
 
             # commits the transaction
             file_context.commit()
@@ -2083,6 +2058,45 @@ class ColonyPackingInstaller:
         """
 
         pass
+
+    def _keep_resources(self, keep_resources, path, virtual_path):
+        """
+        Keeps the resources present in the given list of resources
+        the resources are kept by checking the current path for the
+        existence of the resource.
+        In case the resource exists the resource is removed from the
+        virtual path.
+
+        @type keep_resources: List
+        @param keep_resources: The list of relative paths to the resources
+        to be kept.
+        @type path: String
+        @param path: The path to the "real" directory containing the resources.
+        @type virtual_path: String
+        @param virtual_path: The path to the virtual directory holding the
+        current transaction contents. This directory is used for removal
+        of the resources to be kept.
+        """
+
+        # iterates over all the keep resources to remove
+        # them from the virtual path (avoids file overlap)
+        for keep_resource in keep_resources:
+            # creates the keep resource path and checks
+            # if it already exists in the file system
+            keep_resource_path = os.path.join(path, keep_resource)
+            keep_resource_exists = os.path.exists(keep_resource_path)
+
+            # in case the keep resource does
+            # not already exists (no overlap)
+            if not keep_resource_exists:
+                # continues the loop (no need to
+                # avoid overlap)
+                continue
+
+            # creates the keep resource virtual path and removes
+            # it from the file system (avoids file overlap)
+            keep_resource_virtual_path = os.path.join(virtual_path, keep_resource)
+            os.remove(keep_resource_virtual_path)
 
     def _deploy_package(self, package_path, target_path = None):
         """
