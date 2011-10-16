@@ -92,6 +92,7 @@ DATA_TYPE_PYTHON_MAP = {
     ),
     "date" : (
         datetime.datetime,
+        types.IntType,
         types.NoneType
     )
 }
@@ -3581,6 +3582,8 @@ class EntityManagerSqliteEngine:
     def get_attribute_sqlite_string_value(self, attribute_value, attribute_data_type):
         """
         Retrieves the sqlite string representation of the given attribute.
+        The conversion into the correct sqlite representation is critical
+        for the correct behaviour and security of the data source.
 
         @type attribute_value: Object
         @param attribute_value: The attribute value.
@@ -3615,24 +3618,51 @@ class EntityManagerSqliteEngine:
                 # retrieves the date time tuple
                 date_time_tuple = attribute_value.utctimetuple()
 
-                # creates the date time timestamp
+                # creates the date time timestamp and then
+                # converts the timestamp to string representation
                 date_time_timestamp = calendar.timegm(date_time_tuple)
+                date_time_timestamp_string = str(date_time_timestamp)
 
-                return str(date_time_timestamp)
+                # returns the data time timestamp into
+                # string representation
+                return date_time_timestamp_string
+            # in case the attribute value type is an integer
+            # (timestamp value)
             elif attribute_value_type == types.IntType:
+                # converts the attribute value (integer)
+                # into a float value and then converts it
+                # into a string representation
                 float_attribute_value = float(attribute_value)
+                float_attribute_value_string = str(float_attribute_value)
 
-                return str(float_attribute_value)
+                # returns the float attribute value converted
+                # into a string
+                return float_attribute_value_string
+            # otherwise it's an unknown
             else:
-                return str(attribute_value)
+                # converts the attribute value to string
+                # (simple conversion)
+                attribute_value_string = str(attribute_value)
+
+                # returns the attribute value converted
+                # into string
+                return attribute_value_string
         # otherwise it must be a default value and it is
         # converted using the default string converter
         else:
-            return str(attribute_value)
+            # converts the attribute value to string
+            # (simple conversion)
+            attribute_value_string = str(attribute_value)
+
+            # returns the attribute value converted
+            # into string
+            return attribute_value_string
 
     def escape_text_value(self, text_value, escape_double_quotes = False):
         """
         Escapes the text value in the sqlite context.
+        This escaping process is important even for
+        security reasons.
 
         @type text_value: String
         @param text_value: The text value to be escapted.
