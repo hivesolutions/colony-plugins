@@ -110,8 +110,8 @@
                         <name>pt.hive.colony.extras</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.extras</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.extras</target_path>
-                        <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.language.version</previous_version_file_path>
+                        <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.extras.version</version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.extras.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.extras.changelog</changelog_file_path>
                     </repository>
                     <repository>
