@@ -43,6 +43,6 @@ configuration = {
         "port" : 2195,
         "feedback_hostname" : "feedback.sandbox.push.apple.com",
         "feedback_port" : 2196,
-        "certificate_file_path" : "c:/apple_development_push_services_lmartinho.pem"
+        "certificate_file_path" : "apple_development_push_services.pem"
     }
 }
