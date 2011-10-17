@@ -62,6 +62,9 @@ TARGET_PATH_VALUE = "target_path"
 PLUGINS_PATH_VALUE = "plugins_path"
 """ The plugins path value """
 
+CONTAINERS_PATH_VALUE = "containers_path"
+""" The containers path value """
+
 COLONY_VALUE = "colony"
 """ The colony value """
 
@@ -214,9 +217,12 @@ class PackingBuildAutomationExtension:
             raise packing_build_automation_extension_exceptions.InvalidPackingTypeException(type)
 
         # creates the properties map for the directory packing
+        # the plugins and the containers paths are required in
+        # order to be able to resolve them for bundle creation
         properties = {
             TARGET_PATH_VALUE : target_path,
-            PLUGINS_PATH_VALUE : plugins_directory
+            PLUGINS_PATH_VALUE : plugins_directory,
+            CONTAINERS_PATH_VALUE : containers_directory
         }
 
         # prints an info message
