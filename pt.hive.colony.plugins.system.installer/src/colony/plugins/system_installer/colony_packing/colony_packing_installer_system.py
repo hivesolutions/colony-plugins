@@ -72,6 +72,9 @@ ID_VALUE = "id"
 VERSION_VALUE = "version"
 """ The version value """
 
+CONFIGURATION_ID_VALUE = "configuration_id"
+""" The configuration id value """
+
 TIMESTAMP_VALUE = "timestamp"
 """ The timestamp value """
 
@@ -1208,7 +1211,78 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the containers directory path
+        containers_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_CONTAINERS_PATH)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
+
+            # retrieves the configuration id
+            configuration_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the configuration version
+            configuration_version = packing_information.get_property(VERSION_VALUE)
+
+            # retrieves the configuration configuration id
+            configuration_configuration_id = packing_information.get_property(CONFIGURATION_ID_VALUE)
+
+            # retrieves the configuration keep resources
+            configuration_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
+            # retrieves the configuration path in order to be used
+            # to determine the configuration exclusive (unique usage) path
+            configuration_path = plugin_manager.get_configuration_path()
+            configuration_exclusive_path = os.path.join(configuration_path, configuration_configuration_id)
+
+            # reads the configuration file contents
+            configuration_file_contents = file_context.read_file(file_path)
+
+            # creates the configuration descriptor file path
+            configuration_file_path = os.path.join(containers_directory_path, configuration_id + "_" + configuration_version + COLONY_CONTAINER_FILE_EXTENSION)
+
+            # writes the configuration file contents to the configuration file path
+            file_context.write_file(configuration_file_path, configuration_file_contents)
+
+            # retrieves the "virtual" configuration path from the file context
+            # this is necessary to ensure a transaction mode
+            configuration_virtual_path = file_context.get_file_path(configuration_exclusive_path)
+
+            # deploys the package using the configuration "virtual" path
+            # and then updates the configuration "virtual" path contents
+            # in order to respect the keep resources
+            self._deploy_package(real_file_path, configuration_virtual_path)
+            self._keep_resources(configuration_keep_resources, configuration_exclusive_path, configuration_virtual_path)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def _uninstall_package(self, package_id, package_version, properties, file_context = None):
         """
@@ -1352,10 +1426,10 @@ class ColonyPackingInstaller:
             # id and version
             bundle_file_name = bundle_id + "_" + bundle_version + COLONY_BUNDLE_FILE_EXTENSION
 
-            # creates the bundle file path from the
+            # creates the bundle file path from the relative bundles path
+            # and the bundle file name and then resolves it in the
+            # current file context
             bundle_path = os.path.join(registry_path, RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
-
-            # resolves the bundle path
             real_bundle_path = file_context.resolve_file_path(bundle_path)
 
             # retrieves the packing information
@@ -1459,10 +1533,10 @@ class ColonyPackingInstaller:
             # id and version
             plugin_file_name = plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
 
-            # creates the plugin file path from the
+            # creates the plugin file path from the relative plugins path
+            # and the plugin file name and then resolves it in the
+            # current file context
             plugin_path = os.path.join(registry_path, RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
-
-            # resolves the plugin path
             real_plugin_path = file_context.resolve_file_path(plugin_path)
 
             # retrieves the packing information
@@ -1646,10 +1720,10 @@ class ColonyPackingInstaller:
             # id and version
             container_file_name = container_id + "_" + container_version + COLONY_CONTAINER_FILE_EXTENSION
 
-            # creates the container file path from the
+            # creates the container file path from the relative containers
+            # path and the container file name and resolves in the
+            # current file context
             container_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + container_file_name)
-
-            # resolves the container path
             real_container_path = file_context.resolve_file_path(container_path)
 
             # retrieves the packing information
@@ -1831,10 +1905,10 @@ class ColonyPackingInstaller:
             # id and version
             plugin_system_file_name = plugin_system_id + "_" + plugin_system_version + COLONY_CONTAINER_FILE_EXTENSION
 
-            # creates the plugin system file path from the
+            # creates the plugin system file path from the relative containers
+            # path and the plugin system file name and then resolves it in the
+            # current file context
             plugin_system_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + plugin_system_file_name)
-
-            # resolves the plugin system path
             real_plugin_system_path = file_context.resolve_file_path(plugin_system_path)
 
             # retrieves the packing information
@@ -1962,10 +2036,10 @@ class ColonyPackingInstaller:
             # id and version
             library_file_name = library_id + "_" + library_version + COLONY_CONTAINER_FILE_EXTENSION
 
-            # creates the library file path from the
+            # creates the library file path from the relative containers
+            # patg and the library file name and then resolves it in the
+            # current file context
             library_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + library_file_name)
-
-            # resolves the library path
             real_library_path = file_context.resolve_file_path(library_path)
 
             # retrieves the packing information
@@ -2057,7 +2131,126 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # retrieves the configuration path
+        configuration_path = plugin_manager.get_configuration_path()
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the configuration version as the configuration version
+            # or from the configuration structure
+            configuration_version = configuration_version or configuration[VERSION_VALUE]
+
+            # creates the configuration file name from the configuration
+            # id and version
+            configuration_file_name = configuration_id + "_" + configuration_version + COLONY_CONTAINER_FILE_EXTENSION
+
+            # creates the configuration file path from the relative
+            # containers path and the configuration file name and then
+            # resolves it in the current file context
+            _configuration_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + configuration_file_name)
+            real_configuration_path = file_context.resolve_file_path(_configuration_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_configuration_path, {}, COLONY_VALUE)
+
+            # retrieves the configuration configuration id
+            configuration_configuration_id = packing_information.get_property(CONFIGURATION_ID_VALUE)
+
+            # retrieves the configuration resources
+            configuration_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the configuration keep resources
+            configuration_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
+            # retrieves the configuration extra resources
+            configuration_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
+
+            # creates the configuration exclusive path using the configuration
+            # configuration id and the (base) configuration path
+            configuration_exclusive_path = os.path.join(configuration_path, configuration_configuration_id)
+
+            # filters the configuration resources that are meant to be kept in
+            # the system and then extends the configuration resources list with
+            # the configuration extra resources
+            configuration_resources = [value for value in configuration_resources if not value in configuration_keep_resources]
+            configuration_resources.extend(configuration_extra_resources)
+
+            # creates the list of directory paths for (possible)
+            # later removal
+            directory_path_list = []
+
+            # iterates over all the resources to remove them
+            for configuration_resource in configuration_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(configuration_exclusive_path, configuration_resource)
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
+
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
+
+                # in case the resource file path exists
+                if not file_context.exists_file_path(resource_file_path):
+                    # continues the loop
+                    continue
+
+                # removes the resource file in the resource file path
+                file_context.remove_file(resource_file_path)
+
+                # retrieves the resource file directory path
+                resource_file_directory_path = os.path.dirname(resource_file_path)
+
+                # in case the resource file directory path is not yet
+                # present in the directory path list
+                if not resource_file_directory_path in directory_path_list:
+                    # adds the file directory path to the
+                    # directory path list
+                    directory_path_list.append(resource_file_directory_path)
+
+            # iterates over all the directory paths
+            for directory_path in directory_path_list:
+                # in case the directory path does not refers
+                # a directory
+                if not file_context.is_directory_path(directory_path):
+                    # continues the loop
+                    continue
+
+                # removes the directories in the directory path
+                file_context.remove_directory(directory_path, True)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def _keep_resources(self, keep_resources, path, virtual_path):
         """
