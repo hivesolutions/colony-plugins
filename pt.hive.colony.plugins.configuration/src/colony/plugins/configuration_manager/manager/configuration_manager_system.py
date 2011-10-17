@@ -189,6 +189,8 @@ class ConfigurationManager:
     def _try_create_path(self, path):
         """
         Tries to create the given path.
+        In case the given paths does not exists
+        creates the necessary directories.
 
         @type path: String
         @param path: The path to try to create.
