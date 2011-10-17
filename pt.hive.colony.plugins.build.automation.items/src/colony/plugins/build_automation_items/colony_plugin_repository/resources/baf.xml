@@ -61,6 +61,16 @@
             <version>.*</version>
             <stage>build</stage>
         </module>
+        <module>
+            <id>pt.hive.colony.configuration.plugins.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
+        <module>
+            <id>pt.hive.colony.configuration.bundles.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
     </modules>
     <build>
         <default_stage>build</default_stage>
