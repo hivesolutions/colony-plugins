@@ -634,7 +634,7 @@ class ColonyPackingInstaller:
             bundle_version = packing_information.get_property(VERSION_VALUE)
 
             # retrieves the bundle keep resources
-            bundle_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+            bundle_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the plugins
             plugins = packing_information.get_property(PLUGINS_VALUE)
@@ -1081,7 +1081,7 @@ class ColonyPackingInstaller:
             plugin_system_version = packing_information.get_property(VERSION_VALUE)
 
             # retrieves the plugin system keep resources
-            plugin_system_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+            plugin_system_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
@@ -1162,7 +1162,7 @@ class ColonyPackingInstaller:
             library_version = packing_information.get_property(VERSION_VALUE)
 
             # retrieves the library keep resources
-            library_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+            library_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the libraries path
             libraries_path = plugin_manager.get_libraries_path()
