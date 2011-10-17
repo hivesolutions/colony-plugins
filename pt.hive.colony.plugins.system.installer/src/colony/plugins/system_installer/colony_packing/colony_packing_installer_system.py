@@ -667,7 +667,8 @@ class ColonyPackingInstaller:
             self._deploy_package(real_file_path, main_bundle_virtual_path)
             self._keep_resources(bundle_keep_resources, temporary_bundles_path, main_bundle_virtual_path)
 
-            # iterates over all the plugins
+            # iterates over all the plugins, to correctly
+            # install them
             for plugin in plugins:
                 # retrieves the plugin id
                 plugin_id = plugin[ID_VALUE]
@@ -1438,7 +1439,8 @@ class ColonyPackingInstaller:
             # retrieves the bundle plugins
             bundle_plugins = packing_information.get_property(PLUGINS_VALUE)
 
-            # iterates over all the plugins to remove them
+            # iterates over all the plugins to correctly
+            # remove them from the system
             for bundle_plugin in bundle_plugins:
                 # retrieves the plugin id
                 plugin_id = bundle_plugin[ID_VALUE]
