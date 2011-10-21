@@ -84,7 +84,7 @@ def _chunk(object, string_buffer):
     # instance nor a list
     elif not object_type in LIST_TYPES:
         # raises the csv encoder exception
-        csv_exceptions.CsvEncodeException("invalid object type")
+        raise csv_exceptions.CsvEncodeException("invalid object type")
 
     # retrieves the (header) attribute names in order to
     # create the header value
