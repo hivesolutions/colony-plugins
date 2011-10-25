@@ -1417,8 +1417,8 @@ class PluginInformation:
     def _get_file_paths(self, path, file_paths):
         # normalizes the path and then uses it to
         # retrieve the path entries for the specified path
-        path = colony.libs.path_util.normalize_path(path)
-        path_entries = os.listdir(path)
+        _path = colony.libs.path_util.normalize_path(path)
+        path_entries = os.listdir(_path)
 
         # sorts the path entries
         path_entries.sort()
