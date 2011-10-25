@@ -41,6 +41,8 @@ import os
 
 import xml.dom.minidom
 
+import colony.libs.path_util
+
 ARTIFACT_VALUE = "artifact"
 """ The artifact value """
 
@@ -1413,7 +1415,9 @@ class PluginInformation:
         return file_paths
 
     def _get_file_paths(self, path, file_paths):
-        # retrieves the path entries for the specified path
+        # normalizes the path and then uses it to
+        # retrieve the path entries for the specified path
+        path = colony.libs.path_util.normalize_path(path)
         path_entries = os.listdir(path)
 
         # sorts the path entries
