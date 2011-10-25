@@ -160,7 +160,7 @@ def _attribute_names(object):
     # returns the attribute names
     return attribute_names
 
-def loads(data):
+def loads(data, header = True):
     # strips the data from extra lines
     # (avoids possible problems)
     data = data.strip()
@@ -169,23 +169,30 @@ def loads(data):
     chunks = [value.strip() for value in data.split(NEWLINE_CHARACTER)]
 
     # "dechunks" the data (retrieving the object list)
-    object = _dechunk(chunks)
+    object = _dechunk(chunks, header)
 
     # returns the object (list)
     return object
 
-def _dechunk(chunks):
+def _dechunk(chunks, header):
     # creates the object list
     object_list = []
 
     # retrieves the header value
     header_value = chunks[0]
 
-    # retrieves the various header names
+    # retrieves the header value
     header_names = [value.strip() for value in header_value.split(SEPARATOR_CHARACTER)]
 
+    # calculates the number of header names
+    number_header_names = len(header_names)
+
+    # retrieves the header names, using the
+    # token indexes in case no header is defined
+    header_names = header and header_names or range(number_header_names)
+
     # retrieves the "various" content values
-    content_values = chunks[1:]
+    content_values = header and chunks[1:] or chunks
 
     # iterates over all the content
     # in the content values

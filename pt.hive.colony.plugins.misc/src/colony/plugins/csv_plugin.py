@@ -100,6 +100,9 @@ class CsvPlugin(colony.base.plugin_system.Plugin):
     def loads(self, csv_string):
         return self.csv_system.loads(csv_string)
 
+    def loads_no_header(self, csv_string):
+        return self.csv_system.loads(csv_string, False)
+
     def load_file(self, csv_file):
         return self.csv_system.load_file(csv_file)
 

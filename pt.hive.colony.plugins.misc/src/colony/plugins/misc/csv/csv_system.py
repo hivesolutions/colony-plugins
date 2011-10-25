@@ -63,8 +63,8 @@ class Csv:
     def dumps(self, object):
         return csv_serializer.dumps(object)
 
-    def loads(self, csv_string):
-        return csv_serializer.loads(csv_string)
+    def loads(self, csv_string, header = True):
+        return csv_serializer.loads(csv_string, header)
 
     def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
         # reads the csv file
