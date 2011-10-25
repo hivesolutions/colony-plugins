@@ -673,7 +673,7 @@ class Visitor:
             # retrieves attribute value value
             format_string = attributes_map[FORMAT_VALUE]
             format_string_value = self.get_value(format_string)
-            attribute_value_value = format_string_value % attribute_value_value
+            attribute_value_value = attribute_value_value and format_string_value % attribute_value_value or attribute_value_value
 
         # in case the quote exists in the attributes map
         if QUOTE_VALUE in attributes_map:
