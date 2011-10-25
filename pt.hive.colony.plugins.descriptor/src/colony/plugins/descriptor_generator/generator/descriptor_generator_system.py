@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
+import colony.libs.path_util
+
 import colony.base.plugin_system
 
 AUTHOR_VALUE = "author"
@@ -418,8 +420,10 @@ class DescriptorGenerator:
         return file_paths
 
     def _get_file_paths(self, path, file_paths):
-        # retrieves the listdir entries for the specified path
-        listdir_entries = os.listdir(path)
+        # normalizes the path and then uses it to
+        # retrieve the directory (listdir) entries for the specified path
+        _path = colony.libs.path_util.normalize_path(path)
+        listdir_entries = os.listdir(_path)
 
         # sorts the listdir entries
         listdir_entries.sort()
