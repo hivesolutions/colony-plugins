@@ -287,7 +287,8 @@ class PackingBuildAutomationExtension:
         # retrieves the json plugin
         json_plugin = self.packing_build_automation_extension_plugin.json_plugin
 
-        # opens the specification file
+        # opens the specification file (normalizing it first)
+        specification_file_path = colony.libs.path_util.normalize_path(specification_file_path)
         specification_file = open(specification_file_path)
 
         try:
