@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.libs.path_util
+
 import json_specification_parser_exceptions
 
 SPECIFICATION_PARSER_NAME = "json"
@@ -91,6 +93,10 @@ class JsonSpecificationParser:
             json_data = json_plugin.loads(file_buffer)
         # in case the file path is defined
         elif file_path:
+            # normalizes the file path (avoids problems accessing
+            # the file system)
+            file_path = colony.libs.path_util.normalize_path(file_path)
+
             # verifies the file path
             self._verify_file_path(file_path)
 
