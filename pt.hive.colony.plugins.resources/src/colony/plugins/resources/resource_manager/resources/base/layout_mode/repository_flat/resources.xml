@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>repository_svn</data>
+                <data>repository_flat</data>
             </second_operand>
         </equals_expression>
     </validation>
