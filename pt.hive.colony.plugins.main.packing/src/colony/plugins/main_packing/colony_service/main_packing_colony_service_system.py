@@ -209,7 +209,9 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
+        # opens the compressed file (from the normalized
+        # path)
+        file_path = colony.libs.path_util.normalize_path(file_path)
         compressed_file.open(file_path, "r")
 
         try:
@@ -245,7 +247,9 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
+        # opens the compressed file (from the normalized
+        # path)
+        file_path = colony.libs.path_util.normalize_path(file_path)
         compressed_file.open(file_path, "r")
 
         try:
@@ -453,8 +457,10 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
-        compressed_file.open(target_path + "/" + bundle_id + "_" + bundle_version + DEFAULT_COLONY_BUNDLE_FILE_EXTENSION, "w")
+        # opens the compressed file (from the created
+        # normalized path)
+        compressed_file_path = colony.libs.path_util.normalize_path(target_path + "/" + bundle_id + "_" + bundle_version + DEFAULT_COLONY_BUNDLE_FILE_EXTENSION)
+        compressed_file.open(compressed_file_path, "w")
 
         try:
             # iterates over all the bundle plugins
@@ -479,7 +485,7 @@ class MainPackingColonyService:
             # to add them to the bundle
             for bundle_container in bundle_containers:
                 # retrieves the bundle container id
-                bundle_container_id = bundle_containers[ID_VALUE]
+                bundle_container_id = bundle_container[ID_VALUE]
 
                 # retrieves the bundle container version
                 bundle_container_version = bundle_container[VERSION_VALUE]
@@ -539,8 +545,10 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
-        compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
+        # opens the compressed file (from the created
+        # normalized path)
+        compressed_file_path = colony.libs.path_util.normalize_path(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION)
+        compressed_file.open(compressed_file_path, "w")
 
         try:
             # iterates over all the plugin resources
@@ -595,8 +603,10 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
-        compressed_file.open(target_path + "/" + container_id + "_" + container_version + DEFAULT_COLONY_CONTAINER_FILE_EXTENSION, "w")
+        # opens the compressed file (from the created
+        # normalized path)
+        compressed_file_path = colony.libs.path_util.normalize_path(target_path + "/" + container_id + "_" + container_version + DEFAULT_COLONY_CONTAINER_FILE_EXTENSION)
+        compressed_file.open(compressed_file_path, "w")
 
         try:
             # iterates over all the container resources
@@ -633,7 +643,9 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
+        # opens the compressed file (from the
+        # normalized path)
+        file_path = colony.libs.path_util.normalize_path(file_path)
         compressed_file.open(file_path, "r")
 
         try:
@@ -694,7 +706,9 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
+        # opens the compressed file (from the normalized
+        # path)
+        file_path = colony.libs.path_util.normalize_path(file_path)
         compressed_file.open(file_path, "r")
 
         try:
@@ -769,7 +783,9 @@ class MainPackingColonyService:
         # creates a new compressed file
         compressed_file = ColonyCompressedFile()
 
-        # opens the compressed file
+        # opens the compressed file (from the normalized
+        # path)
+        file_path = colony.libs.path_util.normalize_path(file_path)
         compressed_file.open(file_path, "r")
 
         try:
@@ -860,7 +876,11 @@ class ColonyCompressedFile:
         the compressed file.
         """
 
+        # in case the mode is zip file
         if self.mode == ZIP_FILE_MODE:
+            # normalizes the file path
+            file_path = colony.libs.path_util.normalize_path(file_path)
+
             # retrieves the file mode
             mode = os.stat(file_path)[stat.ST_MODE]
 
@@ -897,6 +917,7 @@ class ColonyCompressedFile:
 
                 # writes the file to the compressed file
                 self.file.write(file_path, target_file_path_normalized)
+        # in case the mode is tar file
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
