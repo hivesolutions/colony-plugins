@@ -63,6 +63,9 @@ RESOURCES_VALUE = "resources"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+CONTAINERS_VALUE = "containers"
+""" The containers value """
+
 SPECIFICATION_VALUE = "specification"
 """ The specification value """
 
@@ -83,6 +86,9 @@ TARGET_PATH_VALUE = "target_path"
 
 PLUGINS_PATH_VALUE = "plugins_path"
 """ The plugins path value """
+
+CONTAINERS_PATH_VALUE = "containers_path"
+""" The containers path value """
 
 MAIN_FILE_VALUE = "main_file"
 """ The main file value """
@@ -110,6 +116,9 @@ RESOURCES_BASE_PATH = "resources"
 
 PLUGINS_BASE_PATH = "plugins"
 """ The plugins base path """
+
+CONTAINERS_BASE_PATH = "containers"
+""" The containers base path """
 
 DEFAULT_COLONY_COMPRESSED_FILE_MODE = ZIP_FILE_MODE
 """ The default colony compressed file mode """
@@ -293,6 +302,9 @@ class MainPackingColonyService:
         # retrieves the plugins path property
         plugins_path = properties.get(PLUGINS_PATH_VALUE, DEFAULT_TARGET_PATH)
 
+        # retrieves the containers path property
+        containers_path = properties.get(CONTAINERS_PATH_VALUE, DEFAULT_TARGET_PATH)
+
         # iterates over all the file path in the
         # file paths list
         for file_path in file_paths_list:
@@ -300,7 +312,7 @@ class MainPackingColonyService:
             # the directory file name
             if self.bundle_regex.match(file_path):
                 # processes the bundle file
-                self._process_bundle_file(file_path, target_path, plugins_path)
+                self._process_bundle_file(file_path, target_path, plugins_path, containers_path)
             # in case there is a plugin match in
             # the directory file name
             elif self.plugin_regex.match(file_path):
@@ -400,7 +412,7 @@ class MainPackingColonyService:
                 # processes the container file
                 self._process_container_file(full_file_path, target_path)
 
-    def _process_bundle_file(self, file_path, target_path, plugins_path):
+    def _process_bundle_file(self, file_path, target_path, plugins_path, containers_path):
         """
         Processes the bundle file in the given file path, putting
         the results in the target path.
@@ -412,6 +424,9 @@ class MainPackingColonyService:
         @type plugins_path: String
         @param plugins_path: The plugins path to be used in the retrieval
         of plugin files.
+        @type containers_path: String
+        @param containers_path: The containers path to be used in the retrieval
+        of container files.
         """
 
         # retrieves the specification manager plugin
@@ -427,7 +442,10 @@ class MainPackingColonyService:
         bundle_version = bundle_specification.get_property(VERSION_VALUE)
 
         # retrieves the bundle plugins
-        bundle_plugins = bundle_specification.get_property(PLUGINS_VALUE)
+        bundle_plugins = bundle_specification.get_property(PLUGINS_VALUE, [])
+
+        # retrieves the bundle containers
+        bundle_containers = bundle_specification.get_property(CONTAINERS_VALUE, [])
 
         # retrieves the base path and extension from the file path
         _file_base_path, file_extension = os.path.splitext(file_path)
@@ -440,6 +458,7 @@ class MainPackingColonyService:
 
         try:
             # iterates over all the bundle plugins
+            # to add them to the bundle
             for bundle_plugin in bundle_plugins:
                 # retrieves the bundle plugin id
                 bundle_plugin_id = bundle_plugin[ID_VALUE]
@@ -455,6 +474,24 @@ class MainPackingColonyService:
 
                 # adds the bundle plugin file to the compressed file
                 compressed_file.add(bundle_plugin_path, PLUGINS_BASE_PATH + "/" + bundle_plugin_name)
+
+            # iterates over all the bundle containers
+            # to add them to the bundle
+            for bundle_container in bundle_containers:
+                # retrieves the bundle container id
+                bundle_container_id = bundle_containers[ID_VALUE]
+
+                # retrieves the bundle container version
+                bundle_container_version = bundle_container[VERSION_VALUE]
+
+                # creates the bundle container name
+                bundle_container_name = bundle_container_id + "_" + bundle_container_version + DEFAULT_COLONY_CONTAINER_FILE_EXTENSION
+
+                # creates the bundle container path
+                bundle_container_path = containers_path + "/" + bundle_container_name
+
+                # adds the bundle container file to the compressed file
+                compressed_file.add(bundle_container_path, CONTAINERS_BASE_PATH + "/" + bundle_container_name)
 
             # adds the specification file to the compressed file
             compressed_file.add(file_path, SPECIFICATION_VALUE + file_extension)
