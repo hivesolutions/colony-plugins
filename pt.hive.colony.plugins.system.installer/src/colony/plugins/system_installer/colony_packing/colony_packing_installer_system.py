@@ -108,6 +108,9 @@ BUNDLES_VALUE = "bundles"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+CONTAINERS_VALUE = "containers"
+""" The containers value """
+
 PLUGIN_SYSTEM_VALUE = "plugin_system"
 """ The plugin system value """
 
@@ -640,7 +643,10 @@ class ColonyPackingInstaller:
             bundle_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the plugins
-            plugins = packing_information.get_property(PLUGINS_VALUE)
+            plugins = packing_information.get_property(PLUGINS_VALUE, [])
+
+            # retrieves the containers
+            containers = packing_information.get_property(CONTAINERS_VALUE, [])
 
             # reads the bundle file contents
             bundle_file_contents = file_context.read_file(file_path)
@@ -696,6 +702,41 @@ class ColonyPackingInstaller:
                 package_item_value = {
                     TYPE_VALUE : PLUGIN_VALUE,
                     VERSION_VALUE : plugin_version,
+                    HASH_DIGEST_VALUE : hash_digest_map
+                }
+
+                # adds the package item
+                self._add_package_item(package_item_key, package_item_value, file_context)
+
+            # iterates over all the containers, to correctly
+            # install them
+            for container in containers:
+                # retrieves the container id
+                container_id = container[ID_VALUE]
+
+                # retrieves the container version
+                container_version = container[VERSION_VALUE]
+
+                # creates the container file path
+                container_file_path = os.path.join(temporary_bundles_path, CONTAINERS_VALUE + "/" + container_id + "_" + container_version + COLONY_CONTAINER_FILE_EXTENSION)
+
+                # installs the container for the given container file path
+                # properties and file context
+                self.install_container(container_file_path, properties, file_context)
+
+                # retrieves the package item key
+                package_item_key = container_id
+
+                # resolves the container file path retrieving the real file path
+                real_container_file_path = file_context.resolve_file_path(file_path)
+
+                # generates the hash digest map for the package file
+                hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_container_file_path)
+
+                # creates the package item value
+                package_item_value = {
+                    TYPE_VALUE : CONTAINER_VALUE,
+                    VERSION_VALUE : container_version,
                     HASH_DIGEST_VALUE : hash_digest_map
                 }
 
@@ -1437,7 +1478,10 @@ class ColonyPackingInstaller:
             packing_information = packing_manager_plugin.get_packing_information(real_bundle_path, {}, COLONY_VALUE)
 
             # retrieves the bundle plugins
-            bundle_plugins = packing_information.get_property(PLUGINS_VALUE)
+            bundle_plugins = packing_information.get_property(PLUGINS_VALUE, [])
+
+            # retrieves the bundle containers
+            bundle_containers = packing_information.get_property(CONTAINERS_VALUE, [])
 
             # iterates over all the plugins to correctly
             # remove them from the system
@@ -1453,6 +1497,21 @@ class ColonyPackingInstaller:
 
                 # removes the package item
                 self._remove_package_item(plugin_id, file_context)
+
+            # iterates over all the containers to correctly
+            # remove them from the system
+            for bundle_container in bundle_containers:
+                # retrieves the container id
+                container_id = bundle_container[ID_VALUE]
+
+                # retrieves the container version
+                container_version = bundle_container[VERSION_VALUE]
+
+                # removes the container
+                self.uninstall_container(container_id, container_version, properties, file_context)
+
+                # removes the package item
+                self._remove_package_item(container_id, file_context)
 
             # removes the bundle file
             file_context.remove_file(real_bundle_path)
