@@ -43,10 +43,10 @@ import sys
 
 import resource_manager_parser
 
-BASE_RESOURCES_PATH = "/resources/resource_manager/resources"
+BASE_RESOURCES_PATH = "resources/resource_manager/resources"
 """ The base resources path """
 
-CONFIGURATION_PATH = "/configuration"
+CONFIGURATION_PATH = "configuration"
 """ The configuration path """
 
 RESOURCES_SUFIX_VALUE = "resources.xml"
@@ -220,6 +220,8 @@ class ResourceManager:
     def load_base_resources(self):
         """
         Loads the base resources from the description file.
+        The base resources are the resources in the plugin's
+        resources directory.
         """
 
         # retrieves the plugin manager
@@ -232,14 +234,17 @@ class ResourceManager:
         plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin_id)
 
         # constructs the full resources path
-        full_resources_path = plugin_path + BASE_RESOURCES_PATH
+        full_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
 
         # loads the base resources for the entry directory
+        # (this is a recursive loading strategy)
         self._load_resources_directory(full_resources_path)
 
     def load_configuration_resources(self):
         """
         Loads the configuration resources from the description file.
+        The configuration resources are located in the configuration
+        directory
         """
 
         # retrieves the plugin manager
@@ -249,19 +254,20 @@ class ResourceManager:
         resource_manager_plugin_id = self.resource_manager_plugin.id
 
         # retrieves the plugin configuration paths from the resource manager plugin
-        configuration_path, workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(resource_manager_plugin_id)
+        # sets the extra paths flag to retrieve all the configuration paths
+        configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(resource_manager_plugin_id, True)
 
-        # constructs the full configuration path
-        full_configuration_path = configuration_path + CONFIGURATION_PATH
+        # iterates over all the configuration paths
+        # to construct the full configuration path and
+        # load the resources in that path
+        for configuration_path in configuration_paths:
+            # constructs the full configuration path, from the
+            # base configuration path and the relative configuration path
+            full_configuration_path = os.path.join(configuration_path, CONFIGURATION_PATH)
 
-        # constructs the full workspace path
-        full_workspace_path = workspace_path + CONFIGURATION_PATH
-
-        # loads the configuration resources for the entry directory
-        self._load_resources_directory(full_configuration_path)
-
-        # loads the workspace resources for the entry directory
-        self._load_resources_directory(full_workspace_path)
+            # loads the configuration resources for the entry directory
+            # (this is a recursive loading strategy)
+            self._load_resources_directory(full_configuration_path)
 
     def parse_file(self, file_path, full_resources_path):
         """
