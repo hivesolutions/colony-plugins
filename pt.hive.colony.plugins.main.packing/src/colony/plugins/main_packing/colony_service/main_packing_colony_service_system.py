@@ -656,7 +656,8 @@ class MainPackingColonyService:
             bundle_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
 
             # retrieves the bundle resources
-            bundle_plugins = bundle_specification.get_property("plugins")
+            bundle_plugins = bundle_specification.get_property("plugins", [])
+            bundle_containers = bundle_specification.get_property("containers", [])
 
             # iterates over all the bundle resources
             for bundle_plugin in bundle_plugins:
@@ -680,6 +681,30 @@ class MainPackingColonyService:
 
                 # extracts the plugin
                 compressed_file.extract(bundle_plugin_path, bundle_plugin_target_path, False)
+
+            # iterates over all the bundle resources
+            for bundle_container in bundle_containers:
+                # retrieves the bundle container id
+                bundle_container_id = bundle_container[ID_VALUE]
+
+                # retrieves the bundle container version
+                bundle_container_version = bundle_container[VERSION_VALUE]
+
+                # creates the bundle container name
+                bundle_container_name = bundle_container_id + "_" + bundle_container_version + DEFAULT_COLONY_CONTAINER_FILE_EXTENSION
+
+                # creates the bundle container path
+                bundle_container_path = CONTAINERS_BASE_PATH + "/" + bundle_container_name
+
+                # creates the bundle container target path
+                bundle_container_target_path = target_path + "/" + CONTAINERS_BASE_PATH + "/" + bundle_container_name
+
+                # prints a debug message
+                self.main_packing_colony_service_plugin.debug("Extracting container '%s'" % bundle_container_name)
+
+                # extracts the container
+                compressed_file.extract(bundle_container_path, bundle_container_target_path, False)
+
         finally:
             # closes the compressed file
             compressed_file.close()
@@ -974,7 +999,7 @@ class ColonyCompressedFile:
         zip_file_contents = self.file.read(file_path)
 
         # opens the target file for writing
-        target_file = open(complete_target_path, "wb")
+        target_file = open(target_path_normalized, "wb")
 
         try:
             # writes the zip file contents into
