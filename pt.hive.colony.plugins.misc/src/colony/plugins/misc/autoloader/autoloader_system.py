@@ -186,7 +186,7 @@ class Autoloader:
                     # retrieves the file properties from the file information
                     file_properties = file_information.file_properties
 
-                    # in case the modified data is differente from
+                    # in case the modified data is different from
                     # the modified date in the file properties (file changed)
                     if not modified_date == file_properties.modified_date:
                         # tries to retrieve the plugin from the plugin manager using the module name
