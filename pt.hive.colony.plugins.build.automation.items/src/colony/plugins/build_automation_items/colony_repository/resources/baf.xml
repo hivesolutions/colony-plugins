@@ -92,6 +92,11 @@
                             <version>1.0.0</version>
                             <architecture>all</architecture>
                         </file>
+                        <file>
+                            <name>colony-base-containers</name>
+                            <version>1.0.0</version>
+                            <architecture>all</architecture>
+                        </file>
                     </contents>
                 </configuration>
             </plugin>
