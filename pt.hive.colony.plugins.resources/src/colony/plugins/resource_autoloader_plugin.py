@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
+class ResourceAutoloaderPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Resource Manager plugin.
+    The main class for the Resource Autoloader plugin.
     """
 
     id = "pt.hive.colony.plugins.resources.resource_autoloader"
@@ -60,8 +60,12 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
         "build_automation_file_path" : "$base{plugin_directory}/resources/resource_autoloader/resources/baf.xml"
     }
     capabilities = [
+        "main",
         "resource_autoloader",
         "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
     ]
     main_modules = [
         "resources.resource_autoloader.resource_autoloader_system"
@@ -70,19 +74,36 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     resource_autoloader = None
     """ The resource autoloader """
 
+    resource_manager_plugin = None
+    """ The resource manager plugin """
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import resources.resource_autoloader.resource_autoloader_system
         self.resource_autoloader = resources.resource_autoloader.resource_autoloader_system.ResourceAutoloader(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+
+        print "aui vou fazer as coisas"
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -90,5 +111,13 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
