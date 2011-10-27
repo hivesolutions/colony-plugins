@@ -93,6 +93,9 @@ class Autoloader:
         # notifies the ready semaphore
         self.autoloader_plugin.release_ready_semaphore()
 
+        # sets the continue flag
+        self.continue_flag = True
+
         # while the flag is active
         while self.continue_flag:
             # iterates over all the search directories (lists)
