@@ -947,9 +947,14 @@ class ResourceManager:
         # creates the map to hold the system base information (ordered  map)
         resource_manager_base_information = colony.libs.structures_util.OrderedMap()
 
-        # iterates over all the resources lists in the resource name
+        # retrieves the resource namespace resources list map and sorts
+        # the items (allows a better view)
+        resource_namespace_resources_list_map_items = self.resource_namespace_resources_list_map.items()
+        resource_namespace_resources_list_map_items.sort()
+
+        # iterates over all the resources lists in the resource namespace
         # resources list map, to creates the resource manager base information
-        for resource_name, resources_list in self.resource_name_resources_list_map.items():
+        for _resource_namespace, resources_list in resource_namespace_resources_list_map_items:
             # iterates over all the resources in the resources
             # list to create the resource manager base information
             for resource in resources_list:
@@ -960,7 +965,7 @@ class ResourceManager:
                 # appropriate value representation
                 resource_type = resource.type
 
-                # in case the resource is of a type that may be visualy
+                # in case the resource is of a type that may be visually
                 # representable
                 if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
                     resource_value = unicode(resource.data)
@@ -1002,13 +1007,78 @@ class ResourceManager:
         resource_manager_base_item["columns"] = resource_manager_base_item_columns
         resource_manager_base_item["values"] = resource_manager_base_information
 
+        # creates the map to hold the system plugins information (ordered  map)
+        resource_manager_plugins_information = colony.libs.structures_util.OrderedMap()
+
+        # retrieves the plugin id configuration resources list map and sorts
+        # the items (allows a better view)
+        plugin_id_configuration_resources_list_map_items = self.plugin_id_configuration_resources_list_map.items()
+        plugin_id_configuration_resources_list_map_items.sort()
+
+        # iterates over all the resources lists in the resource namespace
+        # resources list map, to creates the resource manager plugins information
+        for plugin_id, resources_list in plugin_id_configuration_resources_list_map_items:
+            # iterates over all the resources in the resources
+            # list to create the resource manager plugins information
+            for resource in resources_list:
+                # retrieves the resource (complete) name (using
+                # the plugin id)
+                resource_name = plugin_id + "." + resource.name
+
+                # retrieves the resource type, to use to retrieve
+                # appropriate value representation
+                resource_type = resource.type
+
+                # in case the resource is of a type that may be visually
+                # representable
+                if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
+                    resource_value = unicode(resource.data)
+                # otherwise it's not possible to represent the resource
+                # visually
+                else:
+                    # sets the resource value with the not available
+                    # string value
+                    resource_value = u"N/A"
+
+                # sets the instance value for the resource manager
+                # plugins information
+                resource_manager_plugins_information[resource_name] = (
+                        resource_type,
+                        resource_value
+                )
+
+        # defines the resource manager plugins item columns
+        resource_manager_plugins_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Name"
+            },
+            {
+                "type" : "value",
+                "value" : "Type"
+            },
+            {
+                "type" : "value",
+                "value" : "Value"
+            }
+        ]
+
+        # creates the resource manager plugins item
+        resource_manager_plugins_item = {}
+
+        # sets the resource manager plugins values
+        resource_manager_plugins_item["type"] = "map"
+        resource_manager_plugins_item["columns"] = resource_manager_plugins_item_columns
+        resource_manager_plugins_item["values"] = resource_manager_plugins_information
+
         # creates the system information (item)
         system_information = {}
 
         # sets the system information (item) values
         system_information["name"] = "Resource Manager"
         system_information["items"] = [
-            resource_manager_base_item
+            resource_manager_base_item,
+            resource_manager_plugins_item
         ]
 
         # returns the system information
