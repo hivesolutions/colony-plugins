@@ -9,7 +9,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["startup", "resource_manager", "test_case",
-            "build_automation_item"],
+            "system_information", "build_automation_item"],
     "capabilities_allowed" : ["resource_parser"],
     "dependencies" : [],
     "main_file" : "resource_manager_plugin.py",

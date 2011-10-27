@@ -944,14 +944,14 @@ class ResourceManager:
         @return: The system information map.
         """
 
-        # creates the map to hold the system information (ordered  map)
-        resource_manager_information = colony.libs.structures_util.OrderedMap()
+        # creates the map to hold the system base information (ordered  map)
+        resource_manager_base_information = colony.libs.structures_util.OrderedMap()
 
-        # iterates over all the resoruces lists in the resource name
-        # resources list map, to creates the resource manager information
+        # iterates over all the resources lists in the resource name
+        # resources list map, to creates the resource manager base information
         for resource_name, resources_list in self.resource_name_resources_list_map.items():
             # iterates over all the resources in the resources
-            # list to create the resource manager information
+            # list to create the resource manager base information
             for resource in resources_list:
                 # retrieves the resource (complete) name
                 resource_name = resource.id
@@ -971,14 +971,15 @@ class ResourceManager:
                     # string value
                     resource_value = u"N/A"
 
-                # sets the instance value for the resource manager information
-                resource_manager_information[resource_name] = (
+                # sets the instance value for the resource manager
+                # base information
+                resource_manager_base_information[resource_name] = (
                         resource_type,
                         resource_value
                 )
 
-        # defines the resource manager item columns
-        resource_manager_item_columns = [
+        # defines the resource manager base item columns
+        resource_manager_base_item_columns = [
             {
                 "type" : "name",
                 "value" : "Name"
@@ -993,13 +994,13 @@ class ResourceManager:
             }
         ]
 
-        # creates the resource manager item
-        resource_manager_item = {}
+        # creates the resource manager base item
+        resource_manager_base_item = {}
 
-        # sets the web resource manager values
-        resource_manager_item["type"] = "map"
-        resource_manager_item["columns"] = resource_manager_item_columns
-        resource_manager_item["values"] = resource_manager_information
+        # sets the resource manager base values
+        resource_manager_base_item["type"] = "map"
+        resource_manager_base_item["columns"] = resource_manager_base_item_columns
+        resource_manager_base_item["values"] = resource_manager_base_information
 
         # creates the system information (item)
         system_information = {}
@@ -1007,7 +1008,7 @@ class ResourceManager:
         # sets the system information (item) values
         system_information["name"] = "Resource Manager"
         system_information["items"] = [
-            resource_manager_item
+            resource_manager_base_item
         ]
 
         # returns the system information
