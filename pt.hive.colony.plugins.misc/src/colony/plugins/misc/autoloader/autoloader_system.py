@@ -196,6 +196,8 @@ class Autoloader:
                         if plugin:
                             # reloads the module
                             self.reload_module(plugin, module_name)
+                        # otherwise the plugin is not loaded and the module
+                        # must only be loaded in the plugin manager
                         else:
                             # loads the module
                             self.load_module(search_directory, module_name)
