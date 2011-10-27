@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
+SLEEP_TIME_VALUE = 1.0
+""" The sleep time value """
+
 class ResourceAutoloader:
     """
     The resource autoloader
@@ -51,3 +56,33 @@ class ResourceAutoloader:
         """
 
         self.resource_autoloader_plugin = resource_autoloader_plugin
+
+    def load_autoloader(self):
+        """
+        Loads the autoloader starting all the necessary structures
+        and setting the update time.
+        The autoloader runs continuously until the continue
+        flag is unset.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_autoloader_plugin.manager
+
+        # retrieves the meta paths
+        meta_paths = plugin_manager.get_meta_paths()
+
+        # notifies the ready semaphore
+        self.autoloader_plugin.release_ready_semaphore()
+
+        # while the flag is active
+        while self.continue_flag:
+            # iterates over all the meta paths
+            for meta_path in meta_paths:
+                print meta_path
+                # iterates over all the search directories
+            #    for search_directory in meta_paths:
+                    # analyzes the given search directory
+            #        self.analyze_search_directory(search_directory)
+
+            # sleeps for the given sleep time
+            time.sleep(SLEEP_TIME_VALUE)
