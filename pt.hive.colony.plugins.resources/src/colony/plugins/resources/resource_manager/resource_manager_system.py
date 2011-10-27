@@ -364,7 +364,8 @@ class ResourceManager:
 
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
-            # registers the resource
+            # registers the resource for the given namespace,
+            # name type and data
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
 
     def register_plugin_resources(self, plugin):
@@ -1140,13 +1141,18 @@ class ResourceManager:
     def _invalidate_real_string_value_cache(self):
         """
         Invalidates the real string value cache.
+        Required to provide a fast way to maintain cache
+        coherence.
         """
 
         # in case the string value real string value map
-        # is not empty
+        # is empty (nothing to do)
         if self.string_value_real_string_value_map:
-            # clears the string value real string value map
-            self.string_value_real_string_value_map.clear()
+            # returns immediately
+            return
+
+        # clears the string value real string value map
+        self.string_value_real_string_value_map.clear()
 
 class Resource:
     """
