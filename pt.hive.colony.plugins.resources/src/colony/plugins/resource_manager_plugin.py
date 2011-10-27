@@ -64,6 +64,7 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
         "startup",
         "resource_manager",
         "test_case",
+        "system_information",
         "build_automation_item"
     ]
     capabilities_allowed = [
@@ -141,6 +142,17 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
 
     def get_test_case(self):
         return self.resource_manager_test_case_class
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        return self.resource_manager.get_system_information()
 
     @colony.base.decorators.load_allowed_capability("resource_parser")
     def resource_parser_load_allowed(self, plugin, capability):

@@ -41,6 +41,8 @@ import os
 import re
 import sys
 
+import colony.libs.structures_util
+
 import resource_manager_parser
 
 BASE_RESOURCES_PATH = "resources/resource_manager/resources"
@@ -932,6 +934,84 @@ class ResourceManager:
 
         # returns an empty list by default
         return []
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        # creates the map to hold the system information (ordered  map)
+        resource_manager_information = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the resoruces lists in the resource name
+        # resources list map, to creates the resource manager information
+        for resource_name, resources_list in self.resource_name_resources_list_map.items():
+            # iterates over all the resources in the resources
+            # list to create the resource manager information
+            for resource in resources_list:
+                # retrieves the resource (complete) name
+                resource_name = resource.id
+
+                # retrieves the resource type, to use to retrieve
+                # appropriate value representation
+                resource_type = resource.type
+
+                # in case the resource is of a type that may be visualy
+                # representable
+                if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
+                    resource_value = unicode(resource.data)
+                # otherwise it's not possible to represent the resource
+                # visually
+                else:
+                    # sets the resource value with the not available
+                    # string value
+                    resource_value = u"N/A"
+
+                # sets the instance value for the resource manager information
+                resource_manager_information[resource_name] = (
+                        resource_type,
+                        resource_value
+                )
+
+        # defines the resource manager item columns
+        resource_manager_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Name"
+            },
+            {
+                "type" : "value",
+                "value" : "Type"
+            },
+            {
+                "type" : "value",
+                "value" : "Value"
+            }
+        ]
+
+        # creates the resource manager item
+        resource_manager_item = {}
+
+        # sets the web resource manager values
+        resource_manager_item["type"] = "map"
+        resource_manager_item["columns"] = resource_manager_item_columns
+        resource_manager_item["values"] = resource_manager_information
+
+        # creates the system information (item)
+        system_information = {}
+
+        # sets the system information (item) values
+        system_information["name"] = "Resource Manager"
+        system_information["items"] = [
+            resource_manager_item
+        ]
+
+        # returns the system information
+        return system_information
 
     def load_resource_parser_plugin(self, resource_parser_plugin):
         resource_parser_name = resource_parser_plugin.get_resource_parser_name()
