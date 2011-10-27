@@ -231,9 +231,12 @@ class Autoloader:
         for file_name in self.search_directories_information_map[search_directory]:
             file_information = self.search_directories_information_map[search_directory][file_name]
             if not file_information.exists:
+                # adds the file name to the remove
+                # list (for file removal)
                 remove_list.append(file_name)
 
         # removes all the modules in the remove list
+        # (pending files for removal)
         for remove_item in remove_list:
             # splits the path of the remove item
             split = os.path.splitext(remove_item)
