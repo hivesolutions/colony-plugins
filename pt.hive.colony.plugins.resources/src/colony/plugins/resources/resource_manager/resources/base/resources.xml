@@ -52,12 +52,6 @@
         <type>string</type>
         <data>${COLONY_INTEGRATION_BASE}</data>
     </resource>
-    <resource>
-        <namespace>system.path</namespace>
-        <name>izpack_home</name>
-        <type>string</type>
-        <data>C:/Program Files/IzPack/bin</data>
-    </resource>
 
     <!-- Mail server configuration -->
     <resource>
