@@ -104,6 +104,34 @@
                             </parameters>
                         </file>
                         <file>
+                            <path>${build_automation.build.containers_directory}/pt.hive.colony.configuration.development.main_console_1.0.0.ccx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.configuration.development.main_console_1.0.0.ccx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.configuration.development.main_console_1.0.0.ccx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.containers_directory}/pt.hive.colony.configuration.development.main_console_interface_1.0.0.ccx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.configuration.development.main_console_interface_1.0.0.ccx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.configuration.development.main_console_interface_1.0.0.ccx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
                             <path>${build_automation.build.containers_directory}/pt.hive.colony.configuration.development.main_service_http_1.0.0.ccx</path>
                             <owner>0</owner>
                             <group>0</group>
