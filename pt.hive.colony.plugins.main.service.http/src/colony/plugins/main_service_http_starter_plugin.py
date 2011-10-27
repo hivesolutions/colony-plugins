@@ -89,8 +89,7 @@ class MainServiceHttpStarterPlugin(colony.base.plugin_system.Plugin):
         # defines the parameters
         parameters = {
             "socket_provider" : "normal",
-            "port" : 8080,
-            "encoding" : "gzip"
+            "port" : 8080
         }
 
         self.main_service_http_plugin.start_service(parameters)
