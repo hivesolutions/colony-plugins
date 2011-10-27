@@ -370,6 +370,8 @@ class ResourceManager:
     def register_plugin_resources(self, plugin):
         """
         Registers the plugin resources in the plugin.
+        The plugin is properly "notified" about the
+        new configuration property.
 
         @type plugin: Plugin
         @param plugin: The plugin to have the resources registered.
