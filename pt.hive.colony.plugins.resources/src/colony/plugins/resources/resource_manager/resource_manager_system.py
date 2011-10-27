@@ -455,9 +455,14 @@ class ResourceManager:
 
         # iterates over all the resources in the base resources list
         for resource in base_resources_list:
-            # unregisters the resource for the given namespace,
-            # name type and data
-            self.unregister_resource(resource.namespace, resource.name, resource.type, resource.data)
+            # creates a new (composite) resource from the given
+            # (base) resource information
+            resource = Resource(resource.namespace, resource.name, resource.type, resource.data)
+
+            # retrieves the resource id and the unregisters
+            # the resource using the given resource id
+            resource_id = resource.get_id()
+            self.unregister_resource(resource_id)
 
     def register_plugin_resources(self, plugin):
         """
@@ -856,7 +861,9 @@ class ResourceManager:
         resource_id = resource.get_id()
 
         # if the resource already exists remove it from all indexes
+        # avoids extra problem with the resource
         if self.is_resource_registered(resource_id):
+            # unregisters the resource (cleans structures)
             self.unregister_resource(resource_id)
 
         # sets the resource in the resource id resource map
