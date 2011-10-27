@@ -8,9 +8,12 @@
     "description" : "A plugin to automatically load and reload resource in the plugin system",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["resource_autoloader", "build_automation_item"],
+    "capabilities" : ["main", "resource_autoloader", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.resources.resource_manager",
+                "version" : "1.0.0"
+            }],
     "main_file" : "resource_autoloader_plugin.py",
     "resources" : ["resource_autoloader_plugin.py", "resources/__init__.py",
             "resources/resource_autoloader/__init__.py",
