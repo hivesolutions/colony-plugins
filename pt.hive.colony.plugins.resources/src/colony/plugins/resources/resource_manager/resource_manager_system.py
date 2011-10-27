@@ -961,15 +961,18 @@ class ResourceManager:
         resources_path_directory_contents = os.listdir(directory_path)
 
         # iterates over the resources path directory contents
+        # to load them in the resource manager
         for resources_path_item in resources_path_directory_contents:
             # creates the resources full path item
-            resources_full_path_item = directory_path + "/" + resources_path_item
+            resources_full_path_item = os.path.join(directory_path, resources_path_item)
 
             # in case the length of the resources path item is greater or equal than the resources suffix length
             # and the last item of the resources path item is the same as the resources suffix value
             if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
                 # parses the resources description file
                 self.parse_file(resources_full_path_item, directory_path)
+            # otherwise in case the resources full path is a directory
+            # path a descent must be done
             elif os.path.isdir(resources_full_path_item):
                 # loads the resources for the directory
                 self._load_resources_directory(resources_full_path_item)
