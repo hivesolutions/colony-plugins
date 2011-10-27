@@ -41,6 +41,7 @@ import os
 import re
 import sys
 
+import colony.libs.path_util
 import colony.libs.structures_util
 
 import resource_manager_parser
@@ -125,6 +126,9 @@ class ResourceManager:
     string_value_real_string_value_map = {}
     """ The string value real string value map """
 
+    file_path_resources_list_map = {}
+    """ The map associating the resource file path with the list of "parsed" resources """
+
     environment_variable_regex = None
     """ The environment variable regular expression used for regular expression match """
 
@@ -156,6 +160,7 @@ class ResourceManager:
         self.resource_parser_plugins_map = {}
         self.plugin_id_configuration_resources_list_map = {}
         self.string_value_real_string_value_map = {}
+        self.file_path_resources_list_map = {}
 
         # compiles the environment variable regular expression
         self.environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
@@ -275,16 +280,15 @@ class ResourceManager:
         """
         Parses the file in the given file path, using the full
         resources path as the base for the parsing.
+        The parsing of the file also implies the registering
+        of the resources in the internal data structures.
 
         @type file_path: String
         @param file_path: The path to the file to be parsed.
         @type full_resources_path: String
         @param full_resources_path: The full path to the
-        resources path.
+        resources path (directory).
         """
-
-        # retrieves the plugin manager
-        plugin_manager = self.resource_manager_plugin.manager
 
         # creates the resources file parser
         resources_file_parser = resource_manager_parser.ResourcesFileParser(file_path)
@@ -292,11 +296,26 @@ class ResourceManager:
         # parses the file (using the current parser)
         resources_file_parser.parse()
 
-        # retrieves the resource list
-        resource_list = resources_file_parser.get_value()
+        # retrieves the resources list
+        resources_list = resources_file_parser.get_value()
 
-        # creates the validation list
-        validation_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Validation]
+        # registers the resources in the given list, send also
+        # the path to the resources file and the full path to
+        # the resources path (directory) are also sent
+        self.register_resources(resources_list, file_path, full_resources_path)
+
+    def register_resources(self, resources_list, file_path, full_resources_path):
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # normalizes the file path and then uses it to set
+        # the resources list in the file path resources list map
+        file_path_normalized = colony.libs.path_util.normalize_path(file_path)
+        self.file_path_resources_list_map[file_path_normalized] = resources_list
+
+        # creates the validation list from the list
+        # resource (filters the validations)
+        validation_list = [value for value in resources_list if value.__class__ == resource_manager_parser.Validation]
 
         # iterates over all the validation in the validation
         # list (to process the validation)
@@ -311,7 +330,7 @@ class ResourceManager:
 
         # iterates over all the resources in the list
         # (to process them)
-        for resource in resource_list:
+        for resource in resources_list:
             # in case the resource is of type validation (ignore)
             if resource.__class__ == resource_manager_parser.Validation:
                 # continues the loop
@@ -320,20 +339,24 @@ class ResourceManager:
             # in case the resource is of type plugin configuration
             if resource.__class__ == resource_manager_parser.PluginConfiguration:
                 # iterates over all the resources in the resources
-                # list
+                # list (the plugin configuration contains multiple resources
                 for resource_item in resource.resources_list:
-                    # processes the resource
+                    # processes the resource, updating the resource item
+                    # with the correct data
                     self.process_resource(resource_item, full_resources_path)
             # otherwise it's a normal (base) configuration
             else:
-                # processes the resources
+                # processes the resources, updating the resource item
+                # with the correct data
                 self.process_resource(resource, full_resources_path)
 
-        # creates the plugin configuration list
-        plugin_configuration_list = [value for value in resource_list if value.__class__ == resource_manager_parser.PluginConfiguration]
+        # creates the plugin configuration list from the list
+        # resource (filters the plugin configurations)
+        plugin_configuration_list = [value for value in resources_list if value.__class__ == resource_manager_parser.PluginConfiguration]
 
-        # creates the base resource list
-        base_resource_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Resource]
+        # creates the base resources list from the list
+        # resource (filters the resources)
+        base_resources_list = [value for value in resources_list if value.__class__ == resource_manager_parser.Resource]
 
         # iterates over all the resources in the plugin configuration list
         for plugin_configuration in plugin_configuration_list:
@@ -349,7 +372,8 @@ class ResourceManager:
             # tries to retrieve the configuration plugin using the plugin id
             configuration_plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
 
-            # in case the configuration plugin is not loaded
+            # in case the configuration plugin is not found
+            # or in case it's not loaded (nothing is done)
             if not configuration_plugin or not configuration_plugin.is_loaded():
                 # continues the loop
                 continue
@@ -362,17 +386,84 @@ class ResourceManager:
                 # sets the plugin configuration resource as configuration property in the configuration plugin
                 configuration_plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
 
-        # iterates over all the resources in the base resource list
-        for resource in base_resource_list:
+        # iterates over all the resources in the base resources list
+        for resource in base_resources_list:
             # registers the resource for the given namespace,
             # name type and data
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
+
+    def unregister_resources_list(self, resources_list, file_path, full_resources_path):
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # normalizes the file path and then uses it to set
+        # the resources list in the file path resources list map
+        file_path_normalized = colony.libs.path_util.normalize_path(file_path)
+        del self.file_path_resources_list_map[file_path_normalized]
+
+        # creates the validation list from the list
+        # resource (filters the validations)
+        validation_list = [value for value in resources_list if value.__class__ == resource_manager_parser.Validation]
+
+        # iterates over all the validation in the validation
+        # list (to process the validation)
+        for validation in validation_list:
+            # processes the validation
+            return_value = self.process_validation(validation)
+
+            # in case the return value is invalid
+            if not return_value:
+                # returns immediately
+                return
+
+        # creates the plugin configuration list from the list
+        # resource (filters the plugin configurations)
+        plugin_configuration_list = [value for value in resources_list if value.__class__ == resource_manager_parser.PluginConfiguration]
+
+        # creates the base resources list from the list
+        # resource (filters the resources)
+        base_resources_list = [value for value in resources_list if value.__class__ == resource_manager_parser.Resource]
+
+        # iterates over all the resources in the plugin configuration list
+        for plugin_configuration in plugin_configuration_list:
+            # retrieves the plugin configuration plugin id
+            plugin_configuration_plugin_id = plugin_configuration.plugin_id
+
+            # retrieves the plugin configuration resources list
+            plugin_configuration_resources_list = plugin_configuration.resources_list
+
+            # unsets the plugin configuration resources list from
+            # the plugin id configuration resources list map
+            del self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id]
+
+            # tries to retrieve the configuration plugin using the plugin id
+            configuration_plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
+
+            # in case the configuration plugin is not found
+            # or in case it's not loaded (nothing is done)
+            if not configuration_plugin or not configuration_plugin.is_loaded():
+                # continues the loop
+                continue
+
+            # iterates over all the plugin configuration resources
+            for plugin_configuration_resource in plugin_configuration_resources_list:
+                # retrieves the plugin configuration resource name
+                plugin_configuration_resource_name = plugin_configuration_resource.name
+
+                # unsets the plugin configuration resource in the configuration plugin
+                configuration_plugin.unset_configuration_property(plugin_configuration_resource_name)
+
+        # iterates over all the resources in the base resources list
+        for resource in base_resources_list:
+            # unregisters the resource for the given namespace,
+            # name type and data
+            self.unregister_resource(resource.namespace, resource.name, resource.type, resource.data)
 
     def register_plugin_resources(self, plugin):
         """
         Registers the plugin resources in the plugin.
         The plugin is properly "notified" about the
-        new configuration property.
+        configuration property "registration".
 
         @type plugin: Plugin
         @param plugin: The plugin to have the resources registered.
@@ -400,6 +491,8 @@ class ResourceManager:
     def unregister_plugin_resources(self, plugin):
         """
         Unregisters the plugin resources in the plugin.
+        The plugin is properly "notified" about the
+        configuration property "unregistration".
 
         @type plugin: Plugin
         @param plugin: The plugin to have the resources unregistered.
@@ -696,6 +789,7 @@ class ResourceManager:
         if expression.__class__ == resource_manager_parser.EqualsExpression:
             return_value = self.process_equals_expression(expression)
 
+        # returns the return value
         return return_value
 
     def process_equals_expression(self, equals_expression):
@@ -816,7 +910,7 @@ class ResourceManager:
             old_resource_namespace = old_resource.get_namespace()
             old_resource_type = old_resource.get_type()
 
-            # removes the "old" resource from the name and type resource list maps
+            # removes the "old" resource from the name and type resources list maps
             self.resource_name_resources_list_map[old_resource_name].remove(old_resource)
             self.resource_type_resources_list_map[old_resource_type].remove(old_resource)
 
@@ -839,7 +933,7 @@ class ResourceManager:
                 # adds the namespace value to the current namespace
                 current_namespace += namespace_value
 
-                # removes from the "old" resource from the namespace resource list map
+                # removes from the "old" resource from the namespace resources list map
                 self.resource_namespace_resources_list_map[current_namespace].remove(old_resource)
 
         # invalidates the real string value cache
@@ -1061,7 +1155,7 @@ class ResourceManager:
         resource_manager_plugins_item_columns = [
             {
                 "type" : "name",
-                "value" : "Name"
+                "value" : "Plugin Identifier"
             },
             {
                 "type" : "value",

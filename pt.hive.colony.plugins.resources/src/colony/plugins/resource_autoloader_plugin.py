@@ -88,14 +88,11 @@ class ResourceAutoloaderPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-        print "aui vou fazer as coisas"
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
+        self.resource_autoloader.load_autoloader()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+        self.resource_autoloader.unload_autoloader()
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
