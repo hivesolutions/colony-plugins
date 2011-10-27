@@ -289,7 +289,7 @@ class ResourceManager:
         # creates the resources file parser
         resources_file_parser = resource_manager_parser.ResourcesFileParser(file_path)
 
-        # parses the file
+        # parses the file (using the current parser)
         resources_file_parser.parse()
 
         # retrieves the resource list
@@ -310,17 +310,24 @@ class ResourceManager:
                 return
 
         # iterates over all the resources in the list
+        # (to process them)
         for resource in resource_list:
-            # in case the resource is not of type validation
-            if not resource.__class__ == resource_manager_parser.Validation:
-                # in case the resource is of type plugin configurations
-                if resource.__class__ == resource_manager_parser.PluginConfiguration:
-                    for resource_item in resource.resources_list:
-                        # processes the resource
-                        self.process_resource(resource_item, full_resources_path)
-                else:
-                    # processes the resources
-                    self.process_resource(resource, full_resources_path)
+            # in case the resource is of type validation (ignore)
+            if resource.__class__ == resource_manager_parser.Validation:
+                # continues the loop
+                continue
+
+            # in case the resource is of type plugin configuration
+            if resource.__class__ == resource_manager_parser.PluginConfiguration:
+                # iterates over all the resources in the resources
+                # list
+                for resource_item in resource.resources_list:
+                    # processes the resource
+                    self.process_resource(resource_item, full_resources_path)
+            # otherwise it's a normal (base) configuration
+            else:
+                # processes the resources
+                self.process_resource(resource, full_resources_path)
 
         # creates the plugin configuration list
         plugin_configuration_list = [value for value in resource_list if value.__class__ == resource_manager_parser.PluginConfiguration]
