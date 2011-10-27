@@ -42,7 +42,7 @@ import sys
 import time
 import stat
 
-SLEEP_TIME_VALUE = 1
+SLEEP_TIME_VALUE = 1.0
 """ The sleep time value """
 
 class Autoloader:
