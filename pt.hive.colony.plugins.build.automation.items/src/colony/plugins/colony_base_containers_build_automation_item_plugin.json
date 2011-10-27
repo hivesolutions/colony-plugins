@@ -1,0 +1,27 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.build.automation.items.colony_base_containers",
+    "name" : "Colony Base Containers Build Automation Item Plugin",
+    "short_name" : "Colony Base Containers Build Automation Item",
+    "description" : "The build automation item for the base containers of the colony framework",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "colony_base_containers_build_automation_item_plugin.py",
+    "resources" : [
+            "colony_base_containers_build_automation_item_plugin.py",
+            "build_automation_items/__init__.py",
+            "build_automation_items/colony_base_containers/__init__.py",
+            "build_automation_items/colony_base_containers/colony_base_containers_build_automation_item_system.py",
+            "build_automation_items/colony_base_containers/resources/baf.xml",
+            "build_automation_items/colony_base_containers/resources/control_files/postinst.sh"],
+    "extra_resources" : [
+            "colony_base_containers_build_automation_item_plugin.pyc",
+            "build_automation_items/__init__.pyc",
+            "build_automation_items/colony_base_containers/__init__.pyc",
+            "build_automation_items/colony_base_containers/colony_base_containers_build_automation_item_system.pyc"]
+}
