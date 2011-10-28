@@ -53,7 +53,7 @@ CONFIGURATION_PATH = "configuration"
 """ The configuration path """
 
 RESOURCES_SUFIX_VALUE = "resources.xml"
-""" The resources sufix value """
+""" The resources suffix value """
 
 RESOURCES_SUFFIX_LENGTH = 13
 """ The resources suffix length """
