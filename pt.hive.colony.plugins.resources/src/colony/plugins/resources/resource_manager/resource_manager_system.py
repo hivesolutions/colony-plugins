@@ -597,7 +597,8 @@ class ResourceManager:
             # sets the parse resource data method reference
             # to none (no need to parse the resource data in lazy mode)
             resource.parse_resource_data = None
-        # otherwise
+        # otherwise there's is nothing to do for now must wait
+        # until a proper resource parser plugin is loaded
         else:
             # sets the parse resource data handler, this technique
             # allows a lazy loading of the resource parser plugins
