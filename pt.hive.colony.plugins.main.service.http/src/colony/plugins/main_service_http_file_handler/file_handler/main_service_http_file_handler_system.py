@@ -153,6 +153,9 @@ class MainServiceHttpFileHandler:
         @param request: The http request to be handled.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_http_file_handler_plugin.manager
+
         # retrieves the format mime plugin
         format_mime_plugin = self.main_service_http_file_handler_plugin.format_mime_plugin
 
@@ -183,8 +186,11 @@ class MainServiceHttpFileHandler:
         # retrieves the handler path
         handler_path = request.get_handler_path()
 
-        # retrieves the real base directory
+        # retrieves the real base directory, resolving it using
+        # both the resource manager and the plugin manager (this is quite
+        # an expensive operation)
         real_base_directory = resource_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = plugin_manager.resolve_file_path(real_base_directory)
 
         # in case the relative paths are disabled
         if not relative_paths:
