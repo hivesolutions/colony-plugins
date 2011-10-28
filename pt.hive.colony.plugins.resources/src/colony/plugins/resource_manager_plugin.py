@@ -119,6 +119,28 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     def event_handler(self, event_name, *event_args):
         colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
+    def parse_file(self, file_path, full_resources_path):
+        """
+        Parses the file in the given file path, using the full
+        resources path as the base for the parsing.
+        The parsing of the file also implies the registering
+        of the resources in the internal data structures.
+
+        @type file_path: String
+        @param file_path: The path to the file to be parsed.
+        @type full_resources_path: String
+        @param full_resources_path: The full path to the
+        resources path (directory).
+        """
+
+        return self.resource_manager.parse_file(file_path, full_resources_path)
+
+    def register_resources(self, resources_list, file_path, full_resources_path):
+        return self.resource_manager.register_resources(resources_list, file_path, full_resources_path)
+
+    def unregister_resources(self, resources_list, file_path, full_resources_path):
+        return self.resource_manager.unregister_resources(resources_list, file_path, full_resources_path)
+
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         return self.resource_manager.register_resource(resource_namespace, resource_name, resource_type, resource_data)
 

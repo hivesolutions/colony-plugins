@@ -117,31 +117,16 @@ class ResourceAutoloader:
         while self.continue_flag:
             # iterates over all the configuration paths
 
-            verified_resources_path_list = []
+            # creates a new list for the verified (existent)
+            # resource paths
+            verified_resource_paths_list = []
 
             #@todo this is so bad
             for configuration_path in list(configuration_paths) + [base_resources_path]:
-                self._load_resources_directory(configuration_path, verified_resources_path_list)
+                self._analyze_search_directory(configuration_path, verified_resource_paths_list)
 
-            for tobias in self.file_path_modified_time_map.keys():
-                if tobias in verified_resources_path_list:
-                    # continues the loop (nothing
-                    # to be removed)
-                    continue
-
-                print "Vai remover configuracao: '%s'" % tobias
-
-                del self.file_path_modified_time_map[tobias]
-
-                resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[tobias]
-                file_path, full_resources_path = resource_manager_plugin.resource_manager.file_path_file_information_map[tobias]
-
-                resource_manager_plugin.resource_manager.unregister_resources(resources_list, file_path, full_resources_path)
-
-                # iterates over all the search directories
-            #    for search_directory in meta_paths:
-                    # analyzes the given search directory
-            #        self.analyze_search_directory(search_directory)
+            # unloads the "pending" resource files for unloading
+            self._unload_pending_resource_files(verified_resource_paths_list)
 
             # sleeps for the given sleep time
             time.sleep(SLEEP_TIME_VALUE)
@@ -154,7 +139,7 @@ class ResourceAutoloader:
         # unsets the continue flag
         self.continue_flag = False
 
-    def _load_resources_directory(self, directory_path, verified_resources_path_list):
+    def _analyze_search_directory(self, directory_path, verified_resource_paths_list):
         """
         Loads the resources in the directory with
         the given path.
@@ -189,7 +174,7 @@ class ResourceAutoloader:
             """ The resources suffix value """
 
             RESOURCES_SUFIX_VALUE = "resources.xml"
-            """ The resources sufix value """
+            """ The resources suffix value """
 
             import colony.libs.path_util
 
@@ -203,17 +188,18 @@ class ResourceAutoloader:
             # in case the length of the resources path item is greater or equal than the resources suffix length
             # and the last item of the resources path item is the same as the resources suffix value
             if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
-
                 # normalizes the resources full path (for file verification)
                 resources_full_path_item_normalized = colony.libs.path_util.normalize_path(resources_full_path_item)
 
+                # adds the resource path to the verified resource paths list
+                # because the resource has been verified as existent
+                verified_resource_paths_list.append(resources_full_path_item_normalized)
+
+                # retrieves the current modified time from the resource and the
+                # modified time currently stored in the internal structure
+                # for later comparison
                 current_modified_time = os.path.getmtime(resources_full_path_item_normalized)
                 modified_time = self.file_path_modified_time_map.get(resources_full_path_item_normalized, None)
-
-
-                verified_resources_path_list.append(resources_full_path_item_normalized)
-
-
 
                 # in case the modified time hasn't changed
                 # the file is considered to be the same
@@ -224,24 +210,50 @@ class ResourceAutoloader:
                 # in case there's no current modified time defined (the file
                 # did not already existed)
                 if modified_time == None:
-                    print "vai fazer load inicial do ficheiro %s" % resources_full_path_item_normalized
+                    # prints an info message (about the loading)
+                    self.resource_autoloader_plugin.info("Loading resource file '%s' in resource manager" % resources_full_path_item_normalized)
                 # otherwise the file already existed but the modified time has
                 # changed (reload case)
                 else:
-                    print "VAI FAZER RELOAD DO FICHEIRO %s" % resources_full_path_item_normalized
+                    # prints an info message (about the reloading)
+                    self.resource_autoloader_plugin.info("Reloading resource file '%s' in resource manager" % resources_full_path_item_normalized)
+
+                    # retrieves the resources list for the resources path and then uses it to
+                    # unregister the resources in the resource manager
+
+                    # @todo: remove the direct reference
                     resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[resources_full_path_item_normalized]
+                    resource_manager_plugin.unregister_resources(resources_list, resources_full_path_item, directory_path)
 
-                    resource_manager_plugin.resource_manager.unregister_resources(resources_list, resources_full_path_item, directory_path)
-
-                # @todo: THIS IS NOT OK (direct reference)
                 # parses the resources description file
-                resource_manager_plugin.resource_manager.parse_file(resources_full_path_item, directory_path)
+                resource_manager_plugin.parse_file(resources_full_path_item, directory_path)
 
                 # sets the "new" modified time in the file path modified
-                # tim map (updates the modified time)
+                # time map (updates the modified time)
                 self.file_path_modified_time_map[resources_full_path_item_normalized] = current_modified_time
             # otherwise in case the resources full path is a directory
             # path a descent must be done
             elif os.path.isdir(resources_full_path_item):
-                # loads the resources for the directory
-                self._load_resources_directory(resources_full_path_item, verified_resources_path_list)
+                # analyzes the resources for the directory
+                self._analyze_search_directory(resources_full_path_item, verified_resource_paths_list)
+
+    def _unload_pending_resource_files(self, verified_resource_paths_list):
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.resource_autoloader_plugin.resource_manager_plugin
+
+        for tobias in self.file_path_modified_time_map.keys():
+
+            if tobias in verified_resource_paths_list:
+                # continues the loop (nothing
+                # to be removed)
+                continue
+
+            # prints an info message (about the unloading)
+            self.resource_autoloader_plugin.info("Unloading resource file '%s' from resource manager" % tobias)
+
+            del self.file_path_modified_time_map[tobias]
+
+            resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[tobias]
+            file_path, full_resources_path = resource_manager_plugin.resource_manager.file_path_file_information_map[tobias]
+
+            resource_manager_plugin.unregister_resources(resources_list, file_path, full_resources_path)
