@@ -102,11 +102,16 @@ class ResourceAutoloader:
         # iterates over all the (resource) file paths
         # to update the stored modified time values
         for file_path in file_paths:
-            # retrieves the modified time for the current
-            # file (for timestamp checking) and then sets it
-            # in the file path modified time map
-            modified_time = os.path.getmtime(file_path)
-            self.file_path_modified_time_map[file_path] = modified_time
+            try:
+                # retrieves the modified time for the current
+                # file (for timestamp checking) and then sets it
+                # in the file path modified time map
+                modified_time = os.path.getmtime(file_path)
+                self.file_path_modified_time_map[file_path] = modified_time
+            except:
+                # sets the invalid modified time for the current
+                # file path (file is not valid)
+                self.file_path_modified_time_map[file_path] = 0
 
         # notifies the ready semaphore
         self.resource_autoloader_plugin.release_ready_semaphore()
