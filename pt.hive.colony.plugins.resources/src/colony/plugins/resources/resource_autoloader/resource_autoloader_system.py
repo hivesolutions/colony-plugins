@@ -199,8 +199,6 @@ class ResourceAutoloader:
 
                     # retrieves the resources list for the resources path and then uses it to
                     # unregister the resources in the resource manager
-
-                    # @todo: remove the direct reference
                     resources_list = file_path_resources_list_map[resources_full_path_item_normalized]
                     resource_manager_plugin.unregister_resources(resources_list, resources_full_path_item, directory_path)
 
