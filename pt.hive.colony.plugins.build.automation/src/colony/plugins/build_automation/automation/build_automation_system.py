@@ -76,6 +76,9 @@ RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 PLUGIN_REGEX = "\$plugin\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the plugin """
 
+PREFIX_REGEX = "\$prefix\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the prefix """
+
 CONTENTS_REGEX = "\$contents\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the contents """
 
@@ -160,6 +163,9 @@ class BuildAutomation:
     plugin_pattern = None
     """ The plugin pattern used for regular expression match """
 
+    prefix_pattern = None
+    """ The prefix pattern used for regular expression match """
+
     contents_pattern = None
     """ The contents pattern used for regular expression match """
 
@@ -201,6 +207,9 @@ class BuildAutomation:
 
         # compiles the plugin regular expression generating the pattern
         self.plugin_pattern = re.compile(PLUGIN_REGEX)
+
+        # compiles the prefix regular expression generating the pattern
+        self.prefix_pattern = re.compile(PREFIX_REGEX)
 
         # compiles the contents regular expression generating the pattern
         self.contents_pattern = re.compile(CONTENTS_REGEX)
@@ -1266,10 +1275,31 @@ class BuildAutomation:
 
             # in case no real plugin value is found raises
             # a runtime error
-            if not real_plugin_value: raise RuntimeError("plugin value '%s' not found in plugin manager" % plugin_value)
+            if not real_plugin_value: raise RuntimeError("plugin value '%s' not found in plugin system" % plugin_value)
 
             # replaces the value in the string
             string = string.replace(group, real_plugin_value)
+
+        # retrieves the prefix match iterator
+        prefix_match_iterator = self.prefix_pattern.finditer(string)
+
+        # iterates using the prefix match iterator
+        for prefix_match in prefix_match_iterator:
+            # retrieves the match group
+            group = prefix_match.group()
+
+            # retrieves the prefix value
+            prefix_value = group[8:-1]
+
+            # retrieves the real prefix value
+            real_prefix_value = self.get_prefix_value(prefix_value, build_automation_structure)
+
+            # in case no real prefix value is found raises
+            # a runtime error
+            if not real_prefix_value: raise RuntimeError("prefix value '%s' not found in plugin system" % plugin_value)
+
+            # replaces the value in the string
+            string = string.replace(group, real_prefix_value)
 
         # retrieves the contents match iterator
         contents_match_iterator = self.contents_pattern.finditer(string)
@@ -1430,8 +1460,8 @@ class BuildAutomation:
         Retrieves the real "plugin" value by retrieving the plugin path value
         from the plugin manager.
 
-        @type resource_value: String
-        @param resource_value: The plugin value in string mode representing the plugin.
+        @type plugin_value: String
+        @param plugin_value: The plugin value in string mode representing the plugin.
         @type build_automation_structure: BuildAutomationStructure
         @param build_automation_structure: The build automation structure to be used in the retrieving of the plugin.
         @rtype: Object
@@ -1446,6 +1476,37 @@ class BuildAutomation:
 
         # returns the plugin path
         return plugin_path
+
+    def get_prefix_value(self, prefix_value, build_automation_structure):
+        """
+        Retrieves the real "prefix" value by retrieving the prefix path value
+        from the plugin manager.
+
+        @type resource_value: String
+        @param resource_value: The prefix value in string mode representing the prefix.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the prefix.
+        @rtype: Object
+        @return: The real value of the prefix path.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.build_automation_plugin.manager
+
+        # retrieves both the manager path and the prefix
+        # paths map
+        manager_path = plugin_manager.get_manager_path(),
+        prefix_paths = plugin_manager.get_prefix_paths()
+
+        # retrieves the prefix "partial" path from the prefix
+        # paths map
+        prefix_partial_path = prefix_paths.get(prefix_value, prefix_value)
+
+        # retrieves the prefix path for the "prefix value"
+        prefix_path = os.path.join(manager_path, prefix_partial_path)
+
+        # returns the prefix path
+        return prefix_path
 
     def get_contents_value(self, contents_value, build_automation_structure):
         """
