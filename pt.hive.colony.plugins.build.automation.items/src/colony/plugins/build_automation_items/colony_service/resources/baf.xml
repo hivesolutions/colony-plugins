@@ -90,13 +90,13 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <path>$prefix{colony}/pt.hive.colony.service.scripts/unix/debian/colony.sh</path>
+                                    <path>$prefix{base}/pt.hive.colony.service.scripts/unix/debian/colony.sh</path>
                                     <target>etc/init.d/colony</target>
                                 </deb>
                             </parameters>
                         </file>
                         <file>
-                            <path>$prefix{colony}/pt.hive.colony.service.scripts/unix/colony_wrapper.sh</path>
+                            <path>$prefix{base}/pt.hive.colony.service.scripts/unix/colony_wrapper.sh</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
