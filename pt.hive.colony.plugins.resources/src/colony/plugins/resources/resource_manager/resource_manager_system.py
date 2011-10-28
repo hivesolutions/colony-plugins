@@ -1069,7 +1069,7 @@ class ResourceManager:
 
         try:
             # in case the resource id does not exist in the resource id resource map
-            if resource_id in self.resource_id_resource_map:
+            if not resource_id in self.resource_id_resource_map:
                 # returns immediately
                 return
 
