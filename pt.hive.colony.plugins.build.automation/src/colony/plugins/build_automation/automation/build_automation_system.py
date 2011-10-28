@@ -1495,7 +1495,7 @@ class BuildAutomation:
 
         # retrieves both the manager path and the prefix
         # paths map
-        manager_path = plugin_manager.get_manager_path(),
+        manager_path = plugin_manager.get_manager_path()
         prefix_paths = plugin_manager.get_prefix_paths()
 
         # retrieves the prefix "partial" path from the prefix
