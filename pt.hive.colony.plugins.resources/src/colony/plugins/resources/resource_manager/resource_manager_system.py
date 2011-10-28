@@ -457,11 +457,11 @@ class ResourceManager:
         for resource in base_resources_list:
             # creates a new (composite) resource from the given
             # (base) resource information
-            resource = Resource(resource.namespace, resource.name, resource.type, resource.data)
+            _resource = Resource(resource.namespace, resource.name, resource.type, resource.data)
 
             # retrieves the resource id and the unregisters
             # the resource using the given resource id
-            resource_id = resource.get_id()
+            resource_id = _resource.get_id()
             self.unregister_resource(resource_id)
 
     def register_plugin_resources(self, plugin):
