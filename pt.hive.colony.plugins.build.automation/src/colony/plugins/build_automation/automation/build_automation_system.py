@@ -1182,7 +1182,7 @@ class BuildAutomation:
 
             # in case no real variable value parsed is found raises
             # a runtime error
-            if not real_variable_value_parsed: raise RuntimeError("no variable value parsed found '%s' in registry" % variable_value)
+            if not real_variable_value_parsed: raise RuntimeError("variable value parsed '%s' not found in registry" % variable_value)
 
             # replaces the value in the string
             string = string.replace(group, real_variable_value_parsed)
@@ -1203,7 +1203,7 @@ class BuildAutomation:
 
             # in case no real base value is found raises
             # a runtime error
-            if not real_base_value: raise RuntimeError("no base value found '%s' in file system" % base_value)
+            if not real_base_value: raise RuntimeError("base value '%s' not found in file system" % base_value)
 
             # replaces the value in the string
             string = string.replace(group, real_base_value)
@@ -1224,7 +1224,7 @@ class BuildAutomation:
 
             # in case no real call value is found raises
             # a runtime error
-            if not real_call_value: raise RuntimeError("no call value found '%s' by calling the method" % call_value)
+            if not real_call_value: raise RuntimeError("call value '%s' not found by calling the method" % call_value)
 
             # replaces the value in the string
             string = string.replace(group, real_call_value)
@@ -1245,7 +1245,7 @@ class BuildAutomation:
 
             # in case no real resource value is found raises
             # a runtime error
-            if not real_resource_value: raise RuntimeError("no resource value found '%s' in resource manager" % resource_value)
+            if not real_resource_value: raise RuntimeError("resource value '%s' not found in resource manager" % resource_value)
 
             # replaces the value in the string
             string = string.replace(group, real_resource_value)
@@ -1266,7 +1266,7 @@ class BuildAutomation:
 
             # in case no real plugin value is found raises
             # a runtime error
-            if not real_plugin_value: raise RuntimeError("no plugin value found '%s' in plugin manager" % plugin_value)
+            if not real_plugin_value: raise RuntimeError("plugin value '%s' not found in plugin manager" % plugin_value)
 
             # replaces the value in the string
             string = string.replace(group, real_plugin_value)
@@ -1287,7 +1287,7 @@ class BuildAutomation:
 
             # in case no real contents value is found raises
             # a runtime error
-            if not real_contents_value: raise RuntimeError("no contents value found '%s' in file system" % contents_value)
+            if not real_contents_value: raise RuntimeError("contents value '%s' not found in file system" % contents_value)
 
             # replaces the value in the string
             string = string.replace(group, real_contents_value)
