@@ -795,6 +795,10 @@ class ResourceManager:
             # retrieves the resource for the match
             resource = self.get_resource(variable_name)
 
+            # in case no resource is found in resource manager
+            # a runtime error is raised
+            if not resource: raise RuntimeError("resource variable '%s' not found in resource manager" % variable_name)
+
             # retrieves the resource data
             resource_data = resource.data
 
