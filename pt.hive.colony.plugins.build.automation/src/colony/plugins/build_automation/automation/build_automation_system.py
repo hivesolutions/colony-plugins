@@ -1551,7 +1551,6 @@ class BuildAutomation:
         # sets the logger level to the initial log level
         self.logger.setLevel(log_level)
 
-
         # creates the stream handler
         stream_handler = logging.StreamHandler()
 
