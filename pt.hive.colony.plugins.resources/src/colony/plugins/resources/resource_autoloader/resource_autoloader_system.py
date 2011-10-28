@@ -116,24 +116,26 @@ class ResourceAutoloader:
 
         # while the flag is active
         while self.continue_flag:
-            # iterates over all the configuration paths
+            try:
+                # creates a new list for the verified (existent)
+                # resource paths
+                verified_resource_paths_list = []
 
-            # creates a new list for the verified (existent)
-            # resource paths
-            verified_resource_paths_list = []
+                # iterates over all the search (configuration) paths to operate over
+                # them and load or reload any found resource file
+                for configuration_path in search_paths:
+                    # analyzes the current configuration path (directory) to load (new resources)
+                    # or reload (updated resources) the resources
+                    self._analyze_resources_directory(configuration_path, verified_resource_paths_list)
 
-            # iterates over all the search (configuration) paths to operate over
-            # them and load or reload any found resource file
-            for configuration_path in search_paths:
-                # analyzes the current configuration path (directory) to load (new resources)
-                # or reload (updated resources) the resources
-                self._analyze_resources_directory(configuration_path, verified_resource_paths_list)
+                # unloads the "pending" resource files for unloading
+                self._unload_pending_resource_files(verified_resource_paths_list)
 
-            # unloads the "pending" resource files for unloading
-            self._unload_pending_resource_files(verified_resource_paths_list)
-
-            # sleeps for the given sleep time
-            time.sleep(SLEEP_TIME_VALUE)
+                # sleeps for the given sleep time
+                time.sleep(SLEEP_TIME_VALUE)
+            except BaseException, exception:
+                # prints an error message
+                self.autoloader_plugin.error("There was a problem autoloading resources: %s" % unicode(exception))
 
     def unload_autoloader(self):
         """
