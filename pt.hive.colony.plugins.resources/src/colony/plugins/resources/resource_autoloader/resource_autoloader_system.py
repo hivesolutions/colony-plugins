@@ -93,8 +93,8 @@ class ResourceAutoloader:
 
         #@todo: this is extremly bad
 
-        # constructs the full resources path
-        full_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
+        # constructs the base resources path
+        base_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
 
 
         # notifies the ready semaphore
@@ -117,9 +117,26 @@ class ResourceAutoloader:
         while self.continue_flag:
             # iterates over all the configuration paths
 
+            verified_resources_path_list = []
+
             #@todo this is so bad
-            for configuration_path in list(configuration_paths) + [full_resources_path]:
-                self._load_resources_directory(configuration_path)
+            for configuration_path in list(configuration_paths) + [base_resources_path]:
+                self._load_resources_directory(configuration_path, verified_resources_path_list)
+
+            for tobias in self.file_path_modified_time_map.keys():
+                if tobias in verified_resources_path_list:
+                    # continues the loop (nothing
+                    # to be removed)
+                    continue
+
+                print "Vai remover configuracao: '%s'" % tobias
+
+                del self.file_path_modified_time_map[tobias]
+
+                resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[tobias]
+                file_path, full_resources_path = resource_manager_plugin.resource_manager.file_path_file_information_map[tobias]
+
+                resource_manager_plugin.resource_manager.unregister_resources(resources_list, file_path, full_resources_path)
 
                 # iterates over all the search directories
             #    for search_directory in meta_paths:
@@ -137,7 +154,7 @@ class ResourceAutoloader:
         # unsets the continue flag
         self.continue_flag = False
 
-    def _load_resources_directory(self, directory_path):
+    def _load_resources_directory(self, directory_path, verified_resources_path_list):
         """
         Loads the resources in the directory with
         the given path.
@@ -181,6 +198,8 @@ class ResourceAutoloader:
             # creates the resources full path item
             resources_full_path_item = os.path.join(directory_path, resources_path_item)
 
+
+
             # in case the length of the resources path item is greater or equal than the resources suffix length
             # and the last item of the resources path item is the same as the resources suffix value
             if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
@@ -190,6 +209,11 @@ class ResourceAutoloader:
 
                 current_modified_time = os.path.getmtime(resources_full_path_item_normalized)
                 modified_time = self.file_path_modified_time_map.get(resources_full_path_item_normalized, None)
+
+
+                verified_resources_path_list.append(resources_full_path_item_normalized)
+
+
 
                 # in case the modified time hasn't changed
                 # the file is considered to be the same
@@ -207,7 +231,7 @@ class ResourceAutoloader:
                     print "VAI FAZER RELOAD DO FICHEIRO %s" % resources_full_path_item_normalized
                     resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[resources_full_path_item_normalized]
 
-                    resource_manager_plugin.resource_manager.unregister_resources_list(resources_list, resources_full_path_item, directory_path)
+                    resource_manager_plugin.resource_manager.unregister_resources(resources_list, resources_full_path_item, directory_path)
 
                 # @todo: THIS IS NOT OK (direct reference)
                 # parses the resources description file
@@ -216,9 +240,8 @@ class ResourceAutoloader:
                 # sets the "new" modified time in the file path modified
                 # tim map (updates the modified time)
                 self.file_path_modified_time_map[resources_full_path_item_normalized] = current_modified_time
-
             # otherwise in case the resources full path is a directory
             # path a descent must be done
             elif os.path.isdir(resources_full_path_item):
                 # loads the resources for the directory
-                self._load_resources_directory(resources_full_path_item)
+                self._load_resources_directory(resources_full_path_item, verified_resources_path_list)
