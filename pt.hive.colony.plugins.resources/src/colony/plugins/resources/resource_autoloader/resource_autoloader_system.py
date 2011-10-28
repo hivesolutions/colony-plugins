@@ -86,7 +86,12 @@ class ResourceAutoloader:
         # retrieves the base plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin.id)
 
+        # retrieve the file path resources list map from the resource manager
+        # and then retrieves the keys from the map as the current used file paths
+        file_path_resources_list_map = resource_manager_plugin.get_file_path_resources_list_map()
+        file_paths = file_path_resources_list_map.keys()
 
+        # -----------------------------------------------------
 
         BASE_RESOURCES_PATH = "resources/resource_manager/resources"
         """ The base resources path """
@@ -96,19 +101,19 @@ class ResourceAutoloader:
         # constructs the base resources path
         base_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
 
+        # -----------------------------------------------------
 
-        # notifies the ready semaphore
-        self.resource_autoloader_plugin.release_ready_semaphore()
-
-
-        #@todo this is a temporary HACK
-
-        for file_path in resource_manager_plugin.resource_manager.file_path_resources_list_map.keys():
+        # iterates over all the (resource) file paths
+        # to update the stored modified time values
+        for file_path in file_paths:
             # retrieves the modified time for the current
             # file (for timestamp checking) and then sets it
             # in the file path modified time map
             modified_time = os.path.getmtime(file_path)
             self.file_path_modified_time_map[file_path] = modified_time
+
+        # notifies the ready semaphore
+        self.resource_autoloader_plugin.release_ready_semaphore()
 
         # sets the continue flag
         self.continue_flag = True
@@ -121,9 +126,12 @@ class ResourceAutoloader:
             # resource paths
             verified_resource_paths_list = []
 
-            #@todo this is so bad
+            # iterates over all the configuration paths to operate over
+            # them and load or reload any foudn resource file
             for configuration_path in list(configuration_paths) + [base_resources_path]:
-                self._analyze_search_directory(configuration_path, verified_resource_paths_list)
+                # analyzes the current configuration path (directory) to load (new resources)
+                # or reload (updated resources) the resources
+                self._analyze_resources_directory(configuration_path, verified_resource_paths_list)
 
             # unloads the "pending" resource files for unloading
             self._unload_pending_resource_files(verified_resource_paths_list)
@@ -139,7 +147,7 @@ class ResourceAutoloader:
         # unsets the continue flag
         self.continue_flag = False
 
-    def _analyze_search_directory(self, directory_path, verified_resource_paths_list):
+    def _analyze_resources_directory(self, directory_path, verified_resource_paths_list):
         """
         Loads the resources in the directory with
         the given path.
@@ -155,6 +163,9 @@ class ResourceAutoloader:
 
         # retrieves the resource manager plugin
         resource_manager_plugin = self.resource_autoloader_plugin.resource_manager_plugin
+
+        # retrieves the file path resources list map from the resource manager
+        file_path_resources_list_map = resource_manager_plugin.get_file_path_resources_list_map()
 
         # retrieves the resources path directory contents
         resources_path_directory_contents = os.listdir(directory_path)
@@ -222,7 +233,7 @@ class ResourceAutoloader:
                     # unregister the resources in the resource manager
 
                     # @todo: remove the direct reference
-                    resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[resources_full_path_item_normalized]
+                    resources_list = file_path_resources_list_map[resources_full_path_item_normalized]
                     resource_manager_plugin.unregister_resources(resources_list, resources_full_path_item, directory_path)
 
                 # parses the resources description file
@@ -235,25 +246,41 @@ class ResourceAutoloader:
             # path a descent must be done
             elif os.path.isdir(resources_full_path_item):
                 # analyzes the resources for the directory
-                self._analyze_search_directory(resources_full_path_item, verified_resource_paths_list)
+                self._analyze_resources_directory(resources_full_path_item, verified_resource_paths_list)
 
     def _unload_pending_resource_files(self, verified_resource_paths_list):
         # retrieves the resource manager plugin
         resource_manager_plugin = self.resource_autoloader_plugin.resource_manager_plugin
 
-        for tobias in self.file_path_modified_time_map.keys():
+        # retrieves the file path resources list map and the file path
+        # file information map from the resource manager and then retrieves
+        # the keys from the map as the current used (resource) file paths
+        file_path_resources_list_map = resource_manager_plugin.get_file_path_resources_list_map()
+        file_path_file_information_map = resource_manager_plugin.get_file_path_file_information_map()
+        resource_file_paths = file_path_resources_list_map.keys()
 
-            if tobias in verified_resource_paths_list:
+        # iterates over all the resource file path
+        # to check if the associated resources shall be
+        # unloaded
+        for resource_file_path in resource_file_paths:
+            # in case the resource file path is contained in
+            # the verified resource paths list (no need to unload)
+            if resource_file_path in verified_resource_paths_list:
                 # continues the loop (nothing
                 # to be removed)
                 continue
 
             # prints an info message (about the unloading)
-            self.resource_autoloader_plugin.info("Unloading resource file '%s' from resource manager" % tobias)
+            self.resource_autoloader_plugin.info("Unloading resource file '%s' from resource manager" % resource_file_path)
 
-            del self.file_path_modified_time_map[tobias]
+            # retrieves both the resources list and the file information tuple
+            # (file path and full resources path) for the resource file path
+            resources_list = file_path_resources_list_map[resource_file_path]
+            file_path, full_resources_path = file_path_file_information_map[resource_file_path]
 
-            resources_list = resource_manager_plugin.resource_manager.file_path_resources_list_map[tobias]
-            file_path, full_resources_path = resource_manager_plugin.resource_manager.file_path_file_information_map[tobias]
-
+            # unregisters the resources for the current resource file in the resource manager
             resource_manager_plugin.unregister_resources(resources_list, file_path, full_resources_path)
+
+            # removes the modified time reference for the resource file
+            # in the file path modified time map
+            del self.file_path_modified_time_map[resource_file_path]

@@ -162,6 +162,12 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     def get_real_string_value(self, string_value):
         return self.resource_manager.get_real_string_value(string_value)
 
+    def get_file_path_resources_list_map(self):
+        return self.resource_manager.file_path_resources_list_map
+
+    def get_file_path_file_information_map(self):
+        return self.resource_manager.file_path_file_information_map
+
     def get_test_case(self):
         return self.resource_manager_test_case_class
 
