@@ -129,6 +129,9 @@ class ResourceManager:
     file_path_resources_list_map = {}
     """ The map associating the resource file path with the list of "parsed" resources """
 
+    file_path_file_information_map = {}
+    """ The map associating the resource file path with the resource path information tuple """
+
     environment_variable_regex = None
     """ The environment variable regular expression used for regular expression match """
 
@@ -161,6 +164,7 @@ class ResourceManager:
         self.plugin_id_configuration_resources_list_map = {}
         self.string_value_real_string_value_map = {}
         self.file_path_resources_list_map = {}
+        self.file_path_file_information_map = {}
 
         # compiles the environment variable regular expression
         self.environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
@@ -310,8 +314,11 @@ class ResourceManager:
 
         # normalizes the file path and then uses it to set
         # the resources list in the file path resources list map
+        # and to set the resource file information tuple in the file
+        # path file information map
         file_path_normalized = colony.libs.path_util.normalize_path(file_path)
         self.file_path_resources_list_map[file_path_normalized] = resources_list
+        self.file_path_file_information_map[file_path_normalized] = (file_path, full_resources_path)
 
         # creates the validation list from the list
         # resource (filters the validations)
@@ -392,14 +399,17 @@ class ResourceManager:
             # name type and data
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
 
-    def unregister_resources_list(self, resources_list, file_path, full_resources_path):
+    def unregister_resources(self, resources_list, file_path, full_resources_path):
         # retrieves the plugin manager
         plugin_manager = self.resource_manager_plugin.manager
 
-        # normalizes the file path and then uses it to set
-        # the resources list in the file path resources list map
+        # normalizes the file path and then uses it to unset
+        # the resources list from the file path resources list map and
+        # to unset the resource file information from the file path
+        # file information map
         file_path_normalized = colony.libs.path_util.normalize_path(file_path)
         del self.file_path_resources_list_map[file_path_normalized]
+        del self.file_path_file_information_map[file_path_normalized]
 
         # creates the validation list from the list
         # resource (filters the validations)
