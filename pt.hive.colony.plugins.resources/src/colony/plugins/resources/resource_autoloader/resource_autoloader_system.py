@@ -130,12 +130,12 @@ class ResourceAutoloader:
 
                 # unloads the "pending" resource files for unloading
                 self._unload_pending_resource_files(verified_resource_paths_list)
-
-                # sleeps for the given sleep time
-                time.sleep(SLEEP_TIME_VALUE)
             except BaseException, exception:
                 # prints an error message
                 self.autoloader_plugin.error("There was a problem autoloading resources: %s" % unicode(exception))
+
+            # sleeps for the given sleep time
+            time.sleep(SLEEP_TIME_VALUE)
 
     def unload_autoloader(self):
         """
