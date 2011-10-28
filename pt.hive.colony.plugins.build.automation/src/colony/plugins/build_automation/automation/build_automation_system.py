@@ -1180,6 +1180,10 @@ class BuildAutomation:
             # parses the real variable value
             real_variable_value_parsed = self.parse_string(real_variable_value, build_automation_structure)
 
+            # in case no real variable value parsed is found raises
+            # a runtime error
+            if not real_variable_value_parsed: raise RuntimeError("no variable value parsed found '%s' in registry" % variable_value)
+
             # replaces the value in the string
             string = string.replace(group, real_variable_value_parsed)
 
@@ -1196,6 +1200,10 @@ class BuildAutomation:
 
             # retrieves the real base value
             real_base_value = self.get_base_value(base_value, build_automation_structure)
+
+            # in case no real base value is found raises
+            # a runtime error
+            if not real_base_value: raise RuntimeError("no base value found '%s' in file system" % base_value)
 
             # replaces the value in the string
             string = string.replace(group, real_base_value)
@@ -1214,6 +1222,10 @@ class BuildAutomation:
             # retrieves the real call value
             real_call_value = self.get_call_value(call_value, build_automation_structure)
 
+            # in case no real call value is found raises
+            # a runtime error
+            if not real_call_value: raise RuntimeError("no call value found '%s' by calling the method" % call_value)
+
             # replaces the value in the string
             string = string.replace(group, real_call_value)
 
@@ -1230,6 +1242,10 @@ class BuildAutomation:
 
             # retrieves the real resource value
             real_resource_value = self.get_resource_value(resource_value, build_automation_structure)
+
+            # in case no real resource value is found raises
+            # a runtime error
+            if not real_resource_value: raise RuntimeError("no resource value found '%s' in resource manager" % resource_value)
 
             # replaces the value in the string
             string = string.replace(group, real_resource_value)
@@ -1248,6 +1264,10 @@ class BuildAutomation:
             # retrieves the real plugin value
             real_plugin_value = self.get_plugin_value(plugin_value, build_automation_structure)
 
+            # in case no real plugin value is found raises
+            # a runtime error
+            if not real_plugin_value: raise RuntimeError("no plugin value found '%s' in plugin manager" % plugin_value)
+
             # replaces the value in the string
             string = string.replace(group, real_plugin_value)
 
@@ -1264,6 +1284,10 @@ class BuildAutomation:
 
             # retrieves the real contents value
             real_contents_value = self.get_contents_value(contents_value, build_automation_structure)
+
+            # in case no real contents value is found raises
+            # a runtime error
+            if not real_contents_value: raise RuntimeError("no contents value found '%s' in file system" % contents_value)
 
             # replaces the value in the string
             string = string.replace(group, real_contents_value)
