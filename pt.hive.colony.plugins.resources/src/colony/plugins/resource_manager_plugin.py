@@ -150,6 +150,9 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     def is_resource_registered(self, resource_id):
         return self.resource_manager.is_resource_registered(resource_id)
 
+    def is_resource_name(self, resource_name):
+        return self.resource_manager.is_resource_name(resource_name)
+
     def get_resource(self, resource_id):
         return self.resource_manager.get_resource(resource_id)
 
@@ -161,6 +164,9 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
 
     def get_real_string_value(self, string_value):
         return self.resource_manager.get_real_string_value(string_value)
+
+    def get_base_resources_path(self):
+        return self.resource_manager.get_base_resources_path()
 
     def get_file_path_resources_list_map(self):
         return self.resource_manager.file_path_resources_list_map

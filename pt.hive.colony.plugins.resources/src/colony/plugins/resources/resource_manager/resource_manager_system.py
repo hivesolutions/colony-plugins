@@ -235,21 +235,13 @@ class ResourceManager:
         resources directory.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.resource_manager_plugin.manager
-
-        # retrieves the resource manager plugin id
-        resource_manager_plugin_id = self.resource_manager_plugin.id
-
-        # retrieves the base plugin path
-        plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin_id)
-
-        # constructs the full resources path
-        full_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
+        # retrieves the base resources path, using the current
+        # plugin information and relative path
+        base_resources_path = self.get_base_resources_path()
 
         # loads the base resources for the entry directory
         # (this is a recursive loading strategy)
-        self._load_resources_directory(full_resources_path)
+        self._load_resources_directory(base_resources_path)
 
     def load_configuration_resources(self):
         """
@@ -772,6 +764,31 @@ class ResourceManager:
         # returns the real string value
         return real_string_value
 
+    def get_base_resources_path(self):
+        """
+        Constructs and retrieves the base resources path
+        for the resource manager plugin.
+
+        @rtype: String
+        @return: The (constructed) base resources path for
+        the resource manager plugin.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # retrieves the resource manager plugin id
+        resource_manager_plugin_id = self.resource_manager_plugin.id
+
+        # retrieves the base plugin path
+        plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin_id)
+
+        # constructs the base resources path
+        base_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
+
+        # returns the base resources path
+        return base_resources_path
+
     def process_validation(self, validation):
         """
         Processes the given validation retrieving the validation result.
@@ -969,6 +986,25 @@ class ResourceManager:
         # returns if the resource id exists in the resource
         # id resource map
         return resource_id in self.resource_id_resource_map
+
+    def is_resource_name(self, resource_name):
+        """
+        Checks if the given resource (file) name represents a valid
+        resource file name.
+        The validation of the resource name is simple and efficient.
+
+        @rtype: bool
+        @return: If the given resource (file) name represents a valid
+        resource file name.
+        """
+
+        # in case the length of the resources name is greater or equal than the resources suffix length
+        # and the last item of the resources name item is the same as the resources suffix value
+        is_resource_name  = len(resource_name) >= RESOURCES_SUFFIX_LENGTH and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
+
+        # returns the result of the is resource
+        # name test
+        return is_resource_name
 
     def get_resource(self, resource_id):
         """
@@ -1238,9 +1274,9 @@ class ResourceManager:
             # creates the resources full path item
             resources_full_path_item = os.path.join(directory_path, resources_path_item)
 
-            # in case the length of the resources path item is greater or equal than the resources suffix length
-            # and the last item of the resources path item is the same as the resources suffix value
-            if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+            # in case the resources path item represents a valid resource
+            # file (it must be parsed)
+            if self.is_resource_name(resources_path_item):
                 # parses the resources description file
                 self.parse_file(resources_full_path_item, directory_path)
             # otherwise in case the resources full path is a directory

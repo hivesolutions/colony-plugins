@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+import colony.libs.path_util
+
 SLEEP_TIME_VALUE = 1.0
 """ The sleep time value """
 
@@ -83,25 +85,19 @@ class ResourceAutoloader:
         # retrieves the configuration paths
         configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(resource_manager_plugin.id, True)
 
-        # retrieves the base plugin path
-        plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin.id)
+        # retrieves the base resources path from
+        # the resource manager
+        base_resources_path = resource_manager_plugin.get_base_resources_path()
+
+        # joins the configuration paths and the base resources
+        # path to construct the final list of paths to be "polled"
+        # for autoloading of resources
+        search_paths = list(configuration_paths) + [base_resources_path]
 
         # retrieve the file path resources list map from the resource manager
         # and then retrieves the keys from the map as the current used file paths
         file_path_resources_list_map = resource_manager_plugin.get_file_path_resources_list_map()
         file_paths = file_path_resources_list_map.keys()
-
-        # -----------------------------------------------------
-
-        BASE_RESOURCES_PATH = "resources/resource_manager/resources"
-        """ The base resources path """
-
-        #@todo: this is extremly bad
-
-        # constructs the base resources path
-        base_resources_path = os.path.join(plugin_path, BASE_RESOURCES_PATH)
-
-        # -----------------------------------------------------
 
         # iterates over all the (resource) file paths
         # to update the stored modified time values
@@ -126,9 +122,9 @@ class ResourceAutoloader:
             # resource paths
             verified_resource_paths_list = []
 
-            # iterates over all the configuration paths to operate over
-            # them and load or reload any foudn resource file
-            for configuration_path in list(configuration_paths) + [base_resources_path]:
+            # iterates over all the search (configuration) paths to operate over
+            # them and load or reload any found resource file
+            for configuration_path in search_paths:
                 # analyzes the current configuration path (directory) to load (new resources)
                 # or reload (updated resources) the resources
                 self._analyze_resources_directory(configuration_path, verified_resource_paths_list)
@@ -148,14 +144,6 @@ class ResourceAutoloader:
         self.continue_flag = False
 
     def _analyze_resources_directory(self, directory_path, verified_resource_paths_list):
-        """
-        Loads the resources in the directory with
-        the given path.
-
-        @type directory_path: String
-        @param directory_path: The directory path to search for resources.
-        """
-
         # in case the directory path does not exists
         if not os.path.exists(directory_path):
             # returns immediately
@@ -173,32 +161,12 @@ class ResourceAutoloader:
         # iterates over the resources path directory contents
         # to load them in the resource manager
         for resources_path_item in resources_path_directory_contents:
-
-            # TENHO DE TER UM METODO NO MAGER TIPO is_resource_name
-            # para testar se o name corresponde a um resource
-
-
-            RESOURCES_SUFFIX_LENGTH = 13
-            """ The resources suffix length """
-
-            RESOURCES_SUFFIX_START_INDEX = -13
-            """ The resources suffix value """
-
-            RESOURCES_SUFIX_VALUE = "resources.xml"
-            """ The resources suffix value """
-
-            import colony.libs.path_util
-
-
-
             # creates the resources full path item
             resources_full_path_item = os.path.join(directory_path, resources_path_item)
 
-
-
-            # in case the length of the resources path item is greater or equal than the resources suffix length
-            # and the last item of the resources path item is the same as the resources suffix value
-            if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+            # in case the current the resource path item refers a real
+            # resource name (resource found in path)
+            if resource_manager_plugin.is_resource_name(resources_path_item):
                 # normalizes the resources full path (for file verification)
                 resources_full_path_item_normalized = colony.libs.path_util.normalize_path(resources_full_path_item)
 
