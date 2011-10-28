@@ -10,10 +10,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["rpc_service", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.resources.resource_manager",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "javascript_manager_plugin.py",
     "resources" : ["javascript_manager_plugin.py",
             "javascript_manager/__init__.py",

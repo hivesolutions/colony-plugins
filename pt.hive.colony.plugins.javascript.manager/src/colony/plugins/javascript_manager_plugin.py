@@ -63,9 +63,6 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
         "rpc_service",
         "build_automation_item"
     ]
-    dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
-    ]
     main_modules = [
         "javascript_manager.manager.javascript_manager_exceptions",
         "javascript_manager.manager.javascript_manager_parser",
@@ -74,9 +71,6 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
 
     javascript_manager = None
     """ The javascript manager """
-
-    resource_manager_plugin = None
-    """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -175,10 +169,3 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
 
     def get_plugin_descriptor_parser(self):
         return self.javascript_manager.get_plugin_descriptor_parser()
-
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin

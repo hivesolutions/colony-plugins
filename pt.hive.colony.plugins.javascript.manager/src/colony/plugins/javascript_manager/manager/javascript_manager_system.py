@@ -57,6 +57,63 @@ DEFAULT_LIMIT_COUNTER = 10
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
+BASE_PATHS_LIST =  [
+    "%prefix:colony_demo%/pt.hive.colony.demo.web.plugins.todo_list/plugins",
+    "%prefix:colony_demo%/pt.hive.colony.demo.web.plugins.twitter/plugins",
+    "%prefix:colony_demo%/pt.hive.colony.demo.web.plugins.wiki/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.browserplus/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.data_structure/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.business/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.content.manager/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.dummy/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.key_activators/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.login/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.main/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.plugin_manager/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.gui.search.manager/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.main.localization/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.main.localization.translation_bundle/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.main.test/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.misc/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.mvc/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.printing/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.sorting/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.tasks/plugins",
+    "%prefix:colony_web%/pt.hive.colony.web.plugins.ui/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.consignments/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.address/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.company/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.consignment/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.contact_information/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.contactable/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.customer/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.employee/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.person/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.pos/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.purchase/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.reservation/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.saft_pt/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.sale/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.stock_adjustment/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.supplier/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.transactional_merchandise/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.transfer/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.general.user/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.human_resources/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.inventory/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.main/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.misc/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.pos/plugins",
+    #"%prefix:omni_web%/pt.hive.omni.web.plugins.gui.purchases/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.sales/plugins",
+    "%prefix:omni_web%/pt.hive.omni.web.plugins.gui.system/plugins",
+    "%prefix:colony_web_ui%/pt.hive.colony.web.ui"
+]
+""" The list of base paths to be used in the javascript manager """
+
 class JavascriptManager:
     """
     The javascript manager class.
@@ -112,101 +169,11 @@ class JavascriptManager:
         self.timeout_counter = 0
 
     def set_plugin_search_directories(self):
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.javascript_manager_plugin.resource_manager_plugin
-
-        # retrieves the colony web path resource
-        colony_web_path_resource = resource_manager_plugin.get_resource("system.path.colony_web")
-
-        # retrieves the colony web path value
-        colony_web_path = colony_web_path_resource.data
-
-        # retrieves the colony web real path value
-        colony_web_real_path = os.path.realpath(colony_web_path)
-
-        # retrieves the omni web path resource
-        omni_web_path_resource = resource_manager_plugin.get_resource("system.path.omni_web")
-
-        # retrieves the omni web path value
-        omni_web_path = omni_web_path_resource.data
-
-        # retrieves the omni web real path value
-        omni_web_real_path = os.path.realpath(omni_web_path)
-
-        # retrieves the colony web ui path resource
-        colony_web_ui_path_resource = resource_manager_plugin.get_resource("system.path.colony_web_ui")
-
-        # retrieves the colony web ui path value
-        colony_web_ui_path = colony_web_ui_path_resource.data
-
-        # retrieves the colony web ui real path value
-        colony_web_ui_real_path = os.path.realpath(colony_web_ui_path)
-
-        # retrieves the colony demo path resource
-        colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.colony_demo")
-
-        # retrieves the colony demo path value
-        colony_demo_path = colony_demo_path_resource.data
-
-        # retrieves the colony demo real path value
-        colony_demo_real_path = os.path.realpath(colony_demo_path)
+        # retrieves the plugin manager
+        plugin_manager = self.javascript_manager_plugin.manager
 
         # sets the plugin search directories list
-        self.plugin_search_directories_list = [
-            colony_demo_real_path + "/pt.hive.colony.demo.web.plugins.todo_list/plugins",
-            colony_demo_real_path + "/pt.hive.colony.demo.web.plugins.twitter/plugins",
-            colony_demo_real_path + "/pt.hive.colony.demo.web.plugins.wiki/plugins",
-            colony_web_real_path + "/pt.hive.colony.web/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.browserplus/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.business/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.content.manager/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.dummy/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.key_activators/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.login/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.main/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.plugin_manager/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.gui.search.manager/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.main.localization/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.main.localization.translation_bundle/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.main.test/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.misc/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.mvc/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.printing/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.sorting/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.tasks/plugins",
-            colony_web_real_path + "/pt.hive.colony.web.plugins.ui/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.consignments/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.address/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.company/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.consignment/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.contact_information/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.contactable/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.customer/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.employee/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.person/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.pos/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.purchase/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.reservation/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.saft_pt/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.sale/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.stock_adjustment/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.supplier/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.transactional_merchandise/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.transfer/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.user/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
-            #omni_web_real_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
-            omni_web_real_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
-            colony_web_ui_real_path + "/pt.hive.colony.web.ui"
-        ]
+        self.plugin_search_directories_list = [plugin_manager.resolve_file_path(value) for value in BASE_PATHS_LIST]
 
     def start_auto_index_plugin_search_directories(self):
         self.auto_index_plugin_search_directories_flag = True
@@ -286,7 +253,10 @@ class JavascriptManager:
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
         # in case the javascript plugins directory does not exists
         if not os.path.exists(plugin_search_directory):
-            self.javascript_manager_plugin.logger.warning("Path '%s' does not exist in the current filesystem" % (plugin_search_directory))
+            # prints a warning message
+            self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % (plugin_search_directory))
+
+            # returns immediately
             return
 
         # the list of files in the javascript plugins directory
