@@ -173,7 +173,7 @@ class JavascriptManager:
         plugin_manager = self.javascript_manager_plugin.manager
 
         # sets the plugin search directories list
-        self.plugin_search_directories_list = [plugin_manager.resolve_file_path(value) for value in BASE_PATHS_LIST]
+        self.plugin_search_directories_list = [plugin_manager.resolve_file_path(value) or value for value in BASE_PATHS_LIST]
 
     def start_auto_index_plugin_search_directories(self):
         self.auto_index_plugin_search_directories_flag = True
