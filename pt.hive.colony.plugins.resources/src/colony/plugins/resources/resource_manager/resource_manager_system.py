@@ -358,7 +358,6 @@ class ResourceManager:
             # with the correct data
             self.process_resource(resource, resource.full_resources_path)
 
-
             # in case the configuration plugin is not found
             # or in case it's not loaded (nothing is done)
             if not configuration_plugin or not configuration_plugin.is_loaded():
