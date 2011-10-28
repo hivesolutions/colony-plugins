@@ -333,6 +333,14 @@ class ResourceManager:
         self.register_resources(resources_list, file_path, full_resources_path)
 
     def update_pending_parses(self):
+        """
+        Updates the current resource manager state so that
+        the pending plugin resources (not parsed correctly because no adapter
+        was available) are tested again for parsing.
+        In case there's success in the parsing the of the plugin resource
+        it's registered in the associated plugin.
+        """
+
         # retrieves the plugin manager
         plugin_manager = self.resource_manager_plugin.manager
 
