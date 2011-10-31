@@ -52,6 +52,16 @@
             <stage>build</stage>
         </module>
         <module>
+            <id>pt.hive.colony.data.plugins.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
+        <module>
+            <id>pt.hive.colony.data.bundles.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
+        <module>
             <id>pt.hive.colony.configuration.plugins.*</id>
             <version>.*</version>
             <stage>build</stage>
