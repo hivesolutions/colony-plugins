@@ -2654,6 +2654,8 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
                 # sets the current attribute value as the value that
                 # exists in the parent structure
                 current_attribute_value = parent_structure[match_result_value]
+            # otherwise no structure exists and must be created
+            # to set new values
             else:
                 # creates a new list structure
                 current_attribute_value = []
