@@ -1237,6 +1237,12 @@ class Connection:
     transaction_stack = []
     """ The transaction stack for the connection """
 
+    commit_handlers = []
+    """ The list of handlers to be called upon the (next) commit """
+
+    rollback_handlers = []
+    """ The list of handlers to be called upon the (next) rollback """
+
     def __init__(self, database_connection, database_system_connection, connection_parameters, transaction_stack):
         """
         Constructor of the class.
@@ -1255,6 +1261,9 @@ class Connection:
         self.database_system_connection = database_system_connection
         self.connection_parameters = connection_parameters
         self.transaction_stack = transaction_stack
+
+        self.commit_handlers = []
+        self.rollback_handlers = []
 
     def add_conection_parameter(self, key, value):
         """
@@ -1292,3 +1301,64 @@ class Connection:
         """
 
         return self.connection_parameters.get(key, None)
+
+    def add_commit_handler(self, commit_handler):
+        """
+        Adds a commit handler to be called upon commit
+        to the current connection.
+
+        @type commit_handler: Function
+        @param commit_handler: The handler to be called
+        upon the next commit in the current connection.
+        """
+
+        self.commit_handlers.append(commit_handler)
+
+    def add_rollback_handler(self, rollback_handler):
+        """
+        Adds a commit handler to be called upon rollback
+        to the current connection.
+
+        @type rollback_handler: Function
+        @param rollback_handler: The handler to be called
+        upon the next rollback in the current connection.
+        """
+
+        self.rollback_handlers.append(rollback_handler)
+
+    def reset_handlers(self):
+        """
+        Resets the list of handlers, for both the commit
+        and rollback operations.
+        """
+
+        # resets both the commit and the rollback
+        # handlers list
+        self.commit_handlers = []
+        self.rollback_handlers = []
+
+    def call_commit_handlers(self):
+        """
+        Calls all the commit handlers, currently present
+        in the connection.
+        """
+
+        # iterates over all the commit handlers in the
+        # current connection
+        for commit_handler in self.commit_handlers:
+            # calls the commit handler for the current
+            # connection
+            commit_handler(self)
+
+    def call_rollback_handlers(self):
+        """
+        Calls all the rollback handlers, currently present
+        in the connection.
+        """
+
+        # iterates over all the rollback handlers in the
+        # current connection
+        for rollback_handler in self.rollback_handlers:
+            # calls the rollback handler for the current
+            # connection
+            rollback_handler(self)

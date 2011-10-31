@@ -379,6 +379,11 @@ class EntityManagerSqliteEngine:
         # commits the changes to the connection
         database_connection.commit()
 
+        # calls the commit handlers and then
+        # resets all the handlers to the original state
+        connection.call_commit_handlers()
+        connection.reset_handlers()
+
     def commit_system_connection(self, connection):
         """
         Commits the current connection completely.
@@ -393,6 +398,11 @@ class EntityManagerSqliteEngine:
 
         # commits the changes to the connection
         database_system_connection.commit()
+
+        # calls the commit handlers and then
+        # resets all the handlers to the original state
+        connection.call_commit_handlers()
+        connection.reset_handlers()
 
     def rollback_connection(self, connection):
         """
@@ -409,6 +419,11 @@ class EntityManagerSqliteEngine:
         # "rollsback" the changes to the connection
         database_connection.rollback()
 
+        # calls the rollback handlers and then
+        # resets all the handlers to the original state
+        connection.call_rollback_handlers()
+        connection.reset_handlers()
+
     def rollback_system_connection(self, connection):
         """
         "Rollsback" the current transaction completely.
@@ -423,6 +438,11 @@ class EntityManagerSqliteEngine:
 
         # "rollsback" the changes to the connection
         database_system_connection.rollback()
+
+        # calls the rollback handlers and then
+        # resets all the handlers to the original state
+        connection.call_rollback_handlers()
+        connection.reset_handlers()
 
     def get_database_size(self, connection):
         """
@@ -1355,11 +1375,13 @@ class EntityManagerSqliteEngine:
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
         # in case the id attribute is already defined
+        # (no need to generate an id)
         if not entity_id_attribute_value == None:
             # returns immediately (no need to generate id)
             return
 
         # in case the id field is not to be generated
+        # (no need to generate an id)
         if not GENERATED_FIELD in entity_class_id_attribute_value:
             # returns immediately (no need to generate id)
             return
@@ -1398,8 +1420,11 @@ class EntityManagerSqliteEngine:
         # sets the new entity id attribute value
         setattr(entity, entity_class_id_attribute_name, next_id_value)
 
-        # retrieves the entity id attribute value
-        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+        # creates a new lambda function to rollback the changes for
+        # the generated entity id in the entity and adds it as a
+        # rollback handler (called upon rollback)
+        revert_generated_entity_id = lambda connection: setattr(entity, entity_class_id_attribute_name, None)
+        connection.add_rollback_handler(revert_generated_entity_id)
 
     def save_entity_indirect_relations(self, connection, entity):
         """
