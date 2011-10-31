@@ -235,6 +235,8 @@ def transaction_method(entity_manager_reference, raise_exception = True):
             if hasattr(self, entity_manager_reference):
                 # sets the entity manager as the current reference
                 entity_manager = getattr(self, entity_manager_reference)
+            # otherwise a new entity manager object
+            # must be "retrieved" and set in the environment
             else:
                 # splits the entity manager reference
                 entity_manager_reference_splitted = entity_manager_reference.split(".")

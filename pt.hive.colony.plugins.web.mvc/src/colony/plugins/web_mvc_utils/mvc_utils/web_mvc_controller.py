@@ -461,7 +461,8 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
         # in case the secure value keys list is valid and the update
         # value key does not exist in the secure value keys list
         if secure_value_keys_list and not update_value_key in secure_value_keys_list:
-            # continues the loop
+            # continues the loop (not safe to
+            # update the current value)
             continue
 
         # checks if the update value value is "callable" (and calls it) or
