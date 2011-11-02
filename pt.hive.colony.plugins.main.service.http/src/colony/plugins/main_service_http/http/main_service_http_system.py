@@ -2448,10 +2448,13 @@ class HttpRequest:
             # retrieves the attribute value reference type
             attribute_value_reference_type = type(attribute_value_reference)
 
-            # in case the attribute value reference type is a list
+            # in case the attribute value reference type is (already)
+            # a list
             if attribute_value_reference_type == types.ListType:
                 # adds the attribute value to the attribute value reference
                 attribute_value_reference.append(attribute_value)
+            # otherwise the attributes is not a list and it must be created
+            # for the first time
             else:
                 # sets the list with the previously defined attribute reference
                 # and the attribute value
@@ -2459,6 +2462,8 @@ class HttpRequest:
                     attribute_value_reference,
                     attribute_value
                 ]
+        # otherwise the attribute is not defined and a normal
+        # set must be done
         else:
             # sets the attribute value in the attributes map
             self.attributes_map[attribute_name] = attribute_value
