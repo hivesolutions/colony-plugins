@@ -2405,7 +2405,7 @@ class HttpRequest:
 
         self.request_time = time.time()
 
-        self.attributes_map = {}
+        self.attributes_map = colony.libs.structures_util.OrderedMap(True)
         self.headers_map = {}
         self.response_headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
