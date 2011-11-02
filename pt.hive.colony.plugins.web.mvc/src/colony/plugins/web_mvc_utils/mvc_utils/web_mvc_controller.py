@@ -369,7 +369,7 @@ def process_map_model_validation_error(self, exception_map, exception):
     exception_map[VALIDATION_MAP_VALUE] = exception_validation_map
     exception_map[VALIDATION_ERRORS_MAP_VALUE] = exception_validation_errors_map
 
-def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None, nullify = True):
+def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None, create = True, nullify = True):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class).
@@ -391,6 +391,9 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
     @param secure_value_keys_list: The list of value keys that may be used
     while setting the values automatically (update), use this list to control the
     access to the values.
+    @type create: bool
+    @param create: If a new entity should be created in case none is
+    retrieved from the entity manager.
     @type nullify: bool
     @param nullify: If the data to be processed should be nullified
     in case empty string values are found.
@@ -425,25 +428,43 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
         entity = entity_manager.get(entity_model, entity_model_id_casted)
 
         # in case the entity is not defined
+        # in the entity manager
         if not entity:
-            # sets the created entity flag
-            created_entity = True
+            # in case the create flag is set (an entity
+            # may be created)
+            if create:
+                # sets the created entity flag
+                created_entity = True
 
-            # creates a new entity from the entity
-            # model (creates instance)
-            entity = entity_model()
+                # creates a new entity from the entity
+                # model (creates instance)
+                entity = entity_model()
 
-            # sets the id in the entity
-            setattr(entity, id_key, entity_model_id)
-    # otherwise a new entity should be
-    # created
-    else:
+                # sets the id in the entity
+                setattr(entity, id_key, entity_model_id)
+            # otherwise no entity was found in the
+            # entity manager for the current id value
+            # and is not possible to create an entity
+            else:
+                # returns invalid entity (no entity
+                # was found in the entity manager)
+                return None
+    # otherwise a new entity should be created
+    # in case the create flag is set
+    elif create:
         # sets the created entity flag
         created_entity = True
 
         # creates a new entity from the entity
         # model
         entity = entity_model()
+    # otherwise it was not possible to retrieve
+    # or create an entity (no entity returned)
+    else:
+        # returns invalid entity (no id
+        # attribute is set, no possible to retrieve
+        # an entity from the entity manager)
+        return None
 
     # in case the entity was created
     if created_entity:
