@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import os
-import time
 import types
+import calendar
 import datetime
 
 import xml.sax.saxutils
@@ -1411,7 +1411,7 @@ class Visitor:
         # attribute and then converts it to timestamp
         # and then into a string
         time_tuple_value = attribute_value_value.utctimetuple()
-        timestamp_value = time.mktime(time_tuple_value)
+        timestamp_value = calendar.timegm(time_tuple_value)
         timestamp_string_value = str(timestamp_value)
 
         # writes the timestamp string value
