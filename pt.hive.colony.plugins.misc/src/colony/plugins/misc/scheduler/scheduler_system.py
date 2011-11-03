@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 import sched
+import calendar
 import datetime
 import threading
 
@@ -560,7 +561,7 @@ class Scheduler:
         date_time_time_tuple = date_time.utctimetuple()
 
         # creates the date time timestamp
-        date_time_timestamp = time.mktime(date_time_time_tuple)
+        date_time_timestamp = calendar.timegm(date_time_time_tuple)
 
         # returns the date time timestamp
         return date_time_timestamp
