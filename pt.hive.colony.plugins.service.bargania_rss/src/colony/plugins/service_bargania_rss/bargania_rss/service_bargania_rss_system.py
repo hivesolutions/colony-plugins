@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import time
 import types
+import calendar
 import datetime
 
 import xml.dom.minidom
@@ -637,7 +637,7 @@ class BarganiaRssClient:
             date_time_value_tuple = date_time_value.utctimetuple()
 
             # converts the date time value tuple to timestamp
-            date_time_timestamp = time.mktime(date_time_value_tuple)
+            date_time_timestamp = calendar.timegm(date_time_value_tuple)
         except:
             # sets the date time timestamp to invalid
             date_time_timestamp = 0
