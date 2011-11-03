@@ -38,9 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import time
 import pysvn
 import types
+import calendar
 import datetime
 
 import colony.libs.path_util
@@ -751,7 +751,7 @@ class SubversionAdapterRevision:
         date_utc_time_tuple = date.utctimetuple()
 
         # converts the time tuple to unix timestamp
-        date_utc_timestamp = time.mktime(date_utc_time_tuple)
+        date_utc_timestamp = calendar.timegm(date_utc_time_tuple)
 
         # sets the date datetime
         self.date = date
