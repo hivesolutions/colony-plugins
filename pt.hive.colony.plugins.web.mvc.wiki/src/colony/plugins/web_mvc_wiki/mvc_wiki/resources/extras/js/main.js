@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
         var classesList = classes.split(" ")
 
         // for each class
-        for (var index = 0; index < classesList.length; i++) {
+        for (var index = 0; index < classesList.length; index++) {
             // retrieves the class value
             var classValue = classesList[index].trim();
 
@@ -134,38 +134,17 @@ jQuery(document).ready(function() {
             });
 
     jQuery("#wiki-page-edit-publish-button").click(function() {
-        // retrieves the contents value
-        var contents = jQuery("#wiki-page-edit-contents-text-area").attr("value");
+                var element = jQuery(this);
+                form = element.parents("form");
+                form.submit();
+            });
 
-        // retrieves the symmary value
-        var summary = jQuery("#wiki-page-edit-summary-input").attr("value");
-
-        // retrieves the wiki page value
-        var wikiPage = jQuery("#wiki-page-title").html();
-
-        // creates the complete url
-        var completeUrl = "pages/" + wikiPage + "/update.json";
-
-        // calls the edit resource
-        jQuery.ajax({
-                    type : "post",
-                    url : completeUrl,
-                    data : {
-                        "page[contents]" : contents,
-                        "page[summary]" : summary
-                    },
-                    success : function(data) {
-                        jQuery.ajax({
-                                    type : "get",
-                                    url : wikiPage + ".ajx",
-                                    success : function(data) {
-                                        jQuery("#wiki-contents").html(data);
-                                        jQuery("#wiki-page-edit").fadeOut(200);
-                                    }
-                                });
-                    }
-                });
-    });
+    jQuery("#wiki-page-edit-preview-button").click(function() {
+                var element = jQuery(this);
+                form = element.parents("form");
+                form.attr("action", "preview");
+                form.submit();
+            });
 
     jQuery(".wiki-input").each(function(index, value) {
                 // retrieves the value reference
