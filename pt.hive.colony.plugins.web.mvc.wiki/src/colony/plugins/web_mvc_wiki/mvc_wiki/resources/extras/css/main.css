@@ -67,8 +67,8 @@
 
 #wiki-page-search {
     margin-left: 1.6em;
-    padding-right: 12px;
     padding-left: 12px;
+    padding-right: 12px;
     width: 170px;
 }
 
@@ -160,23 +160,23 @@
 .wiki-button-container {
     float: left;
     height: 32px;
-    margin-right: 6px;
     margin-left: 6px;
+    margin-right: 6px;
     width: 122px;
 }
 
 .wiki-button-container.wiki-button-blue {
-    border-top: 1px solid #2a629c;
-    border-right: 1px solid #214c8f;
     border-bottom: 1px solid #214c8f;
     border-left: 1px solid #2a629c;
+    border-right: 1px solid #214c8f;
+    border-top: 1px solid #2a629c;
 }
 
 .wiki-button-container.wiki-button-gray {
-    border-top: 1px solid #444444;
-    border-right: 1px solid #222222;
     border-bottom: 1px solid #222222;
     border-left: 1px solid #444444;
+    border-right: 1px solid #222222;
+    border-top: 1px solid #444444;
 }
 
 .wiki-button {
@@ -208,31 +208,31 @@
 
 .wiki-button.wiki-button-blue {
     background-image: url(../images/wiki-button-sprite-blue.png);
-    border-top: 1px solid #9cb4cf;
-    border-right: 1px solid transparent;
     border-bottom: 1px solid transparent;
     border-left: 1px solid #9cb4cf;
+    border-right: 1px solid transparent;
+    border-top: 1px solid #9cb4cf;
     color: #ffffff;
     text-shadow: 1px 1px #2a629c;
 }
 
 .wiki-button.wiki-button-gray {
     background-image: url(../images/wiki-button-sprite-gray.png);
-    border-top: 1px solid #ffffff;
-    border-right: 1px solid transparent;
     border-bottom: 1px solid transparent;
     border-left: 1px solid #ffffff;
+    border-right: 1px solid transparent;
+    border-top: 1px solid #ffffff;
     color: #222222;
     text-shadow: 1px 1px #ffffff;
 }
 
 .wiki-input {
-    background-color: #ffffff;
     background: #ffffff url(../images/wiki-input-background.png) repeat-x;
+    background-color: #ffffff;
+    border: none;
     border-radius: 6px 6px 6px 6px;
     -moz-border-radius: 6px 6px 6px 6px;
     -webkit-border-radius: 6px 6px 6px 6px;
-    border: none;
     font-family: "Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
     height: 16px;
@@ -252,7 +252,7 @@
 .wiki-text-area {
     background: #ffffff url(../images/wiki-text-area-background.png) repeat-x;
     border: 1px solid #214c8f;
-    font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
+    font-family: "Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
     padding: 0px 0px 0px 0px;
     width: 100%;
@@ -264,17 +264,17 @@
 
 #wiki-controls {
     background-color: #bcc9dd;
-    border-top: 1px solid #214c8f;
-    border-right: 1px solid #214c8f;
     border-left: 1px solid #214c8f;
+    border-right: 1px solid #214c8f;
+    border-top: 1px solid #214c8f;
     height: 32px;
     margin: 0px 0px 0px 0px;
     width: 100%;
 }
 
 #wiki-controls-icons {
-    padding-top: 6px;
     padding-left: 6px;
+    padding-top: 6px;
 }
 
 .wiki-control-icon {
