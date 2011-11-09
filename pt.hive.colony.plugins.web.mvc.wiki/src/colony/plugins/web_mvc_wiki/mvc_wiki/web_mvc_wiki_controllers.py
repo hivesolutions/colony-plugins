@@ -228,10 +228,10 @@ class PageController:
         base_target_path = self._get_cache_directory_path(instance_name)
 
         # retrieves the file path striping the file path
+        # then checks if it's not empty using the instance
+        # main page in case it is
         file_path = page_name.rstrip("/")
-
-        # retrieves the file path
-        file_path = file_path and file_path or instance_main_page
+        file_path = file_path or instance_main_page
 
         # retrieves the encoder name
         encoder_name = rest_request.encoder_name and rest_request.encoder_name or "html"
@@ -239,7 +239,7 @@ class PageController:
         # encoder name is not provided or the encoder name is html, ajax or print
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
-            wiki_file_path = base_file_path + "/" + file_path + WIKI_EXTENSION
+            wiki_file_path = os.path.join(base_file_path, file_path + WIKI_EXTENSION)
 
             try:
                 # generates the wiki files using the wiki engine
@@ -282,9 +282,9 @@ class PageController:
         # creates the target file name from the file path and the file extension
         target_file_name = file_path + "." + file_extension
 
-        # creates the target file path appending the base target path with
+        # creates the target file path joining the base target path with
         # the target file name
-        target_file_path = base_target_path + "/" + target_file_name
+        target_file_path = os.path.join(base_target_path, target_file_name)
 
         # retrieves the target file contents
         target_file_contents = self._get_file_contents(target_file_path)
@@ -381,7 +381,7 @@ class PageController:
         full_file_name = file_path + "." + rest_request.encoder_name
 
         # creates the full path to the file to be read
-        full_file_path = base_target_path + "/" + full_file_name
+        full_file_path = os.path.join(base_target_path, full_file_name)
 
         # opens the resource file
         resource_file = open(full_file_path, "rb")
@@ -435,13 +435,13 @@ class PageController:
             raise web_mvc_wiki_exceptions.InvalidRepositoryPath("'%s' from '%s'" % (base_file_path, instance_repository_path))
 
         # retrieves the file path striping the file path
+        # then checks if it's not empty using the instance
+        # main page in case it is
         file_path = page_name.rstrip("/")
-
-        # retrieves the file path
-        file_path = file_path and file_path or instance_main_page
+        file_path = file_path or instance_main_page
 
         # creates the wiki file path
-        wiki_file_path = base_file_path + "/" + file_path + WIKI_EXTENSION
+        wiki_file_path = os.path.join(base_file_path, file_path + WIKI_EXTENSION)
 
         # retrieves the wiki file contents decoded
         wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
@@ -563,10 +563,10 @@ class PageController:
             temporary_file.close()
 
         # retrieves the file path striping the file path
+        # then checks if it's not empty using the instance
+        # main page in case it is
         file_path = page_name.rstrip("/")
-
-        # retrieves the file path
-        file_path = file_path and file_path or instance_main_page
+        file_path = file_path or instance_main_page
 
         # generates the wiki files using the wiki engine
         self._generate_wiki_html_files(temporary_directory_path, temporary_file_path, instance_configuration_map)
@@ -574,9 +574,9 @@ class PageController:
         # creates the target file name from the file path and the file extension
         target_file_name = file_path + ".html"
 
-        # creates the target file path appending the base target path with
+        # creates the target file path joining the base target path with
         # the target file name
-        target_file_path = temporary_file_path + "/" + target_file_name
+        target_file_path = os.path.join(temporary_file_path, target_file_name)
 
         # retrieves the target file contents
         target_file_contents = self._get_file_contents(target_file_path)
@@ -650,7 +650,7 @@ class PageController:
     def _generate_wiki_html_files(self, base_target_path, wiki_file_path, configuration_map):
         """
         Generates the html files using the wiki engine.
-        The generation of the html files is archieved using
+        The generation of the html files is achieved using
         the wiki engine library.
 
         @type base_target_path: String.
