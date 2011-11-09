@@ -23,8 +23,9 @@
             </div>
             <div id="wiki-page-new-buttons" class="wiki-page-new-line">
                 <div id="wiki-page-new-publish-button" class="wiki-button wiki-button-blue">Publish</div>
-                <div class="wiki-button wiki-button-blue disabled">Preview</div>
+                <div id="wiki-page-new-preview-button" class="wiki-button wiki-button-blue">Preview</div>
             </div>
         </form>
     </div>
 </div>
+${out_none value=page_contents /}
