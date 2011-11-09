@@ -185,25 +185,13 @@ class MainServiceHttpTemplateDirectoryListHandler:
         # sets the current format as active
         formats_map[format] = "active"
 
-        # assigns the directory list to the template file
+        # assigns the template variables
         template_file.assign("directory_list", directory_list)
-
-        # assigns the directory final item to the template file
         template_file.assign("directory_final_item", suffix_resouces_path_value)
-
-        # assigns the directory entries to the template file
         template_file.assign("directory_entries", directory_entries)
-
-        # assigns the format to the template file
         template_file.assign("format", format)
-
-        # assigns the format file to the template file
         template_file.assign("format_file", format_file)
-
-        # assigns the formats map to the template file
         template_file.assign("formats_map", formats_map)
-
-        # assigns the delta time to the template file
         template_file.assign("delta_time", delta_time_rounded)
 
         # processes the template file

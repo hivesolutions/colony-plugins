@@ -126,13 +126,9 @@ class MainServiceHttpSystemInformationHandler:
         # retrieves the plugin manager release
         plugin_manager_release = plugin_manager.get_release()
 
-        # assigns the plugin manager version to the template file
+        # assigns the template variables
         template_file.assign("plugin_manager_version", plugin_manager_version)
-
-        # assigns the plugin manager release to the template file
         template_file.assign("plugin_manager_release", plugin_manager_release)
-
-        # assigns the system information to the template file
         template_file.assign("system_information", system_information)
 
         # processes the template file

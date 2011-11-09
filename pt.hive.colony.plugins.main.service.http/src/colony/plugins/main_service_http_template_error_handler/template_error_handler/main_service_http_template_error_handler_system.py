@@ -236,22 +236,12 @@ class MainServiceHttpTemplateErrorHandler:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
-        # assigns the error code to the template file
+        # assigns the template variables
         template_file.assign("error_code", error_code)
-
-        # assigns the error description to the template file
         template_file.assign("error_description", error_description)
-
-        # assigns the error image to the template file
         template_file.assign("error_image", error_image)
-
-        # assigns the delta time to the template file
         template_file.assign("delta_time", delta_time_rounded)
-
-        # assigns the error to the template file
         template_file.assign("error", error_string)
-
-        # assigns the traceback to the template file
         template_file.assign("traceback", formated_traceback)
 
         # processes the template file
