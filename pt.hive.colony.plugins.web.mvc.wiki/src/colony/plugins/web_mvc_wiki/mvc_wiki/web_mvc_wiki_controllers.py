@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import copy
 import time
 import tempfile
 
@@ -194,7 +195,7 @@ class PageController:
 
         # in case the page contents are defined a preview of them shall
         # be created for the given instance and page
-        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name) or None
+        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name, instance_name) or None
 
         # retrieves the file path striping the file path
         # then checks if it's not empty using the instance
@@ -525,7 +526,7 @@ class PageController:
 
         # in case the page contents are defined a preview of them shall
         # be created for the given instance and page
-        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name) or None
+        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name, instance_name) or None
 
         # retrieves the file path striping the file path
         # then checks if it's not empty using the instance
@@ -676,7 +677,7 @@ class PageController:
         # generates the html files using the wiki engine with the given engine properties
         language_wiki_plugin.generate("html", engine_properties)
 
-    def _preview_page(self, rest_request, form_data_map, instance, page_name):
+    def _preview_page(self, rest_request, form_data_map, instance, page_name, instance_name):
         """
         "Preview" a page generating the html contents for it and returning
         them in a "simple" string value.
@@ -709,6 +710,15 @@ class PageController:
         # retrieves the instance attributes
         instance_main_page = instance.get("main_page", "index")
         instance_configuration_map = instance.get("configuration_map", {})
+
+        # creates a new instance configuration map as a duplicate of
+        # the existent in order to avoid property overlapping
+        instance_configuration_map = copy.copy(instance_configuration_map)
+
+        # constructs the preview base path from the base path and
+        # the instance name value (this is required for proper resource rendering)
+        preview_base_path = self.get_base_path(rest_request) + instance_name + "/"
+        instance_configuration_map["base_path"] = preview_base_path
 
         # creates a new temporary directory path and a temporary
         # file path in the directory for the wiki page creation

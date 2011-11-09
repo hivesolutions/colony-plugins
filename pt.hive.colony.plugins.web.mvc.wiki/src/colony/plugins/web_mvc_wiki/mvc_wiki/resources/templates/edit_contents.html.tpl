@@ -3,7 +3,7 @@
         <form action="update" id="wiki-page-edit-form" method="post">
             <input name="page[name]" type="hidden" value="${out_none value=page_name /}" />
             <div class="wiki-page-edit-line">
-                <div class="warning">For help regarding the wiki syntax please refer to <a href="documentation_demo.html">reference</a>.</div>
+                <div class="warning">For help regarding the wiki syntax please refer to <a href="${out_none value=base_path /}${out_none value=instance_name /}/documentation_demo.html">reference</a>.</div>
             </div>
             <div class="wiki-page-edit-line">
                 <div id="wiki-controls">
@@ -27,5 +27,7 @@
 </div>
 ${if item=page_contents value=None operator=neq}
     <div class="wiki-separator"></div>
-    ${out_none value=page_contents /}
+    <div id="wiki-preview">
+        ${out_none value=page_contents /}
+    </div>
 ${/if}
