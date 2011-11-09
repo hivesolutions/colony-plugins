@@ -361,13 +361,15 @@ class ConsumerController:
         web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
 
         # creates the consumer create map
-        consumer_create = {
+        consumer_create_map = {
             "status" : INVALID_STATUS_VALUE,
             "api_key" : self._generate_api_key()
         }
 
-        # retrieves the consumer entity
-        consumer_entity = self.get_entity_model(web_mvc_encryption_entity_models.entity_manager, web_mvc_encryption_entity_models.Consumer, consumer, consumer_create)
+        # retrieves the consumer entity, in case no entity
+        # is found or failure occurs returns immediately
+        consumer_entity = self.get_entity_model(web_mvc_encryption_entity_models.entity_manager, web_mvc_encryption_entity_models.Consumer, consumer, consumer_create_map, create = persist_type & PERSIST_SAVE_TYPE)
+        if not consumer_entity: return consumer_entity
 
         # validates the consumer entity
         self.validate_model_exception(consumer_entity, "consumer validation failed")
