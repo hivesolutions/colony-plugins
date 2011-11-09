@@ -807,6 +807,11 @@ class PageController:
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
+        # in case the base file path is invalid
+        if base_file_path == None:
+            # raises the invalid repository path exception
+            raise web_mvc_wiki_exceptions.InvalidRepositoryPath("'%s' from '%s'" % (base_file_path, instance_repository_path))
+
         # creates the complete file path for the wiki file
         # joining the base file path and the wiki page name, then
         # checks if the file already exists (or not)
