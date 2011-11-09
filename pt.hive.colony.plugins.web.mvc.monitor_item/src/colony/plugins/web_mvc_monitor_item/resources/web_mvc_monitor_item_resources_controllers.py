@@ -101,8 +101,6 @@ class MainController:
         # retrieves the cpu usage in percentage
         cpu_usage = process.get_cpu_percent()
 
-        # assigns the memory usage to the template
+        # assigns the template variables
         template_file.assign("memory_usage", memory_usage)
-
-        # assigns the cpu usage to the template
         template_file.assign("cpu_usage", cpu_usage)

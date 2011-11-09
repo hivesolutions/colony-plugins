@@ -89,11 +89,17 @@ class MainController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_monitor_item_colony_plugin.manager
 
-        # assigns the plugin count to the template
-        template_file.assign("plugin_count", len(plugin_manager.get_all_plugins()))
+        # retrieves the various plugin manager components
+        plugins = plugin_manager.get_all_plugins()
+        loaded_plugins = plugin_manager.get_all_loaded_plugins()
+        capabilities_plugins_map = plugin_manager.capabilities_plugins_map
 
-        # assigns the plugin loaded count to the template
-        template_file.assign("plugin_loaded_count", len(plugin_manager.get_all_loaded_plugins()))
+        # retrieves the number of each plugin manager component
+        number_plugins = len(plugins)
+        number_loaded_plugins = len(loaded_plugins)
+        number_capabilities = len(capabilities_plugins_map)
 
-        # assigns the capabilities count to the template
-        template_file.assign("capabilities_count", len(plugin_manager.capabilities_plugins_map))
+        # assigns the template variables
+        template_file.assign("plugin_count", number_plugins)
+        template_file.assign("plugin_loaded_count", number_loaded_plugins)
+        template_file.assign("capabilities_count", number_capabilities)
