@@ -133,6 +133,13 @@ jQuery(document).ready(function() {
                 jQuery(this).parents("form").submit();
             });
 
+    jQuery("#wiki-page-new-preview-button").click(function() {
+                var element = jQuery(this);
+                form = element.parents("form");
+                form.attr("action", "");
+                form.submit();
+            });
+
     jQuery("#wiki-page-edit-publish-button").click(function() {
                 var element = jQuery(this);
                 form = element.parents("form");
@@ -142,7 +149,7 @@ jQuery(document).ready(function() {
     jQuery("#wiki-page-edit-preview-button").click(function() {
                 var element = jQuery(this);
                 form = element.parents("form");
-                form.attr("action", "preview");
+                form.attr("action", "");
                 form.submit();
             });
 

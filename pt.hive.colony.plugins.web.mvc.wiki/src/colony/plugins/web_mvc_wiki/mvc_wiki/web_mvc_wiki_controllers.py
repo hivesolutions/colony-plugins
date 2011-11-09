@@ -149,6 +149,98 @@ class PageController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
 
+    def handle_new(self, rest_request, parameters = {}):
+        """
+        Handles the given new page rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The new page rest request to
+        be handled.
+        """
+
+        # retrieves the initial time
+        initial_time = time.clock()
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        page_name = self.get_pattern(parameters, "page_name")
+
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(instance_name)
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # sets the page name in the page
+        page["name"] = page_name
+
+        # tries to retrieve the page contents
+        page_contents = page.get("contents", None)
+
+        # retrieves the instance attributes
+        instance_wiki_name = instance.get("wiki_name", instance_name)
+        instance_template = instance.get("template", "main")
+        instance_main_page = instance.get("main_page", "index")
+        instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+        instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
+        instance_footer_enabled = instance.get("footer_enabled", True)
+        instance_options_enabled = instance.get("options_enabled", True)
+        instance_print_enabled = instance.get("print_enabled", True)
+        instance_header_links = instance.get("header_links", [])
+        instance_configuration_index = instance.get("configuration_index", [])
+
+        # in case the page contents are defined a preview of them shall
+        # be created for the given instance and page
+        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name) or None
+
+        # retrieves the file path striping the file path
+        # then checks if it's not empty using the instance
+        # main page in case it is
+        file_path = page_name.rstrip("/")
+        file_path = file_path or instance_main_page
+
+        # retrieves the final time and calculates the
+        # generation (delta) time
+        final_time = time.clock()
+        generation_time = final_time - initial_time
+
+        # creates the generation time string
+        generation_time_string = "%.2f" % generation_time
+
+        # retrieves the template file and assigns the
+        # include to the template
+        template_file = self.retrieve_template_file("general_action.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", "new_contents.html.tpl")
+
+        # sets the various template file variables
+        template_file.assign("page_name", file_path)
+        template_file.assign("page_source", page_contents)
+        template_file.assign("page_contents", processed_page_contents)
+        template_file.assign("wiki_name", instance_wiki_name)
+        template_file.assign("template", instance_template)
+        template_file.assign("main_page", instance_main_page)
+        template_file.assign("generation_time", generation_time_string)
+        template_file.assign("instance_name", instance_name)
+        template_file.assign("instance_configuration_index", instance_configuration_index)
+        template_file.assign("logo_path", instance_logo_path)
+        template_file.assign("icon_path", instance_icon_path)
+        template_file.assign("footer_enabled", instance_footer_enabled)
+        template_file.assign("options_enabled", instance_options_enabled)
+        template_file.assign("print_enabled", instance_print_enabled)
+        template_file.assign("header_links", instance_header_links)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns
+        return
+
     def handle_create(self, rest_request, parameters = {}):
         """
         Handles the given create page rest request.
@@ -245,35 +337,11 @@ class PageController:
                 # generates the wiki files using the wiki engine
                 self._generate_wiki_html_files(base_target_path, wiki_file_path, instance_configuration_map)
             except web_mvc_wiki_exceptions.WikiFileNotFound:
-                # retrieves the template file
-                template_file = self.retrieve_template_file("general_action.html.tpl")
+                # handles the request as a new page request
+                # because no wiki page was found
+                self.handle_new(rest_request, parameters)
 
-                # assigns the include to the template
-                self.assign_include_template_file(template_file, "page_include", "new_contents.html.tpl")
-
-                # sets the page name in the template file
-                template_file.assign("page_name", file_path)
-
-                # sets the various template file variables
-                template_file.assign("wiki_name", instance_wiki_name)
-                template_file.assign("template", instance_template)
-                template_file.assign("main_page", instance_main_page)
-                template_file.assign("instance_name", instance_name)
-                template_file.assign("instance_configuration_index", instance_configuration_index)
-                template_file.assign("logo_path", instance_logo_path)
-                template_file.assign("icon_path", instance_icon_path)
-                template_file.assign("footer_enabled", instance_footer_enabled)
-                template_file.assign("options_enabled", instance_options_enabled)
-                template_file.assign("print_enabled", instance_print_enabled)
-                template_file.assign("header_links", instance_header_links)
-
-                # applies the base path to the template file
-                self.apply_base_path_template_file(rest_request, template_file)
-
-                # processes the template file and sets the request contents
-                self.process_set_contents(rest_request, template_file)
-
-                # returns
+                # returns immediately
                 return
 
         # retrieves the file extension
@@ -406,8 +474,14 @@ class PageController:
         @param rest_request: The edit rest request to be handled.
         """
 
+        # retrieves the initial time
+        initial_time = time.clock()
+
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the various patterns
         instance_name = self.get_pattern(parameters, "instance_name")
@@ -416,12 +490,26 @@ class PageController:
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(instance_name)
 
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # sets the page name in the page
+        page["name"] = page_name
+
+        # tries to retrieve the page contents
+        page_contents = page.get("contents", None)
+
         # retrieves the instance attributes
         instance_wiki_name = instance.get("wiki_name", instance_name)
         instance_template = instance.get("template", "main")
         instance_main_page = instance.get("main_page", "index")
         instance_repository_path = instance["repository_path"]
         instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+        instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
+        instance_footer_enabled = instance.get("footer_enabled", True)
+        instance_options_enabled = instance.get("options_enabled", True)
+        instance_print_enabled = instance.get("print_enabled", True)
+        instance_header_links = instance.get("header_links", [])
         instance_configuration_index = instance.get("configuration_index", [])
 
         # sets the base file path as the instance repository path
@@ -432,6 +520,10 @@ class PageController:
         if base_file_path == None:
             # raises the invalid repository path exception
             raise web_mvc_wiki_exceptions.InvalidRepositoryPath("'%s' from '%s'" % (base_file_path, instance_repository_path))
+
+        # in case the page contents are defined a preview of them shall
+        # be created for the given instance and page
+        processed_page_contents = page_contents and self._preview_page(rest_request, form_data_map, instance, page_name) or None
 
         # retrieves the file path striping the file path
         # then checks if it's not empty using the instance
@@ -445,21 +537,35 @@ class PageController:
         # retrieves the wiki file contents decoded
         wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("general_action.html.tpl")
+        # retrieves the final time and calculates the
+        # generation (delta) time
+        final_time = time.clock()
+        generation_time = final_time - initial_time
 
-        # assigns the include to the template
+        # creates the generation time string
+        generation_time_string = "%.2f" % generation_time
+
+        # retrieves the template file and assigns
+        # the include to the template
+        template_file = self.retrieve_template_file("general_action.html.tpl")
         self.assign_include_template_file(template_file, "page_include", "edit_contents.html.tpl")
 
         # sets the various template file variables
         template_file.assign("page_name", file_path)
         template_file.assign("page_source", wiki_file_contents)
+        template_file.assign("page_contents", processed_page_contents)
         template_file.assign("wiki_name", instance_wiki_name)
         template_file.assign("template", instance_template)
         template_file.assign("main_page", instance_main_page)
+        template_file.assign("generation_time", generation_time_string)
         template_file.assign("instance_name", instance_name)
         template_file.assign("instance_configuration_index", instance_configuration_index)
         template_file.assign("logo_path", instance_logo_path)
+        template_file.assign("icon_path", instance_icon_path)
+        template_file.assign("footer_enabled", instance_footer_enabled)
+        template_file.assign("options_enabled", instance_options_enabled)
+        template_file.assign("print_enabled", instance_print_enabled)
+        template_file.assign("header_links", instance_header_links)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -498,129 +604,6 @@ class PageController:
 
         # redirects the rest request
         self.redirect_base_path(rest_request, instance_name + "/" + page_name)
-
-    def handle_preview(self, rest_request, parameters = {}):
-        """
-        Handles the given preview rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The show rest request to be handled.
-        """
-
-        # retrieves the initial time
-        initial_time = time.clock()
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the various patterns
-        instance_name = self.get_pattern(parameters, "instance_name")
-        page_name = self.get_pattern(parameters, "page_name")
-
-        # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(instance_name)
-
-        # retrieves the page
-        page = form_data_map.get("page", {})
-
-        # sets the page name in the page
-        page["name"] = page_name
-
-        # retrieves the page contents
-        page_contents = page["contents"]
-
-        # normalizes the contents
-        normalized_contents = self._normalize_contents(page_contents)
-
-        # retrieves the instance attributes
-        instance_wiki_name = instance.get("wiki_name", instance_name)
-        instance_template = instance.get("template", "main")
-        instance_main_page = instance.get("main_page", "index")
-        instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
-        instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
-        instance_footer_enabled = instance.get("footer_enabled", True)
-        instance_options_enabled = instance.get("options_enabled", True)
-        instance_print_enabled = instance.get("print_enabled", True)
-        instance_header_links = instance.get("header_links", [])
-        instance_configuration_map = instance.get("configuration_map", {})
-        instance_configuration_index = instance.get("configuration_index", [])
-
-        # creates a new temporary directory path and a temporary
-        # file path in the directory for the wiki page creation
-        temporary_directory_path = tempfile.mkdtemp()
-        temporary_file_path = os.path.join(temporary_directory_path, page_name + WIKI_EXTENSION)
-
-        # opens the temporary file path for writing
-        temporary_file = open(temporary_file_path, "wb")
-
-        try:
-            # writes the normalizes contents (wiki contents)
-            # into the temporary file
-            temporary_file.write(normalized_contents)
-        finally:
-            # closes the temporary file
-            temporary_file.close()
-
-        # retrieves the file path striping the file path
-        # then checks if it's not empty using the instance
-        # main page in case it is
-        file_path = page_name.rstrip("/")
-        file_path = file_path or instance_main_page
-
-        # generates the wiki files using the wiki engine
-        self._generate_wiki_html_files(temporary_directory_path, temporary_file_path, instance_configuration_map)
-
-        # creates the target file name from the file path and the file extension
-        target_file_name = file_path + ".html"
-
-        # creates the target file path joining the temporary directory path with
-        # the target file name
-        target_file_path = os.path.join(temporary_directory_path, target_file_name)
-
-        # retrieves the target file contents and then decodes
-        # decodes the file contents using the file encoding
-        target_file_contents = self._get_file_contents(target_file_path)
-        target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
-
-        # retrieves the final time and  calculates the
-        # generation (delta) time
-        final_time = time.clock()
-        generation_time = final_time - initial_time
-
-        # creates the generation time string
-        generation_time_string = "%.2f" % generation_time
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("general_action.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "edit_contents.html.tpl")
-
-        # sets the various template file variables
-        template_file.assign("page_name", file_path)
-        template_file.assign("page_source", page_contents)
-        template_file.assign("page_contents", target_file_contents)
-        template_file.assign("wiki_name", instance_wiki_name)
-        template_file.assign("template", instance_template)
-        template_file.assign("main_page", instance_main_page)
-        template_file.assign("generation_time", generation_time_string)
-        template_file.assign("instance_name", instance_name)
-        template_file.assign("instance_configuration_index", instance_configuration_index)
-        template_file.assign("logo_path", instance_logo_path)
-        template_file.assign("icon_path", instance_icon_path)
-        template_file.assign("footer_enabled", instance_footer_enabled)
-        template_file.assign("options_enabled", instance_options_enabled)
-        template_file.assign("print_enabled", instance_print_enabled)
-        template_file.assign("header_links", instance_header_links)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
 
     def _get_cache_directory_path(self, instance_name):
         """
@@ -688,6 +671,80 @@ class PageController:
 
         # generates the html files using the wiki engine with the given engine properties
         language_wiki_plugin.generate("html", engine_properties)
+
+    def _preview_page(self, rest_request, form_data_map, instance, page_name):
+        """
+        "Preview" a page generating the html contents for it and returning
+        them in a "simple" string value.
+        The generation strategy involves the creation of temporary files
+        and the execution of the wiki engine against them.
+
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request in use
+        for the handling.
+        @type form_data_map: Dictionary
+        @param form_data_map: The map containing the submitted form data.
+        @type instance: Dictionary
+        @param instance: The map containing the (wiki) instance information.
+        @type page_name:  String
+        @param page_name: The name of the page to be previewed.
+        @rtype: String
+        @return: The generated html page contents.
+        """
+
+        # retrieves the page from the form data
+        # map dictionary
+        page = form_data_map.get("page", {})
+
+        # retrieves the page contents
+        page_contents = page["contents"]
+
+        # normalizes the contents
+        normalized_contents = self._normalize_contents(page_contents)
+
+        # retrieves the instance attributes
+        instance_main_page = instance.get("main_page", "index")
+        instance_configuration_map = instance.get("configuration_map", {})
+
+        # creates a new temporary directory path and a temporary
+        # file path in the directory for the wiki page creation
+        temporary_directory_path = tempfile.mkdtemp()
+        temporary_file_path = os.path.join(temporary_directory_path, page_name + WIKI_EXTENSION)
+
+        # opens the temporary file path for writing
+        temporary_file = open(temporary_file_path, "wb")
+
+        try:
+            # writes the normalizes contents (wiki contents)
+            # into the temporary file
+            temporary_file.write(normalized_contents)
+        finally:
+            # closes the temporary file
+            temporary_file.close()
+
+        # retrieves the file path striping the file path
+        # then checks if it's not empty using the instance
+        # main page in case it is
+        file_path = page_name.rstrip("/")
+        file_path = file_path or instance_main_page
+
+        # generates the wiki files using the wiki engine
+        self._generate_wiki_html_files(temporary_directory_path, temporary_file_path, instance_configuration_map)
+
+        # creates the target file name from the file path and the file extension
+        target_file_name = file_path + ".html"
+
+        # creates the target file path joining the temporary directory path with
+        # the target file name
+        target_file_path = os.path.join(temporary_directory_path, target_file_name)
+
+        # retrieves the target file contents and then decodes
+        # decodes the file contents using the file encoding
+        target_file_contents = self._get_file_contents(target_file_path)
+        target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
+
+        # returns the target (html) file contents
+        return target_file_contents
 
     def _update_page(self, rest_request, page, instance_name):
         """
