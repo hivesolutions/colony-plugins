@@ -67,9 +67,6 @@ SERIALIZER_VALUE = "serializer"
 NORMAL_ENCODER_NAME = None
 """ The normal encoder name """
 
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
 EXCEPTION_VALUE = "exception"
 """ The exception value """
 
@@ -130,10 +127,8 @@ class MainController:
         @param parameters: The handler parameters.
         """
 
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
-
         # sets the exception handler in the parameters
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
         parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
         # retrieves the template file

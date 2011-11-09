@@ -86,9 +86,6 @@ EXCEPTION_VALUE = "exception"
 MESSAGE_VALUE = "message"
 """ The message value """
 
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -137,10 +134,8 @@ class PluginController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
@@ -212,16 +207,10 @@ class PluginController:
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
-        # assigns the plugins to the template
+        # assigns the template variables
         template_file.assign("plugins", partial_filtered_plugins)
-
-        # assigns the start record to the template
         template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
         template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
@@ -239,11 +228,8 @@ class PluginController:
         # retrieves the template file from the parameters
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
+        plugin_id = self.get_pattern(parameters, "plugin_id")
 
         # retrieves the specified plugin
         plugin = self._get_plugin(rest_request, plugin_id)
@@ -251,10 +237,8 @@ class PluginController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_edit_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the plugin to the template
@@ -278,11 +262,8 @@ class PluginController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
+        plugin_id = self.get_pattern(parameters, "plugin_id")
 
         # retrieves the specified plugin
         plugin = self._get_plugin(rest_request, plugin_id)
@@ -311,14 +292,11 @@ class PluginController:
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the communication helper
         communication_helper = parameters["communication_helper"]
 
         # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
+        plugin_id = self.get_pattern(parameters, "plugin_id")
 
         # retrieves the plugin status from the form data map
         plugin_status = form_data_map["plugin_status"]
@@ -454,10 +432,8 @@ class CapabilityController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/capability/capability_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
@@ -529,16 +505,10 @@ class CapabilityController:
         # retrieves the template file
         template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
 
-        # assigns the capabilities to the template
+        # assigns the template variables
         template_file.assign("capabilities", partial_filtered_capabilities)
-
-        # assigns the start record to the template
         template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
         template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
@@ -556,11 +526,8 @@ class CapabilityController:
         # retrieves the template file from the parameters
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the capability pattern
-        capability = pattern_names["capability"]
+        capability = self.get_pattern(parameters, "capability")
 
         # retrieves the plugins map for the capability
         plugins_capability = self._get_plugins_capability(rest_request, capability)
@@ -571,19 +538,13 @@ class CapabilityController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/capability/capability_edit_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # assigns the capability to the template
+        # assigns the template variables
         template_file.assign("capability", capability)
-
-        # assigns the plugins capability to the template
         template_file.assign("plugins_capability", plugins_capability)
-
-        # assigns the sub capabilities to the template
         template_file.assign("sub_capabilities", sub_capabilities)
 
         # assigns the session variables to the template file
@@ -604,11 +565,8 @@ class CapabilityController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the capability pattern
-        capability = pattern_names["capability"]
+        capability = self.get_pattern(parameters, "capability")
 
         # retrieves the plugins map for the capability
         plugins_capability = self._get_plugins_capability(rest_request, capability)
@@ -619,13 +577,9 @@ class CapabilityController:
         # retrieves the template file
         template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
 
-        # assigns the capability to the template
+        # assigns the template variables
         template_file.assign("capability", capability)
-
-        # assigns the plugins capability to the template
         template_file.assign("plugins_capability", plugins_capability)
-
-        # assigns the sub capabilities to the template
         template_file.assign("sub_capabilities", sub_capabilities)
 
         # assigns the session variables to the template file

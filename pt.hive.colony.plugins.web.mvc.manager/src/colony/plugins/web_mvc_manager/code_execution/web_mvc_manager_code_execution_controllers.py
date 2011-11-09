@@ -126,10 +126,8 @@ class CodeExecutionController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_CODE_EXECUTION_RESOURCES_PATH, "templates/code_execution/code_execution_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file

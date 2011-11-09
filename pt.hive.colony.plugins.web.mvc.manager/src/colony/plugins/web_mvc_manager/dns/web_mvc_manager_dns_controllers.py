@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import colony.libs.importer_util
 
 SERIALIZER_VALUE = "serializer"
@@ -53,9 +55,6 @@ DEFAULT_ENCODING = "utf-8"
 
 WEB_MVC_MANAGER_DNS_RESOURCES_PATH = "web_mvc_manager/dns/resources"
 """ The web mvc manager dns resources path """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
@@ -105,14 +104,8 @@ class DnsController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the dns index patterns
-        dns_index = pattern_names["dns_index"]
-
-        # converts the dns index to integer
-        dns_index = int(dns_index)
+        dns_index = self.get_pattern(parameters, "dns_index", types.IntType)
 
         # retrieves the specified capability
         dns = self._get_dns(rest_request, dns_index)
@@ -120,10 +113,8 @@ class DnsController:
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_edit_contents.html.tpl")
 
-        # assigns the dns to the template
+        # assigns the template variables
         template_file.assign("dns", dns)
-
-        # assigns the dns index to the template
         template_file.assign("dns_index", dns_index)
 
         # assigns the session variables to the template file
@@ -138,14 +129,8 @@ class DnsController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("dns.show")
     def handle_show(self, rest_request, parameters = {}):
-        # retrieves the pattern names
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the dns index patterns
-        dns_index = pattern_names["dns_index"]
-
-        # converts the dns index to integer
-        dns_index = int(dns_index)
+        dns_index = self.get_pattern(parameters, "dns_index", types.IntType)
 
         # retrieves the specified capability
         dns = self._get_dns(rest_request, dns_index)
@@ -156,16 +141,12 @@ class DnsController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_DNS_RESOURCES_PATH, "templates/dns/dns_edit_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
 
-        # assigns the dns to the template
+        # assigns the template variables
         template_file.assign("dns", dns)
-
-        # assigns the dns index to the template
         template_file.assign("dns_index", dns_index)
 
         # assigns the session variables to the template file
@@ -255,16 +236,10 @@ class DnsController:
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
 
-        # assigns the dns zones to the template
+        # assigns the template variables
         template_file.assign("dns_zones", partial_filtered_dns_zones)
-
-        # assigns the start record to the template
         template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
         template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file

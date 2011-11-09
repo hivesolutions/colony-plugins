@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 import copy
+import types
 
 import colony.libs.importer_util
 
@@ -62,9 +63,6 @@ DEFAULT_ENCODING = "utf-8"
 
 WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH = "web_mvc_manager/repository/resources"
 """ The web mvc manager repository resources path """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
 
 INSTALLATION_DELAY = 1.0
 """ The delay induce uppon installation """
@@ -138,10 +136,8 @@ class RepositoryController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
@@ -180,10 +176,8 @@ class RepositoryController:
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
 
-        # assigns the repositories to the template
+        # assigns the template variables
         template_file.assign("repositories", partial_filtered_repositories)
-
-        # assigns the various search values to the template
         template_file.assign("start_record", start_record)
         template_file.assign("number_records", number_records)
         template_file.assign("total_number_records", total_number_records)
@@ -206,14 +200,8 @@ class RepositoryController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the specified repository
         repository = self._get_repository(rest_request, repository_index)
@@ -221,10 +209,8 @@ class RepositoryController:
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_show_contents.html.tpl")
 
-        # assigns the repository to the template
+        # assigns the template variables
         template_file.assign("repository", repository)
-
-        # assigns the repository index to the template
         template_file.assign("repository_index", repository_index)
 
         # assigns the session variables to the template file
@@ -239,14 +225,8 @@ class RepositoryController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("repository.show")
     def handle_show(self, rest_request, parameters = {}):
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the specified repository
         repository = self._get_repository(rest_request, repository_index)
@@ -257,16 +237,12 @@ class RepositoryController:
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_show_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
 
-        # assigns the repository to the template
+        # assigns the template variables
         template_file.assign("repository", repository)
-
-        # assigns the repository index to the template
         template_file.assign("repository_index", repository_index)
 
         # assigns the session variables to the template file
@@ -392,14 +368,8 @@ class RepositoryBundlesController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_bundles_list_contents.html.tpl")
@@ -422,22 +392,14 @@ class RepositoryBundlesController:
         # retrieves the template file from the parameters
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository_bundles/repository_bundles_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the repository index to the template
@@ -467,22 +429,16 @@ class RepositoryBundlesController:
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the search values
         search_query = form_data_map["search_query"]
         start_record = form_data_map["start_record"]
         number_records = form_data_map["number_records"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
 
         # converts the the search values
         start_record = int(start_record)
@@ -497,10 +453,8 @@ class RepositoryBundlesController:
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_bundles_partial_list_contents.html.tpl")
 
-        # assigns the repositories to the template
+        # assigns the template variables
         template_file.assign("repository_bundles", partial_filtered_repository_bundles)
-
-        # assigns the various search values to the template
         template_file.assign("start_record", start_record)
         template_file.assign("number_records", number_records)
         template_file.assign("total_number_records", total_number_records)
@@ -723,14 +677,8 @@ class RepositoryPluginsController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_plugins_list_contents.html.tpl")
@@ -753,22 +701,14 @@ class RepositoryPluginsController:
         # retrieves the template file from the parameters
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository_plugins/repository_plugins_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the repository index to the template
@@ -798,14 +738,11 @@ class RepositoryPluginsController:
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the search values
         search_query = form_data_map["search_query"]
@@ -828,10 +765,8 @@ class RepositoryPluginsController:
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
 
-        # assigns the repositories to the template
+        # assigns the template variables
         template_file.assign("repository_plugins", partial_filtered_repository_plugins)
-
-        # assigns the various search values to the template
         template_file.assign("start_record", start_record)
         template_file.assign("number_records", number_records)
         template_file.assign("total_number_records", total_number_records)
@@ -1054,14 +989,8 @@ class RepositoryContainersController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_containers_list_contents.html.tpl")
@@ -1084,22 +1013,14 @@ class RepositoryContainersController:
         # retrieves the template file from the parameters
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository_containers/repository_containers_list_contents.html.tpl")
 
-        # assigns the include to the template
+        # assigns the includes to the templates
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the repository index to the template
@@ -1129,22 +1050,16 @@ class RepositoryContainersController:
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
         # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
+        repository_index = self.get_pattern(parameters, "repository_index", types.IntType)
 
         # retrieves the search values
         search_query = form_data_map["search_query"]
         start_record = form_data_map["start_record"]
         number_records = form_data_map["number_records"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
 
         # converts the the search values
         start_record = int(start_record)
@@ -1159,10 +1074,8 @@ class RepositoryContainersController:
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_containers_partial_list_contents.html.tpl")
 
-        # assigns the repositories to the template
+        # assigns the template variables
         template_file.assign("repository_containers", partial_filtered_repository_containers)
-
-        # assigns the various search values to the template
         template_file.assign("start_record", start_record)
         template_file.assign("number_records", number_records)
         template_file.assign("total_number_records", total_number_records)
