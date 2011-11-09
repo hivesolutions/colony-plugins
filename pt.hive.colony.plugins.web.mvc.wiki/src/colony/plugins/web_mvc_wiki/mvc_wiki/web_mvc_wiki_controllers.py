@@ -317,10 +317,9 @@ class PageController:
         # retrieves the wiki file contents decoded
         wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
 
-        # retrieves the final time
+        # retrieves the final time and calculates the
+        # generation (delta) time
         final_time = time.clock()
-
-        # calculates the generation (delta) time
         generation_time = final_time - initial_time
 
         # creates the generation time string
@@ -584,10 +583,9 @@ class PageController:
         # decodes the file contents using the file encoding
         target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
-        # retrieves the final time
+        # retrieves the final time and  calculates the
+        # generation (delta) time
         final_time = time.clock()
-
-        # calculates the generation (delta) time
         generation_time = final_time - initial_time
 
         # creates the generation time string
