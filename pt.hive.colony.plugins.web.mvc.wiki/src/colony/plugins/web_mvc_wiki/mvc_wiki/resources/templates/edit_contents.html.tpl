@@ -25,3 +25,4 @@
         </form>
     </div>
 </div>
+${out_none value=page_contents /}

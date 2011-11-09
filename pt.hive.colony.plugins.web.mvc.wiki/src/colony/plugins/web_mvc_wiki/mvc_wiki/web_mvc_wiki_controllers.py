@@ -573,14 +573,13 @@ class PageController:
         # creates the target file name from the file path and the file extension
         target_file_name = file_path + ".html"
 
-        # creates the target file path joining the base target path with
+        # creates the target file path joining the temporary directory path with
         # the target file name
-        target_file_path = os.path.join(temporary_file_path, target_file_name)
+        target_file_path = os.path.join(temporary_directory_path, target_file_name)
 
-        # retrieves the target file contents
-        target_file_contents = self._get_file_contents(target_file_path)
-
+        # retrieves the target file contents and then decodes
         # decodes the file contents using the file encoding
+        target_file_contents = self._get_file_contents(target_file_path)
         target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
         # retrieves the final time and  calculates the
@@ -595,7 +594,7 @@ class PageController:
         template_file = self.retrieve_template_file("general_action.html.tpl")
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "preview_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", "edit_contents.html.tpl")
 
         # sets the various template file variables
         template_file.assign("page_name", file_path)
