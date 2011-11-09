@@ -19,10 +19,13 @@
                 <input id="wiki-page-edit-summary-input" name="page[summary]" class="wiki-input" type="text" value="Describe your change" current_status="" original_value="Describe your change" />
             </div>
             <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-                <div id="wiki-page-edit-publish-button" class="wiki-button wiki-button-blue">Publish</div>
-                <div id="wiki-page-edit-preview-button" class="wiki-button wiki-button-blue">Preview</div>
+                <div id="wiki-page-edit-publish-button" class="wiki-button wiki-button-blue">Save Page</div>
+                <div id="wiki-page-edit-preview-button" class="wiki-button wiki-button-blue">Show Preview</div>
             </div>
         </form>
     </div>
 </div>
-${out_none value=page_contents /}
+${if item=page_contents value=None operator=neq}
+    <div class="wiki-separator"></div>
+    ${out_none value=page_contents /}
+${/if}

@@ -22,10 +22,13 @@
                 <input id="wiki-page-new-summary-input" name="page[summary]" class="wiki-input" type="text" value="Describe your new page" current_status="" original_value="Describe your new page" />
             </div>
             <div id="wiki-page-new-buttons" class="wiki-page-new-line">
-                <div id="wiki-page-new-publish-button" class="wiki-button wiki-button-blue">Publish</div>
-                <div id="wiki-page-new-preview-button" class="wiki-button wiki-button-blue">Preview</div>
+                <div id="wiki-page-new-publish-button" class="wiki-button wiki-button-blue">Publish Page</div>
+                <div id="wiki-page-new-preview-button" class="wiki-button wiki-button-blue">Show Preview</div>
             </div>
         </form>
     </div>
 </div>
-${out_none value=page_contents /}
+${if item=page_contents value=None operator=neq}
+    <div class="wiki-separator"></div>
+    ${out_none value=page_contents /}
+${/if}

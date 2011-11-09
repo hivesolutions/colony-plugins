@@ -216,6 +216,7 @@ class PageController:
         self.assign_include_template_file(template_file, "page_include", "new_contents.html.tpl")
 
         # sets the various template file variables
+        template_file.assign("section", "new")
         template_file.assign("page_name", file_path)
         template_file.assign("page_source", page_contents)
         template_file.assign("page_contents", processed_page_contents)
@@ -397,6 +398,7 @@ class PageController:
         template_file = self.retrieve_template_file(template_file_name)
 
         # sets the various template file variables
+        template_file.assign("section", "show")
         template_file.assign("page_name", file_path)
         template_file.assign("page_source", wiki_file_contents)
         template_file.assign("page_contents", target_file_contents)
@@ -551,6 +553,7 @@ class PageController:
         self.assign_include_template_file(template_file, "page_include", "edit_contents.html.tpl")
 
         # sets the various template file variables
+        template_file.assign("section", "edit")
         template_file.assign("page_name", file_path)
         template_file.assign("page_source", wiki_file_contents)
         template_file.assign("page_contents", processed_page_contents)

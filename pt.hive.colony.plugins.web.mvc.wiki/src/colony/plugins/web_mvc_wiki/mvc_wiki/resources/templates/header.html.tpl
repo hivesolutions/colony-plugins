@@ -26,7 +26,7 @@
                 </li>
                 ${foreach item=header_link from=header_links}
                     <li class="menu">
-                        <a href="${out_none value=header_link.address /}">${out_none value=header_link.name /}</a>
+                        <a href="${out_none value=base_path /}${out_none value=instance_name /}/${out_none value=header_link.address /}">${out_none value=header_link.name /}</a>
                     </li>
                 ${/foreach}
                 <li>
