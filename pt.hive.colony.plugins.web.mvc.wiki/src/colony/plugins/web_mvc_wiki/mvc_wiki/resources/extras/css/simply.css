@@ -44,9 +44,12 @@
     margin: 0px 4px 0px 4px;
 }
 
+.wiki-contents-action.active {
+    border-bottom: 2px solid #214c8f;
+}
+
 .wiki-contents-action:hover {
-    border-bottom: none;
-    color: #142f42;
+    border-bottom: 2px solid #214c8f;
 }
 
 #environment-variables {
@@ -260,6 +263,13 @@
 
 .wiki-text-area.selected {
     border-color: #f3ba0a;
+}
+
+.wiki-separator {
+    background-color: #eeeeee;
+    height: 1px;
+    margin: 24px 0px 24px 0px;
+    width: 100%;
 }
 
 #wiki-controls {
