@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import time
+import tempfile
 
 import colony.libs.map_util
 import colony.libs.importer_util
@@ -74,9 +75,6 @@ CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
 
 WIKI_EXTENSION = ".wiki"
 """ The wiki extension """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
 
 DEFAULT_LOGO_PATH = "images/colony_logo.png"
 """ The default logo path """
@@ -119,12 +117,71 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
 
-    def handle_wiki(self, rest_request, parameters = {}):
+class PageController:
+    """
+    The web mvc wiki page controller.
+    """
+
+    web_mvc_wiki_plugin = None
+    """ The web mvc wiki plugin """
+
+    web_mvc_wiki = None
+    """ The web mvc wiki """
+
+    def __init__(self, web_mvc_wiki_plugin, web_mvc_wiki):
         """
-        Handles the given wiki rest request.
+        Constructor of the class.
+
+        @type web_mvc_wiki_plugin: WebMvcWikiPlugin
+        @param web_mvc_wiki_plugin: The web vmc wiki plugin.
+        @type web_mvc_wiki: WebMvcWiki
+        @param web_mvc_wiki: The web mvc wiki.
+        """
+
+        self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
+        self.web_mvc_wiki = web_mvc_wiki
+
+    def start(self):
+        """
+        Method called upon structure initialization
+        """
+
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
+
+    def handle_create(self, rest_request, parameters = {}):
+        """
+        Handles the given create page rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The wiki rest request to be handled.
+        @param rest_request: The create page rest request to
+        be handled.
+        """
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the instance name pattern
+        instance_name = self.get_pattern(parameters, "instance_name")
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # updates the page (created it because none exists)
+        self._update_page(rest_request, page, instance_name)
+
+        # retrieves the page name
+        page_name = page["name"]
+
+        # redirects the rest request
+        self.redirect_base_path(rest_request, instance_name + "/" + page_name)
+
+    def handle_show(self, rest_request, parameters = {}):
+        """
+        Handles the given show rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The show rest request to be handled.
         """
 
         # retrieves the initial time
@@ -136,52 +193,25 @@ class MainController:
         # retrieves the format mime plugin
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the instance name pattern
-        instance_name = pattern_names["instance_name"]
-
-        # retrieves the page name pattern
-        page_name = pattern_names["page_name"]
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        page_name = self.get_pattern(parameters, "page_name")
 
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(instance_name)
 
-        # retrieves the instance wiki name
+        # retrieves the instance attributes
         instance_wiki_name = instance.get("wiki_name", instance_name)
-
-        # retrieves the instance template
         instance_template = instance.get("template", "main")
-
-        # retrieves the instance main page
         instance_main_page = instance.get("main_page", "index")
-
-        # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
-
-        # retrieves the instance logo path
         instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
-
-        # retrieves the instance icon path
         instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
-
-        # retrieves the instance footer enabled
         instance_footer_enabled = instance.get("footer_enabled", True)
-
-        # retrieves the instance options enabled
         instance_options_enabled = instance.get("options_enabled", True)
-
-        # retrieves the instance print enabled
         instance_print_enabled = instance.get("print_enabled", True)
-
-        # retrieves the instance header links
         instance_header_links = instance.get("header_links", [])
-
-        # retrieves the instance configuration map
         instance_configuration_map = instance.get("configuration_map", {})
-
-        # retrieves the instance configuration index
         instance_configuration_index = instance.get("configuration_index", [])
 
         # sets the base file path as the instance repository path
@@ -224,37 +254,17 @@ class MainController:
                 # sets the page name in the template file
                 template_file.assign("page_name", file_path)
 
-                # sets the wiki name to be set in the template file
+                # sets the various template file variables
                 template_file.assign("wiki_name", instance_wiki_name)
-
-                # sets the template to be loaded in the template file
                 template_file.assign("template", instance_template)
-
-                # sets the main page to be loaded in the template file
                 template_file.assign("main_page", instance_main_page)
-
-                # sets the instance name in the template file
                 template_file.assign("instance_name", instance_name)
-
-                # sets the instance configuration index in the template file
                 template_file.assign("instance_configuration_index", instance_configuration_index)
-
-                # sets the logo path in the template file
                 template_file.assign("logo_path", instance_logo_path)
-
-                # sets the icon path in the template file
                 template_file.assign("icon_path", instance_icon_path)
-
-                # sets the footer enabled in the template file
                 template_file.assign("footer_enabled", instance_footer_enabled)
-
-                # sets the options enabled in the template file
                 template_file.assign("options_enabled", instance_options_enabled)
-
-                # sets the print enabled in the template file
                 template_file.assign("print_enabled", instance_print_enabled)
-
-                # sets the header links in the template file
                 template_file.assign("header_links", instance_header_links)
 
                 # applies the base path to the template file
@@ -319,49 +329,21 @@ class MainController:
         # retrieves the template file
         template_file = self.retrieve_template_file(template_file_name)
 
-        # sets the page name in the template file
+        # sets the various template file variables
         template_file.assign("page_name", file_path)
-
-        # sets the page source in the template file
         template_file.assign("page_source", wiki_file_contents)
-
-        # sets the page contents to be loaded in the template file
         template_file.assign("page_contents", target_file_contents)
-
-        # sets the wiki name to be set in the template file
         template_file.assign("wiki_name", instance_wiki_name)
-
-        # sets the template to be loaded in the template file
         template_file.assign("template", instance_template)
-
-        # sets the main page to be loaded in the template file
         template_file.assign("main_page", instance_main_page)
-
-        # sets the generation time in the template file
         template_file.assign("generation_time", generation_time_string)
-
-        # sets the instance name in the template file
         template_file.assign("instance_name", instance_name)
-
-        # sets the instance configuration index in the template file
         template_file.assign("instance_configuration_index", instance_configuration_index)
-
-        # sets the logo path in the template file
         template_file.assign("logo_path", instance_logo_path)
-
-        # sets the icon path in the template file
         template_file.assign("icon_path", instance_icon_path)
-
-        # sets the footer enabled in the template file
         template_file.assign("footer_enabled", instance_footer_enabled)
-
-        # sets the options enabled in the template file
         template_file.assign("options_enabled", instance_options_enabled)
-
-        # sets the print enabled in the template file
         template_file.assign("print_enabled", instance_print_enabled)
-
-        # sets the header links in the template file
         template_file.assign("header_links", instance_header_links)
 
         # assigns the session variables to the template file
@@ -384,17 +366,10 @@ class MainController:
         # retrieves the format mime plugin
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the instance name pattern
-        instance_name = pattern_names["instance_name"]
-
-        # retrieves the resource type pattern
-        resource_type = pattern_names["resource_type"]
-
-        # retrieves the resource name pattern
-        resource_name = pattern_names["resource_name"]
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        resource_type = self.get_pattern(parameters, "resource_type")
+        resource_name = self.get_pattern(parameters, "resource_name")
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path(instance_name)
@@ -424,6 +399,232 @@ class MainController:
         # sets the request contents
         self.set_contents(rest_request, resource_file_contents, mime_type)
 
+    def handle_edit(self, rest_request, parameters):
+        """
+        Handles the given edit rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The edit rest request to be handled.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        page_name = self.get_pattern(parameters, "page_name")
+
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(instance_name)
+
+        # retrieves the instance attributes
+        instance_wiki_name = instance.get("wiki_name", instance_name)
+        instance_template = instance.get("template", "main")
+        instance_main_page = instance.get("main_page", "index")
+        instance_repository_path = instance["repository_path"]
+        instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+        instance_configuration_index = instance.get("configuration_index", [])
+
+        # sets the base file path as the instance repository path
+        # resolved by the plugin manager
+        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
+
+        # in case the base file path is invalid
+        if base_file_path == None:
+            # raises the invalid repository path exception
+            raise web_mvc_wiki_exceptions.InvalidRepositoryPath("'%s' from '%s'" % (base_file_path, instance_repository_path))
+
+        # retrieves the file path striping the file path
+        file_path = page_name.rstrip("/")
+
+        # retrieves the file path
+        file_path = file_path and file_path or instance_main_page
+
+        # creates the wiki file path
+        wiki_file_path = base_file_path + "/" + file_path + WIKI_EXTENSION
+
+        # retrieves the wiki file contents decoded
+        wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("general_action.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "edit_contents.html.tpl")
+
+        # sets the various template file variables
+        template_file.assign("page_name", file_path)
+        template_file.assign("page_source", wiki_file_contents)
+        template_file.assign("wiki_name", instance_wiki_name)
+        template_file.assign("template", instance_template)
+        template_file.assign("main_page", instance_main_page)
+        template_file.assign("instance_name", instance_name)
+        template_file.assign("instance_configuration_index", instance_configuration_index)
+        template_file.assign("logo_path", instance_logo_path)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_update(self, rest_request, parameters = {}):
+        """
+        Handles the given update page serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The update page serialized rest request
+        to be handled.
+        """
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        page_name = self.get_pattern(parameters, "page_name")
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # sets the page name in the page
+        page["name"] = page_name
+
+        # updates the page
+        self._update_page(rest_request, page, instance_name)
+
+        # redirects the rest request
+        self.redirect_base_path(rest_request, instance_name + "/" + page_name)
+
+    def handle_preview(self, rest_request, parameters = {}):
+        """
+        Handles the given preview rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The show rest request to be handled.
+        """
+
+        # retrieves the initial time
+        initial_time = time.clock()
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the various patterns
+        instance_name = self.get_pattern(parameters, "instance_name")
+        page_name = self.get_pattern(parameters, "page_name")
+
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(instance_name)
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # sets the page name in the page
+        page["name"] = page_name
+
+        # retrieves the page contents
+        page_contents = page["contents"]
+
+        # normalizes the contents
+        normalized_contents = self._normalize_contents(page_contents)
+
+        # retrieves the instance attributes
+        instance_wiki_name = instance.get("wiki_name", instance_name)
+        instance_template = instance.get("template", "main")
+        instance_main_page = instance.get("main_page", "index")
+        instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+        instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
+        instance_footer_enabled = instance.get("footer_enabled", True)
+        instance_options_enabled = instance.get("options_enabled", True)
+        instance_print_enabled = instance.get("print_enabled", True)
+        instance_header_links = instance.get("header_links", [])
+        instance_configuration_map = instance.get("configuration_map", {})
+        instance_configuration_index = instance.get("configuration_index", [])
+
+        # creates a new temporary directory path and a temporary
+        # file path in the directory for the wiki page creation
+        temporary_directory_path = tempfile.mkdtemp()
+        temporary_file_path = os.path.join(temporary_directory_path, page_name + WIKI_EXTENSION)
+
+        # opens the temporary file path for writing
+        temporary_file = open(temporary_file_path, "wb")
+
+        try:
+            # writes the normalizes contents (wiki contents)
+            # into the temporary file
+            temporary_file.write(normalized_contents)
+        finally:
+            # closes the temporary file
+            temporary_file.close()
+
+        # retrieves the file path striping the file path
+        file_path = page_name.rstrip("/")
+
+        # retrieves the file path
+        file_path = file_path and file_path or instance_main_page
+
+        # generates the wiki files using the wiki engine
+        self._generate_wiki_html_files(temporary_directory_path, temporary_file_path, instance_configuration_map)
+
+        # creates the target file name from the file path and the file extension
+        target_file_name = file_path + ".html"
+
+        # creates the target file path appending the base target path with
+        # the target file name
+        target_file_path = temporary_file_path + "/" + target_file_name
+
+        # retrieves the target file contents
+        target_file_contents = self._get_file_contents(target_file_path)
+
+        # decodes the file contents using the file encoding
+        target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
+
+        # retrieves the final time
+        final_time = time.clock()
+
+        # calculates the generation (delta) time
+        generation_time = final_time - initial_time
+
+        # creates the generation time string
+        generation_time_string = "%.2f" % generation_time
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("general_action.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "preview_contents.html.tpl")
+
+        # sets the various template file variables
+        template_file.assign("page_name", file_path)
+        template_file.assign("page_source", page_contents)
+        template_file.assign("page_contents", target_file_contents)
+        template_file.assign("wiki_name", instance_wiki_name)
+        template_file.assign("template", instance_template)
+        template_file.assign("main_page", instance_main_page)
+        template_file.assign("generation_time", generation_time_string)
+        template_file.assign("instance_name", instance_name)
+        template_file.assign("instance_configuration_index", instance_configuration_index)
+        template_file.assign("logo_path", instance_logo_path)
+        template_file.assign("icon_path", instance_icon_path)
+        template_file.assign("footer_enabled", instance_footer_enabled)
+        template_file.assign("options_enabled", instance_options_enabled)
+        template_file.assign("print_enabled", instance_print_enabled)
+        template_file.assign("header_links", instance_header_links)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
     def _get_cache_directory_path(self, instance_name):
         """
         Retrieves the reference path for the cache directory.
@@ -449,6 +650,8 @@ class MainController:
     def _generate_wiki_html_files(self, base_target_path, wiki_file_path, configuration_map):
         """
         Generates the html files using the wiki engine.
+        The generation of the html files is archieved using
+        the wiki engine library.
 
         @type base_target_path: String.
         @param base_target_path: The base target path.
@@ -489,6 +692,88 @@ class MainController:
         # generates the html files using the wiki engine with the given engine properties
         language_wiki_plugin.generate("html", engine_properties)
 
+    def _update_page(self, rest_request, page, instance_name):
+        """
+        Updates the page in the underlying repository structure.
+        The updating of the page may involve the remote
+        communication with the repository server.
+        In case no page exists in the underlying repository a
+        new page is created and persisted.
+
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request in use
+        for the handling.
+        @type page: Dictionary
+        @param page: The map containing the the page information
+        (including name, summary and contents).
+        @type instance_name: String
+        @param instance_name: The name of the instance to be used
+        in the updating of the page.
+        @rtype: int
+        @return: The revision number for the updated page.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the revision control manager plugin
+        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
+
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(instance_name)
+
+        # retrieves the instance attributes
+        instance_repository_path = instance["repository_path"]
+        instance_repository_type = instance.get("repository_type",  None)
+        instance_repository_arguments = instance.get("repository_arguments", None)
+
+        # retrieves the page attributes
+        page_name = page["name"]
+        page_contents = page["contents"]
+        page_summary = page.get("summary", DEFAULT_SUMMARY)
+
+        # normalizes the contents
+        normalized_contents = self._normalize_contents(page_contents)
+
+        # sets the base file path as the instance repository path
+        # resolved by the plugin manager
+        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
+
+        # creates the complete file path for the wiki file
+        # joining the base file path and the wiki page name, then
+        # checks if the file already exists (or not)
+        complete_file_path = os.path.join(base_file_path, page_name + WIKI_EXTENSION)
+        exists_file = os.path.exists(complete_file_path)
+
+        # writes the normalized contents to the wiki file (in the complete file path)
+        self._write_file(complete_file_path, normalized_contents)
+
+        # in case no repository type is defined
+        # for the instance (no repository)
+        if not instance_repository_type:
+            # returns immediately
+            return None
+
+        # defines the default repository arguments
+        default_repository_arguments = {
+            "repository_path" : base_file_path
+        }
+
+        # creates the revision control parameters and uses them to
+        # loads a new revision control manager with the specified
+        # adapter name (selects the adapter type)
+        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, default_repository_arguments)
+        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
+
+        # in case the file is new uses the revision control manager
+        # to add the file to the revision controller, then commits
+        # the file to the revision control and retrieves the commit revision
+        not exists_file and revision_control_manager.add([complete_file_path], True)
+        commit_revision = revision_control_manager.commit([complete_file_path], page_summary)
+
+        # returns the update revision
+        return commit_revision
+
     def _get_file_contents(self, file_path):
         """
         Retrieves the contents of specified file.
@@ -528,257 +813,6 @@ class MainController:
 
         # returns the file contents decoded
         return file_contents
-
-class PageController:
-    """
-    The web mvc wiki page controller.
-    """
-
-    web_mvc_wiki_plugin = None
-    """ The web mvc wiki plugin """
-
-    web_mvc_wiki = None
-    """ The web mvc wiki """
-
-    def __init__(self, web_mvc_wiki_plugin, web_mvc_wiki):
-        """
-        Constructor of the class.
-
-        @type web_mvc_wiki_plugin: WebMvcWikiPlugin
-        @param web_mvc_wiki_plugin: The web vmc wiki plugin.
-        @type web_mvc_wiki: WebMvcWiki
-        @param web_mvc_wiki: The web mvc wiki.
-        """
-
-        self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
-        self.web_mvc_wiki = web_mvc_wiki
-
-    def start(self):
-        """
-        Method called upon structure initialization
-        """
-
-        # sets the relative resources path
-        self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
-
-    def handle_create(self, rest_request, parameters = {}):
-        """
-        Handles the given create page rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The create page rest request to
-        be handled.
-        """
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the instance name pattern
-        instance_name = pattern_names["instance_name"]
-
-        # retrieves the page
-        page = form_data_map.get("page", {})
-
-        # creates the page
-        _create_revision = self._create_page(rest_request, page, instance_name)
-
-        # retrieves the base path
-        base_path = self.get_base_path(rest_request)
-
-        # retrieves the page name
-        page_name = page["name"]
-
-        # redirects the rest request
-        self.redirect(rest_request, base_path + instance_name + "/" + page_name)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_update_serialized(self, rest_request, parameters = {}):
-        """
-        Handles the given update page serialized rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The update page serialized rest request
-        to be handled.
-        """
-
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the instance name pattern
-        instance_name = pattern_names["instance_name"]
-
-        # retrieves the page name pattern
-        page_name = pattern_names["page_name"]
-
-        # retrieves the page
-        page = form_data_map.get("page", {})
-
-        # sets the page name in the page
-        page["name"] = page_name
-
-        # updates the page
-        update_revision = self._update_page(rest_request, page, instance_name)
-
-        # retrieves the revision number
-        update_revision_map = update_revision.get_revision_map()
-
-        # serializes the update revision map
-        serialized_update_revision_map = serializer.dumps(update_revision_map)
-
-        # sets the request contents
-        self.set_contents(rest_request, serialized_update_revision_map)
-
-    def handle_update_json(self, rest_request, parameters = {}):
-        """
-        Handles the given update page json rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The update page json rest request
-        to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_wiki_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # handles the request with the general
-        # handle update serialized method
-        self.handle_update_serialized(rest_request, parameters)
-
-    def _create_page(self, rest_request, page, instance_name):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_wiki_plugin.manager
-
-        # retrieves the revision control manager plugin
-        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
-
-        # retrieves the instance for the instance name
-        instance = self.web_mvc_wiki._get_instance(instance_name)
-
-        # retrieves the instance name
-        instance_name = instance["name"]
-
-        # retrieves the instance repository type
-        instance_repository_type = instance["repository_type"]
-
-        # retrieves the instance repository arguments
-        instance_repository_arguments = instance["repository_arguments"]
-
-        # retrieves the instance repository path
-        instance_repository_path = instance["repository_path"]
-
-        # retrieves the page name
-        page_name = page.get("name", DEFAULT_SUMMARY)
-
-        # retrieves the page summary
-        page_summary = page.get("summary", DEFAULT_SUMMARY)
-
-        # retrieves the page contents
-        page_contents = page["contents"]
-
-        # normalizes the contents
-        normalized_contents = self._normalize_contents(page_contents)
-
-        # sets the base file path as the instance repository path
-        # resolved by the plugin manager
-        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
-
-        # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + page_name + WIKI_EXTENSION
-
-        # writes the normalized contents to the wiki file (in the complete file path)
-        self._write_file(complete_file_path, normalized_contents)
-
-        # creates the repository arguments
-        repository_arguments = {
-            "repository_path" : base_file_path
-        }
-
-        # creates the revision control parameters
-        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, repository_arguments)
-
-        # loads a new revision control manager for the specified adapter name
-        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
-
-        # uses the revision control manager to add the file
-        revision_control_manager.add([complete_file_path], True)
-
-        # uses the revision control manager to perform the commit
-        commit_revision = revision_control_manager.commit([complete_file_path], page_summary)
-
-        # returns the creation revision
-        return commit_revision
-
-    def _update_page(self, rest_request, page, instance_name):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_wiki_plugin.manager
-
-        # retrieves the revision control manager plugin
-        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
-
-        # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(instance_name)
-
-        # retrieves the instance repository type
-        instance_repository_type = instance["repository_type"]
-
-        # retrieves the instance repository arguments
-        instance_repository_arguments = instance["repository_arguments"]
-
-        # retrieves the instance repository path
-        instance_repository_path = instance["repository_path"]
-
-        # retrieves the page name
-        page_name = page["name"]
-
-        # retrieves the edit contents
-        page_contents = page["contents"]
-
-        # retrieves the edit summary
-        page_summary = page.get("summary", DEFAULT_SUMMARY)
-
-        # normalizes the contents
-        normalized_contents = self._normalize_contents(page_contents)
-
-        # sets the base file path as the instance repository path
-        # resolved by the plugin manager
-        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
-
-        # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + page_name + WIKI_EXTENSION
-
-        # writes the normalized contents to the wiki file (in the complete file path)
-        self._write_file(complete_file_path, normalized_contents)
-
-        # defines the default repository arguments
-        default_repository_arguments = {
-            "repository_path" : base_file_path
-        }
-
-        # creates the revision control parameters
-        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, default_repository_arguments)
-
-        # loads a new revision control manager for the specified adapter name
-        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
-
-        # uses the revision control manager to perform the commit
-        commit_revision = revision_control_manager.commit([complete_file_path], page_summary)
-
-        # returns the update revision
-        return commit_revision
 
     def _normalize_contents(self, contents):
         """

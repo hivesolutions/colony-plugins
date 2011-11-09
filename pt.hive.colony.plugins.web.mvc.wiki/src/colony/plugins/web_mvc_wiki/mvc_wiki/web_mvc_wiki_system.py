@@ -95,9 +95,13 @@ class WebMvcWiki:
 
         return (
             (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages$", self.web_mvc_wiki_page_controller.handle_create, "post"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/update$", self.web_mvc_wiki_page_controller.handle_update_json, "post", "json"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_main_controller.handle_wiki, "get"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_main_controller.handle_resources, "get")
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_page_controller.handle_show, "get"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_page_controller.handle_resources, "get"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/edit$", self.web_mvc_wiki_page_controller.handle_edit, "get"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/update$", self.web_mvc_wiki_page_controller.handle_update, "post"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/preview$", self.web_mvc_wiki_page_controller.handle_preview, "post"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_page_controller.handle_show, "get"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_page_controller.handle_resources, "get")
         )
 
     def get_communication_patterns(self):
