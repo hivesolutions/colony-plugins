@@ -152,9 +152,9 @@ class WebMvcWiki:
 
         # iterates over all the instances to creates the information
         for instance_name, instance_value in self.instances_map.items():
-            # retrieves the instance values
+            # retrieves the instance repository path and type values
             instance_repository_path = instance_value["repository_path"]
-            instance_repository_type = instance_value["repository_type"]
+            instance_repository_type = instance_value.get("repository_type", "N/A")
 
             # sets the instance value for the web mvc wiki information
             web_mvc_wiki_information[instance_name] = (
