@@ -135,7 +135,7 @@ a {
 }
 
 a:hover {
-    border-bottom: 1px dashed #355f7c;
+    border-bottom: 1px solid #355f7c;
 }
 
 a.external {

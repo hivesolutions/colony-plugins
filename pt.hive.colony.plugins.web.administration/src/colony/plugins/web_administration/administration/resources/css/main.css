@@ -227,7 +227,7 @@ a {
 }
 
 a:hover {
-    border-bottom: 1px dashed #355f7c;
+    border-bottom: 1px solid #355f7c;
 }
 
 a.external {
@@ -320,7 +320,7 @@ h5:hover > a.headerlink {
 }
 
 #wiki-footer .wiki-footer-contents a:hover {
-    border-bottom: 1px dashed #90a5c7;
+    border-bottom: 1px solid #90a5c7;
 }
 
 
