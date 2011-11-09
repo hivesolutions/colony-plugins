@@ -216,7 +216,7 @@ class SystemUpdater:
         """
 
         # resets all the internal structures associated
-        # with the repository descriptors
+        # with the repository descriptors (flushes cache)
         self.repository_descriptor_list = []
         self.repository_repository_descriptor_map = {}
         self.repository_descriptor_repository_map = {}
