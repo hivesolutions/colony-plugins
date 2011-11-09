@@ -192,6 +192,12 @@ class MainServiceHttpFileHandler:
         real_base_directory = resource_manager_plugin.get_real_string_value(base_directory)
         real_base_directory = plugin_manager.resolve_file_path(real_base_directory)
 
+        # in case the real base directory was not resolved
+        # (file was not found using the plugin system)
+        if not real_base_directory:
+            # raises file not found exception with 404 http error code
+            raise main_service_http_file_handler_exceptions.FileNotFoundException(resource_path, 404)
+
         # in case the relative paths are disabled
         if not relative_paths:
             # escapes the resource path in the relatives paths
