@@ -150,16 +150,10 @@ class TemplateEngineBuildAutomationExtension:
         # retrieves the current build value
         build_value = build_automation_structure_runtime.local_properties.get(BUILD_VALUE, -1)
 
-        # assigns the release version to the template file
+        # assigns the template variables
         template_file.assign(RELEASE_VERSION_VALUE, build_value)
-
-        # assigns the build version to the template file
         template_file.assign(BUILD_VERSION_VALUE, build_value)
-
-        # assigns the date to the template file
         template_file.assign(DATE_VALUE, current_date_string)
-
-        # assigns the date time to the template file
         template_file.assign(DATE_TIME_VALUE, current_date_time_string)
 
         # iterates over all the local properties to assign their
