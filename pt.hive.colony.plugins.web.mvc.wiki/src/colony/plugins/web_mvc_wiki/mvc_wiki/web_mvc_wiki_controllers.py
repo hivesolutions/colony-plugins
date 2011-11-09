@@ -536,8 +536,9 @@ class PageController:
         # creates the wiki file path
         wiki_file_path = os.path.join(base_file_path, file_path + WIKI_EXTENSION)
 
-        # retrieves the wiki file contents decoded
-        wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
+        # retrieves the wiki file contents from the provided page contents
+        # of from the wiki file itself in case no preview was requested
+        wiki_file_contents = page_contents or self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
 
         # retrieves the final time and calculates the
         # generation (delta) time
