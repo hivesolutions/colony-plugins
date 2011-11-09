@@ -70,6 +70,29 @@ class ConsoleSystemUpdater:
     def get_commands_map(self):
         return self.commands_map
 
+    def process_update_repositories(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the update repositories command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # resets the repositories information and then loads
+        # the repositories information (reload or update)
+        system_updater.reset_repositories_information()
+        system_updater.load_repositories_information()
+
     def process_list_repositories(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the list repositories command, with the given
@@ -532,6 +555,10 @@ class ConsoleSystemUpdater:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
+            "update_repositories" : {
+                "handler" : self.process_update_repositories,
+                "description" : "updates the currently available repositories (fetches remote data)"
+            },
             "list_repositories" : {
                 "handler" : self.process_list_repositories,
                 "description" : "lists the current available repositories"

@@ -179,27 +179,47 @@ class SystemUpdater:
         # retrieves the repository list from the repositories file parser
         self.repository_list = repositories_file_parser.get_value()
 
-    def load_repositories_information(self):
+    def load_repositories_information(self, flush = False):
         """
         Loads the repository information for each of the repositories.
         This method is called to flush the current repository information.
+
+        @type flush: bool
+        @param flush: If a flush should be ran in the repository
+        descriptor to force them to be loaded from the remove server.
         """
 
-        # in case the repository descriptor list
-        # is already populated (a successful run
-        # of the load has been completed)
-        if self.repository_descriptor_list:
-            # returns immediately
+        # in case the repository descriptor list is
+        # already populated (a successful run of the
+        # load has been completed), the skipping
+        # is only made in the flush flag is not set
+        if self.repository_descriptor_list and not flush:
+            # returns immediately (no need to
+            # update the repository descriptors)
             return
 
         # iterates over all the repositories in the
-        # repository list
+        # repository list to retrieve their repository
+        # descriptor
         for repository in self.repository_list:
-            # retrieves the repository information (descriptor)
+            # retrieves the repository information (descriptor) and adds
+            # it the list of repository descriptors
             repository_descriptor = self.get_repository_information(repository)
-
-            # adds the repository descriptor to the repository descriptor list
             self.repository_descriptor_list.append(repository_descriptor)
+
+    def reset_repositories_information(self):
+        """
+        Resets the internal structures that hold the various repositories
+        information.
+        After this reset any repository information cache will imply
+        a connection to the remote repository (no caching).
+        """
+
+        # resets all the internal structures associated
+        # with the repository descriptors
+        self.repository_descriptor_list = []
+        self.repository_repository_descriptor_map = {}
+        self.repository_descriptor_repository_map = {}
 
     def get_repositories(self):
         """
@@ -318,6 +338,8 @@ class SystemUpdater:
     def get_repository_information(self, repository):
         """
         Retrieves the repository descriptor for the given repository.
+        The retrieval of the repository information is cached
+        in local structures.
 
         @type repository: Repository
         @param repository: The repository to get the descriptor.
@@ -326,18 +348,21 @@ class SystemUpdater:
         """
 
         # in case the repository exists in the repository descriptor map
+        # (retrieves the repository information from local cache)
         if repository in self.repository_repository_descriptor_map:
             # retrieves the repository descriptor from the repository repository descriptor map
+            # (local cache)
             repository_descriptor = self.repository_repository_descriptor_map[repository]
-        # otherwise it must be retrieved (downloaded)
+        # otherwise it must be retrieved from the remote
+        # repository location
         else:
-            # retrieves the repository descriptor file (downloading it)
+            # retrieves the repository descriptor file (downloading it) using
+            # the associated repository (remote) address
             repository_descriptor_file = self.get_repository_descriptor_file(repository.addresses)
 
-            # creates the repository descriptor file parser
+            # creates the repository descriptor file parser and runs the parsing
+            # on the repository descriptor file
             repository_descriptor_file_parser = system_updater_parser.RepositoryDescriptorFileParser(repository_descriptor_file)
-
-            # parses the repository descriptor file
             repository_descriptor_file_parser.parse()
 
             # retrieves the repository descriptor (value) from the repository
