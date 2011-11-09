@@ -68,6 +68,7 @@
             "web_mvc_wiki/mvc_wiki/resources/extras/libs/jquery/jquery-1.5.1-min.js",
             "web_mvc_wiki/mvc_wiki/resources/extras/libs/jquery/jquery-ui-1.7.1-dev.js",
             "web_mvc_wiki/mvc_wiki/resources/templates/doctype.html.tpl",
+            "web_mvc_wiki/mvc_wiki/resources/templates/edit_contents.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/end_doctype.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/footer.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/footer_print.html.tpl",
