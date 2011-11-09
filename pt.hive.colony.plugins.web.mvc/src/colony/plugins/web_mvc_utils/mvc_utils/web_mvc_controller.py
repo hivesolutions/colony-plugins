@@ -109,6 +109,9 @@ EXCEPTION_VALUE = "exception"
 EXCEPTION_NAME_VALUE = "exception_name"
 """ The exception name value """
 
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
+
 MESSAGE_VALUE = "message"
 """ The message value """
 
@@ -724,6 +727,36 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
 
     # returns if the relation is valid
     return valid_relation
+
+def get_pattern(self, parameters, pattern_name, pattern_type = None):
+    """
+    Retrieves a pattern value from the parameters map,
+    casting it to the appropriate type in case a type
+    is provided.
+
+    @type parameters: Dictionary
+    @param parameters: The map of parameters provided to the
+    controller's action method.
+    @type pattern_name: String
+    @param pattern_name: The name of the pattern to be retrieved.
+    @type pattern_type: type
+    @param pattern_type: The type to be used to cast the pattern
+    value (the cast is done in safe mode).
+    @rtype: Object
+    @return: The retrieved and "casted" pattern value.
+    """
+
+    # retrieves the pattern names from the parameters
+    # and retrieves the patter from it
+    pattern_names = parameters[PATTERN_NAMES_VALUE]
+    pattern_value = pattern_names.get(pattern_name, None)
+
+    # casts the pattern value using the safe mode, avoids
+    # problems when a cast fails (no exception raised)
+    pattern_value = pattern_value and self._cast_safe(pattern_value, pattern_type) or pattern_value
+
+    # returns the pattern value
+    return pattern_value
 
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
@@ -2805,7 +2838,7 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     # is an empty string sets the attribute value to none (null)
     if nullify and attribute_value == "": attribute_value = None
 
-    # casts the attribute value is using the safe mode
+    # casts the attribute value using the safe mode
     attribute_value_casted = self._cast_safe(attribute_value, cast_type)
 
     # sets the attribute value casted in the entity
