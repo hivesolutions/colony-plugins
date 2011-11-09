@@ -99,10 +99,8 @@ class MainController:
         @param parameters: The handler parameters.
         """
 
-        # retrieves the exception handler
-        #exception_handler = self.web_mvc_manager.web_manager_exception_controller
-
         # sets the exception handler in the parameters
+        #exception_handler = self.web_mvc_manager.web_manager_exception_controller
         #parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
         # retrieves the template file
