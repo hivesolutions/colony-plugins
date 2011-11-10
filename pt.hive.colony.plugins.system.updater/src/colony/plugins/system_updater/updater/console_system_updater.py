@@ -229,6 +229,28 @@ class ConsoleSystemUpdater:
         for container_information in container_information_list:
             self.print_container_info(container_information, output_method)
 
+    def process_upgrade(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the upgrade command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # runs the upgrade process in the system updater, upgrading
+        # all the installed objects in the system
+        system_updater.upgrade()
+
     def process_install(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the install command, with the given
@@ -592,6 +614,10 @@ class ConsoleSystemUpdater:
                         "mandatory" : True
                     }
                 ]
+            },
+            "upgrade" : {
+                "handler" : self.process_upgrade,
+                "description" : "upgrade the current colony instance using the objects in the currently available repositories"
             },
             "install" : {
                 "handler" : self.process_install,

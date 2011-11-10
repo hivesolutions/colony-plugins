@@ -193,6 +193,73 @@ class SystemUpdater:
         # updating all the current internal state
         self.load_repositories_cache()
 
+    def upgrade(self, transaction_properties = None):
+        upgrade_descriptors = []
+
+
+        # iterates over the repository list
+        for repository in self.repository_list:
+            # retrieves the repository information for the repository
+            repository_information = self.get_repository_information(repository)
+
+            # creates the list of descriptors to be checked for new versions
+            # the used descriptors are: bundles, plugins and containers
+            descriptors = repository_information.bundles + repository_information.plugins + repository_information.containers
+
+            for descriptor in descriptors:
+                if not descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS):
+                    continue
+
+                upgrade_descriptors.append(descriptor)
+
+        #if not lista:
+        #    return
+
+        #a = lista[0]
+
+        # ASSUMES THAT EVERYONE IS OF THIS TYPE
+        # OF DEPLOYER (MOST OF THE TIMES IS OK)
+
+        # TENHO DE CIRAR UM MAPARA PARA VER O
+        # ATTRIBUTO DE TIPO ASSOCIADO
+
+
+
+
+        # retrieves the bundle type
+        #bundle_type = bundle_descriptor.bundle_type
+
+        # retrieves a deployer for the given plugin type
+        #plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
+
+
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type("colony_packing")
+
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            for descriptor in upgrade_descriptors:
+                self.install_object(descriptor.id, descriptor.version, transaction_properties)
+
+            for descriptor in upgrade_descriptors:
+                descriptor.status = SAME_VERSION_STATUS
+
+            self.save_repositories_cache()
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+
     def update_repositories(self):
         """
         Updates the repositories information, flushing it for the
@@ -612,14 +679,21 @@ class SystemUpdater:
         current transaction.
         """
 
-        # retrieves the type of object for the provided
-        # id and version (return invalid in case none is found)
-        object_type = self.get_object_type(object_id, object_version)
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
 
-        # retrieves the install method for the object type and uses
-        # it to install the object for the id and version
-        install_method, _uninstall_method = self.install_methods_type_map.get(object_type, None)
-        install_method(object_id, object_version, transaction_properties)
+        try:
+            # retrieves the type of object for the provided
+            # id and version (return invalid in case none is found)
+            object_type = self.get_object_type(object_id, object_version)
+
+            # retrieves the install method for the object type and uses
+            # it to install the object for the id and version
+            install_method, _uninstall_method = self.install_methods_type_map.get(object_type, None)
+            install_method(object_id, object_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
 
     def install_package(self, package_id, package_version = None, transaction_properties = None):
         """
@@ -733,14 +807,21 @@ class SystemUpdater:
         current transaction.
         """
 
-        # retrieves the type of object for the provided
-        # id and version (return invalid in case none is found)
-        object_type = self.get_object_type(object_id, object_version)
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
 
-        # retrieves the uninstall method for the object type and uses
-        # it to uninstall the object for the id and version
-        _install_method, uninstall_method = self.install_methods_type_map.get(object_type, None)
-        uninstall_method(object_id, object_version, transaction_properties)
+        try:
+            # retrieves the type of object for the provided
+            # id and version (return invalid in case none is found)
+            object_type = self.get_object_type(object_id, object_version)
+
+            # retrieves the uninstall method for the object type and uses
+            # it to uninstall the object for the id and version
+            _install_method, uninstall_method = self.install_methods_type_map.get(object_type, None)
+            uninstall_method(object_id, object_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
 
     def uninstall_package(self, package_id, package_version = None, transaction_properties = None):
         """
