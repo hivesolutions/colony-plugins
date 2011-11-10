@@ -500,6 +500,30 @@ class ColonyPackingInstaller:
         # "rollsback" the file context
         file_context.rollback()
 
+
+
+
+
+
+    def add_commit_callback(self, callback, transaction_properties):
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # adds the commit callback to the file context
+        file_context.add_commit_callback(callback)
+
+    def add_rollback_callback(self, callback, transaction_properties):
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # adds the rollback callback to the file context
+        file_context.add_rollback_callback(callback)
+
+
+
+
+
+
     def _install_package(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the package with
