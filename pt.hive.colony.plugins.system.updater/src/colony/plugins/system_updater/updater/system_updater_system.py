@@ -188,6 +188,27 @@ class SystemUpdater:
         # updating all the current internal state
         self.load_repositories_cache()
 
+    def update_repositories(self):
+        """
+        Updates the repositories information, flushing it for the
+        current plugin contents.
+        The process involves resetting the repositories structures,
+        re-loading them from the the file system and from the remote
+        repositories.
+        At the end the state is persisted into the cache file.
+        """
+
+        # resets the repositories file and information and then loads
+        # the repositories file and information (reload or update)
+        self.reset_repositories_file()
+        self.reset_repositories_information()
+        self.load_repositories_file()
+        self.load_repositories_information()
+
+        # saves all the repositories cache information (includes
+        # the repositories file information)
+        self.save_repositories_cache()
+
     def load_repositories_file(self):
         """
         Loads the repositories file, from the currently plugin
@@ -1002,9 +1023,6 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
         # retrieves the descriptor of the package
         package_descriptor = self.get_package_descriptor(package_id, package_version)
 
@@ -1038,9 +1056,6 @@ class SystemUpdater:
         @param transaction_properties: The properties map for the
         current transaction.
         """
-
-        # loads the information for the repositories
-        self.load_repositories_information()
 
         # retrieves the descriptor of the bundle
         bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
@@ -1109,9 +1124,6 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
         # retrieves the descriptor of the plugin
         plugin_descriptor = self.get_plugin_descriptor(plugin_id, plugin_version)
 
@@ -1178,9 +1190,6 @@ class SystemUpdater:
         @param transaction_properties: The properties map for the
         current transaction.
         """
-
-        # loads the information for the repositories
-        self.load_repositories_information()
 
         # retrieves the descriptor of the container
         container_descriptor = self.get_container_descriptor(container_id, container_version)
@@ -1249,9 +1258,6 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
         # retrieves the descriptor of the package
         package_descriptor = self.get_package_descriptor(package_id, package_version)
 
@@ -1280,9 +1286,6 @@ class SystemUpdater:
         @param transaction_properties: The properties map for the
         current transaction.
         """
-
-        # loads the information for the repositories
-        self.load_repositories_information()
 
         # retrieves the descriptor of the bundle
         bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
@@ -1335,9 +1338,6 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
         # retrieves the descriptor of the plugin
         plugin_descriptor = self.get_plugin_descriptor(plugin_id, plugin_version)
 
@@ -1388,9 +1388,6 @@ class SystemUpdater:
         @param transaction_properties: The properties map for the
         current transaction.
         """
-
-        # loads the information for the repositories
-        self.load_repositories_information()
 
         # retrieves the descriptor of the container
         container_descriptor = self.get_container_descriptor(container_id, container_version)

@@ -121,6 +121,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def update_repositories(self):
+        return self.system_updater.update_repositories()
+
     def load_repositories_information(self):
         return self.system_updater.load_repositories_information()
 
