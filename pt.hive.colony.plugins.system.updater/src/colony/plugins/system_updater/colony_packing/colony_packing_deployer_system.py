@@ -276,3 +276,35 @@ class ColonyPackingDeployer:
         """
 
         pass
+
+    def add_commit_callback(self, callback, transaction_properties):
+        """
+        Adds a commit callback to the current transaction.
+        This callback will be called upon the final
+        commit is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final commit.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
+        pass
+
+    def add_rollback_callback(self, callback, transaction_properties):
+        """
+        Adds a rollback callback to the current transaction.
+        This callback will be called upon the final
+        rollback is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final rollback.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
+        pass

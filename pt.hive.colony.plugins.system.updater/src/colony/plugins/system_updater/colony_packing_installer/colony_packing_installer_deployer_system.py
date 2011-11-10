@@ -280,13 +280,20 @@ class ColonyPackingInstallerDeployer:
         # commits the transaction
         colony_packing_installer_plugin.commit_transaction(transaction_properties)
 
-
-
-
-
-
-
     def add_commit_callback(self, callback, transaction_properties):
+        """
+        Adds a commit callback to the current transaction.
+        This callback will be called upon the final
+        commit is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final commit.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
         # retrieves the colony packing installer plugin
         colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
 
@@ -294,16 +301,24 @@ class ColonyPackingInstallerDeployer:
         colony_packing_installer_plugin.add_commit_callback(callback, transaction_properties)
 
     def add_rollback_callback(self, callback, transaction_properties):
+        """
+        Adds a rollback callback to the current transaction.
+        This callback will be called upon the final
+        rollback is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final rollback.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
         # retrieves the colony packing installer plugin
         colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
 
         # adds a rollback callback
         colony_packing_installer_plugin.add_rollback_callback(callback, transaction_properties)
-
-
-
-
-
 
     def rollback_transaction(self, transaction_properties):
         """

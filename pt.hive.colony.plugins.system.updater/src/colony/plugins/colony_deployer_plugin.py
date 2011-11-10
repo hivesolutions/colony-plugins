@@ -253,6 +253,38 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_deployer.rollback_transaction(transaction_properties)
 
+    def add_commit_callback(self, callback, transaction_properties):
+        """
+        Adds a commit callback to the current transaction.
+        This callback will be called upon the final
+        commit is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final commit.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
+        return self.colony_deployer.add_commit_callback(callback, transaction_properties)
+
+    def add_rollback_callback(self, callback, transaction_properties):
+        """
+        Adds a rollback callback to the current transaction.
+        This callback will be called upon the final
+        rollback is passed.
+
+        @type callback: Function
+        @param callback: The callback function to be called
+        upon the final rollback.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction.
+        """
+
+        return self.colony_deployer.add_rollback_callback(callback, transaction_properties)
+
     def get_zip_plugin(self):
         return self.zip_plugin
 
