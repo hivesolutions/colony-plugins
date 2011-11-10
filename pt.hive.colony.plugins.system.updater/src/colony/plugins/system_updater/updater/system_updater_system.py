@@ -194,8 +194,9 @@ class SystemUpdater:
         self.load_repositories_cache()
 
     def upgrade(self, transaction_properties = None):
+        # creates the list that holds all the descriptors
+        # set for upgrading
         upgrade_descriptors = []
-
 
         # iterates over the repository list to creates the list
         # of descriptors for upgrading
@@ -212,44 +213,40 @@ class SystemUpdater:
             _upgrade_descriptors = [descriptor for descriptor in descriptors if descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS)]
             upgrade_descriptors.extend(_upgrade_descriptors)
 
+        # in case the re are no descriptors to be
+        # upgraded (no upgrade to be done)
+        if not upgrade_descriptors:
+            # returns immediately
+            return
 
-        # TENHO DE FAZER CHECKING QUE TODOS SAO DO MESMO TIPO
+        # retrieves the first descriptor to set the base value
+        # for the descriptor type
+        first_descriptor = upgrade_descriptors[0]
+        first_descriptor_type = first_descriptor.get_type()
 
-        #if not lista:
-        #    return
+        # iterates over all the upgrade descriptors
+        for descriptor in upgrade_descriptors:
+            descriptor_type = descriptor.get_type()
 
-        #a = lista[0]
+            # in case the type of the current descriptor
+            # does not match the verification one
+            if descriptor_type == first_descriptor_type:
+                # raises upgrade exception
+                raise system_updater_exceptions.UpgradeException("invalid descriptor type")
 
-        # ASSUMES THAT EVERYONE IS OF THIS TYPE
-        # OF DEPLOYER (MOST OF THE TIMES IS OK)
-
-        # TENHO DE CIRAR UM MAPARA PARA VER O
-        # ATTRIBUTO DE TIPO ASSOCIADO
-
-
-
-
-        # retrieves the bundle type
-        #bundle_type = bundle_descriptor.bundle_type
-
-        # retrieves a deployer for the given plugin type
-        #plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
-
-
-        plugin_deployer = self._get_deployer_plugin_by_deployer_type("colony_packing")
-
+        # retrieves the deployer plugin for the first descriptor type (the
+        # valid descriptor type)
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(first_descriptor_type)
 
         # retrieves the current transaction properties or creates a new transaction
         transaction_properties = plugin_deployer.open_transaction(transaction_properties)
 
         try:
+            # iterates over all the descriptors to be upgraded
+            # to install the associated object
             for descriptor in upgrade_descriptors:
+                # installs the object represented by the descriptor
                 self.install_object(descriptor.id, descriptor.version, transaction_properties)
-
-            for descriptor in upgrade_descriptors:
-                descriptor.status = SAME_VERSION_STATUS
-
-            self.save_repositories_cache()
 
             # commits the transaction represented in the
             # transaction properties
@@ -261,6 +258,8 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
+
+
 
 
     def update_repositories(self):
@@ -382,6 +381,10 @@ class SystemUpdater:
         Saves the repositories information into the cache
         file for the current plugin context.
         """
+
+
+        print "SALVANDO REPOsITORY CAHCE"
+
 
         # retrieves the plugin manager
         plugin_manager = self.system_updater_plugin.manager
@@ -1200,6 +1203,13 @@ class SystemUpdater:
                 # deletes the contents file
                 self._delete_contents_file(contents_file)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): bundle_descriptor.status = SAME_VERSION_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1210,9 +1220,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the bundle descriptor status
-        bundle_descriptor.status = SAME_VERSION_STATUS
 
     def _install_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
         """
@@ -1267,6 +1274,13 @@ class SystemUpdater:
                 # deletes the contents file
                 self._delete_contents_file(contents_file)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): plugin_descriptor.status = SAME_VERSION_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1277,9 +1291,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the plugin descriptor status
-        plugin_descriptor.status = SAME_VERSION_STATUS
 
     def _install_container(self, container_id, container_version = None, transaction_properties = None):
         """
@@ -1334,6 +1345,13 @@ class SystemUpdater:
                 # deletes the contents file
                 self._delete_contents_file(contents_file)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): container_descriptor.status = SAME_VERSION_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1344,9 +1362,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the container descriptor status
-        container_descriptor.status = SAME_VERSION_STATUS
 
     def _uninstall_package(self, package_id, package_version = None, transaction_properties = None):
         """
@@ -1414,6 +1429,13 @@ class SystemUpdater:
             # also sent for transaction control
             plugin_deployer.undeploy_bundle(bundle_descriptor.id, bundle_descriptor.version, transaction_properties)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): bundle_descriptor.status = NOT_INSTALLED_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1424,9 +1446,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the bundle descriptor status
-        bundle_descriptor.status = NOT_INSTALLED_STATUS
 
     def _uninstall_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
         """
@@ -1465,6 +1484,13 @@ class SystemUpdater:
             # also sent for transaction control
             plugin_deployer.undeploy_bundle(plugin_descriptor.id, plugin_descriptor.version, transaction_properties)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): plugin_descriptor.status = NOT_INSTALLED_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1475,9 +1501,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the plugin descriptor status
-        plugin_descriptor.status = NOT_INSTALLED_STATUS
 
     def _uninstall_container(self, container_id, container_version = None, transaction_properties = None):
         """
@@ -1516,6 +1539,13 @@ class SystemUpdater:
             # also sent for transaction control
             plugin_deployer.undeploy_bundle(container_descriptor.id, container_descriptor.version, transaction_properties)
 
+            # creates the method to handle the descriptor status update
+            def descriptor_status_update(): container_descriptor.status = NOT_INSTALLED_STATUS
+
+            # adds the callback to be called uppon the commit
+            plugin_deployer.add_commit_callback(descriptor_status_update, transaction_properties)
+            plugin_deployer.add_commit_callback(self.save_repositories_cache, transaction_properties)
+
             # commits the transaction represented in the
             # transaction properties
             plugin_deployer.commit_transaction(transaction_properties)
@@ -1526,9 +1556,6 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
-
-        # updates the container descriptor status
-        container_descriptor.status = NOT_INSTALLED_STATUS
 
     def get_object_type(self, object_id, object_version = None):
         """

@@ -960,6 +960,9 @@ class PackageDescriptor:
             self.version
         )
 
+    def get_type(self):
+        return self.package_type
+
 class PackagePluginDescriptor:
     """
     The package plugin descriptor class.
@@ -1042,6 +1045,9 @@ class BundleDescriptor:
             self.name,
             self.version
         )
+
+    def get_type(self):
+        return self.bundle_type
 
 class BundleDependency:
     """
@@ -1132,6 +1138,9 @@ class PluginDescriptor:
             self.version
         )
 
+    def get_type(self):
+        return self.plugin_type
+
 class PluginDependency:
     """
     The plugin dependency class.
@@ -1220,6 +1229,9 @@ class ContainerDescriptor:
             self.name,
             self.version
         )
+
+    def get_type(self):
+        return self.container_type
 
 class ContainerDependency:
     """

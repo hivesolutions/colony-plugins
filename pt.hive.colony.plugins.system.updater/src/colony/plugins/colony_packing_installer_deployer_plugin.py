@@ -247,6 +247,24 @@ class ColonyPackingInstallerDeployerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer_deployer.rollback_transaction(transaction_properties)
 
+
+
+
+
+
+
+    def add_commit_callback(self, callback, transaction_properties):
+        return self.colony_packing_installer_deployer.add_commit_callback(callback, transaction_properties)
+
+    def add_rollback_callback(self, callback, transaction_properties):
+        return self.colony_packing_installer_deployer.add_rollback_callback(callback, transaction_properties)
+
+
+
+
+
+
+
     def get_colony_packing_installer_plugin(self):
         return self.colony_packing_installer_plugin
 
