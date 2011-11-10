@@ -38,10 +38,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import gzip
 import cPickle
 import threading
 
 import colony.libs.path_util
+import colony.libs.string_buffer_util
 
 import system_updater_parser
 import system_updater_exceptions
@@ -57,6 +59,9 @@ REPOSITORIES_FILE_NAME = "repositories.xml"
 
 REPOSITORY_DESCRIPTOR_FILE = "repository_descriptor.xml"
 """ The repository descriptor file """
+
+REPOSITORY_DESCRIPTOR_GZIP_FILE = "repository_descriptor.xml.gz"
+""" The repository descriptor gzip file """
 
 REPOSITORIES_CACHE_FILE_NAME = "repositories_cache.db"
 """ The repositories cache file name """
@@ -557,6 +562,21 @@ class SystemUpdater:
 
             # retrieves the repository address value
             repository_address_value = repository_address.value
+
+            # creates the repository file address, using the repository
+            # address value
+            repository_file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_GZIP_FILE
+
+            # retrieves the file compressed (gzip) buffer using the downloader plugin
+            # and tries to decompress it as a gzip buffer
+            file_gzip_buffer = downloader_plugin.get_download_package_stream(repository_file_address)
+            file_buffer = self._decompress_gzip_buffer(file_gzip_buffer)
+
+            # in case the buffer was correctly decompressed
+            # (the file buffer is valid)
+            if file_buffer:
+                # returns the file buffer
+                return file_buffer
 
             # creates the repository file address, using the repository
             # address value
@@ -1840,3 +1860,44 @@ class SystemUpdater:
 
         # returns true (valid)
         return True
+
+    def _decompress_gzip_buffer(self, file_gzip_buffer):
+        """
+        Decompresses the given gzip buffer (as string) into a
+        normalized string value.
+        The decompression is done using the system based gzip
+        infra-structure.
+
+        @type file_gzip_buffer: String
+        @param file_gzip_buffer: The gzip file buffer with
+        the contents of the gzip file.
+        @rtype: String
+        @return: The decompressed string buffer (value).
+        """
+
+        # in case the file gzip buffer is not valid
+        # (nothing to be processed)
+        if not file_gzip_buffer:
+            # returns immediately
+            return
+
+        # creates the file gzip string buffer with the contents of the
+        # file gzip buffer for compression interpretation writing
+        file_gzip_string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+        file_gzip_string_buffer.write(file_gzip_buffer)
+        file_gzip_string_buffer.seek(0)
+
+        # creates the file gzip from the contents of the file
+        # gzip string buffer
+        file_gzip = gzip.GzipFile(fileobj = file_gzip_string_buffer)
+
+        try:
+            # reads the file buffer from the file
+            # gzip value
+            file_buffer = file_gzip.read()
+        finally:
+            # closes the file gzip
+            file_gzip.close()
+
+        # returns the (decompressed) file buffer
+        return file_buffer
