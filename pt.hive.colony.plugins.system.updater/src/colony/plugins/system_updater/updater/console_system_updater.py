@@ -88,10 +88,16 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # resets the repositories information and then loads
-        # the repositories information (reload or update)
+        # resets the repositories file and information and then loads
+        # the repositories file and information (reload or update)
+        system_updater.reset_repositories_file()
         system_updater.reset_repositories_information()
+        system_updater.load_repositories_file()
         system_updater.load_repositories_information()
+
+        # saves all the repositories cache information (includes
+        # the repositories file information)
+        system_updater.save_repositories_cache()
 
     def process_list_repositories(self, arguments, arguments_map, output_method, console_context):
         """

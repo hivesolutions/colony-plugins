@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import cPickle
 import threading
 
 import colony.libs.path_util
@@ -56,6 +57,9 @@ REPOSITORIES_FILE_NAME = "repositories.xml"
 
 REPOSITORY_DESCRIPTOR_FILE = "repository_descriptor.xml"
 """ The repository descriptor file """
+
+REPOSITORIES_CACHE_FILE_NAME = "repositories_cache.db"
+""" The repositories cache file name """
 
 SIMPLE_REPOSITORY_LAYOUT_VALUE = "simple"
 """ The simple repository layout value """
@@ -104,6 +108,9 @@ SAME_VERSION_STATUS = "same_version"
 
 DIFFERENT_DIGEST_STATUS = "different_digest"
 """ The different digest status """
+
+PICKLE_PROTOCOL = 2
+""" The pickle protocol number to be used """
 
 class SystemUpdater:
     """
@@ -177,11 +184,16 @@ class SystemUpdater:
         Loads the system updater.
         """
 
-        self.load_repositories_file()
+        # loads the repository cache from the file system
+        # updating all the current internal state
+        self.load_repositories_cache()
 
     def load_repositories_file(self):
         """
-        Loads the repositories file.
+        Loads the repositories file, from the currently plugin
+        associated file.
+        Ensures that the path exists and creates the file with
+        a default one in case it does not exists.
         """
 
         # retrieves the plugin manager
@@ -214,6 +226,18 @@ class SystemUpdater:
 
         # retrieves the repository list from the repositories file parser
         self.repository_list = repositories_file_parser.get_value()
+
+    def reset_repositories_file(self):
+        """
+        Resets the internal structures that hold the various repositories
+        file information.
+        After this reset any repository file cache will imply
+        a loading of the repositories file (no caching).
+        """
+
+        # resets all the internal structures associated
+        # with the repository file (flushes cache)
+        self.repository_list = []
 
     def load_repositories_information(self, flush = False):
         """
@@ -256,6 +280,81 @@ class SystemUpdater:
         self.repository_descriptor_list = []
         self.repository_repository_descriptor_map = {}
         self.repository_descriptor_repository_map = {}
+
+    def save_repositories_cache(self):
+        """
+        Saves the repositories information into the cache
+        file for the current plugin context.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.system_updater_plugin.manager
+
+        # retrieves the system updater plugin id
+        system_updater_plugin_id = self.system_updater_plugin.id
+
+        # resolves the repositories cache file path (creating it if necessary)
+        repository_cache_file_path = plugin_manager.resolve_file_path("%configuration:" + system_updater_plugin_id + "%/" + REPOSITORIES_CACHE_FILE_NAME, True, True)
+
+        # creates the map holding the serialization structures
+        # to send it to the serializer
+        serialization_map = {
+            "list" : self.repository_list,
+            "descriptor_list" : self.repository_descriptor_list,
+            "repository_descriptor_map" : self.repository_repository_descriptor_map,
+            "descriptor_repository_map" : self.repository_descriptor_repository_map
+        }
+
+        # opens the repository cache file for binary writing
+        # to store the serialized state contents
+        repository_cache_file = open(repository_cache_file_path, "wb")
+
+        try:
+            # dumps the serialization map to the repository cache file
+            # using the a high level of pickle protocol (for high compression)
+            cPickle.dump(serialization_map, repository_cache_file, PICKLE_PROTOCOL)
+        finally:
+            # closes the repository cache file
+            repository_cache_file.close()
+
+    def load_repositories_cache(self):
+        """
+        Loads the repositories information from the cache
+        file into the current plugin context.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.system_updater_plugin.manager
+
+        # retrieves the system updater plugin id
+        system_updater_plugin_id = self.system_updater_plugin.id
+
+        # resolves the repositories cache file path (fails if not found)
+        repository_cache_file_path = plugin_manager.resolve_file_path("%configuration:" + system_updater_plugin_id + "%/" + REPOSITORIES_CACHE_FILE_NAME)
+
+        # in case the repository cache file is not
+        # created in the file system
+        if not repository_cache_file_path:
+            # returns immediately (no repository cache)
+            return
+
+        # opens the repository cache file to read the serialized
+        # internal structures
+        repository_cache_file = open(repository_cache_file_path, "rb")
+
+        try:
+            # loads the serialization map from the repository cache file
+            serialization_map = cPickle.load(repository_cache_file)
+        finally:
+            # closes the repository cache file
+            repository_cache_file.close()
+
+        # sets the various internal structures assciated with the
+        # repositories in the current system updater
+        self.repository_list = serialization_map.get("list", [])
+        self.repository_descriptor_list = serialization_map.get("descriptor_list", [])
+        self.repository_repository_descriptor_map = serialization_map.get("repository_descriptor_map", [])
+        self.repository_descriptor_repository_map = serialization_map.get("descriptor_repository_map", [])
 
     def get_repositories(self):
         """
@@ -577,7 +676,7 @@ class SystemUpdater:
             # releases the system updater lock
             self.system_updater_lock.release()
 
-    def uninstall_object(self, object_id, object_version = None, transaction_properties):
+    def uninstall_object(self, object_id, object_version = None, transaction_properties = None):
         """
         Uninstalls the object (package, bundle, plugin or container)
         with the given id and version from a random repository.

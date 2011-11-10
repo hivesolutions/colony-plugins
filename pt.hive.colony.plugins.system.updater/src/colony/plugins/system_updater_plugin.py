@@ -127,6 +127,12 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def reset_repositories_information(self):
         return self.system_updater.reset_repositories_information()
 
+    def save_repositories_cache(self):
+        return self.system_updater.save_repositories_cache()
+
+    def load_repositories_cache(self):
+        return self.system_updater.load_repositories_cache()
+
     def get_repositories(self):
         return self.system_updater.get_repositories()
 
