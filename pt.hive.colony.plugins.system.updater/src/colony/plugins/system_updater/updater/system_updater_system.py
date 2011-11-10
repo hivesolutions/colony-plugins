@@ -230,7 +230,7 @@ class SystemUpdater:
 
             # in case the type of the current descriptor
             # does not match the verification one
-            if descriptor_type == first_descriptor_type:
+            if not descriptor_type == first_descriptor_type:
                 # raises upgrade exception
                 raise system_updater_exceptions.UpgradeException("invalid descriptor type")
 
