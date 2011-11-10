@@ -142,6 +142,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def get_repository_information_by_repository_name(self, repository_name):
         return self.system_updater.get_repository_information_by_repository_name(repository_name)
 
+    def upgrade_system(self):
+        return self.system_updater.upgrade_system()
+
     def install_package(self, package_id, package_version):
         return self.system_updater.install_package(package_id, package_version)
 

@@ -247,9 +247,9 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # runs the upgrade process in the system updater, upgrading
-        # all the installed objects in the system
-        system_updater.upgrade()
+        # runs the upgrade system process in the system updater,
+        # upgrading all the installed objects in the system
+        system_updater.upgrade_system()
 
     def process_install(self, arguments, arguments_map, output_method, console_context):
         """

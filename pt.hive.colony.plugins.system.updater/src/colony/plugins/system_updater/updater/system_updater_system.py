@@ -193,76 +193,6 @@ class SystemUpdater:
         # updating all the current internal state
         self.load_repositories_cache()
 
-    def upgrade(self, transaction_properties = None):
-        # creates the list that holds all the descriptors
-        # set for upgrading
-        upgrade_descriptors = []
-
-        # iterates over the repository list to creates the list
-        # of descriptors for upgrading
-        for repository in self.repository_list:
-            # retrieves the repository information for the repository
-            repository_information = self.get_repository_information(repository)
-
-            # creates the list of descriptors to be checked for new versions
-            # the used descriptors are: bundles, plugins and containers
-            descriptors = repository_information.bundles + repository_information.plugins + repository_information.containers
-
-            # filters the descriptors that represent a new object in the current
-            # system instance, then adds the list to the upgrade descriptor list
-            _upgrade_descriptors = [descriptor for descriptor in descriptors if descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS)]
-            upgrade_descriptors.extend(_upgrade_descriptors)
-
-        # in case the re are no descriptors to be
-        # upgraded (no upgrade to be done)
-        if not upgrade_descriptors:
-            # returns immediately
-            return
-
-        # retrieves the first descriptor to set the base value
-        # for the descriptor type
-        first_descriptor = upgrade_descriptors[0]
-        first_descriptor_type = first_descriptor.get_type()
-
-        # iterates over all the upgrade descriptors
-        for descriptor in upgrade_descriptors:
-            # retrieves the type for the current descriptor
-            descriptor_type = descriptor.get_type()
-
-            # in case the type of the current descriptor
-            # does not match the verification one
-            if not descriptor_type == first_descriptor_type:
-                # raises upgrade exception
-                raise system_updater_exceptions.UpgradeException("invalid descriptor type")
-
-        # retrieves the deployer plugin for the first descriptor type (the
-        # valid descriptor type)
-        plugin_deployer = self._get_deployer_plugin_by_deployer_type(first_descriptor_type)
-
-        # retrieves the current transaction properties or creates a new transaction
-        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
-
-        try:
-            # iterates over all the descriptors to be upgraded
-            # to install the associated object
-            for descriptor in upgrade_descriptors:
-                # installs the object represented by the descriptor
-                self.install_object(descriptor.id, descriptor.version, transaction_properties)
-
-            # commits the transaction represented in the
-            # transaction properties
-            plugin_deployer.commit_transaction(transaction_properties)
-        except:
-            # "rollsback" the transaction represented in the
-            # transaction properties
-            plugin_deployer.rollback_transaction(transaction_properties)
-
-            # re-raises the exception
-            raise
-
-
-
-
     def update_repositories(self):
         """
         Updates the repositories information, flushing it for the
@@ -382,10 +312,6 @@ class SystemUpdater:
         Saves the repositories information into the cache
         file for the current plugin context.
         """
-
-
-        print "SALVANDO REPOsITORY CAHCE"
-
 
         # retrieves the plugin manager
         plugin_manager = self.system_updater_plugin.manager
@@ -669,6 +595,83 @@ class SystemUpdater:
 
         # raises the file not found exception
         raise system_updater_exceptions.FileNotFoundException("repository descriptor not found")
+
+    def upgrade_system(self, transaction_properties = None):
+        """
+        Upgrades the current system to the latest version according
+        to the information in the remote repositories.
+        The complete operation is run under a single transaction.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # creates the list that holds all the descriptors
+        # set for upgrading
+        upgrade_descriptors = []
+
+        # iterates over the repository list to creates the list
+        # of descriptors for upgrading
+        for repository in self.repository_list:
+            # retrieves the repository information for the repository
+            repository_information = self.get_repository_information(repository)
+
+            # creates the list of descriptors to be checked for new versions
+            # the used descriptors are: bundles, plugins and containers
+            descriptors = repository_information.bundles + repository_information.plugins + repository_information.containers
+
+            # filters the descriptors that represent a new object in the current
+            # system instance, then adds the list to the upgrade descriptor list
+            _upgrade_descriptors = [descriptor for descriptor in descriptors if descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS)]
+            upgrade_descriptors.extend(_upgrade_descriptors)
+
+        # in case the re are no descriptors to be
+        # upgraded (no upgrade to be done)
+        if not upgrade_descriptors:
+            # returns immediately
+            return
+
+        # retrieves the first descriptor to set the base value
+        # for the descriptor type
+        first_descriptor = upgrade_descriptors[0]
+        first_descriptor_type = first_descriptor.get_type()
+
+        # iterates over all the upgrade descriptors
+        for descriptor in upgrade_descriptors:
+            # retrieves the type for the current descriptor
+            descriptor_type = descriptor.get_type()
+
+            # in case the type of the current descriptor
+            # does not match the verification one
+            if not descriptor_type == first_descriptor_type:
+                # raises upgrade exception
+                raise system_updater_exceptions.UpgradeException("invalid descriptor type")
+
+        # retrieves the deployer plugin for the first descriptor type (the
+        # valid descriptor type)
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(first_descriptor_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # iterates over all the descriptors to be upgraded
+            # to install the associated object
+            for descriptor in upgrade_descriptors:
+                # installs the object represented by the descriptor
+                self.install_object(descriptor.id, descriptor.version, transaction_properties)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
 
     def install_object(self, object_id, object_version = None, transaction_properties = None):
         """
