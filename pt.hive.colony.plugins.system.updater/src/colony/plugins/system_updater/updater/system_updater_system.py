@@ -197,7 +197,8 @@ class SystemUpdater:
         upgrade_descriptors = []
 
 
-        # iterates over the repository list
+        # iterates over the repository list to creates the list
+        # of descriptors for upgrading
         for repository in self.repository_list:
             # retrieves the repository information for the repository
             repository_information = self.get_repository_information(repository)
@@ -206,11 +207,13 @@ class SystemUpdater:
             # the used descriptors are: bundles, plugins and containers
             descriptors = repository_information.bundles + repository_information.plugins + repository_information.containers
 
-            for descriptor in descriptors:
-                if not descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS):
-                    continue
+            # filters the descriptors that represent a new object in the current
+            # system instance, then adds the list to the upgrade descriptor list
+            _upgrade_descriptors = [descriptor for descriptor in descriptors if descriptor.status in (NEWER_VERSION_STATUS, DIFFERENT_DIGEST_STATUS)]
+            upgrade_descriptors.extend(_upgrade_descriptors)
 
-                upgrade_descriptors.append(descriptor)
+
+        # TENHO DE FAZER CHECKING QUE TODOS SAO DO MESMO TIPO
 
         #if not lista:
         #    return
