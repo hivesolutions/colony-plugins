@@ -186,6 +186,22 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # processes the containers copying them to the repository directory
         self._process_containers(packed_containers, containers_directory, full_target_directory)
 
+        ## GZIP ENCODING ##
+
+        repository_descriptor_gzip_file_path = repository_descriptor_file_path + ".gz"
+
+        repository_descriptor_file = open(repository_descriptor_file_path, "rb")
+        repository_descriptor_contents = repository_descriptor_file.read()
+        repository_descriptor_file.close()
+
+        import gzip
+
+        f = gzip.open(repository_descriptor_gzip_file_path, "wb")
+        f.write(repository_descriptor_contents)
+        f.close()
+
+        ## END GZIP ENCODING ##
+
         # returns true (success)
         return True
 
