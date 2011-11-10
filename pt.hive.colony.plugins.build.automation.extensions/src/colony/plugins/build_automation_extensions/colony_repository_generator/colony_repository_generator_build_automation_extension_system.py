@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import gzip
 
 import colony.libs.path_util
 
@@ -177,6 +178,9 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # generates the repository descriptor file using the given artifacts
         repository_descriptor_generator_plugin.generate_repository_descriptor_file_artifacts(repository_descriptor_file_path, repository_name, repository_description, repository_layout, packed_bundles, packed_plugins, packed_containers)
 
+        # compresses the repository descriptor
+        self._compress_repository_descriptor(repository_descriptor_file_path)
+
         # processes the bundles copying them to the repository directory
         self._process_bundles(packed_bundles, bundles_directory, full_target_directory)
 
@@ -186,24 +190,33 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # processes the containers copying them to the repository directory
         self._process_containers(packed_containers, containers_directory, full_target_directory)
 
-        ## GZIP ENCODING ##
-
-        repository_descriptor_gzip_file_path = repository_descriptor_file_path + ".gz"
-
-        repository_descriptor_file = open(repository_descriptor_file_path, "rb")
-        repository_descriptor_contents = repository_descriptor_file.read()
-        repository_descriptor_file.close()
-
-        import gzip
-
-        f = gzip.open(repository_descriptor_gzip_file_path, "wb")
-        f.write(repository_descriptor_contents)
-        f.close()
-
-        ## END GZIP ENCODING ##
-
         # returns true (success)
         return True
+
+    def _compress_repository_descriptor(self, repository_descriptor_file_path):
+        # creates the repository descriptor gzip file path
+        repository_descriptor_gzip_file_path = repository_descriptor_file_path + ".gz"
+
+        # opens the repository descriptor file
+        repository_descriptor_file = open(repository_descriptor_file_path, "rb")
+
+        try:
+            # retrieves the repository descriptor contents
+            repository_descriptor_contents = repository_descriptor_file.read()
+        finally:
+            # closes the repository descriptor file
+            repository_descriptor_file.close()
+
+        # opens the repository descriptor gzip file
+        repository_descriptor_gzip_file = gzip.open(repository_descriptor_gzip_file_path, "wb")
+
+        try:
+            # writes the repository descriptor contents to the
+            # compressed (gzip) file
+            repository_descriptor_gzip_file.write(repository_descriptor_contents)
+        finally:
+            # closes the repository descriptor gzip file
+            repository_descriptor_gzip_file.close()
 
     def _process_bundles(self, packed_bundles, bundles_directory, full_target_directory):
         # creates the full bundles directory
