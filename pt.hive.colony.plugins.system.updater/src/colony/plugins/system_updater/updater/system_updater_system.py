@@ -226,6 +226,7 @@ class SystemUpdater:
 
         # iterates over all the upgrade descriptors
         for descriptor in upgrade_descriptors:
+            # retrieves the type for the current descriptor
             descriptor_type = descriptor.get_type()
 
             # in case the type of the current descriptor
