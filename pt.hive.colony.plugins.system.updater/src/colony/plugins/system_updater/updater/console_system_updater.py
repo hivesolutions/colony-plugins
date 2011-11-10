@@ -245,7 +245,14 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
-        pass
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the object identifier and the object version and
+        # uses them to install the object in the current instance
+        object_id = arguments_map["object_id"]
+        object_version = arguments_map.get("object_version", None)
+        system_updater.install_object(object_id, object_version)
 
     def process_install_package(self, arguments, arguments_map, output_method, console_context):
         """
@@ -265,17 +272,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the package identifier
+        # retrieves the package identifier and the package version and
+        # uses them to install the package in the current instance
         package_id = arguments_map["package_id"]
-
-        # retrieves the package version
         package_version = arguments_map.get("package_version", None)
-
-        # installs the package
-        if package_version:
-            system_updater.install_package(package_id, package_version)
-        else:
-            system_updater.install_package(package_id)
+        system_updater.install_package(package_id, package_version)
 
     def process_install_bundle(self, arguments, arguments_map, output_method, console_context):
         """
@@ -295,17 +296,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the bundle identifier
+        # retrieves the bundle identifier and the bundle version and
+        # uses them to install the bundle in the current instance
         bundle_id = arguments_map["bundle_id"]
-
-        # retrieves the bundle version
         bundle_version = arguments_map.get("bundle_version", None)
-
-        # installs the bundle
-        if bundle_version:
-            system_updater.install_bundle(bundle_id, bundle_version)
-        else:
-            system_updater.install_bundle(bundle_id)
+        system_updater.install_bundle(bundle_id, bundle_version)
 
     def process_install_plugin(self, arguments, arguments_map, output_method, console_context):
         """
@@ -325,17 +320,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the plugin identifier
+        # retrieves the plugin identifier and plugin version and
+        # uses them to install the plugin in the current instance
         plugin_id = arguments_map["plugin_id"]
-
-        # retrieves the plugin version
         plugin_version = arguments_map.get("plugin_version", None)
-
-        # installs the plugin
-        if plugin_version:
-            system_updater.install_plugin(plugin_id, plugin_version)
-        else:
-            system_updater.install_plugin(plugin_id)
+        system_updater.install_plugin(plugin_id, plugin_version)
 
     def process_install_container(self, arguments, arguments_map, output_method, console_context):
         """
@@ -355,17 +344,35 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the container identifier
+        # retrieves the container identifier and container version and
+        # uses them to install the container in the current instance
         container_id = arguments_map["container_id"]
-
-        # retrieves the container version
         container_version = arguments_map.get("container_version", None)
+        system_updater.install_container(container_id, container_version)
 
-        # installs the container
-        if container_version:
-            system_updater.install_container(container_id, container_version)
-        else:
-            system_updater.install_container(container_id)
+    def process_uninstall(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the uninstall command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the object identifier and the object version and
+        # uses them to uninstall the object in the current instance
+        object_id = arguments_map["object_id"]
+        object_version = arguments_map.get("object_version", None)
+        system_updater.uninstall_object(object_id, object_version)
 
     def process_uninstall_package(self, arguments, arguments_map, output_method, console_context):
         """
@@ -385,17 +392,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the package identifier
+        # retrieves the package identifier and the package version and
+        # uses them to install the package in the current instance
         package_id = arguments_map["package_id"]
-
-        # retrieves the package version
         package_version = arguments_map.get("package_version", None)
-
-        # uninstalls the package
-        if package_version:
-            system_updater.uninstall_package(package_id, package_version)
-        else:
-            system_updater.uninstall_package(package_id)
+        system_updater.uninstall_package(package_id, package_version)
 
     def process_uninstall_bundle(self, arguments, arguments_map, output_method, console_context):
         """
@@ -415,17 +416,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the bundle identifier
+        # retrieves the bundle identifier and the bundle version and
+        # uses them to install the bundle in the current instance
         bundle_id = arguments_map["bundle_id"]
-
-        # retrieves the bundle version
         bundle_version = arguments_map.get("bundle_version", None)
-
-        # uninstalls the bundle
-        if bundle_version:
-            system_updater.uninstall_bundle(bundle_id, bundle_version)
-        else:
-            system_updater.uninstall_bundle(bundle_id)
+        system_updater.uninstall_bundle(bundle_id, bundle_version)
 
     def process_uninstall_plugin(self, arguments, arguments_map, output_method, console_context):
         """
@@ -445,17 +440,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the plugin identifier
+        # retrieves the plugin identifier and the plugin version and
+        # uses them to install the plugin in the current instance
         plugin_id = arguments_map["plugin_id"]
-
-        # retrieves the plugin version
         plugin_version = arguments_map.get("plugin_version", None)
-
-        # uninstalls the plugin
-        if plugin_version:
-            system_updater.uninstall_plugin(plugin_id, plugin_version)
-        else:
-            system_updater.uninstall_plugin(plugin_id)
+        system_updater.uninstall_plugin(plugin_id, plugin_version)
 
     def process_uninstall_container(self, arguments, arguments_map, output_method, console_context):
         """
@@ -475,17 +464,11 @@ class ConsoleSystemUpdater:
         # retrieves the system updater
         system_updater = self.system_updater_plugin.system_updater
 
-        # retrieves the container identifier
+        # retrieves the container identifier and the container version and
+        # uses them to install the container in the current instance
         container_id = arguments_map["container_id"]
-
-        # retrieves the container version
         container_version = arguments_map.get("container_version", None)
-
-        # uninstalls the container
-        if container_version:
-            system_updater.uninstall_container(container_id, container_version)
-        else:
-            system_updater.uninstall_container(container_id)
+        system_updater.uninstall_container(container_id, container_version)
 
     def print_repository_info(self, repository_information, output_method):
         output_method("name:        " + repository_information.name)
@@ -613,7 +596,21 @@ class ConsoleSystemUpdater:
             },
             "install" : {
                 "handler" : self.process_install,
-                "description" : "installs the package, bundle or plugin with the given id and version"
+                "description" : "installs the package, bundle or plugin with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "object_id",
+                        "description" : "the id of the object to install",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "object_version",
+                        "description" : "the version of the object to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
             },
             "install_package" : {
                 "handler" : self.process_install_package,
@@ -682,6 +679,24 @@ class ConsoleSystemUpdater:
                     {
                         "name" : "container_version",
                         "description" : "the version of the container to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "uninstall" : {
+                "handler" : self.process_uninstall,
+                "description" : "uninstalls the package, bundle or plugin with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "object_id",
+                        "description" : "the id of the object to uninstall",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "object_version",
+                        "description" : "the version of the object to uninstall",
                         "values" : str,
                         "mandatory" : False
                     }

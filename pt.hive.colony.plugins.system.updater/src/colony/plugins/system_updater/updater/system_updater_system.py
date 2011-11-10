@@ -63,6 +63,18 @@ SIMPLE_REPOSITORY_LAYOUT_VALUE = "simple"
 EXTENDED_REPOSITORY_LAYOUT_VALUE = "extended"
 """ The extended repository layout value """
 
+PACKAGE_VALUE = "package"
+""" The package value """
+
+BUNDLE_VALUE = "bundle"
+""" The bundle value """
+
+PLUGIN_VALUE = "plugin"
+""" The plugin value """
+
+CONTAINER_VALUE = "container"
+""" The container value """
+
 BUNDLES_VALUE = "bundles"
 """ The bundles value """
 
@@ -119,6 +131,12 @@ class SystemUpdater:
     deployer_plugins_map = {}
     """ The deployer plugins map """
 
+    get_method_type_map = {}
+    """ The map associating the get method for the objects and the type of the objects """
+
+    install_methods_type_map = {}
+    """ The map associating the install methods for the objects and the type of the objects """
+
     def __init__(self, system_updater_plugin):
         """
         Constructor of the class.
@@ -135,6 +153,24 @@ class SystemUpdater:
         self.repository_repository_descriptor_map = {}
         self.repository_descriptor_repository_map = {}
         self.deployer_plugins_map = {}
+
+        # creates the map associating the various object
+        # getter methods with the object type identifier
+        self.get_method_type_map = {
+            self.get_package_descriptor : PACKAGE_VALUE,
+            self.get_bundle_descriptor : BUNDLE_VALUE,
+            self.get_plugin_descriptor : PLUGIN_VALUE,
+            self.get_container_descriptor : CONTAINER_VALUE
+        }
+
+        # creates the map associating the various object install
+        # methods (tuple) with the object type identifier
+        self.install_methods_type_map = {
+            PACKAGE_VALUE : (self.install_package, self.uninstall_package),
+            BUNDLE_VALUE : (self.install_bundle, self.uninstall_bundle),
+            PLUGIN_VALUE : (self.install_plugin, self.uninstall_plugin),
+            CONTAINER_VALUE : (self.install_container, self.uninstall_container)
+        }
 
     def load_system_updater(self):
         """
@@ -420,6 +456,31 @@ class SystemUpdater:
         # raises the file not found exception
         raise system_updater_exceptions.FileNotFoundException("repository descriptor not found")
 
+    def install_object(self, object_id, object_version = None, transaction_properties = None):
+        """
+        Installs the object (package, bundle, plugin or container)
+        with the given id and version from a random repository.
+        The object is first resolved as a proper type with the natural
+        resolution order (ackage, bundle, plugin, container).
+
+        @type object_id: String
+        @param object_id: The id of the object to install.
+        @type object_version: String
+        @param object_version: The version of the object to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the type of object for the provided
+        # id and version (return invalid in case none is found)
+        object_type = self.get_object_type(object_id, object_version)
+
+        # retrieves the install method for the object type and uses
+        # it to install the object for the id and version
+        install_method, _uninstall_method = self.install_methods_type_map.get(object_type, None)
+        install_method(object_id, object_version, transaction_properties)
+
     def install_package(self, package_id, package_version = None, transaction_properties = None):
         """
         Installs the package with the given id and version
@@ -515,6 +576,31 @@ class SystemUpdater:
         finally:
             # releases the system updater lock
             self.system_updater_lock.release()
+
+    def uninstall_object(self, object_id, object_version = None, transaction_properties):
+        """
+        Uninstalls the object (package, bundle, plugin or container)
+        with the given id and version from a random repository.
+        The object is first resolved as a proper type with the natural
+        resolution order (ackage, bundle, plugin, container).
+
+        @type object_id: String
+        @param object_id: The id of the object to uninstall.
+        @type object_version: String
+        @param object_version: The version of the object to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the type of object for the provided
+        # id and version (return invalid in case none is found)
+        object_type = self.get_object_type(object_id, object_version)
+
+        # retrieves the uninstall method for the object type and uses
+        # it to uninstall the object for the id and version
+        _install_method, uninstall_method = self.install_methods_type_map.get(object_type, None)
+        uninstall_method(object_id, object_version, transaction_properties)
 
     def uninstall_package(self, package_id, package_version = None, transaction_properties = None):
         """
@@ -1244,6 +1330,39 @@ class SystemUpdater:
         # updates the container descriptor status
         container_descriptor.status = NOT_INSTALLED_STATUS
 
+    def get_object_type(self, object_id, object_version = None):
+        """
+        Retrieves the object type as a string for the given
+        object id and version.
+
+        @type object_id: String
+        @param object_id: The id of the object to retrieve
+        the type.
+        @type object_version: String
+        @param object_version: The version of the object to retrieve
+        the type.
+        @rtype: String
+        @return: The object type as a string for the given
+        object id and version.
+        """
+
+        # iterates over all the get method retrieving
+        # both the get method and the associated type
+        for get_method, type in self.get_method_type_map.items():
+            # tries to retrieve the object descriptor using
+            # the current iteration get method
+            descriptor = get_method(object_id, object_version)
+
+            # in case no descriptor is returned
+            # there is no object in the given category
+            if not descriptor:
+                # continues the loop
+                # (category not valid)
+                continue
+
+            # returns the type of the given object
+            return type
+
     def _get_deployer_plugin_by_deployer_type(self, deployer_type):
         """
         Retrieves a deployer plugin for the given deployer type.
@@ -1504,7 +1623,7 @@ class SystemUpdater:
         in accordance to such.
 
         @type repository_descriptor: Repository
-        @param repository_descriptor: The repository descritpro to be processed.
+        @param repository_descriptor: The repository descriptor to be processed.
         """
 
         # retrieves the system registry plugin
