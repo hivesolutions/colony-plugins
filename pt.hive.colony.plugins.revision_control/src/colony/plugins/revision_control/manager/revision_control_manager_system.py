@@ -174,7 +174,7 @@ class RevisionControlAdapter:
 
         @type resource_identifiers: List
         @param resource_identifiers: The list of resource identifiers.
-        @type recurse: Boolean
+        @type recurse: bool
         @param recurse: Indicates if a directory's children are to be recursively added.
         """
 
