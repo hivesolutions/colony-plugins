@@ -201,6 +201,27 @@ def _load_value(self, key, value):
     # sets the value in the current object
     setattr(self, key, value)
 
+def is_lazy_loaded(self, attribute_name):
+    """
+    Indicates if the specified attribute
+    is lazy loaded.
+
+    @type attribute_name: String
+    @param attribute_name: The attribute name.
+    @rtype: bool
+    @return: The lazy loaded flag.
+    """
+
+    # retrieves the attribute value
+    attribute_value = getattr(self, attribute_name)
+
+    # sets the lazy loaded flag in case
+    # the attribute value is lazy loaded
+    lazy_loaded = attribute_value == LAZY_LOADED_VALUE
+
+    # returns the lazy loaded flag
+    return lazy_loaded
+
 def add_validation_method(self, attribute_name, validation_method_name, validate_null = False, properties = {}, contexts = (DEFAULT_VALIDATION_CONTEXT,)):
     """
     Adds a validation method to the attribute with the given name.
@@ -881,8 +902,16 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
 
     # for each entity in the attribute value
     for entity in attribute_value:
-        # retrieves the attribute value
-        value = entity.get_attribute_name(target)
+        # attempts to retrieve the attribute name
+        try:
+            # retrieves the attribute value
+            value = entity.get_attribute_name(target)
+        # in case retrieving the attribute name
+        # caused and error when attempting to
+        # access an attribute in an undefined entity
+        except:
+            # continues to the next entity
+            continue
 
         # associates the entity with the value in order
         # to later detect which entities have duplicate attributes

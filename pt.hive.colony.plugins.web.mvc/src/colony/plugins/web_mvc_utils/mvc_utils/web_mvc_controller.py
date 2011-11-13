@@ -840,6 +840,70 @@ def send_broadcast_communication_message(self, parameters, connection_name, mess
     # sends the broadcast communication message using the communication handler
     communication_handler.send_broadcast_communication_message(connection_name, message)
 
+def create_form_data_string(self, rest_request, data_map):
+    """
+    Converts the data map to a string representation
+    in the form data format.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type data_map: Dictionary
+    @param data_map: The map containing the hierarchy of
+    defined structure for the "form" contents.
+    @rtype: String
+    @return: The string representation of the data map
+    in the form data format.
+    """
+
+    # initializes the form data map items list
+    form_data_map_items = []
+
+    # creates the form data map
+    form_data_map = self.create_form_data(rest_request, data_map)
+
+    # while the form data map is not empty
+    while form_data_map:
+        # initializes the remaining form data map
+        remaining_form_data_map = {}
+
+        # for each item in the form data map
+        for attribute_name, attribute_value in form_data_map.items():
+            # retrieves the attribute value type
+            attribute_value_type = type(attribute_value)
+
+            # in case the attribute value is a list then
+            # makes the attribute value the first value
+            # in the list and keeps the rest of the list
+            # so that it can be processed in the next iterations
+            attribute_value_list = attribute_value_type == types.ListType and attribute_value or None
+            attribute_value = attribute_value_list and attribute_value_list[0] or attribute_value
+            attribute_value_list = attribute_value_list and attribute_value_list[1:] or None
+
+            # in case the attribute value list
+            # exists and is not empty
+            if attribute_value_list:
+                # sets the attribute value list in the remaining
+                # form data map so that the remaining list items
+                # are flushed out in the next iterations
+                remaining_form_data_map[attribute_name] = attribute_value_list
+
+            # creates the form data map item
+            form_data_map_item = "%s=%s" % (attribute_name, attribute_value)
+
+            # adds the form data map item to the list
+            form_data_map_items.append(form_data_map_item)
+
+        # sets the remaning form data map
+        # as the form data map
+        form_data_map = remaining_form_data_map
+
+    # creates the form data map string by joining
+    # the previously accumulated form data items
+    form_data_map_string = "&".join(form_data_map_items)
+
+    # returns the form data map string
+    return form_data_map_string
+
 def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
     """
     Processes the data map, creating a single map with all the
@@ -2523,10 +2587,13 @@ def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data
         attribute_value_type = type(attribute_value)
 
         # retrieves the form data map key format
-        form_data_map_key_format = attribute_value_type == types.ListType and FORM_DATA_LIST_KEY_FORMAT or FORM_DATA_MAP_KEY_FORMAT
+        form_data_map_key_format = attribute_value_type in (types.ListType, types.TupleType) and FORM_DATA_LIST_KEY_FORMAT or FORM_DATA_MAP_KEY_FORMAT
 
         # retrieves the attribute form data map key
         attribute_form_data_map_key = form_data_map_key_format % (form_data_map_key, attribute_name)
+
+        # initializes the new form data attribute value
+        new_form_data_attribute_value = None
 
         # invokes this same function recursively
         # in case the attribute value is a map
@@ -2534,25 +2601,35 @@ def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data
             self._create_form_data(rest_request, attribute_value, attribute_form_data_map_key, form_data_map, encoding)
         # invokes this same function recursively for each
         # item in case the attribute value is a list
-        elif attribute_value_type == types.ListType:
+        elif attribute_value_type in (types.ListType, types.TupleType):
             for attribute_value_item in attribute_value:
                 self._create_form_data(rest_request, attribute_value_item, attribute_form_data_map_key, form_data_map, encoding)
         # decodes the attribute value and sets it
         # in the form data map in case it is a unicode string
         elif attribute_value_type == types.UnicodeType:
             # encodes the attribute value
-            attribute_value = attribute_value.encode(encoding)
-
-            # sets the attribute value in the form data map
-            form_data_map[attribute_form_data_map_key] = attribute_value
+            new_form_data_attribute_value = attribute_value.encode(encoding)
         # otherwise converts the attribute value to
         # a string and sets it in the form data map
         else:
             # converts the attribute value to a string
-            attribute_value = str(attribute_value)
+            new_form_data_attribute_value = str(attribute_value)
 
-            # sets the attribute value in the form data map
-            form_data_map[attribute_form_data_map_key] = attribute_value
+        # in case the new form data attribute value was not set
+        if new_form_data_attribute_value == None:
+            # continues to the next attribute
+            continue
+
+        # sets the new form data attribute value in the form
+        # data map, taking into account that if one or more
+        # values already exist for that key, a list should
+        # be created with these values and the new value
+        # and set in the form data map
+        form_data_attribute_value = form_data_map.get(attribute_form_data_map_key, None)
+        form_data_attribute_value_type = type(form_data_attribute_value)
+        form_data_attribute_value = not form_data_attribute_value_type in (types.ListType, types.NoneType) and [form_data_attribute_value] or form_data_attribute_value
+        form_data_attribute_value = form_data_attribute_value and form_data_attribute_value + [new_form_data_attribute_value] or new_form_data_attribute_value
+        form_data_map[attribute_form_data_map_key] = form_data_attribute_value
 
 def _process_form_attribute_flat(self, parent_structure, attribute_names_list, attribute_value):
     """
