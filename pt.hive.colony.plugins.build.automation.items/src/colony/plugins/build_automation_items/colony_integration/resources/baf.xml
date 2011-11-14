@@ -125,21 +125,21 @@
                     </repository>
                     <repository>
                         <adapter>svn</adapter>
-                        <name>pt.hive.colony.colony_site</name>
-                        <path>http://svn.hive.pt/hive-main/pt.hive.colony.colony_site</path>
-                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.colony_site</target_path>
-                        <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.colony_site.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.colony_site.version</previous_version_file_path>
-                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.colony_site.changelog</changelog_file_path>
-                    </repository>
-                    <repository>
-                        <adapter>svn</adapter>
                         <name>pt.hive.colony.configuration</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.configuration</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.configuration</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.configuration.version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.configuration.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.configuration.changelog</changelog_file_path>
+                    </repository>
+                    <repository>
+                        <adapter>svn</adapter>
+                        <name>pt.hive.colony_site</name>
+                        <path>http://svn.hive.pt/hive-main/pt.hive.colony_site</path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony_site</target_path>
+                        <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony_site.version</version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony_site.version</previous_version_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony_site.changelog</changelog_file_path>
                     </repository>
                 </configuration>
             </plugin>
