@@ -1,0 +1,25 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.build.automation.extensions.copy",
+    "name" : "Copy Build Automation Extension Plugin",
+    "short_name" : "Copy Build Automation Extension",
+    "description" : "A plugin to manage the copy build automation tasks",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "copy_build_automation_extension_plugin.py",
+    "resources" : [
+            "copy_build_automation_extension_plugin.py",
+            "build_automation_extensions/__init__.py",
+            "build_automation_extensions/copy/__init__.py",
+            "build_automation_extensions/copy/copy_build_automation_extension_system.py",
+            "build_automation_extensions/copy/resources/baf.xml"],
+    "extra_resources" : ["copy_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/copy/__init__.pyc",
+            "build_automation_extensions/copy/copy_build_automation_extension_system.pyc"]
+}
