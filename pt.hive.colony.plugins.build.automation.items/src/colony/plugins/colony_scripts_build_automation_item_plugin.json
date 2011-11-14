@@ -17,7 +17,12 @@
             "build_automation_items/__init__.py",
             "build_automation_items/colony_scripts/__init__.py",
             "build_automation_items/colony_scripts/colony_scripts_build_automation_item_system.py",
-            "build_automation_items/colony_scripts/resources/baf.xml"],
+            "build_automation_items/colony_scripts/resources/baf.xml",
+            "build_automation_items/colony_scripts/resources/base_scripts/bsd/colony_install.sh",
+            "build_automation_items/colony_scripts/resources/base_scripts/unix/colony_install.sh",
+            "build_automation_items/colony_scripts/resources/service_scripts/unix/colony_wrapper.sh",
+            "build_automation_items/colony_scripts/resources/service_scripts/unix/debian/colony.sh",
+            "build_automation_items/colony_scripts/resources/service_scripts/unix/fedora/colony.sh"],
     "extra_resources" : [
             "colony_scripts_build_automation_item_plugin.pyc",
             "build_automation_items/__init__.pyc",

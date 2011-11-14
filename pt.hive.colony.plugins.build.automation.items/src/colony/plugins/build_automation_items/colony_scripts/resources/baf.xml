@@ -58,8 +58,18 @@
                 <stage>build</stage>
                 <configuration>
                     <type>plugin</type>
-                    <source>C:/teste.lua</source>
-                    <target>${build_automation.build.scripts_directory}/tobias.sh</target>
+                    <copies>
+                        <copy>
+                            <source>$base{plugin_directory}/build_automation_items/colony_scripts/resources/base_scripts</source>
+                            <target>${build_automation.build.scripts_directory}/base_scripts</target>
+                            <copy_hidden>false</copy_hidden>
+                        </copy>
+                        <copy>
+                            <source>$base{plugin_directory}/build_automation_items/colony_scripts/resources/service_scripts</source>
+                            <target>${build_automation.build.scripts_directory}/service_scripts</target>
+                            <copy_hidden>false</copy_hidden>
+                        </copy>
+                    </copies>
                 </configuration>
             </plugin>
         </plugins>
