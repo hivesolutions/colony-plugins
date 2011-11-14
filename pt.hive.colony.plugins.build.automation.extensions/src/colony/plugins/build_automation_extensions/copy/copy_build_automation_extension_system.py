@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 import colony.libs.path_util
 
 SOURCE_VALUE = "source"
@@ -80,9 +82,20 @@ class CopyBuildAutomationExtension:
             source_path = copy[SOURCE_VALUE]
             target_path = copy[TARGET_VALUE]
 
-            # copies the file from the source path to the target
-            # path, in case a duplicate file already exists replaces it
-            colony.libs.path_util.copy_file(source_path, target_path)
+            # retrieves the value for the copy hidden flag
+            copy_hidden = copy.get("copy_hidden", "true") == "true" and True or False
+
+            # in case the source path "refers" a directory, recursive
+            # file copy must be performed
+            if os.path.isdir(source_path):
+                # copes the directory from the source path to the target
+                # path replacing any existing duplicate files
+                colony.libs.path_util.copy_directory(source_path, target_path, copy_hidden = copy_hidden)
+            # otherwise it must be a regular file
+            else:
+                # copies the file from the source path to the target
+                # path, in case a duplicate file already exists replaces it
+                colony.libs.path_util.copy_file(source_path, target_path)
 
         # returns valid (success)
         return True
