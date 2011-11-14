@@ -42,6 +42,16 @@
     </artifact>
     <modules>
         <module>
+            <id>pt.hive.colony_site.plugins.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
+        <module>
+            <id>pt.hive.colony_site.bundles.*</id>
+            <version>.*</version>
+            <stage>build</stage>
+        </module>
+        <module>
             <id>pt.hive.colony.language.plugins.*</id>
             <version>.*</version>
             <stage>build</stage>
