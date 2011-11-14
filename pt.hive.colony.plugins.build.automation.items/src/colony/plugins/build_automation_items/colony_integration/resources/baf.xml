@@ -125,6 +125,15 @@
                     </repository>
                     <repository>
                         <adapter>svn</adapter>
+                        <name>pt.hive.colony.documentation</name>
+                        <path>http://svn.hive.pt/hive-main/pt.hive.colony.documentation</path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.documentation</target_path>
+                        <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.documentation.version</version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.documentation.version</previous_version_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.documentation.changelog</changelog_file_path>
+                    </repository>
+                    <repository>
+                        <adapter>svn</adapter>
                         <name>pt.hive.colony.configuration</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.configuration</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.configuration</target_path>
