@@ -1,0 +1,26 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.build.automation.items.colony_scripts",
+    "name" : "Colony Scripts Build Automation Item Plugin",
+    "short_name" : "Colony Scripts Build Automation Item",
+    "description" : "The build automation item for the scripts of the colony framework",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "colony_scripts_build_automation_item_plugin.py",
+    "resources" : [
+            "colony_scripts_build_automation_item_plugin.py",
+            "build_automation_items/__init__.py",
+            "build_automation_items/colony_scripts/__init__.py",
+            "build_automation_items/colony_scripts/colony_scripts_build_automation_item_system.py",
+            "build_automation_items/colony_scripts/resources/baf.xml"],
+    "extra_resources" : [
+            "colony_scripts_build_automation_item_plugin.pyc",
+            "build_automation_items/__init__.pyc",
+            "build_automation_items/colony_scripts/__init__.pyc",
+            "build_automation_items/colony_scripts/colony_scripts_build_automation_item_system.pyc"]
+}
