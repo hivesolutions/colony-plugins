@@ -67,15 +67,22 @@ class CopyBuildAutomationExtension:
         # prints an info message
         logger.info("Running copy build automation plugin")
 
-        # retrieves the source (file path)
-        source_path = parameters[SOURCE_VALUE]
+        # retrieves the copies
+        copies = parameters.get("copies", {})
 
-        # retrieves the target (file path)
-        target_path = parameters[TARGET_VALUE]
+        # retrieves the various copy elements (copies)
+        _copies = colony.libs.map_util.map_get_values(copies, "copy")
 
-        # copies the file from the source path to the target
-        # path, in case a duplicate file already exists replaces it
-        colony.libs.path_util.copy_file(source_path, target_path)
+        # iterates over all the copies to be performed
+        for copy in _copies:
+            # retrieves the source and target (file paths)
+            # from the copy information map
+            source_path = copy[SOURCE_VALUE]
+            target_path = copy[TARGET_VALUE]
+
+            # copies the file from the source path to the target
+            # path, in case a duplicate file already exists replaces it
+            colony.libs.path_util.copy_file(source_path, target_path)
 
         # returns valid (success)
         return True
