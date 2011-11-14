@@ -741,10 +741,9 @@ class BuildAutomation:
         # retrieves the plugin manager
         manager = self.build_automation_plugin.manager
 
-        # retrieves the associated plugin
+        # tries to retrieve the associated plugin and sets it
+        # in the build automation structure as "metadata"
         associated_plugin = manager.get_plugin_by_id_and_version(artifact_id, artifact_version)
-
-        # sets the associated plugin in the build automation structure
         build_automation_structure.associated_plugin = associated_plugin
 
     def generate_build_automation_modules_structure(self, build_automation_parsing_structure, build_automation_structure):
@@ -831,6 +830,11 @@ class BuildAutomation:
             build_automation_repository_directory = self.parse_string(build.repository_directory, build_automation_structure)
             build_automation_structure.build_properties["repository_directory"] = build_automation_repository_directory
 
+        if build.scripts_directory:
+            # retrieves the build scripts directory
+            build_automation_scripts_directory = self.parse_string(build.scripts_directory, build_automation_structure)
+            build_automation_structure.build_properties["scripts_directory"] = build_automation_scripts_directory
+
         if build.resources_directory:
             # retrieves the build resources directory
             build_automation_resources_directory = self.parse_string(build.resources_directory, build_automation_structure)
@@ -888,8 +892,10 @@ class BuildAutomation:
                 build_automation_plugin_version
             )
 
-            # retrieves the build automation plugin instance
+            # retrieves the build automation plugin instance, in case the
+            # plugin instance is not found raise a build automation exception
             build_automation_plugin_instance = self.get_build_automation_extension_plugin(build_automation_plugin_id, build_automation_plugin_version)
+            if not build_automation_plugin_instance: raise build_automation_exceptions.BuildAutomationFailedException("build automation plugin '%s' v%s not found" % (build_automation_plugin_id, build_automation_plugin_version))
 
             # appends the build automation plugin instance to the automation plugins list
             build_automation_structure.automation_plugins.append(build_automation_plugin_instance)
@@ -1002,6 +1008,9 @@ class BuildAutomation:
         # retrieves the repository directory path value
         repository_directory_path = build_properties["repository_directory"]
 
+        # retrieves the scripts directory path value
+        scripts_directory_path = build_properties["scripts_directory"]
+
         # retrieves the resources directory path value
         resources_directory_path = build_properties["resources_directory"]
 
@@ -1034,6 +1043,9 @@ class BuildAutomation:
 
         # creates the complete repository directory path
         complete_repository_directory_path = execution_directory_path + "/" + repository_directory_path
+
+        # creates the complete scripts directory path
+        complete_scripts_directory_path = execution_directory_path + "/" + scripts_directory_path
 
         # creates the complete resources directory path
         complete_resources_directory_path = execution_directory_path + "/" + resources_directory_path
@@ -1088,6 +1100,11 @@ class BuildAutomation:
         if not os.path.isdir(complete_repository_directory_path):
             # creates the repository directory
             os.mkdir(complete_repository_directory_path)
+
+        # in case the scripts directory does not exist
+        if not os.path.isdir(complete_scripts_directory_path):
+            # creates the scripts directory
+            os.mkdir(complete_scripts_directory_path)
 
         # in case the resources directory does not exist
         if not os.path.isdir(complete_resources_directory_path):
@@ -1766,7 +1783,7 @@ class BuildAutomationStructure:
         automation_plugins_stage = self.stages_automation_plugins.get(stage, [])
 
         # iterates over all the automation plugins of the stage
-        # to validate them agains the dependencies if existent
+        # to validate them against the dependencies if existent
         for automation_plugin_stage in automation_plugins_stage:
             # retrieves the automation plugin stage dependency
             automation_plugin_stage_dependency = self.automation_plugins_stage_dependencies[automation_plugin_stage]
@@ -1777,7 +1794,8 @@ class BuildAutomationStructure:
                 # adds the automation plugin to the list of automation plugins
                 automation_plugins.append(automation_plugin_stage)
 
-        # in case it contains a parent
+        # in case it contains a parent, need to retrieve
+        # the automation plugins from it
         if self.parent:
             # retrieves all of the automation plugins for the stage from the parent
             automation_plugins_stage_parent = self.parent.get_all_automation_plugins_by_stage(stage, base_stage)
