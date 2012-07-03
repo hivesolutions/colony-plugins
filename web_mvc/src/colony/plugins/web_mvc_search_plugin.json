@@ -1,0 +1,29 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.web.mvc.search",
+    "name" : "Web Mvc Search Plugin",
+    "short_name" : "Web Mvc Search",
+    "description" : "Web Mvc Search Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.data.entity_manager.new",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.search.manager",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "web_mvc_search_plugin.py",
+    "resources" : ["web_mvc_search_plugin.py", "web_mvc_search/__init__.py",
+            "web_mvc_search/mvc_search/__init__.py",
+            "web_mvc_search/mvc_search/web_mvc_search_system.py",
+            "web_mvc_search/mvc_search/resources/baf.xml"],
+    "extra_resources" : ["web_mvc_search_plugin.pyc",
+            "web_mvc_search/__init__.pyc",
+            "web_mvc_search/mvc_search/__init__.pyc",
+            "web_mvc_search/mvc_search/web_mvc_search_system.pyc"]
+}
