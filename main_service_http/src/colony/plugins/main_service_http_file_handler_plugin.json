@@ -1,0 +1,34 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.main.service.http.file_handler",
+    "name" : "Http Service Main File Handler Plugin",
+    "short_name" : "Http Service Main File Handler",
+    "description" : "The plugin that offers the http service file handler",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["http_service_handler", "build_automation_item"],
+    "capabilities_allowed" : ["http_service_directory_list_handler"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.resources.resource_manager",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "main_service_http_file_handler_plugin.py",
+    "resources" : [
+            "main_service_http_file_handler_plugin.py",
+            "main_service_http_file_handler/__init__.py",
+            "main_service_http_file_handler/file_handler/__init__.py",
+            "main_service_http_file_handler/file_handler/main_service_http_file_handler_exceptions.py",
+            "main_service_http_file_handler/file_handler/main_service_http_file_handler_system.py",
+            "main_service_http_file_handler/file_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_http_file_handler_plugin.pyc",
+            "main_service_http_file_handler/__init__.pyc",
+            "main_service_http_file_handler/file_handler/__init__.pyc",
+            "main_service_http_file_handler/file_handler/main_service_http_file_handler_exceptions.pyc",
+            "main_service_http_file_handler/file_handler/main_service_http_file_handler_system.pyc"]
+}
