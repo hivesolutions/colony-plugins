@@ -1,0 +1,23 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.resources.conf_resource_parser",
+    "name" : "Conf Resource Parser Plugin",
+    "short_name" : "Conf Resource Parser",
+    "description" : "A plugin to parse conf resources",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["resource_parser", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "conf_resource_parser_plugin.py",
+    "resources" : ["conf_resource_parser_plugin.py", "resources/__init__.py",
+            "resources/conf_resource_parser/__init__.py",
+            "resources/conf_resource_parser/conf_resource_parser_system.py",
+            "resources/conf_resource_parser/resources/baf.xml"],
+    "extra_resources" : ["conf_resource_parser_plugin.pyc",
+            "resources/__init__.pyc",
+            "resources/conf_resource_parser/__init__.pyc",
+            "resources/conf_resource_parser/conf_resource_parser_system.pyc"]
+}
