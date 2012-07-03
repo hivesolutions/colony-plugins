@@ -45,7 +45,7 @@ import hashlib
 
 import colony.libs.quote_util
 
-import service_dropbox_exceptions
+import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -531,7 +531,7 @@ class DropboxClient:
         # in case the oauth access token is not available
         if not self.oauth_structure.oauth_access_token:
             # raises the invalid authentication exception
-            raise service_dropbox_exceptions.InvalidAuthentication("user not authenticated")
+            raise exceptions.InvalidAuthentication("user not authenticated")
 
     def get_oauth_structure(self):
         """

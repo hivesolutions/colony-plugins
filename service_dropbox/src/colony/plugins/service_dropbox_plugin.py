@@ -55,9 +55,6 @@ class ServiceDropboxPlugin(colony.base.plugin_system.Plugin):
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_dropbox/dropbox/resources/baf.xml"
-    }
     capabilities = [
         "service.dropbox",
         "build_automation_item"
@@ -67,8 +64,8 @@ class ServiceDropboxPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
-        "service_dropbox.dropbox.service_dropbox_exceptions",
-        "service_dropbox.dropbox.service_dropbox_system"
+        "service_dropbox.dropbox.system",
+        "service_dropbox.dropbox.exceptions"
     ]
 
     service_dropbox = None
@@ -82,23 +79,8 @@ class ServiceDropboxPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import service_dropbox.dropbox.service_dropbox_system
-        self.service_dropbox = service_dropbox.dropbox.service_dropbox_system.ServiceDropbox(self)
-
-    def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        import service_dropbox.dropbox.system
+        self.service_dropbox = service_dropbox.dropbox.system.ServiceDropbox(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -116,15 +98,9 @@ class ServiceDropboxPlugin(colony.base.plugin_system.Plugin):
 
         return self.service_dropbox.create_remote_client(service_attributes)
 
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):
         self.main_client_http_plugin = main_client_http_plugin
-
-    def get_json_plugin(self):
-        return self.json_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

@@ -46,7 +46,6 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.security.captcha"
     name = "Security Captcha Plugin"
-    short_name = "Security Captcha"
     description = "A plugin to generate captcha values"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -56,9 +55,6 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.JYTHON_ENVIRONMENT,
         colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/security_captcha/captcha/resources/baf.xml"
-    }
     capabilities = [
         "startup",
         "security_captcha",
@@ -78,24 +74,6 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import security_captcha.captcha.security_captcha_system
         self.security_captcha = security_captcha.captcha.security_captcha_system.SecurityCaptcha(self)
-
-    def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_captcha(self, string_value, properties):
         return self.security_captcha.generate_captcha(string_value, properties)

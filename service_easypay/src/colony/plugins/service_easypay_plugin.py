@@ -47,7 +47,6 @@ class ServiceEasypayPlugin(colony.base.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.service.easypay"
     name = "Easypay Service Plugin"
-    short_name = "Easypay Service Main"
     description = "The plugin that offers the easypay service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -55,20 +54,16 @@ class ServiceEasypayPlugin(colony.base.plugin_system.Plugin):
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_easypay/easypay/resources/baf.xml"
-    }
     capabilities = [
         "service.easypay",
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency(
-        "pt.hive.colony.plugins.main.client.http", "1.x.x")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
     ]
     main_modules = [
-        "service_easypay.easypay.service_easypay_exceptions",
-        "service_easypay.easypay.service_easypay_system"
+        "service_easypay.easypay.exceptions",
+        "service_easypay.easypay.system"
     ]
 
     service_easypay = None
@@ -79,23 +74,8 @@ class ServiceEasypayPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import service_easypay.easypay.service_easypay_system
-        self.service_easypay = service_easypay.easypay.service_easypay_system.ServiceEasypay(self)
-
-    def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        import service_easypay.easypay.system
+        self.service_easypay = service_easypay.easypay.system.ServiceEasypay(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -112,9 +92,6 @@ class ServiceEasypayPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.service_easypay.create_remote_client(service_attributes)
-
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):

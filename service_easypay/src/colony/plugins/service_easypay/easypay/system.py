@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom
 
-import service_easypay_exceptions
+import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -454,7 +454,7 @@ class EasypayClient:
         if not status.startswith(ERROR_STATUS): return
 
         # raises the easypay api error
-        raise service_easypay_exceptions.EasypayApiError("error in request: " + message)
+        raise exceptions.EasypayApiError("error in request: " + message)
 
     def _get_http_client(self):
         """
