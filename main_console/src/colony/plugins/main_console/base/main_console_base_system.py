@@ -205,40 +205,23 @@ class MainConsoleBase:
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the plugin manager
+        # retrieves the plugin manager and uses it to retrieve the
+        # various attributes to be displayed to the user
         plugin_manager = self.main_console_base_plugin.manager
-
-        # retrieves the plugin amnager uid
         plugin_manager_uid = plugin_manager.uid
-
-        # retrieves the plugin manager version
         plugin_manager_version = plugin_manager.get_version()
-
-        # retrieves the plugin manager release
         plugin_manager_release = plugin_manager.get_release()
-
-        # retrieves the plugin manager build
         plugin_manager_build = plugin_manager.get_build()
-
-        # retrieves the plugin manager release date time
         plugin_manager_release_date_time = plugin_manager.get_release_date_time()
-
-        # retrieves the plugin manager layout mode
         plugin_manager_layout_mode = plugin_manager.get_layout_mode()
-
-        # retrieves the plugin manager run mode
         plugin_manager_run_mode = plugin_manager.get_run_mode()
-
-        # retrieves the plugin manager environment
         plugin_manager_environment = plugin_manager.get_environment()
 
-        # retrieves the current time
+        # retrieves the current time and the plugin manager (start)
+        # timestamp and calculates the uptime as the difference between
+        # both values (time delta)
         current_time = time.time()
-
-        # retrieves the plugin manager timestamp
         plugin_manager_timestamp = plugin_manager.plugin_manager_timestamp
-
-        # calculates the uptime
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
@@ -488,6 +471,31 @@ class MainConsoleBase:
             plugin_manager.unload_plugin(plugin_id)
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
+
+    def process_loadall(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the loadll command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_console_base_plugin.manager
+
+        # iterates over all the plugin identifies existent in the
+        # plugin instances map and the loads the associated plugin
+        # this action should be able to trigger the load of all
+        # the plugins available in the current plugin manager
+        for plugin_id in plugin_manager.plugin_instances_map:
+            plugin_manager.load_plugin(plugin_id)
 
     def process_exec(self, arguments, arguments_map, output_method, console_context):
         """
@@ -841,6 +849,10 @@ class MainConsoleBase:
                         "mandatory" : True
                     }
                 ]
+            },
+            "loadall" : {
+                "handler" : self.process_loadall,
+                "help" : "loads all the available plugins"
             },
             "exec" : {
                 "handler" : self.process_exec,
