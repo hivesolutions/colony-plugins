@@ -55,12 +55,8 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/business/helper/resources/baf.xml"
-    }
     capabilities = [
-        "business_helper",
-        "build_automation_item"
+        "business_helper"
     ]
     capabilities_allowed = [
         "entity",
