@@ -42,7 +42,7 @@ import hashlib
 
 import colony.libs.string_buffer_util
 
-import service_facebook_exceptions
+import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -600,7 +600,7 @@ class FacebookClient:
         error_message = data.get("error_msg", None)
 
         # raises the facebook api error
-        raise service_facebook_exceptions.FacebookApiError("error in request: " + error_message)
+        raise exceptions.FacebookApiError("error in request: " + error_message)
 
     def _get_http_client(self):
         """
@@ -914,7 +914,7 @@ class FacebookClientOauth:
         error_message = data.get("error_msg", None)
 
         # raises the facebook api error
-        raise service_facebook_exceptions.FacebookApiError("error in request: " + error_message)
+        raise exceptions.FacebookApiError("error in request: " + error_message)
 
     def _parse_query_string(self, query_string):
         """

@@ -64,8 +64,8 @@ class ServiceFacebookPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
-        "service_facebook.facebook.service_facebook_exceptions",
-        "service_facebook.facebook.service_facebook_system"
+        "service_facebook.facebook.exceptions",
+        "service_facebook.facebook.system"
     ]
 
     service_facebook = None
@@ -79,8 +79,8 @@ class ServiceFacebookPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import service_facebook.facebook.service_facebook_system
-        self.service_facebook = service_facebook.facebook.service_facebook_system.ServiceFacebook(self)
+        import service_facebook.facebook.system
+        self.service_facebook = service_facebook.facebook.system.ServiceFacebook(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
