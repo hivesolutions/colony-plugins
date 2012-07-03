@@ -354,21 +354,6 @@ def _class_lock(class_reference, id_value, entity_manager = None):
     # class and the given id value
     entity_manager.lock(class_reference, id_value)
 
-def _class_get_system(class_reference):
-    """
-    Class method that retrieves the system instance associated
-    with the current entity model class.
-    This method should not overlap the get system method on the
-    instance, and you should used this one to retrieve the absolute
-    related system instance, avoiding problems with inheritance.
-
-    @rtype: Object
-    @return: The system instance associated with the current
-    entity model class.
-    """
-
-    return class_reference._system_instance
-
 def _class_valid(class_reference, entity_manager = None):
     """
     Checks if the current model class reference is valid, according
@@ -1200,19 +1185,6 @@ def get_resource_path(self):
 
     # creates and returns the target request
     return entity_class_pluralized + "/" + id_attribute_value_string
-
-def get_system(self):
-    """
-    Retrieves the current (associated) system instance
-    reference that can be used to retrieve the plugin
-    internal state and global data reference.
-
-    @rtype: Object
-    @return: The system instance associated with the current
-    entity model.
-    """
-
-    return self._system_instance
 
 def is_persisted(self):
     """
