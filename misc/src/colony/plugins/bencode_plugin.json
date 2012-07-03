@@ -1,0 +1,23 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.bencode",
+    "name" : "Bencode Plugin",
+    "short_name" : "Bencode",
+    "description" : "A plugin to serialize and unserialize bencode files",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["serializer.bencode", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "bencode_plugin.py",
+    "resources" : ["bencode_plugin.py", "misc/__init__.py",
+            "misc/bencode/__init__.py", "misc/bencode/bencode_exceptions.py",
+            "misc/bencode/bencode_serializer.py",
+            "misc/bencode/bencode_system.py", "misc/bencode/resources/baf.xml"],
+    "extra_resources" : ["bencode_plugin.pyc", "misc/__init__.pyc",
+            "misc/bencode/__init__.pyc", "misc/bencode/bencode_exceptions.pyc",
+            "misc/bencode/bencode_serializer.pyc",
+            "misc/bencode/bencode_system.pyc"]
+}

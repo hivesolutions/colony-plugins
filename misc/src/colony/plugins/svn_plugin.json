@@ -1,0 +1,19 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.svn",
+    "name" : "Svn Plugin",
+    "short_name" : "Svn",
+    "description" : "A plugin to manage svn repositories",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["svn", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "svn_plugin.py",
+    "resources" : ["svn_plugin.py", "misc/__init__.py", "misc/svn/__init__.py",
+            "misc/svn/svn_system.py", "misc/svn/resources/baf.xml"],
+    "extra_resources" : ["svn_plugin.pyc", "misc/__init__.pyc",
+            "misc/svn/__init__.pyc", "misc/svn/svn_system.pyc"]
+}
