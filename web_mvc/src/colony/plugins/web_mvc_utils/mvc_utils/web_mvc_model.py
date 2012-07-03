@@ -200,6 +200,21 @@ def _class_new(class_reference, map = None, rest_request = None):
     # returns the created model
     return model
 
+def _class_get_system(class_reference):
+    """
+    Class method that retrieves the system instance associated
+    with the current model class.
+    This method should not overlap the get system method on the
+    instance, and you should used this one to retrieve the absolute
+    related system instance, avoiding problems with inheritance.
+
+    @rtype: Object
+    @return: The system instance associated with the current
+    model class.
+    """
+
+    return class_reference._system_instance
+
 def apply(self, map):
     """
     "Applies" the given map of "form" values into the current
@@ -324,6 +339,19 @@ def apply(self, map):
         # attaches the entity back to the data source
         # for correct persistence structures
         self.attach(force = False)
+
+def get_system(self):
+    """
+    Retrieves the current (associated) system instance
+    reference that can be used to retrieve the plugin
+    internal state and global data reference.
+
+    @rtype: Object
+    @return: The system instance associated with the current
+    entity model.
+    """
+
+    return self._system_instance
 
 def get_attribute_name(self, attribute_name):
     """
@@ -1592,7 +1620,7 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
                 attribute_model = attribute_model.get_value(target_token)
 
             # adds an error to the duplicated attribute
-            attribute_model.add_error(target_attribute_name, "value is same")
+            attribute_model.add_error(target_attribute_name, "value is the same")
 
             # adds an error to the model that has the duplicated attribute
             model and model.add_error(model_attribute_name, "value has duplicate")
