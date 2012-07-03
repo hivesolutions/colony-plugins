@@ -1,0 +1,32 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.main.client.http",
+    "name" : "Http Client Main Plugin",
+    "short_name" : "Http Client Main",
+    "description" : "The plugin that offers the http client",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["client.http", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.utils",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.url_parser",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "main_client_http_plugin.py",
+    "resources" : ["main_client_http_plugin.py",
+            "main_client_http/__init__.py",
+            "main_client_http/http/__init__.py",
+            "main_client_http/http/main_client_http_exceptions.py",
+            "main_client_http/http/main_client_http_system.py",
+            "main_client_http/http/resources/baf.xml"],
+    "extra_resources" : ["main_client_http_plugin.pyc",
+            "main_client_http/__init__.pyc",
+            "main_client_http/http/__init__.pyc",
+            "main_client_http/http/main_client_http_exceptions.pyc",
+            "main_client_http/http/main_client_http_system.pyc"]
+}

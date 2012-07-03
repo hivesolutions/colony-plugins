@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.execution_environment",
+    "name" : "Execution Environment Plugin",
+    "short_name" : "Execution Environment",
+    "description" : "A plugin to manage the execution environment",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["execution_environment", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "execution_environment_plugin.py",
+    "resources" : ["execution_environment_plugin.py", "misc/__init__.py",
+            "misc/execution_environment/__init__.py",
+            "misc/execution_environment/execution_environment_system.py",
+            "misc/execution_environment/resources/baf.xml"],
+    "extra_resources" : ["execution_environment_plugin.pyc",
+            "misc/__init__.pyc", "misc/execution_environment/__init__.pyc",
+            "misc/execution_environment/execution_environment_system.pyc"]
+}

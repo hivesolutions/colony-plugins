@@ -1,0 +1,25 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.format.mime.utils",
+    "name" : "Mime Format Utils Plugin",
+    "short_name" : "Mime Format Utils",
+    "description" : "The plugin that offers the mime format utils support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["format.mime.utils", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "format_mime_utils_plugin.py",
+    "resources" : ["format_mime_utils_plugin.py", "format/__init__.py",
+            "format/mime_utils/__init__.py",
+            "format/mime_utils/format_mime_utils_system.py",
+            "format/mime_utils/resources/baf.xml"],
+    "extra_resources" : ["format_mime_utils_plugin.pyc", "format/__init__.pyc",
+            "format/mime_utils/__init__.pyc",
+            "format/mime_utils/format_mime_utils_system.pyc"]
+}

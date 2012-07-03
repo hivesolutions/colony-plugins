@@ -1,0 +1,31 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.twitter",
+    "name" : "Twitter Service Plugin",
+    "short_name" : "Twitter Service Main",
+    "description" : "The plugin that offers the twitter service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.twitter", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "service_twitter_plugin.py",
+    "resources" : ["service_twitter_plugin.py", "service_twitter/__init__.py",
+            "service_twitter/twitter/__init__.py",
+            "service_twitter/twitter/service_twitter_exceptions.py",
+            "service_twitter/twitter/service_twitter_system.py",
+            "service_twitter/twitter/resources/baf.xml"],
+    "extra_resources" : ["service_twitter_plugin.pyc",
+            "service_twitter/__init__.pyc",
+            "service_twitter/twitter/__init__.pyc",
+            "service_twitter/twitter/service_twitter_exceptions.pyc",
+            "service_twitter/twitter/service_twitter_system.pyc"]
+}

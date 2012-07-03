@@ -1,0 +1,39 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.openid",
+    "name" : "Openid Service Plugin",
+    "short_name" : "Openid Service Main",
+    "description" : "The plugin that offers the openid service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.openid", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.service.yadis",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.encryption.diffie_hellman",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.random",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "service_openid_plugin.py",
+    "resources" : ["service_openid_plugin.py", "service_openid/__init__.py",
+            "service_openid/openid/__init__.py",
+            "service_openid/openid/service_openid_exceptions.py",
+            "service_openid/openid/service_openid_parser.py",
+            "service_openid/openid/service_openid_system.py",
+            "service_openid/openid/resources/baf.xml"],
+    "extra_resources" : ["service_openid_plugin.pyc",
+            "service_openid/__init__.pyc",
+            "service_openid/openid/__init__.pyc",
+            "service_openid/openid/service_openid_exceptions.pyc",
+            "service_openid/openid/service_openid_parser.pyc",
+            "service_openid/openid/service_openid_system.pyc"]
+}

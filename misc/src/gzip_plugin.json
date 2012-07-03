@@ -1,0 +1,20 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.misc.gzip",
+    "name" : "Gzip Plugin",
+    "short_name" : "Gzip",
+    "description" : "A plugin to manage gzip files",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["zip", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "gzip_plugin.py",
+    "resources" : ["gzip_plugin.py", "misc/__init__.py",
+            "misc/gzip/__init__.py", "misc/gzip/gzip_system.py",
+            "misc/gzip/resources/baf.xml"],
+    "extra_resources" : ["gzip_plugin.pyc", "misc/__init__.pyc",
+            "misc/gzip/__init__.pyc", "misc/gzip/gzip_system.pyc"]
+}

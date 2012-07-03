@@ -1,0 +1,20 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.misc.random",
+    "name" : "Random Plugin",
+    "short_name" : "Random",
+    "description" : "A plugin to generate ramdom numbers",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["random", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "random_plugin.py",
+    "resources" : ["random_plugin.py", "misc/__init__.py",
+            "misc/random/__init__.py", "misc/random/random_system.py",
+            "misc/random/resources/baf.xml"],
+    "extra_resources" : ["random_plugin.pyc", "misc/__init__.pyc",
+            "misc/random/__init__.pyc", "misc/random/random_system.pyc"]
+}

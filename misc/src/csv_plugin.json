@@ -1,0 +1,21 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.misc.csv",
+    "name" : "Csv Plugin",
+    "short_name" : "Csv",
+    "description" : "A plugin to serialize and unserialize csv files",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["serializer.csv", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "csv_plugin.py",
+    "resources" : ["csv_plugin.py", "misc/__init__.py", "misc/csv/__init__.py",
+            "misc/csv/csv_exceptions.py", "misc/csv/csv_serializer.py",
+            "misc/csv/csv_system.py", "misc/csv/resources/baf.xml"],
+    "extra_resources" : ["csv_plugin.pyc", "misc/__init__.pyc",
+            "misc/csv/__init__.pyc", "misc/csv/csv_exceptions.pyc",
+            "misc/csv/csv_serializer.pyc", "misc/csv/csv_system.pyc"]
+}

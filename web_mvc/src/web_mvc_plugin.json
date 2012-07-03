@@ -1,0 +1,36 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.web.mvc",
+    "name" : "Web Mvc Plugin",
+    "short_name" : "Web Mvc",
+    "description" : "The plugin that offers a web strategy abstraction for mvc management",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["web.mvc", "rest_service", "build_automation_item"],
+    "capabilities_allowed" : ["web.mvc_service"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.random",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "web_mvc_plugin.py",
+    "resources" : ["web_mvc_plugin.py", "web_mvc/__init__.py",
+            "web_mvc/mvc/__init__.py",
+            "web_mvc/mvc/web_mvc_communication_handler.py",
+            "web_mvc/mvc/web_mvc_exceptions.py",
+            "web_mvc/mvc/web_mvc_file_handler.py",
+            "web_mvc/mvc/web_mvc_system.py", "web_mvc/mvc/resources/baf.xml"],
+    "extra_resources" : ["web_mvc_plugin.pyc", "web_mvc/__init__.pyc",
+            "web_mvc/mvc/__init__.pyc",
+            "web_mvc/mvc/web_mvc_communication_handler.pyc",
+            "web_mvc/mvc/web_mvc_exceptions.pyc",
+            "web_mvc/mvc/web_mvc_file_handler.pyc",
+            "web_mvc/mvc/web_mvc_system.pyc"]
+}

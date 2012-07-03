@@ -1,0 +1,412 @@
+@charset "utf-8";
+
+/*
+ Hive Colony Web Framework
+ Copyright (c) 2008-2012 Hive Solutions Lda.
+
+ This file is part of Hive Colony Web Framework.
+
+ Hive Colony Web Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Web Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Web Framework. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+ __author__    = João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision$
+ __date__      = $LastChangedDate$
+ __copyright__ = Copyright (c) 2008-2012 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+*/
+
+/**
+ * @fileoverview This file contains some initial CSS styles for the environment.
+ *
+ * @author João Magalhães <joamag@hive.pt>
+ * @version 1.0.0
+ */
+
+body {
+    color: #000000;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    font-size: 90%;
+    font-size-adjust: none;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: normal;
+    margin: 0px 0px 0px 0px;
+}
+
+#wiki-contents {
+    margin: 0px auto 10px auto;
+    min-width: 800px;
+    width: 70%;
+}
+
+p {
+    font-size: 9pt;
+    line-height: 1.6em;
+    margin: 1.0em 0.0em 1.0em 0.0em;
+}
+
+h1, h2, h3, h4, h5 {
+    color: #20435c;
+    font-family: "Trebuchet MS", "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    font-weight: bold;
+}
+
+h1, h2, h3 {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #cccccc;
+    padding: 6px 0px 3px 5px;
+}
+
+h1 {
+    font-size: 200%;
+}
+
+h2 {
+    font-size: 150%;
+}
+
+h3 {
+    font-size: 130%;
+}
+
+h4 {
+    font-size: 100%;
+}
+
+h5 {
+    font-size: 80%;
+}
+
+ul {
+    color: #20435c;
+    line-height: 175%;
+    list-style-image: none;
+    list-style-type: square;
+}
+
+ol {
+    color: #20435c;
+    line-height: 175%;
+}
+
+li.indentation-1 {
+    margin-left: 0em;
+}
+
+li.indentation-2 {
+    margin-left: 2em;
+}
+
+li.indentation-3 {
+    margin-left: 4em;
+}
+
+li.indentation-4 {
+    margin-left: 6em;
+}
+
+li.indentation-5 {
+    margin-left: 8em;
+}
+
+li > div {
+    color: #000000;
+    font-weight: normal;
+}
+
+a {
+    color: #355f7c;
+    text-decoration: none;
+}
+
+a:hover {
+    border-bottom: 1px solid #355f7c;
+}
+
+a.external {
+    background: transparent url(../images/link_icon.png) no-repeat scroll 0 2px;
+    padding: 1px 0px 1px 20px;
+}
+
+a.headerlink {
+    color: #c60f0f;
+    font-size: 750;
+    margin: 0em -0.3em;
+    padding: 0px 4px;
+    text-decoration: none;
+    visibility: hidden;
+}
+
+a.headerlink:hover {
+    background-color: #c60f0f;
+    color: white;
+    text-decoration: none;
+}
+
+h1:hover > a.headerlink,
+h2:hover > a.headerlink,
+h3:hover > a.headerlink,
+h4:hover > a.headerlink,
+h5:hover > a.headerlink {
+    visibility: visible;
+}
+
+.image {
+    background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
+    overflow: auto;
+    padding: 1.2em 1.2em 0.6em 3.2em;
+    text-align: center;
+}
+
+.image img {
+    -moz-box-shadow: 0.25em 0.25em 2em rgba(0, 0, 0, 0.35);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0.25em 0.25em 2em;
+}
+
+.image .image-id {
+    color: #20435c;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.image p {
+    font-size: 90%;
+    margin: 10px 0px 6px 0px;
+}
+
+#wiki-header {
+    background: transparent url(../images/header.png) repeat-x;
+    height: 95px;
+}
+
+#wiki-header .wiki-header-contents {
+    margin: 0px auto 10px auto;
+    min-width: 800px;
+    padding-top: 12px;
+    width: 70%;
+}
+
+.wiki-header-contents .logo-image {
+    float: left;
+}
+
+.wiki-header-contents .logo-image img {
+    border: none;
+}
+
+.wiki-header-contents .logo-image a:hover {
+    border-bottom: none;
+}
+
+#wiki-footer {
+    background-color: #f2f2f2;
+    color: #999999;
+    font-size: 60%;
+}
+
+#wiki-footer .wiki-footer-contents {
+    height: 38px;
+    margin: 0px auto 0px auto;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    width: 70%;
+}
+
+.wiki-footer-contents .logo-image {
+    float: left;
+    margin-right: 12px;
+    margin-top: 4px;
+}
+
+.wiki-footer-contents .logo-image img {
+    border: none;
+}
+
+.wiki-footer-contents .logo-image a:hover {
+    border-bottom: none;
+}
+
+.wiki-footer-contents .separator {
+    float: left;
+}
+
+.wiki-footer-contents .text-contents {
+    float: left;
+    margin-left: 12px;
+    margin-top: 4px;
+}
+
+.highlight {
+    background: #d5e9f6 url(../images/colony_watermark.png) no-repeat scroll right bottom;
+    color: #444444;
+    min-height: 64px;
+    padding: 18px 22px 14px 22px;
+}
+
+.highlight b {
+    font-size: 16pt;
+}
+
+.highlight P {
+    font-size: 13pt;
+    margin: 0.6em 0.0em 0.2em 0.0em;
+}
+
+.highlight ul {
+    color: #333333;
+    line-height: 2.0em;
+    list-style-type: upper-roman;
+}
+
+.highlight li > div {
+    color: #333333;
+}
+
+.highlight li > div > b {
+    font-size: 11pt;
+}
+
+.highlight .directory-list-image {
+    float: left;
+}
+
+.highlight .directory-list-text {
+    margin-left: 82px;
+    word-wrap: break-word;
+}
+
+.command {
+    background: #eeeeee url(../images/console_icon.png) no-repeat scroll 6px 5px;
+    color: #20435c;
+    font-family: monospace;
+    font-size: 110%;
+    font-weight: bold;
+    padding: 4px 8px 4px 28px;
+}
+
+.directory-list {
+    background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
+    line-height: 1.5em;
+    padding: 18px 32px 18px 52px;
+}
+
+.directory-list .table-view table {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.directory-list .table-view table th {
+    border-bottom: 1px solid #b2b2b2;
+    height: 36px;
+}
+
+.directory-list .table-view table tr {
+    height: 36px;
+}
+
+.directory-list .table-view table .column.name {
+    text-align: left;
+}
+
+.directory-list .table-view table .column.date {
+    text-align: right;
+    width: 240px;
+}
+
+.directory-list .table-view table .column.size {
+    text-align: right;
+    width: 60px;
+}
+
+.directory-list .table-view table .name {
+    background-position: 0px 4px;
+    padding-left: 30px;
+}
+
+.directory-list .table-view table .date , .size {
+    text-align: right;
+}
+
+.directory-list .mosaic-view .item {
+    float: left;
+    height: 60px;
+    margin-bottom: 20px;
+    width: 250px;
+}
+
+.directory-list .mosaic-view .item p {
+    margin: 0px 0px 0px 58px;
+}
+
+.directory-list .mosaic-view .item .name {
+    word-wrap: break-word;
+}
+
+.directory-list .mosaic-view .item .description {
+    color: #666666;
+    font-size: 8pt;
+}
+
+.directory-list .thumbnail-view .item {
+    background-position: top center;
+    float: left;
+    height: 100px;
+    width: 150px;
+}
+
+.directory-list .thumbnail-view .item .name {
+    padding-top: 40px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.monospace {
+    color: #20435c;
+    font-size: 110%;
+    font-weight: bold;
+}
+
+.folder-small {
+    background: transparent url(../images/folder-small.png) no-repeat;
+}
+
+.file-small {
+    background: transparent url(../images/file-small.png) no-repeat;
+}
+
+.folder-large {
+    background: transparent url(../images/folder-large.png) no-repeat;
+}
+
+.file-large {
+    background: transparent url(../images/file-large.png) no-repeat;
+}
+
+.view-modes {
+    clear: both;
+    margin: 0px auto 0px auto;
+    text-align: center;
+}
+
+.view-modes a {
+    margin: 0px 6px 0px 6px;
+}
+
+.view-modes a.active {
+    color: #000000;
+}

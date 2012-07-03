@@ -1,0 +1,20 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.timer",
+    "name" : "Timer Plugin",
+    "short_name" : "Timer",
+    "description" : "Provides time monitoring features (start, stop, time elapsed, etc..)",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["timer", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "timer_plugin.py",
+    "resources" : ["timer_plugin.py", "misc/__init__.py",
+            "misc/timer/__init__.py", "misc/timer/timer_system.py",
+            "misc/timer/resources/baf.xml"],
+    "extra_resources" : ["timer_plugin.pyc", "misc/__init__.pyc",
+            "misc/timer/__init__.pyc", "misc/timer/timer_system.pyc"]
+}

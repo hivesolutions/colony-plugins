@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.main.remote.manager",
+    "name" : "Remote Manager Main Plugin",
+    "short_name" : "Remote Manager Main",
+    "description" : "Remote Manager Main Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["rpc_handler_manager", "build_automation_item"],
+    "capabilities_allowed" : ["rpc_handler"],
+    "dependencies" : [],
+    "main_file" : "main_remote_manager_plugin.py",
+    "resources" : ["main_remote_manager_plugin.py", "main_remote/__init__.py",
+            "main_remote/manager/__init__.py",
+            "main_remote/manager/main_remote_manager_system.py",
+            "main_remote/manager/resources/baf.xml"],
+    "extra_resources" : ["main_remote_manager_plugin.pyc",
+            "main_remote/__init__.pyc", "main_remote/manager/__init__.pyc",
+            "main_remote/manager/main_remote_manager_system.pyc"]
+}
