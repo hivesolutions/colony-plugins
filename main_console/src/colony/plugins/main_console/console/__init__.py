@@ -22,10 +22,10 @@
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 15295 $"
+__revision__ = "$LastChangedRevision$"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2011-07-14 19:14:42 +0100 (qui, 14 Jul 2011) $"
+__date__ = "$LastChangedDate$"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
