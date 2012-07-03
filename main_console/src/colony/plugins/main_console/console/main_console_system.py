@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (C) 2008 Hive Solutions Lda.
+# Copyright (c) 2008-2012 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -31,7 +31,7 @@ __revision__ = "$LastChangedRevision$"
 __date__ = "$LastChangedDate: 2012-03-17 14:24:13 +0000 (sáb, 17 Mar 2012) $"
 """ The last change date of the module """
 
-__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "GNU General Public License (GPL), Version 3"
