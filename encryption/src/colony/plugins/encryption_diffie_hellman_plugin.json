@@ -1,0 +1,23 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.encryption.diffie_hellman",
+    "name" : "Diffie Hellman Encryption Plugin",
+    "short_name" : "Diffie Hellman Encryption",
+    "description" : "The plugin that offers the diffie hellman encryption support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["encryption.diffie_hellman", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "encryption_diffie_hellman_plugin.py",
+    "resources" : ["encryption_diffie_hellman_plugin.py",
+            "encryption/__init__.py", "encryption/diffie_hellman/__init__.py",
+            "encryption/diffie_hellman/encryption_diffie_hellman_system.py",
+            "encryption/diffie_hellman/resources/baf.xml"],
+    "extra_resources" : ["encryption_diffie_hellman_plugin.pyc",
+            "encryption/__init__.pyc",
+            "encryption/diffie_hellman/__init__.pyc",
+            "encryption/diffie_hellman/encryption_diffie_hellman_system.pyc"]
+}
