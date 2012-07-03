@@ -1,0 +1,29 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.main.service.ssl_socket_upgrader",
+    "name" : "Service Main Ssl Socket Upgrader Plugin",
+    "short_name" : "Service Main Ssl Socket Upgrader",
+    "description" : "The plugin that offers the ssl socket upgrader",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["socket_upgrader", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "main_service_ssl_socket_upgrader_plugin.py",
+    "resources" : [
+            "main_service_ssl_socket_upgrader_plugin.py",
+            "main_service_ssl_socket_upgrader/__init__.py",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/__init__.py",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/main_service_ssl_socket_upgrader_system.py",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/baf.xml",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/dummy.crt",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/dummy.csr",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/dummy.key"],
+    "extra_resources" : [
+            "main_service_ssl_socket_upgrader_plugin.pyc",
+            "main_service_ssl_socket_upgrader/__init__.pyc",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/__init__.pyc",
+            "main_service_ssl_socket_upgrader/ssl_socket_upgrader/main_service_ssl_socket_upgrader_system.pyc"]
+}
