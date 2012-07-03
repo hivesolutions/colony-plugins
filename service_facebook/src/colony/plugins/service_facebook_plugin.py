@@ -55,9 +55,6 @@ class ServiceFacebookPlugin(colony.base.plugin_system.Plugin):
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_facebook/facebook/resources/baf.xml"
-    }
     capabilities = [
         "service.facebook",
         "build_automation_item"
