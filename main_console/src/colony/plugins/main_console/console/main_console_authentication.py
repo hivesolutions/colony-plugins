@@ -78,25 +78,24 @@ class MainConsoleAuthentication:
         """
 
         # in case the authentication handler property is not defined
+        # must raise the missing property exception
         if not AUTHENTICATION_HANDLER_VALUE in properties:
-            # raises the missing property exception
             raise main_console_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
 
-        # in case the arguments property is not defined
+        # in case the arguments property is not defined must raise the
+        # missing property exception
         if not ARGUMENTS_VALUE in properties:
-            # raises the missing property exception
             raise main_console_exceptions.MissingProperty(ARGUMENTS_VALUE)
 
-        # retrieves the authentication handler
+        # retrieves the various property elements from the provided
+        # map of properties, this should include the authentication
+        # handler and the arguments for authentication
         authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
-
-        # retrieves the arguments
         arguments = properties[ARGUMENTS_VALUE]
 
-        # retrieves the main authentication plugin
+        # retrieves the main authentication plugin and uses it to try
+        # to authenticate the current user retrieving the result
         main_authentication_plugin = self.main_console_plugin.main_authentication_plugin
-
-        # authenticates the user with the main authentication plugin retrieving the result
         authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
 
         # returns the authentication result
