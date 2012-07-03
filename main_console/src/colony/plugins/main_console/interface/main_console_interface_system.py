@@ -130,21 +130,18 @@ class MainConsoleInterface:
         # the console interface should start)
         active = self.console_interface_configuration.get(ACTIVE_VALUE, True)
 
-        # in case the active flag is not set
-        if not active:
-            # returns immediately
-            return
+        # in case the active flag is not set, must return immediately
+        # no need to load the console
+        if not active: return
 
-        # in case the main console interface class is
-        # not defined
+        # in case the main console interface class is not defined, must
+        # raise the undefined console exception 
         if not main_console_interface_class:
-            # raises the undefined console interface exception
             raise main_console_interface_exceptions.UndefinedConsoleInterface("no class available")
 
-        # creates a new main console interface system
+        # creates a new main console interface system and uses it to
+        # create a new console context to be used
         self.main_console_interface = main_console_interface_class(self.main_console_interface_plugin, self)
-
-        # creates a new console context
         main_console_context = main_console_plugin.create_console_context()
 
         try:
