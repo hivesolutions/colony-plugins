@@ -1,0 +1,25 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.data.file_manager.gridfs_engine",
+    "name" : "File Manager Gridfs Engine Plugin",
+    "short_name" : "File Manager Gridfs Engine",
+    "description" : "File Manager Gridfs Engine Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["file_manager_engine", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "file_manager_gridfs_engine_plugin.py",
+    "resources" : [
+            "file_manager_gridfs_engine_plugin.py",
+            "data/__init__.py",
+            "data/file_manager_gridfs_engine/__init__.py",
+            "data/file_manager_gridfs_engine/file_manager_gridfs_engine_system.py",
+            "data/file_manager_gridfs_engine/resources/baf.xml"],
+    "extra_resources" : ["file_manager_gridfs_engine_plugin.pyc",
+            "data/__init__.pyc",
+            "data/file_manager_gridfs_engine/__init__.pyc",
+            "data/file_manager_gridfs_engine/file_manager_gridfs_engine_system.pyc"]
+}
