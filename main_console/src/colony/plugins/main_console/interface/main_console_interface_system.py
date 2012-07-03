@@ -135,7 +135,7 @@ class MainConsoleInterface:
         if not active: return
 
         # in case the main console interface class is not defined, must
-        # raise the undefined console exception 
+        # raise the undefined console exception
         if not main_console_interface_class:
             raise main_console_interface_exceptions.UndefinedConsoleInterface("no class available")
 
