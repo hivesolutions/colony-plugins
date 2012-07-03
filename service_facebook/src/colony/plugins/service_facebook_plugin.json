@@ -1,0 +1,32 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.facebook",
+    "name" : "Facebook Service Plugin",
+    "short_name" : "Facebook Service Main",
+    "description" : "The plugin that offers the facebook service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.facebook", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "service_facebook_plugin.py",
+    "resources" : ["service_facebook_plugin.py",
+            "service_facebook/__init__.py",
+            "service_facebook/facebook/__init__.py",
+            "service_facebook/facebook/service_facebook_exceptions.py",
+            "service_facebook/facebook/service_facebook_system.py",
+            "service_facebook/facebook/resources/baf.xml"],
+    "extra_resources" : ["service_facebook_plugin.pyc",
+            "service_facebook/__init__.pyc",
+            "service_facebook/facebook/__init__.pyc",
+            "service_facebook/facebook/service_facebook_exceptions.pyc",
+            "service_facebook/facebook/service_facebook_system.pyc"]
+}
