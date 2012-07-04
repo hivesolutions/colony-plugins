@@ -2223,31 +2223,40 @@ class HttpClientServiceHandler:
         # retrieves the verify request flag
         verify_request = service_configuration.get("verify_request", True)
 
-        # in case the request is not meant to be verified
-        if not verify_request:
-            # returns immediately
-            return
+        # in case the request is not meant to be verified must
+        # returns immediately (avoids validation)
+        if not verify_request: return
 
         # retrieves the host value from the request headers
         host = request.headers_map.get(HOST_VALUE, None)
 
-        # in case the host is not defined
+        # in case the host is not defined it's not possible to
+        # execute the security validation so it must raise the
+        # client request security violation exception
         if not host:
-            # raises the client request security violation exception
             raise main_service_http_exceptions.ClientRequestSecurityViolation("host not defined")
 
-        # retrieves the allowed host map
-        allowed_hosts = service_configuration.get("allowed_hosts", {})
+        # retrieves the allowed host map, note that the default
+        # value for the map contains permission to the access
+        # from the local machine domain names
+        allowed_hosts = service_configuration.get(
+            "allowed_hosts",
+            {
+                "127.0.0.1" : True,
+                "localhost" : True
+            }
+        )
 
-        # retrieves the "hostname" from the host
+        # retrieves the "hostname" from the host and uses this value
+        # to check if the hostname is allowed in the allowed hosts
+        # map value (security verification)
         hostname = host.rsplit(":", 1)[0]
-
-        # tries to retrieve the host from the allowed hosts map
         host_allowed = allowed_hosts.get(hostname, False)
 
-        # in case the host is not allowed
+        # in case the host is not allowed, must raise a client request
+        # security violation exception to notify the system about the
+        # security problem (avoids data providing)
         if not host_allowed:
-            # raises the client request security violation exception
             raise main_service_http_exceptions.ClientRequestSecurityViolation("host not allowed: " + hostname)
 
     def _get_service_configuration(self, request):

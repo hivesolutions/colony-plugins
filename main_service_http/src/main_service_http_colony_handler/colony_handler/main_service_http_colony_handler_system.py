@@ -115,17 +115,15 @@ class MainServiceHttpColonyHandler:
                 # is request handler for the current request
                 is_request_handler = http_python_handler_plugin.is_request_handler(request)
 
-                # in case it's not the request handler
-                if not is_request_handler:
-                    # continues the loop
-                    continue
+                # in case it's not the request handler, must continue
+                # the current loop, nothing to handler
+                if not is_request_handler: continue
 
                 # handles the request by the http python handler plugin and
-                # retrieves the return value
+                # retrieves the return value then sets the status code in
+                # the request in case it's defined or default to the error
+                # status in case the handler did not set any status code
                 http_python_handler_plugin.handle_request(request)
-
-                # sets the request status code in case it has
-                # not been already set
                 request.status_code = request.status_code or DEFAULT_ERROR_STATUS_CODE
 
                 # returns immediately
