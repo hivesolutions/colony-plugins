@@ -46,8 +46,7 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.web.mvc.utils"
-    name = "Web Mvc Utils Plugin"
-    short_name = "Web Mvc Utils"
+    name = "Web Mvc Utils"
     description = "The plugin that offers the top-level abstractions for mvc processing"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

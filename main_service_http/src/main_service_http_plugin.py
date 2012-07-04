@@ -46,8 +46,7 @@ class MainServiceHttpPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http"
-    name = "Http Service Main Plugin"
-    short_name = "Http Service Main"
+    name = "Http Service Main"
     description = "The plugin that offers the http service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

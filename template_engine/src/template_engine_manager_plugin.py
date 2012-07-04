@@ -45,8 +45,7 @@ class TemplateEngineManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.template_engine.manager"
-    name = "Template Engine Manager Plugin"
-    short_name = "Template Engine Manager"
+    name = "Template Engine Manager"
     description = "Template Engine Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

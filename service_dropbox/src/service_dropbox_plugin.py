@@ -46,8 +46,7 @@ class ServiceDropboxPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.dropbox"
-    name = "Dropbox Service Plugin"
-    short_name = "Dropbox Service Main"
+    name = "Dropbox Service"
     description = "The plugin that offers the dropbox service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

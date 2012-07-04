@@ -46,8 +46,7 @@ class MainServiceHttpTemplateErrorHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.template_error_handler"
-    name = "Http Service Main Template Error Handler Plugin"
-    short_name = "Http Service Main Template Error Handler"
+    name = "Http Service Main Template Error Handler"
     description = "The plugin that offers the http service template error handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

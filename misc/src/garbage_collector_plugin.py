@@ -45,8 +45,7 @@ class GarbageCollectorPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.garbage_collector"
-    name = "Garbage Collector Plugin"
-    short_name = "Garbage Collector"
+    name = "Garbage Collector"
     description = "Garbage Collector Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

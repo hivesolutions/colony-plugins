@@ -45,8 +45,7 @@ class ConfResourceParserPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.resources.conf_resource_parser"
-    name = "Conf Resource Parser Plugin"
-    short_name = "Conf Resource Parser"
+    name = "Conf Resource Parser"
     description = "A plugin to parse conf resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -45,8 +45,7 @@ class GzipPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.gzip"
-    name = "Gzip Plugin"
-    short_name = "Gzip"
+    name = "Gzip"
     description = "A plugin to manage gzip files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -46,8 +46,7 @@ class MainServiceHttpTemplateDirectoryListHandlerPlugin(colony.base.system.Plugi
     """
 
     id = "pt.hive.colony.plugins.main.service.http.template_directory_list_handler"
-    name = "Http Service Main Template Directory List Handler Plugin"
-    short_name = "Http Service Main Template Directory List Handler"
+    name = "Http Service Main Template Directory List Handler"
     description = "The plugin that offers the http service template directory list handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

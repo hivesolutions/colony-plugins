@@ -45,8 +45,7 @@ class EncryptionSslPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.encryption.ssl"
-    name = "Ssl Encryption Plugin"
-    short_name = "Ssl Encryption"
+    name = "Ssl Encryption"
     description = "The plugin that offers the ssl encryption support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

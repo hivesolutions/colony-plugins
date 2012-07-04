@@ -45,8 +45,7 @@ class AutoloaderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.autoloader"
-    name = "Autoloader Plugin"
-    short_name = "Autoloader"
+    name = "Autoloader"
     description = "Autoloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

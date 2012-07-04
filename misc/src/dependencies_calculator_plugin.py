@@ -45,8 +45,7 @@ class DependenciesCalculatorPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.dependencies_calculator"
-    name = "Dependencies Calculator Plugin"
-    short_name = "Dependencies Calculator"
+    name = "Dependencies Calculator"
     description = "Dependencies Calculator Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -45,8 +45,7 @@ class WebMvcPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.web.mvc"
-    name = "Web Mvc Plugin"
-    short_name = "Web Mvc"
+    name = "Web Mvc"
     description = "The plugin that offers a web strategy abstraction for mvc management"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

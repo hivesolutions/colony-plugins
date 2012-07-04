@@ -46,8 +46,7 @@ class FormatMimePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.format.mime"
-    name = "Mime Format Plugin"
-    short_name = "Mime Format"
+    name = "Mime Format"
     description = "The plugin that offers the mime format support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

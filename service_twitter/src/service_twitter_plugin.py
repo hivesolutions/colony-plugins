@@ -46,8 +46,7 @@ class ServiceTwitterPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.twitter"
-    name = "Twitter Service Plugin"
-    short_name = "Twitter Service Main"
+    name = "Twitter Service"
     description = "The plugin that offers the twitter service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

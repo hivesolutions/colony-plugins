@@ -45,8 +45,7 @@ class YamlResourceParserPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.resources.yaml_resource_parser"
-    name = "Yaml Resource Parser Plugin"
-    short_name = "Yaml Resource Parser"
+    name = "Yaml Resource Parser"
     description = "A plugin to parse yaml resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

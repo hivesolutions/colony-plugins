@@ -46,7 +46,7 @@ class ServiceEasypayPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.easypay"
-    name = "Easypay Service Plugin"
+    name = "Easypay Service"
     description = "The plugin that offers the easypay service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

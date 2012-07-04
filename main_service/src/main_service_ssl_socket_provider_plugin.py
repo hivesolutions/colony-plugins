@@ -45,8 +45,7 @@ class MainServiceSslSocketProviderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.ssl_socket_provider"
-    name = "Service Main Ssl Socket Provider Plugin"
-    short_name = "Service Main Ssl Socket Provider"
+    name = "Service Main Ssl Socket Provider"
     description = "The plugin that offers the ssl socket provider"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

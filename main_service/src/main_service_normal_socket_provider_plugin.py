@@ -45,8 +45,7 @@ class MainServiceNormalSocketProviderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.normal_socket_provider"
-    name = "Service Main Normal Socket Provider Plugin"
-    short_name = "Service Main Normal Socket Provider"
+    name = "Service Main Normal Socket Provider"
     description = "The plugin that offers the normal socket provider"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

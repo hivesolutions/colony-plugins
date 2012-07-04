@@ -45,8 +45,7 @@ class MainAuthenticationXmlHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.authentication.xml_handler"
-    name = "Authentication Xml Handler Main Plugin"
-    short_name = "Authentication Xml Handler Main"
+    name = "Authentication Xml Handler Main"
     description = "Authentication Xml Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

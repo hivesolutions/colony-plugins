@@ -45,8 +45,7 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.authentication.python_handler"
-    name = "Authentication Python Handler Main Plugin"
-    short_name = "Authentication Python Handler Main"
+    name = "Authentication Python Handler Main"
     description = "Authentication Python Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

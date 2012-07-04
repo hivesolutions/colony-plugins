@@ -46,8 +46,7 @@ class EntityManagerSqliteEnginePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.entity_manager.sqlite_engine"
-    name = "Entity Manager Sqlite Engine Plugin"
-    short_name = "Entity Manager Sqlite Engine"
+    name = "Entity Manager Sqlite Engine"
     description = "Entity Manager Sqlite Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

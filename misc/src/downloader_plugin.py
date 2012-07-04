@@ -46,8 +46,7 @@ class DownloaderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.downloader"
-    name = "Downloader Plugin"
-    short_name = "Downloader"
+    name = "Downloader"
     description = "Downloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

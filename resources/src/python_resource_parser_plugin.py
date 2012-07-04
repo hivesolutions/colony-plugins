@@ -45,8 +45,7 @@ class PythonResourceParserPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.resources.python_resource_parser"
-    name = "Python Resource Parser Plugin"
-    short_name = "Python Resource Parser"
+    name = "Python Resource Parser"
     description = "A plugin to parse python resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

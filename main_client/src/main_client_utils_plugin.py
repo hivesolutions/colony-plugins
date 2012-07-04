@@ -46,8 +46,7 @@ class MainClientUtilsPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.client.utils"
-    name = "Client Main Utils Plugin"
-    short_name = "Client Main Utils"
+    name = "Client Main Utils"
     description = "The plugin that offers a utils for clients"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

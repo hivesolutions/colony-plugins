@@ -45,8 +45,7 @@ class TimerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.timer"
-    name = "Timer Plugin"
-    short_name = "Timer"
+    name = "Timer"
     description = "Provides time monitoring features (start, stop, time elapsed, etc..)"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

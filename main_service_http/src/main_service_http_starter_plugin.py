@@ -46,8 +46,7 @@ class MainServiceHttpStarterPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.starter"
-    name = "Http Service Main Starter Plugin"
-    short_name = "Http Service Main Starter"
+    name = "Http Service Main Starter"
     description = "The plugin that starts the http service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

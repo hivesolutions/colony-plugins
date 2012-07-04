@@ -45,8 +45,7 @@ class JsonPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.json"
-    name = "Json Plugin"
-    short_name = "Json"
+    name = "Json"
     description = "A plugin to serialize and unserialize json files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

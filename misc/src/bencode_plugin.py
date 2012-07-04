@@ -45,8 +45,7 @@ class BencodePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.bencode"
-    name = "Bencode Plugin"
-    short_name = "Bencode"
+    name = "Bencode"
     description = "A plugin to serialize and unserialize bencode files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

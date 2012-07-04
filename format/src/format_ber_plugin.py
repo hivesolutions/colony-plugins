@@ -45,8 +45,7 @@ class FormatBerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.format.ber"
-    name = "Ber Format Plugin"
-    short_name = "Ber Format"
+    name = "Ber Format"
     description = "The plugin that offers the ber (basic encoding rules) format support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

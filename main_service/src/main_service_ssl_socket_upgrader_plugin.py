@@ -45,8 +45,7 @@ class MainServiceSslSocketUpgraderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.ssl_socket_upgrader"
-    name = "Service Main Ssl Socket Upgrader Plugin"
-    short_name = "Service Main Ssl Socket Upgrader"
+    name = "Service Main Ssl Socket Upgrader"
     description = "The plugin that offers the ssl socket upgrader"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

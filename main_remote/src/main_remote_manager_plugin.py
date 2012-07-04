@@ -45,8 +45,7 @@ class MainRemoteManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.remote.manager"
-    name = "Remote Manager Main Plugin"
-    short_name = "Remote Manager Main"
+    name = "Remote Manager Main"
     description = "Remote Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

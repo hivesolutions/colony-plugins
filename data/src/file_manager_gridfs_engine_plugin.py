@@ -45,8 +45,7 @@ class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.file_manager.gridfs_engine"
-    name = "File Manager Gridfs Engine Plugin"
-    short_name = "File Manager Gridfs Engine"
+    name = "File Manager Gridfs Engine"
     description = "File Manager Gridfs Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -45,8 +45,7 @@ class MainServiceHttpWebdavHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.webdav_handler"
-    name = "Http Service Main Webdav Handler Plugin"
-    short_name = "Http Service Main Webdav Handler"
+    name = "Http Service Main Webdav Handler"
     description = "The plugin that offers the http service webdav handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -44,8 +44,7 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.websocket_handler"
-    name = "Http Service Main Websocket Handler Plugin"
-    short_name = "Http Service Main Websocket Handler"
+    name = "Http Service Main Websocket Handler"
     description = "The plugin that offers the http service websocket handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

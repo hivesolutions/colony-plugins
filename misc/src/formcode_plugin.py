@@ -45,8 +45,7 @@ class FormcodePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.formcode"
-    name = "Formcode Plugin"
-    short_name = "Formcode"
+    name = "Formcode"
     description = "A plugin to serialize and unserialize formcode files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

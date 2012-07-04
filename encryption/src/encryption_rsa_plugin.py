@@ -45,8 +45,7 @@ class EncryptionRsaPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.encryption.rsa"
-    name = "Rsa Encryption Plugin"
-    short_name = "Rsa Encryption"
+    name = "Rsa Encryption"
     description = "The plugin that offers the rsa encryption support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

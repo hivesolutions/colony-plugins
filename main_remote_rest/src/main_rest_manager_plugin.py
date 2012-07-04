@@ -46,8 +46,7 @@ class MainRestManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.remote.rest.manager"
-    name = "Rest Manager Main Plugin"
-    short_name = "Rest Manager Main"
+    name = "Rest Manager Main"
     description = "Rest Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

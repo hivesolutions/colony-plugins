@@ -46,8 +46,7 @@ class ResourceAutoloaderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.resources.resource_autoloader"
-    name = "Resource Autoloader Plugin"
-    short_name = "Resource Autoloader"
+    name = "Resource Autoloader"
     description = "A plugin to automatically load and reload resource in the plugin system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

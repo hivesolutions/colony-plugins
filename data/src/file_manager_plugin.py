@@ -45,8 +45,7 @@ class FileManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.file_manager"
-    name = "File Manager Plugin"
-    short_name = "Data File Manager"
+    name = "File Manager"
     description = "The plugin that manages the file system abstraction sub system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

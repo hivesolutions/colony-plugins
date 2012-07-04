@@ -46,8 +46,7 @@ class WorkPoolManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.work.work_pool_manager"
-    name = "Work Pool Manager Plugin"
-    short_name = "Work Pool Manager"
+    name = "Work Pool Manager"
     description = "Work Pool Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

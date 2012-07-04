@@ -45,8 +45,7 @@ class ServiceOpenidPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.openid"
-    name = "Openid Service Plugin"
-    short_name = "Openid Service Main"
+    name = "Openid Service"
     description = "The plugin that offers the openid service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

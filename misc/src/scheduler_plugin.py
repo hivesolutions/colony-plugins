@@ -46,8 +46,7 @@ class SchedulerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.scheduler"
-    name = "Scheduler Plugin"
-    short_name = "Scheduler"
+    name = "Scheduler"
     description = "A plugin to manage the scheduling of tasks"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -46,8 +46,7 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.main_authentication_handler"
-    name = "Http Service Main Main Authentication Handler Plugin"
-    short_name = "Http Service Main Main Authentication Handler"
+    name = "Http Service Main Main Authentication Handler"
     description = "The plugin that offers the http service authentication main handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

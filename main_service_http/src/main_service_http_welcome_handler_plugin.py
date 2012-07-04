@@ -45,8 +45,7 @@ class MainServiceHttpWelcomeHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.welcome_handler"
-    name = "Http Service Main Welcome Handler Plugin"
-    short_name = "Http Service Main Welcome Handler"
+    name = "Http Service Main Welcome Handler"
     description = "The plugin that offers the http service welcome handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

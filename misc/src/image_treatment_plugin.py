@@ -45,8 +45,7 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.image_treatment"
-    name = "Image Treatment Plugin"
-    short_name = "Image Treatment"
+    name = "Image Treatment"
     description = "Image Treatment Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

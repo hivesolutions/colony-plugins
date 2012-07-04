@@ -45,8 +45,7 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.datagram_socket_provider"
-    name = "Service Main Datagram Socket Provider Plugin"
-    short_name = "Service Main Datagram Socket Provider"
+    name = "Service Main Datagram Socket Provider"
     description = "The plugin that offers the Datagram socket provider"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

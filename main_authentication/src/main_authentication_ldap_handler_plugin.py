@@ -45,8 +45,7 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.authentication.ldap_handler"
-    name = "Authentication Ldap Handler Main Plugin"
-    short_name = "Authentication Ldap Handler Main"
+    name = "Authentication Ldap Handler Main"
     description = "Authentication Ldap Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

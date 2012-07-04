@@ -45,8 +45,7 @@ class CsvPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.csv"
-    name = "Csv Plugin"
-    short_name = "Csv"
+    name = "Csv"
     description = "A plugin to serialize and unserialize csv files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

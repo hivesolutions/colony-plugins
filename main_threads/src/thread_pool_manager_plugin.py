@@ -45,8 +45,7 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.threads.thread_pool_manager"
-    name = "Thread Pool Manager Plugin"
-    short_name = "Thread Pool Manager"
+    name = "Thread Pool Manager"
     description = "Thread Pool Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

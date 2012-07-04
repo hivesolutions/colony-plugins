@@ -45,8 +45,7 @@ class EncryptionDiffieHellmanPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.encryption.diffie_hellman"
-    name = "Diffie Hellman Encryption Plugin"
-    short_name = "Diffie Hellman Encryption"
+    name = "Diffie Hellman Encryption"
     description = "The plugin that offers the diffie hellman encryption support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

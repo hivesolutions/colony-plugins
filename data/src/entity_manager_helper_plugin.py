@@ -45,8 +45,7 @@ class EntityManagerHelperPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.entity_manager_helper"
-    name = "Entity Manager Helper Plugin"
-    short_name = "Entity Manager Helper"
+    name = "Entity Manager Helper"
     description = "Entity Manager Helper Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

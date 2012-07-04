@@ -46,8 +46,7 @@ class ConsoleInterfacePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.console.interface"
-    name = "Console Interface Plugin"
-    short_name = "Console Interface"
+    name = "Console Interface"
     description = "The console plugin that controls the console interface"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

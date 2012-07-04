@@ -46,8 +46,7 @@ class MainServiceHttpFastCgiHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.fast_cgi_handler"
-    name = "Http Service Main Fast Cgi Handler Plugin"
-    short_name = "Http Service Main Fast Cgi Handler"
+    name = "Http Service Main Fast Cgi Handler"
     description = "The plugin that offers the http service fast cgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

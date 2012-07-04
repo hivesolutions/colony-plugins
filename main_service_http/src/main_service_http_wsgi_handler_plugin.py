@@ -46,8 +46,7 @@ class MainServiceHttpWsgiHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.wsgi_handler"
-    name = "Http Service Main Wsgi Handler Plugin"
-    short_name = "Http Service Main Wsgi Handler"
+    name = "Http Service Main Wsgi Handler"
     description = "The plugin that offers the http service wsgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

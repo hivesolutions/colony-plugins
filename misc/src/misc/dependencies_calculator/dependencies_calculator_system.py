@@ -105,7 +105,7 @@ class PluginGraphGenerator:
                     dependency_graph_node = self.plugin_id_version_node_map[plugin_dependency_tuple]
                     graph_node.connected_nodes_list.append(dependency_graph_node)
                 else:
-                    raise Exception("Plugin dependency not found for plugin '%s' v%s" % (plugin.short_name, plugin.version))
+                    raise Exception("Plugin dependency not found for plugin '%s' v%s" % (plugin.name, plugin.version))
 
     def get_value(self):
         return self.graph

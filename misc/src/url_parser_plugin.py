@@ -45,8 +45,7 @@ class UrlParserPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.url_parser"
-    name = "Url Parser Plugin"
-    short_name = "Url Parser"
+    name = "Url Parser"
     description = "A plugin to parse url for agile interpretation"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

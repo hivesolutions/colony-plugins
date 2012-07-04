@@ -46,8 +46,7 @@ class ServiceFacebookPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.facebook"
-    name = "Facebook Service Plugin"
-    short_name = "Facebook Service Main"
+    name = "Facebook Service"
     description = "The plugin that offers the facebook service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

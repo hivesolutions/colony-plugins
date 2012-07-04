@@ -45,8 +45,7 @@ class ExecutionEnvironmentPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.execution_environment"
-    name = "Execution Environment Plugin"
-    short_name = "Execution Environment"
+    name = "Execution Environment"
     description = "A plugin to manage the execution environment"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

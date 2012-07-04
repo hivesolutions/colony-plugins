@@ -46,8 +46,7 @@ class MainClientHttpPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.client.http"
-    name = "Http Client Main Plugin"
-    short_name = "Http Client Main"
+    name = "Http Client Main"
     description = "The plugin that offers the http client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

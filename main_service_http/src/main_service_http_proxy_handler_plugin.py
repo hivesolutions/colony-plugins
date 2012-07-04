@@ -46,8 +46,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.proxy_handler"
-    name = "Http Service Main Proxy Handler Plugin"
-    short_name = "Http Service Main Proxy Handler"
+    name = "Http Service Main Proxy Handler"
     description = "The plugin that offers the http service proxy handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

@@ -45,8 +45,7 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.web.mvc.encryption"
-    name = "Web Mvc Encryption Service Plugin"
-    short_name = "Web Mvc Encryption Service Main"
+    name = "Web Mvc Encryption Service"
     description = "The plugin that offers the web mvc encryption service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

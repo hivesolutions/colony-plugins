@@ -46,8 +46,7 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.work.work_pool_dummy"
-    name = "Work Pool Dummy Plugin"
-    short_name = "Work Pool Dummy"
+    name = "Work Pool Dummy"
     description = "Work Pool Dummy Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

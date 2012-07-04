@@ -46,8 +46,7 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.colony_handler"
-    name = "Http Service Main Colony Handler Plugin"
-    short_name = "Http Service Main Colony Handler"
+    name = "Http Service Main Colony Handler"
     description = "The plugin that offers the http service colony handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

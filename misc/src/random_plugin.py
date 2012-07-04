@@ -45,8 +45,7 @@ class RandomPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.random"
-    name = "Random Plugin"
-    short_name = "Random"
+    name = "Random"
     description = "A plugin to generate ramdom numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

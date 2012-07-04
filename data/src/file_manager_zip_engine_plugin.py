@@ -45,8 +45,7 @@ class FileManagerZipEnginePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.file_manager.zip_engine"
-    name = "File Manager Zip Engine Plugin"
-    short_name = "File Manager Zip Engine"
+    name = "File Manager Zip Engine"
     description = "File Manager Zip Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

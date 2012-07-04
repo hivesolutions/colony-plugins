@@ -45,7 +45,7 @@ class SecurityCaptchaPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.security.captcha"
-    name = "Security Captcha Plugin"
+    name = "Security Captcha"
     description = "A plugin to generate captcha values"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

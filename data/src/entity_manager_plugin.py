@@ -46,8 +46,7 @@ class EntityManagerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.entity_manager"
-    name = "Entity Manager Plugin"
-    short_name = "Data Entity Manager"
+    name = "Entity Manager"
     description = "The plugin that manages the entity manager orm system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

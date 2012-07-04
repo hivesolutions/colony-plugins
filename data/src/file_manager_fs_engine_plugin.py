@@ -45,8 +45,7 @@ class FileManagerFsEnginePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.file_manager.fs_engine"
-    name = "File Manager File System Engine Plugin"
-    short_name = "File Manager File System Engine"
+    name = "File Manager File System Engine"
     description = "File Manager File System Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

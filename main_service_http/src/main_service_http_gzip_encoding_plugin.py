@@ -46,8 +46,7 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.gzip_encoding"
-    name = "Http Service Main Gzip Encoding Plugin"
-    short_name = "Http Service Main Gzip Encoding"
+    name = "Http Service Main Gzip Encoding"
     description = "The plugin that offers the http service gzip encoding"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

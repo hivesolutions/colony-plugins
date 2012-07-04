@@ -46,8 +46,7 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.business.helper"
-    name = "Business Helper Plugin"
-    short_name = "Business Helper"
+    name = "Business Helper"
     description = "Business Helper Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

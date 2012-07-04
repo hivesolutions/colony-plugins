@@ -46,8 +46,7 @@ class EmailPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.email"
-    name = "Email Plugin"
-    short_name = "Email"
+    name = "Email"
     description = "Email Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

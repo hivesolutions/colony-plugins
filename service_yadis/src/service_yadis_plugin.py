@@ -46,8 +46,7 @@ class ServiceYadisPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.yadis"
-    name = "Yadis Service Plugin"
-    short_name = "Yadis Service Main"
+    name = "Yadis Service"
     description = "The plugin that offers the yadis service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

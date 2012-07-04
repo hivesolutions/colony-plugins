@@ -45,8 +45,7 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.utils"
-    name = "Service Main Utils Plugin"
-    short_name = "Service Main Utils"
+    name = "Service Main Utils"
     description = "The plugin that offers a utils for services"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

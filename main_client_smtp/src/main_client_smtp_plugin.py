@@ -46,8 +46,7 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.client.smtp"
-    name = "Smtp Client Main Plugin"
-    short_name = "Smtp Client Main"
+    name = "Smtp Client Main"
     description = "The plugin that offers the smtp client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

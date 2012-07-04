@@ -45,8 +45,7 @@ class GuidPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid Plugin"
-    short_name = "Guid"
+    name = "Guid"
     description = "A plugin to generate guid numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

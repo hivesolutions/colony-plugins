@@ -46,8 +46,7 @@ class MainServiceHttpCgiHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.cgi_handler"
-    name = "Http Service Main Cgi Handler Plugin"
-    short_name = "Http Service Main Cgi Handler"
+    name = "Http Service Main Cgi Handler"
     description = "The plugin that offers the http service cgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

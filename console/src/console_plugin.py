@@ -46,8 +46,7 @@ class ConsolePlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.console"
-    name = "Console Plugin"
-    short_name = "Console"
+    name = "Console"
     description = "The console plugin that controls the console"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

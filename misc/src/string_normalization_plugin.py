@@ -45,8 +45,7 @@ class StringNormalizationPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.misc.string_normalization"
-    name = "String Normalization Plugin"
-    short_name = "String Normalization"
+    name = "String Normalization"
     description = "A plugin to manage the normalization of strings"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

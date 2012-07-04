@@ -46,8 +46,7 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.service.http.system_information_handler"
-    name = "Http Service Main System Information Handler Plugin"
-    short_name = "Http Service Main System Information Handler"
+    name = "Http Service Main System Information Handler"
     description = "The plugin that offers the http service system information handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
