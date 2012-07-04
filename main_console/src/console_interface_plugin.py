@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
+class ConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console Interface Main plugin.
+    The main class for the Console Interface plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console.interface"
-    name = "Console Interface Main Plugin"
-    short_name = "Console Interface Main"
-    description = "The main console plugin that controls the console interface"
+    id = "pt.hive.colony.plugins.console.interface"
+    name = "Console Interface Plugin"
+    short_name = "Console Interface"
+    description = "The console plugin that controls the console interface"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -62,26 +62,26 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.x.x")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
     ]
     main_modules = [
-        "main_console.interface.main_console_interface_exceptions",
-        "main_console.interface.main_console_interface_system",
-        "main_console.interface.main_console_interface_unix",
-        "main_console.interface.main_console_interface_win32"
+        "console.interface.exceptions",
+        "console.interface.system",
+        "console.interface.interface_unix",
+        "console.interface.interface_win32"
     ]
 
     console_interface = None
     """ The console interface """
 
-    main_console_plugin = None
-    """ The main console plugin """
+    console_plugin = None
+    """ The console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         self.console_command_plugins = []
-        import main_console.interface.main_console_interface_system
-        self.console_interface = main_console.interface.main_console_interface_system.MainConsoleInterface(self)
+        import console.interface.system
+        self.console_interface = console.interface.system.ConsoleInterface(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
@@ -116,9 +116,9 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     def unset_configuration_property(self, property_name):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
-    def set_main_console_plugin(self, main_console_plugin):
-        self.main_console_plugin = main_console_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
+    def set_console_plugin(self, console_plugin):
+        self.console_plugin = console_plugin
 
     @colony.base.decorators.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):

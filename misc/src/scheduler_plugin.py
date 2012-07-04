@@ -66,7 +66,7 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.x.x"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.x.x")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
     ]
     main_modules = [
         "misc.scheduler.console_scheduler",
@@ -83,8 +83,8 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     guid_plugin = None
     """ The guid plugin """
 
-    main_console_plugin = None
-    """ The main console plugin """
+    console_plugin = None
+    """ The console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -177,19 +177,13 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
 
         return self.scheduler.get_task_class()
 
-    def get_guid_plugin(self):
-        return self.guid_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
     def set_guid_plugin(self, guid_plugin):
         self.guid_plugin = guid_plugin
 
-    def get_main_console_plugin(self):
-        return self.main_console_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
-    def set_main_console_plugin(self, main_console_plugin):
-        self.main_console_plugin = main_console_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
+    def set_console_plugin(self, console_plugin):
+        self.console_plugin = console_plugin
 
     @colony.base.decorators.set_configuration_property_method("startup_configuration")
     def startup_configuration_set_configuration_property(self, property_name, property):

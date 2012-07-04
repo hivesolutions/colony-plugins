@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainConsolePlugin(colony.base.plugin_system.Plugin):
+class ConsolePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console Main plugin.
+    The main class for the Console plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console"
-    name = "Console Main Plugin"
-    short_name = "Console Main"
-    description = "The main console plugin that controls the console"
+    id = "pt.hive.colony.plugins.console"
+    name = "Console Plugin"
+    short_name = "Console"
+    description = "The console plugin that controls the console"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -58,7 +58,7 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "main_console",
+        "console",
         "test_case",
         "build_automation_item"
     ]
@@ -70,11 +70,11 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.authentication", "1.x.x")
     ]
     main_modules = [
-        "main_console.console.main_console_authentication",
-        "main_console.console.main_console_exceptions",
-        "main_console.console.main_console_interfaces",
-        "main_console.console.main_console_system",
-        "main_console.console.main_console_test"
+        "console.console.authentication",
+        "console.console.exceptions",
+        "console.console.interfaces",
+        "console.console.system",
+        "console.console.test"
     ]
 
     console = None
@@ -92,10 +92,10 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         self.console_command_plugins = []
-        import main_console.console.main_console_system
-        import main_console.console.main_console_test
-        self.console = main_console.console.main_console_system.MainConsole(self)
-        self.console_test_case_class = main_console.console.main_console_test.MainConsoleTestCase
+        import console.console.system
+        import console.console.test
+        self.console = console.console.system.Console(self)
+        self.console_test_case_class = console.console.test.ConsoleTestCase
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):

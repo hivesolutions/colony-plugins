@@ -313,14 +313,19 @@ class Scheduler:
             # retrieves the console command
             console_command = task_arguments[CONSOLE_COMMAND_VALUE]
 
-            # retrieves the main console plugin
-            main_console_plugin = self.scheduler_plugin.main_console_plugin
-
-            # retrieves the default console output method
-            default_console_output_method = main_console_plugin.get_default_output_method()
+            # retrieves the console plugin and uses it to retrieve
+            # the default console output method
+            console_plugin = self.scheduler_plugin.console_plugin
+            default_console_output_method = console_plugin.get_default_output_method()
 
             # creates a new scheduler item
-            scheduler_item = self.create_scheduler_item(main_console_plugin.process_command_line, [console_command, default_console_output_method], absolute_time, recursion_list, task)
+            scheduler_item = self.create_scheduler_item(
+                console_plugin.process_command_line,
+                [console_command, default_console_output_method],
+                absolute_time,
+                recursion_list,
+                task
+            )
         # otherwise it's an invalid task type
         else:
             # raises an exception

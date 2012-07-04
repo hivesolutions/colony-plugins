@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class MainConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
+class ConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console File System Main plugin.
+    The main class for the Console File System plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console.file_system"
-    name = "Console File System Main Plugin"
-    short_name = "Console File System Main"
+    id = "pt.hive.colony.plugins.console.file_system"
+    name = "Console File System Plugin"
+    short_name = "Console File System"
     description = "The plugin that provides the file system commands for the system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -61,7 +61,7 @@ class MainConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     main_modules = [
-        "main_console.file_system.main_console_file_system_system"
+        "console.file_system.system"
     ]
 
     console_file_system = None
@@ -69,8 +69,8 @@ class MainConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import main_console.file_system.main_console_file_system_system
-        self.console_file_system = main_console.file_system.main_console_file_system_system.MainConsoleFileSystem(self)
+        import console.file_system.system
+        self.console_file_system = console.file_system.system.ConsoleFileSystem(self)
 
     def get_console_extension_name(self):
         return self.console_file_system.get_console_extension_name()

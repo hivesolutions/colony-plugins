@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainConsoleBasePlugin(colony.base.plugin_system.Plugin):
+class ConsoleBasePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console Base Main plugin.
+    The main class for the Console Base plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console.base"
-    name = "Console Base Main Plugin"
-    short_name = "Console Base Main"
+    id = "pt.hive.colony.plugins.console.base"
+    name = "Console Base Plugin"
+    short_name = "Console Base"
     description = "The plugin that provides the base commands for the system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -62,22 +62,22 @@ class MainConsoleBasePlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.x.x")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
     ]
     main_modules = [
-        "main_console.base.main_console_base_system"
+        "console.base.system"
     ]
 
     console_base = None
     """ The console base """
 
-    main_console_plugin = None
-    """ The main console plugin """
+    console_plugin = None
+    """ The console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import main_console.base.main_console_base_system
-        self.console_base = main_console.base.main_console_base_system.MainConsoleBase(self)
+        import console.base.system
+        self.console_base = console.base.system.ConsoleBase(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -89,6 +89,6 @@ class MainConsoleBasePlugin(colony.base.plugin_system.Plugin):
     def get_commands_map(self):
         return self.console_base.get_commands_map()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
-    def set_main_console_plugin(self, main_console_plugin):
-        self.main_console_plugin = main_console_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
+    def set_console_plugin(self, console_plugin):
+        self.console_plugin = console_plugin
