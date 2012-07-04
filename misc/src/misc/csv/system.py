@@ -37,53 +37,47 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json_serializer
+import serializer
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-MIME_TYPE = "application/json"
+MIME_TYPE = "text/csv"
 """ The mime type """
 
-class Json:
+class Csv:
     """
-    Provides functions to interact with json.
+    Provides functions to interact with csv.
     """
 
-    json_plugin = None
-    """ The json plugin """
+    csv_plugin = None
+    """ The csv plugin """
 
-    def __init__(self, json_plugin):
+    def __init__(self, csv_plugin):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
+        @type csv_plugin: CsvPlugin
+        @param csv_plugin: The csv plugin.
         """
 
-        self.json_plugin = json_plugin
+        self.csv_plugin = csv_plugin
 
     def dumps(self, object):
-        return json_serializer.dumps(object)
+        return serializer.dumps(object)
 
-    def dumps_pretty(self, object):
-        return json_serializer.dumps_pretty(object)
+    def loads(self, csv_string, header = True):
+        return serializer.loads(csv_string, header)
 
-    def dumps_buffer(self, object):
-        return json_serializer.dumps_buffer(object)
+    def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
+        # reads the csv file
+        csv_file_contents = csv_file.read()
 
-    def loads(self, json_string):
-        return json_serializer.loads(json_string)
+        # decodes the csv file contents using the default encoder
+        csv_file_contents_decoded = csv_file_contents.decode(encoding)
 
-    def load_file(self, json_file, encoding = DEFAULT_ENCODING):
-        # reads the json file
-        json_file_contents = json_file.read()
-
-        # decodes the json file contents using the default encoder
-        json_file_contents_decoded = json_file_contents.decode(encoding)
-
-        # loads the json file contents
-        return self.loads(json_file_contents_decoded)
+        # loads the csv file contents
+        return self.loads(csv_file_contents_decoded)
 
     def get_mime_type(self):
         return MIME_TYPE

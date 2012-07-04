@@ -43,7 +43,7 @@ import time
 import colony.libs.size_util
 import colony.libs.observer_util
 
-import downloader_exceptions
+import exceptions
 
 VALID_STATUS_CODES = (
     200,
@@ -119,7 +119,7 @@ class Downloader:
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
-                    raise downloader_exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
+                    raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
 
                 # retrieves the file contents from the http response
                 file_contents = http_response.received_message
@@ -207,7 +207,7 @@ class Downloader:
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
-                    raise downloader_exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
+                    raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
 
                 # retrieves the file contents from the http response
                 file_contents = http_response.received_message

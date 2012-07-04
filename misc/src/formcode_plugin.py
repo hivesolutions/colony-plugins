@@ -52,17 +52,13 @@ class FormcodePlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/formcode/resources/baf.xml"
-    }
     capabilities = [
-        "serializer.formcode",
-        "build_automation_item"
+        "serializer.formcode"
     ]
     main_modules = [
-        "misc.formcode.formcode_exceptions",
-        "misc.formcode.formcode_serializer",
-        "misc.formcode.formcode_system"
+        "misc.formcode.exceptions",
+        "misc.formcode.serializer",
+        "misc.formcode.system"
     ]
 
     formcode = None
@@ -70,26 +66,8 @@ class FormcodePlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.formcode.formcode_system
-        self.formcode = misc.formcode.formcode_system.Formcode(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.formcode.system
+        self.formcode =  misc.formcode.system.Formcode(self)
 
     def dumps(self, object):
         return self.formcode.dumps(object)

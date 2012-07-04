@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import url_parser_exceptions
+import exceptions
 
 URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The url regex value """
@@ -216,7 +216,7 @@ class Url:
         # in case there was no match
         if not url_match:
             # raises the url parser exception
-            raise url_parser_exceptions.UrlParserException("invalid url value: %s" % url)
+            raise exceptions.UrlParserException("invalid url value: %s" % url)
 
         # retrieves the protocol
         protocol = url_match.group("protocol")

@@ -53,21 +53,17 @@ class DownloaderPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/downloader/resources/baf.xml"
-    }
     capabilities = [
         "download",
-        "_console_command_extension",
-        "build_automation_item"
+        "_console_command_extension"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
     ]
     main_modules = [
-        "misc.downloader.console_downloader",
-        "misc.downloader.downloader_exceptions",
-        "misc.downloader.downloader_system"
+        "misc.downloader.console",
+        "misc.downloader.exceptions",
+        "misc.downloader.system"
     ]
 
     downloader = None
@@ -81,25 +77,10 @@ class DownloaderPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.downloader.downloader_system
-        import misc.downloader.console_downloader
-        self.downloader = misc.downloader.downloader_system.Downloader(self)
-        self.console_downloader = misc.downloader.console_downloader.ConsoleDownloader(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        import misc.downloader.system
+        import misc.downloader.console
+        self.downloader = misc.downloader.system.Downloader(self)
+        self.console_downloader = misc.downloader.console.ConsoleDownloader(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -122,9 +103,6 @@ class DownloaderPlugin(colony.base.system.Plugin):
 
     def get_commands_map(self):
         return self.console_downloader.get_commands_map()
-
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):

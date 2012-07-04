@@ -44,7 +44,7 @@ import calendar
 
 import colony.libs.string_buffer_util
 
-import bencode_exceptions
+import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,
@@ -197,7 +197,7 @@ def _chunk(chunk, string_buffer):
         string_buffer.write("e")
     else:
         # raises the bencode encode exception
-        raise bencode_exceptions.BencodeEncodeException("data type not defined: " + str(chunk))
+        raise exceptions.BencodeEncodeException("data type not defined: " + str(chunk))
 
 def loads(data):
     # creates a list from the data
@@ -318,4 +318,4 @@ def _dechunk(chunks):
         return string_value
 
     # raises the bencode decode exception
-    raise bencode_exceptions.BencodeDecodeException("data type not defined: " + str(item))
+    raise exceptions.BencodeDecodeException("data type not defined: " + str(item))

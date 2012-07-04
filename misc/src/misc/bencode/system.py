@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -37,40 +37,47 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import gc
+import serializer
 
-class GarbageCollector:
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
+MIME_TYPE = "application/x-bencode"
+""" The mime type """
+
+class Bencode:
     """
-    The garbage collector class.
+    Provides functions to interact with bencode.
     """
 
-    garbage_collector_plugin = None
-    """ The garbage collector plugin """
+    bencode_plugin = None
+    """ The bencode plugin """
 
-    def __init__(self, garbage_collector_plugin):
+    def __init__(self, bencode_plugin):
         """
         Constructor of the class.
 
-        @type garbage_collector_plugin: GarbageCollectorPlugin
-        @param garbage_collector_plugin: The garbage collector plugin.
+        @type bencode_plugin: BencodePlugin
+        @param bencode_plugin: The bencode plugin.
         """
 
-        self.garbage_collector_plugin = garbage_collector_plugin
+        self.bencode_plugin = bencode_plugin
 
-    def run_garbage_collector(self):
-        gc.collect()
+    def dumps(self, object):
+        return serializer.dumps(object)
 
-    def enable(self):
-        gc.enable()
+    def loads(self, bencode_string):
+        return serializer.loads(bencode_string)
 
-    def disable(self):
-        gc.disable()
+    def load_file(self, bencode_file, encoding = DEFAULT_ENCODING):
+        # reads the bencode file
+        bencode_file_contents = bencode_file.read()
 
-    def set_debug(self, flags):
-        gc.set_debug(flags)
+        # decodes the bencode file contents using the default encoder
+        bencode_file_contents_decoded = bencode_file_contents.decode(encoding)
 
-    def is_enabled(self):
-        return gc.isenabled()
+        # loads the bencode file contents
+        return self.loads(bencode_file_contents_decoded)
 
-    def get_count(self):
-        return gc.get_count()
+    def get_mime_type(self):
+        return MIME_TYPE

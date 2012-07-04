@@ -43,7 +43,7 @@ import colony.libs.list_util
 import colony.libs.object_util
 import colony.libs.string_buffer_util
 
-import csv_exceptions
+import exceptions
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding for csv files """
@@ -84,7 +84,7 @@ def _chunk(object, string_buffer):
     # instance nor a list
     elif not object_type in LIST_TYPES:
         # raises the csv encoder exception
-        raise csv_exceptions.CsvEncodeException("invalid object type")
+        raise exceptions.CsvEncodeException("invalid object type")
 
     # in case the object is not set, is invalid
     # or is empty there is no need to codify it

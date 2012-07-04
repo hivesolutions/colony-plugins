@@ -52,18 +52,14 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/image_treatment/resources/baf.xml"
-    }
     capabilities = [
-        "image_treatment",
-        "build_automation_item"
+        "image_treatment"
     ]
     dependencies = [
         colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
     ]
     main_modules = [
-        "misc.image_treatment.image_treatment_system"
+        "misc.image_treatment.system"
     ]
 
     image_treatment = None
@@ -71,26 +67,8 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.image_treatment.image_treatment_system
-        self.image_treatment = misc.image_treatment.image_treatment_system.ImageTreatment(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.image_treatment.system
+        self.image_treatment = misc.image_treatment.system.ImageTreatment(self)
 
     def resize_image(self, image_path, width, height):
         """

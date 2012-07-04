@@ -53,18 +53,14 @@ class AutoloaderPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/autoloader/resources/baf.xml"
-    }
     capabilities = [
         "main",
         "autoload",
-        "console_command_extension",
-        "build_automation_item"
+        "console_command_extension"
     ]
     main_modules = [
-        "misc.autoloader.autoloader_system",
-        "misc.autoloader.console_autoloader"
+        "misc.autoloader.system",
+        "misc.autoloader.console"
     ]
 
     autoloader = None
@@ -75,10 +71,10 @@ class AutoloaderPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.autoloader.autoloader_system
-        import misc.autoloader.console_autoloader
-        self.autoloader = misc.autoloader.autoloader_system.Autoloader(self)
-        self.console_autoloader = misc.autoloader.console_autoloader.ConsoleAutoloader(self)
+        import misc.autoloader.system
+        import misc.autoloader.console
+        self.autoloader = misc.autoloader.system.Autoloader(self)
+        self.console_autoloader = misc.autoloader.console.ConsoleAutoloader(self)
         self.autoloader.load_autoloader()
 
     def end_load_plugin(self):
@@ -93,15 +89,6 @@ class AutoloaderPlugin(colony.base.system.Plugin):
     def end_unload_plugin(self):
         colony.base.system.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_autoloader.get_console_extension_name()

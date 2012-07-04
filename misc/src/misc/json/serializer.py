@@ -47,7 +47,7 @@ import calendar
 
 import colony.libs.string_buffer_util
 
-import json_exceptions
+import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,
@@ -361,7 +361,7 @@ def dump_parts(object):
     # in case a different type is set
     else:
         # raises the json encode exception
-        raise json_exceptions.JsonEncodeException(object)
+        raise exceptions.JsonEncodeException(object)
 
 def dump_parts_pretty(object, indentation = 0):
     """
@@ -552,7 +552,7 @@ def dump_parts_pretty(object, indentation = 0):
     # in case a different type is set
     else:
         # raises the json encode exception
-        raise json_exceptions.JsonEncodeException(object)
+        raise exceptions.JsonEncodeException(object)
 
 def dump_parts_buffer(object, string_buffer):
     """
@@ -702,7 +702,7 @@ def dump_parts_buffer(object, string_buffer):
     # in case a different type is set
     else:
         # raises a json encode exception
-        raise json_exceptions.JsonEncodeException(object)
+        raise exceptions.JsonEncodeException(object)
 
 def loads(data):
     # initializes the stack
@@ -761,7 +761,7 @@ def loads(data):
                                     value += unichr(int(hex_code, 16))
                                 else:
                                     # raises the json decode exception
-                                    raise json_exceptions.JsonDecodeException("Bad Escape Sequence Found")
+                                    raise exceptions.JsonDecodeException("Bad Escape Sequence Found")
                         else:
                             value += character
 
@@ -769,7 +769,7 @@ def loads(data):
                         character = characters.next()
                 except StopIteration:
                     # raises the json decode exception
-                    raise json_exceptions.JsonDecodeException("Expected end of String")
+                    raise exceptions.JsonDecodeException("Expected end of String")
             elif character == "{":
                 # creates a new map
                 _map = {}
@@ -847,7 +847,7 @@ def loads(data):
                                     digits.append(character)
                                     character = characters.next()
                             else:
-                                raise json_exceptions.JsonDecodeException("Expected + or -")
+                                raise exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
                     pass
 
@@ -866,10 +866,10 @@ def loads(data):
                     value = False
                 else:
                     # raises the json decode exception
-                    raise json_exceptions.JsonDecodeException("Expected Null, False or True")
+                    raise exceptions.JsonDecodeException("Expected Null, False or True")
             else:
                 # raises the json decode exception
-                raise json_exceptions.JsonDecodeException("Expected []{},\" or Number, Null, False or True")
+                raise exceptions.JsonDecodeException("Expected []{},\" or Number, Null, False or True")
 
             if not skip:
                 if len(stack):
@@ -884,7 +884,7 @@ def loads(data):
                         # in the valid map
                         if not top_id in valid_map:
                             # raises the json decode exception
-                            raise json_exceptions.JsonDecodeException("Expected list structure")
+                            raise exceptions.JsonDecodeException("Expected list structure")
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -895,7 +895,7 @@ def loads(data):
                             valid_map[top_id] = False
                         else:
                             # raises the json decode exception
-                            raise json_exceptions.JsonDecodeException("Expected list separator ','")
+                            raise exceptions.JsonDecodeException("Expected list separator ','")
                     elif type(top) is types.DictionaryType:
                         # appends the value to the stack
                         stack.append(value)
@@ -907,7 +907,7 @@ def loads(data):
                         # in the valid map
                         if not top_id in valid_map:
                             # raises the json decode exception
-                            raise json_exceptions.JsonDecodeException("Expected dictionary structure")
+                            raise exceptions.JsonDecodeException("Expected dictionary structure")
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -929,15 +929,15 @@ def loads(data):
                             valid_map[top_id] = False
                         else:
                             # raises the json decode exception
-                            raise json_exceptions.JsonDecodeException("Expected dictionary separator ':'")
+                            raise exceptions.JsonDecodeException("Expected dictionary separator ':'")
                     # otherwise
                     else:
                         # raises the json decode exception
-                        raise json_exceptions.JsonDecodeException("Expected dictionary key, or start of a value")
+                        raise exceptions.JsonDecodeException("Expected dictionary key, or start of a value")
                 # otherwise
                 else:
                     # returns the value
                     return value
     except StopIteration:
         # raises the json decode exception
-        raise json_exceptions.JsonDecodeException("Unexpected end of Json source")
+        raise exceptions.JsonDecodeException("Unexpected end of Json source")

@@ -52,43 +52,21 @@ class UrlParserPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/url_parser/resources/baf.xml"
-    }
     capabilities = [
-        "url_parse",
-        "build_automation_item"
+        "url_parse"
     ]
     main_modules = [
-        "misc.url_parser.url_parser_exceptions",
-        "misc.url_parser.url_parser_system"
+        "misc.url_parser.exceptions",
+        "misc.url_parser.system"
     ]
 
-    url_parser_system = None
-    """ The url parser system """
+    url_parser = None
+    """ The url parser """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.url_parser.url_parser_system
-        self.url_parser_system = misc.url_parser.url_parser_system.UrlParser(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.url_parser.system
+        self.url_parser = misc.url_parser.system.UrlParser(self)
 
     def parse_url(self, url):
         """

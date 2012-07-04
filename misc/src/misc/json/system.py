@@ -37,47 +37,53 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import bencode_serializer
+import serializer
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-MIME_TYPE = "application/x-bencode"
+MIME_TYPE = "application/json"
 """ The mime type """
 
-class Bencode:
+class Json:
     """
-    Provides functions to interact with bencode.
+    Provides functions to interact with json.
     """
 
-    bencode_plugin = None
-    """ The bencode plugin """
+    json_plugin = None
+    """ The json plugin """
 
-    def __init__(self, bencode_plugin):
+    def __init__(self, json_plugin):
         """
         Constructor of the class.
 
-        @type bencode_plugin: BencodePlugin
-        @param bencode_plugin: The bencode plugin.
+        @type json_plugin: JsonPlugin
+        @param json_plugin: The json plugin.
         """
 
-        self.bencode_plugin = bencode_plugin
+        self.json_plugin = json_plugin
 
     def dumps(self, object):
-        return bencode_serializer.dumps(object)
+        return serializer.dumps(object)
 
-    def loads(self, bencode_string):
-        return bencode_serializer.loads(bencode_string)
+    def dumps_pretty(self, object):
+        return serializer.dumps_pretty(object)
 
-    def load_file(self, bencode_file, encoding = DEFAULT_ENCODING):
-        # reads the bencode file
-        bencode_file_contents = bencode_file.read()
+    def dumps_buffer(self, object):
+        return serializer.dumps_buffer(object)
 
-        # decodes the bencode file contents using the default encoder
-        bencode_file_contents_decoded = bencode_file_contents.decode(encoding)
+    def loads(self, json_string):
+        return serializer.loads(json_string)
 
-        # loads the bencode file contents
-        return self.loads(bencode_file_contents_decoded)
+    def load_file(self, json_file, encoding = DEFAULT_ENCODING):
+        # reads the json file
+        json_file_contents = json_file.read()
+
+        # decodes the json file contents using the default encoder
+        json_file_contents_decoded = json_file_contents.decode(encoding)
+
+        # loads the json file contents
+        return self.loads(json_file_contents_decoded)
 
     def get_mime_type(self):
         return MIME_TYPE

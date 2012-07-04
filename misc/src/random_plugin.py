@@ -53,15 +53,11 @@ class RandomPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/random/resources/baf.xml"
-    }
     capabilities = [
-        "random",
-        "build_automation_item"
+        "random"
     ]
     main_modules = [
-        "misc.random.random_system"
+        "misc.random.system"
     ]
 
     random = None
@@ -69,26 +65,8 @@ class RandomPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.random.random_system
-        self.random = misc.random.random_system.Random(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.random.system
+        self.random = misc.random.system.Random(self)
 
     def generate_random(self):
         """

@@ -45,7 +45,7 @@ import threading
 
 import colony.libs.map_util
 
-import scheduler_exceptions
+import exceptions
 
 METHOD_CALL_TYPE = "method_call"
 """ The method call type """
@@ -169,7 +169,7 @@ class Scheduler:
             # is triggered in the scheduler the cycle
             # is broken (breaks the loop)
             try: self.scheduler.run()
-            except scheduler_exceptions.SchedulerCancel: break
+            except exceptions.SchedulerCancel: break
 
     def unload_scheduler(self):
         """
@@ -518,7 +518,7 @@ class Scheduler:
         # in case the continue flag is not set
         if not self.continue_flag:
             # raises the scheduler cancel exception
-            raise scheduler_exceptions.SchedulerCancel("continue flag is not set")
+            raise exceptions.SchedulerCancel("continue flag is not set")
 
         # retrieves the is recursive value
         is_recursive = scheduler_item.is_recursive()
@@ -651,7 +651,7 @@ class Scheduler:
             # in case the continue flag is not set must
             # return immediately raising a scheduler
             # cancel exception (will stop the scheduler)
-            if not self.continue_flag: scheduler_exceptions.SchedulerCancel("continue flag is not set")
+            if not self.continue_flag: exceptions.SchedulerCancel("continue flag is not set")
 
         # sleeps the extra sleep time
         time.sleep(extra_sleep_time)

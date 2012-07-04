@@ -53,23 +53,19 @@ class SchedulerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"
-    }
     capabilities = [
         "main",
         "scheduler",
-        "_console_command_extension",
-        "build_automation_item"
+        "_console_command_extension"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
     ]
     main_modules = [
-        "misc.scheduler.console_scheduler",
-        "misc.scheduler.scheduler_exceptions",
-        "misc.scheduler.scheduler_system"
+        "misc.scheduler.console",
+        "misc.scheduler.exceptions",
+        "misc.scheduler.system"
     ]
 
     scheduler = None
@@ -86,10 +82,10 @@ class SchedulerPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.scheduler.scheduler_system
-        import misc.scheduler.console_scheduler
-        self.scheduler = misc.scheduler.scheduler_system.Scheduler(self)
-        self.console_scheduler = misc.scheduler.console_scheduler.ConsoleScheduler(self)
+        import misc.scheduler.system
+        import misc.scheduler.console
+        self.scheduler = misc.scheduler.system.Scheduler(self)
+        self.console_scheduler = misc.scheduler.console.ConsoleScheduler(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
@@ -104,12 +100,6 @@ class SchedulerPlugin(colony.base.system.Plugin):
     def end_unload_plugin(self):
         colony.base.system.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):

@@ -52,43 +52,21 @@ class ZipPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/zip/resources/baf.xml"
-    }
     capabilities = [
-        "zip",
-        "build_automation_item"
+        "zip"
     ]
     main_modules = [
-        "misc.zip.zip_system"
+        "misc.zip.system"
     ]
 
-    zip_system = None
-    """ The zip system """
+    zip = None
+    """ The zip reference to the plugin logic, this
+    is the object used as entry point for execution """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.zip.zip_system
-        self.zip_system = misc.zip.zip_system.Zip(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.zip_system = None
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.zip.system
+        self.zip = misc.zip.system.Zip(self)
 
     def zip(self, zip_file_path, input_directory, file_path_list = None):
         """

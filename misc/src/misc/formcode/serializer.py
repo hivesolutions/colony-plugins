@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
-import formcode_exceptions
+import exceptions
 
 NAME_TYPE_VALUE = "name"
 """ The name type value """
@@ -137,7 +137,7 @@ def dump_parts(object, current_path):
     # in case a different type is set
     else:
         # raises the formcode encode exception
-        raise formcode_exceptions.FormcodeEncodeException(object)
+        raise exceptions.FormcodeEncodeException(object)
 
 def loads(data):
     # creates the base attributes map
@@ -202,7 +202,7 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
     # in case there is no match result
     if not match_result:
         # raises the formcode decode exception
-        raise formcode_exceptions.FormcodeEncodeException("invalid match value: " + current_attribute_name)
+        raise exceptions.FormcodeEncodeException("invalid match value: " + current_attribute_name)
 
     # retrieves the match result end position
     match_result_end = match_result.end()
@@ -246,7 +246,7 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
         # in case there is no next match result
         if not next_match_result:
             # raises the formcode decode exception
-            raise formcode_exceptions.FormcodeEncodeException("invalid next match value: " + current_attribute_name)
+            raise exceptions.FormcodeEncodeException("invalid next match value: " + current_attribute_name)
 
         # retrieves the next match result name
         next_match_result_name = next_match_result.lastgroup
@@ -263,7 +263,7 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
         # in case the next match is of type name
         if next_match_result_name == NAME_TYPE_VALUE:
             # raises the formcode decode exception
-            raise formcode_exceptions.FormcodeEncodeException("invalid next match value (it's a name): " + current_attribute_name)
+            raise exceptions.FormcodeEncodeException("invalid next match value (it's a name): " + current_attribute_name)
 
         # in case the next match is of type list, a list needs to
         # be created in order to support the sequence, in case a list

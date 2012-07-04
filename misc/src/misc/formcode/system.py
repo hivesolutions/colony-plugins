@@ -37,54 +37,50 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
+import serializer
 
-WINDOWS_OS = "windows"
-""" The windows os value """
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
 
-MAC_OS = "mac"
-""" The mac os value """
+MIME_TYPE = "application/x-formcode"
+""" The mime type """
 
-UNIX_OS = "unix"
-""" The unix os value """
-
-OTHER_OS = "other"
-""" The other os value """
-
-class ExecutionEnvironment:
+class Formcode:
     """
-    The execution environment class.
+    Provides functions to interact with formcode.
     """
 
-    execution_environment_plugin = None
-    """ The execution environment plugin """
+    formcode_plugin = None
+    """ The formcode plugin """
 
-    def __init__(self, execution_environment_plugin):
+    def __init__(self, formcode_plugin):
         """
         Constructor of the class.
 
-        @type execution_environment_plugin: ExecutionEnvironmentPlugin
-        @param execution_environment_plugin: The execution environment plugin.
+        @type formcode_plugin: FormcodePlugin
+        @param formcode_plugin: The formcode plugin.
         """
 
-        self.execution_environment_plugin = execution_environment_plugin
+        self.formcode_plugin = formcode_plugin
 
-    def get_operative_system(self):
-        """
-        Retrieves the current operative system, described as a string.
+    def dumps(self, object):
+        return serializer.dumps(object)
 
-        @rtype: String
-        @return: The current operative system, described as a string.
-        """
+    def dumps_base_path(self, object, base_path):
+        return serializer.dumps(object, base_path)
 
-        # retrieves the os name
-        os_name = os.name
+    def loads(self, formcode_string):
+        return serializer.loads(formcode_string)
 
-        if os_name == "nt" or os_name == "dos":
-            return WINDOWS_OS
-        elif os_name == "mac":
-            return MAC_OS
-        elif os_name == "posix":
-            return UNIX_OS
+    def load_file(self, formcode_file, encoding = DEFAULT_ENCODING):
+        # reads the formcode file
+        formcode_file_contents = formcode_file.read()
 
-        return OTHER_OS
+        # decodes the formcode file contents using the default encoder
+        formcode_file_contents_decoded = formcode_file_contents.decode(encoding)
+
+        # loads the formcode file contents
+        return self.loads(formcode_file_contents_decoded)
+
+    def get_mime_type(self):
+        return MIME_TYPE

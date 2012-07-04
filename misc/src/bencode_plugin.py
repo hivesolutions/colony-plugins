@@ -52,17 +52,13 @@ class BencodePlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/bencode/resources/baf.xml"
-    }
     capabilities = [
-        "serializer.bencode",
-        "build_automation_item"
+        "serializer.bencode"
     ]
     main_modules = [
-        "misc.bencode.bencode_exceptions",
-        "misc.bencode.bencode_serializer",
-        "misc.bencode.bencode_system"
+        "misc.bencode.exceptions",
+        "misc.bencode.serializer",
+        "misc.bencode.system"
     ]
 
     bencode = None
@@ -70,26 +66,8 @@ class BencodePlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.bencode.bencode_system
-        self.bencode = misc.bencode.bencode_system.Bencode(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.bencode.system
+        self.bencode = misc.bencode.system.Bencode(self)
 
     def dumps(self, object):
         return self.bencode.dumps(object)

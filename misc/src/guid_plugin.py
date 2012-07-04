@@ -52,15 +52,11 @@ class GuidPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/guid/resources/baf.xml"
-    }
     capabilities = [
-        "guid",
-        "build_automation_item"
+        "guid"
     ]
     main_modules = [
-        "misc.guid.guid_system"
+        "misc.guid.system"
     ]
 
     guid = None
@@ -68,26 +64,8 @@ class GuidPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.guid.guid_system
-        self.guid = misc.guid.guid_system.Guid(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.guid.system
+        self.guid = misc.guid.system.Guid(self)
 
     def generate_guid(self):
         return self.guid.generate_guid()

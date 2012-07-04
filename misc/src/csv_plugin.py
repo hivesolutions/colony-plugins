@@ -53,17 +53,13 @@ class CsvPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc/csv/resources/baf.xml"
-    }
     capabilities = [
-        "serializer.csv",
-        "build_automation_item"
+        "serializer.csv"
     ]
     main_modules = [
-        "misc.csv.csv_exceptions",
-        "misc.csv.csv_serializer",
-        "misc.csv.csv_system"
+        "misc.csv.exceptions",
+        "misc.csv.serializer",
+        "misc.csv.system"
     ]
 
     csv_system = None
@@ -71,26 +67,8 @@ class CsvPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import misc.csv.csv_system
-        self.csv_system = misc.csv.csv_system.Csv(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import misc.csv.system
+        self.csv_system = misc.csv.system.Csv(self)
 
     def dumps(self, object):
         return self.csv_system.dumps(object)

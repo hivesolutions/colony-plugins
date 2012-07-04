@@ -52,12 +52,8 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_web_mvc_encryption/web_mvc_encryption/resources/baf.xml"
-    }
     capabilities = [
-        "service.web.mvc.encryption",
-        "build_automation_item"
+        "service.web.mvc.encryption"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
@@ -77,21 +73,6 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
         import service_web_mvc_encryption.web_mvc_encryption.service_web_mvc_encryption_system
         self.service_web_mvc_encryption = service_web_mvc_encryption.web_mvc_encryption.service_web_mvc_encryption_system.ServiceWebMvcEncryption(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
@@ -107,9 +88,6 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
         """
 
         return self.service_web_mvc_encryption.create_remote_client(service_attributes)
-
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):
