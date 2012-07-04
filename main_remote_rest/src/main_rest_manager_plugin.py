@@ -53,14 +53,10 @@ class MainRestManagerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_remote_rest/manager/resources/baf.xml"
-    }
     capabilities = [
         "rest_manager",
         "http_python_handler",
-        "rpc_handler",
-        "build_automation_item"
+        "rpc_handler"
     ]
     capabilities_allowed = [
         "rest_encoder",

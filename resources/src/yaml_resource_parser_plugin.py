@@ -52,12 +52,8 @@ class YamlResourceParserPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/resources/yaml_resource_parser/resources/baf.xml"
-    }
     capabilities = [
-        "resource_parser",
-        "build_automation_item"
+        "resource_parser"
     ]
     main_modules = [
         "resources.yaml_resource_parser.yaml_resource_parser_system"

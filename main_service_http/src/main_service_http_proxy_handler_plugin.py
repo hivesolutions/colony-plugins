@@ -55,12 +55,8 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_proxy_handler/proxy_handler/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_handler",
-        "build_automation_item"
+        "http_service_handler"
     ]
     capabilities_allowed = [
         "http_service_directory_list_handler"

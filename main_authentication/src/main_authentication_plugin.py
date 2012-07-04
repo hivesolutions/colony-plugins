@@ -54,12 +54,8 @@ class MainAuthenticationPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_authentication/authentication/resources/baf.xml"
-    }
     capabilities = [
-        "authentication",
-        "build_automation_item"
+        "authentication"
     ]
     capabilities_allowed = [
         "authentication_handler"

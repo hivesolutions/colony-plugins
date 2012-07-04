@@ -52,12 +52,8 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_ldap_handler/ldap_handler/resources/baf.xml"
-    }
     capabilities = [
-        "authentication_handler",
-        "build_automation_item"
+        "authentication_handler"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.ldap", "1.x.x")

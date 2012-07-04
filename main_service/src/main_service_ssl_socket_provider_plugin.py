@@ -52,12 +52,8 @@ class MainServiceSslSocketProviderPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_provider/ssl_socket_provider/resources/baf.xml"
-    }
     capabilities = [
-        "socket_provider",
-        "build_automation_item"
+        "socket_provider"
     ]
     dependencies = [
         colony.base.system.PackageDependency("Python 2.6", "ssl", "2.6.x", "http://python.org")

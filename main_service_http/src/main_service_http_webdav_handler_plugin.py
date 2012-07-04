@@ -52,12 +52,8 @@ class MainServiceHttpWebdavHandlerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_webdav_handler/webdav_handler/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_handler",
-        "build_automation_item"
+        "http_service_handler"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x")

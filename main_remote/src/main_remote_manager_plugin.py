@@ -52,12 +52,8 @@ class MainRemoteManagerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_remote/manager/resources/baf.xml"
-    }
     capabilities = [
-        "rpc_handler_manager",
-        "build_automation_item"
+        "rpc_handler_manager"
     ]
     capabilities_allowed = [
         "rpc_handler"

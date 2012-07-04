@@ -54,12 +54,6 @@ class MainServiceHttpWelcomeHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_welcome_handler/welcome_handler/resources/baf.xml"
-    }
-    capabilities = [
-        "build_automation_item"
-    ]
     main_modules = [
         "main_service_http_welcome_handler.welcome_handler.main_service_http_welcome_handler_system"
     ]
@@ -71,21 +65,3 @@ class MainServiceHttpWelcomeHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import main_service_http_welcome_handler.welcome_handler.main_service_http_welcome_handler_system
         self.main_service_http_welcome_handler = main_service_http_welcome_handler.welcome_handler.main_service_http_welcome_handler_system.MainServiceHttpWelcomeHandler(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)

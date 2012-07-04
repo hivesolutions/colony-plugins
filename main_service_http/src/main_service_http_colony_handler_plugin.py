@@ -55,12 +55,8 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_colony_handler/colony_handler/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_handler",
-        "build_automation_item"
+        "http_service_handler"
     ]
     capabilities_allowed = [
         "http_python_handler"

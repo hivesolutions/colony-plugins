@@ -54,7 +54,6 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT
     ]
     attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_python_handler/python_handler/resources/baf.xml",
         "configuration_models_bundle" : {
             "authentication.py" : {
                 "path" : "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
@@ -65,8 +64,7 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.system.Plugin):
     }
     capabilities = [
         "authentication_handler",
-        "configuration_model_provider",
-        "build_automation_item"
+        "configuration_model_provider"
     ]
     main_modules = [
         "main_authentication_python_handler.python_handler.configuration.authentication_configuration",

@@ -54,12 +54,8 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_client_smtp/smtp/resources/baf.xml"
-    }
     capabilities = [
-        "client.smtp",
-        "build_automation_item"
+        "client.smtp"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x")

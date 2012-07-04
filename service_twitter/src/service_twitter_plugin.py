@@ -53,12 +53,8 @@ class ServiceTwitterPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_twitter/twitter/resources/baf.xml"
-    }
     capabilities = [
-        "service.twitter",
-        "build_automation_item"
+        "service.twitter"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x"),

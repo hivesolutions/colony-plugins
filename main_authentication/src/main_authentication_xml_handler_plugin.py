@@ -52,12 +52,8 @@ class MainAuthenticationXmlHandlerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_xml_handler/xml_handler/resources/baf.xml"
-    }
     capabilities = [
-        "authentication_handler",
-        "build_automation_item"
+        "authentication_handler"
     ]
     main_modules = [
         "main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system"

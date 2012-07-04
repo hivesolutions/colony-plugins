@@ -56,8 +56,7 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "startup",
-        "build_automation_item"
+        "startup"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.x.x")

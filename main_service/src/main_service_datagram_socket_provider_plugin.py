@@ -54,12 +54,8 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_datagram_socket_provider/datagram_socket_provider/resources/baf.xml"
-    }
     capabilities = [
-        "socket_provider",
-        "build_automation_item"
+        "socket_provider"
     ]
     main_modules = [
         "main_service_datagram_socket_provider.datagram_socket_provider.main_service_datagram_socket_provider_system"

@@ -54,12 +54,8 @@ class MainClientHttpPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_client_http/http/resources/baf.xml"
-    }
     capabilities = [
-        "client.http",
-        "build_automation_item"
+        "client.http"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x"),

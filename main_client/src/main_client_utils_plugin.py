@@ -55,12 +55,6 @@ class MainClientUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_client_utils/utils/resources/baf.xml"
-    }
-    capabilities = [
-        "build_automation_item"
-    ]
     capabilities_allowed = [
         "socket_provider",
         "socket_upgrader"

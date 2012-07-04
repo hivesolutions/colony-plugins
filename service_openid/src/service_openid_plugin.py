@@ -52,12 +52,8 @@ class ServiceOpenidPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_openid/openid/resources/baf.xml"
-    }
     capabilities = [
-        "service.openid",
-        "build_automation_item"
+        "service.openid"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x"),

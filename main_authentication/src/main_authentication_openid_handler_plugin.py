@@ -52,12 +52,8 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_openid_handler/openid_handler/resources/baf.xml"
-    }
     capabilities = [
-        "authentication_handler",
-        "build_automation_item"
+        "authentication_handler"
     ]
     main_modules = [
         "main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system"

@@ -53,12 +53,8 @@ class JsonResourceParserPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/resources/json_resource_parser/resources/baf.xml"
-    }
     capabilities = [
-        "resource_parser",
-        "build_automation_item"
+        "resource_parser"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")

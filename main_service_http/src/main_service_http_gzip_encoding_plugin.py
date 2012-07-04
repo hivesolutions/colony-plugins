@@ -54,12 +54,8 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_encoding",
-        "build_automation_item"
+        "http_service_encoding"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.gzip", "1.x.x")

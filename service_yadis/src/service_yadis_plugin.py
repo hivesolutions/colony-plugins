@@ -53,12 +53,8 @@ class ServiceYadisPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/service_yadis/yadis/resources/baf.xml"
-    }
     capabilities = [
-        "service.yadis",
-        "build_automation_item"
+        "service.yadis"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
