@@ -50,18 +50,13 @@ class MainServiceHttpCgiHandlerPlugin(colony.base.system.Plugin):
     description = "The plugin that offers the http service cgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_cgi_handler/cgi_handler/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_handler",
-        "build_automation_item"
+        "http_service_handler"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x")
@@ -120,9 +115,6 @@ class MainServiceHttpCgiHandlerPlugin(colony.base.system.Plugin):
         """
 
         return self.main_service_http_cgi_handler.handle_request(request)
-
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):

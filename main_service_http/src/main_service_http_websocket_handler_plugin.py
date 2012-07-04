@@ -48,16 +48,11 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.system.Plugin):
     description = "The plugin that offers the http service websocket handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_websocket_handler/websocket_handler/resources/baf.xml"
-    }
     capabilities = [
-        "http_service_handler",
-        "build_automation_item"
+        "http_service_handler"
     ]
     capabilities_allowed = [
         "websocket_handler"
@@ -78,15 +73,6 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.system.Plugin):
         import main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system
         self.main_service_http_websocket_handler = main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system.MainServiceHttpWebsocketHandler(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
         colony.base.system.Plugin.load_allowed(self, plugin, capability)
@@ -94,9 +80,6 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.system.Plugin):
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
         colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         """

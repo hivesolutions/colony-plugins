@@ -49,17 +49,10 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
     description = "The plugin that offers a utils for services"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
-    ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_utils/utils/resources/baf.xml"
-    }
-    capabilities = [
-        "build_automation_item"
     ]
     capabilities_allowed = [
         "socket_provider",
@@ -92,15 +85,6 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import main_service_utils.utils.main_service_utils_system
         self.main_service_utils = main_service_utils.utils.main_service_utils_system.MainServiceUtils(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -159,9 +143,6 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
     def socket_upgrader_unload_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.remove(plugin)
         self.main_service_utils.socket_upgrader_unload(plugin)
-
-    def get_work_pool_manager_plugin(self):
-        return self.work_pool_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
     def set_work_pool_manager_plugin(self, work_pool_manager_plugin):

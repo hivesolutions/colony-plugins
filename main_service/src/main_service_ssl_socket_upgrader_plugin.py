@@ -49,16 +49,11 @@ class MainServiceSslSocketUpgraderPlugin(colony.base.system.Plugin):
     description = "The plugin that offers the ssl socket upgrader"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/baf.xml"
-    }
     capabilities = [
-        "socket_upgrader",
-        "build_automation_item"
+        "socket_upgrader"
     ]
     dependencies = [
         colony.base.system.PackageDependency("Python 2.6", "ssl", "2.6.x", "http://python.org")

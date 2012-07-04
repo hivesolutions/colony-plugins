@@ -49,7 +49,6 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
     description = "Image Treatment Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]

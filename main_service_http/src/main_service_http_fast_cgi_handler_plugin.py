@@ -50,7 +50,6 @@ class MainServiceHttpFastCgiHandlerPlugin(colony.base.system.Plugin):
     description = "The plugin that offers the http service fast cgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT,
