@@ -90,7 +90,17 @@ class WorkPoolManagerPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_new_work_pool(self, name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm):
-        return self.work_pool_manager.create_new_work_pool(name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
+        return self.work_pool_manager.create_new_work_pool(
+            name,
+            description,
+            work_processing_task_class,
+            work_processing_task_arguments,
+            number_threads,
+            scheduling_algorithm,
+            maximum_number_threads,
+            maximum_number_works_thread,
+            work_scheduling_algorithm
+        )
 
     def get_system_information(self):
         """

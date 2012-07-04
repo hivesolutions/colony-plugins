@@ -55,12 +55,8 @@ class EncryptionDiffieHellmanPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/encryption/diffie_hellman/resources/baf.xml"
-    }
     capabilities = [
-        "encryption.diffie_hellman",
-        "build_automation_item"
+        "encryption.diffie_hellman"
     ]
     main_modules = [
         "encryption.diffie_hellman.encryption_diffie_hellman_system"
