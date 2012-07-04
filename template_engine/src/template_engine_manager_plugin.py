@@ -55,12 +55,8 @@ class TemplateEngineManagerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/template_engine/manager/resources/baf.xml"
-    }
     capabilities = [
-        "template_engine_manager",
-        "build_automation_item"
+        "template_engine_manager"
     ]
     main_modules = [
         "template_engine.manager.template_engine_ast",
@@ -76,24 +72,6 @@ class TemplateEngineManagerPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import template_engine.manager.template_engine_manager_system
         self.template_engine_manager = template_engine.manager.template_engine_manager_system.TemplateEngineManager(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def parse_file_path(self, file_path):
         return self.template_engine_manager.parse_file_path(file_path)
