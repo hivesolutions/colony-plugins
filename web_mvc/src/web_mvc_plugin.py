@@ -55,13 +55,9 @@ class WebMvcPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/web_mvc/mvc/resources/baf.xml"
-    }
     capabilities = [
         "web.mvc",
-        "rest_service",
-        "build_automation_item"
+        "rest_service"
     ]
     capabilities_allowed = [
         "web.mvc_service"
@@ -111,9 +107,6 @@ class WebMvcPlugin(colony.base.system.Plugin):
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
         self.web_mvc.stop_system()
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -165,22 +158,13 @@ class WebMvcPlugin(colony.base.system.Plugin):
         self.web_mvc_service_plugins.remove(plugin)
         self.web_mvc.unload_web_mvc_service_plugin(plugin)
 
-    def get_format_mime_plugin(self):
-        return self.format_mime_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):
         self.format_mime_plugin = format_mime_plugin
 
-    def get_random_plugin(self):
-        return self.random_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
     def set_random_plugin(self, random_plugin):
         self.random_plugin = random_plugin
-
-    def get_json_plugin(self):
-        return self.json_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

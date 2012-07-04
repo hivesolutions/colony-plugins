@@ -55,19 +55,14 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_utils/mvc_utils/resources/baf.xml"
-    }
     capabilities = [
-        "web.mvc.utils",
-        "build_automation_item"
+        "web.mvc.utils"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager.new", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.web.mvc.search", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
@@ -108,21 +103,6 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import web_mvc_utils.mvc_utils.web_mvc_utils_system
         self.web_mvc_utils = web_mvc_utils.mvc_utils.web_mvc_utils_system.WebMvcUtils(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -174,9 +154,6 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
         self.web_mvc_utils.destroy_controllers(system_instance)
         return True
 
-    def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
-        return self.web_mvc_utils.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
-
     def create_file_manager(self, engine_name, connection_parameters):
         """
         Creates a new file manager reference, to manage files
@@ -202,50 +179,25 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
     def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
         return self.web_mvc_utils.generate_entity_manager_arguments(plugin, base_entity_manager_arguments, parameters)
 
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
     def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
         self.template_engine_manager_plugin = template_engine_manager_plugin
-
-    def get_entity_manager_plugin(self):
-        return self.entity_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager.new")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
-    def get_file_manager_plugin(self):
-        return self.file_manager_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.file_manager")
     def set_file_manager_plugin(self, file_manager_plugin):
         self.file_manager_plugin = file_manager_plugin
-
-    def get_business_helper_plugin(self):
-        return self.business_helper_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
     def set_business_helper_plugin(self, business_helper_plugin):
         self.business_helper_plugin = business_helper_plugin
 
-    def get_web_mvc_search_plugin(self):
-        return self.web_mvc_search_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.search")
-    def set_web_mvc_search_plugin(self, web_mvc_search_plugin):
-        self.web_mvc_search_plugin = web_mvc_search_plugin
-
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
-
-    def get_json_plugin(self):
-        return self.json_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

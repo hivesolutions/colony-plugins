@@ -966,16 +966,6 @@ class WebMvcUtils:
         # path controllers map
         del self.package_path_controllers_map[package_path]
 
-    def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
-        # retrieves the web mvc search plugin
-        web_mvc_search_plugin = self.web_mvc_utils_plugin.web_mvc_search_plugin
-
-        # creates the search index controller
-        search_index_controller = web_mvc_search_plugin.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
-
-        # returns the created search index controller
-        return search_index_controller
-
     def create_file_manager(self, engine_name, connection_parameters = {}):
         """
         Creates a new file manager reference, to manage files
