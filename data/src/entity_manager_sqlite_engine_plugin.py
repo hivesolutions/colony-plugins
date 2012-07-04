@@ -54,9 +54,6 @@ class EntityManagerSqliteEnginePlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/data/entity_manager_sqlite_engine/resources/baf.xml"
-    }
     capabilities = [
         "entity_manager_engine"
     ]

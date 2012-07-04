@@ -53,9 +53,6 @@ class EntityManagerHelperPlugin(colony.base.system.Plugin):
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/data/entity_manager_helper/resources/baf.xml"
-    }
     capabilities = [
         "entity_manager_helper"
     ]
