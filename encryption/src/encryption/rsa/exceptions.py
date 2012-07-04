@@ -39,17 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class EncryptionPkcs1Exception(colony.base.exceptions.ColonyException):
+class RsaException(colony.base.exceptions.ColonyException):
     """
-    The encryption pkcs 1 exception class.
+    The rsa exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidFormatException(EncryptionPkcs1Exception):
+class KeyGenerationError(RsaException):
     """
-    The invalid format exception class.
+    The key generation error class.
     """
 
     def __init__(self, message):
@@ -60,7 +60,7 @@ class InvalidFormatException(EncryptionPkcs1Exception):
         @param message: The message to be printed.
         """
 
-        EncryptionPkcs1Exception.__init__(self)
+        RsaException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -71,4 +71,4 @@ class InvalidFormatException(EncryptionPkcs1Exception):
         @return: The string representation of the class.
         """
 
-        return "Invalid format exception - %s" % self.message
+        return "Key generation error - %s" % self.message

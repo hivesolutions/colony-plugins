@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class EncryptionSslPlugin(colony.base.system.Plugin):
+class SslPlugin(colony.base.system.Plugin):
     """
-    The main class for the Ssl Encryption plugin.
+    The main class for the Ssl plugin.
     """
 
     id = "pt.hive.colony.plugins.encryption.ssl"
-    name = "Ssl Encryption"
-    description = "The plugin that offers the ssl encryption support"
+    name = "Ssl"
+    description = "The plugin that offers the ssl support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -54,67 +54,42 @@ class EncryptionSslPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/encryption/ssl/resources/baf.xml"
-    }
     capabilities = [
-        "encryption.ssl",
-        "build_automation_item"
+        "encryption.ssl"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.rsa", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.pkcs_1", "1.x.x")
     ]
     main_modules = [
-        "encryption.ssl.encryption_ssl_system"
+        "encryption.ssl.system"
     ]
 
-    encryption_ssl = None
-    """ The encryption ssl """
+    ssl = None
+    """ The ssl """
 
-    encryption_rsa_plugin = None
-    """ The encryption rsa plugin """
+    rsa_plugin = None
+    """ The rsa plugin """
 
-    encryption_pkcs_1_plugin = None
-    """ The encryption pkcs 1 plugin """
+    pkcs_1_plugin = None
+    """ The pkcs 1 plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import encryption.ssl.encryption_ssl_system
-        self.encryption_ssl = encryption.ssl.encryption_ssl_system.EncryptionSsl(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        import encryption.ssl.system
+        self.ssl = encryption.ssl.system.Ssl(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_structure(self, parameters):
-        return self.encryption_ssl.create_structure(parameters)
-
-    def get_encryption_rsa_plugin(self):
-        return self.encryption_rsa_plugin
+        return self.ssl.create_structure(parameters)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.rsa")
-    def set_encryption_rsa_plugin(self, encryption_rsa_plugin):
-        self.encryption_rsa_plugin = encryption_rsa_plugin
-
-    def get_encryption_pkcs_1_plugin(self):
-        return self.encryption_pkcs_1_plugin
+    def set_rsa_plugin(self, rsa_plugin):
+        self.rsa_plugin = rsa_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.pkcs_1")
-    def set_encryption_pkcs_1_plugin(self, encryption_pkcs_1_plugin):
-        self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
+    def set_pkcs_1_plugin(self, pkcs_1_plugin):
+        self.pkcs_1_plugin = pkcs_1_plugin

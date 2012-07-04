@@ -37,23 +37,23 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class EncryptionDiffieHellman:
+class DiffieHellman:
     """
-    The encryption diffie hellman class.
+    The diffie hellman class.
     """
 
-    encryption_diffie_hellman_plugin = None
-    """ The encryption diffie hellman plugin """
+    diffie_hellman_plugin = None
+    """ The diffie hellman plugin """
 
-    def __init__(self, encryption_diffie_hellman_plugin):
+    def __init__(self, diffie_hellman_plugin):
         """
         Constructor of the class.
 
-        @type encryption_diffie_hellman_plugin: EncryptionDiffieHellmanPlugin
-        @param encryption_diffie_hellman_plugin: The encryption diffie hellman plugin.
+        @type diffie_hellman_plugin: DiffieHellmanPlugin
+        @param diffie_hellman_plugin: The diffie hellman plugin.
         """
 
-        self.encryption_diffie_hellman_plugin = encryption_diffie_hellman_plugin
+        self.diffie_hellman_plugin = diffie_hellman_plugin
 
     def create_structure(self, parameters):
         # retrieves the prime value (if available)

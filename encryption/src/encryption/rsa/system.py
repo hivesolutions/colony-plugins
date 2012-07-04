@@ -44,25 +44,25 @@ import random
 
 import colony.libs.math_util
 
-import encryption_rsa_exceptions
+import exceptions
 
-class EncryptionRsa:
+class Rsa:
     """
-    The encryption rsa class.
+    The rsa class.
     """
 
-    encryption_rsa_plugin = None
-    """ The encryption rsa plugin """
+    rsa_plugin = None
+    """ The rsa plugin """
 
-    def __init__(self, encryption_rsa_plugin):
+    def __init__(self, rsa_plugin):
         """
         Constructor of the class.
 
-        @type encryption_rsa_plugin: EncryptionRsaPlugin
-        @param encryption_rsa_plugin: The encryption rsa plugin.
+        @type rsa_plugin: RsaPlugin
+        @param rsa_plugin: The rsa plugin.
         """
 
-        self.encryption_rsa_plugin = encryption_rsa_plugin
+        self.rsa_plugin = rsa_plugin
 
     def create_structure(self, parameters):
         # retrieves the keys (if available)
@@ -453,13 +453,13 @@ class RsaStructure:
         # is not one (not relative primes)
         if not d_value == 1:
             # raises the key generation error
-            raise encryption_rsa_exceptions.KeyGenerationError("The public exponent '%d' and the phi modulus '%d' are not relative primes" % (e_value, phi_n_value))
+            raise exceptions.KeyGenerationError("The public exponent '%d' and the phi modulus '%d' are not relative primes" % (e_value, phi_n_value))
 
         # in case the test for multiplicative inverse
         # modulo fails
         if not (e_value * i_value) % phi_n_value == 1:
             # raises the key generation error
-            raise encryption_rsa_exceptions.KeyGenerationError("The public exponent '%d' and private exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value))
+            raise exceptions.KeyGenerationError("The public exponent '%d' and private exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value))
 
         # creates a tuple with the keys
         keys_tuple = (

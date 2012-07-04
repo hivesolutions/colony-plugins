@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class EncryptionRsaPlugin(colony.base.system.Plugin):
+class DiffieHellmanPlugin(colony.base.system.Plugin):
     """
-    The main class for the Rsa Encryption plugin.
+    The main class for the Diffie Hellman plugin.
     """
 
-    id = "pt.hive.colony.plugins.encryption.rsa"
-    name = "Rsa Encryption"
-    description = "The plugin that offers the rsa encryption support"
+    id = "pt.hive.colony.plugins.encryption.diffie_hellman"
+    name = "Diffie Hellman"
+    description = "The plugin that offers the diffie hellman support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -54,43 +54,20 @@ class EncryptionRsaPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/encryption/rsa/resources/baf.xml"
-    }
     capabilities = [
-        "encryption.rsa",
-        "build_automation_item"
+        "encryption.diffie_hellman"
     ]
     main_modules = [
-        "encryption.rsa.encryption_rsa_exceptions",
-        "encryption.rsa.encryption_rsa_system"
+        "encryption.diffie_hellman.system"
     ]
 
-    encryption_rsa = None
-    """ The encryption rsa """
+    diffie_hellman = None
+    """ The diffie helman """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import encryption.rsa.encryption_rsa_system
-        self.encryption_rsa = encryption.rsa.encryption_rsa_system.EncryptionRsa(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import encryption.diffie_hellman.system
+        self.diffie_hellman = encryption.diffie_hellman.system.DiffieHellman(self)
 
     def create_structure(self, parameters):
-        return self.encryption_rsa.create_structure(parameters)
+        return self.diffie_hellman.create_structure(parameters)

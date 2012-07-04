@@ -45,33 +45,33 @@ BASE_64_ENCODED_MAXIMUM_SIZE = 64
 DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits """
 
-class EncryptionSsl:
+class Ssl:
     """
-    The encryption ssl class.
+    The ssl class.
     """
 
-    encryption_ssl_plugin = None
-    """ The encryption ssl plugin """
+    ssl_plugin = None
+    """ The ssl plugin """
 
-    def __init__(self, encryption_ssl_plugin):
+    def __init__(self, ssl_plugin):
         """
         Constructor of the class.
 
-        @type encryption_ras_plugin: EncryptionSslPlugin
-        @param encryption_ras_plugin: The encryption ssl plugin.
+        @type ras_plugin: SslPlugin
+        @param ras_plugin: The ssl plugin.
         """
 
-        self.encryption_ssl_plugin = encryption_ssl_plugin
+        self.ssl_plugin = ssl_plugin
 
     def create_structure(self, parameters):
-        # retrieves the encryption rsa plugin
-        encryption_rsa_plugin = self.encryption_ssl_plugin.encryption_rsa_plugin
+        # retrieves the rsa plugin
+        rsa_plugin = self.ssl_plugin.rsa_plugin
 
-        # retrieves the encryption pkcs 1 plugin
-        encryption_pkcs_1_plugin = self.encryption_ssl_plugin.encryption_pkcs_1_plugin
+        # retrieves the pkcs 1 plugin
+        pkcs_1_plugin = self.ssl_plugin.pkcs_1_plugin
 
         # creates the ssl structure
-        ssl_structure = SslStructure(encryption_rsa_plugin, encryption_pkcs_1_plugin)
+        ssl_structure = SslStructure(rsa_plugin, pkcs_1_plugin)
 
         # returns the ssl structure
         return ssl_structure
@@ -82,31 +82,31 @@ class SslStructure:
     cryptographic protocol structure.
     """
 
-    encryption_rsa_plugin = None
-    """ The encryption rsa plugin """
+    rsa_plugin = None
+    """ The rsa plugin """
 
-    encryption_pkcs_1_plugin = None
-    """ The encryption pkcs 1 plugin """
+    pkcs_1_plugin = None
+    """ The pkcs 1 plugin """
 
-    def __init__(self, encryption_rsa_plugin, encryption_pkcs_1_plugin):
+    def __init__(self, rsa_plugin, pkcs_1_plugin):
         """
         Constructor of the class.
 
-        @type encryption_rsa_plugin: EncryptionRsaPlugin
-        @param encryption_rsa_plugin: The encryption rsa plugin.
-        @type encryption_pkcs_1_plugin: EncryptionPkcs1Plugin
-        @param encryption_pkcs_1_plugin: The encryption pkkc 1 plugin.
+        @type rsa_plugin: RsaPlugin
+        @param rsa_plugin: The rsa plugin.
+        @type pkcs_1_plugin: Pkcs1Plugin
+        @param pkcs_1_plugin: The pkkc 1 plugin.
         """
 
-        self.encryption_rsa_plugin = encryption_rsa_plugin
-        self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
+        self.rsa_plugin = rsa_plugin
+        self.pkcs_1_plugin = pkcs_1_plugin
 
     def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
         # creates the rsa structure
-        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+        rsa_structure = self.rsa_plugin.create_structure({})
 
         # creates the pkcs 1 structure
-        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
 
         # generates the keys in the rsa structure
         rsa_structure.generate_keys(number_bits)
@@ -147,10 +147,10 @@ class SslStructure:
 
     def sign(self, private_key_path, hash_algorithm_name, base_string_value):
         # creates the rsa structure
-        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+        rsa_structure = self.rsa_plugin.create_structure({})
 
         # creates the pkcs 1 structure
-        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
 
         # loads the private key, retrieving the keys tuple and the version value
         keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
@@ -169,10 +169,10 @@ class SslStructure:
 
     def verify(self, public_key_path, signature, base_string_value):
         # creates the rsa structure
-        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+        rsa_structure = self.rsa_plugin.create_structure({})
 
         # creates the pkcs 1 structure
-        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
 
         # loads the public key, retrieving the keys tuple
         keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)

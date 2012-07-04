@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class EncryptionPkcs1Plugin(colony.base.system.Plugin):
+class Pkcs1Plugin(colony.base.system.Plugin):
     """
-    The main class for the Pkcs 1 Encryption plugin.
+    The main class for the Pkcs 1 plugin.
     """
 
     id = "pt.hive.colony.plugins.encryption.pkcs_1"
     name = "Pksc 1 Encryption"
-    description = "The plugin that offers the pkcs 1 encryption support"
+    description = "The plugin that offers the pkcs 1 support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -55,53 +55,34 @@ class EncryptionPkcs1Plugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/encryption/pkcs_1/resources/baf.xml"
-    }
     capabilities = [
-        "encryption.pkcs_1",
-        "build_automation_item"
+        "encryption.pkcs_1"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.format.ber", "1.x.x")
     ]
     main_modules = [
-        "encryption.pkcs_1.encryption_pkcs_1_exceptions",
-        "encryption.pkcs_1.encryption_pkcs_1_system"
+        "encryption.pkcs_1.exceptions",
+        "encryption.pkcs_1.system"
     ]
 
-    encryption_pkcs_1 = None
-    """ The encryption pkcs 1 """
+    pkcs_1 = None
+    """ The pkcs 1 """
 
     format_ber_plugin = None
     """ The format ber plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import encryption.pkcs_1.encryption_pkcs_1_system
-        self.encryption_pkcs_1 = encryption.pkcs_1.encryption_pkcs_1_system.EncryptionPkcs1(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        import encryption.pkcs_1.system
+        self.pkcs_1 = encryption.pkcs_1.system.Pkcs1(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_structure(self, parameters):
-        return self.encryption_pkcs_1.create_structure(parameters)
+        return self.pkcs_1.create_structure(parameters)
 
     def get_format_ber_plugin(self):
         return self.format_ber_plugin

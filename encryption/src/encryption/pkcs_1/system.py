@@ -45,7 +45,7 @@ import hashlib
 import colony.libs.math_util
 import colony.libs.string_buffer_util
 
-import encryption_pkcs_1_exceptions
+import exceptions
 
 TYPE_VALUE = "type"
 """ The type value """
@@ -151,27 +151,27 @@ TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
 }
 """ The map associating the tuples with the hash object identifiers """
 
-class EncryptionPkcs1:
+class Pkcs1:
     """
-    The encryption pkcs 1 class.
+    The pkcs 1 class.
     """
 
-    encryption_pkcs_1_plugin = None
-    """ The encryption pkcs 1 plugin """
+    pkcs_1_plugin = None
+    """ The pkcs 1 plugin """
 
-    def __init__(self, encryption_pkcs_1_plugin):
+    def __init__(self, pkcs_1_plugin):
         """
         Constructor of the class.
 
-        @type encryption_pkcs_1_plugin: EncryptionPkcs1Plugin
-        @param encryption_pkcs_1_plugin: The encryption pkcs 1 plugin.
+        @type pkcs_1_plugin: Pkcs1Plugin
+        @param pkcs_1_plugin: The pkcs 1 plugin.
         """
 
-        self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
+        self.pkcs_1_plugin = pkcs_1_plugin
 
     def create_structure(self, parameters):
         # retrieves the format ber plugin
-        format_ber_plugin = self.encryption_pkcs_1_plugin.format_ber_plugin
+        format_ber_plugin = self.pkcs_1_plugin.format_ber_plugin
 
         # creates the pkcs 1 structure
         pkcs_1_structure = Pkcs1Structure(format_ber_plugin)
@@ -758,12 +758,12 @@ class Pkcs1Structure:
         # in case the object identifier is not rsa encryption
         if not algorithm_value == OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]:
             # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))
+            raise exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))
 
         # in case the arguments value is not none
         if not arguments_value == None:
             # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+            raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
 
         # creates the public key map
         public_key = {
@@ -904,7 +904,7 @@ class Pkcs1Structure:
         # in case the first character ordinal is not zero or the second character is not one
         if not first_character_ordinal == 0x00 or not second_character_ordinal == 0x01:
             # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid signature format")
+            raise exceptions.InvalidFormatException("invalid signature format")
 
         # creates the ber structure
         ber_structure = self.format_ber_plugin.create_structure({})
@@ -955,7 +955,7 @@ class Pkcs1Structure:
         # in case the arguments value is not none
         if not arguments_value == None:
             # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+            raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
 
         # retrieves the hash algorithm name
         hash_algorithm_name = TUPLES_HASH_OBJECT_IDENTIFIERS_MAP[algorithm_value]
