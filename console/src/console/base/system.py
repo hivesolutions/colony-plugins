@@ -474,7 +474,7 @@ class ConsoleBase:
 
     def process_loadall(self, arguments, arguments_map, output_method, console_context):
         """
-        Processes the loadll command, with the given
+        Processes the loadall command, with the given
         arguments and output method.
 
         @type arguments: List
@@ -496,6 +496,31 @@ class ConsoleBase:
         # the plugins available in the current plugin manager
         for plugin_id in plugin_manager.plugin_instances_map:
             plugin_manager.load_plugin(plugin_id)
+
+    def process_unloadall(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the unloadall command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.console_base_plugin.manager
+
+        # iterates over all the plugin identifies existent in the
+        # plugin instances map and the loads the associated plugin
+        # this action should be able to trigger the unload of all
+        # the plugins available in the current plugin manager
+        for plugin_id in plugin_manager.plugin_instances_map:
+            plugin_manager.unload_plugin(plugin_id)
 
     def process_exec(self, arguments, arguments_map, output_method, console_context):
         """
@@ -853,6 +878,10 @@ class ConsoleBase:
             "loadall" : {
                 "handler" : self.process_loadall,
                 "help" : "loads all the available plugins"
+            },
+            "unloadall" : {
+                "handler" : self.process_unloadall,
+                "help" : "unloads all the available plugins"
             },
             "exec" : {
                 "handler" : self.process_exec,
