@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
+class MainRestManagerPlugin(colony.base.system.Plugin):
     """
     The main class for the Rest Manager Main plugin.
     """
@@ -51,9 +51,9 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
     description = "Rest Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_remote_rest/manager/resources/baf.xml"
@@ -70,8 +70,8 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
         "rpc_service"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
     ]
     main_modules = [
         "main_remote_rest.manager.main_rest_manager_exceptions",
@@ -94,30 +94,30 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
     """ The rpc service plugins """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_remote_rest.manager.main_rest_manager_system
         self.main_rest_manager = main_remote_rest.manager.main_rest_manager_system.MainRestManager(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def is_request_handler(self, request):
         return self.main_rest_manager.is_request_handler(request)

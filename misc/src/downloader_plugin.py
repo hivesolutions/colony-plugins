@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class DownloaderPlugin(colony.base.plugin_system.Plugin):
+class DownloaderPlugin(colony.base.system.Plugin):
     """
     The main class for the Downloader plugin.
     """
@@ -51,9 +51,9 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     description = "Downloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/misc/downloader/resources/baf.xml"
@@ -64,7 +64,7 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
     ]
     main_modules = [
         "misc.downloader.console_downloader",
@@ -82,30 +82,30 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     """ The main client http plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import misc.downloader.downloader_system
         import misc.downloader.console_downloader
         self.downloader = misc.downloader.downloader_system.Downloader(self)
         self.console_downloader = misc.downloader.console_downloader.ConsoleDownloader(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def download_package(self, address, target_directory):
         return self.downloader.download_package(address, target_directory)

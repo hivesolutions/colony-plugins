@@ -42,7 +42,7 @@ import errno
 import types
 import socket
 
-import colony.base.plugin_system_exceptions
+import colony.base.exceptions
 
 PROVIDER_NAME = "ssl"
 """ The provider name """
@@ -250,7 +250,7 @@ def accept(self):
         if error.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
             # creates the error and populates it with the connection and the address
             # then raises it to the upper levels
-            error = colony.base.plugin_system_exceptions.OperationNotComplete("no handshake was possible")
+            error = colony.base.exceptions.OperationNotComplete("no handshake was possible")
             error.socket = connection
             error.connection = connection
             error.address = address

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
+class RepositoryDescriptorGeneratorPlugin(colony.base.system.Plugin):
     """
     The main class for the Repository Descriptor Generator plugin.
     """
@@ -50,9 +50,9 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     description = "A plugin to generate repository descriptors"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/misc/repository_descriptor_generator/resources/baf.xml"
@@ -74,29 +74,29 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     """ The console repository descriptor generator """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import misc.repository_descriptor_generator.repository_descriptor_generator_system
         import misc.repository_descriptor_generator.console_repository_descriptor_generator
         self.repository_descriptor_generator = misc.repository_descriptor_generator.repository_descriptor_generator_system.RepositoryDescriptorGenerator(self)
         self.console_repository_descriptor_generator = misc.repository_descriptor_generator.console_repository_descriptor_generator.ConsoleRepositoryDescriptorGenerator(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def generate_repository_descriptor_file(self, file_path, repository_name, repository_description, repository_layout):
         return self.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)

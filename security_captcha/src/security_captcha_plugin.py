@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
+class SecurityCaptchaPlugin(colony.base.system.Plugin):
     """
     The main class for the Security Captcha plugin.
     """
@@ -49,11 +49,11 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
     description = "A plugin to generate captcha values"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "startup",
@@ -61,7 +61,7 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+        colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
     ]
     main_modules = [
         "security_captcha.captcha.security_captcha_system"
@@ -71,7 +71,7 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
     """ The security captcha """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import security_captcha.captcha.security_captcha_system
         self.security_captcha = security_captcha.captcha.security_captcha_system.SecurityCaptcha(self)
 

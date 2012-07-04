@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class ConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
+class ConsoleFileSystemPlugin(colony.base.system.Plugin):
     """
     The main class for the Console File System plugin.
     """
@@ -50,15 +50,14 @@ class ConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that provides the file system commands for the system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "_console_command_extension",
-        "build_automation_item"
+        "_console_command_extension"
     ]
     main_modules = [
         "console.file_system.system"
@@ -68,7 +67,7 @@ class ConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
     """ The console file system """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import console.file_system.system
         self.console_file_system = console.file_system.system.ConsoleFileSystem(self)
 

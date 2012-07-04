@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class ZipPlugin(colony.base.plugin_system.Plugin):
+class ZipPlugin(colony.base.system.Plugin):
     """
     The main class for the Zip plugin.
     """
@@ -50,9 +50,9 @@ class ZipPlugin(colony.base.plugin_system.Plugin):
     description = "A plugin to manage zip files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/misc/zip/resources/baf.xml"
@@ -69,28 +69,28 @@ class ZipPlugin(colony.base.plugin_system.Plugin):
     """ The zip system """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import misc.zip.zip_system
         self.zip_system = misc.zip.zip_system.Zip(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
         self.zip_system = None
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def zip(self, zip_file_path, input_directory, file_path_list = None):
         """

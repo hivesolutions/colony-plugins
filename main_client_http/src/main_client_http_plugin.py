@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
+class MainClientHttpPlugin(colony.base.system.Plugin):
     """
     The main class for the Http Client Main plugin.
     """
@@ -51,10 +51,10 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers the http client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_client_http/http/resources/baf.xml"
@@ -64,8 +64,8 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
     ]
     main_modules = [
         "main_client_http.http.main_client_http_exceptions",
@@ -82,28 +82,28 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
     """ The url parser plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_client_http.http.main_client_http_system
         self.main_client_http = main_client_http.http.main_client_http_system.MainClientHttp(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_client(self, parameters):
         return self.main_client_http.create_client(parameters)

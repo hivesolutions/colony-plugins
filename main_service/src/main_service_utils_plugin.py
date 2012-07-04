@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
+class MainServiceUtilsPlugin(colony.base.system.Plugin):
     """
     The main class for the Service Main Utils plugin.
     """
@@ -50,11 +50,11 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers a utils for services"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_service_utils/utils/resources/baf.xml"
@@ -67,7 +67,7 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
         "socket_upgrader"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.x.x")
     ]
     main_modules = [
         "main_service_utils.utils.main_service_utils_async",
@@ -90,30 +90,30 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
     """ The work pool manager plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_service_utils.utils.main_service_utils_system
         self.main_service_utils = main_service_utils.utils.main_service_utils_system.MainServiceUtils(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def generate_service(self, parameters):
         """

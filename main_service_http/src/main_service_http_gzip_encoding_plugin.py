@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class MainServiceHttpGzipEncodingPlugin(colony.base.plugin_system.Plugin):
+class MainServiceHttpGzipEncodingPlugin(colony.base.system.Plugin):
     """
     The main class for the Http Service Main Gzip Encoding plugin.
     """
@@ -51,10 +51,10 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers the http service gzip encoding"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"
@@ -64,7 +64,7 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.gzip", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.gzip", "1.x.x")
     ]
     main_modules = [
         "main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system"
@@ -77,28 +77,28 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.plugin_system.Plugin):
     """ The gzip plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system
         self.main_service_http_gzip_encoding = main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system.MainServiceHttpGzipEncoding(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_encoding_name(self):
         return self.main_service_http_gzip_encoding.get_encoding_name()

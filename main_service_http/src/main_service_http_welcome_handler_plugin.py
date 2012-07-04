@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class MainServiceHttpWelcomeHandlerPlugin(colony.base.plugin_system.Plugin):
+class MainServiceHttpWelcomeHandlerPlugin(colony.base.system.Plugin):
     """
     The main class for the Http Service Main Welcome Handler plugin.
     """
@@ -50,11 +50,11 @@ class MainServiceHttpWelcomeHandlerPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers the http service welcome handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_service_http_welcome_handler/welcome_handler/resources/baf.xml"
@@ -70,24 +70,24 @@ class MainServiceHttpWelcomeHandlerPlugin(colony.base.plugin_system.Plugin):
     """ The main service http welcome handler """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_service_http_welcome_handler.welcome_handler.main_service_http_welcome_handler_system
         self.main_service_http_welcome_handler = main_service_http_welcome_handler.welcome_handler.main_service_http_welcome_handler_system.MainServiceHttpWelcomeHandler(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
+class ThreadPoolManagerPlugin(colony.base.system.Plugin):
     """
     The main class for the Thread Pool Manager plugin
     """
@@ -50,11 +50,11 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
     description = "Thread Pool Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_threads/thread_pool_manager/resources/baf.xml"
@@ -70,30 +70,30 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
     """ The thread pool manager """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_threads.thread_pool_manager.thread_pool_manager_system
         self.thread_pool_manager = main_threads.thread_pool_manager.thread_pool_manager_system.ThreadPoolManager(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
         # unloads the thread pool manager
         self.thread_pool_manager.unload()
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
         return self.thread_pool_manager.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)

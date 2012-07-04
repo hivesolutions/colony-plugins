@@ -49,7 +49,7 @@ import traceback
 
 import colony.libs.map_util
 
-import colony.base.plugin_system_exceptions
+import colony.base.exceptions
 
 import main_service_utils_threads
 import main_service_utils_exceptions
@@ -770,7 +770,7 @@ class ServiceConnection(Connection):
             try:
                 # accepts the connection retrieving the service connection object and the address
                 service_connection, service_address = _socket.accept()
-            except colony.base.plugin_system_exceptions.OperationNotComplete, error:
+            except colony.base.exceptions.OperationNotComplete, error:
                 # unpacks the various components of the error, so
                 # that is possible to retrieve the connection and
                 # the address of the (still) pending connection

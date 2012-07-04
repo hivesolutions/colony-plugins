@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class FileManagerFsEnginePlugin(colony.base.plugin_system.Plugin):
+class FileManagerFsEnginePlugin(colony.base.system.Plugin):
     """
     The main class for the File Manager File System Engine plugin.
     """
@@ -50,16 +50,12 @@ class FileManagerFsEnginePlugin(colony.base.plugin_system.Plugin):
     description = "File Manager File System Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/data/file_manager_fs_engine/resources/baf.xml"
-    }
     capabilities = [
-        "file_manager_engine",
-        "build_automation_item"
+        "file_manager_engine"
     ]
     main_modules = [
         "data.file_manager_fs_engine.file_manager_fs_engine_system"
@@ -72,27 +68,27 @@ class FileManagerFsEnginePlugin(colony.base.plugin_system.Plugin):
     """ The business helper plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import data.file_manager_fs_engine.file_manager_fs_engine_system
         self.file_manager_fs_engine = data.file_manager_fs_engine.file_manager_fs_engine_system.FileManagerFsEngine(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_engine_name(self):
         return self.file_manager_fs_engine.get_engine_name()

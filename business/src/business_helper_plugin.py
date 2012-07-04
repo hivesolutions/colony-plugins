@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
+class BusinessHelperPlugin(colony.base.system.Plugin):
     """
     The main class for the Business Helper plugin.
     """
@@ -51,9 +51,9 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     description = "Business Helper Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "business_helper"
@@ -65,7 +65,7 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
         "business_logic_bundle"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager.new", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager.new", "1.x.x")
     ]
     main_modules = [
         "business_helper.system"
@@ -90,30 +90,30 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     """ The business logic bundle plugins """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import business_helper.system
         self.business_helper = business_helper.system.BusinessHelper(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path):
         return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path)

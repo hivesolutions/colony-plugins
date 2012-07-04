@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
+class WorkPoolManagerPlugin(colony.base.system.Plugin):
     """
     The main class for the Work Pool Manager plugin
     """
@@ -51,22 +51,18 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
     description = "Work Pool Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_work/work_pool_manager/resources/baf.xml"
-    }
     capabilities = [
         "work_pool_manager",
-        "system_information",
-        "build_automation_item"
+        "system_information"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.x.x")
     ]
     main_modules = [
         "main_work.work_pool_manager.work_pool_manager_algorithms",
@@ -81,29 +77,17 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
     """ The thread pool manager plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_work.work_pool_manager.work_pool_manager_system
         self.work_pool_manager = main_work.work_pool_manager.work_pool_manager_system.WorkPoolManager(self)
 
-    def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
-
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
         self.work_pool_manager.unload()
-
-    def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_new_work_pool(self, name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm):
         return self.work_pool_manager.create_new_work_pool(name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -118,9 +102,6 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.work_pool_manager.get_system_information()
-
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):

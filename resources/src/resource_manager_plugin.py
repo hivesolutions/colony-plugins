@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
+class ResourceManagerPlugin(colony.base.system.Plugin):
     """
     The main class for the Resource Manager plugin.
     """
@@ -51,11 +51,11 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     description = "A plugin to manage the resources contained in the plugins"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/resources/resource_manager/resources/baf.xml"
@@ -88,7 +88,7 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     """ The resource parser plugins """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import resources.resource_manager.resource_manager_system
         import resources.resource_manager.resource_manager_tests
         self.resource_manager = resources.resource_manager.resource_manager_system.ResourceManager(self)
@@ -96,29 +96,29 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
         self.resource_manager.load_system()
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
         self.resource_manager.unload_system()
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     @colony.base.decorators.event_handler
     def event_handler(self, event_name, *event_args):
-        colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+        colony.base.system.Plugin.event_handler(self, event_name, *event_args)
 
     def parse_file(self, file_path, full_resources_path):
         """

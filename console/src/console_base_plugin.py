@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class ConsoleBasePlugin(colony.base.plugin_system.Plugin):
+class ConsoleBasePlugin(colony.base.system.Plugin):
     """
     The main class for the Console Base plugin.
     """
@@ -51,18 +51,17 @@ class ConsoleBasePlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that provides the base commands for the system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT,
-        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "_console_command_extension",
-        "build_automation_item"
+        "_console_command_extension"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
     ]
     main_modules = [
         "console.base.system"
@@ -75,13 +74,13 @@ class ConsoleBasePlugin(colony.base.plugin_system.Plugin):
     """ The console plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import console.base.system
         self.console_base = console.base.system.ConsoleBase(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_base.get_console_extension_name()

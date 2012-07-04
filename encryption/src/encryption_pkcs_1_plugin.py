@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
+class EncryptionPkcs1Plugin(colony.base.system.Plugin):
     """
     The main class for the Pkcs 1 Encryption plugin.
     """
@@ -51,10 +51,10 @@ class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers the pkcs 1 encryption support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-        colony.base.plugin_system.JYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/encryption/pkcs_1/resources/baf.xml"
@@ -64,7 +64,7 @@ class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.ber", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.ber", "1.x.x")
     ]
     main_modules = [
         "encryption.pkcs_1.encryption_pkcs_1_exceptions",
@@ -78,28 +78,28 @@ class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
     """ The format ber plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import encryption.pkcs_1.encryption_pkcs_1_system
         self.encryption_pkcs_1 = encryption.pkcs_1.encryption_pkcs_1_system.EncryptionPkcs1(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_structure(self, parameters):
         return self.encryption_pkcs_1.create_structure(parameters)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 
-class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
+class MainAuthenticationOpenidHandlerPlugin(colony.base.system.Plugin):
     """
     The main class for the Authentication Openid Handler Main plugin.
     """
@@ -50,9 +50,9 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
     description = "Authentication Openid Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_authentication_openid_handler/openid_handler/resources/baf.xml"
@@ -69,27 +69,27 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
     """ The main authentication open id handler """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system
         self.main_authentication_openid_handler = main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system.MainAuthenticationOpenidHandler(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         return self.main_authentication_openid_handler.get_handler_name()

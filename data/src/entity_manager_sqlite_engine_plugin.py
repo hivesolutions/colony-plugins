@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
+class EntityManagerSqliteEnginePlugin(colony.base.system.Plugin):
     """
     The main class for the Entity Manager Sqlite Engine plugin.
     """
@@ -51,19 +51,18 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     description = "Entity Manager Sqlite Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/data/entity_manager_sqlite_engine/resources/baf.xml"
     }
     capabilities = [
-        "entity_manager_engine",
-        "build_automation_item"
+        "entity_manager_engine"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x")
     ]
     main_modules = [
         "data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_exceptions",
@@ -77,28 +76,28 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     """ The business helper plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
+        colony.base.system.Plugin.load_plugin(self)
         import data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system
         self.entity_manager_sqlite_engine = data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system.EntityManagerSqliteEngine(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_engine_name(self):
         return self.entity_manager_sqlite_engine.get_engine_name()
