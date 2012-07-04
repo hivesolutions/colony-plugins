@@ -2293,13 +2293,12 @@ class HttpClientServiceHandler:
             # retrieves the host splitted length
             host_splitted_length = len(host_splitted)
 
-            # in case the host splitted length is two
-            if host_splitted_length == 2:
-                # retrieves the hostname and the port
-                hostname, _port = host_splitted
-            else:
-                # sets the hostname as the host (size one)
-                hostname = host
+            # in case the host splitted length is two,
+            # retrieves the hostname and the port
+            if host_splitted_length == 2: hostname, _port = host_splitted
+            # otherwise sets the hostname as the host
+            # (for size one)
+            else: hostname = host
 
             # in case the hostname exists in the service configuration virtual servers map
             if hostname in service_configuration_virtual_servers:
