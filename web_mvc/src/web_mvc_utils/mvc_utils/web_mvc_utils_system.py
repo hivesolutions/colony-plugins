@@ -277,7 +277,7 @@ class WebMvcUtils:
 
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map, start_structures = False, default_parameters = {}):
         # retrieves the required plugins
-        template_engine_manager_plugin = self.web_mvc_utils_plugin.template_engine_manager_plugin
+        template_engine_plugin = self.web_mvc_utils_plugin.template_engine_plugin
         json_plugin = self.web_mvc_utils_plugin.json_plugin
 
         # retrieves the first and second arguments from the base arguments
@@ -302,12 +302,12 @@ class WebMvcUtils:
         # the start structures flag is set
         start_structures and controller._start_controller()
 
-        # sets the template engine manager plugin in the controller
-        controller.set_template_engine_manager_plugin(template_engine_manager_plugin)
+        # sets the template engine plugin in the controller
+        controller.set_template_engine_plugin(template_engine_plugin)
 
-        # sets the template engine manager plugin and the json plugins
+        # sets the template engine plugin and the json plugins
         # in the controller
-        controller.set_template_engine_manager_plugin(template_engine_manager_plugin)
+        controller.set_template_engine_plugin(template_engine_plugin)
         controller.set_json_plugin(json_plugin)
 
         # extends the default parameters in the controller

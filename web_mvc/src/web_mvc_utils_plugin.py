@@ -58,7 +58,7 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
         "web.mvc.utils"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager.new", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
@@ -77,8 +77,8 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
     web_mvc_utils = None
     """ The web mvc utils """
 
-    template_engine_manager_plugin = None
-    """ The template engine manager plugin """
+    template_engine_plugin = None
+    """ The template engine plugin """
 
     entity_manager_plugin = None
     """ The entity manager plugin """
@@ -178,9 +178,9 @@ class WebMvcUtilsPlugin(colony.base.system.Plugin):
     def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
         return self.web_mvc_utils.generate_entity_manager_arguments(plugin, base_entity_manager_arguments, parameters)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
+    def set_template_engine_plugin(self, template_engine_plugin):
+        self.template_engine_plugin = template_engine_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager.new")
     def set_entity_manager_plugin(self, entity_manager_plugin):

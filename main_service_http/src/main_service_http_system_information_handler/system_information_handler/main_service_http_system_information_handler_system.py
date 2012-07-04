@@ -105,8 +105,8 @@ class MainServiceHttpSystemInformationHandler:
         # retrieves the plugin manager
         plugin_manager = self.main_service_http_system_information_handler_plugin.manager
 
-        # retrieves the template engine manager plugin
-        template_engine_manager_plugin = self.main_service_http_system_information_handler_plugin.template_engine_manager_plugin
+        # retrieves the template engine plugin
+        template_engine_plugin = self.main_service_http_system_information_handler_plugin.template_engine_plugin
 
         # retrieves the main service http system information handler plugin path
         main_service_http_system_information_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_http_system_information_handler_plugin.id)
@@ -115,7 +115,7 @@ class MainServiceHttpSystemInformationHandler:
         template_file_path = main_service_http_system_information_handler_plugin_path + "/" + SYSTEM_INFORMATION_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
+        template_file = template_engine_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # retrieves the system information
         system_information = self._get_system_information()

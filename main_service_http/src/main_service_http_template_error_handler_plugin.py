@@ -64,7 +64,7 @@ class MainServiceHttpTemplateErrorHandlerPlugin(colony.base.system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x")
     ]
     main_modules = [
         "main_service_http_template_error_handler.template_error_handler.main_service_http_template_error_handler_system"
@@ -73,8 +73,8 @@ class MainServiceHttpTemplateErrorHandlerPlugin(colony.base.system.Plugin):
     main_service_http_template_error_handler = None
     """ The main service http template error handler """
 
-    template_engine_manager_plugin = None
-    """ The template engine manager plugin """
+    template_engine_plugin = None
+    """ The template engine plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -106,9 +106,9 @@ class MainServiceHttpTemplateErrorHandlerPlugin(colony.base.system.Plugin):
     def handle_error(self, request, error):
         return self.main_service_http_template_error_handler.handle_error(request, error)
 
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
+    def get_template_engine_plugin(self):
+        return self.template_engine_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
+    def set_template_engine_plugin(self, template_engine_plugin):
+        self.template_engine_plugin = template_engine_plugin

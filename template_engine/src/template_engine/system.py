@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import template_engine_ast
-import template_engine_visitor
+import ast
+import visitor
 
 START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
 """ The start tag regular expression value """
@@ -116,23 +116,23 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
 )
 """ The literal regular expression that matches all the literals """
 
-class TemplateEngineManager:
+class TemplateEngine:
     """
-    The template engine manager class.
+    The template engine class.
     """
 
-    template_engine_manager_plugin = None
-    """ The template engine manager plugin """
+    template_engine_plugin = None
+    """ The template engine plugin """
 
-    def __init__(self, template_engine_manager_plugin):
+    def __init__(self, template_engine_plugin):
         """
         Constructor of the class.
 
-        @type template_engine_manager_plugin: TemplateEngineManagerPlugin
-        @param template_engine_manager_plugin: The template engine manager plugin.
+        @type template_engine_plugin: TemplateEnginePlugin
+        @param template_engine_plugin: The template engine plugin.
         """
 
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+        self.template_engine_plugin = template_engine_plugin
 
     def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
         # opens the file for reading
@@ -303,7 +303,7 @@ class TemplateEngineManager:
         match_orderer_list.reverse()
 
         # creates the root node
-        root_node = template_engine_ast.RootNode()
+        root_node = ast.RootNode()
 
         # creates the tree node stack with the root node inserted
         tree_node_stack = [root_node]
@@ -320,7 +320,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the composite node from the match orderer
-                composite_node = template_engine_ast.CompositeNode([match_orderer], ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
+                composite_node = ast.CompositeNode([match_orderer], ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
 
                 # adds the composite node as a child to the parent node
                 parent_node.add_child_node(composite_node)
@@ -343,7 +343,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the single node from the match orderer
-                single_node = template_engine_ast.SingleNode(match_orderer, ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
+                single_node = ast.SingleNode(match_orderer, ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
 
                 # adds the single node as a child to the parent node
                 parent_node.add_child_node(single_node)
@@ -353,7 +353,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the literal node from the match orderer
-                literal_node = template_engine_ast.LiteralNode(match_orderer)
+                literal_node = ast.LiteralNode(match_orderer)
 
                 # adds the literal node as a child to the parent node
                 parent_node.add_child_node(literal_node)
@@ -459,7 +459,7 @@ class TemplateFile:
         """
         Constructor of the class.
 
-        @type manager: TemplateEngineManager
+        @type manager: TemplateEngine
         @param manager: The manager to be used.
         @type file_path: String
         @param file_path: The path to the file to be used.
@@ -474,7 +474,7 @@ class TemplateFile:
         self.encoding = encoding
         self.root_node = root_node
 
-        self.visitor = template_engine_visitor.Visitor()
+        self.visitor = visitor.Visitor()
         self.locale_bundles = []
 
     def assign(self, variable_name, variable_value):
@@ -543,10 +543,10 @@ class TemplateFile:
         to retain the system wide information.
         """
 
-        # retrieves the template engine manager plugin
+        # retrieves the template engine plugin
         # in order to obtain the plugin manager
-        template_engine_manager_plugin = self.manager.template_engine_manager_plugin
-        plugin_manager = template_engine_manager_plugin.manager
+        template_engine_plugin = self.manager.template_engine_plugin
+        plugin_manager = template_engine_plugin.manager
 
         # retrieves the map containing the "global" system information
         system_information_map = plugin_manager.get_system_information_map()
@@ -570,8 +570,8 @@ class TemplateFile:
         # sets the file path in the visitor
         self.visitor.set_file_path(self.file_path)
 
-        # sets the template engine manager in the visitor
-        self.visitor.set_template_engine_manager(self.manager)
+        # sets the template engine in the visitor
+        self.visitor.set_template_engine(self.manager)
 
         # sets the variable encoding in the visitor
         self.visitor.set_variable_encoding(self.variable_encoding)

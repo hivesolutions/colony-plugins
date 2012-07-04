@@ -2035,7 +2035,7 @@ def retrieve_template_file(self, file_path = None, encoding = DEFAULT_TEMPLATE_F
 
     # parses the template file in the template file path assigning
     # the appropriate page include if the partial page value is set
-    template_file = self.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, encoding)
+    template_file = self.template_engine_plugin.parse_file_path_encoding(template_file_path, encoding)
     partial_page and self.assign_include_template_file(template_file, PAGE_INCLUDE_VALUE, partial_page, locale)
 
     # retrieves the global bundle for the locale and adds it to the
@@ -3015,25 +3015,25 @@ def unset_default_parameter(self, parameter_name):
 
     del self.default_parameters[parameter_name]
 
-def get_template_engine_manager_plugin(self):
+def get_template_engine_plugin(self):
     """
-    Retrieves the template engine manager plugin.
+    Retrieves the template engine plugin.
 
     @rtype: Plugin
-    @return: The template engine manager plugin.
+    @return: The template engine plugin.
     """
 
-    return self.template_engine_manager_plugin
+    return self.template_engine_plugin
 
-def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+def set_template_engine_plugin(self, template_engine_plugin):
     """
-    Sets the template engine manager plugin.
+    Sets the template engine plugin.
 
-    @type template_engine_manager_plugin: Plugin
-    @param template_engine_manager_plugin: The templates engine manager plguin
+    @type template_engine_plugin: Plugin
+    @param template_engine_plugin: The templates engine manager plguin
     """
 
-    self.template_engine_manager_plugin = template_engine_manager_plugin
+    self.template_engine_plugin = template_engine_plugin
 
 def set_json_plugin(self, json_plugin):
     """

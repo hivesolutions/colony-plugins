@@ -224,8 +224,8 @@ class MainServiceHttpTemplateErrorHandler:
         # retrieves the plugin manager
         plugin_manager = self.main_service_http_template_error_handler_plugin.manager
 
-        # retrieves the template engine manager plugin
-        template_engine_manager_plugin = self.main_service_http_template_error_handler_plugin.template_engine_manager_plugin
+        # retrieves the template engine plugin
+        template_engine_plugin = self.main_service_http_template_error_handler_plugin.template_engine_plugin
 
         # retrieves the main service http template error handler plugin path
         main_service_http_template_error_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_http_template_error_handler_plugin.id)
@@ -234,7 +234,7 @@ class MainServiceHttpTemplateErrorHandler:
         template_file_path = main_service_http_template_error_handler_plugin_path + "/" + TEMPLATE_ERROR_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
+        template_file = template_engine_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # assigns the template variables
         template_file.assign("error_code", error_code)

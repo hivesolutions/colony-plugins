@@ -67,7 +67,7 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.system.Plugin):
         "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x")
     ]
     main_modules = [
         "main_service_http_system_information_handler.system_information_handler.main_service_http_system_information_handler_system"
@@ -79,8 +79,8 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.system.Plugin):
     system_information_plugins = []
     """ The system information plugins """
 
-    template_engine_manager_plugin = None
-    """ The template engine manager plugin """
+    template_engine_plugin = None
+    """ The template engine plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -136,9 +136,9 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.system.Plugin):
     def system_information_unload_allowed(self, plugin, capability):
         self.system_information_plugins.append(plugin)
 
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
+    def get_template_engine_plugin(self):
+        return self.template_engine_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
+    def set_template_engine_plugin(self, template_engine_plugin):
+        self.template_engine_plugin = template_engine_plugin

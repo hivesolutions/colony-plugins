@@ -64,7 +64,7 @@ class MainServiceHttpTemplateDirectoryListHandlerPlugin(colony.base.system.Plugi
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x")
     ]
     main_modules = [
         "main_service_http_template_directory_list_handler.template_directory_list_handler.main_service_http_template_directory_list_handler_system"
@@ -73,8 +73,8 @@ class MainServiceHttpTemplateDirectoryListHandlerPlugin(colony.base.system.Plugi
     main_service_http_template_directory_list_handler = None
     """ The main service http template directory list handler """
 
-    template_engine_manager_plugin = None
-    """ The template engine manager plugin """
+    template_engine_plugin = None
+    """ The template engine plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -106,9 +106,9 @@ class MainServiceHttpTemplateDirectoryListHandlerPlugin(colony.base.system.Plugi
     def handle_directory_list(self, request, directory_list):
         return self.main_service_http_template_directory_list_handler.handle_directory_list(request, directory_list)
 
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
+    def get_template_engine_plugin(self):
+        return self.template_engine_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
+    def set_template_engine_plugin(self, template_engine_plugin):
+        self.template_engine_plugin = template_engine_plugin

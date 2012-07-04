@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class TemplateEngineManagerPlugin(colony.base.system.Plugin):
+class TemplateEnginePlugin(colony.base.system.Plugin):
     """
-    The main class for the Template Engine Manager plugin.
+    The main class for the Template Engine plugin.
     """
 
-    id = "pt.hive.colony.plugins.template_engine.manager"
-    name = "Template Engine Manager"
-    description = "Template Engine Manager Plugin"
+    id = "pt.hive.colony.plugins.template_engine"
+    name = "Template Engine"
+    description = "Template Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -56,31 +56,31 @@ class TemplateEngineManagerPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "template_engine_manager"
+        "template_engine"
     ]
     main_modules = [
-        "template_engine.manager.template_engine_ast",
-        "template_engine.manager.template_engine_exceptions",
-        "template_engine.manager.template_engine_manager_system",
-        "template_engine.manager.template_engine_visitor"
+        "template_engine.ast",
+        "template_engine.exceptions",
+        "template_engine.system",
+        "template_engine.visitor"
     ]
 
-    template_engine_manager = None
-    """ The template engine manager """
+    template_engine = None
+    """ The template engine """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import template_engine.manager.template_engine_manager_system
-        self.template_engine_manager = template_engine.manager.template_engine_manager_system.TemplateEngineManager(self)
+        import template_engine.system
+        self.template_engine = template_engine.system.TemplateEngine(self)
 
     def parse_file_path(self, file_path):
-        return self.template_engine_manager.parse_file_path(file_path)
+        return self.template_engine.parse_file_path(file_path)
 
     def parse_file_path_encoding(self, file_path, encoding):
-        return self.template_engine_manager.parse_file_path(file_path, encoding)
+        return self.template_engine.parse_file_path(file_path, encoding)
 
     def parse_file_path_variable_encoding(self, file_path, encoding, variable_encoding):
-        return self.template_engine_manager.parse_file_path_variable_encoding(file_path, encoding, variable_encoding)
+        return self.template_engine.parse_file_path_variable_encoding(file_path, encoding, variable_encoding)
 
     def parse_file(self, file):
-        return self.template_engine_manager.parse_file(file)
+        return self.template_engine.parse_file(file)

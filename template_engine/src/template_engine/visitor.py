@@ -50,8 +50,8 @@ import colony.libs.quote_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
-import template_engine_ast
-import template_engine_exceptions
+import ast
+import exceptions
 
 FUNCTION_TYPES = (
     types.MethodType,
@@ -336,8 +336,8 @@ class Visitor:
     file_path = None
     """ The path to the file """
 
-    template_engine_manager = None
-    """ The template engine manager """
+    template_engine = None
+    """ The template engine """
 
     variable_encoding = None
     """ The variable encoding """
@@ -467,25 +467,25 @@ class Visitor:
 
         self.file_path = file_path
 
-    def get_template_engine_manager(self):
+    def get_template_engine(self):
         """
-        Retrieves the template engine manager.
+        Retrieves the template engine.
 
-        @rtype: TemplateEngineManager
-        @return: The template engine manager.
-        """
-
-        return self.template_engine_manager
-
-    def set_template_engine_manager(self, template_engine_manager):
-        """
-        Sets the template engine manager.
-
-        @type template_engine_manager: TemplateEngineManager
-        @param template_engine_manager: The template engine manager.
+        @rtype: TemplateEngine
+        @return: The template engine.
         """
 
-        self.template_engine_manager = template_engine_manager
+        return self.template_engine
+
+    def set_template_engine(self, template_engine):
+        """
+        Sets the template engine.
+
+        @type template_engine: TemplateEngine
+        @param template_engine: The template engine.
+        """
+
+        self.template_engine = template_engine
 
     def get_variable_encoding(self):
         """
@@ -538,15 +538,15 @@ class Visitor:
     def after_visit(self, node):
         pass
 
-    @_visit(template_engine_ast.AstNode)
+    @_visit(ast.AstNode)
     def visit_ast_node(self, node):
         pass
 
-    @_visit(template_engine_ast.RootNode)
+    @_visit(ast.RootNode)
     def visit_root_node(self, node):
         pass
 
-    @_visit(template_engine_ast.LiteralNode)
+    @_visit(ast.LiteralNode)
     def visit_literal_node(self, node):
         # retrieves the match value (literal value)
         match_value = node.value.match_value
@@ -557,15 +557,15 @@ class Visitor:
         # writes the escaped match value
         self.string_buffer.write(escaped_match_value)
 
-    @_visit(template_engine_ast.MatchNode)
+    @_visit(ast.MatchNode)
     def visit_match_node(self, node):
         pass
 
-    @_visit(template_engine_ast.SingleNode)
+    @_visit(ast.SingleNode)
     def visit_single_node(self, node):
         pass
 
-    @_visit(template_engine_ast.CompositeNode)
+    @_visit(ast.CompositeNode)
     def visit_composite_node(self, node):
         pass
 
@@ -1083,7 +1083,7 @@ class Visitor:
                 attribute_from_value = attribute_from[VALUE_VALUE]
 
                 # raises the variable not iterable exception
-                raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
+                raise exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
             # otherwise avoids exception in case the object
             # is not an invalid one (possible problems)
             elif not attribute_from_value == None:
@@ -1299,7 +1299,7 @@ class Visitor:
             node_value_type = node.get_value_type()
 
             # raises the undefined reference exception
-            raise template_engine_exceptions.UndefinedReference(node_value_type)
+            raise exceptions.UndefinedReference(node_value_type)
 
         # in case the path is absolute
         if os.path.isabs(attribute_file_literal_value):
@@ -1314,7 +1314,7 @@ class Visitor:
             file_path = file_directory + "/" + attribute_file_literal_value
 
         # parses the file retrieving the template file
-        template_file = self.template_engine_manager.parse_file_path(file_path, self.encoding, self.process_methods_list, self.locale_bundles)
+        template_file = self.template_engine.parse_file_path(file_path, self.encoding, self.process_methods_list, self.locale_bundles)
 
         # sets the global map in template file
         template_file.set_global_map(self.global_map)
@@ -1632,7 +1632,7 @@ class Visitor:
                                 break
                             else:
                                 # raises the undefined variable exception
-                                raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                                raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
                         # variable is of type object or other
                         else:
                             if hasattr(current_variable, variable_name_split):
@@ -1656,13 +1656,13 @@ class Visitor:
                                 break
                             else:
                                 # raises the undefined variable exception
-                                raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                                raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
                 elif not self.strict_mode:
                     # sets the current variable as none
                     current_variable = None
                 else:
                     # raises the undefined variable exception
-                    raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                    raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
@@ -1710,7 +1710,7 @@ class Visitor:
             return literal_value
 
         # raises an invalid boolean value exception
-        raise template_engine_exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
+        raise exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
 
     def _validate_accept_node(self, node, accept_node):
         """
@@ -1726,7 +1726,7 @@ class Visitor:
         """
 
         # in case the current node is not a match node
-        if not isinstance(node, template_engine_ast.MatchNode):
+        if not isinstance(node, ast.MatchNode):
             # returns the accept node
             return accept_node
 
