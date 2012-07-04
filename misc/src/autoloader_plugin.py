@@ -85,21 +85,15 @@ class AutoloaderPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
         self.autoloader.unload_autoloader()
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):

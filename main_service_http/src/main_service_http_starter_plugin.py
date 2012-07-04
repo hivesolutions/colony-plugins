@@ -76,36 +76,27 @@ class MainServiceHttpStarterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
-        # defines the parameters
+        # defines the parameters and starts the service with
+        # this map as the configuration
         parameters = {
             "socket_provider" : "normal",
             "port" : 8080
         }
-
         self.main_service_http_plugin.start_service(parameters)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-
         self.main_service_http_plugin.stop_service({})
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
