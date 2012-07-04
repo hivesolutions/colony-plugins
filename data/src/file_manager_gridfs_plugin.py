@@ -41,12 +41,12 @@ import colony.base.system
 
 class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
     """
-    The main class for the File Manager Gridfs Engine plugin.
+    The main class for the File Manager Gridfs plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.file_manager.gridfs_engine"
-    name = "File Manager Gridfs Engine"
-    description = "File Manager Gridfs Engine Plugin"
+    id = "pt.hive.colony.plugins.data.file_manager.gridfs"
+    name = "File Manager Gridfs"
+    description = "File Manager Gridfs Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -61,46 +61,46 @@ class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
         colony.base.system.PackageDependency("MongoDB GridFS python bindings", "gridfs", "1.6.x", "http://mongodb.org")
     ]
     main_modules = [
-        "data.file_manager_gridfs_engine.system"
+        "data.file_manager_gridfs.system"
     ]
 
-    file_manager_gridfs_engine = None
-    """ The file manager gridfs engine """
+    file_manager_gridfs = None
+    """ The file manager gridfs """
 
     business_helper_plugin = None
     """ The business helper plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_gridfs_engine.system
-        self.file_manager_gridfs_engine = data.file_manager_gridfs_engine.system.FileManagerGridfsEngine(self)
+        import data.file_manager_gridfs.system
+        self.file_manager_gridfs = data.file_manager_gridfs.system.FileManagerGridfsEngine(self)
 
     def get_engine_name(self):
-        return self.file_manager_gridfs_engine.get_engine_name()
+        return self.file_manager_gridfs.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_manager_gridfs_engine.get_internal_version()
+        return self.file_manager_gridfs.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_manager_gridfs_engine.create_connection(connection_parameters)
+        return self.file_manager_gridfs.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_manager_gridfs_engine.close_connection(connection)
+        return self.file_manager_gridfs.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_manager_gridfs_engine.get(connection, file_name)
+        return self.file_manager_gridfs.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_manager_gridfs_engine.put(connection, file_path, file_name)
+        return self.file_manager_gridfs.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_manager_gridfs_engine.put_file(connection, file, file_name)
+        return self.file_manager_gridfs.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_manager_gridfs_engine.put_data(connection, data, file_name)
+        return self.file_manager_gridfs.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_manager_gridfs_engine.delete(connection, file_name)
+        return self.file_manager_gridfs.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_manager_gridfs_engine.list(connection, directory_name)
+        return self.file_manager_gridfs.list(connection, directory_name)

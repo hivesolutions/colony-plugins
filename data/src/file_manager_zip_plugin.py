@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class FileManagerFsEnginePlugin(colony.base.system.Plugin):
+class FileManagerZipPlugin(colony.base.system.Plugin):
     """
-    The main class for the File Manager File System Engine plugin.
+    The main class for the File Manager Zip Engine plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.file_manager.fs_engine"
-    name = "File Manager File System Engine"
-    description = "File Manager File System Engine Plugin"
+    id = "pt.hive.colony.plugins.data.file_manager.zip"
+    name = "File Manager Zip Engine"
+    description = "File Manager Zip Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -57,46 +57,46 @@ class FileManagerFsEnginePlugin(colony.base.system.Plugin):
         "file_manager_engine"
     ]
     main_modules = [
-        "data.file_manager_fs_engine.system"
+        "data.file_manager_zip.system"
     ]
 
-    file_manager_fs_engine = None
-    """ The file manager fs engine """
+    file_manager_zip = None
+    """ The file manager zip """
 
     business_helper_plugin = None
     """ The business helper plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_fs_engine.system
-        self.file_manager_fs_engine = data.file_manager_fs_engine.system.FileManagerFsEngine(self)
+        import data.file_manager_zip.system
+        self.file_manager_zip = data.file_manager_zip.system.FileManagerZip(self)
 
     def get_engine_name(self):
-        return self.file_manager_fs_engine.get_engine_name()
+        return self.file_manager_zip.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_manager_fs_engine.get_internal_version()
+        return self.file_manager_zip.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_manager_fs_engine.create_connection(connection_parameters)
+        return self.file_manager_zip.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_manager_fs_engine.close_connection(connection)
+        return self.file_manager_zip.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_manager_fs_engine.get(connection, file_name)
+        return self.file_manager_zip.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_manager_fs_engine.put(connection, file_path, file_name)
+        return self.file_manager_zip.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_manager_fs_engine.put_file(connection, file, file_name)
+        return self.file_manager_zip.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_manager_fs_engine.put_data(connection, data, file_name)
+        return self.file_manager_zip.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_manager_fs_engine.delete(connection, file_name)
+        return self.file_manager_zip.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_manager_fs_engine.list(connection, directory_name)
+        return self.file_manager_zip.list(connection, directory_name)

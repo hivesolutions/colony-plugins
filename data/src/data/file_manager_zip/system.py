@@ -48,23 +48,23 @@ ENGINE_NAME = "zip"
 ZIP_FILE_EXTENSION = ".zip"
 """ The zip file extension value """
 
-class FileManagerZipEngine:
+class FileManagerZip:
     """
-    The file manager zip engine class.
+    The file manager zip class.
     """
 
-    file_manager_zip_engine_plugin = None
-    """ The file manager zip engine plugin """
+    file_manager_zip_plugin = None
+    """ The file manager zip plugin """
 
-    def __init__(self, file_manager_zip_engine_plugin):
+    def __init__(self, file_manager_zip_plugin):
         """
         Constructor of the class
 
-        @type file_manager_zip_engine_plugin: FileManagerZipEnginePlugin
-        @param file_manager_zip_engine_plugin: The file manager  zip engine plugin.
+        @type file_manager_zip_plugin: FileManagerZipPlugin
+        @param file_manager_zip_plugin: The file manager  zip plugin.
         """
 
-        self.file_manager_zip_engine_plugin = file_manager_zip_engine_plugin
+        self.file_manager_zip_plugin = file_manager_zip_plugin
 
     def get_engine_name(self):
         """
@@ -90,11 +90,11 @@ class FileManagerZipEngine:
 
     def create_connection(self, connection_parameters):
         # retrieves the plugin manager
-        plugin_manager = self.file_manager_zip_engine_plugin.manager
+        plugin_manager = self.file_manager_zip_plugin.manager
 
         # retrieves the connection parameters
         context_name = connection_parameters.get("context_name", "default")
-        base_path = connection_parameters.get("base_path", "%configuration:" + self.file_manager_zip_engine_plugin.id + "%")
+        base_path = connection_parameters.get("base_path", "%configuration:" + self.file_manager_zip_plugin.id + "%")
 
         # creates the zip file anme from the context name
         zip_file_name = context_name + ZIP_FILE_EXTENSION

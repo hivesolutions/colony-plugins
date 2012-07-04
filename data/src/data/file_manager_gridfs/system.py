@@ -45,21 +45,21 @@ ENGINE_NAME = "gridfs"
 
 class FileManagerGridfsEngine:
     """
-    The file manager gridfs engine class.
+    The file manager gridfs class.
     """
 
-    file_manager_gridfs_engine_plugin = None
-    """ The file manager gridfs engine plugin """
+    file_manager_gridfs_plugin = None
+    """ The file manager gridfs plugin """
 
-    def __init__(self, file_manager_gridfs_engine_plugin):
+    def __init__(self, file_manager_gridfs_plugin):
         """
         Constructor of the class
 
-        @type file_manager_gridfs_engine_plugin: FileManagerGridfsEnginePlugin
-        @param file_manager_gridfs_engine_plugin: The file manager  gridfs engine plugin.
+        @type file_manager_gridfs_plugin: FileManagerGridfsEnginePlugin
+        @param file_manager_gridfs_plugin: The file manager  gridfs plugin.
         """
 
-        self.file_manager_gridfs_engine_plugin = file_manager_gridfs_engine_plugin
+        self.file_manager_gridfs_plugin = file_manager_gridfs_plugin
 
     def get_engine_name(self):
         """
