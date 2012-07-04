@@ -116,13 +116,35 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path):
-        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path)
+        return self.business_helper.import_class_module(
+            class_module_name,
+            globals,
+            locals,
+            global_values,
+            base_directory_path
+        )
 
     def import_class_module_target(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name):
-        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name)
+        return self.business_helper.import_class_module(
+            class_module_name,
+            globals,
+            locals,
+            global_values,
+            base_directory_path,
+            target_module_name
+        )
 
     def import_class_module_extra(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name, extra_symbols_map, extra_globals_map):
-        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name, extra_symbols_map, extra_globals_map)
+        return self.business_helper.import_class_module(
+            class_module_name,
+            globals,
+            locals,
+            global_values,
+            base_directory_path,
+            target_module_name,
+            extra_symbols_map,
+            extra_globals_map
+        )
 
     def generate_bundle_map(self, bundle_classes):
         return self.business_helper.generate_bundle_map(bundle_classes)
