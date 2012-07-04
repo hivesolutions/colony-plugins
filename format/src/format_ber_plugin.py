@@ -55,12 +55,8 @@ class FormatBerPlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/format/ber/resources/baf.xml"
-    }
     capabilities = [
-        "format.ber",
-        "build_automation_item"
+        "format.ber"
     ]
     main_modules = [
         "format.ber.format_ber_exceptions",

@@ -55,12 +55,8 @@ class FormatMimePlugin(colony.base.system.Plugin):
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/format/mime/resources/baf.xml"
-    }
     capabilities = [
-        "format.mime",
-        "build_automation_item"
+        "format.mime"
     ]
     main_modules = [
         "format.mime.format_mime_exceptions",

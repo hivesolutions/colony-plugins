@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class SecurityCaptchaPlugin(colony.base.system.Plugin):
+class CaptchaPlugin(colony.base.system.Plugin):
     """
-    The main class for the Security Captcha plugin.
+    The main class for the Captcha plugin.
     """
 
     id = "pt.hive.colony.plugins.security.captcha"
@@ -56,26 +56,25 @@ class SecurityCaptchaPlugin(colony.base.system.Plugin):
     ]
     capabilities = [
         "startup",
-        "security_captcha",
-        "build_automation_item"
+        "security_captcha"
     ]
     dependencies = [
         colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
     ]
     main_modules = [
-        "security_captcha.captcha.security_captcha_system"
+        "captcha.system"
     ]
 
-    security_captcha = None
-    """ The security captcha """
+    captcha = None
+    """ The captcha """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import security_captcha.captcha.security_captcha_system
-        self.security_captcha = security_captcha.captcha.security_captcha_system.SecurityCaptcha(self)
+        import captcha.system
+        self.captcha = captcha.system.Captcha(self)
 
     def generate_captcha(self, string_value, properties):
-        return self.security_captcha.generate_captcha(string_value, properties)
+        return self.captcha.generate_captcha(string_value, properties)
 
     def generate_captcha_string_value(self, properties):
-        return self.security_captcha.generate_captcha_string_value(properties)
+        return self.captcha.generate_captcha_string_value(properties)

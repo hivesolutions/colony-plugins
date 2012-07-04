@@ -46,7 +46,7 @@ import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 
-RESOURCES_PATH = "security_captcha/captcha/resources"
+RESOURCES_PATH = "captcha/resources"
 """ The resources path """
 
 DEFAULT_IMAGE_WIDTH = 300
@@ -76,27 +76,27 @@ RGBA_VALUE = "RGBA"
 JPEG_VALUE = "jpeg"
 """ The jpeg value """
 
-class SecurityCaptcha:
+class Captcha:
     """
-    The security captcha class.
+    The captcha class.
     """
 
-    security_captcha_plugin = None
-    """ The security captcha plugin """
+    captcha_plugin = None
+    """ The captcha plugin """
 
-    def __init__(self, security_captcha_plugin):
+    def __init__(self, captcha_plugin):
         """
         Constructor of the class.
 
-        @type security_captcha_plugin: SecurityCaptchaPlugin
-        @param security_captcha_plugin: The security captcha plugin.
+        @type captcha_plugin: CaptchaPlugin
+        @param captcha_plugin: The captcha plugin.
         """
 
-        self.security_captcha_plugin = security_captcha_plugin
+        self.captcha_plugin = captcha_plugin
 
     def generate_captcha(self, string_value, properties):
         # retrieves the plugin manager
-        plugin_manager = self.security_captcha_plugin.manager
+        plugin_manager = self.captcha_plugin.manager
 
         # tries to retrieve the image width
         image_width = properties.get(IMAGE_WIDTH_VALUE, DEFAULT_IMAGE_WIDTH)
@@ -107,11 +107,11 @@ class SecurityCaptcha:
         # tries to retrieve the number of letters
         number_letters = properties.get(NUMBER_LETTERS_VALUE, DEFAULT_NUMBER_LETTERS)
 
-        # retrieves the security captcha plugin path
-        security_captcha_plugin_path = plugin_manager.get_plugin_path_by_id(self.security_captcha_plugin.id)
+        # retrieves the captcha plugin path
+        captcha_plugin_path = plugin_manager.get_plugin_path_by_id(self.captcha_plugin.id)
 
-        # creates the resources path from the "base" security captcha plugin path
-        resources_path = security_captcha_plugin_path + "/" + RESOURCES_PATH
+        # creates the resources path from the "base" captcha plugin path
+        resources_path = captcha_plugin_path + "/" + RESOURCES_PATH
 
         # retrieves the font for the current resources path
         text_font = self._get_font(resources_path)
