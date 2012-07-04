@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.test_util
 
-import entity_manager_exceptions
-import entity_manager_test_mocks
+import exceptions
+import test_mocks
 
 class EntityManagerTest:
     """
@@ -74,7 +74,7 @@ class EntityManagerTest:
         # generator creation) and begins a new  transaction
         # context (for the current set of operations)
         test_case.entity_manager = entity_manager.load_entity_manager("sqlite")
-        test_case.entity_manager.extend_module(entity_manager_test_mocks)
+        test_case.entity_manager.extend_module(test_mocks)
         test_case.entity_manager.open(start = False)
         test_case.entity_manager.create_generator()
         test_case.entity_manager.begin()
@@ -109,97 +109,97 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
     def test_create(self):
         # creates the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
-        self.entity_manager.create(entity_manager_test_mocks.RootEntity)
-        self.entity_manager.create(entity_manager_test_mocks.Logable)
-        self.entity_manager.create(entity_manager_test_mocks.Taxable)
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
-        self.entity_manager.create(entity_manager_test_mocks.Address)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
-        self.entity_manager.create(entity_manager_test_mocks.Cat)
-        self.entity_manager.create(entity_manager_test_mocks.Car)
-        self.entity_manager.create(entity_manager_test_mocks.Supplier)
-        self.entity_manager.create(entity_manager_test_mocks.Operation)
+        self.entity_manager.create(test_mocks.RootEntity)
+        self.entity_manager.create(test_mocks.Logable)
+        self.entity_manager.create(test_mocks.Taxable)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Address)
+        self.entity_manager.create(test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Cat)
+        self.entity_manager.create(test_mocks.Car)
+        self.entity_manager.create(test_mocks.Supplier)
+        self.entity_manager.create(test_mocks.Operation)
 
         # verifies that all the data source references for the entity classes
         # have been created successfully
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.RootEntity))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Logable))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Taxable))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Person))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Employee))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Address))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Dog))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Cat))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Car))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Supplier))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Operation))
+        self.assertTrue(self.entity_manager.exists(test_mocks.RootEntity))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Logable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Taxable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Person))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Employee))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Address))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Dog))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Cat))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Car))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Supplier))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Operation))
 
     def test_delete(self):
         # creates the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
-        self.entity_manager.create(entity_manager_test_mocks.RootEntity)
-        self.entity_manager.create(entity_manager_test_mocks.Logable)
-        self.entity_manager.create(entity_manager_test_mocks.Taxable)
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
-        self.entity_manager.create(entity_manager_test_mocks.Address)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
-        self.entity_manager.create(entity_manager_test_mocks.Cat)
-        self.entity_manager.create(entity_manager_test_mocks.Car)
-        self.entity_manager.create(entity_manager_test_mocks.Supplier)
-        self.entity_manager.create(entity_manager_test_mocks.Operation)
+        self.entity_manager.create(test_mocks.RootEntity)
+        self.entity_manager.create(test_mocks.Logable)
+        self.entity_manager.create(test_mocks.Taxable)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Address)
+        self.entity_manager.create(test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Cat)
+        self.entity_manager.create(test_mocks.Car)
+        self.entity_manager.create(test_mocks.Supplier)
+        self.entity_manager.create(test_mocks.Operation)
 
         # verifies that all the data source references for the entity classes
         # have been created successfully
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.RootEntity))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Logable))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Taxable))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Person))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Employee))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Address))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Dog))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Cat))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Car))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Supplier))
-        self.assertTrue(self.entity_manager.exists(entity_manager_test_mocks.Operation))
+        self.assertTrue(self.entity_manager.exists(test_mocks.RootEntity))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Logable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Taxable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Person))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Employee))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Address))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Dog))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Cat))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Car))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Supplier))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Operation))
 
         # deletes the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
-        self.entity_manager.delete(entity_manager_test_mocks.RootEntity)
-        self.entity_manager.delete(entity_manager_test_mocks.Logable)
-        self.entity_manager.delete(entity_manager_test_mocks.Taxable)
-        self.entity_manager.delete(entity_manager_test_mocks.Person)
-        self.entity_manager.delete(entity_manager_test_mocks.Employee)
-        self.entity_manager.delete(entity_manager_test_mocks.Address)
-        self.entity_manager.delete(entity_manager_test_mocks.Dog)
-        self.entity_manager.delete(entity_manager_test_mocks.Cat)
-        self.entity_manager.delete(entity_manager_test_mocks.Car)
-        self.entity_manager.delete(entity_manager_test_mocks.Supplier)
-        self.entity_manager.delete(entity_manager_test_mocks.Operation)
+        self.entity_manager.delete(test_mocks.RootEntity)
+        self.entity_manager.delete(test_mocks.Logable)
+        self.entity_manager.delete(test_mocks.Taxable)
+        self.entity_manager.delete(test_mocks.Person)
+        self.entity_manager.delete(test_mocks.Employee)
+        self.entity_manager.delete(test_mocks.Address)
+        self.entity_manager.delete(test_mocks.Dog)
+        self.entity_manager.delete(test_mocks.Cat)
+        self.entity_manager.delete(test_mocks.Car)
+        self.entity_manager.delete(test_mocks.Supplier)
+        self.entity_manager.delete(test_mocks.Operation)
 
         # verifies that all the data source references for the entity classes
         # have been deleted successfully
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.RootEntity))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Logable))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Taxable))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Person))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Employee))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Address))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Dog))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Cat))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Car))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Supplier))
-        self.assertFalse(self.entity_manager.exists(entity_manager_test_mocks.Operation))
+        self.assertFalse(self.entity_manager.exists(test_mocks.RootEntity))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Logable))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Taxable))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Person))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Employee))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Address))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Dog))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Cat))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Car))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Supplier))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Operation))
 
     def test_save(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
 
         # creates the person entity that is going to be used
         # for the verification of the save method and saves it
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
         self.entity_manager.save(person)
@@ -211,7 +211,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the saved person by the unique identifier
         # of it and verifies that the object is not modified
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 1)
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
         self.assertNotEqual(saved_person, None)
 
         # verifies that the entity values of the retrieve entity
@@ -222,7 +222,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the dog entity that is going to be used
         # for the verification of the save of relations
         # then saves it associated with the person
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 2
         dog.name = "name_dog"
         dog.owner = person
@@ -235,8 +235,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the dog and the "associated" person to test them
         # for the correct relations
-        saved_dog = self.entity_manager.get(entity_manager_test_mocks.Dog, 2)
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 1)
+        saved_dog = self.entity_manager.get(test_mocks.Dog, 2)
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
         self.assertNotEqual(saved_dog, None)
         self.assertNotEqual(saved_person, None)
 
@@ -253,17 +253,17 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_one_to_one(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Address)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Address)
+        self.entity_manager.create(test_mocks.Employee)
 
         # creates the the person and address entities and populates
         # them with some values, then sets the person relation
         # in the address side and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 2
         address.street = "street_address"
         address.door = 1
@@ -283,8 +283,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the person and the address to test them
         # for the correct relations
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 1)
-        saved_address = self.entity_manager.get(entity_manager_test_mocks.Address, 2)
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
+        saved_address = self.entity_manager.get(test_mocks.Address, 2)
         self.assertNotEqual(saved_person, None)
         self.assertNotEqual(saved_address, None)
 
@@ -299,10 +299,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the address and person entities and populates
         # them with some values, then sets the person relation
         # in the address side and saves both entities
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 3
         address.name = "name_address"
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 4
         person.name = "name_person"
         person.address = address
@@ -318,8 +318,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the address and the person to test them
         # for the correct relations
-        saved_address = self.entity_manager.get(entity_manager_test_mocks.Address, 3)
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 4)
+        saved_address = self.entity_manager.get(test_mocks.Address, 3)
+        saved_person = self.entity_manager.get(test_mocks.Person, 4)
         self.assertNotEqual(saved_address, None)
         self.assertNotEqual(saved_person, None)
 
@@ -334,10 +334,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the employee and address entities and populates
         # them with some values, then sets the employee relation
         # in the address side and saves both entities
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 5
         employee.name = "name_employee"
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 6
         address.street = "street_address"
         address.door = 1
@@ -357,8 +357,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the employee and the address to test them
         # for the correct relations
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 5)
-        saved_address = self.entity_manager.get(entity_manager_test_mocks.Address, 6)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 5)
+        saved_address = self.entity_manager.get(test_mocks.Address, 6)
         self.assertNotEqual(saved_employee, None)
         self.assertNotEqual(saved_address, None)
 
@@ -373,10 +373,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the address and employee entities and populates
         # them with some values, then sets the employee relation
         # in the address side and saves both entities
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 7
         address.name = "name_address"
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 8
         employee.name = "name_employee"
         employee.address = address
@@ -392,8 +392,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the address and the employee to test them
         # for the correct relations
-        saved_address = self.entity_manager.get(entity_manager_test_mocks.Address, 7)
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 8)
+        saved_address = self.entity_manager.get(test_mocks.Address, 7)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 8)
         self.assertNotEqual(saved_address, None)
         self.assertNotEqual(saved_employee, None)
 
@@ -437,17 +437,17 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         """
 
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Employee)
 
         # creates the the person and dog entities and populates
         # them with some values, then sets the owner relation
         # in the dog side and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 2
         dog.name = "name_dog"
         dog.owner = person
@@ -463,8 +463,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the person and the dog to test them
         # for the correct relations
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 1)
-        saved_dog = self.entity_manager.get(entity_manager_test_mocks.Dog, 2)
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
+        saved_dog = self.entity_manager.get(test_mocks.Dog, 2)
         self.assertNotEqual(saved_person, None)
         self.assertNotEqual(saved_dog, None)
 
@@ -479,10 +479,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the dog and person entities and populates
         # them with some values, then sets the owner relation
         # in the dog side and saves both entities
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 3
         dog.name = "name_dog"
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 4
         person.name = "name_person"
         person.dogs = [dog]
@@ -498,8 +498,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the dog and the person to test them
         # for the correct relations
-        saved_dog = self.entity_manager.get(entity_manager_test_mocks.Dog, 3)
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 4)
+        saved_dog = self.entity_manager.get(test_mocks.Dog, 3)
+        saved_person = self.entity_manager.get(test_mocks.Person, 4)
         self.assertNotEqual(saved_dog, None)
         self.assertNotEqual(saved_person, None)
 
@@ -514,10 +514,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the employee and dog entities and populates
         # them with some values, then sets the owner relation
         # in the dog side and saves both entities
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 5
         employee.name = "name_employee"
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 6
         dog.name = "name_dog"
         dog.owner = employee
@@ -533,8 +533,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the employee and the dog to test them
         # for the correct relations
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 5)
-        saved_dog = self.entity_manager.get(entity_manager_test_mocks.Dog, 6)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 5)
+        saved_dog = self.entity_manager.get(test_mocks.Dog, 6)
         self.assertNotEqual(saved_employee, None)
         self.assertNotEqual(saved_dog, None)
 
@@ -549,10 +549,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the dog and employee entities and populates
         # them with some values, then sets the owner relation
         # in the dog side and saves both entities
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 7
         dog.name = "name_dog"
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 8
         employee.name = "name_employee"
         employee.dogs = [dog]
@@ -568,8 +568,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the dog and the employee to test them
         # for the correct relations
-        saved_dog = self.entity_manager.get(entity_manager_test_mocks.Dog, 7)
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 8)
+        saved_dog = self.entity_manager.get(test_mocks.Dog, 7)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 8)
         self.assertNotEqual(saved_dog, None)
         self.assertNotEqual(saved_employee, None)
 
@@ -583,17 +583,17 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_many_to_many(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Car)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Car)
+        self.entity_manager.create(test_mocks.Employee)
 
         # creates the the person and car entities and populates
         # them with some values, then sets the owners relation
         # in the dog side and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 2
         car.tires = 4
         car.owners = [person]
@@ -609,8 +609,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the person and the car to test them
         # for the correct relations
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 1)
-        saved_car = self.entity_manager.get(entity_manager_test_mocks.Car, 2)
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
+        saved_car = self.entity_manager.get(test_mocks.Car, 2)
         self.assertNotEqual(saved_person, None)
         self.assertNotEqual(saved_car, None)
 
@@ -625,10 +625,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the car and person entities and populates
         # them with some values, then sets the owners relation
         # in the car side and saves both entities
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 3
         car.tires = 4
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 4
         person.name = "name_person"
         person.cars = [car]
@@ -644,8 +644,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the car and the person to test them
         # for the correct relations
-        saved_car = self.entity_manager.get(entity_manager_test_mocks.Car, 3)
-        saved_person = self.entity_manager.get(entity_manager_test_mocks.Person, 4)
+        saved_car = self.entity_manager.get(test_mocks.Car, 3)
+        saved_person = self.entity_manager.get(test_mocks.Person, 4)
         self.assertNotEqual(saved_car, None)
         self.assertNotEqual(saved_person, None)
 
@@ -660,10 +660,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the employee and car entities and populates
         # them with some values, then sets the owners relation
         # in the dog side and saves both entities
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 5
         employee.name = "name_employee"
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 6
         car.tires = 4
         car.owners = [employee]
@@ -679,8 +679,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the employee and the car to test them
         # for the correct relations
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 5)
-        saved_car = self.entity_manager.get(entity_manager_test_mocks.Car, 6)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 5)
+        saved_car = self.entity_manager.get(test_mocks.Car, 6)
         self.assertNotEqual(saved_employee, None)
         self.assertNotEqual(saved_car, None)
 
@@ -695,10 +695,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the car and employee entities and populates
         # them with some values, then sets the owners relation
         # in the car side and saves both entities
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 7
         car.tires = 4
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 8
         employee.name = "name_employee"
         employee.cars = [car]
@@ -714,8 +714,8 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves both the car and the employee to test them
         # for the correct relations
-        saved_car = self.entity_manager.get(entity_manager_test_mocks.Car, 7)
-        saved_employee = self.entity_manager.get(entity_manager_test_mocks.Employee, 8)
+        saved_car = self.entity_manager.get(test_mocks.Car, 7)
+        saved_employee = self.entity_manager.get(test_mocks.Employee, 8)
         self.assertNotEqual(saved_car, None)
         self.assertNotEqual(saved_employee, None)
 
@@ -746,19 +746,19 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_invalid_relation(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
-        self.entity_manager.create(entity_manager_test_mocks.Car)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Car)
 
         # creates the the person and dog entities and populates
         # them with some values, then sets the owner relation
         # in the dog side and saves both entities, note that no
         # object id is set in the person nor it is generated because
         # no person is saved
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = None
         person.name = "name_person"
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 1
         dog.name = "name_dog"
         dog.owner = person
@@ -766,17 +766,17 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because no identifier
         # is set in the person object associated with the dog, cannot
         # associate an item with no identifier
-        self.assert_raises(entity_manager_exceptions.ValidationError, self.entity_manager.save, dog)
+        self.assert_raises(exceptions.ValidationError, self.entity_manager.save, dog)
 
         # creates the the dog and person entities and populates
         # them with some values, then sets the dogs relation
         # in the person side and saves both entities, note that no
         # object id is set in the dog nor it is generated because
         # no dog is saved
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = None
         dog.name = "name_dog"
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 2
         person.name = "name_person"
         person.dogs = [dog]
@@ -784,17 +784,17 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because no identifier
         # is set in the dog object associated with the person, cannot
         # associate an item with no identifier
-        self.assert_raises(entity_manager_exceptions.ValidationError, self.entity_manager.save, person)
+        self.assert_raises(exceptions.ValidationError, self.entity_manager.save, person)
 
         # creates the the car and person entities and populates
         # them with some values, then sets the cars relation
         # in the person side and saves both entities, note that no
         # object id is set in the car nor it is generated because
         # no dog is saved
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = None
         car.tires = 4
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 3
         person.name = "name_person"
         person.cars = [car]
@@ -802,15 +802,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because no identifier
         # is set in the car object associated with the person, cannot
         # associate an item with no identifier
-        self.assert_raises(entity_manager_exceptions.ValidationError, self.entity_manager.save, person)
+        self.assert_raises(exceptions.ValidationError, self.entity_manager.save, person)
 
         # creates the the car and dog entities and populates
         # them with some values, then sets the owner relation
         # in the dog side with the (invalid) car value
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 4
         car.tires = 4
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 5
         dog.name = "name_dog"
         dog.owner = car
@@ -818,15 +818,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the owner relation in the dog entity is invalid (should be
         # person instead got car)
-        self.assert_raises(entity_manager_exceptions.RelationValidationError, self.entity_manager.save, dog)
+        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, dog)
 
         # creates the the car and person entities and populates
         # them with some values, then sets the dogs relation
         # in the person side with the (invalid) car value
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 6
         car.tires = 4
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 7
         person.name = "name_person"
         person.dogs = [car]
@@ -834,15 +834,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the dogs relation in the dog entity is invalid (should be
         # dog instead got car)
-        self.assert_raises(entity_manager_exceptions.RelationValidationError, self.entity_manager.save, person)
+        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, person)
 
         # creates the the dog and car entities and populates
         # them with some values, then sets the owners relation
         # in the car side with the (invalid) dog value
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 8
         dog.name = "name_dog"
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 9
         car.tires = 4
         car.owners = [dog]
@@ -850,15 +850,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the owners relation in the car entity is invalid (should be
         # person instead got dog)
-        self.assert_raises(entity_manager_exceptions.RelationValidationError, self.entity_manager.save, car)
+        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, car)
 
         # creates the the person and car entities and populates
         # them with some values, then sets the owners relation
         # in the car side with an invalid type value (not sequence)
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 10
         person.name = "name_person"
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 11
         car.tires = 4
         car.owners = person
@@ -866,7 +866,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the owners relation in the car entity is invalid (should be
         # a sequence type got a single person instead)
-        self.assert_raises(entity_manager_exceptions.ValidationError, self.entity_manager.save, car)
+        self.assert_raises(exceptions.ValidationError, self.entity_manager.save, car)
 
     def test_database_integrity(self):
         # test that the database retains reference
@@ -891,18 +891,18 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_order_by(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Address)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Address)
 
         # creates the the various person entities and populates
         # them with some ordered values to be able to sort them
-        person_a = entity_manager_test_mocks.Person()
+        person_a = test_mocks.Person()
         person_a.object_id = 1
         person_a.name = "name_person_a"
-        person_c = entity_manager_test_mocks.Person()
+        person_c = test_mocks.Person()
         person_c.object_id = 2
         person_c.name = "name_person_c"
-        person_b = entity_manager_test_mocks.Person()
+        person_b = test_mocks.Person()
         person_b.object_id = 3
         person_b.name = "name_person_b"
         self.entity_manager.save(person_a)
@@ -920,7 +920,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute (defaults as descending)
-        persons = self.entity_manager.find(entity_manager_test_mocks.Person, {"order_by" : "name"})
+        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : "name"})
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -931,7 +931,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in descending order (explicit)
-        persons = self.entity_manager.find(entity_manager_test_mocks.Person, {"order_by" : (("name", "descending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : (("name", "descending"),)})
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -942,7 +942,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in ascending order (explicit)
-        persons = self.entity_manager.find(entity_manager_test_mocks.Person, {"order_by" : (("name", "ascending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : (("name", "ascending"),)})
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -955,15 +955,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # them with some ordered values to be able to sort them,
         # then associates them with a series of person, this will
         # allow the testing of relation based sorting
-        address_a = entity_manager_test_mocks.Address()
+        address_a = test_mocks.Address()
         address_a.object_id = 4
         address_a.street = "street_address_a"
         address_a.person = person_b
-        address_b = entity_manager_test_mocks.Address()
+        address_b = test_mocks.Address()
         address_b.object_id = 5
         address_b.street = "street_address_b"
         address_b.person = person_c
-        address_c = entity_manager_test_mocks.Address()
+        address_c = test_mocks.Address()
         address_c.object_id = 6
         address_c.street = "street_address_c"
         address_c.person = person_a
@@ -973,7 +973,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in descending order
-        persons = self.entity_manager.find(entity_manager_test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "descending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "descending"),)})
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -984,7 +984,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in ascending order
-        persons = self.entity_manager.find(entity_manager_test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "ascending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "ascending"),)})
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1000,12 +1000,12 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_reload(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
 
         # creates a person entity with it's default attributes and
         # saves it into the data source
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
         self.entity_manager.save(person)
@@ -1018,7 +1018,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates a new person entity with new (reload) attributes
         # and updates it into the data source, the person contains
         # the same object id so an update should be done correctly
-        person_reload = entity_manager_test_mocks.Person()
+        person_reload = test_mocks.Person()
         person_reload.object_id = 1
         person_reload.name = "name_person_reload"
         self.entity_manager.update(person_reload)
@@ -1049,7 +1049,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates a dog entity with it's default attributes associated
         # with the previously created person and saves it into the
         # data source
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 2
         dog.name = "name_dog"
         dog.owner = person
@@ -1075,18 +1075,18 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_count(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
+        self.entity_manager.create(test_mocks.Person)
 
         # creates a person entity with it's default attributes and
         # saves it into the data source
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
         self.entity_manager.save(person)
 
         # counts the amount of entities of type person
         # present in the data source
-        count = self.entity_manager.count(entity_manager_test_mocks.Person)
+        count = self.entity_manager.count(test_mocks.Person)
 
         # verifies that the amount of "persons" in the data
         # source is one (only one persist)
@@ -1094,14 +1094,14 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # creates a person entity with it's default attributes and
         # saves it into the data source
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 2
         person.name = "name_person"
         self.entity_manager.save(person)
 
         # counts the amount of entities of type person
         # present in the data source
-        count = self.entity_manager.count(entity_manager_test_mocks.Person)
+        count = self.entity_manager.count(test_mocks.Person)
 
         # verifies that the amount of "persons" in the data
         # source is two (two persists)
@@ -1109,11 +1109,11 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_generate_id(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
+        self.entity_manager.create(test_mocks.Person)
 
         # creates a person entity with it's default attributes and
         # (but no identifier) saves it into the data source
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.name = "name_person"
         self.entity_manager.save(person)
 
@@ -1127,13 +1127,13 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_duplicate(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Employee)
-        self.entity_manager.create(entity_manager_test_mocks.Car)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Employee)
+        self.entity_manager.create(test_mocks.Car)
 
         # creates a person entity with it's default attributes and
         # saves it into the data source
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
         self.entity_manager.save(person)
@@ -1144,7 +1144,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # creates a new employee entity (sub class of person) with the
         # same identifier as the created person
-        employee = entity_manager_test_mocks.Employee()
+        employee = test_mocks.Employee()
         employee.object_id = 1
         employee.name = "name_employee"
 
@@ -1156,7 +1156,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates a new employee entity (sub class of root entity and same
         # class hierarchy as the person) with the same identifier as the created
         # person, should also fail on saving
-        car = entity_manager_test_mocks.Car()
+        car = test_mocks.Car()
         car.object_id = 1
         car.tires = 4
 
@@ -1167,15 +1167,15 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_validate_relation(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Dog)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
 
         # creates the the person and dog entities and populates
         # them with some values and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        dog = entity_manager_test_mocks.Dog()
+        dog = test_mocks.Dog()
         dog.object_id = 2
         dog.name = "name_dog"
         self.entity_manager.save(person)
@@ -1205,10 +1205,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # creates the the person and the parent (person) entities and populates
         # them with some values and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 3
         person.name = "name_person"
-        parent = entity_manager_test_mocks.Person()
+        parent = test_mocks.Person()
         parent.object_id = 4
         parent.name = "name_parent"
         self.entity_manager.save(person)
@@ -1237,18 +1237,18 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_abstract(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.RootEntityAbstract)
-        self.entity_manager.create(entity_manager_test_mocks.Chair)
+        self.entity_manager.create(test_mocks.RootEntityAbstract)
+        self.entity_manager.create(test_mocks.Chair)
 
         # verifies that all the data source references for the entity classes
         # have been created successfully (or not created depending if the class
         # is abstract or not)
-        self.assertFalse(self.entity_manager.has_definition(entity_manager_test_mocks.RootEntityAbstract))
-        self.assertTrue(self.entity_manager.has_definition(entity_manager_test_mocks.Chair))
+        self.assertFalse(self.entity_manager.has_definition(test_mocks.RootEntityAbstract))
+        self.assertTrue(self.entity_manager.has_definition(test_mocks.Chair))
 
         # creates the the chair entity and populates
         # them with some values and saves the entity
-        chair = entity_manager_test_mocks.Chair()
+        chair = test_mocks.Chair()
         chair.object_id = 1
         chair.legs = 4
         self.entity_manager.save(chair)
@@ -1260,7 +1260,7 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
         # retrieves the saved chair by the unique identifier
         # of it and verifies that the object is not modified
-        saved_chair = self.entity_manager.get(entity_manager_test_mocks.Chair, 1)
+        saved_chair = self.entity_manager.get(test_mocks.Chair, 1)
         self.assertNotEqual(saved_chair, None)
 
         # verifies that the entity values of the retrieve entity
@@ -1270,16 +1270,16 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
 
     def test_nullify(self):
         # creates the required entity classes in the data source
-        self.entity_manager.create(entity_manager_test_mocks.Person)
-        self.entity_manager.create(entity_manager_test_mocks.Address)
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Address)
 
         # creates the the person and address entities and populates
         # them with some values, then sets the address relation
         # in the person side and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 2
         address.street = "street_address"
         address.door = 1
@@ -1302,10 +1302,10 @@ class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
         # creates the the person and address entities and populates
         # them with some values, then sets the address relation
         # in the person side and saves both entities
-        person = entity_manager_test_mocks.Person()
+        person = test_mocks.Person()
         person.object_id = 3
         person.name = "name_person"
-        address = entity_manager_test_mocks.Address()
+        address = test_mocks.Address()
         address.object_id = 4
         address.street = "street_address"
         address.door = 1

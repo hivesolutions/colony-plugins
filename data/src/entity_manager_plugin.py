@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class EntityManagerNewPlugin(colony.base.system.Plugin):
+class EntityManagerPlugin(colony.base.system.Plugin):
     """
-    The main class for the Entity Manager New plugin.
+    The main class for the Entity Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.entity_manager.new"
-    name = "Entity Manager New"
-    description = "The plugin that manages the entity manager orm system new"
+    id = "pt.hive.colony.plugins.data.entity_manager"
+    name = "Entity Manager"
+    description = "The plugin that manages the entity manager orm system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.system.EAGER_LOADING_TYPE
@@ -63,15 +63,15 @@ class EntityManagerNewPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
-        "data.entity_manager_new.entity_manager_decorators",
-        "data.entity_manager_new.entity_manager_exceptions",
-        "data.entity_manager_new.entity_manager_new_system",
-        "data.entity_manager_new.entity_manager_structures",
-        "data.entity_manager_new.entity_manager_test",
-        "data.entity_manager_new.entity_manager_test_mocks",
-        "data.entity_manager_new.mysql_system",
-        "data.entity_manager_new.pgsql_system",
-        "data.entity_manager_new.sqlite_system"
+        "data.entity_manager.decorators",
+        "data.entity_manager.exceptions",
+        "data.entity_manager.mysql_system",
+        "data.entity_manager.pgsql_system",
+        "data.entity_manager.sqlite_system"
+        "data.entity_manager.structures",
+        "data.entity_manager.system",
+        "data.entity_manager.test_mocks",
+        "data.entity_manager.test"
     ]
 
     entity_manager = None
@@ -88,21 +88,12 @@ class EntityManagerNewPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.entity_manager_new.entity_manager_new_system
-        import data.entity_manager_new.entity_manager_test
-        import data.entity_manager_new.entity_manager_decorators
-        self.entity_manager = data.entity_manager_new.entity_manager_new_system.DataEntityManager(self)
-        self.entity_manager_test = data.entity_manager_new.entity_manager_test.EntityManagerTest(self)
-        self.entity_manager_decorators_module = data.entity_manager_new.entity_manager_decorators
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        import data.entity_manager.system
+        import data.entity_manager.test
+        import data.entity_manager.decorators
+        self.entity_manager = data.entity_manager.system.DataEntityManager(self)
+        self.entity_manager_test = data.entity_manager.test.EntityManagerTest(self)
+        self.entity_manager_decorators_module = data.entity_manager.decorators
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -197,9 +188,6 @@ class EntityManagerNewPlugin(colony.base.system.Plugin):
 
     def get_plugin_test_case_bundle(self):
         return self.entity_manager_test.get_plugin_test_case_bundle()
-
-    def get_json_plugin(self):
-        return self.json_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

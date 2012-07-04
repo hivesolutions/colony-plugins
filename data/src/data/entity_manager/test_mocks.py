@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import entity_manager_structures
+import structures
 
-class RootEntity(entity_manager_structures.EntityClass):
+class RootEntity(structures.EntityClass):
     """
     The root entity class, this class represents
     a typical base class for a model hierarchy.
@@ -65,7 +65,7 @@ class RootEntity(entity_manager_structures.EntityClass):
         self.object_id = None
         self.status = 1
 
-class RootEntityAbstract(entity_manager_structures.EntityClass):
+class RootEntityAbstract(structures.EntityClass):
     """
     The root entity abstract class, this class represents
     a typical base class for a model hierarchy.
@@ -98,7 +98,7 @@ class RootEntityAbstract(entity_manager_structures.EntityClass):
         self.object_id = None
         self.status = 1
 
-class Logable(entity_manager_structures.EntityClass):
+class Logable(structures.EntityClass):
     """
     The (interface) class that decorates an entity with
     the "logable" attribute for polymorphic retrieval.

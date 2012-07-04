@@ -47,14 +47,13 @@ import mysql_system
 import pgsql_system
 import sqlite_system
 
-import entity_manager_exceptions
-
 import colony.libs.path_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
-import entity_manager_test_mocks
-import entity_manager_structures
+import exceptions
+import structures
+import test_mocks
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
@@ -209,7 +208,7 @@ class DataEntityManager:
         # engine plugins map
         if not engine_name in self.entity_manager_engine_plugins_map:
             # raises the entity manager engine not found exception
-            raise entity_manager_exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
+            raise exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
 
         # in case the id is already defined in the loaded
         # entity manager map (no need to load the entity manager)
@@ -280,7 +279,7 @@ class DataEntityManager:
         methods to be used along all the entity classes.
         """
 
-        return entity_manager_structures.EntityClass
+        return structures.EntityClass
 
     def _generate_class_map(self, class_list):
         # creates a list of tuples containing the class name
@@ -374,7 +373,7 @@ class EntityManager:
         that may be used for testing.
         """
 
-        return entity_manager_test_mocks
+        return test_mocks
 
     def get_entity(self, entity_name):
         """
@@ -409,7 +408,7 @@ class EntityManager:
         inheritance of all the entity classes.
         """
 
-        return entity_manager_structures.EntityClass
+        return structures.EntityClass
 
     def get_engine_name(self):
         """
@@ -472,7 +471,7 @@ class EntityManager:
         if self.connection == None or self.connection.is_closed():
             # creates a new connection with the specified parameters for the
             # appropriate connection handling
-            self.connection = self.connection or entity_manager_structures.Connection({})
+            self.connection = self.connection or structures.Connection({})
 
             # connects the connection using the engine, the connection parameters
             # are sent to provide configuration over the connection
@@ -4872,7 +4871,7 @@ class EntityManager:
             # retrieves the current class using the "descriminator"
             # for the retrieval of the entity definition
             current_class_name = result_map["_class"]
-            current_class = self.entities_map.get(current_class_name, entity_manager_structures.EntityClass)
+            current_class = self.entities_map.get(current_class_name, structures.EntityClass)
 
             # in case the current class does not exists in the
             # map of entities the map reference must be created
@@ -4992,7 +4991,7 @@ class EntityManager:
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
                         target_class_name = result_map[current_path + "_class"]
-                        target_class = self.entities_map.get(target_class_name, entity_manager_structures.EntityClass)
+                        target_class = self.entities_map.get(target_class_name, structures.EntityClass)
 
                         # in case the target class does not exists in the
                         # map of entities the map reference must be created
@@ -5176,7 +5175,7 @@ class EntityManager:
             # retrieves the current class using the "descriminator"
             # for the retrieval of the entity definition
             current_class_name = result_map["_class"]
-            current_class = self.entities_map.get(current_class_name, entity_manager_structures.EntityClass)
+            current_class = self.entities_map.get(current_class_name, structures.EntityClass)
 
             # retrieves the current modified time value for the
             # current entity class level
@@ -5305,7 +5304,7 @@ class EntityManager:
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
                         target_class_name = result_map[current_path + "_class"]
-                        target_class = self.entities_map.get(target_class_name, entity_manager_structures.EntityClass)
+                        target_class = self.entities_map.get(target_class_name, structures.EntityClass)
 
                         # retrieves the target modified time, to be set in the create
                         # map representing the entity, this may be used to check the
@@ -6459,7 +6458,7 @@ class EntityManager:
             # or the module item is not a sub class of the top level
             # entity class, this is not a proper entity class item,
             # must continue the loop
-            if not module_item_type == types.TypeType or not issubclass(module_item, entity_manager_structures.EntityClass):
+            if not module_item_type == types.TypeType or not issubclass(module_item, structures.EntityClass):
                 # continues the loop, trying to find valid
                 # entity classes for registration
                 continue
@@ -6580,7 +6579,7 @@ class EntityManager:
         standard specification.
         """
 
-        return entity_manager_structures.EntityClass._escape_text(text_value, escape_slash, escape_double_quotes)
+        return structures.EntityClass._escape_text(text_value, escape_slash, escape_double_quotes)
 
     def _load_meta(self, path):
         """

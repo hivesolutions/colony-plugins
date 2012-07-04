@@ -57,7 +57,7 @@ class FileManagerFsEnginePlugin(colony.base.system.Plugin):
         "file_manager_engine"
     ]
     main_modules = [
-        "data.file_manager_fs_engine.file_manager_fs_engine_system"
+        "data.file_manager_fs_engine.system"
     ]
 
     file_manager_fs_engine = None
@@ -68,26 +68,8 @@ class FileManagerFsEnginePlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_fs_engine.file_manager_fs_engine_system
-        self.file_manager_fs_engine = data.file_manager_fs_engine.file_manager_fs_engine_system.FileManagerFsEngine(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import data.file_manager_fs_engine.system
+        self.file_manager_fs_engine = data.file_manager_fs_engine.system.FileManagerFsEngine(self)
 
     def get_engine_name(self):
         return self.file_manager_fs_engine.get_engine_name()

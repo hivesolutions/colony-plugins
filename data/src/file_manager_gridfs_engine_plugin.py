@@ -61,7 +61,7 @@ class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
         colony.base.system.PackageDependency("MongoDB GridFS python bindings", "gridfs", "1.6.x", "http://mongodb.org")
     ]
     main_modules = [
-        "data.file_manager_gridfs_engine.file_manager_gridfs_engine_system"
+        "data.file_manager_gridfs_engine.system"
     ]
 
     file_manager_gridfs_engine = None
@@ -72,26 +72,8 @@ class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_gridfs_engine.file_manager_gridfs_engine_system
-        self.file_manager_gridfs_engine = data.file_manager_gridfs_engine.file_manager_gridfs_engine_system.FileManagerGridfsEngine(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import data.file_manager_gridfs_engine.system
+        self.file_manager_gridfs_engine = data.file_manager_gridfs_engine.system.FileManagerGridfsEngine(self)
 
     def get_engine_name(self):
         return self.file_manager_gridfs_engine.get_engine_name()
