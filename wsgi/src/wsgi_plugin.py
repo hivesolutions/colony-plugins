@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.system
+import colony.base.decorators
 
 class WsgiPlugin(colony.base.system.Plugin):
     """
@@ -58,6 +59,9 @@ class WsgiPlugin(colony.base.system.Plugin):
     capabilities = [
         "wsgi"
     ]
+    dependencies = [
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.remote.rest.manager", "1.x.x"),
+    ]
     main_modules = [
         "wsgi.sytem"
     ]
@@ -65,7 +69,22 @@ class WsgiPlugin(colony.base.system.Plugin):
     wsgi = None
     """ The wsgi """
 
+    rest_plugin = None
+    """ The reference to the rest plugin to be used to
+    route (and handle) the request to be received """
+
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
         import wsgi.system
         self.wsgi = wsgi.system.Wsgi(self)
+
+    @colony.base.decorators.inject_dependencies
+    def dependency_injected(self, plugin):
+        colony.base.system.Plugin.dependency_injected(self, plugin)
+
+    def handle(self, environ, start_response):
+        return self.wsgi.handle(environ, start_response)
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.remote.rest.manager")
+    def set_rest_plugin(self, rest_plugin):
+        self.rest_plugin = rest_plugin
