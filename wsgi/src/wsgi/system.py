@@ -62,7 +62,8 @@ class Wsgi:
     """
 
     wsgi_plugin = None
-    """ The wsgi plugin """
+    """ The wsgi plugin to be used to reference the
+    top level elements in the plugin """
 
     def __init__(self, wsgi_plugin):
         """
