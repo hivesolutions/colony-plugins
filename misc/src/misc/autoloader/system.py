@@ -192,18 +192,15 @@ class Autoloader:
             # retrieves the mode
             mode = file_stat[stat.ST_MODE]
 
-            # splits the file name
-            split = os.path.splitext(file_name)
-
-            # retrieves the module name
-            module_name = "".join(split[:-1])
-
-            # retrieves the extension name
-            extension_name = split[-1]
+            # splits the file name into the name of the module
+            # and the extension for the file name
+            module_name, extension = os.path.splitext(file_name)
 
             # in case it's not a directory and the extension of the file is .py (python file)
-            # must be checked for previous existence or modification
-            if not stat.S_ISDIR(mode) and extension_name == ".py":
+            # must be checked for previous existence or modification, and additional check is
+            # made to verify that the file name ends with the plugin suffix
+            if not stat.S_ISDIR(mode) and extension == ".py"\
+                and module_name.endswith("plugin"):
                 # in case the file name exists in the search directories information map
                 # for the current search directory
                 if file_name in self.search_directories_information_map[search_directory]:
