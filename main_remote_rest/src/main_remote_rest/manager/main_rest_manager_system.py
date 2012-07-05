@@ -341,10 +341,9 @@ class MainRestManager:
                 # retrieves the resource path match
                 resource_path_match = matching_regex.match(resource_path)
 
-                # in case there is no valid resource path match
-                if not resource_path_match:
-                    # continues the loop
-                    continue
+                # in case there is no valid resource path match, must
+                # continue the loop to try to find one
+                if not resource_path_match: continue
 
                 # retrieves the base value for the matching regex
                 base_value = self.matching_regex_base_values_map[matching_regex]

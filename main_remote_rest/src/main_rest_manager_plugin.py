@@ -55,7 +55,7 @@ class MainRestManagerPlugin(colony.base.system.Plugin):
     ]
     capabilities = [
         "rest_manager",
-        "http_python_handler",
+        "http_handler",
         "rpc_handler"
     ]
     capabilities_allowed = [
@@ -160,30 +160,30 @@ class MainRestManagerPlugin(colony.base.system.Plugin):
         return self.main_rest_manager.get_handler_properties()
 
     @colony.base.decorators.load_allowed_capability("rest_encoder")
-    def rest_encoder_capability_load_allowed(self, plugin, capability):
+    def rest_encoder_load_allowed(self, plugin, capability):
         self.rest_encoder_plugins.append(plugin)
 
     @colony.base.decorators.load_allowed_capability("rest_service")
-    def rest_service_capability_load_allowed(self, plugin, capability):
+    def rest_service_load_allowed(self, plugin, capability):
         self.rest_service_plugins.append(plugin)
         self.main_rest_manager.load_rest_service_plugin(plugin)
 
     @colony.base.decorators.load_allowed_capability("rpc_service")
-    def rpc_service_capability_load_allowed(self, plugin, capability):
+    def rpc_service_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)
         self.main_rest_manager.update_service_methods(plugin)
 
     @colony.base.decorators.unload_allowed_capability("rest_encoder")
-    def rest_encoder_capability_unload_allowed(self, plugin, capability):
+    def rest_encoder_unload_allowed(self, plugin, capability):
         self.rest_encoder_plugins.remove(plugin)
 
     @colony.base.decorators.unload_allowed_capability("rest_service")
-    def rest_service_capability_unload_allowed(self, plugin, capability):
+    def rest_service_unload_allowed(self, plugin, capability):
         self.rest_service_plugins.remove(plugin)
         self.main_rest_manager.unload_rest_service_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("rpc_service")
-    def rpc_servicer_capability_unload_allowed(self, plugin, capability):
+    def rpc_servicer_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_rest_manager.update_service_methods()
 

@@ -59,7 +59,7 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.system.Plugin):
         "http_service_handler"
     ]
     capabilities_allowed = [
-        "http_python_handler"
+        "http_handler"
     ]
     main_modules = [
         "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_exceptions",
@@ -69,8 +69,8 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.system.Plugin):
     main_service_http_colony_handler = None
     """ The main service http colony handler """
 
-    http_python_handler_plugins = []
-    """ The http python handler plugins """
+    http_handler_plugins = []
+    """ The http handler plugins """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -117,12 +117,12 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.system.Plugin):
 
         return self.main_service_http_colony_handler.handle_request(request)
 
-    @colony.base.decorators.load_allowed_capability("http_python_handler")
-    def http_python_handler_capability_load_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.append(plugin)
-        self.main_service_http_colony_handler.http_python_handler_load(plugin)
+    @colony.base.decorators.load_allowed_capability("http_handler")
+    def http_handler_load_allowed(self, plugin, capability):
+        self.http_handler_plugins.append(plugin)
+        self.main_service_http_colony_handler.http_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_python_handler")
-    def http_python_handler_capability_unload_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.remove(plugin)
-        self.main_service_http_colony_handler.http_python_handler_unload(plugin)
+    @colony.base.decorators.unload_allowed_capability("http_handler")
+    def http_handler_unload_allowed(self, plugin, capability):
+        self.http_handler_plugins.remove(plugin)
+        self.main_service_http_colony_handler.http_handler_unload(plugin)

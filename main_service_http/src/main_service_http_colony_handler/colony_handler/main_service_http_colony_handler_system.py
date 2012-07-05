@@ -56,8 +56,8 @@ class MainServiceHttpColonyHandler:
     main_service_http_colony_handler_plugin = None
     """ The main service http colony handler plugin """
 
-    http_python_handler_plugin_map = {}
-    """ The http python handler plugin map """
+    http_handler_plugin_map = {}
+    """ The http handler plugin map """
 
     def __init__(self, main_service_http_colony_handler_plugin):
         """
@@ -69,7 +69,7 @@ class MainServiceHttpColonyHandler:
 
         self.main_service_http_colony_handler_plugin = main_service_http_colony_handler_plugin
 
-        self.http_python_handler_plugin_map = {}
+        self.http_handler_plugin_map = {}
 
     def get_handler_name(self):
         """
@@ -95,12 +95,12 @@ class MainServiceHttpColonyHandler:
             # retrieves the plugin handler id for the plugin handler value
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
-            # retrieves the http python handler plugin
-            http_python_handler_plugin = self.http_python_handler_plugin_map.get(plugin_handler_id, None)
+            # retrieves the http handler plugin
+            http_handler_plugin = self.http_handler_plugin_map.get(plugin_handler_id, None)
 
-            # handles the request by the http python handler plugin and
+            # handles the request by the http handler plugin and
             # retrieves the return value
-            http_python_handler_plugin.handle_request(request)
+            http_handler_plugin.handle_request(request)
 
             # sets the request status code in case it has
             # not been already set
@@ -109,21 +109,21 @@ class MainServiceHttpColonyHandler:
             # returns immediately
             return
         else:
-            # iterates over all the http python handler plugins
-            for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
-                # checks if the current http python handler plugin
+            # iterates over all the http handler plugins
+            for http_handler_plugin in self.main_service_http_colony_handler_plugin.http_handler_plugins:
+                # checks if the current http handler plugin
                 # is request handler for the current request
-                is_request_handler = http_python_handler_plugin.is_request_handler(request)
+                is_request_handler = http_handler_plugin.is_request_handler(request)
 
                 # in case it's not the request handler, must continue
                 # the current loop, nothing to handler
                 if not is_request_handler: continue
 
-                # handles the request by the http python handler plugin and
+                # handles the request by the http handler plugin and
                 # retrieves the return value then sets the status code in
                 # the request in case it's defined or default to the error
                 # status in case the handler did not set any status code
-                http_python_handler_plugin.handle_request(request)
+                http_handler_plugin.handle_request(request)
                 request.status_code = request.status_code or DEFAULT_ERROR_STATUS_CODE
 
                 # returns immediately
@@ -132,14 +132,14 @@ class MainServiceHttpColonyHandler:
         # raises the request not handled exception
         raise main_service_http_colony_handler_exceptions.RequestNotHandled("no python handler plugin could handle the request")
 
-    def http_python_handler_load(self, http_python_handler_plugin):
+    def http_handler_load(self, http_handler_plugin):
         # retrieves the plugin id
-        plugin_id = http_python_handler_plugin.id
+        plugin_id = http_handler_plugin.id
 
-        self.http_python_handler_plugin_map[plugin_id] = http_python_handler_plugin
+        self.http_handler_plugin_map[plugin_id] = http_handler_plugin
 
-    def http_python_handler_unload(self, http_python_handler_plugin):
+    def http_handler_unload(self, http_handler_plugin):
         # retrieves the plugin id
-        plugin_id = http_python_handler_plugin.id
+        plugin_id = http_handler_plugin.id
 
-        del self.http_python_handler_plugin_map[plugin_id]
+        del self.http_handler_plugin_map[plugin_id]

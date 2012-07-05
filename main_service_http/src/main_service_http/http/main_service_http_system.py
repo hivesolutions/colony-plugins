@@ -3327,39 +3327,36 @@ class HttpRequest:
         @return: The result of the resource modification test.
         """
 
-        # retrieves the if modified header value
-        if_modified_header = self.get_header(IF_MODIFIED_SINCE_VALUE)
-
-        # in case the modified timestamp and if modified header are defined
+        # retrieves the if modified header value and in case the
+        # modified timestamp and if modified header are defined
+        # the date time base modification check must be run
+        if_modified_header = self.get_header("If-Modified-Since")
         if modified_timestamp and if_modified_header:
             try:
-                # converts the if modified header value to date time
-                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
-
+                # converts the if modified header value to date time and then
                 # converts the modified timestamp to date time
+                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, "%a, %d %b %Y %H:%M:%S GMT")
                 modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
 
                 # in case the modified date time is less or the same
                 # as the if modified header date time (no modification)
-                if modified_date_time <= if_modified_header_data_time:
-                    # returns false (not modified)
-                    return False
+                # must return false as there was no modification
+                if modified_date_time <= if_modified_header_data_time: return False
             except:
                 # prints a warning for not being able to check the modification date
                 self.http_client_service_handler.service_plugin.warning("Problem while checking modification date")
 
-        # retrieves the if none match value
-        if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
-
-        # in case the etag value and the if none header are defined
+        # retrieves the if none match value and in case it is
+        # defined together with the etag value the etag based
+        # checking must be performed
+        if_none_match_header = self.get_header("If-None-Match")
         if etag_value and if_none_match_header:
             # in case the value of the if modified header is the same
-            # as the etag value of the file (no modification)
-            if if_modified_header == etag_value:
-                # returns false (not modified)
-                return False
+            # as the etag value of the file (no modification) must
+            # return false as there was no modification
+            if if_modified_header == etag_value: return False
 
-        # returns false (modified or no information for
+        # returns true (modified or no information for
         # modification test)
         return True
 
