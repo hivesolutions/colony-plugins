@@ -3330,12 +3330,12 @@ class HttpRequest:
         # retrieves the if modified header value and in case the
         # modified timestamp and if modified header are defined
         # the date time base modification check must be run
-        if_modified_header = self.get_header("If-Modified-Since")
+        if_modified_header = self.get_header(IF_MODIFIED_SINCE_VALUE)
         if modified_timestamp and if_modified_header:
             try:
                 # converts the if modified header value to date time and then
                 # converts the modified timestamp to date time
-                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, "%a, %d %b %Y %H:%M:%S GMT")
+                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
                 modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
 
                 # in case the modified date time is less or the same
@@ -3349,7 +3349,7 @@ class HttpRequest:
         # retrieves the if none match value and in case it is
         # defined together with the etag value the etag based
         # checking must be performed
-        if_none_match_header = self.get_header("If-None-Match")
+        if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
         if etag_value and if_none_match_header:
             # in case the value of the if modified header is the same
             # as the etag value of the file (no modification) must
