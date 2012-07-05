@@ -5642,17 +5642,7 @@ class EntityManager:
                 # saves or updates the current entity values
                 # into the data source
                 self.save_update(entity, generate = False)
-        except BaseException, exception:
-            print "Excetion "
-            print exception
-            import sys
-
-            import traceback
-            print "Exception in user code:"
-            print '-'*60
-            traceback.print_exc(file=sys.stdout)
-            print '-'*60
-
+        except:
             # "rollsback" the transaction and re-raises the exception
             # to be caught at the upper levels
             self.rollback()
