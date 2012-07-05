@@ -54,7 +54,7 @@ class MainServiceHttpFastCgiHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
-    }
+    ]
     capabilities = [
         "http_service_handler"
     ]
@@ -76,21 +76,6 @@ class MainServiceHttpFastCgiHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import main_service_http_fast_cgi_handler.fast_cgi_handler.main_service_http_fast_cgi_handler_system
         self.main_service_http_fast_cgi_handler = main_service_http_fast_cgi_handler.fast_cgi_handler.main_service_http_fast_cgi_handler_system.MainServiceHttpFastCgiHandler(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -115,9 +100,6 @@ class MainServiceHttpFastCgiHandlerPlugin(colony.base.system.Plugin):
         """
 
         return self.main_service_http_fast_cgi_handler.handle_request(request)
-
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
