@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>colony.plugins.main.authentication</name>
+	<name>colony.plugins.wsgi</name>
 	<comment></comment>
 	<projects>
 		<project>colony</project>

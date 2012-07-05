@@ -3,7 +3,7 @@
 	<name>colony.plugins.service.web.mvc.encryption</name>
 	<comment></comment>
 	<projects>
-		<project>pt.hive.colony</project>
+		<project>colony</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

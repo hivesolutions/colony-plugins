@@ -3,7 +3,7 @@
 	<name>colony.plugins.resources</name>
 	<comment></comment>
 	<projects>
-		<project>pt.hive.colony</project>
+		<project>colony</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

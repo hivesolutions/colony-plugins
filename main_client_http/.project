@@ -3,7 +3,7 @@
 	<name>colony.plugins.main.client.http</name>
 	<comment></comment>
 	<projects>
-		<project>pt.hive.colony</project>
+		<project>colony</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
