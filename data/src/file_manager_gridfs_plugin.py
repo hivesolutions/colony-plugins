@@ -53,6 +53,7 @@ class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "threads",
         "file_manager_engine"
     ]
     dependencies = [
