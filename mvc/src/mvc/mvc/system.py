@@ -174,6 +174,10 @@ class Mvc:
         Starts the mvc system structures.
         This method starts all the persistent and
         background execution tasks for mvc.
+
+        Note that the execution og background tasks
+        is conditioned to the current thread execution
+        policy and permissions from the manager.
         """
 
         # retrieves the plugin manager reference and uses it to check
