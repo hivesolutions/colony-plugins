@@ -55,6 +55,7 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "threads",
         "thread_pool_manager",
         "system_information"
     ]
