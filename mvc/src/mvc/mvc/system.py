@@ -176,7 +176,12 @@ class Mvc:
         background execution tasks for mvc.
         """
 
-        self.mvc_communication_handler.start_processing()
+        # retrieves the plugin manager reference and uses it to check
+        # if the communication handler processing system should be
+        # started, because if threads are not allowed no process should
+        # be started (violates manger rules)
+        plugin_manager = self.mvc_plugin.manager
+        if plugin_manager.allow_threads: self.mvc_communication_handler.start_processing()
 
     def stop_system(self):
         """
@@ -185,7 +190,11 @@ class Mvc:
         background execution tasks for mvc.
         """
 
-        self.mvc_communication_handler.stop_processing()
+        # retrieves the plugin manager to recall the option to load or not
+        # the communication handler in case the handler has been started it
+        # must now be stopped to avoid any memory or other resource leak
+        plugin_manager = self.mvc_plugin.manager
+        if plugin_manager.allow_threads: self.mvc_communication_handler.stop_processing()
 
     def get_routes(self):
         """
