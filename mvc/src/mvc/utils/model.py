@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
+import colony.libs.time_util
 import colony.libs.crypt_util
 import colony.libs.control_util
 import colony.libs.structures_util
@@ -434,10 +435,9 @@ def _load_value(self, key, value):
     """
 
     # in case the current object does not contain
-    # an attribute with the key name
-    if not hasattr(self, key):
-        # returns immediately
-        return
+    # an attribute with the key name must return
+    # immediately, nothing to be set
+    if not hasattr(self, key): return
 
     # sets the value in the current object
     setattr(self, key, value)
