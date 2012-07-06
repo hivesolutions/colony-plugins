@@ -55,6 +55,7 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities_allowed = [
+        "threads",
         "socket_provider",
         "socket_upgrader"
     ]
