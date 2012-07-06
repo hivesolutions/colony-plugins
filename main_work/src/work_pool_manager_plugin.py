@@ -56,7 +56,6 @@ class WorkPoolManagerPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "threads",
         "work_pool_manager",
         "system_information"
     ]
