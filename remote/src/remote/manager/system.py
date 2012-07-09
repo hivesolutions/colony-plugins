@@ -37,23 +37,23 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainRemoteManager:
+class RemoteManager:
     """
-    The main remote manager class.
+    The remote manager class.
     """
 
-    main_remote_manager_plugin = None
-    """ The main remote manager plugin """
+    remote_manager_plugin = None
+    """ The remote manager plugin """
 
-    def __init__(self, main_remote_manager_plugin):
+    def __init__(self, remote_manager_plugin):
         """
         Constructor of the class.
 
-        @type main_remote_manager_plugin: MainRemoteManagerPlugin
-        @param main_remote_manager_plugin: The main remote manager plugin.
+        @type remote_manager_plugin: RemoteManagerPlugin
+        @param remote_manager_plugin: The remote manager plugin.
         """
 
-        self.main_remote_manager_plugin = main_remote_manager_plugin
+        self.remote_manager_plugin = remote_manager_plugin
 
     def get_available_rpc_handlers(self):
         """
@@ -67,7 +67,7 @@ class MainRemoteManager:
         available_rpc_handlers = []
 
         # retrieves the rpc handler plugins
-        rpc_handler_plugins = self.main_remote_manager_plugin.rpc_handler_plugins
+        rpc_handler_plugins = self.remote_manager_plugin.rpc_handler_plugins
 
         # iterates over all the rpc handler plugins
         for rpc_handler_plugin in rpc_handler_plugins:

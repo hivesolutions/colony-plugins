@@ -92,15 +92,6 @@ class RestPlugin(colony.base.system.Plugin):
         import remote_rest.system
         self.rest = remote_rest.system.Rest(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
         colony.base.system.Plugin.load_allowed(self, plugin, capability)
