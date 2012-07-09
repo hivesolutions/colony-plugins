@@ -57,7 +57,7 @@ class ServiceDropboxPlugin(colony.base.system.Plugin):
         "service.dropbox"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
@@ -95,7 +95,7 @@ class ServiceDropboxPlugin(colony.base.system.Plugin):
 
         return self.service_dropbox.create_remote_client(service_attributes)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin
 

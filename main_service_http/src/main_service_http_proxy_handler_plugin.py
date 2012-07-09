@@ -62,7 +62,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
         "http_service_directory_list_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
     ]
@@ -132,7 +132,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
     def get_client_http_plugin(self):
         return self.client_http_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin
 

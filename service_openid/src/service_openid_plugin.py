@@ -56,7 +56,7 @@ class ServiceOpenidPlugin(colony.base.system.Plugin):
         "service.openid"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.service.yadis", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
@@ -133,7 +133,7 @@ class ServiceOpenidPlugin(colony.base.system.Plugin):
     def get_client_http_plugin(self):
         return self.client_http_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin
 

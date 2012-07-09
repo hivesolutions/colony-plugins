@@ -59,10 +59,10 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
         "startup"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.work_pool", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool", "1.x.x")
     ]
     main_modules = [
-        "main_work.work_pool_dummy.work_pool_dummy_system"
+        "work.pool_dummy.system"
     ]
 
     work_pool_dummy = None
@@ -73,8 +73,8 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_work.work_pool_dummy.work_pool_dummy_system
-        self.work_pool_dummy = main_work.work_pool_dummy.work_pool_dummy_system.WorkPoolDummy(self)
+        import work.pool_dummy.system
+        self.work_pool_dummy = work.pool_dummy.system.WorkPoolDummy(self)
 
     def end_load_plugin(self):
         colony.base.system.Plugin.end_load_plugin(self)

@@ -56,7 +56,7 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
         "service.web.mvc.encryption"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
     ]
     main_modules = [
         "service_web_mvc_encryption.web_mvc_encryption.service_web_mvc_encryption_system"
@@ -89,6 +89,6 @@ class ServiceWebMvcEncryptionPlugin(colony.base.system.Plugin):
 
         return self.service_web_mvc_encryption.create_remote_client(service_attributes)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin

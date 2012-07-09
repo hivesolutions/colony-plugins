@@ -43,7 +43,7 @@ import threading
 
 import colony.libs.map_util
 
-import client_utils_exceptions
+import exceptions
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -374,7 +374,7 @@ class AbstractClient:
             return socket
         else:
             # raises the socket provider not found exception
-            raise client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
+            raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
 
     def _generate_connection_tuple_hashable(self, connection_tuple):
         """
@@ -591,7 +591,7 @@ class ClientConnection:
         # in case the upgrader handler is not found in the handler plugins map
         if not socket_upgrader in socket_upgrader_plugins_map:
             # raises the socket upgrader not found exception
-            raise client_utils_exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+            raise exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
 
         # retrieves the socket upgrader plugin
         socket_upgrader_plugin = client_utils.socket_upgrader_plugins_map[socket_upgrader]
@@ -816,14 +816,14 @@ class ClientConnection:
                 self.close()
 
                 # raises the request closed exception
-                raise client_utils_exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
                 # closes the connection
                 self.close()
 
                 # raises the server request timeout exception
-                raise client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+                raise exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
                 # iterates continuously
                 while True:
@@ -867,7 +867,7 @@ class ClientConnection:
                     self.close()
 
                     # raises the client request timeout exception
-                    raise client_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+                    raise exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
             # breaks the loop
             break
@@ -922,7 +922,7 @@ class ClientConnection:
                 self.close()
 
                 # raises the request closed exception
-                raise client_utils_exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed("invalid socket")
 
             # in case there is pending data to
             # be received
@@ -958,7 +958,7 @@ class ClientConnection:
                 self.close()
 
                 # raises the server response timeout exception
-                raise client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
+                raise exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
             # in case the socket is ready to have data
             # sent through it
             elif not selected_values[1] == []:
@@ -990,7 +990,7 @@ class ClientConnection:
                         self.close()
 
                         # raises the client response timeout exception
-                        raise client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
+                        raise exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent

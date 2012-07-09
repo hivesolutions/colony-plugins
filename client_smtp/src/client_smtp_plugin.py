@@ -42,10 +42,10 @@ import colony.base.decorators
 
 class ClientSmtpPlugin(colony.base.system.Plugin):
     """
-    The main class for the Smtp Client Main plugin.
+    The main class for the Smtp Client plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.client.smtp"
+    id = "pt.hive.colony.plugins.client.smtp"
     name = "Smtp Client Main"
     description = "The plugin that offers the smtp client"
     version = "1.0.0"
@@ -61,8 +61,8 @@ class ClientSmtpPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils", "1.x.x")
     ]
     main_modules = [
-        "client_smtp.smtp.client_smtp_exceptions",
-        "client_smtp.smtp.client_smtp_system"
+        "client_smtp.exceptions",
+        "client_smtp.system"
     ]
 
     client_smtp = None
@@ -73,23 +73,8 @@ class ClientSmtpPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import client_smtp.smtp.client_smtp_system
-        self.client_smtp = client_smtp.smtp.client_smtp_system.ClientSmtp(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        import client_smtp.system
+        self.client_smtp = client_smtp.system.ClientSmtp(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
@@ -100,9 +85,6 @@ class ClientSmtpPlugin(colony.base.system.Plugin):
 
     def create_request(self, parameters):
         return self.client_smtp.create_request(parameters)
-
-    def get_client_utils_plugin(self):
-        return self.client_utils_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.utils")
     def set_client_utils_plugin(self, client_utils_plugin):

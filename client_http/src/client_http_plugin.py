@@ -77,8 +77,8 @@ class ClientHttpPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import client_http.http.client_http_system
-        self.client_http = client_http.http.client_http_system.ClientHttp(self)
+        import client_http.system
+        self.client_http = client_http.system.ClientHttp(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):

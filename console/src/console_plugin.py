@@ -64,7 +64,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         "console_authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.authentication", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.authentication", "1.x.x")
     ]
     main_modules = [
         "console.console.authentication",
@@ -196,7 +196,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         self.console_command_plugins.remove(plugin)
         self.console.console_command_extension_unload(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.authentication")
     def set_authentication_plugin(self, authentication_plugin):
         self.authentication_plugin = authentication_plugin
 

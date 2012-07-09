@@ -50,18 +50,18 @@ ARGUMENTS_VALUE = "arguments"
 
 class MainServiceHttpMainAuthenticationHandler:
     """
-    The main service http main authentication handler class.
+    The main service http authentication handler class.
     """
 
     main_service_http_authentication_handler_plugin = None
-    """ The main service http main authentication handler plugin """
+    """ The main service http authentication handler plugin """
 
     def __init__(self, main_service_http_authentication_handler_plugin):
         """
         Constructor of the class.
 
         @type main_service_http_authentication_handler_plugin: MainServiceHttpMainAuthenticationHandlerPlugin
-        @param main_service_http_authentication_handler_plugin: The main service http main authentication handler plugin.
+        @param main_service_http_authentication_handler_plugin: The main service http authentication handler plugin.
         """
 
         self.main_service_http_authentication_handler_plugin = main_service_http_authentication_handler_plugin
@@ -106,10 +106,10 @@ class MainServiceHttpMainAuthenticationHandler:
         # retrieves the arguments
         arguments = properties[ARGUMENTS_VALUE]
 
-        # retrieves the main authentication plugin
+        # retrieves the authentication plugin
         authentication_plugin = self.main_service_http_authentication_handler_plugin.authentication_plugin
 
-        # authenticates the user with the main authentication plugin retrieving the result
+        # authenticates the user with the authentication plugin retrieving the result
         authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
 
         # returns the authentication result

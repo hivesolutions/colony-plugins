@@ -58,7 +58,7 @@ class DownloaderPlugin(colony.base.system.Plugin):
         "_console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
     ]
     main_modules = [
         "misc.downloader.console",
@@ -104,6 +104,6 @@ class DownloaderPlugin(colony.base.system.Plugin):
     def get_commands_map(self):
         return self.console_downloader.get_commands_map()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin

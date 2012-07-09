@@ -41,7 +41,7 @@ import colony.base.exceptions
 
 class MainServiceHttpMainAuthenticationHandlerException(colony.base.exceptions.ColonyException):
     """
-    The main service http main authentication handler exception class.
+    The main service http authentication handler exception class.
     """
 
     message = None

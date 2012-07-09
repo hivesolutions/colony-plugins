@@ -40,10 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import base64
 import threading
 
+import colony.base.system
 import colony.libs.map_util
 import colony.libs.string_buffer_util
 
-import client_smtp_exceptions
+import exceptions
 
 DEFAULT_PORT = 25
 """ The default port """
@@ -78,23 +79,10 @@ END_TOKEN_VALUE = "\r\n"
 AUTHENTICATION_METHOD_VALUE = "authentication_method"
 """ The authentication method value """
 
-class ClientSmtp:
+class ClientSmtp(colony.base.system.System):
     """
     The client smtp class.
     """
-
-    client_smtp_plugin = None
-    """ The client smtp plugin """
-
-    def __init__(self, client_smtp_plugin):
-        """
-        Constructor of the class.
-
-        @type client_smtp_plugin: ClientSmtpPlugin
-        @param client_smtp_plugin: The client smtp plugin.
-        """
-
-        self.client_smtp_plugin = client_smtp_plugin
 
     def create_client(self, parameters):
         """
@@ -156,7 +144,7 @@ class SmtpClient:
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the smtp client, generating the internal structures
-        self._smtp_client = self.client_smtp.client_smtp_plugin.client_utils_plugin.generate_client(client_parameters)
+        self._smtp_client = self.client_smtp.plugin.client_utils_plugin.generate_client(client_parameters)
 
         # starts the smtp client
         self._smtp_client.start_client()
@@ -332,7 +320,7 @@ class SmtpClient:
 
             # in case no valid data was received
             if data == "":
-                raise client_smtp_exceptions.SmtpInvalidDataException("empty data received")
+                raise exceptions.SmtpInvalidDataException("empty data received")
 
             # writes the data to the string buffer
             message.write(data)
@@ -374,7 +362,7 @@ class SmtpClient:
                 if comparison_character == "-":
                     continue
                 elif not comparison_character == " ":
-                    raise client_smtp_exceptions.SmtpInvalidDataException("invalid comparison character")
+                    raise exceptions.SmtpInvalidDataException("invalid comparison character")
 
                 # retrieves the smtp message
                 smtp_message = message_value[:end_token_index]
@@ -468,7 +456,7 @@ class SmtpClient:
         # in case no verification user is defined
         if not verification_user:
             # raises an smtp runtime exception
-            raise client_smtp_exceptions.SmtpRuntimeException("invalid verification user")
+            raise exceptions.SmtpRuntimeException("invalid verification user")
 
         # sends the verify request
         request = self.send_request("vrfy", verification_user, session, parameters)
@@ -495,7 +483,7 @@ class SmtpClient:
         # in case the authentication method is not defined in the current object
         if not hasattr(self, authentication_method_name):
             # raises the smtp runtime exception
-            raise client_smtp_exceptions.SmtpRuntimeException("authentication method not found: " + authentication_method)
+            raise exceptions.SmtpRuntimeException("authentication method not found: " + authentication_method)
 
         # retrieves the authentication method from the object
         authentication_method = getattr(self, authentication_method_name)
@@ -657,7 +645,7 @@ class SmtpClient:
         # in case the response code is not "accepted"
         if not response_code in accepted_codes:
             # raises the smtp response error
-            raise client_smtp_exceptions.SmtpResponseError(message + str(response))
+            raise exceptions.SmtpResponseError(message + str(response))
 
     def _generate_client_parameters(self, parameters):
         """
@@ -673,7 +661,7 @@ class SmtpClient:
 
         # creates the default parameters
         default_parameters = {
-            "client_plugin" : self.client_smtp.client_smtp_plugin,
+            "client_plugin" : self.client_smtp.plugin,
             "request_timeout" : REQUEST_TIMEOUT,
             "response_timeout" : RESPONSE_TIMEOUT
         }
