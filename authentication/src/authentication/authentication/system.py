@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
+import colony.base.system
 import colony.libs.string_util
 
 VALID_VALUE = "valid"
@@ -63,23 +64,10 @@ TRACEBACK_VALUE = "traceback"
 NO_AUTHENTICATION_METHOD_MESSAGE = "no authentication method found"
 """ The no authentication method found message """
 
-class MainAuthentication:
+class Authentication(colony.base.system.System):
     """
-    The main authentication class.
+    The authentication class.
     """
-
-    main_authentication_plugin = None
-    """ The main authentication plugin """
-
-    def __init__(self, main_authentication_plugin):
-        """
-        Constructor of the class.
-
-        @type main_authentication_plugin: MainAuthenticationPlugin
-        @param main_authentication_plugin: The main authentication plugin.
-        """
-
-        self.main_authentication_plugin = main_authentication_plugin
 
     def authenticate_user(self, username, password, authentication_handler, arguments):
         """
@@ -113,7 +101,7 @@ class MainAuthentication:
         authentication_request.set_arguments(arguments)
 
         # iterates over all the authentication handler plugins
-        for authentication_handler_plugin in self.main_authentication_plugin.authentication_handler_plugins:
+        for authentication_handler_plugin in self.plugin.authentication_handler_plugins:
             # retrieves the authentication handler plugin handler name
             authentication_handler_plugin_handler_name = authentication_handler_plugin.get_handler_name()
 

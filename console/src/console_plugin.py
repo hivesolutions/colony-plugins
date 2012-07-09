@@ -83,8 +83,8 @@ class ConsolePlugin(colony.base.system.Plugin):
     console_command_plugins = []
     """ The console command plugins """
 
-    main_authentication_plugin = None
-    """ The main authentication plugin """
+    authentication_plugin = None
+    """ The authentication plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -197,8 +197,8 @@ class ConsolePlugin(colony.base.system.Plugin):
         self.console.console_command_extension_unload(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
-    def set_main_authentication_plugin(self, main_authentication_plugin):
-        self.main_authentication_plugin = main_authentication_plugin
+    def set_authentication_plugin(self, authentication_plugin):
+        self.authentication_plugin = authentication_plugin
 
     @colony.base.decorators.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):

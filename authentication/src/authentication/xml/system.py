@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -33,3 +36,33 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+import colony.base.system
+
+HANDLER_NAME = "xml"
+""" The handler name """
+
+class AuthenticationXml(colony.base.system.System):
+    """
+    The authentication xml class.
+    """
+
+    def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
+        return HANDLER_NAME
+
+    def handle_request(self, request):
+        """
+        Authenticates a user in the general service.
+
+        @type request: AuthenticationRequest
+        @param request: The authentication request to be handled.
+        """
+
+        pass

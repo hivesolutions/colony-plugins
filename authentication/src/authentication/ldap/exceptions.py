@@ -39,41 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainAuthenticationPythonHandlerException(colony.base.exceptions.ColonyException):
+class AuthenticationLdapHandlerException(colony.base.exceptions.ColonyException):
     """
-    The main authentication python handler exception class.
+    The authentication ldap handler exception class.
     """
 
     message = None
     """ The exception's message """
 
-class MissingArgument(MainAuthenticationPythonHandlerException):
-    """
-    The missing argument class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainAuthenticationPythonHandlerException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing argument - %s" % self.message
-
-class AuthenticationError(MainAuthenticationPythonHandlerException):
+class AuthenticationError(AuthenticationLdapHandlerException):
     """
     The authentication error class.
     """
@@ -86,7 +60,7 @@ class AuthenticationError(MainAuthenticationPythonHandlerException):
         @param message: The message to be printed.
         """
 
-        MainAuthenticationPythonHandlerException.__init__(self)
+        AuthenticationLdapHandlerException.__init__(self)
         self.message = message
 
     def __str__(self):

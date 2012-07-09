@@ -37,26 +37,15 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-HANDLER_NAME = "xml"
+import colony.base.system
+
+HANDLER_NAME = "openid"
 """ The handler name """
 
-class MainAuthenticationXmlHandler:
+class AuthenticationOpenid(colony.base.system.System):
     """
-    The main authentication xml handler class.
+    The authentication openid class.
     """
-
-    main_authentication_xml_handler_plugin = None
-    """ The main authentication xml handler plugin """
-
-    def __init__(self, main_authentication_xml_handler_plugin):
-        """
-        Constructor of the class.
-
-        @type main_authentication_xml_handler_plugin: MainAuthenticationXmlHandlerPlugin
-        @param main_authentication_xml_handler_plugin: The main authentication xml handler plugin.
-        """
-
-        self.main_authentication_xml_handler_plugin = main_authentication_xml_handler_plugin
 
     def get_handler_name(self):
         """

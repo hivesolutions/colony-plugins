@@ -45,7 +45,7 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.system.Plugin):
     The main class for the http Service Main Main Authentication Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http.main_authentication_handler"
+    id = "pt.hive.colony.plugins.main.service.http.authentication_handler"
     name = "Http Service Main Main Authentication Handler"
     description = "The plugin that offers the http service authentication main handler"
     version = "1.0.0"
@@ -61,20 +61,20 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.main.authentication", "1.x.x")
     ]
     main_modules = [
-        "main_service_http_main_authentication_handler.main_authentication_handler.main_service_http_main_authentication_handler_exceptions",
-        "main_service_http_main_authentication_handler.main_authentication_handler.main_service_http_main_authentication_handler_system"
+        "main_service_http_authentication_handler.authentication_handler.main_service_http_authentication_handler_exceptions",
+        "main_service_http_authentication_handler.authentication_handler.main_service_http_authentication_handler_system"
     ]
 
-    main_service_http_main_authentication_handler = None
+    main_service_http_authentication_handler = None
     """ The main service http main authentication handler """
 
-    main_authentication_plugin = None
+    authentication_plugin = None
     """ The main authentication plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_service_http_main_authentication_handler.main_authentication_handler.main_service_http_main_authentication_handler_system
-        self.main_service_http_main_authentication_handler =  main_service_http_main_authentication_handler.main_authentication_handler.main_service_http_main_authentication_handler_system.MainServiceHttpMainAuthenticationHandler(self)
+        import main_service_http_authentication_handler.authentication_handler.main_service_http_authentication_handler_system
+        self.main_service_http_authentication_handler =  main_service_http_authentication_handler.authentication_handler.main_service_http_authentication_handler_system.MainServiceHttpMainAuthenticationHandler(self)
 
     def end_load_plugin(self):
         colony.base.system.Plugin.end_load_plugin(self)
@@ -103,7 +103,7 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.main_service_http_main_authentication_handler.get_handler_name()
+        return self.main_service_http_authentication_handler.get_handler_name()
 
     def handle_authentication(self, username, password, properties):
         """
@@ -119,11 +119,11 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.system.Plugin):
         @return: The authentication result.
         """
 
-        return self.main_service_http_main_authentication_handler.handle_authentication(username, password, properties)
+        return self.main_service_http_authentication_handler.handle_authentication(username, password, properties)
 
-    def get_main_authentication_plugin(self):
-        return self.main_authentication_plugin
+    def get_authentication_plugin(self):
+        return self.authentication_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
-    def set_main_authentication_plugin(self, main_authentication_plugin):
-        self.main_authentication_plugin = main_authentication_plugin
+    def set_authentication_plugin(self, authentication_plugin):
+        self.authentication_plugin = authentication_plugin

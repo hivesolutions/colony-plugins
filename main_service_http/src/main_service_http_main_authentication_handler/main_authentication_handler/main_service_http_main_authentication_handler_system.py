@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import main_service_http_main_authentication_handler_exceptions
+import main_service_http_authentication_handler_exceptions
 
 HANDLER_NAME = "main"
 """ The handler name """
@@ -53,18 +53,18 @@ class MainServiceHttpMainAuthenticationHandler:
     The main service http main authentication handler class.
     """
 
-    main_service_http_main_authentication_handler_plugin = None
+    main_service_http_authentication_handler_plugin = None
     """ The main service http main authentication handler plugin """
 
-    def __init__(self, main_service_http_main_authentication_handler_plugin):
+    def __init__(self, main_service_http_authentication_handler_plugin):
         """
         Constructor of the class.
 
-        @type main_service_http_main_authentication_handler_plugin: MainServiceHttpMainAuthenticationHandlerPlugin
-        @param main_service_http_main_authentication_handler_plugin: The main service http main authentication handler plugin.
+        @type main_service_http_authentication_handler_plugin: MainServiceHttpMainAuthenticationHandlerPlugin
+        @param main_service_http_authentication_handler_plugin: The main service http main authentication handler plugin.
         """
 
-        self.main_service_http_main_authentication_handler_plugin = main_service_http_main_authentication_handler_plugin
+        self.main_service_http_authentication_handler_plugin = main_service_http_authentication_handler_plugin
 
     def get_handler_name(self):
         """
@@ -93,12 +93,12 @@ class MainServiceHttpMainAuthenticationHandler:
         # in case the authentication handler property is not defined
         if not AUTHENTICATION_HANDLER_VALUE in properties:
             # raises the missing property exception
-            raise main_service_http_main_authentication_handler_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
+            raise main_service_http_authentication_handler_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
 
         # in case the arguments property is not defined
         if not ARGUMENTS_VALUE in properties:
             # raises the missing property exception
-            raise main_service_http_main_authentication_handler_exceptions.MissingProperty(ARGUMENTS_VALUE)
+            raise main_service_http_authentication_handler_exceptions.MissingProperty(ARGUMENTS_VALUE)
 
         # retrieves the authentication handler
         authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
@@ -107,10 +107,10 @@ class MainServiceHttpMainAuthenticationHandler:
         arguments = properties[ARGUMENTS_VALUE]
 
         # retrieves the main authentication plugin
-        main_authentication_plugin = self.main_service_http_main_authentication_handler_plugin.main_authentication_plugin
+        authentication_plugin = self.main_service_http_authentication_handler_plugin.authentication_plugin
 
         # authenticates the user with the main authentication plugin retrieving the result
-        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
 
         # returns the authentication result
         return authentication_result

@@ -95,8 +95,8 @@ class ConsoleAuthentication:
 
         # retrieves the authentication plugin and uses it to try
         # to authenticate the current user retrieving the result
-        main_authentication_plugin = self.console_plugin.main_authentication_plugin
-        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_plugin = self.console_plugin.authentication_plugin
+        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
 
         # returns the authentication result
         return authentication_result

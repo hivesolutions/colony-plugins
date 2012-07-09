@@ -37,43 +37,38 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-HANDLER_NAME = "openid"
-""" The handler name """
+import colony.base.system
 
-class MainAuthenticationOpenidHandler:
+class AuthenticationOpenidPlugin(colony.base.system.Plugin):
     """
-    The main authentication openid handler class.
+    The main class for the Authentication Openid plugin.
     """
 
-    main_authentication_openid_handler_plugin = None
-    """ The main authentication openid handler plugin """
+    id = "pt.hive.colony.plugins.authentication.openid"
+    name = "Authentication Openid"
+    description = "Authentication Openid Plugin"
+    version = "1.0.0"
+    author = "Hive Solutions Lda. <development@hive.pt>"
+    platforms = [
+        colony.base.system.CPYTHON_ENVIRONMENT
+    ]
+    capabilities = [
+        "authentication_handler"
+    ]
+    main_modules = [
+        "authentication.openid.system"
+    ]
 
-    def __init__(self, main_authentication_openid_handler_plugin):
-        """
-        Constructor of the class.
+    authentication_openid = None
+    """ The authentication openid """
 
-        @type main_authentication_openid_handler_plugin: MainAuthenticationOpenidHandlerPlugin
-        @param main_authentication_openid_handler_plugin: The main authentication openid handler plugin.
-        """
-
-        self.main_authentication_openid_handler_plugin = main_authentication_openid_handler_plugin
+    def load_plugin(self):
+        colony.base.system.Plugin.load_plugin(self)
+        import authentication.openid.system
+        self.authentication_openid = authentication.openid.system.AuthenticationOpenid(self)
 
     def get_handler_name(self):
-        """
-        Retrieves the handler name.
-
-        @rtype: String
-        @return: The handler name.
-        """
-
-        return HANDLER_NAME
+        return self.authentication_openid.get_handler_name()
 
     def handle_request(self, request):
-        """
-        Authenticates a user in the general service.
-
-        @type request: AuthenticationRequest
-        @param request: The authentication request to be handled.
-        """
-
-        pass
+        return self.authentication_openid.handle_request(request)

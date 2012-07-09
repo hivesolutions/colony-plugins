@@ -41,9 +41,10 @@ import re
 import base64
 import hashlib
 
+import colony.base.system
 import colony.libs.crypt_util
 
-import main_authentication_ldap_handler_exceptions
+import exceptions
 
 HANDLER_NAME = "ldap"
 """ The handler name """
@@ -90,23 +91,10 @@ PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
 MD5_CRYPT_SALT_VALUE_REGEX = re.compile(MD5_CRYPT_SALT_VALUE_REGEX_VALUE)
 """ The md5 crypt salt value regex """
 
-class MainAuthenticationLdapHandler:
+class AuthenticationLdap(colony.base.system.System):
     """
-    The main authentication ldap handler class.
+    The authentication ldap class.
     """
-
-    main_authentication_ldap_handler_plugin = None
-    """ The main authentication ldap handler plugin """
-
-    def __init__(self, main_authentication_ldap_handler_plugin):
-        """
-        Constructor of the class.
-
-        @type main_authentication_ldap_handler_plugin: MainAuthenticationLdapHandlerPlugin
-        @param main_authentication_ldap_handler_plugin: The main authentication ldap handler plugin.
-        """
-
-        self.main_authentication_ldap_handler_plugin = main_authentication_ldap_handler_plugin
 
     def get_handler_name(self):
         """
@@ -127,7 +115,7 @@ class MainAuthenticationLdapHandler:
         """
 
         # retrieves the main client ldap plugin
-        main_client_ldap_plugin = self.main_authentication_ldap_handler_plugin.main_client_ldap_plugin
+        main_client_ldap_plugin = self.plugin.main_client_ldap_plugin
 
         # retrieves the request username
         username = request.get_username()
@@ -153,7 +141,7 @@ class MainAuthenticationLdapHandler:
         # in case the username or password are not defined
         if not username or not password:
             # raises an authentication error
-            raise main_authentication_ldap_handler_exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError("an username and a password must be provided")
 
         # creates a new ldap client
         ldap_client = main_client_ldap_plugin.create_client({})
@@ -202,7 +190,7 @@ class MainAuthenticationLdapHandler:
             # otherwise there is an error in authentication
             else:
                 # raises the authentication error
-                raise main_authentication_ldap_handler_exceptions.AuthenticationError("password mismatch")
+                raise exceptions.AuthenticationError("password mismatch")
 
             # disconnects from the ldap client
             ldap_client.disconnect()

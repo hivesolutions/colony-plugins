@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainAuthenticationEntityManagerHandlerException(colony.base.exceptions.ColonyException):
+class AuthenticationEntityManagerHandlerException(colony.base.exceptions.ColonyException):
     """
-    The main authentication entity manager handler exception class.
+    The authentication entity manager handler exception class.
     """
 
     message = None
     """ The exception's message """
 
-class MissingArgument(MainAuthenticationEntityManagerHandlerException):
+class MissingArgument(AuthenticationEntityManagerHandlerException):
     """
     The missing argument class.
     """
@@ -60,7 +60,7 @@ class MissingArgument(MainAuthenticationEntityManagerHandlerException):
         @param message: The message to be printed.
         """
 
-        MainAuthenticationEntityManagerHandlerException.__init__(self)
+        AuthenticationEntityManagerHandlerException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class MissingArgument(MainAuthenticationEntityManagerHandlerException):
 
         return "Missing argument - %s" % self.message
 
-class AuthenticationError(MainAuthenticationEntityManagerHandlerException):
+class AuthenticationError(AuthenticationEntityManagerHandlerException):
     """
     The authentication error class.
     """
@@ -86,7 +86,7 @@ class AuthenticationError(MainAuthenticationEntityManagerHandlerException):
         @param message: The message to be printed.
         """
 
-        MainAuthenticationEntityManagerHandlerException.__init__(self)
+        AuthenticationEntityManagerHandlerException.__init__(self)
         self.message = message
 
     def __str__(self):

@@ -37,38 +37,38 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import colony.base.system
 
-class MainAuthenticationLdapHandlerException(colony.base.exceptions.ColonyException):
+class AuthenticationXmlPlugin(colony.base.system.Plugin):
     """
-    The main authentication ldap handler exception class.
-    """
-
-    message = None
-    """ The exception's message """
-
-class AuthenticationError(MainAuthenticationLdapHandlerException):
-    """
-    The authentication error class.
+    The main class for the Authentication Xml plugin.
     """
 
-    def __init__(self, message):
-        """
-        Constructor of the class.
+    id = "pt.hive.colony.plugins.authentication.xml"
+    name = "Authentication Xml"
+    description = "Authentication Xml Plugin"
+    version = "1.0.0"
+    author = "Hive Solutions Lda. <development@hive.pt>"
+    platforms = [
+        colony.base.system.CPYTHON_ENVIRONMENT
+    ]
+    capabilities = [
+        "authentication_handler"
+    ]
+    main_modules = [
+        "authentication.xml.system"
+    ]
 
-        @type message: String
-        @param message: The message to be printed.
-        """
+    authentication_xml = None
+    """ The authentication xml """
 
-        MainAuthenticationLdapHandlerException.__init__(self)
-        self.message = message
+    def load_plugin(self):
+        colony.base.system.Plugin.load_plugin(self)
+        import authentication.xml.system
+        self.authentication_xml = authentication.xml.system.AuthenticationXml(self)
 
-    def __str__(self):
-        """
-        Returns the string representation of the class.
+    def get_handler_name(self):
+        return self.authentication_xml.get_handler_name()
 
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Authentication error - %s" % self.message
+    def handle_request(self, request):
+        return self.authentication_xml.handle_request(request)

@@ -39,54 +39,49 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class MainAuthenticationOpenidHandlerPlugin(colony.base.system.Plugin):
+class AuthenticationPythonPlugin(colony.base.system.Plugin):
     """
-    The main class for the Authentication Openid Handler Main plugin.
+    The main class for the Authentication Python plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.authentication.openid_handler"
-    name = "Authentication Openid Handler Main"
-    description = "Authentication Openid Handler Main Plugin"
+    id = "pt.hive.colony.plugins.authentication.python"
+    name = "Authentication Python"
+    description = "Authentication Python Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT
     ]
+    attributes = {
+        "configuration_models_bundle" : {
+            "authentication.py" : {
+                "path" : "authentication/python/configuration/authentication_configuration.py",
+                "global" : False,
+                "replace" : False
+            }
+        }
+    }
     capabilities = [
-        "authentication_handler"
+        "authentication_handler",
+        "configuration_model_provider"
     ]
     main_modules = [
-        "main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system"
+        "authentication.python.configuration.authentication_configuration",
+        "authentication.python.exceptions",
+        "authentication.python.system"
     ]
 
-    main_authentication_openid_handler = None
-    """ The main authentication open id handler """
+    authentication_python = None
+    """ The authentication python """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system
-        self.main_authentication_openid_handler = main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system.MainAuthenticationOpenidHandler(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import authentication.python.system
+        self.authentication_python = authentication.python.system.AuthenticationPython(self)
 
     def get_handler_name(self):
-        return self.main_authentication_openid_handler.get_handler_name()
+        return self.authentication_python.get_handler_name()
 
     def handle_request(self, request):
-        return self.main_authentication_openid_handler.handle_request(request)
+        return self.authentication_python.handle_request(request)

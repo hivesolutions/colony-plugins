@@ -40,13 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class MainAuthenticationPlugin(colony.base.system.Plugin):
+class AuthenticationPlugin(colony.base.system.Plugin):
     """
-    The main class for the Authentication Main plugin.
+    The main class for the Authentication plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.authentication"
-    name = "Authentication Main"
+    id = "pt.hive.colony.plugins.authentication"
+    name = "Authentication"
     description = "Plugin that provides the authentication front-end mechanisms"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -61,28 +61,19 @@ class MainAuthenticationPlugin(colony.base.system.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "main_authentication.authentication.main_authentication_system"
+        "authentication.authentication.system"
     ]
 
-    main_authentication = None
-    """ The main authentication """
+    authentication = None
+    """ The authentication """
 
     authentication_handler_plugins = []
     """ The authentication handler plugins """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_authentication.authentication.main_authentication_system
-        self.main_authentication = main_authentication.authentication.main_authentication_system.MainAuthentication(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        import authentication.authentication.system
+        self.authentication = authentication.authentication.system.Authentication(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -92,14 +83,11 @@ class MainAuthenticationPlugin(colony.base.system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.system.Plugin.unload_allowed(self, plugin, capability)
 
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
     def authenticate_user(self, username, password, authentication_handler, arguments):
-        return self.main_authentication.authenticate_user(username, password, authentication_handler, arguments)
+        return self.authentication.authenticate_user(username, password, authentication_handler, arguments)
 
     def process_authentication_string(self, authentication_string):
-        return self.main_authentication.process_authentication_string(authentication_string)
+        return self.authentication.process_authentication_string(authentication_string)
 
     @colony.base.decorators.load_allowed_capability("authentication_handler")
     def authentication_handler_load_allowed(self, plugin, capability):

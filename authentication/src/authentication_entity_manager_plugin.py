@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class MainAuthenticationXmlHandlerPlugin(colony.base.system.Plugin):
+class AuthenticationEntityManagerPlugin(colony.base.system.Plugin):
     """
-    The main class for the Authentication Xml Handler Main plugin.
+    The main class for the Authentication Entity Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.authentication.xml_handler"
-    name = "Authentication Xml Handler Main"
-    description = "Authentication Xml Handler Main Plugin"
+    id = "pt.hive.colony.plugins.authentication.entity_manager"
+    name = "Authentication Entity Manager"
+    description = "Authentication Entity Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -56,37 +56,20 @@ class MainAuthenticationXmlHandlerPlugin(colony.base.system.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system"
+        "authentication.entity_manager.exceptions",
+        "authentication.entity_manager.system"
     ]
 
-    main_authentication_xml_handler = None
-    """ The main authentication xml handler """
+    authentication_entity_manager = None
+    """ The authentication entity manager """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system
-        self.main_authentication_xml_handler = main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system.MainAuthenticationXmlHandler(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import authentication.entity_manager.system
+        self.authentication_entity_manager = authentication.entity_manager.system.AuthenticationEntityManager(self)
 
     def get_handler_name(self):
-        return self.main_authentication_xml_handler.get_handler_name()
+        return self.authentication_entity_manager.get_handler_name()
 
     def handle_request(self, request):
-        return self.main_authentication_xml_handler.handle_request(request)
+        return self.authentication_entity_manager.handle_request(request)

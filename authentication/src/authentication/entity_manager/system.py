@@ -37,9 +37,10 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
 import colony.libs.crypt_util
 
-import main_authentication_entity_manager_handler_exceptions
+import exceptions
 
 HANDLER_NAME = "entity_manager"
 """ The handler name """
@@ -59,23 +60,10 @@ LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
 LOGIN_SALT_VALUE = "login_salt"
 """ The login salt value """
 
-class MainAuthenticationEntityManagerHandler:
+class AuthenticationEntityManager(colony.base.system.System):
     """
-    The main authentication entity manager handler class.
+    The authentication entity manager class.
     """
-
-    main_authentication_entity_manager_handler_plugin = None
-    """ The main authentication entity manager handler plugin """
-
-    def __init__(self, main_authentication_entity_manager_handler_plugin):
-        """
-        Constructor of the class.
-
-        @type main_authentication_entity_manager_handler_plugin: MainAuthenticationEntityManagerHandlerPlugin
-        @param main_authentication_entity_manager_handler_plugin: The main authentication entity manager handler plugin.
-        """
-
-        self.main_authentication_entity_manager_handler_plugin = main_authentication_entity_manager_handler_plugin
 
     def get_handler_name(self):
         """
@@ -107,12 +95,12 @@ class MainAuthenticationEntityManagerHandler:
         # in case the entity manager in not defined in arguments
         if not ENTITY_MANAGER_VALUE in arguments:
             # raises an exception
-            raise main_authentication_entity_manager_handler_exceptions.MissingArgument(ENTITY_MANAGER_VALUE)
+            raise exceptions.MissingArgument(ENTITY_MANAGER_VALUE)
 
         # in case the local entity name value in not defined in arguments
         if not LOGIN_ENTITY_NAME_VALUE in arguments:
             # raises an exception
-            raise main_authentication_entity_manager_handler_exceptions.MissingArgument(LOGIN_ENTITY_NAME_VALUE)
+            raise exceptions.MissingArgument(LOGIN_ENTITY_NAME_VALUE)
 
         # retrieves the entity manager
         entity_manager = arguments[ENTITY_MANAGER_VALUE]
@@ -129,7 +117,7 @@ class MainAuthenticationEntityManagerHandler:
         # in case the username or password are not defined
         if not username or not password:
             # raises an authentication error
-            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError("an username and a password must be provided")
 
         # creates the filter map
         filter = {
@@ -145,7 +133,7 @@ class MainAuthenticationEntityManagerHandler:
         # in case the user was not found
         if not user_entity:
             # raises an authentication error
-            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("user not found")
+            raise exceptions.AuthenticationError("user not found")
 
         # checks that the password is valid
         password_valid = colony.libs.crypt_util.password_match(user_entity.password_hash, password, login_salt)
@@ -161,7 +149,7 @@ class MainAuthenticationEntityManagerHandler:
         # combination
         else:
             # raises the authentication error
-            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("invalid username password combination")
+            raise exceptions.AuthenticationError("invalid username password combination")
 
         # returns the return value
         return return_value

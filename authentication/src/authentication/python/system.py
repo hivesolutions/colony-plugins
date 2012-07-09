@@ -37,14 +37,15 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
 import colony.libs.path_util
 
-import main_authentication_python_handler_exceptions
+import exceptions
 
 HANDLER_NAME = "python"
 """ The handler name """
 
-CONFIGURATION_PATH = "main_authentication_python_handler/python_handler/configuration"
+CONFIGURATION_PATH = "authentication_python_handler/python_handler/configuration"
 """ The configuration path """
 
 FILE_PATH_VALUE = "file_path"
@@ -62,25 +63,13 @@ VALID_VALUE = "valid"
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
 
-class MainAuthenticationPythonHandler:
+class AuthenticationPython(colony.base.system.System):
     """
-    The main authentication python handler class.
+    The authentication python class.
     """
 
-    main_authentication_python_handler_plugin = None
-    """ The main authentication python handler plugin """
-
-    def __init__(self, main_authentication_python_handler_plugin):
-        """
-        Constructor of the class.
-
-        @type main_authentication_python_handler_plugin: MainAuthenticationPythonHandlerPlugin
-        @param main_authentication_python_handler_plugin: The main authentication python handler plugin.
-        """
-
-        self.main_authentication_python_handler_plugin = main_authentication_python_handler_plugin
-
-        # creates the default file
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.create_default_file()
 
     def get_handler_name(self):
@@ -102,7 +91,7 @@ class MainAuthenticationPythonHandler:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.main_authentication_python_handler_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the request username
         username = request.get_username()
@@ -116,12 +105,12 @@ class MainAuthenticationPythonHandler:
         # in case the username or password are not defined
         if not username or not password:
             # raises an authentication error
-            raise main_authentication_python_handler_exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError("an username and a password must be provided")
 
         # in case the file path in not defined in arguments
         if not FILE_PATH_VALUE in arguments:
             # raises an exception
-            raise main_authentication_python_handler_exceptions.MissingArgument(FILE_PATH_VALUE)
+            raise exceptions.MissingArgument(FILE_PATH_VALUE)
 
         # retrieves the file path
         file_path = arguments[FILE_PATH_VALUE]
@@ -145,7 +134,7 @@ class MainAuthenticationPythonHandler:
         # in case no user authentication configuration is defined
         if not user_authentication_configuration:
             # raises the authentication error
-            raise main_authentication_python_handler_exceptions.AuthenticationError("user not found")
+            raise exceptions.AuthenticationError("user not found")
 
         # retrieves the user password from the user authentication
         # configuration
@@ -155,7 +144,7 @@ class MainAuthenticationPythonHandler:
         # in the configuration and is valid
         if not user_password or not user_password == password:
             # raises the authentication error
-            raise main_authentication_python_handler_exceptions.AuthenticationError("password mismatch")
+            raise exceptions.AuthenticationError("password mismatch")
 
         # creates the return value
         return_value = {
@@ -173,19 +162,19 @@ class MainAuthenticationPythonHandler:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.main_authentication_python_handler_plugin.manager
+        plugin_manager = self.plugin.manager
 
-        # retrieves the main authentication python handler plugin id
-        main_authentication_python_handler_plugin_id = self.main_authentication_python_handler_plugin.id
+        # retrieves the authentication python handler plugin id
+        authentication_python_handler_plugin_id = self.plugin.id
 
         # resolves the configuration file path
-        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + main_authentication_python_handler_plugin_id + "%/authentication.py", True)
+        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + authentication_python_handler_plugin_id + "%/authentication.py", True)
 
-        # retrieves the main authentication python handler plugin path
-        main_authentication_python_handler_plugin_path = plugin_manager.get_plugin_path_by_id(main_authentication_python_handler_plugin_id)
+        # retrieves the authentication python handler plugin path
+        authentication_python_handler_plugin_path = plugin_manager.get_plugin_path_by_id(authentication_python_handler_plugin_id)
 
         # creates the authentication configuration file path
-        authentication_configuration_file_path = main_authentication_python_handler_plugin_path + "/" +  CONFIGURATION_PATH + "/authentication_configuration.py"
+        authentication_configuration_file_path = authentication_python_handler_plugin_path + "/" +  CONFIGURATION_PATH + "/authentication_configuration.py"
 
         # ensures that the configuration file path exists and contains the default contents
         colony.libs.path_util.ensure_file_path(configuration_file_path, authentication_configuration_file_path)
