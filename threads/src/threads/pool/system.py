@@ -87,32 +87,32 @@ SCHEDULING_ALGORITHM_NAME_MAP = {
 }
 """ The scheduling algorithm name map """
 
-class ThreadPoolManager:
+class ThreadPool:
     """
-    The thread pool manager class.
+    The thread pool class.
     """
 
-    thread_pool_manager_plugin = None
-    """ The thread pool manager plugin """
+    thread_pool_plugin = None
+    """ The thread pool plugin """
 
     thread_pools_list = []
     """ The list of currently enabled thread pools """
 
-    def __init__(self, thread_pool_manager_plugin):
+    def __init__(self, thread_pool_plugin):
         """
         Constructor of the class.
 
-        @type thread_pool_manager_plugin: Plugin
-        @param thread_pool_manager_plugin: The thread pool manager plugin.
+        @type thread_pool_plugin: Plugin
+        @param thread_pool_plugin: The thread pool plugin.
         """
 
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+        self.thread_pool_plugin = thread_pool_plugin
 
         self.thread_pools_list = []
 
     def unload(self):
         """
-        Unloads the thread pool manager, stopping all the available thread pools.
+        Unloads the thread pool, stopping all the available thread pools.
         """
 
         # iterates over all the thread pools
@@ -122,7 +122,8 @@ class ThreadPoolManager:
 
     def create_new_thread_pool(self, name, description, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS):
         """
-        Creates a new thread pool with the given name, description and number of threads.
+        Creates a new thread pool with the given name, description
+        and number of threads.
 
         @type name: String
         @param name: The thread pool name.
@@ -139,7 +140,7 @@ class ThreadPoolManager:
         """
 
         # retrieves the logger
-        logger = self.thread_pool_manager_plugin.logger
+        logger = self.thread_pool_plugin.logger
 
         # creates a new thread pool
         thread_pool = ThreadPoolImplementation(name, description, number_threads, scheduling_algorithm, maximum_number_threads, logger)
@@ -170,7 +171,7 @@ class ThreadPoolManager:
         """
 
         # creates the map to hold the system information (ordered  map)
-        thread_pool_manager_information = colony.libs.structures_util.OrderedMap()
+        thread_pool_information = colony.libs.structures_util.OrderedMap()
 
         # iterates over all the thread pools
         for thread_pool in self.thread_pools_list:
@@ -188,14 +189,14 @@ class ThreadPoolManager:
             # creates the thread pool thread string
             thread_pool_thread_string = "%d / %d / %d / %d" % (thread_pool_busy_threads, thread_pool_current_threads, thread_pool_number_threads, thread_pool_maximum_number_threads)
 
-            # sets the instance value for the thread pool manager information
-            thread_pool_manager_information[thread_pool_name] = (
+            # sets the instance value for the thread pool information
+            thread_pool_information[thread_pool_name] = (
                 thread_pool_thread_string,
                 thread_pool_scheduling_algorithm_name
             )
 
-        # defines the thread pool manager item columns
-        thread_pool_manager_item_columns = [
+        # defines the thread pool item columns
+        thread_pool_item_columns = [
             {
                 "type" : "name",
                 "value" : "Pool Name"
@@ -210,20 +211,20 @@ class ThreadPoolManager:
             }
         ]
 
-        # creates the thread pool manager item
-        thread_pool_manager_item = {}
+        # creates the thread pool item
+        thread_pool_item = {}
 
-        # sets the thread pool manager item values
-        thread_pool_manager_item["type"] = "map"
-        thread_pool_manager_item["columns"] = thread_pool_manager_item_columns
-        thread_pool_manager_item["values"] = thread_pool_manager_information
+        # sets the thread pool item values
+        thread_pool_item["type"] = "map"
+        thread_pool_item["columns"] = thread_pool_item_columns
+        thread_pool_item["values"] = thread_pool_information
 
         # creates the system information (item)
         system_information = {}
 
         # sets the system information (item) values
         system_information["name"] = "Thread Pool Manager"
-        system_information["items"] = [thread_pool_manager_item]
+        system_information["items"] = [thread_pool_item]
 
         # returns the system information
         return system_information
@@ -474,8 +475,12 @@ class ThreadPoolImplementation:
         @param start_method_args: The start method arguments.
         """
 
-        # creates a worker thread task to start a task and inserts the task descriptor and arguments as arguments
-        worker_thread_task = WorkerThreadTask(START_TASK_TASK_TYPE, (task_descriptor, start_method_args))
+        # creates a worker thread task to start a task and inserts the
+        # task descriptor and arguments as arguments
+        worker_thread_task = WorkerThreadTask(
+            START_TASK_TASK_TYPE,
+            (task_descriptor, start_method_args)
+        )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
@@ -490,8 +495,12 @@ class ThreadPoolImplementation:
         @param stop_method_args: The stop method arguments.
         """
 
-        # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
-        worker_thread_task = WorkerThreadTask(STOP_TASK_TASK_TYPE, (task_descriptor, stop_method_args))
+        # creates a worker thread task to stop a task and inserts the
+        # task descriptor and arguments as arguments
+        worker_thread_task = WorkerThreadTask(
+            STOP_TASK_TASK_TYPE,
+            (task_descriptor, stop_method_args)
+        )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
@@ -506,8 +515,12 @@ class ThreadPoolImplementation:
         @param pause_method_args: The pause method arguments.
         """
 
-        # creates a worker thread task to pause a task and inserts the task descriptor and arguments as arguments
-        worker_thread_task = WorkerThreadTask(PAUSE_TASK_TASK_TYPE, (task_descriptor, pause_method_args))
+        # creates a worker thread task to pause a task and inserts the
+        # task descriptor and arguments as arguments
+        worker_thread_task = WorkerThreadTask(
+            PAUSE_TASK_TASK_TYPE,
+            (task_descriptor, pause_method_args)
+        )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
@@ -522,8 +535,12 @@ class ThreadPoolImplementation:
         @param resume_method_args: The resume method arguments.
         """
 
-        # creates a worker thread task to pause a task and inserts the task descriptor and arguments as arguments
-        worker_thread_task = WorkerThreadTask(RESUME_TASK_TASK_TYPE, (task_descriptor, resume_method_args))
+        # creates a worker thread task to pause a task and inserts the
+        # task descriptor and arguments as arguments
+        worker_thread_task = WorkerThreadTask(
+            RESUME_TASK_TASK_TYPE,
+            (task_descriptor, resume_method_args)
+        )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
@@ -539,7 +556,10 @@ class ThreadPoolImplementation:
         """
 
         # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
-        worker_thread_task = WorkerThreadTask(STOP_TASK_TASK_TYPE, (task_descriptor, stop_method_args))
+        worker_thread_task = WorkerThreadTask(
+            STOP_TASK_TASK_TYPE,
+            (task_descriptor, stop_method_args)
+        )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
@@ -549,9 +569,11 @@ class ThreadPoolImplementation:
         Inserts a worker thread task into the task queue.
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to inserted in the task queue.
+        @param worker_thread_task: The worker thread task to
+        inserted in the task queue.
         @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not.
+        @param insert_at_end: If the worker thread task is to be
+        inserted at the end of the queue or not.
         """
 
         # refreshes the thread pool size
@@ -567,13 +589,16 @@ class ThreadPoolImplementation:
 
     def insert_worker_thread_task_all(self, worker_thread_task, insert_at_end = True):
         """
-        Inserts n worker thread tasks into the task queue (the same amount
-        as the current number of active threads in the pool).
+        Inserts n worker thread tasks into the task queue (the
+        same amount as the current number of active threads
+        in the pool).
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to inserted in the task queue.
+        @param worker_thread_task: The worker thread task to
+        inserted in the task queue.
         @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not.
+        @param insert_at_end: If the worker thread task is to be
+        inserted at the end of the queue or not.
         """
 
         # iterates over the number of currently available threads
@@ -591,7 +616,8 @@ class ThreadPoolImplementation:
         Removes a worker thread task from the task queue.
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to removed from the task queue.
+        @param worker_thread_task: The worker thread task to removed
+        from the task queue.
         """
 
         # refreshes the thread pool size
@@ -616,7 +642,8 @@ class WorkerThread(threading.Thread):
         Constructor of the class
 
         @type thread_pool: ThreadPoolImplementation
-        @param thread_pool: The thread pool to be associated with this worker tread.
+        @param thread_pool: The thread pool to be associated with
+        this worker tread.
         """
 
         threading.Thread.__init__(self)

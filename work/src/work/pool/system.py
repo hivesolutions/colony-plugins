@@ -142,16 +142,16 @@ class WorkPool:
         """
 
         # retrieves the work pool plugin
-        thread_pool_manager_plugin = self.work_pool_plugin.thread_pool_manager_plugin
+        thread_pool_plugin = self.work_pool_plugin.thread_pool_plugin
 
         # retrieves the logger
         logger = self.work_pool_plugin.logger
 
-        # retrieves the task descriptor class from the thread pool manager plugin
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
+        # retrieves the task descriptor class from the thread pool plugin
+        task_descriptor_class = thread_pool_plugin.get_thread_task_descriptor_class()
 
         # creates a new work pool
-        work_pool = WorkPoolImplementation(thread_pool_manager_plugin, name, description, work_processing_task_class, work_processing_task_arguments, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
+        work_pool = WorkPoolImplementation(thread_pool_plugin, name, description, work_processing_task_class, work_processing_task_arguments, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
 
         # adds the new thread pool to the list of work pools
         self.work_pools_list.append(work_pool)
@@ -298,12 +298,12 @@ class WorkPoolImplementation:
     algorithm_manager = None
     """ The algorithm manager object reference """
 
-    def __init__(self, thread_pool_manager, name = "none", description = "none", work_processing_task_class = None, work_processing_task_arguments = [], task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
+    def __init__(self, thread_pool, name = "none", description = "none", work_processing_task_class = None, work_processing_task_arguments = [], task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
         """
         Constructor of the class
 
-        @type thread_pool_manager: Object
-        @param thread_pool_manager: The thread pool manager object to be used to create the thread pool
+        @type thread_pool: Object
+        @param thread_pool: The thread pool object to be used to create the thread pool
         @type name: String
         @param name: The work pool name.
         @type description: String
@@ -341,7 +341,7 @@ class WorkPoolImplementation:
         self.logger = logger
 
         # creates the thread pool to be used for in the work pool
-        self.thread_pool = thread_pool_manager.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        self.thread_pool = thread_pool.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
         self.work_tasks_list = []
         self.work_tasks_access_lock = threading.RLock()

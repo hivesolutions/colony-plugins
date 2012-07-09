@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class ThreadPoolManagerPlugin(colony.base.system.Plugin):
+class ThreadPoolPlugin(colony.base.system.Plugin):
     """
-    The main class for the Thread Pool Manager plugin
+    The main class for the Thread Pool plugin
     """
 
-    id = "pt.hive.colony.plugins.main.threads.thread_pool_manager"
-    name = "Thread Pool Manager"
-    description = "Thread Pool Manager Plugin"
+    id = "pt.hive.colony.plugins.threads.pool"
+    name = "Thread Pool"
+    description = "Thread Pool Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -56,20 +56,20 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
     ]
     capabilities = [
         "threads",
-        "thread_pool_manager",
+        "thread_pool",
         "system_information"
     ]
     main_modules = [
-        "main_threads.thread_pool_manager.thread_pool_manager_system"
+        "threads.pool.system"
     ]
 
-    thread_pool_manager = None
-    """ The thread pool manager """
+    thread_pool = None
+    """ The thread pool """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_threads.thread_pool_manager.thread_pool_manager_system
-        self.thread_pool_manager = main_threads.thread_pool_manager.thread_pool_manager_system.ThreadPoolManager(self)
+        import threads.pool.system
+        self.thread_pool = threads.pool.system.ThreadPool(self)
 
     def end_load_plugin(self):
         colony.base.system.Plugin.end_load_plugin(self)
@@ -77,8 +77,8 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
 
-        # unloads the thread pool manager
-        self.thread_pool_manager.unload()
+        # unloads the thread pool
+        self.thread_pool.unload()
 
     def end_unload_plugin(self):
         colony.base.system.Plugin.end_unload_plugin(self)
@@ -93,10 +93,10 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
-        return self.thread_pool_manager.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        return self.thread_pool.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
     def get_thread_task_descriptor_class(self):
-        return self.thread_pool_manager.get_thread_task_descriptor_class()
+        return self.thread_pool.get_thread_task_descriptor_class()
 
     def get_system_information(self):
         """
@@ -107,4 +107,4 @@ class ThreadPoolManagerPlugin(colony.base.system.Plugin):
         @return: The system information map.
         """
 
-        return self.thread_pool_manager.get_system_information()
+        return self.thread_pool.get_system_information()

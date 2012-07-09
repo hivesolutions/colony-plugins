@@ -60,7 +60,7 @@ class WorkPoolPlugin(colony.base.system.Plugin):
         "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.threads.pool", "1.x.x")
     ]
     main_modules = [
         "work.pool.algorithms",
@@ -71,8 +71,8 @@ class WorkPoolPlugin(colony.base.system.Plugin):
     work_pool = None
     """ The work pool """
 
-    thread_pool_manager_plugin = None
-    """ The thread pool manager plugin """
+    thread_pool_plugin = None
+    """ The thread pool plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -111,6 +111,6 @@ class WorkPoolPlugin(colony.base.system.Plugin):
 
         return self.work_pool.get_system_information()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.threads.pool")
+    def set_thread_pool_plugin(self, thread_pool_plugin):
+        self.thread_pool_plugin = thread_pool_plugin
