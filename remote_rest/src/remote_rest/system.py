@@ -1099,14 +1099,10 @@ class RestRequest:
         @return: If the request method is of type get.
         """
 
-        # in case the operation is of type get
-        if self.request.operation_type == GET_METHOD_VALUE:
-            # returns true (valid)
-            return True
-        # otherwise
-        else:
-            # returns false (invalid)
-            return False
+        # in case the operation is of type get must return
+        # valid otherwise returns false (default validation)
+        if self.request.operation_type == GET_METHOD_VALUE: return True
+        else: return False
 
     def is_post(self):
         """
@@ -1117,14 +1113,10 @@ class RestRequest:
         @return: If the request method is of type post.
         """
 
-        # in case the operation is of type post
-        if self.request.operation_type == POST_METHOD_VALUE:
-            # returns true (valid)
-            return True
-        # otherwise
-        else:
-            # returns false (invalid)
-            return False
+        # in case the operation is of type post must return
+        # valid otherwise returns false (default validation)
+        if self.request.operation_type == POST_METHOD_VALUE: return True
+        else: return False
 
     def is_debug(self, minimum_level = 6):
         """
@@ -1144,16 +1136,19 @@ class RestRequest:
         # retrieves the debug level
         debug_level = resource_manager_plugin.get_resource("system.debug.level")
 
-        # in case the debug level does meet
-        # the required level
-        if debug_level and debug_level.data >= minimum_level:
-            return True
-        else:
-            return False
+        # in case the debug level does meet the required
+        # level returns valid otherwise return not valid
+        if debug_level and debug_level.data >= minimum_level: return True
+        else: return False
 
     def flush(self):
         """
-        Flushes the rest request buffer.
+        Flushes the rest request buffer, this operation should
+        generate all the required information (partial generation)
+        and send it to the underlying request object.
+
+        This is a potentially costy operation so it should be called
+        with care (and not very often).
         """
 
         # in case there is a session available
@@ -1177,10 +1172,9 @@ class RestRequest:
         # sets the content type for the request
         self.request.content_type = self.content_type
 
-        # writes the result translated
+        # writes the result translated and flushes the
+        # request, sending the output to the client
         self.request.write(self.result_translated)
-
-        # flushes the request, sending the output to the client
         self.request.flush()
 
     def redirect(self, target_path, status_code = 302, quote = True, attributes_map = None):
