@@ -39,13 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class MainServiceUtilsPlugin(colony.base.system.Plugin):
+class ServiceUtilsPlugin(colony.base.system.Plugin):
     """
-    The main class for the Service Main Utils plugin.
+    The main class for the Service Utils plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.utils"
-    name = "Service Main Utils"
+    id = "pt.hive.colony.plugins.service.utils"
+    name = "Service Utils"
     description = "The plugin that offers a utils for services"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -63,15 +63,15 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool", "1.x.x")
     ]
     main_modules = [
-        "main_service_utils.utils.main_service_utils_async",
-        "main_service_utils.utils.main_service_utils_exceptions",
-        "main_service_utils.utils.main_service_utils_sync",
-        "main_service_utils.utils.main_service_utils_system",
-        "main_service_utils.utils.main_service_utils_threads"
+        "service.utils.async",
+        "service.utils.exceptions",
+        "service.utils.sync",
+        "service.utils.system",
+        "service.utils.threads"
     ]
 
-    main_service_utils = None
-    """ The main service utils """
+    service_utils = None
+    """ The service utils """
 
     socket_provider_plugins = []
     """ The socket provider plugins """
@@ -84,8 +84,8 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_service_utils.utils.main_service_utils_system
-        self.main_service_utils = main_service_utils.utils.main_service_utils_system.MainServiceUtils(self)
+        import service.utils.system
+        self.service_utils = service.utils.system.ServiceUtils(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -110,7 +110,7 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         @return: The generated service.
         """
 
-        return self.main_service_utils.generate_service(parameters)
+        return self.service_utils.generate_service(parameters)
 
     def generate_service_port(self, parameters):
         """
@@ -123,27 +123,27 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         @return: The newly generated port.
         """
 
-        return self.main_service_utils.generate_service_port(parameters)
+        return self.service_utils.generate_service_port(parameters)
 
     @colony.base.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
-        self.main_service_utils.socket_provider_load(plugin)
+        self.service_utils.socket_provider_load(plugin)
 
     @colony.base.decorators.load_allowed_capability("socket_upgrader")
     def socket_upgrader_load_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.append(plugin)
-        self.main_service_utils.socket_upgrader_load(plugin)
+        self.service_utils.socket_upgrader_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
-        self.main_service_utils.socket_provider_unload(plugin)
+        self.service_utils.socket_provider_unload(plugin)
 
     @colony.base.decorators.unload_allowed_capability("socket_upgrader")
     def socket_upgrader_unload_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.remove(plugin)
-        self.main_service_utils.socket_upgrader_unload(plugin)
+        self.service_utils.socket_upgrader_unload(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.work.pool")
     def set_work_pool_plugin(self, work_pool_plugin):

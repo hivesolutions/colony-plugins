@@ -65,7 +65,7 @@ class MainServiceHttpPlugin(colony.base.system.Plugin):
         "http_service_error_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.utils", "1.x.x")
     ]
     main_modules = [
         "main_service_http.http.main_service_http_exceptions",
@@ -87,8 +87,8 @@ class MainServiceHttpPlugin(colony.base.system.Plugin):
     http_service_error_handler_plugins = []
     """ The http service error handler plugins """
 
-    main_service_utils_plugin = None
-    """ The main service utils plugin """
+    service_utils_plugin = None
+    """ The service utils plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -170,12 +170,12 @@ class MainServiceHttpPlugin(colony.base.system.Plugin):
         self.http_service_error_handler_plugins.remove(plugin)
         self.main_service_http.http_service_error_handler_unload(plugin)
 
-    def get_main_service_utils_plugin(self):
-        return self.main_service_utils_plugin
+    def get_service_utils_plugin(self):
+        return self.service_utils_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
-    def set_main_service_utils_plugin(self, main_service_utils_plugin):
-        self.main_service_utils_plugin = main_service_utils_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.service.utils")
+    def set_service_utils_plugin(self, service_utils_plugin):
+        self.service_utils_plugin = service_utils_plugin
 
     @colony.base.decorators.set_configuration_property_method("service_configuration")
     def service_configuration_set_configuration_property(self, property_name, property):

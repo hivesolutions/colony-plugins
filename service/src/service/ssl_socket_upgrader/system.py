@@ -41,6 +41,8 @@ import ssl
 import types
 import select
 
+import colony.base.system
+
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
 
@@ -59,23 +61,10 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
 
-class MainServiceSslSocketUpgrader:
+class SslSocketUpgrader(colony.base.system.System):
     """
-    The main service ssl socket upgrader class.
+    The ssl socket upgrader class.
     """
-
-    main_service_ssl_socket_upgrader_plugin = None
-    """ The main service ssl socket upgrader plugin """
-
-    def __init__(self, main_service_ssl_socket_upgrader_plugin):
-        """
-        Constructor of the class.
-
-        @type main_service_ssl_socket_upgrader_plugin: MainServiceSslSocketUpgraderPlugin
-        @param main_service_ssl_socket_upgrader_plugin: The main service ssl socket upgrader plugin.
-        """
-
-        self.main_service_ssl_socket_upgrader_plugin = main_service_ssl_socket_upgrader_plugin
 
     def get_upgrader_name(self):
         """
@@ -118,21 +107,20 @@ class MainServiceSslSocketUpgrader:
         """
 
         # prints a debug message
-        self.main_service_ssl_socket_upgrader_plugin.debug("Upgrading a socket to ssl")
+        self.plugin.debug("Upgrading a socket to ssl")
 
         # retrieves the plugin manager
-        manager = self.main_service_ssl_socket_upgrader_plugin.manager
+        manager = self.plugin.manager
 
-        # retrieves the main service ssl socket provicer plugin base path
-        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_upgrader_plugin.id)
-
-        # sets the main service ssl socket provicer plugin resources path
-        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources"
+        # retrieves the plugin base path and uses it to retrieve the plugin
+        # resources path (relative to the plugin path)
+        plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
+        plugin_resources_path = plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
 
         # retrieves the dummy ssl key and certificate paths
         # so that they can be used as the default values
-        dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
-        dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
+        dummy_ssl_key_path = plugin_resources_path + "/dummy.key"
+        dummy_ssl_certificate_path = plugin_resources_path + "/dummy.crt"
 
         # tries to retrieve the key and certificate file paths,
         # falling back to the dummy certificate values

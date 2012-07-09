@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
+class DatagramSocketPlugin(colony.base.system.Plugin):
     """
-    The main class for the Service Main Datagram Socket Provider plugin.
+    The main class for the Datagram Socket plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.datagram_socket_provider"
-    name = "Service Main Datagram Socket Provider"
-    description = "The plugin that offers the Datagram socket provider"
+    id = "pt.hive.colony.plugins.service.datagram_socket"
+    name = "Datagram Socket"
+    description = "The plugin that offers the datagram socket"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -58,34 +58,16 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
         "socket_provider"
     ]
     main_modules = [
-        "main_service_datagram_socket_provider.datagram_socket_provider.main_service_datagram_socket_provider_system"
+        "service.datagram_socket.system"
     ]
 
-    main_service_datagram_socket_provider = None
-    """ The main service datagram socket provider """
+    datagram_socket = None
+    """ The datagram socket (provider) """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_service_datagram_socket_provider.datagram_socket_provider.main_service_datagram_socket_provider_system
-        self.main_service_datagram_socket_provider = main_service_datagram_socket_provider.datagram_socket_provider.main_service_datagram_socket_provider_system.MainServiceDatagramSocketProvider(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        import service.datagram_socket.system
+        self.datagram_socket = service.datagram_socket.system.DatagramSocket(self)
 
     def get_provider_name(self):
         """
@@ -95,7 +77,7 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
         @return: The socket provider name.
         """
 
-        return self.main_service_datagram_socket_provider.get_provider_name()
+        return self.datagram_socket.get_provider_name()
 
     def provide_socket(self):
         """
@@ -106,7 +88,7 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.main_service_datagram_socket_provider.provide_socket()
+        return self.datagram_socket.provide_socket()
 
     def provide_socket_parameters(self, parameters):
         """
@@ -119,4 +101,4 @@ class MainServiceDatagramSocketProviderPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.main_service_datagram_socket_provider.provide_socket_parameters(parameters)
+        return self.datagram_socket.provide_socket_parameters(parameters)

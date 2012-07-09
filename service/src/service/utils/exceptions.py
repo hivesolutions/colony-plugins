@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainServiceUtilsException(colony.base.exceptions.ColonyException):
+class ServiceUtilsException(colony.base.exceptions.ColonyException):
     """
-    The main service utils exception class.
+    The service utils exception class.
     """
 
     message = None
     """ The exception's message """
 
-class SocketProviderNotFound(MainServiceUtilsException):
+class SocketProviderNotFound(ServiceUtilsException):
     """
     The socket provider not found class.
     """
@@ -60,7 +60,7 @@ class SocketProviderNotFound(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class SocketProviderNotFound(MainServiceUtilsException):
 
         return "Socket provider not found - %s" % self.message
 
-class SocketUpgraderNotFound(MainServiceUtilsException):
+class SocketUpgraderNotFound(ServiceUtilsException):
     """
     The socket upgrader not found class.
     """
@@ -86,7 +86,7 @@ class SocketUpgraderNotFound(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class SocketUpgraderNotFound(MainServiceUtilsException):
 
         return "Socket upgrader not found - %s" % self.message
 
-class ServerRequestTimeout(MainServiceUtilsException):
+class ServerRequestTimeout(ServiceUtilsException):
     """
     The server request timeout class.
     """
@@ -112,7 +112,7 @@ class ServerRequestTimeout(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class ServerRequestTimeout(MainServiceUtilsException):
 
         return "Server request timeout - %s" % self.message
 
-class ClientRequestTimeout(MainServiceUtilsException):
+class ClientRequestTimeout(ServiceUtilsException):
     """
     The client request timeout class.
     """
@@ -138,7 +138,7 @@ class ClientRequestTimeout(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -151,7 +151,7 @@ class ClientRequestTimeout(MainServiceUtilsException):
 
         return "Client request timeout - %s" % self.message
 
-class ServerResponseTimeout(MainServiceUtilsException):
+class ServerResponseTimeout(ServiceUtilsException):
     """
     The server response timeout class.
     """
@@ -164,7 +164,7 @@ class ServerResponseTimeout(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -177,7 +177,7 @@ class ServerResponseTimeout(MainServiceUtilsException):
 
         return "Server response timeout - %s" % self.message
 
-class ClientResponseTimeout(MainServiceUtilsException):
+class ClientResponseTimeout(ServiceUtilsException):
     """
     The client response timeout class.
     """
@@ -190,7 +190,7 @@ class ClientResponseTimeout(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -203,7 +203,7 @@ class ClientResponseTimeout(MainServiceUtilsException):
 
         return "Client response timeout - %s" % self.message
 
-class RequestClosed(MainServiceUtilsException):
+class RequestClosed(ServiceUtilsException):
     """
     The request closed class.
     """
@@ -216,7 +216,7 @@ class RequestClosed(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -229,7 +229,7 @@ class RequestClosed(MainServiceUtilsException):
 
         return "Request closed - %s" % self.message
 
-class PortStarvationReached(MainServiceUtilsException):
+class PortStarvationReached(ServiceUtilsException):
     """
     The port starvation reached class.
     """
@@ -242,7 +242,7 @@ class PortStarvationReached(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -255,7 +255,7 @@ class PortStarvationReached(MainServiceUtilsException):
 
         return "Port starvation reached - %s" % self.message
 
-class ConnectionChangeFailure(MainServiceUtilsException):
+class ConnectionChangeFailure(ServiceUtilsException):
     """
     The connection change failure class.
     """
@@ -268,7 +268,7 @@ class ConnectionChangeFailure(MainServiceUtilsException):
         @param message: The message to be printed.
         """
 
-        MainServiceUtilsException.__init__(self)
+        ServiceUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):

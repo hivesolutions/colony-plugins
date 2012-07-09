@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
+import colony.base.system
 import colony.libs.host_util
 
 PROVIDER_NAME = "datagram"
@@ -62,23 +63,10 @@ TTL_VALUE = "ttl"
 DEFAULT_MULTICAST_TTL = 255
 """ The default multicast ttl """
 
-class MainServiceDatagramSocketProvider:
+class DatagramSocket(colony.base.system.System):
     """
-    The main service datagram socket provider class.
+    The datagram socket (provider) class.
     """
-
-    main_service_datagram_socket_provider_plugin = None
-    """ The main service datagram socket provider plugin """
-
-    def __init__(self, main_service_datagram_socket_provider_plugin):
-        """
-        Constructor of the class.
-
-        @type main_service_datagram_socket_provider_plugin: MainServiceDatagramSocketProviderPlugin
-        @param main_service_datagram_socket_provider_plugin: The main service datagram socket provider plugin.
-        """
-
-        self.main_service_datagram_socket_provider_plugin = main_service_datagram_socket_provider_plugin
 
     def get_provider_name(self):
         """
@@ -117,7 +105,7 @@ class MainServiceDatagramSocketProvider:
         """
 
         # prints a debug message
-        self.main_service_datagram_socket_provider_plugin.debug("Providing a datagram socket")
+        self.plugin.debug("Providing a datagram socket")
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)

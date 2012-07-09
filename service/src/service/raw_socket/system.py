@@ -39,29 +39,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
-PROVIDER_NAME = "normal"
+import colony.base.system
+
+PROVIDER_NAME = "raw"
 """ The provider name """
 
 FAMILY_VALUE = "family"
 """ The family value """
 
-class MainServiceNormalSocketProvider:
+class RawSocket(colony.base.system.System):
     """
-    The main service normal socket provider class.
+    The raw socket (provider) class.
     """
-
-    main_service_normal_socket_provider_plugin = None
-    """ The main service normal socket provider plugin """
-
-    def __init__(self, main_service_normal_socket_provider_plugin):
-        """
-        Constructor of the class.
-
-        @type main_service_normal_socket_provider_plugin: MainServiceNormalSocketProviderPlugin
-        @param main_service_normal_socket_provider_plugin: The main service normal socket provider plugin.
-        """
-
-        self.main_service_normal_socket_provider_plugin = main_service_normal_socket_provider_plugin
 
     def get_provider_name(self):
         """
@@ -82,11 +71,11 @@ class MainServiceNormalSocketProvider:
         @return: The provided socket.
         """
 
-        # creates the normal socket
-        normal_socket = self.provide_socket_parameters()
+        # creates the raw socket
+        raw_socket = self.provide_socket_parameters()
 
-        # returns the normal socket
-        return normal_socket
+        # returns the raw socket
+        return raw_socket
 
     def provide_socket_parameters(self, parameters = {}):
         """
@@ -100,13 +89,13 @@ class MainServiceNormalSocketProvider:
         """
 
         # prints a debug message
-        self.main_service_normal_socket_provider_plugin.debug("Providing a normal socket")
+        self.plugin.debug("Providing a raw socket")
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
-        # creates the normal socket
-        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+        # creates the raw socket
+        raw_socket = socket.socket(socket_family, socket.SOCK_RAW)
 
-        # returns the normal socket
-        return normal_socket
+        # returns the raw socket
+        return raw_socket

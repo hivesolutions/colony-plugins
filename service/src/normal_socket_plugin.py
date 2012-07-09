@@ -37,31 +37,37 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import socket
+import colony.base.system
 
-PROVIDER_NAME = "raw"
-""" The provider name """
-
-FAMILY_VALUE = "family"
-""" The family value """
-
-class MainServiceRawSocketProvider:
+class NormalSocketPlugin(colony.base.system.Plugin):
     """
-    The main service raw socket provider class.
+    The main class for the Normal Socket plugin.
     """
 
-    main_service_raw_socket_provider_plugin = None
-    """ The main service raw socket provider plugin """
+    id = "pt.hive.colony.plugins.service.normal_socket"
+    name = "Normal Socket"
+    description = "The plugin that offers the normal socket"
+    version = "1.0.0"
+    author = "Hive Solutions Lda. <development@hive.pt>"
+    platforms = [
+        colony.base.system.CPYTHON_ENVIRONMENT,
+        colony.base.system.JYTHON_ENVIRONMENT,
+        colony.base.system.IRON_PYTHON_ENVIRONMENT
+    ]
+    capabilities = [
+        "socket_provider"
+    ]
+    main_modules = [
+        "service.normal_socket.system"
+    ]
 
-    def __init__(self, main_service_raw_socket_provider_plugin):
-        """
-        Constructor of the class.
+    normal_socket = None
+    """ The normal socket (provider) """
 
-        @type main_service_raw_socket_provider_plugin: MainServiceRawSocketProviderPlugin
-        @param main_service_raw_socket_provider_plugin: The main service raw socket provider plugin.
-        """
-
-        self.main_service_raw_socket_provider_plugin = main_service_raw_socket_provider_plugin
+    def load_plugin(self):
+        colony.base.system.Plugin.load_plugin(self)
+        import service.normal_socket.system
+        self.normal_socket = service.normal_socket.system.NormalSocket(self)
 
     def get_provider_name(self):
         """
@@ -71,7 +77,7 @@ class MainServiceRawSocketProvider:
         @return: The socket provider name.
         """
 
-        return PROVIDER_NAME
+        return self.normal_socket.get_provider_name()
 
     def provide_socket(self):
         """
@@ -82,13 +88,9 @@ class MainServiceRawSocketProvider:
         @return: The provided socket.
         """
 
-        # creates the raw socket
-        raw_socket = self.provide_socket_parameters()
+        return self.normal_socket.provide_socket()
 
-        # returns the raw socket
-        return raw_socket
-
-    def provide_socket_parameters(self, parameters = {}):
+    def provide_socket_parameters(self, parameters):
         """
         Provides a new socket, configured with
         the given parameters.
@@ -99,14 +101,4 @@ class MainServiceRawSocketProvider:
         @return: The provided socket.
         """
 
-        # prints a debug message
-        self.main_service_raw_socket_provider_plugin.debug("Providing a raw socket")
-
-        # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
-
-        # creates the raw socket
-        raw_socket = socket.socket(socket_family, socket.SOCK_RAW)
-
-        # returns the raw socket
-        return raw_socket
+        return self.normal_socket.provide_socket_parameters(parameters)

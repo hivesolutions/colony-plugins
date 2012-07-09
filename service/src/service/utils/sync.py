@@ -45,8 +45,8 @@ import threading
 import colony.libs.map_util
 import colony.libs.call_util
 
-import main_service_utils_threads
-import main_service_utils_exceptions
+import threads
+import exceptions
 
 BIND_HOST = ""
 """ The bind host """
@@ -147,11 +147,11 @@ class AbstractService:
     The abstract service class.
     """
 
-    main_service_utils = None
-    """ The main service utils """
+    service_utils = None
+    """ The service utils """
 
-    main_service_utils_plugin = None
-    """ The main service utils plugin """
+    service_utils_plugin = None
+    """ The service utils plugin """
 
     service_sockets = []
     """ The service sockets """
@@ -225,20 +225,20 @@ class AbstractService:
     service_execution_thread = None
     """ The service execution thread """
 
-    def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
+    def __init__(self, service_utils, service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
 
-        @type main_service_utils: MainServiceUtils
-        @param main_service_utils: The main service utils.
-        @type main_service_utils_plugin: MainServiceUtilsPlugin
-        @param main_service_utils_plugin: The main service utils plugin.
+        @type service_utils: ServiceUtils
+        @param service_utils: The service utils.
+        @type service_utils_plugin: ServiceUtilsPlugin
+        @param service_utils_plugin: The service utils plugin.
         @type parameters: Dictionary
         @param parameters: The parameters
         """
 
-        self.main_service_utils = main_service_utils
-        self.main_service_utils_plugin = main_service_utils_plugin
+        self.service_utils = service_utils
+        self.service_utils_plugin = service_utils_plugin
 
         self.service_type = parameters.get("type", DEFAULT_TYPE)
         self.service_plugin = parameters.get("service_plugin", None)
@@ -262,8 +262,8 @@ class AbstractService:
         self.service_connection_close_event = threading.Event()
         self.service_connection_close_end_event = threading.Event()
 
-        self.service_accepting_thread = main_service_utils_threads.ServiceAcceptingThread(self)
-        self.service_execution_thread = main_service_utils_threads.ServiceExecutionThread(self)
+        self.service_accepting_thread = threads.ServiceAcceptingThread(self)
+        self.service_execution_thread = threads.ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
         # a default end point is created with those values
@@ -354,7 +354,7 @@ class AbstractService:
         """
 
         # retrieves the work pool plugin
-        work_pool_plugin = self.main_service_utils_plugin.work_pool_plugin
+        work_pool_plugin = self.service_utils_plugin.work_pool_plugin
 
         # retrieves the work pool configuration parameters
         pool_name = self.pool_configuration.get("name", POOL_NAME)
@@ -404,7 +404,7 @@ class AbstractService:
             # in case the socket provider is defined
             if socket_provider:
                 # retrieves the socket provider plugins map
-                socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
+                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
 
                 # in case the socket provider is available in the socket
                 # provider plugins map
@@ -425,7 +425,7 @@ class AbstractService:
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
                 else:
                     # raises the socket provider not found exception
-                    raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
             else:
                 # creates the service socket
                 service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -506,7 +506,7 @@ class AbstractService:
             return selected_values_read
         except BaseException, exception:
             # prints info message about connection
-            self.main_service_utils_plugin.info("The socket is not valid for selection of the pool: " + unicode(exception))
+            self.service_utils_plugin.info("The socket is not valid for selection of the pool: " + unicode(exception))
 
             # returns invalid
             return None
@@ -540,7 +540,7 @@ class AbstractService:
             self.service_accepting_thread.add_service_tuple(service_tuple)
         except Exception, exception:
             # prints an error message about the problem accepting the socket
-            self.main_service_utils_plugin.error("Error accepting service tuple: " + unicode(exception))
+            self.service_utils_plugin.error("Error accepting service tuple: " + unicode(exception))
 
     def _read_service_socket(self, service_socket):
         """
@@ -565,7 +565,7 @@ class AbstractService:
             self._insert_data_pool(service_data, service_socket, service_address, port)
         except Exception, exception:
             # prints an error message about the problem reading from socket
-            self.main_service_utils_plugin.error("Error reading from socket: " + unicode(exception))
+            self.service_utils_plugin.error("Error reading from socket: " + unicode(exception))
 
     def _activate_service_sockets(self):
         """
@@ -794,7 +794,7 @@ class AbstractServiceConnectionHandler:
         self.connection_socket_connection_socket_file_descriptor_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException, extra_parameters)
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration, exceptions.ServiceUtilsException, extra_parameters)
 
     def start(self):
         self.__start_base()
@@ -808,7 +808,7 @@ class AbstractServiceConnectionHandler:
 
     def __start_base(self):
         # generates a new wake "file" port
-        self.wake_file_port = self.service.main_service_utils.generate_service_port({})
+        self.wake_file_port = self.service.service_utils.generate_service_port({})
 
         # creates the wake "file" object
         self.wake_file = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -928,7 +928,7 @@ class AbstractServiceConnectionHandler:
             self.add_connection(connection_socket, connection_address, connection_port)
         except Exception, exception:
             # prints an error for not being able to add connection
-            self.service.main_service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % unicode(exception))
+            self.service.service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % unicode(exception))
 
     def work_removed(self, work_reference):
         """
@@ -947,7 +947,7 @@ class AbstractServiceConnectionHandler:
             self.remove_connection_socket(connection_socket)
         except Exception, exception:
             # prints an error for not being able to remove connection
-            self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
+            self.service.service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
@@ -967,7 +967,7 @@ class AbstractServiceConnectionHandler:
         # the service connections map
         if connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise main_service_utils_exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
+            raise exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
 
         # creates the new service connection and sets the service execution thread
         # on the service connection (for callable execution)
@@ -1024,7 +1024,7 @@ class AbstractServiceConnectionHandler:
         # the service connections map
         if not connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise main_service_utils_exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + unicode(connection_socket))
+            raise exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + unicode(connection_socket))
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
@@ -1167,7 +1167,7 @@ class AbstractServiceConnectionHandler:
             colony.libs.call_util.execute_retries(callable)
         except BaseException, exception:
             # raises the connection change failure exception
-            raise main_service_utils_exceptions.ConnectionChangeFailure("problem adding epoll connection: " + unicode(exception))
+            raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + unicode(exception))
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
@@ -1184,7 +1184,7 @@ class AbstractServiceConnectionHandler:
             colony.libs.call_util.execute_retries(callable)
         except BaseException, exception:
             # raises the connection change failure exception
-            raise main_service_utils_exceptions.ConnectionChangeFailure("problem removing epoll connection: " + unicode(exception))
+            raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + unicode(exception))
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
@@ -1346,7 +1346,7 @@ class AbstractServiceConnectionlessHandler:
         self.service_connections_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException, extra_parameters)
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration, exceptions.ServiceUtilsException, extra_parameters)
 
     def start(self):
         pass
@@ -1703,19 +1703,19 @@ class ServiceConnection:
         @param parameters: The parameters to the upgrade process.
         """
 
-        # retrieves the main service utils
-        main_service_utils = self.service_connection_handler.service.main_service_utils
+        # retrieves the service utils
+        service_utils = self.service_connection_handler.service.service_utils
 
         # retrieves the socket upgrader plugins map
-        socket_upgrader_plugins_map = main_service_utils.socket_upgrader_plugins_map
+        socket_upgrader_plugins_map = service_utils.socket_upgrader_plugins_map
 
         # in case the upgrader handler is not found in the handler plugins map
         if not socket_upgrader in socket_upgrader_plugins_map:
             # raises the socket upgrader not found exception
-            raise main_service_utils_exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+            raise exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
 
         # retrieves the socket upgrader plugin
-        socket_upgrader_plugin = main_service_utils.socket_upgrader_plugins_map[socket_upgrader]
+        socket_upgrader_plugin = service_utils.socket_upgrader_plugins_map[socket_upgrader]
 
         # upgrades the current connection socket using the socket upgrader plugin
         self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
@@ -2018,11 +2018,11 @@ class ServiceConnection:
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
             except:
                 # raises the request closed exception
-                raise main_service_utils_exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
                 # raises the server request timeout exception
-                raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+                raise exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
                 # iterates continuously
                 while True:
@@ -2063,7 +2063,7 @@ class ServiceConnection:
                         continue
 
                     # raises the client request timeout exception
-                    raise main_service_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+                    raise exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
             # breaks the loop
             break
@@ -2102,11 +2102,11 @@ class ServiceConnection:
                 selected_values = select.select([], [self.connection_socket], [], response_timeout)
             except:
                 # raises the request closed exception
-                raise main_service_utils_exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
                 # raises the server response timeout exception
-                raise main_service_utils_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
+                raise exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
             try:
                 # sends the data in chunks
                 number_bytes_sent = self.connection_socket.send(message)
@@ -2123,7 +2123,7 @@ class ServiceConnection:
                 # raised
                 else:
                     # raises the client response timeout exception
-                    raise main_service_utils_exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
+                    raise exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
 
             # decrements the number of bytes sent
             number_bytes -= number_bytes_sent
@@ -2190,7 +2190,17 @@ class ServiceConnectionless(ServiceConnection):
         @param connection_chunk_size: The connection chunk size.
         """
 
-        ServiceConnection.__init__(self, service_connection_handler, service_plugin, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size)
+        ServiceConnection.__init__(
+            self,
+            service_connection_handler,
+            service_plugin,
+            connection_socket,
+            connection_address,
+            connection_port,
+            connection_request_timeout,
+            connection_response_timeout,
+            connection_chunk_size
+        )
 
         self.connection_data = connection_data
 

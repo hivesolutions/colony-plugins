@@ -356,14 +356,14 @@ class MainServiceHttp:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the main service utils plugin
-        main_service_utils_plugin = self.main_service_http_plugin.main_service_utils_plugin
+        # retrieves the service utils plugin
+        service_utils_plugin = self.main_service_http_plugin.service_utils_plugin
 
         # generates the parameters
         service_parameters = self._generate_service_parameters(parameters)
 
         # generates the http service using the given service parameters
-        self.http_service = main_service_utils_plugin.generate_service(service_parameters)
+        self.http_service = service_utils_plugin.generate_service(service_parameters)
 
         # starts the http service
         self.http_service.start_service()
@@ -682,8 +682,8 @@ class HttpClientServiceHandler:
         handles this connection.
         @type service_configuration: Dictionary
         @param service_configuration: The service configuration.
-        @type main_service_utils_exception: Class
-        @param main_service_utils_exception: The service utils exception class.
+        @type service_utils_exception: Class
+        @param service_utils_exception: The service utils exception class.
         @type extra_parameters: Dictionary
         @param extra_parameters: The extra parameters.
         """

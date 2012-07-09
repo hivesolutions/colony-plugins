@@ -42,6 +42,7 @@ import errno
 import types
 import socket
 
+import colony.base.system
 import colony.base.exceptions
 
 PROVIDER_NAME = "ssl"
@@ -68,23 +69,10 @@ SSL_ERROR_WANT_READ = 2
 WSAEWOULDBLOCK = 10035
 """ The wsa would block error code """
 
-class MainServiceSslSocketProvider:
+class SslSocket(colony.base.system.System):
     """
-    The main service ssl socket provider class.
+    The ssl socket (provider) class.
     """
-
-    main_service_ssl_socket_provider_plugin = None
-    """ The main service ssl socket provider plugin """
-
-    def __init__(self, main_service_ssl_socket_provider_plugin):
-        """
-        Constructor of the class.
-
-        @type main_service_ssl_socket_provider_plugin: MainServiceSslSocketProviderPlugin
-        @param main_service_ssl_socket_provider_plugin: The main service ssl socket provider plugin.
-        """
-
-        self.main_service_ssl_socket_provider_plugin = main_service_ssl_socket_provider_plugin
 
     def get_provider_name(self):
         """
@@ -123,16 +111,15 @@ class MainServiceSslSocketProvider:
         """
 
         # prints a debug message
-        self.main_service_ssl_socket_provider_plugin.debug("Providing an ssl socket")
+        self.plugin.debug("Providing an ssl socket")
 
         # retrieves the plugin manager
-        manager = self.main_service_ssl_socket_provider_plugin.manager
+        manager = self.plugin.manager
 
-        # retrieves the main service ssl socket provicer plugin base path
-        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_provider_plugin.id)
-
-        # sets the main service ssl socket provicer plugin resources path
-        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
+        # retrieves the plugin base path and uses it to retrieve the plugin
+        # resources path (relative to the plugin path)
+        plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
+        plugin_resources_path = plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
@@ -142,8 +129,8 @@ class MainServiceSslSocketProvider:
 
         # retrieves the dummy ssl key and certificate paths
         # so that they can be used as the default values
-        dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
-        dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
+        dummy_ssl_key_path = plugin_resources_path + "/dummy.key"
+        dummy_ssl_certificate_path = plugin_resources_path + "/dummy.crt"
 
         # tries to retrieve the key and certificate file paths,
         # falling back to the dummy certificate values

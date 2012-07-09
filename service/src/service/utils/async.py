@@ -51,8 +51,8 @@ import colony.libs.map_util
 
 import colony.base.exceptions
 
-import main_service_utils_threads
-import main_service_utils_exceptions
+import threads
+import exceptions
 
 BIND_HOST = ""
 """ The bind host """
@@ -104,11 +104,11 @@ handshake pending state (not possible to accept) """
 
 class AbstractService:
 
-    main_service_utils = None
-    """ The main service utils """
+    service_utils = None
+    """ The service utils """
 
-    main_service_utils_plugin = None
-    """ The main service utils plugin """
+    service_utils_plugin = None
+    """ The service utils plugin """
 
     stop_flag = False
     """ The flag that controls the execution of the main loop """
@@ -151,20 +151,20 @@ class AbstractService:
 
 
 
-    def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
+    def __init__(self, service_utils, service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
 
-        @type main_service_utils: MainServiceUtils
-        @param main_service_utils: The main service utils.
-        @type main_service_utils_plugin: MainServiceUtilsPlugin
-        @param main_service_utils_plugin: The main service utils plugin.
+        @type service_utils: ServiceUtils
+        @param service_utils: The service utils.
+        @type service_utils_plugin: ServiceUtilsPlugin
+        @param service_utils_plugin: The service utils plugin.
         @type parameters: Dictionary
         @param parameters: The parameters
         """
 
-        self.main_service_utils = main_service_utils
-        self.main_service_utils_plugin = main_service_utils_plugin
+        self.service_utils = service_utils
+        self.service_utils_plugin = service_utils_plugin
 
         self.service_plugin = parameters.get("service_plugin", None)
         self.service_handling_task_class = parameters.get("service_handling_task_class", None)
@@ -207,8 +207,8 @@ class AbstractService:
 
         # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
 
-        self.client_service = self.service_handling_task_class(self.service_plugin, None, self.service_configuration, main_service_utils_exceptions.MainServiceUtilsException, self.extra_parameters)
-        self.service_execution_thread = main_service_utils_threads.ServiceExecutionThread(self)
+        self.client_service = self.service_handling_task_class(self.service_plugin, None, self.service_configuration, exceptions.ServiceUtilsException, self.extra_parameters)
+        self.service_execution_thread = threads.ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
         # a default end point is created with those values
@@ -244,7 +244,7 @@ class AbstractService:
             # in case the socket provider is defined
             if socket_provider:
                 # retrieves the socket provider plugins map
-                socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
+                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
 
                 # in case the socket provider is available in the socket
                 # provider plugins map
@@ -265,7 +265,7 @@ class AbstractService:
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
                 else:
                     # raises the socket provider not found exception
-                    raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
             else:
                 # creates the service socket
                 service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
-import main_service_utils_sync
-import main_service_utils_async
-import main_service_utils_exceptions
+import sync
+import async
+import exceptions
 
 PORT_RANGES = (
     (38001, 39999),
@@ -50,18 +50,18 @@ PORT_RANGES = (
 """ The ranges of port available for services """
 
 SERVICE_CLASSES_MAP = {
-    "sync" : main_service_utils_sync.AbstractService,
-    "async" : main_service_utils_async.AbstractService
+    "sync" : sync.AbstractService,
+    "async" : async.AbstractService
 }
 """ The map containing the various abstract service types """
 
-class MainServiceUtils:
+class ServiceUtils:
     """
-    The main service utils class.
+    The service utils class.
     """
 
-    main_service_utils_plugin = None
-    """ The main service utils plugin """
+    service_utils_plugin = None
+    """ The service utils plugin """
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
@@ -78,15 +78,15 @@ class MainServiceUtils:
     current_port = None
     """ The current port """
 
-    def __init__(self, main_service_utils_plugin):
+    def __init__(self, service_utils_plugin):
         """
         Constructor of the class.
 
-        @type main_service_utils_plugin: MainServiceUtilsPlugin
-        @param main_service_utils_plugin: The main service utils plugin.
+        @type service_utils_plugin: ServiceUtilsPlugin
+        @param service_utils_plugin: The service utils plugin.
         """
 
-        self.main_service_utils_plugin = main_service_utils_plugin
+        self.service_utils_plugin = service_utils_plugin
 
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}
@@ -109,10 +109,10 @@ class MainServiceUtils:
         # retrieves the service type from the parameters in order
         # to retrieve the proper (abstract) service class
         service_type = parameters.get("service_type", "sync")
-        service_class = SERVICE_CLASSES_MAP.get(service_type, main_service_utils_sync.AbstractService)
+        service_class = SERVICE_CLASSES_MAP.get(service_type, sync.AbstractService)
 
         # creates the service "instance" using the abstract service class
-        service_instance = service_class(self, self.main_service_utils_plugin, parameters)
+        service_instance = service_class(self, self.service_utils_plugin, parameters)
 
         # returns the service instance
         return service_instance
@@ -146,7 +146,7 @@ class MainServiceUtils:
             # in case the limit of port ranges has been reached
             if self.current_port_range_index == len(PORT_RANGES):
                 # raises the port starvation reached exception
-                raise main_service_utils_exceptions.PortStarvationReached("no more ports available")
+                raise exceptions.PortStarvationReached("no more ports available")
             else:
                 # resets the current port value
                 self._reset_port()

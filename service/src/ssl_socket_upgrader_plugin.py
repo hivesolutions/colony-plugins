@@ -39,85 +39,71 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class MainServiceSslSocketProviderPlugin(colony.base.system.Plugin):
+class SslSocketUpgraderPlugin(colony.base.system.Plugin):
     """
-    The main class for the Service Main Ssl Socket Provider plugin.
+    The main class for the Ssl Socket Upgrader plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.ssl_socket_provider"
-    name = "Service Main Ssl Socket Provider"
-    description = "The plugin that offers the ssl socket provider"
+    id = "pt.hive.colony.plugins.service.ssl_socket_upgrader"
+    name = "Ssl Socket Upgrader"
+    description = "The plugin that offers the ssl socket upgrader"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "socket_provider"
+        "socket_upgrader"
     ]
     dependencies = [
         colony.base.system.PackageDependency("Python 2.6", "ssl", "2.6.x", "http://python.org")
     ]
     main_modules = [
-        "main_service_ssl_socket_provider.ssl_socket_provider.main_service_ssl_socket_provider_system"
+        "service.ssl_socket_upgrader.system"
     ]
 
-    main_service_ssl_socket_provider = None
-    """ The main service ssl socket provider """
+    ssl_socket_upgrader = None
+    """ The ssl socket upgrader """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_service_ssl_socket_provider.ssl_socket_provider.main_service_ssl_socket_provider_system
-        self.main_service_ssl_socket_provider = main_service_ssl_socket_provider.ssl_socket_provider.main_service_ssl_socket_provider_system.MainServiceSslSocketProvider(self)
+        import service.ssl_socket_upgrader.system
+        self.ssl_socket_upgrader = service.ssl_socket_upgrader.system.SslSocketUpgrader(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    def get_provider_name(self):
+    def get_upgrader_name(self):
         """
-        Retrieves the socket provider name.
+        Retrieves the socket upgrader name.
 
         @rtype: String
-        @return: The socket provider name.
+        @return: The socket upgrader name.
         """
 
-        return self.main_service_ssl_socket_provider.get_provider_name()
+        return self.ssl_socket_upgrader.get_upgrader_name()
 
-    def provide_socket(self):
+    def upgrade_socket(self, socket):
         """
-        Provides a new socket, configured with
+        Upgrades the given socket, configured with
         the default parameters.
 
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
         @rtype: Socket
-        @return: The provided socket.
+        @return: The upgraded socket.
         """
 
-        return self.main_service_ssl_socket_provider.provide_socket()
+        return self.ssl_socket_upgrader.upgrade_socket(socket)
 
-    def provide_socket_parameters(self, parameters):
+    def upgrade_socket_parameters(self, socket, parameters):
         """
-        Provides a new socket, configured with
+        Upgrades the given socket, configured with
         the given parameters.
 
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
         @type parameters: Dictionary
         @param parameters: The parameters for socket configuration.
         @rtype: Socket
-        @return: The provided socket.
+        @return: The upgraded socket.
         """
 
-        return self.main_service_ssl_socket_provider.provide_socket_parameters(parameters)
+        return self.ssl_socket_upgrader.upgrade_socket_parameters(socket, parameters)
