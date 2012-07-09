@@ -68,8 +68,8 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
     main_client_smtp = None
     """ The main client smtp """
 
-    main_client_utils_plugin = None
-    """ The main client utils plugin """
+    client_utils_plugin = None
+    """ The main client plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -101,9 +101,9 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
     def create_request(self, parameters):
         return self.main_client_smtp.create_request(parameters)
 
-    def get_main_client_utils_plugin(self):
-        return self.main_client_utils_plugin
+    def get_client_utils_plugin(self):
+        return self.client_utils_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.utils")
-    def set_main_client_utils_plugin(self, main_client_utils_plugin):
-        self.main_client_utils_plugin = main_client_utils_plugin
+    def set_client_utils_plugin(self, client_utils_plugin):
+        self.client_utils_plugin = client_utils_plugin

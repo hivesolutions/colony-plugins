@@ -43,7 +43,7 @@ import threading
 
 import colony.libs.map_util
 
-import main_client_utils_exceptions
+import client_utils_exceptions
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -81,13 +81,13 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 DEFAULT_TYPE = CONNECTION_TYPE_VALUE
 """ The default type client """
 
-class MainClientUtils:
+class ClientUtils:
     """
-    The main client utils class.
+    The client class.
     """
 
-    main_client_utils_plugin = None
-    """ The main client utils plugin """
+    client_utils_plugin = None
+    """ The main client plugin """
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
@@ -95,15 +95,15 @@ class MainClientUtils:
     socket_upgrader_plugins_map = {}
     """ The socket upgrader plugins map """
 
-    def __init__(self, main_client_utils_plugin):
+    def __init__(self, client_utils_plugin):
         """
         Constructor of the class.
 
-        @type main_client_utils_plugin: MainClientUtilsPlugin
-        @param main_client_utils_plugin: The main client utils plugin.
+        @type client_utils_plugin: ClientUtilsPlugin
+        @param client_utils_plugin: The client plugin.
         """
 
-        self.main_client_utils_plugin = main_client_utils_plugin
+        self.client_utils_plugin = client_utils_plugin
 
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}
@@ -118,7 +118,7 @@ class MainClientUtils:
         @return: The generated client.
         """
 
-        return AbstractClient(self, self.main_client_utils_plugin, parameters)
+        return AbstractClient(self, self.client_utils_plugin, parameters)
 
     def socket_provider_load(self, socket_provider_plugin):
         """
@@ -185,11 +185,11 @@ class AbstractClient:
     The abstract client class.
     """
 
-    main_client_utils = None
-    """ The main client utils """
+    client_utils = None
+    """ The main client """
 
-    main_client_utils_plugin = None
-    """ The main client utils plugin """
+    client_utils_plugin = None
+    """ The main client plugin """
 
     client_type = None
     """ The client type """
@@ -218,20 +218,20 @@ class AbstractClient:
     client_connections_map = {}
     """ The map containing the client connections """
 
-    def __init__(self, main_client_utils, main_client_utils_plugin, parameters = {}):
+    def __init__(self, client_utils, client_utils_plugin, parameters = {}):
         """
         Constructor of the class.
 
-        @type main_client_utils: MainClientUtils
-        @param main_client_utils: The main client utils.
-        @type main_client_utils_plugin: MainClientUtilsPlugin
-        @param main_client_utils_plugin: The main client utils plugin.
+        @type client_utils: ClientUtils
+        @param client_utils: The main client.
+        @type client_utils_plugin: ClientUtilsPlugin
+        @param client_utils_plugin: The main client plugin.
         @type parameters: Dictionary
         @param parameters: The parameters
         """
 
-        self.main_client_utils = main_client_utils
-        self.main_client_utils_plugin = main_client_utils_plugin
+        self.client_utils = client_utils
+        self.client_utils_plugin = client_utils_plugin
 
         self.client_type = parameters.get("type", DEFAULT_TYPE)
         self.client_plugin = parameters.get("client_plugin", None)
@@ -350,7 +350,7 @@ class AbstractClient:
         """
 
         # retrieves the socket provider plugins map
-        socket_provider_plugins_map = self.main_client_utils.socket_provider_plugins_map
+        socket_provider_plugins_map = self.client_utils.socket_provider_plugins_map
 
         # in case the socket name is available in the socket
         # provider plugins map
@@ -374,7 +374,7 @@ class AbstractClient:
             return socket
         else:
             # raises the socket provider not found exception
-            raise main_client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
+            raise client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
 
     def _generate_connection_tuple_hashable(self, connection_tuple):
         """
@@ -582,19 +582,19 @@ class ClientConnection:
         @param parameters: The parameters to the upgrade process.
         """
 
-        # retrieves the main client utils
-        main_client_utils = self.client.main_client_utils
+        # retrieves the main client
+        client_utils = self.client.client_utils
 
         # retrieves the socket upgrader plugins map
-        socket_upgrader_plugins_map = main_client_utils.socket_upgrader_plugins_map
+        socket_upgrader_plugins_map = client_utils.socket_upgrader_plugins_map
 
         # in case the upgrader handler is not found in the handler plugins map
         if not socket_upgrader in socket_upgrader_plugins_map:
             # raises the socket upgrader not found exception
-            raise main_client_utils_exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+            raise client_utils_exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
 
         # retrieves the socket upgrader plugin
-        socket_upgrader_plugin = main_client_utils.socket_upgrader_plugins_map[socket_upgrader]
+        socket_upgrader_plugin = client_utils.socket_upgrader_plugins_map[socket_upgrader]
 
         # upgrades the current connection socket using the socket upgrader plugin
         self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
@@ -816,14 +816,14 @@ class ClientConnection:
                 self.close()
 
                 # raises the request closed exception
-                raise main_client_utils_exceptions.RequestClosed("invalid socket")
+                raise client_utils_exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
                 # closes the connection
                 self.close()
 
                 # raises the server request timeout exception
-                raise main_client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+                raise client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
                 # iterates continuously
                 while True:
@@ -867,7 +867,7 @@ class ClientConnection:
                     self.close()
 
                     # raises the client request timeout exception
-                    raise main_client_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+                    raise client_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
             # breaks the loop
             break
@@ -922,7 +922,7 @@ class ClientConnection:
                 self.close()
 
                 # raises the request closed exception
-                raise main_client_utils_exceptions.RequestClosed("invalid socket")
+                raise client_utils_exceptions.RequestClosed("invalid socket")
 
             # in case there is pending data to
             # be received
@@ -958,7 +958,7 @@ class ClientConnection:
                 self.close()
 
                 # raises the server response timeout exception
-                raise main_client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
+                raise client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
             # in case the socket is ready to have data
             # sent through it
             elif not selected_values[1] == []:
@@ -990,7 +990,7 @@ class ClientConnection:
                         self.close()
 
                         # raises the client response timeout exception
-                        raise main_client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
+                        raise client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent

@@ -336,7 +336,7 @@ class HttpClient:
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the http client, generating the internal structures
-        self._http_client = self.main_client_http.main_client_http_plugin.main_client_utils_plugin.generate_client(client_parameters)
+        self._http_client = self.main_client_http.main_client_http_plugin.client_utils_plugin.generate_client(client_parameters)
 
         # starts the http client
         self._http_client.start_client()

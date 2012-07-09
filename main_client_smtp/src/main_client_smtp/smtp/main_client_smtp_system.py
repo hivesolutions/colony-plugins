@@ -156,7 +156,7 @@ class SmtpClient:
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the smtp client, generating the internal structures
-        self._smtp_client = self.main_client_smtp.main_client_smtp_plugin.main_client_utils_plugin.generate_client(client_parameters)
+        self._smtp_client = self.main_client_smtp.main_client_smtp_plugin.client_utils_plugin.generate_client(client_parameters)
 
         # starts the smtp client
         self._smtp_client.start_client()

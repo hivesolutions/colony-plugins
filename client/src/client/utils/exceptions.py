@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainClientUtilsException(colony.base.exceptions.ColonyException):
+class ClientUtilsException(colony.base.exceptions.ColonyException):
     """
-    The main client utils exception class.
+    The main client exception class.
     """
 
     message = None
     """ The exception's message """
 
-class SocketProviderNotFound(MainClientUtilsException):
+class SocketProviderNotFound(ClientUtilsException):
     """
     The socket provider not found class.
     """
@@ -60,7 +60,7 @@ class SocketProviderNotFound(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class SocketProviderNotFound(MainClientUtilsException):
 
         return "Socket provider not found - %s" % self.message
 
-class SocketUpgraderNotFound(MainClientUtilsException):
+class SocketUpgraderNotFound(ClientUtilsException):
     """
     The socket upgrader not found class.
     """
@@ -86,7 +86,7 @@ class SocketUpgraderNotFound(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class SocketUpgraderNotFound(MainClientUtilsException):
 
         return "Socket upgrader not found - %s" % self.message
 
-class ClientRequestTimeout(MainClientUtilsException):
+class ClientRequestTimeout(ClientUtilsException):
     """
     The client request timeout class.
     """
@@ -112,7 +112,7 @@ class ClientRequestTimeout(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class ClientRequestTimeout(MainClientUtilsException):
 
         return "Client request timeout - %s" % self.message
 
-class ServerRequestTimeout(MainClientUtilsException):
+class ServerRequestTimeout(ClientUtilsException):
     """
     The server request timeout class.
     """
@@ -138,7 +138,7 @@ class ServerRequestTimeout(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -151,7 +151,7 @@ class ServerRequestTimeout(MainClientUtilsException):
 
         return "Server request timeout - %s" % self.message
 
-class ClientResponseTimeout(MainClientUtilsException):
+class ClientResponseTimeout(ClientUtilsException):
     """
     The client response timeout class.
     """
@@ -164,7 +164,7 @@ class ClientResponseTimeout(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -177,7 +177,7 @@ class ClientResponseTimeout(MainClientUtilsException):
 
         return "Client response timeout - %s" % self.message
 
-class ServerResponseTimeout(MainClientUtilsException):
+class ServerResponseTimeout(ClientUtilsException):
     """
     The server response timeout class.
     """
@@ -190,7 +190,7 @@ class ServerResponseTimeout(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -203,7 +203,7 @@ class ServerResponseTimeout(MainClientUtilsException):
 
         return "Server response timeout - %s" % self.message
 
-class RequestClosed(MainClientUtilsException):
+class RequestClosed(ClientUtilsException):
     """
     The request closed class.
     """
@@ -216,7 +216,7 @@ class RequestClosed(MainClientUtilsException):
         @param message: The message to be printed.
         """
 
-        MainClientUtilsException.__init__(self)
+        ClientUtilsException.__init__(self)
         self.message = message
 
     def __str__(self):
