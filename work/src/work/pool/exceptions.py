@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class WorkPoolManagerException(colony.base.exceptions.ColonyException):
+class WorkPoolException(colony.base.exceptions.ColonyException):
     """
-    The work pool manager exception class.
+    The work pool exception class.
     """
 
     message = None
     """ The exception's message """
 
-class WorkPoolOperationException(WorkPoolManagerException):
+class WorkPoolOperationException(WorkPoolException):
     """
     The work pool operation exception class.
     """
@@ -60,7 +60,7 @@ class WorkPoolOperationException(WorkPoolManagerException):
         @param message: The message to be printed.
         """
 
-        WorkPoolManagerException.__init__(self)
+        WorkPoolException.__init__(self)
         self.message = message
 
     def __str__(self):

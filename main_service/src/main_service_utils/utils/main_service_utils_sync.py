@@ -353,8 +353,8 @@ class AbstractService:
         service configuration.
         """
 
-        # retrieves the work pool manager plugin
-        work_pool_manager_plugin = self.main_service_utils_plugin.work_pool_manager_plugin
+        # retrieves the work pool plugin
+        work_pool_plugin = self.main_service_utils_plugin.work_pool_plugin
 
         # retrieves the work pool configuration parameters
         pool_name = self.pool_configuration.get("name", POOL_NAME)
@@ -382,7 +382,7 @@ class AbstractService:
         )
 
         # creates the service client pool
-        self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
+        self.service_client_pool = work_pool_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
 
         # start the service client pool
         self.service_client_pool.start_pool()

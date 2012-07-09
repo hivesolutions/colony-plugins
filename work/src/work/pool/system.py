@@ -41,8 +41,8 @@ import threading
 
 import colony.libs.structures_util
 
-import work_pool_manager_algorithms
-import work_pool_manager_exceptions
+import algorithms
+import exceptions
 
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """
@@ -76,38 +76,38 @@ WORK_SCHEDULING_ALGORITHM_NAME_MAP = {
 """ The work scheduling algorithm name map """
 
 WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {
-    RANDOM_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RandomAlgorithm,
-    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RoundRobinAlgorithm,
-    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.SmartBusyAlgorithm
+    RANDOM_WORK_SCHEDULING_ALGORITHM : algorithms.RandomAlgorithm,
+    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : algorithms.RoundRobinAlgorithm,
+    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : algorithms.SmartBusyAlgorithm
 }
 """ The work scheduling algorithm class map """
 
-class WorkPoolManager:
+class WorkPool:
     """
-    The work pool manager class.
+    The work pool class.
     """
 
-    work_pool_manager_plugin = None
-    """ The work pool manager plugin """
+    work_pool_plugin = None
+    """ The work pool plugin """
 
     work_pools_list = []
     """ The list of currently enabled work pools """
 
-    def __init__(self, work_pool_manager_plugin):
+    def __init__(self, work_pool_plugin):
         """
         Constructor of the class.
 
-        @type work_pool_manager_plugin: Plugin
-        @param work_pool_manager_plugin: The work pool manager plugin.
+        @type work_pool_plugin: Plugin
+        @param work_pool_plugin: The work pool plugin.
         """
 
-        self.work_pool_manager_plugin = work_pool_manager_plugin
+        self.work_pool_plugin = work_pool_plugin
 
         self.work_pools_list = []
 
     def unload(self):
         """
-        Unloads the work pool manager, stopping all the available work pools.
+        Unloads the work pool, stopping all the available work pools.
         """
 
         # iterates over all the work pools
@@ -141,11 +141,11 @@ class WorkPoolManager:
         @return: The created thread pool.
         """
 
-        # retrieves the work pool manager plugin
-        thread_pool_manager_plugin = self.work_pool_manager_plugin.thread_pool_manager_plugin
+        # retrieves the work pool plugin
+        thread_pool_manager_plugin = self.work_pool_plugin.thread_pool_manager_plugin
 
         # retrieves the logger
-        logger = self.work_pool_manager_plugin.logger
+        logger = self.work_pool_plugin.logger
 
         # retrieves the task descriptor class from the thread pool manager plugin
         task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
@@ -169,7 +169,7 @@ class WorkPoolManager:
         """
 
         # creates the map to hold the system information (ordered  map)
-        work_pool_manager_information = colony.libs.structures_util.OrderedMap()
+        work_pool_information = colony.libs.structures_util.OrderedMap()
 
         # iterates over all the work pools
         for work_pool in self.work_pools_list:
@@ -201,15 +201,15 @@ class WorkPoolManager:
             # creates the work pool work string
             work_pool_work_string = "%d / %d" % (work_pool_work_counter, maximum_number_works_thread * work_pool_work_tasks_list_length)
 
-            # sets the instance value for the work pool manager information
-            work_pool_manager_information[work_pool_name] = (
+            # sets the instance value for the work pool information
+            work_pool_information[work_pool_name] = (
                 work_pool_work_string,
                 work_pool_scheduling_algorithm_name,
                 work_pool_thread_pool_name
             )
 
-        # defines the work pool manager item columns
-        work_pool_manager_item_columns = [
+        # defines the work pool item columns
+        work_pool_item_columns = [
             {
                 "type" : "name",
                 "value" : "Pool Name"
@@ -228,21 +228,21 @@ class WorkPoolManager:
             }
         ]
 
-        # creates the work pool manager item
-        work_pool_manager_item = {}
+        # creates the work pool item
+        work_pool_item = {}
 
-        # sets the work pool manager item values
-        work_pool_manager_item["type"] = "map"
-        work_pool_manager_item["columns"] = work_pool_manager_item_columns
-        work_pool_manager_item["values"] = work_pool_manager_information
+        # sets the work pool item values
+        work_pool_item["type"] = "map"
+        work_pool_item["columns"] = work_pool_item_columns
+        work_pool_item["values"] = work_pool_information
 
         # creates the system information (item)
         system_information = {}
 
         # sets the system information (item) values
-        system_information["name"] = "Work Pool Manager"
+        system_information["name"] = "Work Pool"
         system_information["items"] = [
-            work_pool_manager_item
+            work_pool_item
         ]
 
         # returns the system information
@@ -412,7 +412,7 @@ class WorkPoolImplementation:
             # in case there is no space for new work tasks
             if not work_task:
                 # raises the work pool operation exception
-                raise work_pool_manager_exceptions.WorkPoolOperationException("no work task available")
+                raise exceptions.WorkPoolOperationException("no work task available")
 
             # adds the work to the work task
             work_task.add_work(work_reference)

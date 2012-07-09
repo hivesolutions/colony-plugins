@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class WorkPoolDummyPlugin(colony.base.system.Plugin):
+class WorkPoolPlugin(colony.base.system.Plugin):
     """
-    The main class for the Work Pool Dummy plugin
+    The main class for the Work Pool plugin
     """
 
-    id = "pt.hive.colony.plugins.main.work.work_pool_dummy"
-    name = "Work Pool Dummy"
-    description = "Work Pool Dummy Plugin"
+    id = "pt.hive.colony.plugins.work.pool"
+    name = "Work Pool"
+    description = "Work Pool Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -56,38 +56,61 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "startup"
+        "work_pool",
+        "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.x.x")
     ]
     main_modules = [
-        "main_work.work_pool_dummy.work_pool_dummy_system"
+        "work.pool.algorithms",
+        "work.pool.exceptions",
+        "work.pool.system"
     ]
 
-    work_pool_dummy = None
-    """ The work pool dummy """
+    work_pool = None
+    """ The work pool """
 
-    work_pool_manager_plugin = None
-    """ The work pool manager plugin """
+    thread_pool_manager_plugin = None
+    """ The thread pool manager plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_work.work_pool_dummy.work_pool_dummy_system
-        self.work_pool_dummy = main_work.work_pool_dummy.work_pool_dummy_system.WorkPoolDummy(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.work_pool_dummy.start_pool()
+        import work.pool.system
+        self.work_pool = work.pool.system.WorkPool(self)
 
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
-        self.work_pool_dummy.stop_pool()
+        self.work_pool.unload()
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
-    def set_work_pool_manager_plugin(self, work_pool_manager_plugin):
-        self.work_pool_manager_plugin = work_pool_manager_plugin
+    def create_new_work_pool(self, name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm):
+        return self.work_pool.create_new_work_pool(
+            name,
+            description,
+            work_processing_task_class,
+            work_processing_task_arguments,
+            number_threads,
+            scheduling_algorithm,
+            maximum_number_threads,
+            maximum_number_works_thread,
+            work_scheduling_algorithm
+        )
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        return self.work_pool.get_system_information()
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
+    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
+        self.thread_pool_manager_plugin = thread_pool_manager_plugin

@@ -60,7 +60,7 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         "socket_upgrader"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool", "1.x.x")
     ]
     main_modules = [
         "main_service_utils.utils.main_service_utils_async",
@@ -79,8 +79,8 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
     socket_upgrader_plugins = []
     """ The socket upgrader plugins """
 
-    work_pool_manager_plugin = None
-    """ The work pool manager plugin """
+    work_pool_plugin = None
+    """ The work pool plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -145,6 +145,6 @@ class MainServiceUtilsPlugin(colony.base.system.Plugin):
         self.socket_upgrader_plugins.remove(plugin)
         self.main_service_utils.socket_upgrader_unload(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
-    def set_work_pool_manager_plugin(self, work_pool_manager_plugin):
-        self.work_pool_manager_plugin = work_pool_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.work.pool")
+    def set_work_pool_plugin(self, work_pool_plugin):
+        self.work_pool_plugin = work_pool_plugin

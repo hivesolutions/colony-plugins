@@ -65,11 +65,11 @@ class WorkPoolDummy:
         Starts the dummy pool.
         """
 
-        # retrieves the work pool manager plugin
-        work_pool_manager_plugin = self.work_pool_dummy_plugin.work_pool_manager_plugin
+        # retrieves the work pool plugin
+        work_pool_plugin = self.work_pool_dummy_plugin.work_pool_plugin
 
         # creates the (dummy) work pool for the given parameters
-        self.work_pool = work_pool_manager_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, [self], 3, 1, 5, 10, 1)
+        self.work_pool = work_pool_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, [self], 3, 1, 5, 10, 1)
 
         # start the (dummy) work pool
         self.work_pool.start_pool()

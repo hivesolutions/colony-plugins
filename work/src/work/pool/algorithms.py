@@ -40,9 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import random
 import threading
 
-class WorkPoolManagerAlgorithm:
+class WorkPoolAlgorithm:
     """
-    The generic work pool manager algorithm.
+    The generic work pool algorithm.
     """
 
     work_pool = None
@@ -96,7 +96,7 @@ class WorkPoolManagerAlgorithm:
 
         return None
 
-class RandomAlgorithm(WorkPoolManagerAlgorithm):
+class RandomAlgorithm(WorkPoolAlgorithm):
     """
     The random algorithm for work
     pool manager.
@@ -113,7 +113,7 @@ class RandomAlgorithm(WorkPoolManagerAlgorithm):
         @param work_pool: The work pool associated with the algorithm.
         """
 
-        WorkPoolManagerAlgorithm.__init__(self, work_pool)
+        WorkPoolAlgorithm.__init__(self, work_pool)
 
         self.work_tasks_list_lock = threading.Lock()
 
@@ -155,7 +155,7 @@ class RandomAlgorithm(WorkPoolManagerAlgorithm):
         # returns the work task
         return work_task
 
-class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
+class RoundRobinAlgorithm(WorkPoolAlgorithm):
     """
     The round robin algorithm for work
     pool manager.
@@ -175,7 +175,7 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
         @param work_pool: The work pool associated with the algorithm.
         """
 
-        WorkPoolManagerAlgorithm.__init__(self, work_pool)
+        WorkPoolAlgorithm.__init__(self, work_pool)
 
         self.work_tasks_list_lock = threading.Lock()
 
@@ -234,7 +234,7 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
         # returns the work task
         return work_task
 
-class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
+class SmartBusyAlgorithm(WorkPoolAlgorithm):
     """
     The smart busy algorithm for work
     pool manager.
@@ -257,7 +257,7 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         @param work_pool: The work pool associated with the algorithm.
         """
 
-        WorkPoolManagerAlgorithm.__init__(self, work_pool)
+        WorkPoolAlgorithm.__init__(self, work_pool)
 
         self.work_tasks_list = []
         self.work_tasks_map = {}
