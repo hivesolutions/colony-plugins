@@ -242,8 +242,8 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_openid_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_openid_plugin.client_http_plugin
 
         # retrieves the service yadis plugin
         service_yadis_plugin = self.service_openid_plugin.service_yadis_plugin
@@ -252,7 +252,7 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(self.service_openid_plugin, main_client_http_plugin, service_yadis_plugin, self, openid_structure)
+        openid_client = OpenidClient(self.service_openid_plugin, client_http_plugin, service_yadis_plugin, self, openid_structure)
 
         # in case the client is meant to be open
         # opens the client
@@ -924,8 +924,8 @@ class OpenidClient:
     service_openid_plugin = None
     """ The service openid plugin """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     service_yadis_plugin = None
     """ The service yadis plugin """
@@ -942,14 +942,14 @@ class OpenidClient:
     yadis_remote_client = None
     """ The yadis remote client for the connection """
 
-    def __init__(self, service_openid_plugin = None, main_client_http_plugin = None, service_yadis_plugin = None, service_openid = None, openid_structure = None):
+    def __init__(self, service_openid_plugin = None, client_http_plugin = None, service_yadis_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
 
         @type service_openid_plugin: ServiceOpenidPlugin
         @param service_openid_plugin: The service openid plugin.
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type service_yadis_plugin: ServiceYadisPlugin
         @param service_yadis_plugin: The service yadis plugin.
         @type service_openid: ServiceOpenid
@@ -959,7 +959,7 @@ class OpenidClient:
         """
 
         self.service_openid_plugin = service_openid_plugin
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.service_yadis_plugin = service_yadis_plugin
         self.service_openid = service_openid
         self.openid_structure = openid_structure
@@ -1461,7 +1461,7 @@ class OpenidClient:
             }
 
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+            self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})

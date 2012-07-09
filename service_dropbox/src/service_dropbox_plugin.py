@@ -68,8 +68,8 @@ class ServiceDropboxPlugin(colony.base.system.Plugin):
     service_dropbox = None
     """ The service dropbox """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     json_plugin = None
     """ The json plugin """
@@ -96,8 +96,8 @@ class ServiceDropboxPlugin(colony.base.system.Plugin):
         return self.service_dropbox.create_remote_client(service_attributes)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
-    def set_main_client_http_plugin(self, main_client_http_plugin):
-        self.main_client_http_plugin = main_client_http_plugin
+    def set_client_http_plugin(self, client_http_plugin):
+        self.client_http_plugin = client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class MainClientSmtpPlugin(colony.base.system.Plugin):
+class ClientSmtpPlugin(colony.base.system.Plugin):
     """
     The main class for the Smtp Client Main plugin.
     """
@@ -58,23 +58,23 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
         "client.smtp"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils", "1.x.x")
     ]
     main_modules = [
-        "main_client_smtp.smtp.main_client_smtp_exceptions",
-        "main_client_smtp.smtp.main_client_smtp_system"
+        "client_smtp.smtp.client_smtp_exceptions",
+        "client_smtp.smtp.client_smtp_system"
     ]
 
-    main_client_smtp = None
-    """ The main client smtp """
+    client_smtp = None
+    """ The client smtp """
 
     client_utils_plugin = None
-    """ The main client plugin """
+    """ The client plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_client_smtp.smtp.main_client_smtp_system
-        self.main_client_smtp = main_client_smtp.smtp.main_client_smtp_system.MainClientSmtp(self)
+        import client_smtp.smtp.client_smtp_system
+        self.client_smtp = client_smtp.smtp.client_smtp_system.ClientSmtp(self)
 
     def end_load_plugin(self):
         colony.base.system.Plugin.end_load_plugin(self)
@@ -96,14 +96,14 @@ class MainClientSmtpPlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_client(self, parameters):
-        return self.main_client_smtp.create_client(parameters)
+        return self.client_smtp.create_client(parameters)
 
     def create_request(self, parameters):
-        return self.main_client_smtp.create_request(parameters)
+        return self.client_smtp.create_request(parameters)
 
     def get_client_utils_plugin(self):
         return self.client_utils_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.utils")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.utils")
     def set_client_utils_plugin(self, client_utils_plugin):
         self.client_utils_plugin = client_utils_plugin

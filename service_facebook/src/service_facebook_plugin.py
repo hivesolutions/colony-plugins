@@ -68,8 +68,8 @@ class ServiceFacebookPlugin(colony.base.system.Plugin):
     service_facebook = None
     """ The service facebook """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     json_plugin = None
     """ The json plugin """
@@ -110,12 +110,12 @@ class ServiceFacebookPlugin(colony.base.system.Plugin):
 
         return self.service_facebook.create_remote_client(service_attributes)
 
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
+    def get_client_http_plugin(self):
+        return self.client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
-    def set_main_client_http_plugin(self, main_client_http_plugin):
-        self.main_client_http_plugin = main_client_http_plugin
+    def set_client_http_plugin(self, client_http_plugin):
+        self.client_http_plugin = client_http_plugin
 
     def get_json_plugin(self):
         return self.json_plugin

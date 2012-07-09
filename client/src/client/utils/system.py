@@ -87,7 +87,7 @@ class ClientUtils:
     """
 
     client_utils_plugin = None
-    """ The main client plugin """
+    """ The client plugin """
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
@@ -186,10 +186,10 @@ class AbstractClient:
     """
 
     client_utils = None
-    """ The main client """
+    """ The client """
 
     client_utils_plugin = None
-    """ The main client plugin """
+    """ The client plugin """
 
     client_type = None
     """ The client type """
@@ -223,9 +223,9 @@ class AbstractClient:
         Constructor of the class.
 
         @type client_utils: ClientUtils
-        @param client_utils: The main client.
+        @param client_utils: The client.
         @type client_utils_plugin: ClientUtilsPlugin
-        @param client_utils_plugin: The main client plugin.
+        @param client_utils_plugin: The client plugin.
         @type parameters: Dictionary
         @param parameters: The parameters
         """
@@ -582,7 +582,7 @@ class ClientConnection:
         @param parameters: The parameters to the upgrade process.
         """
 
-        # retrieves the main client
+        # retrieves the client
         client_utils = self.client.client_utils
 
         # retrieves the socket upgrader plugins map

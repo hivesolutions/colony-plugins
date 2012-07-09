@@ -66,8 +66,8 @@ class AuthenticationLdapPlugin(colony.base.system.Plugin):
     authentication_ldap = None
     """ The authentication ldap """
 
-    main_client_ldap_plugin = None
-    """ The main client ldap plugin """
+    client_ldap_plugin = None
+    """ The client ldap plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -85,5 +85,5 @@ class AuthenticationLdapPlugin(colony.base.system.Plugin):
         return self.authentication_ldap.handle_request(request)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.ldap")
-    def set_main_client_ldap_plugin(self, main_client_ldap_plugin):
-        self.main_client_ldap_plugin = main_client_ldap_plugin
+    def set_client_ldap_plugin(self, client_ldap_plugin):
+        self.client_ldap_plugin = client_ldap_plugin

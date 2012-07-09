@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainClientSmtpException(colony.base.exceptions.ColonyException):
+class ClientSmtpException(colony.base.exceptions.ColonyException):
     """
-    The main client smtp exception class.
+    The client smtp exception class.
     """
 
     message = None
     """ The exception's message """
 
-class SmtpRuntimeException(MainClientSmtpException):
+class SmtpRuntimeException(ClientSmtpException):
     """
     The smtp runtime exception class.
     """
@@ -60,7 +60,7 @@ class SmtpRuntimeException(MainClientSmtpException):
         @param message: The message to be printed.
         """
 
-        MainClientSmtpException.__init__(self)
+        ClientSmtpException.__init__(self)
         self.message = message
 
     def __str__(self):

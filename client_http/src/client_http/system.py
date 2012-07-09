@@ -42,12 +42,13 @@ import types
 import base64
 import threading
 
+import colony.base.system
 import colony.libs.map_util
 import colony.libs.quote_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
-import main_client_http_exceptions
+import exceptions
 
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
@@ -229,23 +230,10 @@ PROTOCOL_DEFAULT_PORT_MAP = {
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
-class MainClientHttp:
+class ClientHttp(colony.base.system.System):
     """
-    The main client http class.
+    The client http class.
     """
-
-    main_client_http_plugin = None
-    """ The main client http plugin """
-
-    def __init__(self, main_client_http_plugin):
-        """
-        Constructor of the class.
-
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
-        """
-
-        self.main_client_http_plugin = main_client_http_plugin
 
     def create_client(self, parameters):
         """
@@ -279,8 +267,8 @@ class HttpClient:
     a client connection in the http protocol.
     """
 
-    main_client_http = None
-    """ The main client http object """
+    client_http = None
+    """ The client http object """
 
     protocol_version = "none"
     """ The version of the http protocol """
@@ -312,12 +300,12 @@ class HttpClient:
     _http_client_lock = None
     """ Lock to control the fetching of the queries """
 
-    def __init__(self, main_client_http, protocol_version, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET):
         """
         Constructor of the class.
 
-        @type main_client_http: MainClientHttp
-        @param main_client_http: The main client http object.
+        @type client_http: ClientHttp
+        @param client_http: The client http object.
         @type protocol_version: String
         @param protocol_version: The version of the http protocol to
         be used.
@@ -325,7 +313,7 @@ class HttpClient:
         @param content_type_charset: The charset to be used by the content.
         """
 
-        self.main_client_http = main_client_http
+        self.client_http = client_http
         self.protocol_version = protocol_version
         self.content_type_charset = content_type_charset
 
@@ -336,7 +324,7 @@ class HttpClient:
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the http client, generating the internal structures
-        self._http_client = self.main_client_http.main_client_http_plugin.client_utils_plugin.generate_client(client_parameters)
+        self._http_client = self.client_http.plugin.client_utils_plugin.generate_client(client_parameters)
 
         # starts the http client
         self._http_client.start_client()
@@ -381,11 +369,11 @@ class HttpClient:
         @return: The retrieved response object.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.main_client_http.main_client_http_plugin
+        # retrieves the associated plugin
+        plugin = self.client_http.plugin
 
         # print a debug message
-        main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
+        plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
 
         # parses the url retrieving the protocol the host, the username,
         # the password, the port, the path, the base url and the options map
@@ -641,7 +629,7 @@ class HttpClient:
                 # otherwise the message size must be defined
                 else:
                     # raises the http invalid data exception
-                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+                    raise exceptions.HttpInvalidDataException("empty data received")
 
             # retrieves the data length
             data_length = len(data)
@@ -696,7 +684,7 @@ class HttpClient:
                     # in case the length of the splitted line is not valid
                     if start_line_splitted_length < 3:
                         # raises the http invalid data exception
-                        raise main_client_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+                        raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
 
                     # retrieve the protocol version the status code and the satus message
                     # from the start line splitted
@@ -883,7 +871,7 @@ class HttpClient:
                 # in case no valid data was received
                 if data == "":
                     # raises the http invalid data exception
-                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+                    raise exceptions.HttpInvalidDataException("empty data received")
 
                 # retrieves the data length
                 data_length = len(data)
@@ -944,7 +932,7 @@ class HttpClient:
                 # in case no valid data was received
                 if data == "":
                     # raises the http invalid data exception
-                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+                    raise exceptions.HttpInvalidDataException("empty data received")
 
                 # retrieves the data length
                 data_length = len(data)
@@ -1076,7 +1064,7 @@ class HttpClient:
 
         # creates the default parameters
         default_parameters = {
-            "client_plugin" : self.main_client_http.main_client_http_plugin,
+            "client_plugin" : self.client_http.plugin,
             "request_timeout" : REQUEST_TIMEOUT,
             "response_timeout" : RESPONSE_TIMEOUT
         }
@@ -1101,7 +1089,7 @@ class HttpClient:
         """
 
         # retrieves the url parser plugin
-        url_parser_plugin = self.main_client_http.main_client_http_plugin.url_parser_plugin
+        url_parser_plugin = self.client_http.plugin.url_parser_plugin
 
         # parses the url retrieving the structure
         url_structure = url_parser_plugin.parse_url(url)
@@ -1112,7 +1100,7 @@ class HttpClient:
             protocol = url_structure.protocol.lower()
         else:
             # raises the http invalid url data exception
-            raise main_client_http_exceptions.HttpInvalidUrlData("missing protocol information: " + url)
+            raise exceptions.HttpInvalidUrlData("missing protocol information: " + url)
 
         # in case the url structure contains the protocol
         if url_structure.username and url_structure.password:
@@ -1134,7 +1122,7 @@ class HttpClient:
             host = url_structure.base_name
         else:
             # raises the http invalid url data exception
-            raise main_client_http_exceptions.HttpInvalidUrlData("missing host information: " + url)
+            raise exceptions.HttpInvalidUrlData("missing host information: " + url)
 
         # in case the url structure contains the port
         if url_structure.port:
@@ -1199,8 +1187,8 @@ class HttpClient:
         redirection (or none if not redirected).
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.main_client_http.main_client_http_plugin
+        # retrieves the associated plugin
+        plugin = self.client_http.plugin
 
         # in case the location value is not set in the response header
         if not LOCATION_VALUE in response.headers_map:
@@ -1242,7 +1230,7 @@ class HttpClient:
         # of type redirect and the redirect flag is set
         if not location == request_url and status_code in REDIRECT_STATUS_CODES and self.redirect:
             # prints a debug message
-            main_client_http_plugin.debug("Redirecting request to '%s'" % location)
+            plugin.debug("Redirecting request to '%s'" % location)
 
             # retrieves the request headers
             request_headers = request.headers_map

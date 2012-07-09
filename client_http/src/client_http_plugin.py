@@ -40,13 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class MainClientHttpPlugin(colony.base.system.Plugin):
+class ClientHttpPlugin(colony.base.system.Plugin):
     """
-    The main class for the Http Client Main plugin.
+    The main class for the Http Client plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.client.http"
-    name = "Http Client Main"
+    id = "pt.hive.colony.plugins.client.http"
+    name = "Http Client"
     description = "The plugin that offers the http client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -58,62 +58,41 @@ class MainClientHttpPlugin(colony.base.system.Plugin):
         "client.http"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
     ]
     main_modules = [
-        "main_client_http.http.main_client_http_exceptions",
-        "main_client_http.http.main_client_http_system"
+        "client_http.exceptions",
+        "client_http.system"
     ]
 
-    main_client_http = None
-    """ The main client http """
+    client_http = None
+    """ The client http """
 
     client_utils_plugin = None
-    """ The main client plugin """
+    """ The client plugin """
 
     url_parser_plugin = None
     """ The url parser plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import main_client_http.http.main_client_http_system
-        self.main_client_http = main_client_http.http.main_client_http_system.MainClientHttp(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        import client_http.http.client_http_system
+        self.client_http = client_http.http.client_http_system.ClientHttp(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_client(self, parameters):
-        return self.main_client_http.create_client(parameters)
+        return self.client_http.create_client(parameters)
 
     def create_request(self, parameters):
-        return self.main_client_http.create_request(parameters)
+        return self.client_http.create_request(parameters)
 
-    def get_client_utils_plugin(self):
-        return self.client_utils_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.utils")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.utils")
     def set_client_utils_plugin(self, client_utils_plugin):
         self.client_utils_plugin = client_utils_plugin
-
-    def get_url_parser_plugin(self):
-        return self.url_parser_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.url_parser")
     def set_url_parser_plugin(self, url_parser_plugin):

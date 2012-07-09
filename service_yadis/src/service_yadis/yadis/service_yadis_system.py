@@ -81,14 +81,14 @@ class ServiceYadis:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_yadis_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_yadis_plugin.client_http_plugin
 
         # retrieves the yadis structure (if available)
         yadis_structure = service_attributes.get("yadis_structure", None)
 
         # creates a new yadis client with the given options
-        yadis_client = YadisClient(main_client_http_plugin, yadis_structure)
+        yadis_client = YadisClient(client_http_plugin, yadis_structure)
 
         # in case the client is meant to be open
         # open the client
@@ -102,8 +102,8 @@ class YadisClient:
     The class that represents a yadis client connection.
     """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     yadis_structure = None
     """ The yadis structure """
@@ -111,17 +111,17 @@ class YadisClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, main_client_http_plugin = None, yadis_structure = None):
+    def __init__(self, client_http_plugin = None, yadis_structure = None):
         """
         Constructor of the class.
 
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type yadis_structure: YadisStructure
         @param yadis_structure: The yadis structure.
         """
 
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.yadis_structure = yadis_structure
 
     def open(self):
@@ -283,7 +283,7 @@ class YadisClient:
             }
 
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+            self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})

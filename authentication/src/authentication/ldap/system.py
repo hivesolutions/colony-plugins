@@ -114,8 +114,8 @@ class AuthenticationLdap(colony.base.system.System):
         @param request: The authentication request to be handled.
         """
 
-        # retrieves the main client ldap plugin
-        main_client_ldap_plugin = self.plugin.main_client_ldap_plugin
+        # retrieves the client ldap plugin
+        client_ldap_plugin = self.plugin.client_ldap_plugin
 
         # retrieves the request username
         username = request.get_username()
@@ -144,7 +144,7 @@ class AuthenticationLdap(colony.base.system.System):
             raise exceptions.AuthenticationError("an username and a password must be provided")
 
         # creates a new ldap client
-        ldap_client = main_client_ldap_plugin.create_client({})
+        ldap_client = client_ldap_plugin.create_client({})
 
         # opens the ldap client
         ldap_client.open({})

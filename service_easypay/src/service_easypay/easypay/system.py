@@ -105,15 +105,15 @@ class ServiceEasypay:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_easypay_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_easypay_plugin.client_http_plugin
 
         # retrieves the easypay structure and test mode (if available)
         easypay_structure = service_attributes.get("easypay_structure", None)
         test_mode = service_attributes.get("test_mode", False)
 
         # creates a new easypay client with the given options
-        easypay_client = EasypayClient(main_client_http_plugin, easypay_structure, test_mode)
+        easypay_client = EasypayClient(client_http_plugin, easypay_structure, test_mode)
 
         # returns the easypay client
         return easypay_client
@@ -123,8 +123,8 @@ class EasypayClient:
     The class that represents a easypay client connection.
     """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     easypay_structure = None
     """ The easypay structure """
@@ -136,12 +136,12 @@ class EasypayClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, main_client_http_plugin = None, easypay_structure = None, test_mode = False):
+    def __init__(self, client_http_plugin = None, easypay_structure = None, test_mode = False):
         """
         Constructor of the class.
 
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type easypay_structure: EasypayStructure
         @param easypay_structure: The easypay structure.
         @type test_mode: bool
@@ -149,7 +149,7 @@ class EasypayClient:
         be run in test mode.
         """
 
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.easypay_structure = easypay_structure
         self.test_mode = test_mode
 
@@ -474,7 +474,7 @@ class EasypayClient:
         }
 
         # creates the http client
-        self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+        self.http_client = self.client_http_plugin.create_client(client_parameters)
 
         # defines the open parameters
         open_parameters = {

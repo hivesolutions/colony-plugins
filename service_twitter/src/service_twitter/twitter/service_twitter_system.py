@@ -132,8 +132,8 @@ class ServiceTwitter:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_twitter_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_twitter_plugin.client_http_plugin
 
         # retrieves the json plugin
         json_plugin = self.service_twitter_plugin.json_plugin
@@ -151,7 +151,7 @@ class ServiceTwitter:
         oauth_structure = service_attributes.get("oauth_structure", None)
 
         # creates a new twitter client with the given options
-        twitter_client = TwitterClient(json_plugin, main_client_http_plugin, username, password, encoding, oauth_structure)
+        twitter_client = TwitterClient(json_plugin, client_http_plugin, username, password, encoding, oauth_structure)
 
         # in case the client is meant to be open
         # open the client
@@ -168,8 +168,8 @@ class TwitterClient:
     json_plugin = None
     """ The json plugin """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     username = None
     """ The username """
@@ -189,14 +189,14 @@ class TwitterClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, main_client_http_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
+    def __init__(self, json_plugin = None, client_http_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
         """
         Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type username: String
         @param username: The username.
         @type password: String
@@ -208,7 +208,7 @@ class TwitterClient:
         """
 
         self.json_plugin = json_plugin
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.username = username
         self.password = password
         self.encoding = encoding
@@ -1088,7 +1088,7 @@ class TwitterClient:
             }
 
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+            self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})

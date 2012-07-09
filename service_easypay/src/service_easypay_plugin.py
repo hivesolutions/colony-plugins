@@ -67,8 +67,8 @@ class ServiceEasypayPlugin(colony.base.system.Plugin):
     service_easypay = None
     """ The service easypay """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -92,5 +92,5 @@ class ServiceEasypayPlugin(colony.base.system.Plugin):
         return self.service_easypay.create_remote_client(service_attributes)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
-    def set_main_client_http_plugin(self, main_client_http_plugin):
-        self.main_client_http_plugin = main_client_http_plugin
+    def set_client_http_plugin(self, client_http_plugin):
+        self.client_http_plugin = client_http_plugin

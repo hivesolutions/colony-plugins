@@ -78,14 +78,14 @@ class ServiceWebMvcEncryption:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_web_mvc_encryption_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_web_mvc_encryption_plugin.client_http_plugin
 
         # retrieves the web mvc encryption structure (if available)
         web_mvc_encryption_structure = service_attributes.get("web_mvc_encryption_structure", None)
 
         # creates the web mvc encryption client
-        web_mvc_encryption_client = WebMvcEncryptionClient(main_client_http_plugin, web_mvc_encryption_structure)
+        web_mvc_encryption_client = WebMvcEncryptionClient(client_http_plugin, web_mvc_encryption_structure)
 
         # in case the client is meant to be open
         # opens the client
@@ -99,8 +99,8 @@ class WebMvcEncryptionClient:
     The class that represents a web mvc encryption client connection.
     """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     web_mvc_encryption_structure = None
     """ The web mvc encryption structure """
@@ -108,17 +108,17 @@ class WebMvcEncryptionClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, main_client_http_plugin = None, web_mvc_encryption_structure = None):
+    def __init__(self, client_http_plugin = None, web_mvc_encryption_structure = None):
         """
         Constructor of the class.
 
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type web_mvc_encryption_structure: WebMvcEncryptionStructure
         @param web_mvc_encryption_structure: The web mvc encryption structure.
         """
 
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.web_mvc_encryption_structure = web_mvc_encryption_structure
 
     def open(self):
@@ -324,7 +324,7 @@ class WebMvcEncryptionClient:
         # in case no http client exists
         if not self.http_client:
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({})
+            self.http_client = self.client_http_plugin.create_client({})
 
             # opens the http client
             self.http_client.open({})

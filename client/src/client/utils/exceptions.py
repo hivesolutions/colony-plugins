@@ -41,7 +41,7 @@ import colony.base.exceptions
 
 class ClientUtilsException(colony.base.exceptions.ColonyException):
     """
-    The main client exception class.
+    The client exception class.
     """
 
     message = None

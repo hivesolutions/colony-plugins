@@ -627,11 +627,11 @@ class MainServiceHttpProxyHandler:
             raise
 
     def _create_http_client(self, arguments):
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.main_service_http_proxy_handler_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.main_service_http_proxy_handler_plugin.client_http_plugin
 
         # creates the http client
-        http_client = main_client_http_plugin.create_client({})
+        http_client = client_http_plugin.create_client({})
 
         # opens the http client
         http_client.open(arguments)

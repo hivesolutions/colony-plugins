@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class MainClientHttpException(colony.base.exceptions.ColonyException):
+class ClientHttpException(colony.base.exceptions.ColonyException):
     """
-    The main client http exception class.
+    The client http exception class.
     """
 
     message = None
     """ The exception's message """
 
-class HttpInvalidUrlData(MainClientHttpException):
+class HttpInvalidUrlData(ClientHttpException):
     """
     The invalid url data class.
     """
@@ -60,7 +60,7 @@ class HttpInvalidUrlData(MainClientHttpException):
         @param message: The message to be printed.
         """
 
-        MainClientHttpException.__init__(self)
+        ClientHttpException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class HttpInvalidUrlData(MainClientHttpException):
 
         return "Http invalid url data - %s" % self.message
 
-class HttpRuntimeException(MainClientHttpException):
+class HttpRuntimeException(ClientHttpException):
     """
     The http runtime exception class.
     """
@@ -86,7 +86,7 @@ class HttpRuntimeException(MainClientHttpException):
         @param message: The message to be printed.
         """
 
-        MainClientHttpException.__init__(self)
+        ClientHttpException.__init__(self)
         self.message = message
 
     def __str__(self):

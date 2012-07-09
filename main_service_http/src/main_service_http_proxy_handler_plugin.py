@@ -74,8 +74,8 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
     main_service_http_proxy_handler = None
     """ The main service http proxy handler """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     element_pool_manager_plugin = None
     """ The element pool manager plugin """
@@ -129,12 +129,12 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.system.Plugin):
 
         return self.main_service_http_proxy_handler.handle_request(request)
 
-    def get_main_client_http_plugin(self):
-        return self.main_client_http_plugin
+    def get_client_http_plugin(self):
+        return self.client_http_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
-    def set_main_client_http_plugin(self, main_client_http_plugin):
-        self.main_client_http_plugin = main_client_http_plugin
+    def set_client_http_plugin(self, client_http_plugin):
+        self.client_http_plugin = client_http_plugin
 
     def get_element_pool_manager_plugin(self):
         return self.element_pool_manager_plugin

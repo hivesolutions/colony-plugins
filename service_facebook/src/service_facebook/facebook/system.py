@@ -140,8 +140,8 @@ class ServiceFacebook:
         @return: The created remote client.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.service_facebook_plugin.main_client_http_plugin
+        # retrieves the client http plugin
+        client_http_plugin = self.service_facebook_plugin.client_http_plugin
 
         # retrieves the json plugin
         json_plugin = self.service_facebook_plugin.json_plugin
@@ -156,7 +156,7 @@ class ServiceFacebook:
         facebook_client_class = self.facebook_client_map.get(facebook_client_type, FacebookClient)
 
         # creates a new facebook client with the given options
-        facebook_client = facebook_client_class(json_plugin, main_client_http_plugin, facebook_structure)
+        facebook_client = facebook_client_class(json_plugin, client_http_plugin, facebook_structure)
 
         # returns the facebook client
         return facebook_client
@@ -169,8 +169,8 @@ class FacebookClient:
     json_plugin = None
     """ The json plugin """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     facebook_structure = None
     """ The facebook structure """
@@ -178,20 +178,20 @@ class FacebookClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, main_client_http_plugin = None, facebook_structure = None):
+    def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
         """
         Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type facebook_structure: FacebookStructure
         @param facebook_structure: The facebook structure.
         """
 
         self.json_plugin = json_plugin
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.facebook_structure = facebook_structure
 
     def open(self):
@@ -619,7 +619,7 @@ class FacebookClient:
             }
 
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+            self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})
@@ -635,8 +635,8 @@ class FacebookClientOauth:
     json_plugin = None
     """ The json plugin """
 
-    main_client_http_plugin = None
-    """ The main client http plugin """
+    client_http_plugin = None
+    """ The client http plugin """
 
     facebook_structure = None
     """ The facebook structure """
@@ -644,20 +644,20 @@ class FacebookClientOauth:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, main_client_http_plugin = None, facebook_structure = None):
+    def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
         """
         Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.
-        @type main_client_http_plugin: MainClientHttpPlugin
-        @param main_client_http_plugin: The main client http plugin.
+        @type client_http_plugin: ClientHttpPlugin
+        @param client_http_plugin: The client http plugin.
         @type facebook_structure: FacebookStructure
         @param facebook_structure: The facebook structure.
         """
 
         self.json_plugin = json_plugin
-        self.main_client_http_plugin = main_client_http_plugin
+        self.client_http_plugin = client_http_plugin
         self.facebook_structure = facebook_structure
 
     def open(self):
@@ -966,7 +966,7 @@ class FacebookClientOauth:
             }
 
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+            self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})

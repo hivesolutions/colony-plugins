@@ -87,8 +87,8 @@ class Downloader:
             # sets the target directory
             target_directory = target_directory or self._get_default_target_directory()
 
-            # retrieves the main client http plugin
-            main_client_http_plugin = self.downloader_plugin.main_client_http_plugin
+            # retrieves the client http plugin
+            client_http_plugin = self.downloader_plugin.client_http_plugin
 
             # notifies the handlers about the message
             colony.libs.observer_util.message(handlers_map, "Get %s" % address)
@@ -101,7 +101,7 @@ class Downloader:
             file_name = self.get_file_name_url(address)
 
             # creates the http client
-            http_client = main_client_http_plugin.create_client({})
+            http_client = client_http_plugin.create_client({})
 
             # opens the http client
             http_client.open({})
@@ -181,15 +181,15 @@ class Downloader:
         """
 
         try:
-            # retrieves the main client http plugin
-            main_client_http_plugin = self.downloader_plugin.main_client_http_plugin
+            # retrieves the client http plugin
+            client_http_plugin = self.downloader_plugin.client_http_plugin
 
             # creates a new set of handlers map (for http client) for
             # the current context
             _handlers_map = self._create_handlers_map(handlers_map)
 
             # creates the http client
-            http_client = main_client_http_plugin.create_client({})
+            http_client = client_http_plugin.create_client({})
 
             # opens the http client
             http_client.open({})
