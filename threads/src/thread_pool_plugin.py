@@ -71,26 +71,11 @@ class ThreadPoolPlugin(colony.base.system.Plugin):
         import threads.pool.system
         self.thread_pool = threads.pool.system.ThreadPool(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
 
         # unloads the thread pool
         self.thread_pool.unload()
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
         return self.thread_pool.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
