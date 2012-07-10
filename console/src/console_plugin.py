@@ -77,7 +77,7 @@ class ConsolePlugin(colony.base.system.Plugin):
     console = None
     """ The console """
 
-    console_test_case_class = None
+    console_test = None
     """ The console test case class """
 
     console_command_plugins = []
@@ -92,7 +92,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         import console.console.system
         import console.console.test
         self.console = console.console.system.Console(self)
-        self.console_test_case_class = console.console.test.ConsoleTestCase
+        self.console_test = console.console.test.ConsoleTestCase
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -184,7 +184,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: The test case.
         """
 
-        return self.console_test_case_class
+        return self.console_test
 
     @colony.base.decorators.load_allowed_capability("_console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):

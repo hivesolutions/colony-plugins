@@ -86,7 +86,7 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
         import resources.manager.system
         import resources.manager.tests
         self.resources_manager = resources.manager.system.ResourcesManager(self)
-        self.resources_manager_test_case_class = resources.manager.tests.ResourcesManagerTestCase
+        self.resources_manager_test = resources.manager.tests.ResourcesManagerTestCase
         self.resources_manager.load_system()
 
     def end_load_plugin(self):
@@ -164,7 +164,7 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
         return self.resources_manager.file_path_file_information_map
 
     def get_test_case(self):
-        return self.resources_manager_test_case_class
+        return self.resources_manager_test
 
     def get_system_information(self):
         """
