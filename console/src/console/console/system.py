@@ -721,12 +721,9 @@ class ConsoleContext(colony.libs.protection_util.Protected):
             # tries to authenticate the user retrieving the result, this call
             # should returns the authentication map, then uses this map to
             # retrieve the boolean result from it (represents the validation result)
-            #authentication_result = self.console.authenticate_user(username, password, self._proxy_instance)
-            #authentication_result_valid = authentication_result.get(VALID_VALUE, False)
-
-            authentication_result = {"valid" : True, "username" : "admin"}
-            authentication_result_valid = True
-
+            authentication_result = self.console.authenticate_user(username, password, self._proxy_instance)
+            authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+            
             # in case the authentication is not valid
             if not authentication_result_valid:
                 # retrieves the authentication result information
