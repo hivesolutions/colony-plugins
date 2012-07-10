@@ -76,8 +76,8 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     directory_handler_plugins = []
     """ The directory handler plugins """
 
-    format_mime_plugin = None
-    """ The format mime plugin """
+    mime_plugin = None
+    """ The mime plugin """
 
     resource_manager_plugin = None
     """ The resource manager plugin """
@@ -138,8 +138,8 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
         self.service_http_file.directory_handler_unload(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
-    def set_format_mime_plugin(self, format_mime_plugin):
-        self.format_mime_plugin = format_mime_plugin
+    def set_mime_plugin(self, mime_plugin):
+        self.mime_plugin = mime_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):

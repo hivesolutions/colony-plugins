@@ -92,11 +92,11 @@ class MvcFileHandler:
         @return: The result of the handling.
         """
 
-        # retrieves the format mime plugin
-        format_mime_plugin = self.mvc_plugin.format_mime_plugin
+        # retrieves the mime plugin
+        mime_plugin = self.mvc_plugin.mime_plugin
 
         # retrieves the associated mime type
-        mime_type = format_mime_plugin.get_mime_type_file_name(file_path)
+        mime_type = mime_plugin.get_mime_type_file_name(file_path)
 
         # in case the file path does not exist
         if not os.path.exists(file_path):

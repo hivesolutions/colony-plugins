@@ -68,8 +68,8 @@ class Pkcs1Plugin(colony.base.system.Plugin):
     pkcs_1 = None
     """ The pkcs 1 """
 
-    format_ber_plugin = None
-    """ The format ber plugin """
+    ber_plugin = None
+    """ The ber plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -84,5 +84,5 @@ class Pkcs1Plugin(colony.base.system.Plugin):
         return self.pkcs_1.create_structure(parameters)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.ber")
-    def set_format_ber_plugin(self, format_ber_plugin):
-        self.format_ber_plugin = format_ber_plugin
+    def set_ber_plugin(self, ber_plugin):
+        self.ber_plugin = ber_plugin

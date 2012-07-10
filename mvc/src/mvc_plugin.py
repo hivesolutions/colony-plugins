@@ -86,8 +86,8 @@ class MvcPlugin(colony.base.system.Plugin):
     mvc_service_plugins = []
     """ The mvc service plugins """
 
-    format_mime_plugin = None
-    """ The format mime plugin """
+    mime_plugin = None
+    """ The mime plugin """
 
     random_plugin = None
     """ The random plugin """
@@ -159,8 +159,8 @@ class MvcPlugin(colony.base.system.Plugin):
         self.mvc.unload_mvc_service_plugin(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
-    def set_format_mime_plugin(self, format_mime_plugin):
-        self.format_mime_plugin = format_mime_plugin
+    def set_mime_plugin(self, mime_plugin):
+        self.mime_plugin = mime_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
     def set_random_plugin(self, random_plugin):

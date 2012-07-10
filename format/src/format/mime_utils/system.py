@@ -56,17 +56,17 @@ BASE64_VALUE = "base64"
 DEFAULT_MIME_TYPE = "application/octet-stream"
 """ The default mime type """
 
-class FormatMimeUtils(colony.base.system.System):
+class MimeUtils(colony.base.system.System):
     """
-    The format mime utils class.
+    The mime utils class.
     """
 
     def add_mime_message_attachment_contents(self, mime_message, contents, file_name, mime_type = None):
-        # retrieves the format mime plugin
-        format_mime_plugin = self.plugin.format_mime_plugin
+        # retrieves the mime plugin
+        mime_plugin = self.plugin.mime_plugin
 
         # creates the mime message part for the attachment
-        mime_message_attachment_part = format_mime_plugin.create_message_part({})
+        mime_message_attachment_part = mime_plugin.create_message_part({})
 
         # creates the content id from the file name
         content_id = "<" + file_name + ">"
@@ -108,11 +108,11 @@ class FormatMimeUtils(colony.base.system.System):
                 self._add_mime_message_content(mime_message, content_path)
 
     def _add_mime_message_content(self, mime_message, content_path):
-        # retrieves the format mime plugin
-        format_mime_plugin = self.plugin.format_mime_plugin
+        # retrieves the mime plugin
+        mime_plugin = self.plugin.mime_plugin
 
         # creates the mime message part for the content
-        mime_message_content_part = format_mime_plugin.create_message_part({})
+        mime_message_content_part = mime_plugin.create_message_part({})
 
         # opens the content file
         content_file = open(content_path, "rb")
@@ -126,7 +126,7 @@ class FormatMimeUtils(colony.base.system.System):
             mime_message_content_part.write_base_64(content_file_contents)
 
             # retrieves the content rtype for the file name
-            content_type = format_mime_plugin.get_mime_type_file_name(content_path)
+            content_type = mime_plugin.get_mime_type_file_name(content_path)
 
             # retrieves the base name from the content path
             base_name = os.path.basename(content_path)

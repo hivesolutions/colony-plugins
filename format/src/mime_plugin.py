@@ -38,38 +38,59 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.system
+import colony.base.decorators
 
-class FormatBerPlugin(colony.base.system.Plugin):
+class MimePlugin(colony.base.system.Plugin):
     """
-    The main class for the Ber Format plugin.
+    The main class for the Mime plugin.
     """
 
-    id = "pt.hive.colony.plugins.format.ber"
-    name = "Ber Format"
-    description = "The plugin that offers the ber (basic encoding rules) format support"
+    id = "pt.hive.colony.plugins.format.mime"
+    name = "Mime"
+    description = "The plugin that offers the mime format support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT,
         colony.base.system.JYTHON_ENVIRONMENT,
         colony.base.system.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "format.ber"
+        "format.mime"
     ]
     main_modules = [
-        "format.ber.format_ber_exceptions",
-        "format.ber.format_ber_system"
+        "format.mime.system"
     ]
 
-    format_ber = None
-    """ The format ber """
+    mime = None
+    """ The mime """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import format.ber.format_ber_system
-        self.format_ber = format.ber.format_ber_system.FormatBer(self)
+        import format.mime.system
+        self.mime = format.mime.system.Mime(self)
 
-    def create_structure(self, parameters):
-        return self.format_ber.create_structure(parameters)
+    @colony.base.decorators.set_configuration_property
+    def set_configuration_property(self, property_name, property):
+        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property
+    def unset_configuration_property(self, property_name):
+        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+
+    def create_message(self, parameters):
+        return self.mime.create_message(parameters)
+
+    def create_message_part(self, parameters):
+        return self.mime.create_message_part(parameters)
+
+    def get_mime_type_file_name(self, file_name):
+        return self.mime.get_mime_type_file_name(file_name)
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.mime.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.mime.unset_configuration_property()

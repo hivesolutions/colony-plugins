@@ -129,9 +129,9 @@ DEFAULT_TYPE_CONSTRUCTED = {
 DEFAULT_CLASS = 0x00
 """ The default class to be used """
 
-class FormatBer(colony.base.system.System):
+class Ber(colony.base.system.System):
     """
-    The format ber class.
+    The ber class.
     """
 
     def create_structure(self, parameters):

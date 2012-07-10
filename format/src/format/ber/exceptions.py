@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class FormatBerException(colony.base.exceptions.ColonyException):
+class BerException(colony.base.exceptions.ColonyException):
     """
-    The format ber exception class.
+    The ber exception class.
     """
 
     message = None
     """ The exception's message """
 
-class PackingError(FormatBerException):
+class PackingError(BerException):
     """
     The packing error class.
     """
@@ -60,7 +60,7 @@ class PackingError(FormatBerException):
         @param message: The message to be printed.
         """
 
-        FormatBerException.__init__(self)
+        BerException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class PackingError(FormatBerException):
 
         return "Packing error - %s" % self.message
 
-class UnpackingError(FormatBerException):
+class UnpackingError(BerException):
     """
     The unpacking error class.
     """
@@ -86,7 +86,7 @@ class UnpackingError(FormatBerException):
         @param message: The message to be printed.
         """
 
-        FormatBerException.__init__(self)
+        BerException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class UnpackingError(FormatBerException):
 
         return "Unpacking error - %s" % self.message
 
-class OperationNotImplemented(FormatBerException):
+class OperationNotImplemented(BerException):
     """
     The operation not implemented class.
     """
@@ -112,7 +112,7 @@ class OperationNotImplemented(FormatBerException):
         @param message: The message to be printed.
         """
 
-        FormatBerException.__init__(self)
+        BerException.__init__(self)
         self.message = message
 
     def __str__(self):

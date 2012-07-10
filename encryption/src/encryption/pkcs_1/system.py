@@ -158,11 +158,11 @@ class Pkcs1(colony.base.system.System):
     """
 
     def create_structure(self, parameters):
-        # retrieves the format ber plugin
-        format_ber_plugin = self.plugin.format_ber_plugin
+        # retrieves the ber plugin
+        ber_plugin = self.plugin.ber_plugin
 
         # creates the pkcs 1 structure
-        pkcs_1_structure = Pkcs1Structure(format_ber_plugin)
+        pkcs_1_structure = Pkcs1Structure(ber_plugin)
 
         # returns the pkcs 1 structure
         return pkcs_1_structure
@@ -173,18 +173,18 @@ class Pkcs1Structure:
     cryptographic standards structure.
     """
 
-    format_ber_plugin = None
-    """ the format ber plugin """
+    ber_plugin = None
+    """ the ber plugin """
 
-    def __init__(self, format_ber_plugin):
+    def __init__(self, ber_plugin):
         """
         Constructor of the class.
 
-        @type format_ber_plugin: Plugin
-        @param format_ber_plugin: The format ber plugin.
+        @type ber_plugin: Plugin
+        @param ber_plugin: The ber plugin.
         """
 
-        self.format_ber_plugin = format_ber_plugin
+        self.ber_plugin = ber_plugin
 
     def generate_write_keys_pem(self, keys, private_key_file_path, public_key_file_path, version = 1):
         # generates the public and private key pem values
@@ -424,7 +424,7 @@ class Pkcs1Structure:
         coefficient  = extras["c"]
 
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # creates the version value
         version_value = {
@@ -532,7 +532,7 @@ class Pkcs1Structure:
         rsa_encryption_object_identifier = OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]
 
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # creates the modulus value
         modulus_value = {
@@ -623,7 +623,7 @@ class Pkcs1Structure:
 
     def load_private_key_der(self, private_key_der):
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # unpacks the rsa private key
         rsa_private_key_unpacked = ber_structure.unpack(private_key_der)
@@ -705,7 +705,7 @@ class Pkcs1Structure:
 
     def load_public_key_der(self, private_key_der):
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # unpacks the rsa public key
         rsa_public_key_unpacked = ber_structure.unpack(private_key_der)
@@ -780,7 +780,7 @@ class Pkcs1Structure:
         hash_algorithm_tuple = HASH_OBJECT_IDENTIFIERS_TUPLES_MAP[hash_algorithm_name]
 
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # creates the algorithm value
         algorithm_value = {
@@ -895,7 +895,7 @@ class Pkcs1Structure:
             raise exceptions.InvalidFormatException("invalid signature format")
 
         # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
+        ber_structure = self.ber_plugin.create_structure({})
 
         # retrieves the signature verified length
         signature_verified_length = len(signature_verified)

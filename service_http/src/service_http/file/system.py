@@ -146,8 +146,8 @@ class ServiceHttpFile(colony.base.system.System):
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
 
-        # retrieves the format mime plugin
-        format_mime_plugin = self.plugin.format_mime_plugin
+        # retrieves the mime plugin
+        mime_plugin = self.plugin.mime_plugin
 
         # retrieves the resource manager plugin
         resource_manager_plugin = self.plugin.resource_manager_plugin
@@ -205,7 +205,7 @@ class ServiceHttpFile(colony.base.system.System):
             path = "/" + default_page
 
         # retrieves the mime type for the path
-        mime_type = format_mime_plugin.get_mime_type_file_name(path)
+        mime_type = mime_plugin.get_mime_type_file_name(path)
 
         # strips the path value from the initial and final slash
         path = path.strip("/")

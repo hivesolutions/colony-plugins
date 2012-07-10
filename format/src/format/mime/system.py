@@ -71,9 +71,9 @@ VALID_BOUNDARY_CHARACTERS = (
 )
 """ The tuple containing the valid boundary characters """
 
-class FormatMime(colony.base.system.System):
+class Mime(colony.base.system.System):
     """
-    The format mime class.
+    The mime class.
     """
 
     extension_map = {}
