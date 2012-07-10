@@ -71,23 +71,5 @@ class FormatBerPlugin(colony.base.system.Plugin):
         import format.ber.format_ber_system
         self.format_ber = format.ber.format_ber_system.FormatBer(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
     def create_structure(self, parameters):
         return self.format_ber.create_structure(parameters)

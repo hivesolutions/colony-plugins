@@ -59,7 +59,6 @@ class FormatMimePlugin(colony.base.system.Plugin):
         "format.mime"
     ]
     main_modules = [
-        "format.mime.format_mime_exceptions",
         "format.mime.format_mime_system"
     ]
 
@@ -70,24 +69,6 @@ class FormatMimePlugin(colony.base.system.Plugin):
         colony.base.system.Plugin.load_plugin(self)
         import format.mime.format_mime_system
         self.format_mime = format.mime.format_mime_system.FormatMime(self)
-
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     @colony.base.decorators.set_configuration_property
     def set_configuration_property(self, property_name, property):

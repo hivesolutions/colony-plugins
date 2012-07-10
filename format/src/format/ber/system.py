@@ -39,9 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
-import format_ber_exceptions
-
+import colony.base.system
 import colony.libs.string_buffer_util
+
+import exceptions
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -128,23 +129,10 @@ DEFAULT_TYPE_CONSTRUCTED = {
 DEFAULT_CLASS = 0x00
 """ The default class to be used """
 
-class FormatBer:
+class FormatBer(colony.base.system.System):
     """
     The format ber class.
     """
-
-    format_ber_plugin = None
-    """ The format ber plugin """
-
-    def __init__(self, format_ber_plugin):
-        """
-        Constructor of the class.
-
-        @type format_ber_plugin: FormatBerPlugin
-        @param format_ber_plugin: The format ber plugin.
-        """
-
-        self.format_ber_plugin = format_ber_plugin
 
     def create_structure(self, parameters):
         return BerStructure()
@@ -671,7 +659,7 @@ class BerStructure:
             # in case the length of the substrate is too big (overflow)
             if substrate_length > 126:
                 # raises the packing error
-                raise format_ber_exceptions.PackingError("length octets overflow: %d" % substrate_length)
+                raise exceptions.PackingError("length octets overflow: %d" % substrate_length)
 
             return chr(0x80 | len(substrate)) + substrate
 
@@ -700,7 +688,7 @@ class BerStructure:
             # space for the length value in the substrate
             if size > substrate_length - 1:
                 # raises the unpacking error
-                raise format_ber_exceptions.UnpackingError("invalid substrate value invalid size: %d" % substrate_length)
+                raise exceptions.UnpackingError("invalid substrate value invalid size: %d" % substrate_length)
 
             # encoded in length bytes
             length = 0
@@ -802,7 +790,7 @@ class BerStructure:
         # in case the initial identifier overflows
         if sub_identifier < 0 or sub_identifier > 0xff:
             # raises the packing error exception
-            raise format_ber_exceptions.PackingError("Initial sub identifier overflow: %s" % sub_identifier)
+            raise exceptions.PackingError("Initial sub identifier overflow: %s" % sub_identifier)
 
         # convert the sub identifier to character
         sub_identifier_character = chr(sub_identifier)
@@ -833,7 +821,7 @@ class BerStructure:
             # in case the value overflows
             elif sub_identifier < 0 or sub_identifier > 0xffffffffL:
                 # raises the packing error exception
-                raise format_ber_exceptions.PackingError("sub identifier overflow: %s" % sub_identifier)
+                raise exceptions.PackingError("sub identifier overflow: %s" % sub_identifier)
             # otherwise a multiple byte encoding must be used
             else:
                 # creates the result list
@@ -926,7 +914,7 @@ class BerStructure:
         # not zero
         if not number_padding_bits == 0:
             # raises the operation not implemented exception
-            raise format_ber_exceptions.OperationNotImplemented("bit string padding removal")
+            raise exceptions.OperationNotImplemented("bit string padding removal")
 
         # retrieves the bit string
         bit_string = packed_value[1:]
@@ -1018,7 +1006,7 @@ class BerStructure:
                 # length match
                 if index == packed_value_length:
                     # raises the unpacking error
-                    raise format_ber_exceptions.UnpackingError("short substrate for object identifier: %s" % object_identifier_list)
+                    raise exceptions.UnpackingError("short substrate for object identifier: %s" % object_identifier_list)
 
                 # calculates the sub identifier
                 sub_identifier = (sub_identifier << 7) + next_sub_identifier

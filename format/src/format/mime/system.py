@@ -42,6 +42,7 @@ import types
 import base64
 import random
 
+import colony.base.system
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
@@ -70,27 +71,16 @@ VALID_BOUNDARY_CHARACTERS = (
 )
 """ The tuple containing the valid boundary characters """
 
-class FormatMime:
+class FormatMime(colony.base.system.System):
     """
     The format mime class.
     """
 
-    format_mime_plugin = None
-    """ The format mime plugin """
-
     extension_map = {}
     """ The map of extension reference """
 
-    def __init__(self, format_mime_plugin):
-        """
-        Constructor of the class.
-
-        @type format_mime_plugin: FormatMimePlugin
-        @param format_mime_plugin: The format mime plugin.
-        """
-
-        self.format_mime_plugin = format_mime_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.extension_map = {}
 
     def create_message(self, parameters):

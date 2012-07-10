@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.base.system
+
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
 
@@ -54,27 +56,14 @@ BASE64_VALUE = "base64"
 DEFAULT_MIME_TYPE = "application/octet-stream"
 """ The default mime type """
 
-class FormatMimeUtils:
+class FormatMimeUtils(colony.base.system.System):
     """
     The format mime utils class.
     """
 
-    format_mime_utils_plugin = None
-    """ The format mime utils plugin """
-
-    def __init__(self, format_mime_utils_plugin):
-        """
-        Constructor of the class.
-
-        @type format_mime_utils_plugin: FormatMimeUtilsPlugin
-        @param format_mime_utils_plugin: The format mime utils plugin.
-        """
-
-        self.format_mime_utils_plugin = format_mime_utils_plugin
-
     def add_mime_message_attachment_contents(self, mime_message, contents, file_name, mime_type = None):
         # retrieves the format mime plugin
-        format_mime_plugin = self.format_mime_utils_plugin.format_mime_plugin
+        format_mime_plugin = self.plugin.format_mime_plugin
 
         # creates the mime message part for the attachment
         mime_message_attachment_part = format_mime_plugin.create_message_part({})
@@ -120,7 +109,7 @@ class FormatMimeUtils:
 
     def _add_mime_message_content(self, mime_message, content_path):
         # retrieves the format mime plugin
-        format_mime_plugin = self.format_mime_utils_plugin.format_mime_plugin
+        format_mime_plugin = self.plugin.format_mime_plugin
 
         # creates the mime message part for the content
         mime_message_content_part = format_mime_plugin.create_message_part({})

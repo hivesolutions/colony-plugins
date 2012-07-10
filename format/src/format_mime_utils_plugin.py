@@ -76,39 +76,21 @@ class FormatMimeUtilsPlugin(colony.base.system.Plugin):
         import format.mime_utils.format_mime_utils_system
         self.format_mime_utils = format.mime_utils.format_mime_utils_system.FormatMimeUtils(self)
 
-    def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-
-    def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
-
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
-    def add_mime_message_attachment_contents(self, mime_message, contents, file_name):
-        return self.format_mime_utils.add_mime_message_attachment_contents(mime_message, contents, file_name)
+    def add_attachment_contents(self, mime_message, contents, file_name):
+        return self.format_mime_utils.add_attachment_contents(mime_message, contents, file_name)
 
-    def add_mime_message_attachment_contents_mime_type(self, mime_message, contents, file_name, mime_type):
-        return self.format_mime_utils.add_mime_message_attachment_contents(mime_message, contents, file_name, mime_type)
+    def add_attachment_contents_mime_type(self, mime_message, contents, file_name, mime_type):
+        return self.format_mime_utils.add_attachment_contents(mime_message, contents, file_name, mime_type)
 
-    def add_mime_message_contents(self, mime_message, contents_path, content_extensions):
-        return self.format_mime_utils.add_mime_message_contents(mime_message, contents_path, content_extensions)
+    def add_contents(self, mime_message, contents_path, content_extensions):
+        return self.format_mime_utils.add_contents(mime_message, contents_path, content_extensions)
 
-    def add_mime_message_contents_non_recursive(self, mime_message, contents_path, content_extensions):
-        return self.format_mime_utils.add_mime_message_contents(mime_message, contents_path, content_extensions, False)
-
-    def get_format_mime_plugin(self):
-        return self.format_mime_plugin
+    def add_contents_non_recursive(self, mime_message, contents_path, content_extensions):
+        return self.format_mime_utils.add_contents(mime_message, contents_path, content_extensions, False)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):
