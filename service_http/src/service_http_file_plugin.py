@@ -59,7 +59,7 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
         "http_service_handler"
     ]
     capabilities_allowed = [
-        "directory_list_handler"
+        "directory_handler"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.x.x"),
@@ -73,8 +73,8 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     service_http_file = None
     """ The service http file (handler) """
 
-    directory_list_handler_plugins = []
-    """ The directory list handler plugins """
+    directory_handler_plugins = []
+    """ The directory handler plugins """
 
     format_mime_plugin = None
     """ The format mime plugin """
@@ -127,15 +127,15 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
 
         return self.service_http_file.handle_request(request)
 
-    @colony.base.decorators.load_allowed_capability("directory_list_handler")
-    def directory_list_handler_load_allowed(self, plugin, capability):
-        self.directory_list_handler_plugins.append(plugin)
-        self.service_http_file.directory_list_handler_load(plugin)
+    @colony.base.decorators.load_allowed_capability("directory_handler")
+    def directory_handler_load_allowed(self, plugin, capability):
+        self.directory_handler_plugins.append(plugin)
+        self.service_http_file.directory_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("directory_list_handler")
-    def directory_list_handler_unload_allowed(self, plugin, capability):
-        self.directory_list_handler_plugins.remove(plugin)
-        self.service_http_file.directory_list_handler_unload(plugin)
+    @colony.base.decorators.unload_allowed_capability("directory_handler")
+    def directory_handler_unload_allowed(self, plugin, capability):
+        self.directory_handler_plugins.remove(plugin)
+        self.service_http_file.directory_handler_unload(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):

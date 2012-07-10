@@ -7,26 +7,26 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <!-- css inclusion -->
-        <link rel="stylesheet" type="text/css" href="/template_directory_list_handler/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/template_directory_handler/css/main.css" />
 
         <!-- favicon inclusion -->
-        <link rel="icon" href="/template_directory_list_handler/images/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/template_directory_handler/images/favicon.ico" type="image/x-icon" />
 
         <!-- javascript inclusion -->
-        <script type="text/javascript" src="/template_directory_list_handler/js/main.js"></script>
+        <script type="text/javascript" src="/template_directory_handler/js/main.js"></script>
     </head>
     <body>
         <div id="wiki-header">
             <div class="wiki-header-contents">
                 <div class="logo-image">
-                    <img src="/template_directory_list_handler/images/colony_logo.png"/>
+                    <img src="/template_directory_handler/images/colony_logo.png"/>
                 </div>
             </div>
         </div>
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-                <img class="directory-list-image" src="/template_directory_list_handler/images/logo_folder.png"/>
+                <img class="directory-list-image" src="/template_directory_handler/images/logo_folder.png"/>
                 <div class="directory-list-text">
                     <b>Directory listing</b>
                     <p>
@@ -51,11 +51,11 @@
             <div class="wiki-footer-contents">
                 <div class="logo-image">
                     <a href="http://getcolony.com">
-                        <img src="/template_directory_list_handler/images/powered_by_colony.png"/>
+                        <img src="/template_directory_handler/images/powered_by_colony.png"/>
                     </a>
                 </div>
                 <div class="separator">
-                    <img src="/template_directory_list_handler/images/separator.png"/>
+                    <img src="/template_directory_handler/images/separator.png"/>
                 </div>
                 <div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
                     <br />Copyright

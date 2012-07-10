@@ -114,15 +114,15 @@ class ServiceHttpFile(colony.base.system.System):
     The service http file (handler) class.
     """
 
-    directory_list_handler_plugins_map = {}
-    """ The directory list handler plugins map """
+    directory_handler_plugins_map = {}
+    """ The directory handler plugins map """
 
     handler_configuration = {}
     """ The handler configuration """
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
-        self.directory_list_handler_plugins_map = {}
+        self.directory_handler_plugins_map = {}
         self.handler_configuration = {}
 
     def get_handler_name(self):
@@ -274,17 +274,17 @@ class ServiceHttpFile(colony.base.system.System):
             # processes the path as a file
             self._process_file(request, complete_path)
 
-    def directory_list_handler_load(self, directory_list_handler_plugin):
-        # retrieves the plugin directory list handler name
-        directory_list_handler_name = directory_list_handler_plugin.get_directory_list_handler_name()
+    def directory_handler_load(self, directory_handler_plugin):
+        # retrieves the plugin directory handler name
+        directory_handler_name = directory_handler_plugin.get_directory_handler_name()
 
-        self.directory_list_handler_plugins_map[directory_list_handler_name] = directory_list_handler_plugin
+        self.directory_handler_plugins_map[directory_handler_name] = directory_handler_plugin
 
-    def directory_list_handler_unload(self, directory_list_handler_plugin):
-        # retrieves the plugin directory list handler name
-        directory_list_handler_name = directory_list_handler_plugin.get_directory_list_handler_name()
+    def directory_handler_unload(self, directory_handler_plugin):
+        # retrieves the plugin directory handler name
+        directory_handler_name = directory_handler_plugin.get_directory_handler_name()
 
-        del self.directory_list_handler_plugins_map[directory_list_handler_name]
+        del self.directory_handler_plugins_map[directory_handler_name]
 
     def set_handler_configuration_property(self, handler_configuration_property):
         # retrieves the handler configuration
@@ -300,9 +300,9 @@ class ServiceHttpFile(colony.base.system.System):
         # cleans the handler configuration
         colony.libs.map_util.map_clean(self.handler_configuration)
 
-    def default_directory_list_handler(self, request, directory_list):
+    def default_directory_handler(self, request, directory_list):
         """
-        The default directory list handler for exception sending.
+        The default directory handler for exception sending.
 
         @type request: HttpRequest
         @param request: The request to send the directory list.
@@ -474,30 +474,30 @@ class ServiceHttpFile(colony.base.system.System):
             request.write(file_contents, 1, False)
 
     def _handle_directory_list(self, handler_configuration, request, directory_list):
-        # retrieves the preferred directory list handlers list
-        preferred_directory_list_handlers_list = handler_configuration.get("preferred_directory_list_handlers", (DEFAULT_VALUE,))
+        # retrieves the preferred directory handlers list
+        preferred_directory_handlers_list = handler_configuration.get("preferred_directory_handlers", (DEFAULT_VALUE,))
 
-        # retrieves the directory list handler plugins map
-        directory_list_handler_plugins_map = self.directory_list_handler_plugins_map
+        # retrieves the directory handler plugins map
+        directory_handler_plugins_map = self.directory_handler_plugins_map
 
-        # iterates over all the preferred directory list handlers
-        for preferred_directory_list_handler in preferred_directory_list_handlers_list:
-            # in case the preferred directory list handler is the default one
-            if preferred_directory_list_handler == DEFAULT_VALUE:
-                # handles the directory list with the default directory list handler
-                self.default_directory_list_handler(request, directory_list)
+        # iterates over all the preferred directory handlers
+        for preferred_directory_handler in preferred_directory_handlers_list:
+            # in case the preferred directory handler is the default one
+            if preferred_directory_handler == DEFAULT_VALUE:
+                # handles the directory list with the default directory handler
+                self.default_directory_handler(request, directory_list)
 
                 # breaks the loop
                 break
             else:
-                # in case the preferred directory list handler exist in the http service
-                # directory list handler plugins map
-                if preferred_directory_list_handler in directory_list_handler_plugins_map:
-                    # retrieves the directory list handler plugin
-                    directory_list_handler_plugin = directory_list_handler_plugins_map[preferred_directory_list_handler]
+                # in case the preferred directory handler exist in the http service
+                # directory handler plugins map
+                if preferred_directory_handler in directory_handler_plugins_map:
+                    # retrieves the directory handler plugin
+                    directory_handler_plugin = directory_handler_plugins_map[preferred_directory_handler]
 
-                    # calls the handle directory list in the directory list handler plugin
-                    directory_list_handler_plugin.handle_directory_list(request, directory_list)
+                    # calls the handle directory list in the directory handler plugin
+                    directory_handler_plugin.handle_directory_list(request, directory_list)
 
                     # breaks the loop
                     break

@@ -49,17 +49,17 @@ DEFAULT_ENCODING = "utf-8"
 DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
-DIRECTORY_LIST_HANDLER_NAME = "template"
-""" The error handler name """
+DIRECTORY_HANDLER_NAME = "template"
+""" The directory handler name """
 
 HTML_MIME_TYPE = "text/html"
 """ The html mime type """
 
-TEMPLATE_DIRECTORY_LIST_RESOURCES_PATH = "service_http/template_directory_list/resources"
-""" The template directory list resources path """
+TEMPLATE_DIRECTORY_RESOURCES_PATH = "service_http/template_directory/resources"
+""" The template directory resources path """
 
-DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME = "directory_list.html.tpl"
-""" The directory list html template file name """
+DIRECTORY_HTML_TEMPLATE_FILE_NAME = "directory.html.tpl"
+""" The directory html template file name """
 
 FORMATS_MAP = {
     "table" : "",
@@ -68,13 +68,13 @@ FORMATS_MAP = {
 }
 """ The formats map """
 
-class ServiceHttpTemplateDirectoryList(colony.base.system.System):
+class ServiceHttpTemplateDirectory(colony.base.system.System):
     """
-    The service http template directory list (handler) class.
+    The service http template directory (handler) class.
     """
 
-    def get_directory_list_handler_name(self):
-        return DIRECTORY_LIST_HANDLER_NAME
+    def get_directory_handler_name(self):
+        return DIRECTORY_HANDLER_NAME
 
     def handle_directory_list(self, request, directory_list):
         # sets the request content type
@@ -86,12 +86,12 @@ class ServiceHttpTemplateDirectoryList(colony.base.system.System):
         # retrieves the template engine plugin
         template_engine_plugin = self.plugin.template_engine_plugin
 
-        # retrieves the service http template directory list handler plugin path
+        # retrieves the service http template directory handler plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path
         template_file_path = plugin_path +\
-            "/" + TEMPLATE_DIRECTORY_LIST_RESOURCES_PATH + "/" + DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME
+            "/" + TEMPLATE_DIRECTORY_RESOURCES_PATH + "/" + DIRECTORY_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
         template_file = template_engine_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)

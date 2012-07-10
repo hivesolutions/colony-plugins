@@ -59,7 +59,7 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
         "http_service_handler"
     ]
     capabilities_allowed = [
-        "directory_list_handler"
+        "directory_handler"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
