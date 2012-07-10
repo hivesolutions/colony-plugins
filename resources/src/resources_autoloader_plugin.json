@@ -1,0 +1,26 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.resources.resources_autoloader",
+    "name" : "Resource Autoloader Plugin",
+    "short_name" : "Resource Autoloader",
+    "description" : "A plugin to automatically load and reload resource in the plugin system",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["main", "resources_autoloader", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.resources.manager",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "resources_autoloader_plugin.py",
+    "resources" : ["resources_autoloader_plugin.py", "resources/__init__.py",
+            "resources/resources_autoloader/__init__.py",
+            "resources/resources_autoloader/resources_autoloader_system.py",
+            "resources/resources_autoloader/resources/baf.xml"],
+    "extra_resources" : ["resources_autoloader_plugin.pyc",
+            "resources/__init__.pyc",
+            "resources/resources_autoloader/__init__.pyc",
+            "resources/resources_autoloader/resources_autoloader_system.pyc"]
+}
