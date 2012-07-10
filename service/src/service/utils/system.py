@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
+import colony.base.system
+
 import sync
 import async
 import exceptions
@@ -55,13 +57,10 @@ SERVICE_CLASSES_MAP = {
 }
 """ The map containing the various abstract service types """
 
-class ServiceUtils:
+class ServiceUtils(colony.base.system.System):
     """
     The service utils class.
     """
-
-    service_utils_plugin = None
-    """ The service utils plugin """
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
@@ -78,15 +77,8 @@ class ServiceUtils:
     current_port = None
     """ The current port """
 
-    def __init__(self, service_utils_plugin):
-        """
-        Constructor of the class.
-
-        @type service_utils_plugin: ServiceUtilsPlugin
-        @param service_utils_plugin: The service utils plugin.
-        """
-
-        self.service_utils_plugin = service_utils_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}
@@ -112,7 +104,7 @@ class ServiceUtils:
         service_class = SERVICE_CLASSES_MAP.get(service_type, sync.AbstractService)
 
         # creates the service "instance" using the abstract service class
-        service_instance = service_class(self, self.service_utils_plugin, parameters)
+        service_instance = service_class(self, self.plugin, parameters)
 
         # returns the service instance
         return service_instance

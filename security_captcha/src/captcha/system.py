@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import random
 
+import colony.base.system
 import colony.libs.string_buffer_util
 
 import PIL.Image
@@ -76,27 +77,14 @@ RGBA_VALUE = "RGBA"
 JPEG_VALUE = "jpeg"
 """ The jpeg value """
 
-class Captcha:
+class Captcha(colony.base.system.System):
     """
     The captcha class.
     """
 
-    captcha_plugin = None
-    """ The captcha plugin """
-
-    def __init__(self, captcha_plugin):
-        """
-        Constructor of the class.
-
-        @type captcha_plugin: CaptchaPlugin
-        @param captcha_plugin: The captcha plugin.
-        """
-
-        self.captcha_plugin = captcha_plugin
-
     def generate_captcha(self, string_value, properties):
         # retrieves the plugin manager
-        plugin_manager = self.captcha_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # tries to retrieve the image width
         image_width = properties.get(IMAGE_WIDTH_VALUE, DEFAULT_IMAGE_WIDTH)
@@ -108,10 +96,10 @@ class Captcha:
         number_letters = properties.get(NUMBER_LETTERS_VALUE, DEFAULT_NUMBER_LETTERS)
 
         # retrieves the captcha plugin path
-        captcha_plugin_path = plugin_manager.get_plugin_path_by_id(self.captcha_plugin.id)
+        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the resources path from the "base" captcha plugin path
-        resources_path = captcha_plugin_path + "/" + RESOURCES_PATH
+        resources_path = plugin_path + "/" + RESOURCES_PATH
 
         # retrieves the font for the current resources path
         text_font = self._get_font(resources_path)

@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import threading
 
+import colony.base.system
 import colony.libs.structures_util
 
 DEFAULT_NUMBER_THREADS = 5
@@ -87,27 +88,16 @@ SCHEDULING_ALGORITHM_NAME_MAP = {
 }
 """ The scheduling algorithm name map """
 
-class ThreadPool:
+class ThreadPool(colony.base.system.System):
     """
     The thread pool class.
     """
 
-    thread_pool_plugin = None
-    """ The thread pool plugin """
-
     thread_pools_list = []
     """ The list of currently enabled thread pools """
 
-    def __init__(self, thread_pool_plugin):
-        """
-        Constructor of the class.
-
-        @type thread_pool_plugin: Plugin
-        @param thread_pool_plugin: The thread pool plugin.
-        """
-
-        self.thread_pool_plugin = thread_pool_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.thread_pools_list = []
 
     def unload(self):
@@ -140,7 +130,7 @@ class ThreadPool:
         """
 
         # retrieves the logger
-        logger = self.thread_pool_plugin.logger
+        logger = self.plugin.logger
 
         # creates a new thread pool
         thread_pool = ThreadPoolImplementation(name, description, number_threads, scheduling_algorithm, maximum_number_threads, logger)

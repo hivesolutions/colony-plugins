@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import datetime
 
+import colony.base.system
+
 POWERED_BY_STRING = "colony/%s"
 """ The string to be used in the powered by http
 header to be sent to the end used as a sign of
@@ -56,33 +58,19 @@ to be retrieved from the message provider from
 each iteration, if this value is too small the
 overhead for sending may be a problem """
 
-class Wsgi:
+class Wsgi(colony.base.system.System):
     """
     The wsgi class.
     """
 
-    wsgi_plugin = None
-    """ The wsgi plugin to be used to reference the
-    top level elements in the plugin """
-
-    def __init__(self, wsgi_plugin):
-        """
-        Constructor of the class.
-
-        @type wsgi_plugin: WsgiPlugin
-        @param wsgi_plugin: The wsgi plugin.
-        """
-
-        self.wsgi_plugin = wsgi_plugin
-
     def handle(self, environ, start_response):
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
-        plugin_manager = self.wsgi_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the reference to the rest plugin from the
         # upper level wsgi plugin
-        rest_plugin = self.wsgi_plugin.rest_plugin
+        rest_plugin = self.plugin.rest_plugin
 
         # retrieves the string based version of the currently
         # executing plugin manager, this value is going to be

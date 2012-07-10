@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
+import colony.base.system
 import colony.libs.structures_util
 
 import algorithms
@@ -82,27 +83,16 @@ WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {
 }
 """ The work scheduling algorithm class map """
 
-class WorkPool:
+class WorkPool(colony.base.system.System):
     """
     The work pool class.
     """
 
-    work_pool_plugin = None
-    """ The work pool plugin """
-
     work_pools_list = []
     """ The list of currently enabled work pools """
 
-    def __init__(self, work_pool_plugin):
-        """
-        Constructor of the class.
-
-        @type work_pool_plugin: Plugin
-        @param work_pool_plugin: The work pool plugin.
-        """
-
-        self.work_pool_plugin = work_pool_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.work_pools_list = []
 
     def unload(self):
@@ -142,10 +132,10 @@ class WorkPool:
         """
 
         # retrieves the work pool plugin
-        thread_pool_plugin = self.work_pool_plugin.thread_pool_plugin
+        thread_pool_plugin = self.plugin.thread_pool_plugin
 
         # retrieves the logger
-        logger = self.work_pool_plugin.logger
+        logger = self.plugin.logger
 
         # retrieves the task descriptor class from the thread pool plugin
         task_descriptor_class = thread_pool_plugin.get_thread_task_descriptor_class()

@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import colony.base.system
+
 import ast
 import visitor
 
@@ -116,23 +118,10 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
 )
 """ The literal regular expression that matches all the literals """
 
-class TemplateEngine:
+class TemplateEngine(colony.base.system.System):
     """
     The template engine class.
     """
-
-    template_engine_plugin = None
-    """ The template engine plugin """
-
-    def __init__(self, template_engine_plugin):
-        """
-        Constructor of the class.
-
-        @type template_engine_plugin: TemplateEnginePlugin
-        @param template_engine_plugin: The template engine plugin.
-        """
-
-        self.template_engine_plugin = template_engine_plugin
 
     def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
         # opens the file for reading
@@ -545,7 +534,7 @@ class TemplateFile:
 
         # retrieves the template engine plugin
         # in order to obtain the plugin manager
-        template_engine_plugin = self.manager.template_engine_plugin
+        template_engine_plugin = self.manager.plugin
         plugin_manager = template_engine_plugin.manager
 
         # retrieves the map containing the "global" system information

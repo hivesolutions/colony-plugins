@@ -39,26 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import thread
 
-class WorkPoolDummy:
+import colony.base.system
+
+class WorkPoolDummy(colony.base.system.System):
     """
     The work pool dummy class.
     """
 
-    work_pool_dummy_plugin = None
-    """ The work pool dummy plugin """
-
     work_pool = None
     """ The dummy pool """
-
-    def __init__(self, work_pool_dummy_plugin):
-        """
-        Constructor of the class.
-
-        @type work_pool_dummy_plugin: Plugin
-        @param work_pool_dummy_plugin: The work pool dummy plugin.
-        """
-
-        self.work_pool_dummy_plugin = work_pool_dummy_plugin
 
     def start_pool(self):
         """
@@ -66,10 +55,15 @@ class WorkPoolDummy:
         """
 
         # retrieves the work pool plugin
-        work_pool_plugin = self.work_pool_dummy_plugin.work_pool_plugin
+        work_pool_plugin = self.plugin.work_pool_plugin
 
         # creates the (dummy) work pool for the given parameters
-        self.work_pool = work_pool_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, [self], 3, 1, 5, 10, 1)
+        self.work_pool = work_pool_plugin.create_new_work_pool(
+            "dummy work pool",
+            "dummy work pool",
+            ProcessingClass,
+            [self], 3, 1, 5, 10, 1
+        )
 
         # start the (dummy) work pool
         self.work_pool.start_pool()
@@ -117,7 +111,7 @@ class ProcessingClass:
 
     def process(self):
         # retrieves the work pool dummy plugin
-        work_pool_dummy_plugin = self.work_pool_dummy.work_pool_dummy_plugin
+        work_pool_dummy_plugin = self.work_pool_dummy.plugin
 
         # iterates over the list of work
         for work in self.work_list:
