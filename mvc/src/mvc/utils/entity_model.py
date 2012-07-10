@@ -1024,7 +1024,7 @@ def persist(self, persist_type, validate = False, entity_manager = None):
         # values of the entity in the data source
         self.save(entity_manager = entity_manager)
 
-def lock(self, entity_manager = None):
+def lock(self, reload = False, entity_manager = None):
     """
     Locks the entity reference in the current data source
     to avoid possible persistence in the data reference.
@@ -1033,6 +1033,13 @@ def lock(self, entity_manager = None):
     Any usage of this method should be made careful at the
     risk of creating a dead lock in the data source.
 
+    In case the optional reload flag is set the entity is
+    reloaded after the lock.
+
+    @type reload: bool
+    @param reload: If the entity should be reloaded after
+    the lock operation is complete, this way it's possible
+    to gather the must updated values.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1050,6 +1057,11 @@ def lock(self, entity_manager = None):
 
     # locks the entity with the given attribute
     entity_manager.lock(entity_class, id_attribute_value)
+
+    # in case the reload flag is set the entity must be
+    # reloaded retrieving the must updated contents for
+    # the entity from the data source
+    reload and self.reload()
 
 def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
     """
