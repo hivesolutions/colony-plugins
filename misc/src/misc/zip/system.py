@@ -42,6 +42,7 @@ import stat
 import types
 import zipfile
 
+import colony.base.system
 import colony.libs.string_buffer_util
 
 BUFFER_LENGTH = 4096
@@ -50,23 +51,10 @@ BUFFER_LENGTH = 4096
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-class Zip:
+class Zip(colony.base.system.System):
     """
     Provides functions to interact with zip files.
     """
-
-    zip_plugin = None
-    """ The zip plugin """
-
-    def __init__(self, zip_plugin):
-        """
-        Constructor of the class.
-
-        @type zip_plugin: ZipPlugin
-        @param zip_plugin: The zip plugin.
-        """
-
-        self.zip_plugin = zip_plugin
 
     def get_directory_paths(self, file_path):
         """

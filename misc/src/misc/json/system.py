@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
+
 import serializer
 
 DEFAULT_ENCODING = "utf-8"
@@ -45,23 +47,10 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/json"
 """ The mime type """
 
-class Json:
+class Json(colony.base.system.System):
     """
     Provides functions to interact with json.
     """
-
-    json_plugin = None
-    """ The json plugin """
-
-    def __init__(self, json_plugin):
-        """
-        Constructor of the class.
-
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
-        """
-
-        self.json_plugin = json_plugin
 
     def dumps(self, object):
         return serializer.dumps(object)

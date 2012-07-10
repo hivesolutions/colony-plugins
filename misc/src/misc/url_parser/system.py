@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import colony.base.system
+
 import exceptions
 
 URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
@@ -53,23 +55,10 @@ DEFAULT_PROTOCOL_VALUE = "http://"
 DEFAULT_PORT_VALUE = None
 """ The default port value """
 
-class UrlParser:
+class UrlParser(colony.base.system.System):
     """
     The url parser class.
     """
-
-    url_parser_plugin = None
-    """ The url parser plugin """
-
-    def __init__(self, url_parser_plugin):
-        """
-        Constructor of the class.
-
-        @type url_parser_plugin: UrlParserPlugin
-        @param url_parser_plugin: The url parser plugin.
-        """
-
-        self.url_parser_plugin = url_parser_plugin
 
     def parse_url(self, url):
         """

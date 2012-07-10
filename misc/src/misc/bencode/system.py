@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
+
 import serializer
 
 DEFAULT_ENCODING = "utf-8"
@@ -45,23 +47,10 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/x-bencode"
 """ The mime type """
 
-class Bencode:
+class Bencode(colony.base.system.System):
     """
     Provides functions to interact with bencode.
     """
-
-    bencode_plugin = None
-    """ The bencode plugin """
-
-    def __init__(self, bencode_plugin):
-        """
-        Constructor of the class.
-
-        @type bencode_plugin: BencodePlugin
-        @param bencode_plugin: The bencode plugin.
-        """
-
-        self.bencode_plugin = bencode_plugin
 
     def dumps(self, object):
         return serializer.dumps(object)

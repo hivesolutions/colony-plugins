@@ -37,31 +37,23 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import socket
 import random
-import time
 import threading
+
+import colony.base.system
 
 MAX_COUNTER = 0xfffffffe
 """ The max counter value """
 
-class Guid:
+class Guid(colony.base.system.System):
     """
     The guid class.
     """
 
-    guid_plugin = None
-    """ The guid plugin """
-
-    def __init__(self, guid_plugin):
-        """
-        Constructor of the class.
-
-        @type guid_plugin: GuidPlugin
-        @param guid_plugin:  The guid plugin.
-        """
-
-        self.guid_plugin = guid_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         self.counter = 0L
         self.first_counter = MAX_COUNTER

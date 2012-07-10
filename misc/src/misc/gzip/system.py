@@ -41,28 +41,16 @@ import zlib
 import time
 import struct
 
+import colony.base.system
 import colony.libs.string_buffer_util
 
 DEFAULT_COMPRESSION_LEVEL = 3
 """ The default compression level """
 
-class Gzip:
+class Gzip(colony.base.system.System):
     """
     Provides functions to interact with gzip files.
     """
-
-    gzip_plugin = None
-    """ The gzip plugin """
-
-    def __init__(self, gzip_plugin):
-        """
-        Constructor of the class.
-
-        @type gzip_plugin: GzipPlugin
-        @param gzip_plugin: The gzip plugin.
-        """
-
-        self.gzip_plugin = gzip_plugin
 
     def gzip_contents(self, contents_string, file_name = None):
         """

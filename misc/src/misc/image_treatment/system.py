@@ -41,6 +41,7 @@ import types
 
 import PIL.Image
 
+import colony.base.system
 import colony.libs.string_buffer_util
 
 SEEK_VALUE = "seek"
@@ -58,23 +59,10 @@ PNG_VALUE = "png"
 MAXIMUM_SIZE = 2147483647
 """ The maximum size value """
 
-class ImageTreatment:
+class ImageTreatment(colony.base.system.System):
     """
     The image treatment class.
     """
-
-    image_treatment_plugin = None
-    """ The image treatment plugin """
-
-    def __init__(self, image_treatment_plugin):
-        """
-        Constructor of the class.
-
-        @type image_treatment_plugin: ImageTreatmentPlugin
-        @param image_treatment_plugin: The image treatment plugin.
-        """
-
-        self.image_treatment_plugin = image_treatment_plugin
 
     def resize_image(self, image_path, width, height, image_type = JPEG_VALUE):
         """

@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
+import colony.base.system
 import colony.libs.map_util
 import colony.libs.string_buffer_util
 
@@ -77,13 +78,10 @@ GET_DEFAULT_PARAMETERS_VALUE = "get_default_parameters"
 DEFAULT_STATUS_CODE = 200
 """ The default status code """
 
-class Mvc:
+class Mvc(colony.base.system.System):
     """
     The mvc class.
     """
-
-    mvc_plugin = None
-    """ The mvc plugin """
 
     mvc_file_handler = None
     """ The mvc file handler """
@@ -141,15 +139,8 @@ class Mvc:
     """ The mvc service resource patterns list for
     indexing """
 
-    def __init__(self, mvc_plugin):
-        """
-        Constructor of the class.
-
-        @type mvc_plugin: MvcPlugin
-        @param mvc_plugin: The mvc plugin.
-        """
-
-        self.mvc_plugin = mvc_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
@@ -166,8 +157,8 @@ class Mvc:
         self.mvc_service_resource_patterns_map = {}
         self.mvc_service_resource_patterns_list = []
 
-        self.mvc_file_handler = file_handler.MvcFileHandler(mvc_plugin)
-        self.mvc_communication_handler = communication_handler.MvcCommunicationHandler(mvc_plugin)
+        self.mvc_file_handler = file_handler.MvcFileHandler(plugin)
+        self.mvc_communication_handler = communication_handler.MvcCommunicationHandler(plugin)
 
     def start_system(self):
         """
@@ -184,7 +175,7 @@ class Mvc:
         # if the communication handler processing system should be
         # started, because if threads are not allowed no process should
         # be started (violates manger rules)
-        plugin_manager = self.mvc_plugin.manager
+        plugin_manager = self.plugin.manager
         if plugin_manager.allow_threads: self.mvc_communication_handler.start_processing()
 
     def stop_system(self):
@@ -197,7 +188,7 @@ class Mvc:
         # retrieves the plugin manager to recall the option to load or not
         # the communication handler in case the handler has been started it
         # must now be stopped to avoid any memory or other resource leak
-        plugin_manager = self.mvc_plugin.manager
+        plugin_manager = self.plugin.manager
         if plugin_manager.allow_threads: self.mvc_communication_handler.stop_processing()
 
     def get_routes(self):

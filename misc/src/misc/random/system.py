@@ -43,6 +43,8 @@ import random
 import thread
 import hashlib
 
+import colony.base.system
+
 TIME_FACTOR = 1000
 """ The time factor """
 
@@ -55,26 +57,16 @@ SECRET_KEY = 123123123L
 SYSTEM_RANDOM_VALUE = "SystemRandom"
 """ The system random value """
 
-class Random:
+class Random(colony.base.system.System):
     """
     The random class.
     """
 
-    random_plugin = None
-    """ The random plugin """
-
     randrange = random.randrange
     """ The rand range method to be used """
 
-    def __init__(self, random_plugin):
-        """
-        Constructor of the class.
-
-        @type random_plugin: RandomPlugin
-        @param random_plugin:  The random plugin.
-        """
-
-        self.random_plugin = random_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         # processes the randrange values
         self.process_randrange()

@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
+
 import serializer
 
 DEFAULT_ENCODING = "utf-8"
@@ -45,23 +47,10 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "text/csv"
 """ The mime type """
 
-class Csv:
+class Csv(colony.base.system.System):
     """
     Provides functions to interact with csv.
     """
-
-    csv_plugin = None
-    """ The csv plugin """
-
-    def __init__(self, csv_plugin):
-        """
-        Constructor of the class.
-
-        @type csv_plugin: CsvPlugin
-        @param csv_plugin: The csv plugin.
-        """
-
-        self.csv_plugin = csv_plugin
 
     def dumps(self, object):
         return serializer.dumps(object)

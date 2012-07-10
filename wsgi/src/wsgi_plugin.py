@@ -60,7 +60,7 @@ class WsgiPlugin(colony.base.system.Plugin):
         "wsgi"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.remote.rest", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.rest", "1.x.x"),
     ]
     main_modules = [
         "wsgi.sytem"
@@ -85,6 +85,6 @@ class WsgiPlugin(colony.base.system.Plugin):
     def handle(self, environ, start_response):
         return self.wsgi.handle(environ, start_response)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.remote.rest")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.rest")
     def set_rest_plugin(self, rest_plugin):
         self.rest_plugin = rest_plugin

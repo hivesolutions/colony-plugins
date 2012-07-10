@@ -43,6 +43,7 @@ import calendar
 import datetime
 import threading
 
+import colony.base.system
 import colony.libs.map_util
 
 import exceptions
@@ -83,13 +84,10 @@ SLEEP_STEP_VALUE = "sleep_step"
 DEFAULT_SLEEP_STEP = 1.0
 """ The default sleep step value used in sleep function """
 
-class Scheduler:
+class Scheduler(colony.base.system.System):
     """
     The scheduler class.
     """
-
-    scheduler_plugin = None
-    """ The build automation plugin """
 
     scheduler_lock = None
     """ The scheduler lock """
@@ -109,15 +107,8 @@ class Scheduler:
     startup_configuration = {}
     """ The startup configuration """
 
-    def __init__(self, scheduler_plugin):
-        """
-        Constructor of the class.
-
-        @type scheduler_plugin: SchedulerPlugin
-        @param scheduler_plugin: The scheduler plugin.
-        """
-
-        self.scheduler_plugin = scheduler_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         # creates a new lock object
         self.scheduler_lock = threading.Lock()
@@ -145,7 +136,7 @@ class Scheduler:
         """
 
         # notifies the ready semaphore
-        self.scheduler_plugin.release_ready_semaphore()
+        self.plugin.release_ready_semaphore()
 
         # acquires the lock object
         self.scheduler_lock.acquire()
@@ -315,7 +306,7 @@ class Scheduler:
 
             # retrieves the console plugin and uses it to retrieve
             # the default console output method
-            console_plugin = self.scheduler_plugin.console_plugin
+            console_plugin = self.plugin.console_plugin
             default_console_output_method = console_plugin.get_default_output_method()
 
             # creates a new scheduler item
@@ -422,7 +413,7 @@ class Scheduler:
 
     def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list, task):
         # retrieves the guid plugin
-        guid_plugin = self.scheduler_plugin.guid_plugin
+        guid_plugin = self.plugin.guid_plugin
 
         # generates a new item id
         item_id = guid_plugin.generate_guid()
@@ -469,7 +460,7 @@ class Scheduler:
             # cancels the current event, and in case a value
             # error occurs prints a warning message
             try: self.scheduler.cancel(current_event)
-            except ValueError, exception: self.scheduler_plugin.warning("Problem canceling the current event: %s" % unicode(exception))
+            except ValueError, exception: self.plugin.warning("Problem canceling the current event: %s" % unicode(exception))
 
         # cancels the scheduler item
         scheduler_item.canceled = True
@@ -502,10 +493,10 @@ class Scheduler:
         task_method_arguments_string = str(task_method_arguments)
 
         # print an info message
-        self.scheduler_plugin.info("Starting execution of task: " + item_id_string)
+        self.plugin.info("Starting execution of task: " + item_id_string)
 
         # prints a debug message
-        self.scheduler_plugin.debug("Calling task method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
+        self.plugin.debug("Calling task method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
 
         try:
             # calls the task method with the task method arguments, this
@@ -513,7 +504,7 @@ class Scheduler:
             item_task_method(*task_method_arguments)
         except BaseException, exception:
             # prints an error message
-            self.scheduler_plugin.error("Problem executing scheduler task: " + item_id_string + " (" + item_task_method_name + ") with error: " + unicode(exception))
+            self.plugin.error("Problem executing scheduler task: " + item_id_string + " (" + item_task_method_name + ") with error: " + unicode(exception))
 
         # in case the continue flag is not set
         if not self.continue_flag:
@@ -526,7 +517,7 @@ class Scheduler:
         # in case it's recursive
         if is_recursive:
             # prints a debug message
-            self.scheduler_plugin.debug("Re-scheduling task for recursion: " + item_id_string)
+            self.plugin.debug("Re-scheduling task for recursion: " + item_id_string)
 
             # retrieves the recursion list
             recursion_list = scheduler_item.recursion_list
@@ -556,7 +547,7 @@ class Scheduler:
             self.remove_scheduler_item(scheduler_item)
 
         # print an info message
-        self.scheduler_plugin.info("Ending execution of task: " + item_id_string)
+        self.plugin.info("Ending execution of task: " + item_id_string)
 
     def date_time_to_timestamp(self, date_time):
         # creates the date time time tuple
@@ -602,7 +593,7 @@ class Scheduler:
         # to register them
         for startup_task in startup_tasks:
             # retrieves the plugin manager
-            plugin_manager = self.scheduler_plugin.manager
+            plugin_manager = self.plugin.manager
 
             # retrieves the various startup task attributes
             plugin_id = startup_task[PLUGIN_ID_VALUE]

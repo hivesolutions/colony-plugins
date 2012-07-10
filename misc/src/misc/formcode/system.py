@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.base.system
+
 import serializer
 
 DEFAULT_ENCODING = "utf-8"
@@ -45,23 +47,10 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/x-formcode"
 """ The mime type """
 
-class Formcode:
+class Formcode(colony.base.system.System):
     """
     Provides functions to interact with formcode.
     """
-
-    formcode_plugin = None
-    """ The formcode plugin """
-
-    def __init__(self, formcode_plugin):
-        """
-        Constructor of the class.
-
-        @type formcode_plugin: FormcodePlugin
-        @param formcode_plugin: The formcode plugin.
-        """
-
-        self.formcode_plugin = formcode_plugin
 
     def dumps(self, object):
         return serializer.dumps(object)

@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+import colony.base.system
 import colony.libs.size_util
 import colony.libs.observer_util
 
@@ -50,23 +51,10 @@ VALID_STATUS_CODES = (
 )
 """ The valid status codes """
 
-class Downloader:
+class Downloader(colony.base.system.System):
     """
     The downloader class.
     """
-
-    downloader_plugin = None
-    """ The downloader plugin """
-
-    def __init__(self, downloader_plugin):
-        """
-        Constructor of the class.
-
-        @type downloader_plugin: DownloaderPlugin
-        @param downloader_plugin: The downloader plugin.
-        """
-
-        self.downloader_plugin = downloader_plugin
 
     def download_package(self, address, target_directory = None, handlers_map = {}):
         """
@@ -88,7 +76,7 @@ class Downloader:
             target_directory = target_directory or self._get_default_target_directory()
 
             # retrieves the client http plugin
-            client_http_plugin = self.downloader_plugin.client_http_plugin
+            client_http_plugin = self.plugin.client_http_plugin
 
             # notifies the handlers about the message
             colony.libs.observer_util.message(handlers_map, "Get %s" % address)
@@ -166,7 +154,7 @@ class Downloader:
 
         except Exception, exception:
             # prints an info message
-            self.downloader_plugin.info("Problem while downloading file: " + address + ", error: " + unicode(exception))
+            self.plugin.info("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
     def get_download_package_stream(self, address, handlers_map = {}):
         """
@@ -182,7 +170,7 @@ class Downloader:
 
         try:
             # retrieves the client http plugin
-            client_http_plugin = self.downloader_plugin.client_http_plugin
+            client_http_plugin = self.plugin.client_http_plugin
 
             # creates a new set of handlers map (for http client) for
             # the current context
@@ -218,7 +206,7 @@ class Downloader:
             # returns the file contents
             return file_contents
         except Exception, exception:
-            self.downloader_plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
+            self.plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
     def get_file_name_url(self, url):
         """
@@ -250,10 +238,10 @@ class Downloader:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.downloader_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the configuration path for the downloader plugin
-        configuration_path, _workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(self.downloader_plugin.id)
+        configuration_path, _workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(self.plugin.id)
 
         # sets the target path as the configuration path
         target_path = configuration_path

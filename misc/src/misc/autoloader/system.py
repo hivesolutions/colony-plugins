@@ -42,6 +42,8 @@ import sys
 import time
 import stat
 
+import colony.base.system
+
 SLEEP_TIME_VALUE = 10.0
 """ The sleep time value """
 
@@ -57,13 +59,10 @@ RELOAD_ACTION = 2
 UNLOAD_ACTION = 3
 """ The unload action value """
 
-class Autoloader:
+class Autoloader(colony.base.system.System):
     """
     The autoloader class.
     """
-
-    autoloader_plugin = None
-    """ The autoloader plugin """
 
     continue_flag = True
     """ The continue flag that controls the autoloading system """
@@ -74,16 +73,8 @@ class Autoloader:
     search_directories_information_map = {}
     """ The search directories information map """
 
-    def __init__(self, autoloader_plugin):
-        """
-        Constructor of the class.
-
-        @type autoloader_plugin: AutoloaderPlugin
-        @param autoloader_plugin: The autoloader plugin.
-        """
-
-        self.autoloader_plugin = autoloader_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.search_directories = []
         self.search_directories_information_map = {}
 
@@ -94,7 +85,7 @@ class Autoloader:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.autoloader_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the plugin paths
         plugin_paths = plugin_manager.get_plugin_paths()
@@ -103,7 +94,7 @@ class Autoloader:
         self.add_search_directories(plugin_paths)
 
         # notifies the ready semaphore
-        self.autoloader_plugin.release_ready_semaphore()
+        self.plugin.release_ready_semaphore()
 
         # sets the continue flag
         self.continue_flag = True
@@ -141,12 +132,12 @@ class Autoloader:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.autoloader_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # in case the search directory does not exists
         if not os.path.exists(search_directory):
             # prints a debug message
-            self.autoloader_plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
+            self.plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
 
             # returns immediately
             return
@@ -178,7 +169,7 @@ class Autoloader:
             # in case the search directory does not exists
             if not os.path.exists(full_path):
                 # prints a debug message
-                self.autoloader_plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
+                self.plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
 
                 # returns immediately
                 return
@@ -294,7 +285,7 @@ class Autoloader:
 
         # retrieves the plugin manager reference for
         # latter usage
-        plugin_manager = self.autoloader_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # sorts the operations list in a reverse order so
         # that the unload operations are positioned first
@@ -380,10 +371,10 @@ class Autoloader:
 
         try:
             # prints an info message
-            self.autoloader_plugin.info("Loading module " + module_name)
+            self.plugin.info("Loading module " + module_name)
 
             # retrieves the plugin manager
-            plugin_manager = self.autoloader_plugin.manager
+            plugin_manager = self.plugin.manager
 
             # in case the search directory is not is the system path
             # it's inserted into it (for local import reference)
@@ -405,7 +396,7 @@ class Autoloader:
             load_plugins and plugin_manager.load_plugin(plugin.id)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem loading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem loading module %s: %s" % (module_name, unicode(exception)))
 
     def unload_module(self, module_name, operations = None):
         """
@@ -425,16 +416,16 @@ class Autoloader:
 
         try:
             # prints an info message
-            self.autoloader_plugin.info("Unloading module " + module_name)
+            self.plugin.info("Unloading module " + module_name)
 
             # retrieves the plugin manager
-            plugin_manager = self.autoloader_plugin.manager
+            plugin_manager = self.plugin.manager
 
             # stops the module
             plugin_manager.stop_module(module_name)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem unloading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem unloading module %s: %s" % (module_name, unicode(exception)))
 
     def reload_module(self, plugin, module_name, load_plugins = True, operations = None):
         """
@@ -463,10 +454,10 @@ class Autoloader:
 
         try:
             # prints an info message
-            self.autoloader_plugin.info("Reloading module " + module_name)
+            self.plugin.info("Reloading module " + module_name)
 
             # retrieves the plugin manager
-            plugin_manager = self.autoloader_plugin.manager
+            plugin_manager = self.plugin.manager
 
             # retrieves the plugin id
             plugin_id = plugin.id
@@ -504,7 +495,7 @@ class Autoloader:
             for loaded_plugin_id in loaded_plugins_ids: plugin_manager.load_plugin(loaded_plugin_id)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem reloading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem reloading module %s: %s" % (module_name, unicode(exception)))
 
     def unload_autoloader(self):
         """

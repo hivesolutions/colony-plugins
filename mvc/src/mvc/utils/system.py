@@ -42,6 +42,7 @@ import sys
 import imp
 import types
 
+import colony.base.system
 import colony.libs.map_util
 import colony.libs.stack_util
 import colony.libs.import_util
@@ -141,13 +142,10 @@ SYMBOLS_LIST = (
 )
 """ The list of symbols to be used for pattern generation """
 
-class MvcUtils:
+class MvcUtils(colony.base.system.System):
     """
     The mvc utils class.
     """
-
-    mvc_utils_plugin = None
-    """ The mvc utils plugin """
 
     models_modules_map = {}
     """ The map containing the various models modules
@@ -161,15 +159,8 @@ class MvcUtils:
     """ The map associating a package path with the
     internal controllers """
 
-    def __init__(self, mvc_utils_plugin):
-        """
-        Constructor of the class.
-
-        @type mvc_utils_plugin: MvcUtilsPlugin
-        @param mvc_utils_plugin: The mvc utils plugin.
-        """
-
-        self.mvc_utils_plugin = mvc_utils_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         self.models_modules_map = {}
         self.package_path_models_map = {}
@@ -280,8 +271,8 @@ class MvcUtils:
 
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map, start_structures = False, default_parameters = {}):
         # retrieves the required plugins
-        template_engine_plugin = self.mvc_utils_plugin.template_engine_plugin
-        json_plugin = self.mvc_utils_plugin.json_plugin
+        template_engine_plugin = self.plugin.template_engine_plugin
+        json_plugin = self.plugin.json_plugin
 
         # retrieves the first and second arguments from the base arguments
         # as the plugin and the system instance
@@ -331,8 +322,8 @@ class MvcUtils:
 
     def create_base_models(self, system_instance, package_path, entity_manager_arguments, directory_path, extra_entity_models = [], load_entity_manager = True):
         # retrieves the entity related plugins
-        entity_manager_plugin = self.mvc_utils_plugin.entity_manager_plugin
-        business_helper_plugin = self.mvc_utils_plugin.business_helper_plugin
+        entity_manager_plugin = self.plugin.entity_manager_plugin
+        business_helper_plugin = self.plugin.business_helper_plugin
 
         # splits the package path into the extra and base
         # parts to be used in the business helper
@@ -843,8 +834,8 @@ class MvcUtils:
 
     def destroy_base_models(self, entity_models, models, entity_manager_arguments):
         # retrieves the entity related plugins
-        entity_manager_plugin = self.mvc_utils_plugin.entity_manager_plugin
-        business_helper_plugin = self.mvc_utils_plugin.business_helper_plugin
+        entity_manager_plugin = self.plugin.entity_manager_plugin
+        business_helper_plugin = self.plugin.business_helper_plugin
 
         # retrieves the entity id from the entity manager arguments or sets
         # the id as undefined, this id is used to identify the correct
@@ -987,7 +978,7 @@ class MvcUtils:
         """
 
         # retrieves the file manager plugin
-        file_manager_plugin = self.mvc_utils_plugin.file_manager_plugin
+        file_manager_plugin = self.plugin.file_manager_plugin
 
         # creates a new file manager for the given engine and sets the connection
         # parameters on it (for loading)
@@ -1065,7 +1056,7 @@ class MvcUtils:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.mvc_utils_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # resolves the file path
         connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
@@ -1300,7 +1291,7 @@ class MvcUtils:
 
     def _generate_entity_manager_path(self, plugin, entity_manager_arguments, parameters):
         # retrieves the resource manager plugin
-        resource_manager_plugin = self.mvc_utils_plugin.resource_manager_plugin
+        resource_manager_plugin = self.plugin.resource_manager_plugin
 
         # retrieves the expected parameter values
         default_database_prefix = parameters.get("default_database_prefix", DEFAULT_DATABASE_PREFIX)

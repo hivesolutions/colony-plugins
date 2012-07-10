@@ -45,7 +45,7 @@ class RestPlugin(colony.base.system.Plugin):
     The main class for the Rest plugin.
     """
 
-    id = "pt.hive.colony.plugins.remote.rest"
+    id = "pt.hive.colony.plugins.rest"
     name = "Rest"
     description = "Rest Plugin"
     version = "1.0.0"
