@@ -39,33 +39,24 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.base.system
+
 CONSOLE_EXTENSION_NAME = "file_system"
 """ The console extension name """
 
 AUTHENTICATION_FAILED_MESSAGE = "authentication failed"
 """ The authentication failed message """
 
-class ConsoleFileSystem:
+class ConsoleFileSystem(colony.base.system.System):
     """
     The console base class.
     """
 
-    console_file_system_plugin = None
-    """ The console file system plugin """
-
     commands_map = {}
     """ The map containing the commands information """
 
-    def __init__(self, console_file_system_plugin):
-        """
-        Constructor of the class.
-
-        @type console_file_system_plugin: ConsoleFileSystemPlugin
-        @param console_file_system_plugin: The console file system plugin.
-        """
-
-        self.console_file_system_plugin = console_file_system_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):

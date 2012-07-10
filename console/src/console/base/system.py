@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import time
 
+import colony.base.system
 import colony.libs.time_util
 
 CONSOLE_EXTENSION_NAME = "base"
@@ -69,27 +70,16 @@ NAME_COLUMN_SPACING = 28
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the plugin """
 
-class ConsoleBase:
+class ConsoleBase(colony.base.system.System):
     """
     The console base class.
     """
 
-    console_base_plugin = None
-    """ The console base plugin """
-
     commands_map = {}
     """ The map containing the commands information """
 
-    def __init__(self, console_base_plugin):
-        """
-        Constructor of the class.
-
-        @type console_base_plugin: ConsoleBasePlugin
-        @param console_base_plugin: The console base plugin.
-        """
-
-        self.console_base_plugin = console_base_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):
@@ -114,7 +104,7 @@ class ConsoleBase:
         """
 
         # retrieves the console plugin
-        console_plugin = self.console_base_plugin.console_plugin
+        console_plugin = self.plugin.console_plugin
 
 #        if len(args) < 1:
 #            output_method(HELP_TEXT)
@@ -142,7 +132,7 @@ class ConsoleBase:
         """
 
         # retrieves the console plugin
-        console_plugin = self.console_base_plugin.console_plugin
+        console_plugin = self.plugin.console_plugin
 
 #        output_method(HELP_TEXT)
 #
@@ -165,10 +155,10 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the console plugin
-        console_plugin = self.console_base_plugin.console_plugin
+        console_plugin = self.plugin.console_plugin
 
         output_method(EXTENSION_TABLE_TOP_TEXT)
 
@@ -207,7 +197,7 @@ class ConsoleBase:
 
         # retrieves the plugin manager and uses it to retrieve the
         # various attributes to be displayed to the user
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
         plugin_manager_uid = plugin_manager.uid
         plugin_manager_version = plugin_manager.get_version()
         plugin_manager_release = plugin_manager.get_release()
@@ -263,7 +253,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the plugin id
         plugin_id = arguments_map.get("plugin_id", None)
@@ -287,7 +277,7 @@ class ConsoleBase:
             plugin_instances = plugin_manager.plugin_instances
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
@@ -323,7 +313,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -351,7 +341,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         for plugin in plugin_manager.plugin_instances:
             self.print_plugin_info(plugin, output_method)
@@ -372,7 +362,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -401,7 +391,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -430,7 +420,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -459,7 +449,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -488,7 +478,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # iterates over all the plugin identifies existent in the
         # plugin instances map and the loads the associated plugin
@@ -513,7 +503,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # iterates over all the plugin identifies existent in the
         # plugin instances map and the loads the associated plugin
@@ -578,7 +568,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # reloads the plugins manager system
         # (exits the process and then launches it again)
@@ -600,7 +590,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # unloads the plugins manager system
         # (exits the process)
@@ -660,7 +650,7 @@ class ConsoleBase:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # unsets the plugin id and the valid flag
         plugin_id = None
@@ -764,7 +754,7 @@ class ConsoleBase:
 
     def get_plugin_id_list(self, argument, console_context):
         # retrieves the plugin manager
-        plugin_manager = self.console_base_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the plugin id list
         plugin_id_list = plugin_manager.plugin_instances_map.keys()

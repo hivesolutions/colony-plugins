@@ -42,6 +42,7 @@ import re
 import sys
 import types
 
+import colony.base.system
 import colony.libs.map_util
 import colony.libs.observer_util
 import colony.libs.protection_util
@@ -104,38 +105,29 @@ SEQUENCE_TYPES = (
 )
 """ The sequence types """
 
-class Console:
+class Console(colony.base.system.System):
     """
     The console class.
     """
-
-    console_plugin = None
-    """ The console plugin """
 
     console_authentication = None
     """ The console authentication """
 
     commands_map = {}
-    """ The map with the command association with the command information """
+    """ The map with the command association with
+    the command information """
 
     console_configuration = {}
-    """ The console configuation configuration """
+    """ The console configuration """
 
-    def __init__(self, console_plugin):
-        """
-        Constructor of the class.
-
-        @type console_plugin: ConsolePlugin
-        @param console_plugin: The console console plugin.
-        """
-
-        self.console_plugin = console_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
 
         self.commands_map = {}
         self.console_configuration = {}
 
         # creates the console authentication
-        self.console_authentication = authentication.ConsoleAuthentication(console_plugin)
+        self.console_authentication = authentication.ConsoleAuthentication(plugin)
 
     def create_console_context(self):
         """
@@ -225,7 +217,7 @@ class Console:
             output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
 
             # logs the stack trace value
-            self.console_plugin.log_stack_trace()
+            self.plugin.log_stack_trace()
 
             # returns false (invalid)
             return False
@@ -745,7 +737,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
             self.authentication_information = authentication_result
         except BaseException, exception:
             # prints a debug message
-            self.console.console_plugin.debug("Problem authenticating user: %s" % unicode(exception))
+            self.console.plugin.debug("Problem authenticating user: %s" % unicode(exception))
 
             # invalidates the user and authentication information as
             # the authentication failed

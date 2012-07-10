@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+import colony.base.system
 import colony.libs.map_util
 
 import exceptions
@@ -83,13 +84,10 @@ TEST_VALUE = "test"
 ANONYMOUS_VALUE = "anonymous"
 """ The anonymous value """
 
-class ConsoleInterface:
+class ConsoleInterface(colony.base.system.System):
     """
     The console interface class.
     """
-
-    console_interface_plugin = None
-    """ The console interface plugin """
 
     console_inteface_configuration = {}
     """ The console interface configuration """
@@ -102,16 +100,8 @@ class ConsoleInterface:
     """ The continue flag, used to control the
     shutdown of the plugin """
 
-    def __init__(self, console_interface_plugin):
-        """
-        Constructor of the class.
-
-        @type console_interface_plugin: ConsoleInterfacePlugin
-        @param console_interface_plugin: The console interface plugin.
-        """
-
-        self.console_interface_plugin = console_interface_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.console_interface_configuration = {}
         self.continue_flag = True
 
@@ -123,10 +113,10 @@ class ConsoleInterface:
         """
 
         # retrieves the console plugin
-        console_plugin = self.console_interface_plugin.console_plugin
+        console_plugin = self.plugin.console_plugin
 
         # notifies the ready semaphore
-        self.console_interface_plugin.release_ready_semaphore()
+        self.plugin.release_ready_semaphore()
 
         # retrieves the active configuration value (checks if
         # the console interface should start)
@@ -143,7 +133,7 @@ class ConsoleInterface:
 
         # creates a new console interface system and uses it to
         # create a new console context to be used
-        self.console_interface = console_interface_class(self.console_interface_plugin, self)
+        self.console_interface = console_interface_class(self.plugin, self)
         console_context = console_plugin.create_console_context()
 
         try:
@@ -161,7 +151,7 @@ class ConsoleInterface:
             console_interface_method = self.console_interface.get_line
         except BaseException, exception:
             # prints a warning message
-            self.console_interface_plugin.warning("Problem starting console interface: %s" % unicode(exception))
+            self.plugin.warning("Problem starting console interface: %s" % unicode(exception))
 
             # sets the read line method as the console interface
             # method as a method for fallback
@@ -198,7 +188,7 @@ class ConsoleInterface:
         self.continue_flag = False
 
         # notifies the ready semaphore
-        self.console_interface_plugin.release_ready_semaphore()
+        self.plugin.release_ready_semaphore()
 
     def set_configuration_property(self, configuration_property):
         # retrieves the configuration
