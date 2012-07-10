@@ -41,6 +41,7 @@ import time
 import select
 import threading
 
+import colony.base.system
 import colony.libs.map_util
 
 import exceptions
@@ -81,13 +82,10 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 DEFAULT_TYPE = CONNECTION_TYPE_VALUE
 """ The default type client """
 
-class ClientUtils:
+class ClientUtils(colony.base.system.System):
     """
     The client class.
     """
-
-    client_utils_plugin = None
-    """ The client plugin """
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
@@ -95,16 +93,8 @@ class ClientUtils:
     socket_upgrader_plugins_map = {}
     """ The socket upgrader plugins map """
 
-    def __init__(self, client_utils_plugin):
-        """
-        Constructor of the class.
-
-        @type client_utils_plugin: ClientUtilsPlugin
-        @param client_utils_plugin: The client plugin.
-        """
-
-        self.client_utils_plugin = client_utils_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}
 
@@ -118,7 +108,7 @@ class ClientUtils:
         @return: The generated client.
         """
 
-        return AbstractClient(self, self.client_utils_plugin, parameters)
+        return AbstractClient(self, self.plugin, parameters)
 
     def socket_provider_load(self, socket_provider_plugin):
         """
