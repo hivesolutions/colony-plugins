@@ -37,29 +37,18 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import pymongo
 import gridfs
+import pymongo
+
+import colony.base.system
 
 ENGINE_NAME = "gridfs"
 """ The engine name """
 
-class FileManagerGridfsEngine:
+class FileManagerGridfsEngine(colony.base.system.System):
     """
     The file manager gridfs class.
     """
-
-    file_manager_gridfs_plugin = None
-    """ The file manager gridfs plugin """
-
-    def __init__(self, file_manager_gridfs_plugin):
-        """
-        Constructor of the class
-
-        @type file_manager_gridfs_plugin: FileManagerGridfsEnginePlugin
-        @param file_manager_gridfs_plugin: The file manager  gridfs plugin.
-        """
-
-        self.file_manager_gridfs_plugin = file_manager_gridfs_plugin
 
     def get_engine_name(self):
         """

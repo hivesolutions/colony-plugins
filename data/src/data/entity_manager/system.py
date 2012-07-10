@@ -47,6 +47,7 @@ import mysql_system
 import pgsql_system
 import sqlite_system
 
+import colony.base.system
 import colony.libs.path_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
@@ -128,13 +129,10 @@ SQL_TYPES_MAP = {
 """ The map containing the association of the entity types with
 the corresponding sql types """
 
-class DataEntityManager:
+class DataEntityManager(colony.base.system.System):
     """
     The data entity manager class.
     """
-
-    entity_manager_plugin = None
-    """ The entity manager plugin """
 
     entity_manager_engine_plugins_map = {}
     """ The map of entity manager engine plugins """
@@ -142,16 +140,9 @@ class DataEntityManager:
     loaded_entity_manager_map = {}
     """ The map associating the id with the (loaded) entity manager """
 
-    def __init__(self, entity_manager_plugin):
-        """
-        Constructor of the class.
-
-        @type entity_manager_plugin: EntityManagerPlugin
-        @param entity_manager_plugin: The entity manager plugin.
-        """
-
-        self.entity_manager_plugin = entity_manager_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
+        
         self.entity_manager_engine_plugins_map = {
             "sqlite" : sqlite_system.SqliteSystem(),
             "mysql" : mysql_system.MysqlSystem(),
@@ -214,7 +205,7 @@ class DataEntityManager:
         # entity manager map (no need to load the entity manager)
         if id in self.loaded_entity_manager_map:
             # prints a debug message
-            self.entity_manager_plugin.debug("Re-loading existent entity manager with id: %s" % id)
+            self.plugin.debug("Re-loading existent entity manager with id: %s" % id)
 
             # retrieves the entity manager from the loaded entity
             # manager map and extends the it with the current entities
@@ -226,7 +217,7 @@ class DataEntityManager:
             return entity_manager
 
         # prints a debug message
-        self.entity_manager_plugin.debug("Loading new entity manager with engine: %s" % engine_name)
+        self.plugin.debug("Loading new entity manager with engine: %s" % engine_name)
 
         # retrieves the entity mager engine plugin
         entity_manager_engine_plugin = self.entity_manager_engine_plugins_map[engine_name]
@@ -235,7 +226,7 @@ class DataEntityManager:
         # plugin, (entity manager) id and the map containing the initial entities to set the
         # context for the entity manager, this action does not trigger any loading of entities
         # of any major internal structure change
-        entity_manager = EntityManager(self.entity_manager_plugin, entity_manager_engine_plugin, id, entities_map, options)
+        entity_manager = EntityManager(self.plugin, entity_manager_engine_plugin, id, entities_map, options)
 
         # in case the id of the entity manager is defined
         # (need to set the entity manager in the map)

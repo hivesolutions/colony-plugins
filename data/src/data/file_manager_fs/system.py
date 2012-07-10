@@ -39,29 +39,22 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.base.system
+
 ENGINE_NAME = "fs"
 """ The engine name """
 
 BUFFER_SIZE = 4096
 """ The size of the buffer for writing """
 
-class FileManagerFs:
+class FileManagerFs(colony.base.system.System):
     """
     The file manager fs class.
     """
 
-    file_manager_fs_plugin = None
-    """ The file manager fs plugin """
-
-    def __init__(self, file_manager_fs_plugin):
-        """
-        Constructor of the class
-
-        @type file_manager_fs_plugin: FileManagerFsPlugin
-        @param file_manager_fs_plugin: The file manager  fs plugin.
-        """
-
-        self.file_manager_fs_plugin = file_manager_fs_plugin
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
+        self.plugin = plugin
 
     def get_engine_name(self):
         """
@@ -87,11 +80,11 @@ class FileManagerFs:
 
     def create_connection(self, connection_parameters):
         # retrieves the plugin manager
-        plugin_manager = self.file_manager_fs_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the connection parameters
         context_name = connection_parameters.get("context_name", "default")
-        base_path = connection_parameters.get("base_path", "%configuration:" + self.file_manager_fs_plugin.id + "%")
+        base_path = connection_parameters.get("base_path", "%configuration:" + self.plugin.id + "%")
 
         # creates the (full) base path by appending the context name and
         # resolves it (for configuration directories) using the plugin manager

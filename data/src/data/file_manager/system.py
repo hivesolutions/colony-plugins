@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-class DataFileManager:
+import colony.base.system
+
+class DataFileManager(colony.base.system.System):
     """
     The data file manager class.
     """
@@ -50,16 +52,8 @@ class DataFileManager:
     file_manager_engine_plugins_map = {}
     """ The map of file manager engine plugins """
 
-    def __init__(self, file_manager_plugin):
-        """
-        Constructor of the class.
-
-        @type file_manager_plugin: FileManagerPlugin
-        @param file_manager_plugin: The file manager plugin.
-        """
-
-        self.file_manager_plugin = file_manager_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)
         self.file_manager_engine_plugins_map = {}
 
     def load_file_manager(self, engine_name, properties = {}):
@@ -79,7 +73,7 @@ class DataFileManager:
         """
 
         # prints a debug message
-        self.file_manager_plugin.debug("Loading new file manager with engine: %s" % engine_name)
+        self.plugin.debug("Loading new file manager with engine: %s" % engine_name)
 
         # retrieves the file mager engine plugin
         file_manager_engine_plugin = self.file_manager_engine_plugins_map[engine_name]
