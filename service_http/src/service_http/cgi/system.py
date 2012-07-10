@@ -283,7 +283,14 @@ class ServiceHttpCgi(colony.base.system.System):
                     environment_map[environment_key] = str(environment_value)
 
             # creates the process executing the command
-            process = subprocess.Popen(complete_command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, env = environment_map)
+            process = subprocess.Popen(
+                complete_command,
+                stdin = subprocess.PIPE,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                shell = True,
+                env = environment_map
+            )
 
             # retrieves the standard output data and the standard error data
             stdout_data, stderr_data = process.communicate(request_contents)

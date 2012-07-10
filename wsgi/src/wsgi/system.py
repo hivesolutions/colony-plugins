@@ -42,7 +42,7 @@ import datetime
 
 import colony.base.system
 
-POWERED_BY_STRING = "colony/%s"
+POWERED_BY_STRING = "colony/%s (%s)"
 """ The string to be used in the powered by http
 header to be sent to the end used as a sign of
 the underlying infra-structure of wsgi """
@@ -76,6 +76,7 @@ class Wsgi(colony.base.system.System):
         # executing plugin manager, this value is going to be
         # used in the formating of the powered by string
         manager_version = plugin_manager.get_version()
+        manager_environment = plugin_manager.get_environment()
 
         # sets the default status code value as success,
         # all the request are considered to be successful
@@ -114,7 +115,7 @@ class Wsgi(colony.base.system.System):
         response_headers = [
             ("Content-Type", content_type),
             ("Content-Length", str(content_length)),
-            ("X-Powered-By", POWERED_BY_STRING % manager_version)
+            ("X-Powered-By", POWERED_BY_STRING % (manager_version, manager_environment))
         ]
         start_response(status, response_headers)
 
