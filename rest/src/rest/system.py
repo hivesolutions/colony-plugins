@@ -43,6 +43,7 @@ import heapq
 import datetime
 import threading
 
+import colony.base.system
 import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
@@ -146,13 +147,10 @@ DEFAULT_TOUCH_SECURE_DELTA = 360
 factor in the timestamp used in the touching of the
 (modified) date """
 
-class Rest:
+class Rest(colony.base.system.System):
     """
     The rest (manager) class.
     """
-
-    rest_plugin = None
-    """ The rest plugin """
 
     matching_regex_list = []
     """ The list of matching regex to be used in route matching """
@@ -184,16 +182,8 @@ class Rest:
     rest_session_lock = None
     """ The lock that controls the access to the critical sections in session information """
 
-    def __init__(self, rest_plugin):
-        """
-        Constructor of the class.
-
-        @type rest_plugin: RestPlugin
-        @param rest_plugin: The rest plugin.
-        """
-
-        self.rest_plugin = rest_plugin
-
+    def __init__(self, plugin):
+        colony.base.system.System.__init__(self, plugin)                
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
@@ -243,7 +233,7 @@ class Rest:
         """
 
         # retrieves the rest encoder plugins
-        rest_encoder_plugins = self.rest_plugin.rest_encoder_plugins
+        rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
         # retrieves the request filename
         request_filename = request.uri
@@ -309,7 +299,7 @@ class Rest:
             rest_request.update_session()
         except:
             # logs a debug message
-            self.rest_plugin.debug("Session is invalid no session loaded or updated")
+            self.plugin.debug("Session is invalid no session loaded or updated")
 
         # "touches" the rest request updating it's
         # internal timing structures
@@ -446,7 +436,7 @@ class Rest:
         """
 
         # retrieves the plugin manager
-        manager = self.rest_plugin.manager
+        manager = self.plugin.manager
 
         # in case the current container is apache
         if manager.container == APACHE_CONTAINER:
@@ -545,7 +535,7 @@ class Rest:
             self.service_methods_map = {}
 
             # retrieves the updated rpc service plugins
-            updated_rpc_service_plugins = self.rest_plugin.rpc_service_plugins
+            updated_rpc_service_plugins = self.plugin.rpc_service_plugins
 
         for rpc_service_plugin in updated_rpc_service_plugins:
             # retrieves all the method names for the current rpc service
@@ -662,7 +652,7 @@ class Rest:
         """
 
         # retrieves the rest encoder plugins
-        rest_encoder_plugins = self.rest_plugin.rest_encoder_plugins
+        rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
         # in case the encoder name is defined
         if encoder_name:
@@ -998,7 +988,7 @@ class RestRequest:
         # in case no session id is defined
         if not session_id:
             # retrieves the random plugin
-            random_plugin = self.rest.rest_plugin.random_plugin
+            random_plugin = self.rest.plugin.random_plugin
 
             # creates a new random session id
             session_id = random_plugin.generate_random_md5_string()
@@ -1128,7 +1118,7 @@ class RestRequest:
         """
 
         # retrieves the rest plugin
-        rest_plugin = self.rest.rest_plugin
+        rest_plugin = self.rest.plugin
 
         # retrieves the resources manager plugin
         resources_manager_plugin = rest_plugin.resources_manager_plugin
@@ -1369,7 +1359,7 @@ class RestRequest:
 
         # retrieves the rest plugin and then
         # uses it to retrieve the plugin manager
-        rest_plugin = self.rest.rest_plugin
+        rest_plugin = self.rest.plugin
         plugin_manager = rest_plugin.manager
 
         # retrieves the plugin manager for the current context
