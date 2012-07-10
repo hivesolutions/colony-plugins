@@ -103,17 +103,17 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
 
         return self.api_openid.create_remote_server(api_attributes)
 
-    def create_remote_client(self, api_attributes):
+    def create_client(self, api_attributes):
         """
-        Creates a remote client, with the given api attributes.
+        Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @rtype: OpenidClient
-        @return: The created remote client.
+        @return: The created client.
         """
 
-        return self.api_openid.create_remote_client(api_attributes)
+        return self.api_openid.create_client(api_attributes)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):

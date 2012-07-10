@@ -84,14 +84,14 @@ class ApiEasypay(colony.base.system.System):
     The api easypay class.
     """
 
-    def create_remote_client(self, api_attributes):
+    def create_client(self, api_attributes):
         """
-        Creates a remote client, with the given api attributes.
+        Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @rtype: EasypayClient
-        @return: The created remote client.
+        @return: The created client.
         """
 
         # retrieves the client http plugin

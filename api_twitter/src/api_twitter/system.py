@@ -108,16 +108,16 @@ class ApiTwitter(colony.base.system.System):
     The api twitter class.
     """
 
-    def create_remote_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client = True):
         """
-        Creates a remote client, with the given api attributes.
+        Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @type open_client: bool
         @param open_client: If the client should be opened.
         @rtype: TwitterClient
-        @return: The created remote client.
+        @return: The created client.
         """
 
         # retrieves the client http plugin

@@ -77,17 +77,17 @@ class ApiCryptonPlugin(colony.base.system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
-    def create_remote_client(self, api_attributes):
+    def create_client(self, api_attributes):
         """
-        Creates a remote client, with the given api attributes.
+        Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @rtype: CryptonClient
-        @return: The created remote client.
+        @return: The created client.
         """
 
-        return self.api_crypton.create_remote_client(api_attributes)
+        return self.api_crypton.create_client(api_attributes)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):

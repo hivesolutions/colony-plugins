@@ -220,16 +220,16 @@ class ApiOpenid(colony.base.system.System):
         # returns the openid server
         return openid_server
 
-    def create_remote_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client = True):
         """
-        Creates a remote client, with the given api attributes.
+        Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @type open_client: bool
         @param open_client: If the client should be opened.
         @rtype: OpenidClient
-        @return: The created remote client.
+        @return: The created client.
         """
 
         # retrieves the client http plugin
@@ -1473,7 +1473,7 @@ class OpenidClient:
         # in case no yadis remote client exists
         if not self.yadis_remote_client:
             # creates the yadis remote client
-            self.yadis_remote_client = self.api_yadis_plugin.create_remote_client({})
+            self.yadis_remote_client = self.api_yadis_plugin.create_client({})
 
         # returns the yadis remote client
         return self.yadis_remote_client
