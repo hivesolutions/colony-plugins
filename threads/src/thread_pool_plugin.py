@@ -73,8 +73,6 @@ class ThreadPoolPlugin(colony.base.system.Plugin):
 
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
-
-        # unloads the thread pool
         self.thread_pool.unload()
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
