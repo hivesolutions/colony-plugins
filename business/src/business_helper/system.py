@@ -41,6 +41,8 @@ import os
 import imp
 import sys
 
+import colony.base.system
+
 BASE_ENTITY_MODULE_VALUE = "base_entity"
 """ The base entity module value """
 
@@ -53,29 +55,16 @@ LOCALS_REFERENCE_VALUE = "_locals"
 DEFAULT_MODULE_NAME = "helper_module"
 """ The default module name """
 
-class BusinessHelper:
+class BusinessHelper(colony.base.system.System):
     """
     The business helper class.
     """
-
-    business_helper_plugin = None
-    """ The business helper plugin """
 
     namespace_entity_classes_map = {}
     """ The map associating the namespace with the entity classes """
 
     namespace_business_logic_classes_map = {}
     """ The map associating the namespace with the business logic classes """
-
-    def __init__(self, business_helper_plugin):
-        """
-        Constructor of the class.
-
-        @type business_helper_plugin: BusinessHelperPlugin
-        @param business_helper_plugin: The business helper plugin.
-        """
-
-        self.business_helper_plugin = business_helper_plugin
 
     def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = DEFAULT_MODULE_NAME, extra_symbols_map = {}, extra_globals_map = {}):
         """
@@ -187,7 +176,7 @@ class BusinessHelper:
     def get_entity_class(self):
         # retrieves the entity manager plugin to use to
         # retrieve the (base) entity class
-        entity_manager_plugin = self.business_helper_plugin.entity_manager_plugin
+        entity_manager_plugin = self.plugin.entity_manager_plugin
         entity_class = entity_manager_plugin.get_entity_class()
 
         # returns the retrieved (base) entity class,
