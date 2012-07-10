@@ -1290,8 +1290,8 @@ class MvcUtils(colony.base.system.System):
         return controller_reference_name, controller_base_name
 
     def _generate_entity_manager_path(self, plugin, entity_manager_arguments, parameters):
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.plugin.resource_manager_plugin
+        # retrieves the resources manager plugin
+        resources_manager_plugin = self.plugin.resources_manager_plugin
 
         # retrieves the expected parameter values
         default_database_prefix = parameters.get("default_database_prefix", DEFAULT_DATABASE_PREFIX)
@@ -1299,7 +1299,7 @@ class MvcUtils(colony.base.system.System):
         configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
-        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
+        system_database_filename_resource = resources_manager_plugin.get_resource("system.database.file_name")
 
         # in case the system database filename resource
         # is defined

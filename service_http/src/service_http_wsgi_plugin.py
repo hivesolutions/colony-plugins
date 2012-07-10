@@ -59,7 +59,7 @@ class ServiceHttpWsgiPlugin(colony.base.system.Plugin):
         "http_service_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x")
     ]
     main_modules = [
         "service_http.wsgi.system"
@@ -68,8 +68,8 @@ class ServiceHttpWsgiPlugin(colony.base.system.Plugin):
     service_http_wsgi = None
     """ The service http wsgi (handler) """
 
-    resource_manager_plugin = None
-    """ The resource manager plugin """
+    resources_manager_plugin = None
+    """ The resources manager plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -100,6 +100,6 @@ class ServiceHttpWsgiPlugin(colony.base.system.Plugin):
 
         return self.service_http_wsgi.handle_request(request)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
+    def set_resources_manager_plugin(self, resources_manager_plugin):
+        self.resources_manager_plugin = resources_manager_plugin

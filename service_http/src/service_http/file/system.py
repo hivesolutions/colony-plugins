@@ -149,8 +149,8 @@ class ServiceHttpFile(colony.base.system.System):
         # retrieves the mime plugin
         mime_plugin = self.plugin.mime_plugin
 
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.plugin.resource_manager_plugin
+        # retrieves the resources manager plugin
+        resources_manager_plugin = self.plugin.resources_manager_plugin
 
         # retrieves the default path
         default_path = self.handler_configuration.get("default_path", "/")
@@ -177,9 +177,9 @@ class ServiceHttpFile(colony.base.system.System):
         handler_path = request.get_handler_path()
 
         # retrieves the real base directory, resolving it using
-        # both the resource manager and the plugin manager (this is quite
+        # both the resources manager and the plugin manager (this is quite
         # an expensive operation)
-        real_base_directory = resource_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = resources_manager_plugin.get_real_string_value(base_directory)
         real_base_directory = plugin_manager.resolve_file_path(real_base_directory)
 
         # in case the real base directory was not resolved

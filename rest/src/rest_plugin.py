@@ -64,19 +64,19 @@ class RestPlugin(colony.base.system.Plugin):
         "rpc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
     ]
     main_modules = [
-        "remote_rest.exceptions",
-        "remote_rest.system"
+        "rest.exceptions",
+        "rest.system"
     ]
 
     rest = None
     """ The rest (manager) object reference """
 
-    resource_manager_plugin = None
-    """ The resource manager plugin """
+    resources_manager_plugin = None
+    """ The resources manager plugin """
 
     rest_encoder_plugins = []
     """ The rest encoder plugins """
@@ -89,8 +89,8 @@ class RestPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import remote_rest.system
-        self.rest = remote_rest.system.Rest(self)
+        import rest.system
+        self.rest = rest.system.Rest(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
@@ -178,9 +178,9 @@ class RestPlugin(colony.base.system.Plugin):
         self.rpc_service_plugins.remove(plugin)
         self.rest.update_service_methods()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
+    def set_resources_manager_plugin(self, resources_manager_plugin):
+        self.resources_manager_plugin = resources_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
     def set_random_plugin(self, random_plugin):

@@ -26,7 +26,7 @@
                 "id" : "pt.hive.colony.plugins.web.mvc.search",
                 "version" : "1.x.x"
             }, {
-                "id" : "pt.hive.colony.plugins.resources.resource_manager",
+                "id" : "pt.hive.colony.plugins.resources.manager",
                 "version" : "1.x.x"
             }, {
                 "id" : "pt.hive.colony.plugins.misc.json",

@@ -62,7 +62,7 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file_manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
@@ -89,8 +89,8 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
     business_helper_plugin = None
     """ The business helper plugin """
 
-    resource_manager_plugin = None
-    """ The resource manager plugin """
+    resources_manager_plugin = None
+    """ The resources manager plugin """
 
     json_plugin = None
     """ The json plugin """
@@ -191,9 +191,9 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
     def set_business_helper_plugin(self, business_helper_plugin):
         self.business_helper_plugin = business_helper_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
+    def set_resources_manager_plugin(self, resources_manager_plugin):
+        self.resources_manager_plugin = resources_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

@@ -63,7 +63,7 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x")
     ]
     main_modules = [
         "service_http.file.exceptions",
@@ -79,8 +79,8 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     mime_plugin = None
     """ The mime plugin """
 
-    resource_manager_plugin = None
-    """ The resource manager plugin """
+    resources_manager_plugin = None
+    """ The resources manager plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -141,9 +141,9 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     def set_mime_plugin(self, mime_plugin):
         self.mime_plugin = mime_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
+    def set_resources_manager_plugin(self, resources_manager_plugin):
+        self.resources_manager_plugin = resources_manager_plugin
 
     @colony.base.decorators.set_configuration_property_method("handler_configuration")
     def handler_configuration_set_configuration_property(self, property_name, property):

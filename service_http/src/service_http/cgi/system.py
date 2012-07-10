@@ -224,9 +224,9 @@ class ServiceHttpCgi(colony.base.system.System):
         base_directory = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
 
         # retrieves the real base directory, resolving it using
-        # both the resource manager and the plugin manager (this is quite
+        # both the resources manager and the plugin manager (this is quite
         # an expensive operation)
-        real_base_directory = self.plugin.resource_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = self.plugin.resources_manager_plugin.get_real_string_value(base_directory)
         real_base_directory = self.plugin.manager.resolve_file_path(real_base_directory)
 
         # constructs the complete path
