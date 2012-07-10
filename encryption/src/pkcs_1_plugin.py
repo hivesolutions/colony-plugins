@@ -83,9 +83,6 @@ class Pkcs1Plugin(colony.base.system.Plugin):
     def create_structure(self, parameters):
         return self.pkcs_1.create_structure(parameters)
 
-    def get_format_ber_plugin(self):
-        return self.format_ber_plugin
-
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.ber")
     def set_format_ber_plugin(self, format_ber_plugin):
         self.format_ber_plugin = format_ber_plugin

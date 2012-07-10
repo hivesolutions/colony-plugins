@@ -39,36 +39,25 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import base64
 
+import colony.base.system
+
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
 
 DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits """
 
-class Ssl:
+class Ssl(colony.base.system.System):
     """
     The ssl class.
     """
 
-    ssl_plugin = None
-    """ The ssl plugin """
-
-    def __init__(self, ssl_plugin):
-        """
-        Constructor of the class.
-
-        @type ras_plugin: SslPlugin
-        @param ras_plugin: The ssl plugin.
-        """
-
-        self.ssl_plugin = ssl_plugin
-
     def create_structure(self, parameters):
         # retrieves the rsa plugin
-        rsa_plugin = self.ssl_plugin.rsa_plugin
+        rsa_plugin = self.plugin.rsa_plugin
 
         # retrieves the pkcs 1 plugin
-        pkcs_1_plugin = self.ssl_plugin.pkcs_1_plugin
+        pkcs_1_plugin = self.plugin.pkcs_1_plugin
 
         # creates the ssl structure
         ssl_structure = SslStructure(rsa_plugin, pkcs_1_plugin)

@@ -37,23 +37,12 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DiffieHellman:
+import colony.base.system
+
+class DiffieHellman(colony.base.system.System):
     """
     The diffie hellman class.
     """
-
-    diffie_hellman_plugin = None
-    """ The diffie hellman plugin """
-
-    def __init__(self, diffie_hellman_plugin):
-        """
-        Constructor of the class.
-
-        @type diffie_hellman_plugin: DiffieHellmanPlugin
-        @param diffie_hellman_plugin: The diffie hellman plugin.
-        """
-
-        self.diffie_hellman_plugin = diffie_hellman_plugin
 
     def create_structure(self, parameters):
         # retrieves the prime value (if available)

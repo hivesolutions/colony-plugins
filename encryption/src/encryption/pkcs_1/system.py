@@ -42,6 +42,7 @@ import math
 import base64
 import hashlib
 
+import colony.base.system
 import colony.libs.math_util
 import colony.libs.string_buffer_util
 
@@ -151,27 +152,14 @@ TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
 }
 """ The map associating the tuples with the hash object identifiers """
 
-class Pkcs1:
+class Pkcs1(colony.base.system.System):
     """
     The pkcs 1 class.
     """
 
-    pkcs_1_plugin = None
-    """ The pkcs 1 plugin """
-
-    def __init__(self, pkcs_1_plugin):
-        """
-        Constructor of the class.
-
-        @type pkcs_1_plugin: Pkcs1Plugin
-        @param pkcs_1_plugin: The pkcs 1 plugin.
-        """
-
-        self.pkcs_1_plugin = pkcs_1_plugin
-
     def create_structure(self, parameters):
         # retrieves the format ber plugin
-        format_ber_plugin = self.pkcs_1_plugin.format_ber_plugin
+        format_ber_plugin = self.plugin.format_ber_plugin
 
         # creates the pkcs 1 structure
         pkcs_1_structure = Pkcs1Structure(format_ber_plugin)

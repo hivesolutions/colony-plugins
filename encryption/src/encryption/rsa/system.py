@@ -42,27 +42,15 @@ import math
 import types
 import random
 
+import colony.base.system
 import colony.libs.math_util
 
 import exceptions
 
-class Rsa:
+class Rsa(colony.base.system.System):
     """
     The rsa class.
     """
-
-    rsa_plugin = None
-    """ The rsa plugin """
-
-    def __init__(self, rsa_plugin):
-        """
-        Constructor of the class.
-
-        @type rsa_plugin: RsaPlugin
-        @param rsa_plugin: The rsa plugin.
-        """
-
-        self.rsa_plugin = rsa_plugin
 
     def create_structure(self, parameters):
         # retrieves the keys (if available)
