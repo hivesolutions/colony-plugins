@@ -89,7 +89,7 @@ class ApiDropboxPlugin(colony.base.system.Plugin):
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
-        @rtype: dropboxClient
+        @rtype: DropboxClient
         @return: The created client.
         """
 
