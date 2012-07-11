@@ -58,6 +58,11 @@ to be retrieved from the message provider from
 each iteration, if this value is too small the
 overhead for sending may be a problem """
 
+DEFAULT_CHARSET = "utf-8"
+""" The default charset to be used by the request
+this value is defined in such a way that all the
+knows characters are able to be encoded """
+
 class Wsgi(colony.base.system.System):
     """
     The wsgi class.
@@ -124,19 +129,71 @@ class Wsgi(colony.base.system.System):
         return content
 
 class WsgiRequest:
+    """
+    Represents an http request to be handled
+    in the wsgi context, this value may be
+    used as a compatibility mock to the internal
+    http request object and as such must comply
+    with the same interface (protocol).
+    """
 
     environ = {}
-    status_code = 200
-    content_type = None
-    operation_type = None
-    uri = None
+    """ The map containing the various environment
+    variables defined in the wsgi specification as
+    the input for processing a certain request """
 
+    status_code = 200
+    """ The status code for the http request, this
+    is considered to be the valid (ok) status code
+    by default (optimistic approach) """
+
+    content_type = None
+    """ The content type as a string that defined
+    the content (response) to be returned from this
+    request """
+
+    operation_type = None
+    """ The type of operation (http method) for the
+    current request, this value should be capitalized
+    so that an uniform version is used """
+
+    uri = None
+    """ The "partial" domain name relative part of
+    the url that reference the resource """
 
     mediated = False
+    """ Flag indicating if the current response is
+    meant to be mediated (generator based) or is a
+    single content buffer is used (default) """
+
+    content_type_charset = None
+    """ The content type charset that is going to be
+    used to encode the underlying message buffer, this
+    must contain a charset that is able to encode all
+    the provided data otherwise exception will be raised
+    by the writing methods """
+
+
+
+
+    etag = None
+    """ The etag """
+    
+    expiration_timestamp = None
+    """ The expiration timestamp """
+
+    last_modified_timestamp = None
+    """ The last modified timestamp """
+
+
 
     message_buffer = []
+    """ The list containing the message buffer to
+    be returned as the contents for the response
+    associated with this request, this value is not
+    used in case the response is mediated"""
 
-    def __init__(self, environ):
+    def __init__(self, environ, content_type_charset = DEFAULT_CHARSET):
         # retrieves the "base" value from the environment
         # map so that the basic request values may be constructed
         # the value are used with default values
@@ -152,6 +209,7 @@ class WsgiRequest:
         # sets the various default request values using the "calculated"
         # wsgi based values as reference
         self.environ = environ
+        self.content_type_charset = content_type_charset
         self.operation_type = request_method
         self.uri = query_string and path_info + "?" + query_string or path_info
 
@@ -176,7 +234,8 @@ class WsgiRequest:
         # then adds the resulting message into the message
         # buffer to be flushed into the connection
         message_type = type(message)
-        if message_type == types.UnicodeType and encode: message = message.encode("utf-8")   # TODO: WARNING MUST SET THIS ENCODING
+        if message_type == types.UnicodeType and encode:
+            message = message.encode(self.content_type_charset)
         self.message_buffer.append(message)
 
     def flush(self):
