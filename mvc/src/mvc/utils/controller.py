@@ -423,7 +423,7 @@ def get_exception_map(self, exception, rest_request = None):
     }
 
     # converts the exception class name to underscore notation
-    exception_class_name_underscore = colony.libs.string_util.convert_underscore(exception_class_name)
+    exception_class_name_underscore = colony.libs.string_util.to_underscore(exception_class_name)
 
     # creates the exception class process method name
     exception_class_process_method_name = "process_map_" + exception_class_name_underscore
