@@ -140,36 +140,6 @@ class ConsoleBase(colony.base.system.System):
 #        for console_command_plugin in console_plugin.console_command_plugins:
 #            output_method(console_command_plugin.get_help())
 
-    def process_python(self, arguments, arguments_map, output_method, console_context):
-        """
-        Processes the python command, with the given
-        arguments and output method.
-
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
-        """
-
-        # retrieves the plugin manager associated with the current
-        # plugin context to be able to expose it
-        plugin_manager = self.plugin.manager
-
-        # creates the map containing the various local symbols
-        # to be exposed to the python console to be created and
-        # then creates the python console and starts running it
-        # with the interact operation, this should begin a loop
-        # that will only end at the exit call
-        locals = {
-            "plugin_manager" : plugin_manager
-        }
-        python_console = code.InteractiveConsole(locals = locals)
-        python_console.interact()
-
     def process_extensions(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the extensions command, with the given
@@ -267,6 +237,36 @@ class ConsoleBase(colony.base.system.System):
         output_method("plugins:      " + plugins_string)
         output_method("replicas:     " + replicas_string)
         output_method("instances:    " + instances_string)
+
+    def process_python(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the python command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the plugin manager associated with the current
+        # plugin context to be able to expose it
+        plugin_manager = self.plugin.manager
+
+        # creates the map containing the various local symbols
+        # to be exposed to the python console to be created and
+        # then creates the python console and starts running it
+        # with the interact operation, this should begin a loop
+        # that will only end at the exit call
+        locals = {
+            "plugin_manager" : plugin_manager
+        }
+        python_console = code.InteractiveConsole(locals = locals)
+        python_console.interact()
 
     def process_show(self, arguments, arguments_map, output_method, console_context):
         """
@@ -812,10 +812,6 @@ class ConsoleBase(colony.base.system.System):
                 "handler" : self.process_helpall,
                 "description" : "shows the help message of all the loaded console extensions"
             },
-            "python" : {
-                "handler" : self.process_python,
-                "description" : "starts the python interpreter cli with the current context",
-            },
             "extensions" : {
                 "handler" : self.process_extensions,
                 "description" : "shows the help message of all the loaded console extensions"
@@ -823,6 +819,10 @@ class ConsoleBase(colony.base.system.System):
             "status" : {
                 "handler" : self.process_status,
                 "description" : "shows the current status of the system"
+            },
+            "python" : {
+                "handler" : self.process_python,
+                "description" : "starts the python interpreter cli with the current context",
             },
             "show" : {
                 "handler" : self.process_show,
