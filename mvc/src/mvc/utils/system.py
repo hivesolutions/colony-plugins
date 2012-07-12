@@ -998,7 +998,7 @@ class MvcUtils(colony.base.system.System):
         # retrieves the base name and converts it into
         # underscore notation
         base_name = controller_class_name[:-10]
-        base_name = colony.libs.string_util.convert_underscore(base_name)
+        base_name = colony.libs.string_util.to_underscore(base_name)
 
         # converts the base name to plural
         controller_name_plural = colony.libs.string_util.pluralize(base_name)
@@ -1283,7 +1283,7 @@ class MvcUtils(colony.base.system.System):
         # converts the controller name into the underscore notation and then adds
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
-        controller_base_name = colony.libs.string_util.convert_underscore(controller_base_name)
+        controller_base_name = colony.libs.string_util.to_underscore(controller_base_name)
         controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name + "_" + CONTROLLER_VALUE or controller_base_name + "_" + CONTROLLER_VALUE
 
         # returns the reference (converted) controller name

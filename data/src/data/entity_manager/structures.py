@@ -503,7 +503,7 @@ class EntityClass(object):
         for the current model class.
         """
 
-        return SAFE_CHARACTER + colony.libs.string_util.convert_underscore(cls.__name__)
+        return SAFE_CHARACTER + colony.libs.string_util.to_underscore(cls.__name__)
 
     @classmethod
     def get_items_map(cls):
