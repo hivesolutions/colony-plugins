@@ -107,7 +107,7 @@ ENTITIES_LIST_VALUE = "entities_list"
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
-mvc_UTILS_VALUE = "mvc_utils"
+MVC_UTILS_VALUE = "mvc_utils"
 """ The mvc utils value """
 
 PYTHON_INIT_FILE = "__init__.py"
@@ -189,11 +189,9 @@ class MvcUtils(colony.base.system.System):
         # it does not already exists
         target_module = self._get_target_module(complete_module_name, globals_map)
 
-        # in case the target module already existed
-        # no need to reload it
-        if exists_target_module:
-            # returns the target module immediately
-            return target_module
+        # in case the target module already existed no need to
+        # reload it, must return the module immediately
+        if exists_target_module: return target_module
 
         # sets the target module dictionary as the target map
         target_map = target_module.__dict__
@@ -212,10 +210,8 @@ class MvcUtils(colony.base.system.System):
         # reference values
         for symbol_name, symbol in system_instance_symbols.items():
             # in case the symbol name ends with the models
-            # suffix it must be a models reference
-            if not symbol_name.endswith(MODELS_VALUE):
-                # continues the loop
-                continue
+            # suffix it must be a models reference, continues
+            if not symbol_name.endswith(MODELS_VALUE): continue
 
             # sets the symbol in the globals map
             # for latter reference
@@ -224,7 +220,8 @@ class MvcUtils(colony.base.system.System):
         # sets the mvc utils in the globals map, this is useful
         # allow later reference of the mvc utils in the created
         # module (export of symbols)
-        globals_map[mvc_UTILS_VALUE] = utils
+        globals_map[MVC_UTILS_VALUE] = utils
+        globals_map[CONTROLLERS_VALUE] = utils
 
         # sets the target map globals and locals
         # reference attributes
@@ -376,7 +373,16 @@ class MvcUtils(colony.base.system.System):
         extra_globals_map[MODELS_VALUE] = models_module
 
         # imports the base entity models module
-        base_entity_models_module = business_helper_plugin.import_class_module_extra(entity_module_name, globals(), locals(), [], directory_path, package_path, extra_symbols_map, extra_globals_map)
+        base_entity_models_module = business_helper_plugin.import_class_module_extra(
+            entity_module_name,
+            globals(),
+            locals(),
+            [],
+            directory_path,
+            package_path,
+            extra_symbols_map,
+            extra_globals_map
+        )
 
         # retrieves all the entity (and non entity) classes from the base entity models module
         # the entity class is used as reference (all entity classes must inherit from that class)
@@ -521,9 +527,7 @@ class MvcUtils(colony.base.system.System):
 
                 # in case the module extension is not
                 # a python file, ignores the file
-                if not module_extension == PYTHON_EXTENSION:
-                    # continues the loop
-                    continue
+                if not module_extension == PYTHON_EXTENSION: continue
 
                 # creates the "new" model package path from the
                 # "parent" package path
@@ -544,9 +548,7 @@ class MvcUtils(colony.base.system.System):
 
                 # in case the module extension is not
                 # a python file, ignores the file
-                if not module_extension == PYTHON_EXTENSION:
-                    # continues the loop
-                    continue
+                if not module_extension == PYTHON_EXTENSION: continue
 
                 # creates the "new" model package path from the
                 # "parent" package path
@@ -555,7 +557,14 @@ class MvcUtils(colony.base.system.System):
                 # creates the entity models (module) using system instance, the module package path
                 # and the entity manager arguments, then uses the created entity models to extend
                 # the entity models list
-                _entity_models, _models, entity_models_module = self.create_base_models(system_instance, module_package_path, entity_manager_arguments, test_directory_path, extra_models, load_entity_manager = False)
+                _entity_models, _models, entity_models_module = self.create_base_models(
+                    system_instance,
+                    module_package_path,
+                    entity_manager_arguments,
+                    test_directory_path,
+                    extra_models,
+                    load_entity_manager = False
+                )
                 entity_models.extend(_entity_models)
                 models.extend(_models)
 
@@ -570,7 +579,13 @@ class MvcUtils(colony.base.system.System):
         else:
             # creates the entity models (module) using the system instance, the package path,
             # the entity manager arguments the directory path and the extra models
-            entity_models, models, entity_models_module = self.create_base_models(system_instance, package_path, entity_manager_arguments, directory_path, extra_models)
+            entity_models, models, entity_models_module = self.create_base_models(
+                system_instance,
+                package_path,
+                entity_manager_arguments,
+                directory_path,
+                extra_models
+            )
 
         # sets the entity models and models (tuple) in the
         # package path models map for the current package path
@@ -679,9 +694,7 @@ class MvcUtils(colony.base.system.System):
 
                 # in case the module extension is not
                 # a python file, ignores the file
-                if not module_extension == PYTHON_EXTENSION:
-                    # continues the loop
-                    continue
+                if not module_extension == PYTHON_EXTENSION: continue
 
                 # creates the module package paths from the (current)
                 # package path and the module base and then adds
@@ -726,7 +739,14 @@ class MvcUtils(colony.base.system.System):
         is_first and self._flush_globals(module_package_path)
 
         # imports the controllers module with the mvc utils support
-        controllers_module = self.import_module_mvc_utils(module_name, package_name, directory_path, system_instance)
+        # this should allow the exporting of the various packages
+        # included in the utils structure (extra import)
+        controllers_module = self.import_module_mvc_utils(
+            module_name,
+            package_name,
+            directory_path,
+            system_instance
+        )
 
         # retrieves the controllers module items
         controllers_module_items = dir(controllers_module)

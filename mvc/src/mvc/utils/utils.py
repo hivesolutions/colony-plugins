@@ -454,3 +454,40 @@ def serialize_exceptions(serialization_parameters = None):
 
     # returns the created decorator
     return decorator
+
+class Controller(object):
+    """
+    The base controller class from which all the
+    controllers should inherit.
+
+    This controller contains a series of utility
+    methods that may be used to complement the
+    functionality of the proper implementation.
+    """
+
+    plugin = None
+    """ The reference to the "owning" plugin, this value
+    may be used to retrieve dependencies, allowed plugins
+    or the reference to the current context manager """
+
+    system = None
+    """ The reference to the "owning" system object, that
+    may be used to access inner functionality of the plugin
+    use this object carefully because it refers inner
+    behavior of the plugin  """
+
+    @classmethod
+    def __init__(self, plugin, system):
+        """
+        Constructor of the class.
+
+        @type plugin: Plugin
+        @param plugin: The owner plguin of the controller class
+        to be used to obtain external references.
+        @type system: System
+        @param system: The system object used to call inner
+        behavior in the current context.
+        """
+
+        self.plugin = plugin
+        self.system = system
