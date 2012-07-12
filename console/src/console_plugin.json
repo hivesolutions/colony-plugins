@@ -12,7 +12,7 @@
     "capabilities_allowed" : ["_console_command_extension",
             "console_authentication_handler"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.authentication",
+                "id" : "pt.hive.colony.plugins.authentication",
                 "version" : "1.x.x"
             }],
     "main_file" : "main_console_plugin.py",

@@ -2,7 +2,7 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython"],
-    "id" : "pt.hive.colony.plugins.main.service.http.main_authentication_handler",
+    "id" : "pt.hive.colony.plugins.main.service.http.authentication_handler",
     "name" : "Http Service Main Main Authentication Handler Plugin",
     "short_name" : "Http Service Main Main Authentication Handler",
     "description" : "The plugin that offers the http service authentication main handler",
@@ -12,21 +12,21 @@
             "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.authentication",
+                "id" : "pt.hive.colony.plugins.authentication",
                 "version" : "1.x.x"
             }],
-    "main_file" : "main_service_http_main_authentication_handler_plugin.py",
+    "main_file" : "main_service_http_authentication_handler_plugin.py",
     "resources" : [
-            "main_service_http_main_authentication_handler_plugin.py",
-            "main_service_http_main_authentication_handler/__init__.py",
-            "main_service_http_main_authentication_handler/main_authentication_handler/__init__.py",
-            "main_service_http_main_authentication_handler/main_authentication_handler/main_service_http_main_authentication_handler_exceptions.py",
-            "main_service_http_main_authentication_handler/main_authentication_handler/main_service_http_main_authentication_handler_system.py",
-            "main_service_http_main_authentication_handler/main_authentication_handler/resources/baf.xml"],
+            "main_service_http_authentication_handler_plugin.py",
+            "main_service_http_authentication_handler/__init__.py",
+            "main_service_http_authentication_handler/authentication_handler/__init__.py",
+            "main_service_http_authentication_handler/authentication_handler/main_service_http_authentication_handler_exceptions.py",
+            "main_service_http_authentication_handler/authentication_handler/main_service_http_authentication_handler_system.py",
+            "main_service_http_authentication_handler/authentication_handler/resources/baf.xml"],
     "extra_resources" : [
-            "main_service_http_main_authentication_handler_plugin.pyc",
-            "main_service_http_main_authentication_handler/__init__.pyc",
-            "main_service_http_main_authentication_handler/main_authentication_handler/__init__.pyc",
-            "main_service_http_main_authentication_handler/main_authentication_handler/main_service_http_main_authentication_handler_exceptions.pyc",
-            "main_service_http_main_authentication_handler/main_authentication_handler/main_service_http_main_authentication_handler_system.pyc"]
+            "main_service_http_authentication_handler_plugin.pyc",
+            "main_service_http_authentication_handler/__init__.pyc",
+            "main_service_http_authentication_handler/authentication_handler/__init__.pyc",
+            "main_service_http_authentication_handler/authentication_handler/main_service_http_authentication_handler_exceptions.pyc",
+            "main_service_http_authentication_handler/authentication_handler/main_service_http_authentication_handler_system.pyc"]
 }
