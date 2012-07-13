@@ -476,7 +476,6 @@ class Controller(object):
     use this object carefully because it refers inner
     behavior of the plugin  """
 
-    @classmethod
     def __init__(self, plugin, system):
         """
         Constructor of the class.

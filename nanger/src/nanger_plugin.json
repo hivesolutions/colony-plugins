@@ -8,7 +8,7 @@
     "description" : "The plugin that offers the colony web site",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc_service", "build_automation_item"],
+    "capabilities" : ["mvc_service", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.mvc.utils",

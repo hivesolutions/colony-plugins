@@ -9,7 +9,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["web.mvc", "rest_service", "build_automation_item"],
-    "capabilities_allowed" : ["web.mvc_service"],
+    "capabilities_allowed" : ["mvc_service"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.format.mime",
                 "version" : "1.x.x"

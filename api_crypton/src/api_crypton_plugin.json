@@ -2,28 +2,28 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
-    "id" : "pt.hive.colony.plugins.service.web.mvc.encryption",
+    "id" : "pt.hive.colony.plugins.service.crypton",
     "name" : "Web Mvc Encryption Service Plugin",
     "short_name" : "Web Mvc Encryption Service Main",
     "description" : "The plugin that offers the web mvc encryption service",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["service.web.mvc.encryption", "build_automation_item"],
+    "capabilities" : ["service.crypton", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.client.http",
                 "version" : "1.x.x"
             }],
-    "main_file" : "service_web_mvc_encryption_plugin.py",
+    "main_file" : "service_crypton_plugin.py",
     "resources" : [
-            "service_web_mvc_encryption_plugin.py",
-            "service_web_mvc_encryption/__init__.py",
-            "service_web_mvc_encryption/web_mvc_encryption/__init__.py",
-            "service_web_mvc_encryption/web_mvc_encryption/service_web_mvc_encryption_system.py",
-            "service_web_mvc_encryption/web_mvc_encryption/resources/baf.xml"],
+            "service_crypton_plugin.py",
+            "service_crypton/__init__.py",
+            "service_crypton/crypton/__init__.py",
+            "service_crypton/crypton/service_crypton_system.py",
+            "service_crypton/crypton/resources/baf.xml"],
     "extra_resources" : [
-            "service_web_mvc_encryption_plugin.pyc",
-            "service_web_mvc_encryption/__init__.pyc",
-            "service_web_mvc_encryption/web_mvc_encryption/__init__.pyc",
-            "service_web_mvc_encryption/web_mvc_encryption/service_web_mvc_encryption_system.pyc"]
+            "service_crypton_plugin.pyc",
+            "service_crypton/__init__.pyc",
+            "service_crypton/crypton/__init__.pyc",
+            "service_crypton/crypton/service_crypton_system.pyc"]
 }
