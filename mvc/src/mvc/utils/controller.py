@@ -2703,7 +2703,7 @@ def set_relative_resources_path(self, relative_resources_path, extra_extras_path
     # retrieves the plugin id
     plugin_id = self.plugin.id
 
-    # retrieves the hive site main plugin path
+    # retrieves the plugin path
     plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
 
     # creates the full absolute resources path from the plugin path
@@ -2738,7 +2738,7 @@ def resolve_relative_path(self, relative_path, extra_path = None):
     # retrieves the plugin id
     plugin_id = self.plugin.id
 
-    # retrieves the hive site main plugin path
+    # retrieves the plugin path
     plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
 
     # creates the full absolute path from the relative path
