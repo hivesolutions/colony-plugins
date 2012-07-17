@@ -81,7 +81,7 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
 
     random_plugin = None
     """ The random plugin """
- 
+
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
         import api_openid.system

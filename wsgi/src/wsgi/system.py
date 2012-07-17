@@ -178,7 +178,7 @@ class WsgiRequest:
 
     etag = None
     """ The etag """
-    
+
     expiration_timestamp = None
     """ The expiration timestamp """
 

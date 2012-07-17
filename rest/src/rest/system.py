@@ -183,7 +183,7 @@ class Rest(colony.base.system.System):
     """ The lock that controls the access to the critical sections in session information """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)                
+        colony.base.system.System.__init__(self, plugin)
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}

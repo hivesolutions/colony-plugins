@@ -575,7 +575,7 @@ class OpenidServer:
             self.openid_structure.signed == return_openid_structure.signed and\
             self.openid_structure.signature == return_openid_structure.signature and\
             return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
-            
+
             # raises a verification failed exception
             raise exceptions.VerificationFailed("invalid discovered information")
 
@@ -1161,7 +1161,7 @@ class OpenidClient:
             self.openid_structure.identity == return_openid_structure.identity and\
             self.openid_structure.provider_url == return_openid_structure.provider_url and\
             return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
-            
+
             # raises a verification failed exception
             raise exceptions.VerificationFailed("invalid discovered information")
 

@@ -74,7 +74,7 @@ class ServiceHttpTemplateDirectoryPlugin(colony.base.system.Plugin):
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
         import service_http.template_directory.system
-        self.service_http_template_directory = service_http.template_directory.system.ServiceHttpTemplateDirectory(self) 
+        self.service_http_template_directory = service_http.template_directory.system.ServiceHttpTemplateDirectory(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):

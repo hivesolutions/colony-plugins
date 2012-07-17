@@ -115,7 +115,7 @@ class ApiFacebook(colony.base.system.System):
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
-        
+
         self.facebook_client_map = {
             FACEBOOK_CLIENT_TYPE_REST : FacebookClient,
             FACEBOOK_CLIENT_TYPE_OAUTH : FacebookClientOauth

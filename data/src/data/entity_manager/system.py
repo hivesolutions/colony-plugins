@@ -142,7 +142,7 @@ class DataEntityManager(colony.base.system.System):
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
-        
+
         self.entity_manager_engine_plugins_map = {
             "sqlite" : sqlite_system.SqliteSystem(),
             "mysql" : mysql_system.MysqlSystem(),
