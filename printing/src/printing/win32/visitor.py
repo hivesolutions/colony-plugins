@@ -46,7 +46,7 @@ import PIL.ImageWin
 
 import colony.libs.string_buffer_util
 
-import printing_win32_exceptions
+import exceptions
 import printing.manager.ast
 
 FONT_SCALE_FACTOR = 20
@@ -646,7 +646,7 @@ class Visitor:
 
     def get_context_information(self, context_information_name):
         if not self.has_context_information(context_information_name):
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         return self.peek_context_information(context_information_name)
 
@@ -670,13 +670,13 @@ class Visitor:
 
     def pop_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         self.context_information_map[context_information_name].pop()
 
     def peek_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         return self.context_information_map[context_information_name][-1]
 
@@ -694,7 +694,7 @@ class Visitor:
         """
 
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         self.context_information_map[context_information_name][-1] = context_information_value
 
