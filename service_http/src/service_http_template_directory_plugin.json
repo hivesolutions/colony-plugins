@@ -12,7 +12,7 @@
             "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.template_engine.manager",
+                "id" : "pt.hive.colony.plugins.template_engine",
                 "version" : "1.x.x"
             }],
     "main_file" : "main_service_http_template_directory_handler_plugin.py",

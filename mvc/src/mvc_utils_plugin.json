@@ -11,7 +11,7 @@
     "capabilities" : ["web.mvc.utils", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.template_engine.manager",
+                "id" : "pt.hive.colony.plugins.template_engine",
                 "version" : "1.x.x"
             }, {
                 "id" : "pt.hive.colony.plugins.data.entity_manager.new",
