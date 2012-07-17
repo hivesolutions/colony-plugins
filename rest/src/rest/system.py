@@ -52,7 +52,7 @@ import exceptions
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
 
-HANDLER_BASE_FILENAME = "/colony_dynamic/rest/"
+HANDLER_BASE_FILENAME = "/dynamic/rest/"
 """ The handler base filename """
 
 HANDLER_EXTENSION = "py"

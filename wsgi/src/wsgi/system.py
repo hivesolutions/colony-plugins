@@ -47,7 +47,7 @@ POWERED_BY_STRING = "colony/%s (%s)"
 header to be sent to the end used as a sign of
 the underlying infra-structure of wsgi """
 
-PATH_INFO_PREFIX = "/colony_dynamic/rest"
+PATH_INFO_PREFIX = "/dynamic/rest"
 """ The prefix to be used at the start of the
 path info so that every request uri is inserted
 within this context (this way the uri is shorter) """
