@@ -177,7 +177,7 @@ class SqliteEngine:
         # layer, executes the "rollback" operation
         self._rollback()
 
-    def lock(self, entity_class, id_value = None):
+    def lock(self, entity_class, id_value = None, lock_parents = True):
         table_name = entity_class.get_name()
         self.lock_table(table_name, {"field_name" : entity_class.get_id()})
 

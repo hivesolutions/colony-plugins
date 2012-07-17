@@ -162,7 +162,7 @@ class PgsqlEngine:
         connection._transaction_level -= 1
         if connection._transaction_level == 0: self._rollback()
 
-    def lock(self, entity_class, id_value = None):
+    def lock(self, entity_class, id_value = None, lock_parents = True):
         # retrieves the table name and id associated
         # with the entity class to be locked, these
         # values are going to be used to set the appropriate
