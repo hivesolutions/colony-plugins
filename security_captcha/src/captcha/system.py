@@ -95,10 +95,10 @@ class Captcha(colony.base.system.System):
         # tries to retrieve the number of letters
         number_letters = properties.get(NUMBER_LETTERS_VALUE, DEFAULT_NUMBER_LETTERS)
 
-        # retrieves the captcha plugin path
+        # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
-        # creates the resources path from the "base" captcha plugin path
+        # creates the resources path from the "base" plugin path
         resources_path = plugin_path + "/" + RESOURCES_PATH
 
         # retrieves the font for the current resources path

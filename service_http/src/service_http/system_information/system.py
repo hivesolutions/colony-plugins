@@ -96,7 +96,7 @@ class ServiceHttpSystemInformation(colony.base.system.System):
         # retrieves the template engine plugin
         template_engine_plugin = self.plugin.template_engine_plugin
 
-        # retrieves the service http system information handler plugin path
+        # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path

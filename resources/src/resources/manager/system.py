@@ -901,7 +901,7 @@ class ResourcesManager(colony.base.system.System):
         # retrieves the resources manager plugin id
         plugin_id = self.plugin.id
 
-        # retrieves the base plugin path
+        # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
 
         # constructs the base resources path

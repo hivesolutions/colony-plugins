@@ -86,7 +86,7 @@ class ServiceHttpTemplateDirectory(colony.base.system.System):
         # retrieves the template engine plugin
         template_engine_plugin = self.plugin.template_engine_plugin
 
-        # retrieves the service http template directory handler plugin path
+        # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path
