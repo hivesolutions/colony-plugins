@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Pecway Payment Gateway
-# Copyright (C) 2010 Hive Solutions Lda.
+# Copyright (C) 2010-2012 Hive Solutions Lda.
 #
 # This file is part of Pecway Payment Gateway.
 #
