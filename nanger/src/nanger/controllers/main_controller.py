@@ -39,11 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.import_util
 
-AVAILABLE_LOCALES = (
-    "en_us",
-)
-""" The available locales """
-
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
 controllers = colony.libs.import_util.__import__("controllers")
 
@@ -62,38 +57,11 @@ class MainController(controllers.Controller):
         @param parameters: The handler parameters.
         """
 
-        # retrieves the current locale
-        locale = self.get_locale(rest_request, AVAILABLE_LOCALES)
-
         # processes the contents of the template file assigning the
         # appropriate values to it
         template_file = self.retrieve_template_file(
             "general.html.tpl",
-            partial_page = "general/index.html.tpl",
-            locale = locale
-        )
-        template_file.assign("title", "Colony Framework")
-        self.process_set_contents(rest_request, template_file)
-
-    def handle_landing(self, rest_request, parameters = {}):
-        """
-        Handles the given landing rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The landing rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
-        # retrieves the current locale
-        locale = self.get_locale(rest_request, AVAILABLE_LOCALES)
-
-        # processes the contents of the template file assigning the
-        # appropriate values to it
-        template_file = self.retrieve_template_file(
-            "general.html.tpl",
-            partial_page = "general/landing.html.tpl",
-            locale = locale
+            partial_page = "general/index.html.tpl"
         )
         template_file.assign("title", "Colony Framework")
         self.process_set_contents(rest_request, template_file)

@@ -78,7 +78,7 @@ class Nanger(colony.base.system.System):
         """
 
         return (
-            (r"^nanger/?$", self.main_controller.handle_landing, "get"),
+            (r"^nanger/?$", self.main_controller.handle_index, "get"),
             (r"^nanger/index$", self.main_controller.handle_index, "get")
         )
 
