@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.plugin_system
+import colony.base.system
 import colony.base.decorators
 
-class CryptonPlugin(colony.base.plugin_system.Plugin):
+class CryptonPlugin(colony.base.system.Plugin):
     """
     The main class for the Crypton plugin.
     """
@@ -50,18 +50,18 @@ class CryptonPlugin(colony.base.plugin_system.Plugin):
     description = "The plugin that offers the crypton base infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    loading_type = colony.base.system.EAGER_LOADING_TYPE
     platforms = [
-        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+        colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "mvc_service",
         "controller_access"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.encryption.ssl", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.ssl", "1.x.x")
     ]
     main_modules = [
         "crypton.exceptions",
@@ -81,29 +81,29 @@ class CryptonPlugin(colony.base.plugin_system.Plugin):
     """ The encryption ssl plugin """
 
     def load_plugin(self):
-        colony.base.plugin_system.Plugin.load_plugin(self)
-        import crypton.encryption.crypton_system
-        self.crypton = crypton.encryption.crypton_system.Crypton(self)
+        colony.base.system.Plugin.load_plugin(self)
+        import crypton.system
+        self.crypton = crypton.system.Crypton(self)
 
     def end_load_plugin(self):
-        colony.base.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.system.Plugin.end_load_plugin(self)
         self.crypton.load_components()
 
     def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
+        colony.base.system.Plugin.unload_plugin(self)
         self.crypton.unload_components()
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     @colony.base.decorators.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
 
     @colony.base.decorators.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+        colony.base.system.Plugin.unset_configuration_property(self, property_name)
 
     def get_patterns(self):
         """

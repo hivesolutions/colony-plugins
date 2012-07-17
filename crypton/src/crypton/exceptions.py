@@ -34,9 +34,9 @@ __copyright__ = "Copyright (c) 2010 Hive Solutions Lda."
 __license__ = "Hive Solutions Confidential Usage License (HSCUL)"
 """ The license for the module """
 
-import colony.base.plugin_system_exceptions
+import colony.base.exceptions
 
-class CryptonException(colony.base.plugin_system_exceptions.ColonyException):
+class CryptonException(colony.base.exceptions.ColonyException):
     """
     The wen mvc encryption exception class.
     """
