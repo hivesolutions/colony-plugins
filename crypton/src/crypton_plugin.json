@@ -1,0 +1,52 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.crypton",
+    "name" : "Crypton Plugin",
+    "short_name" : "Crypton",
+    "description" : "The plugin that offers the crypton base infrastructure",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["mvc_service", "controller_access",
+            "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.mvc.utils",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.random",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.encryption.ssl",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "crypton_plugin.py",
+    "resources" : [
+            "crypton_plugin.py",
+            "crypton/__init__.py",
+            "crypton/encryption/__init__.py",
+            "crypton/encryption/crypton_exceptions.py",
+            "crypton/encryption/crypton_system.py",
+            "crypton/encryption/controllers/__init__.py",
+            "crypton/encryption/controllers/consumer_controller.py",
+            "crypton/encryption/controllers/main_controller.py",
+            "crypton/encryption/controllers/signature_controller.py",
+            "crypton/encryption/models/__init__.py",
+            "crypton/encryption/models/consumer.py",
+            "crypton/encryption/models/root_entity.py",
+            "crypton/encryption/resources/baf.xml"],
+    "extra_resources" : [
+            "crypton_plugin.pyc",
+            "crypton/__init__.pyc",
+            "crypton/encryption/__init__.pyc",
+            "crypton/encryption/crypton_exceptions.pyc",
+            "crypton/encryption/crypton_system.pyc",
+            "crypton/encryption/controllers/__init__.pyc",
+            "crypton/encryption/controllers/consumer_controller.pyc",
+            "crypton/encryption/controllers/main_controller.pyc",
+            "crypton/encryption/controllers/signature_controller.pyc",
+            "crypton/encryption/models/__init__.pyc",
+            "crypton/encryption/models/consumer.pyc",
+            "crypton/encryption/models/root_entity.pyc"]
+}

@@ -2,10 +2,10 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
-    "id" : "pt.hive.colony.plugins.service.crypton",
-    "name" : "Web Mvc Encryption Service Plugin",
-    "short_name" : "Web Mvc Encryption Service Main",
-    "description" : "The plugin that offers the web mvc encryption service",
+    "id" : "pt.hive.colony.plugins.api.crypton",
+    "name" : "Crypton Service Plugin",
+    "short_name" : "Crypton Service Main",
+    "description" : "The plugin that offers the crypton service",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["service.crypton", "build_automation_item"],
@@ -14,15 +14,15 @@
                 "id" : "pt.hive.colony.plugins.main.client.http",
                 "version" : "1.x.x"
             }],
-    "main_file" : "service_crypton_plugin.py",
+    "main_file" : "api_crypton_plugin.py",
     "resources" : [
-            "service_crypton_plugin.py",
+            "api_crypton_plugin.py",
             "service_crypton/__init__.py",
             "service_crypton/crypton/__init__.py",
             "service_crypton/crypton/service_crypton_system.py",
             "service_crypton/crypton/resources/baf.xml"],
     "extra_resources" : [
-            "service_crypton_plugin.pyc",
+            "api_crypton_plugin.pyc",
             "service_crypton/__init__.pyc",
             "service_crypton/crypton/__init__.pyc",
             "service_crypton/crypton/service_crypton_system.pyc"]
