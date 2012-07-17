@@ -51,35 +51,17 @@ DEFAULT_NUMBER_BITS = 256
 """ The default number of bits """
 
 models = colony.libs.import_util.__import__("models")
+controllers = colony.libs.import_util.__import__("controllers")
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
 
-class SignatureController:
+class SignatureController(controllers.Controller):
     """
     The crypton signature controller.
     """
 
-    crypton_plugin = None
-    """ The crypton plugin """
-
-    crypton = None
-    """ The crypton """
-
-    def __init__(self, crypton_plugin, crypton):
-        """
-        Constructor of the class.
-
-        @type crypton_plugin: CryptonPlugin
-        @param crypton_plugin: The crypton plugin.
-        @type crypton: Crypton
-        @param crypton: The crypton.
-        """
-
-        self.crypton_plugin = crypton_plugin
-        self.crypton = crypton
-
     def sign(self, rest_request, api_key, key_name, message, algorithm_name):
         # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.crypton_plugin.encryption_ssl_plugin
+        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
@@ -101,7 +83,7 @@ class SignatureController:
 
     def verify(self, rest_request, api_key, key_name, signature, message):
         # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.crypton_plugin.encryption_ssl_plugin
+        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
@@ -126,7 +108,7 @@ class SignatureController:
 
     def _validate_api_key(self, rest_request, api_key):
         # retrieves the security map
-        security_map = self.crypton.security_map
+        security_map = self.system.security_map
 
         # retrieves the validate api key value
         validate_api_key = security_map.get("validate_api_key", True)
@@ -158,10 +140,10 @@ class SignatureController:
 
     def _get_key_path(self, key_name, key_type):
         # retrieves the plugin manager
-        plugin_manager = self.crypton_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the key path
-        keys_map = self.crypton.keys_map
+        keys_map = self.system.keys_map
         key = keys_map.get(key_name, {})
         key_path = key.get(key_type, None)
         key_path = plugin_manager.resolve_file_path(key_path, True, True)
@@ -174,10 +156,10 @@ class SignatureController:
 
     def _generate_key_files(self, key):
         # retrieves the plugin manager
-        plugin_manager = self.crypton_plugin.manager
+        plugin_manager = self.plugin.manager
 
         # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.crypton_plugin.encryption_ssl_plugin
+        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
         # retrieves the key paths
         private_key_path = key.get("private_key", None)

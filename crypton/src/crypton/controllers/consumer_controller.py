@@ -40,31 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.libs.import_util
 
 models = colony.libs.import_util.__import__("models")
+controllers = colony.libs.import_util.__import__("controllers")
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
 
-class ConsumerController:
+class ConsumerController(controllers.Controller):
     """
     The crypton consumer controller.
     """
-
-    crypton_plugin = None
-    """ The crypton plugin """
-
-    crypton = None
-    """ The crypton """
-
-    def __init__(self, crypton_plugin, crypton):
-        """
-        Constructor of the class.
-
-        @type crypton_plugin: CryptonPlugin
-        @param crypton_plugin: The crypton plugin.
-        @type crypton: Crypton
-        @param crypton: The crypton.
-        """
-
-        self.crypton_plugin = crypton_plugin
-        self.crypton = crypton
 
     def handle_create(self, rest_request, parameters = {}):
         """

@@ -46,7 +46,7 @@ models = colony.libs.import_util.__import__("models")
 controllers = colony.libs.import_util.__import__("controllers")
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
 
-class MainController:
+class MainController(controllers.Controller):
     """
     The crypton main controller.
     """
