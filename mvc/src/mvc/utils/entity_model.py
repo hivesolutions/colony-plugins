@@ -331,7 +331,7 @@ def _class_execute(class_reference, query, entity_manager = None):
     # returns the retrieved result set
     return result_set
 
-def _class_lock(class_reference, id_value, entity_manager = None):
+def _class_lock_g(class_reference, id_value, entity_manager = None):
     """
     Class method that locks the entity manager data source
     for the entity model with the given id value.
