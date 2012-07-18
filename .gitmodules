@@ -1,0 +1,6 @@
+[submodule "nanger/src/nanger/resources/extras/libs/jquery"]
+	path = nanger/src/nanger/resources/extras/libs/jquery
+	url = git@github.com:hivesolutions/jquery.git
+[submodule "nanger/src/nanger/resources/extras/libs/uxf"]
+	path = nanger/src/nanger/resources/extras/libs/uxf
+	url = git@github.com:hivesolutions/uxf_bin.git
