@@ -1178,21 +1178,19 @@ class EntityClass(object):
         for key, value in items.items():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
-            if key in INVALID_NAMES:
-                # continues the loop
-                continue
+            if key in INVALID_NAMES: continue
+                        
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not an item)
+            if key.isupper(): continue
 
             # in case the type is a function or a method it
             # should be ignored (not an item)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop
-                continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # in case the key does not refer a relation
             # value (must be ignored)
-            if not cls.is_relation(key):
-                # continues the loop
-                continue
+            if not cls.is_relation(key): continue
 
             # retrieves the relation (map) for the current
             # key (relation name) then sets it in the relation
@@ -1413,22 +1411,20 @@ class EntityClass(object):
         for key, value in items.items():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
-            if key in INVALID_NAMES:
-                # continues the loop
-                continue
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not an item)
+            if key.isupper(): continue
 
             # in case the type is a function or a method it
             # should be ignored (not an item)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop
-                continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # in case the foreign relations are meant to be ignored and
             # the current attribute is a non mapped relation (foreign)
             # it should be ignored
-            if not foreign_relations and cls.is_relation(key) and not cls.is_mapped(key):
-                # continues the loop
-                continue
+            if not foreign_relations and cls.is_relation(key) and not cls.is_mapped(key): continue
 
             # sets the value as the item for the current
             # key (valid field in the context)
@@ -1479,15 +1475,15 @@ class EntityClass(object):
         for key, value in items.items():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES:
-                # continues the loop
-                continue
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not a name)
+            if key.isupper(): continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop
-                continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # adds the key (name) to the list of names
             # for the current entity model (class)
@@ -1524,22 +1520,20 @@ class EntityClass(object):
         for key, value in items.items():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES:
-                # continues the loop
-                continue
+            if key in INVALID_NAMES: continue
+            
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not an item)
+            if key.isupper(): continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop
-                continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # in case the current key name does not refer a
             # generated value, it is not mean to be added to
             # the generated list
-            if not cls.is_generated(key):
-                # continues the loop
-                continue
+            if not cls.is_generated(key): continue
 
             # adds the key (name) to the list of generated
             # for the current entity model (class)
@@ -1576,22 +1570,20 @@ class EntityClass(object):
         for key, value in items.items():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES:
-                # continues the loop
-                continue
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not a name)
+            if key.isupper(): continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop
-                continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # in case the current key name does not refer a
             # indexed value, it is not mean to be added to
             # the indexed list
-            if not cls.is_indexed(key):
-                # continues the loop
-                continue
+            if not cls.is_indexed(key): continue
 
             # adds the key (name) to the list of indexed
             # for the current entity model (class)
@@ -2536,18 +2528,19 @@ class EntityClass(object):
         # them and set them in the fields map
         for key, value in fields.items():
             # in case the key is not valid according
-            # to the invalid names list
-            if key in INVALID_NAMES:
-                # continues the loop the current
-                # item is not valid (invalid name)
-                continue
+            # to the invalid names list, continues
+            # the loop the current item is not valid
+            # (invalid name)
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (invalid name)
+            if key.isupper(): continue
 
             # in case the value type is not valid as
-            # a field (function or method)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):
-                # continues the loop, functions
-                # or method are not items
-                continue
+            # a field (function or method) continues the
+            # loop, functions or method are not items
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):  continue
 
             # sets the value in the map of fields
             # for the current key value
