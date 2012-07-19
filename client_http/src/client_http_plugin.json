@@ -17,16 +17,16 @@
                 "id" : "pt.hive.colony.plugins.misc.url_parser",
                 "version" : "1.x.x"
             }],
-    "main_file" : "main_client_http_plugin.py",
-    "resources" : ["main_client_http_plugin.py",
-            "main_client_http/__init__.py",
-            "main_client_http/http/__init__.py",
-            "main_client_http/http/main_client_http_exceptions.py",
-            "main_client_http/http/main_client_http_system.py",
-            "main_client_http/http/resources/baf.xml"],
-    "extra_resources" : ["main_client_http_plugin.pyc",
-            "main_client_http/__init__.pyc",
-            "main_client_http/http/__init__.pyc",
-            "main_client_http/http/main_client_http_exceptions.pyc",
-            "main_client_http/http/main_client_http_system.pyc"]
+    "main_file" : "client_http_plugin.py",
+    "resources" : ["client_http_plugin.py",
+            "client_http/__init__.py",
+            "client_http/http/__init__.py",
+            "client_http/http/client_http_exceptions.py",
+            "client_http/http/client_http_system.py",
+            "client_http/http/resources/baf.xml"],
+    "extra_resources" : ["client_http_plugin.pyc",
+            "client_http/__init__.pyc",
+            "client_http/http/__init__.pyc",
+            "client_http/http/client_http_exceptions.pyc",
+            "client_http/http/client_http_system.pyc"]
 }
