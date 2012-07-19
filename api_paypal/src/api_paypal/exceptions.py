@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system_exceptions
+import colony.base.exceptions
 
-class ApiPaypalException(colony.base.system_exceptions.ColonyException):
+class ApiPaypalException(colony.base.exceptions.ColonyException):
     """
     The api paypal exception class.
     """

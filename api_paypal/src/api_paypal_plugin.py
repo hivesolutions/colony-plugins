@@ -77,8 +77,8 @@ class ApiPaypalPlugin(colony.base.system.Plugin):
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import api_paypal.paypal.api_paypal_system
-        self.api_paypal = api_paypal.paypal.api_paypal_system.ApiPaypal(self)
+        import api_paypal.system
+        self.api_paypal = api_paypal.system.ApiPaypal(self)
 
     @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
