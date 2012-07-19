@@ -189,9 +189,9 @@ class ApiOpenid(colony.base.system.System):
         colony.base.system.System.__init__(self, plugin)
         self.nonce_values_map = {}
 
-    def create_remote_server(self, api_attributes, open_server = True):
+    def create_server(self, api_attributes, open_server = True):
         """
-        Creates a remote server, with the given api attributes.
+        Creates a server, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.

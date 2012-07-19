@@ -91,9 +91,9 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
-    def create_remote_server(self, api_attributes):
+    def create_server(self, api_attributes):
         """
-        Creates a remote server, with the given api attributes.
+        Creates a server, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
@@ -101,7 +101,7 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
         @return: The created remote server.
         """
 
-        return self.api_openid.create_remote_server(api_attributes)
+        return self.api_openid.create_server(api_attributes)
 
     def create_client(self, api_attributes):
         """
