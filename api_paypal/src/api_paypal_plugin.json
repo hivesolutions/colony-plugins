@@ -1,0 +1,31 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.api.paypal",
+    "name" : "Paypal Service Plugin",
+    "short_name" : "Paypal Service Main",
+    "description" : "The plugin that offers the paypal api",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["api.paypal", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.client.http",
+                "version" : "1.x.x"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.x.x"
+            }],
+    "main_file" : "api_paypal_plugin.py",
+    "resources" : ["api_paypal_plugin.py", "api_paypal/__init__.py",
+            "api_paypal/paypal/__init__.py",
+            "api_paypal/paypal/api_paypal_exceptions.py",
+            "api_paypal/paypal/api_paypal_system.py",
+            "api_paypal/paypal/resources/baf.xml"],
+    "extra_resources" : ["api_paypal_plugin.pyc",
+            "api_paypal/__init__.pyc",
+            "api_paypal/paypal/__init__.pyc",
+            "api_paypal/paypal/api_paypal_exceptions.pyc",
+            "api_paypal/paypal/api_paypal_system.pyc"]
+}
