@@ -252,3 +252,24 @@ pre {
     text-align: center;
     width: 24px;
 }
+
+.console {
+	height: 300px;
+	background-color: #4d4d4d;
+	margin: 20px 0px 20px 0px;
+	padding: 4px 4px 4px 4px;
+	font-family: monospace;
+	color: #ffffff;
+	text-align: left;
+}
+
+.console .prompt {
+	display: inline-block;
+}
+
+.console .cursor {
+	display: inline-block;
+	height: 18px;
+	width: 8px;
+	background-color: #aaaaaa;
+}
