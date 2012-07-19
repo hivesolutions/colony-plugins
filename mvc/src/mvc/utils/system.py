@@ -370,6 +370,7 @@ class MvcUtils(colony.base.system.System):
         # updates the map containing the extra global symbols
         # with the models module (to be used by the models to refer
         # to other models)
+        extra_globals_map[MVC_UTILS_VALUE] = utils
         extra_globals_map[MODELS_VALUE] = models_module
 
         # imports the base entity models module
