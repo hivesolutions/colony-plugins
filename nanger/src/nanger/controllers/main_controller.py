@@ -64,4 +64,5 @@ class MainController(controllers.Controller):
             partial_page = "general/index.html.tpl"
         )
         template_file.assign("title", "Colony Framework")
+        template_file.assign("area", "home")
         self.process_set_contents(rest_request, template_file)
