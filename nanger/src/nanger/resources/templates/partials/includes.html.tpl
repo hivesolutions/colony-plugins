@@ -1,4 +1,6 @@
 <!-- css inclusion -->
+<link rel="stylesheet" href="${out_none value=base_path /}resources/libs/uxf/css/ux-min.css" type="text/css" />
+<link rel="stylesheet" href="${out_none value=base_path /}resources/libs/uxf/styles/omni/css/ux-min.css" type="text/css" />
 <link rel="stylesheet" href="${out_none value=base_path /}resources/css/layout.css" type="text/css" />
 
 <!-- favicon inclusion -->
@@ -6,4 +8,5 @@
 
 <!-- javascript inclusion -->
 <script type="text/javascript" src="${out_none value=base_path /}resources/libs/jquery/jquery-1.4.2-min.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources/libs/uxf/js/ux-min.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/main.js"></script>
