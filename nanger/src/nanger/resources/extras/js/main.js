@@ -22,3 +22,35 @@
 // __date__      = $LastChangedDate$
 // __copyright__ = Copyright (c) 2008-2012 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
+
+jQuery(document).ready(function() {
+            jQuery(".console").click(function() {
+                        var element = jQuery(this);
+                        var text = jQuery(".text", element);
+                        text.focus();
+                    });
+
+            jQuery(".console .text").keyup(function() {
+                        var element = jQuery(this);
+                        jQuery(".console .line").html(element.val());
+                    });
+
+            jQuery(".console .text").keypress(function() {
+                        var element = jQuery(this);
+                        jQuery(".console .line").html(element.val());
+                    });
+
+            jQuery(".console .text").keydown(function() {
+                        var element = jQuery(this);
+                        jQuery(".console .line").html(element.val());
+                    });
+
+            jQuery(".console .text").focus(function() {
+                        jQuery(".console .cursor").css("display",
+                                "inline-block");
+                    });
+
+            jQuery(".console .text").blur(function() {
+                        jQuery(".console .cursor").css("display", "none");
+                    });
+        });
