@@ -79,7 +79,9 @@ class Nanger(colony.base.system.System):
 
         return (
             (r"^nanger/?$", self.main_controller.handle_index, "get"),
-            (r"^nanger/index$", self.main_controller.handle_index, "get")
+            (r"^nanger/index$", self.main_controller.handle_index, "get"),
+            (r"^nanger/console$", self.main_controller.handle_console, "get"),
+            (r"^nanger/about$", self.main_controller.handle_about, "get")
         )
 
     def get_communication_patterns(self):

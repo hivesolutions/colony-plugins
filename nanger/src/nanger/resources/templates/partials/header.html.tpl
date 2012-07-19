@@ -12,5 +12,11 @@
         ${else /}
             <a href="${out_none value=base_path /}console">console</a>
         ${/if}
+        //
+        ${if item=area value="about" operator=eq}
+            <a href="${out_none value=base_path /}about" class="active">about</a>
+        ${else /}
+            <a href="${out_none value=base_path /}about">about</a>
+        ${/if}
     </div>
 </div>

@@ -66,3 +66,43 @@ class MainController(controllers.Controller):
         template_file.assign("title", "Colony Framework")
         template_file.assign("area", "home")
         self.process_set_contents(rest_request, template_file)
+
+    def handle_console(self, rest_request, parameters = {}):
+        """
+        Handles the given console rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The console rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # processes the contents of the template file assigning the
+        # appropriate values to it
+        template_file = self.retrieve_template_file(
+            "general.html.tpl",
+            partial_page = "general/console.html.tpl"
+        )
+        template_file.assign("title", "Console")
+        template_file.assign("area", "console")
+        self.process_set_contents(rest_request, template_file)
+
+    def handle_about(self, rest_request, parameters = {}):
+        """
+        Handles the given about rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The console rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # processes the contents of the template file assigning the
+        # appropriate values to it
+        template_file = self.retrieve_template_file(
+            "general.html.tpl",
+            partial_page = "general/about.html.tpl"
+        )
+        template_file.assign("title", "About")
+        template_file.assign("area", "about")
+        self.process_set_contents(rest_request, template_file)
