@@ -1179,7 +1179,7 @@ class EntityClass(object):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
             if key in INVALID_NAMES: continue
-                        
+
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not an item)
             if key.isupper(): continue
@@ -1521,7 +1521,7 @@ class EntityClass(object):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
-            
+
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not an item)
             if key.isupper(): continue
