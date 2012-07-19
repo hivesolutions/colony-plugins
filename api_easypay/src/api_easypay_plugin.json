@@ -11,7 +11,7 @@
     "capabilities" : ["service.easypay", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.client.http",
+                "id" : "pt.hive.colony.plugins.client.http",
                 "version" : "1.x.x"
             }],
     "main_file" : "api_easypay_plugin.py",

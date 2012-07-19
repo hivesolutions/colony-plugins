@@ -2,7 +2,7 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython"],
-    "id" : "pt.hive.colony.plugins.main.client.http",
+    "id" : "pt.hive.colony.plugins.client.http",
     "name" : "Http Client Main Plugin",
     "short_name" : "Http Client Main",
     "description" : "The plugin that offers the http client",

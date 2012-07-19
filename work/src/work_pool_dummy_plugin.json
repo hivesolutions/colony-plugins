@@ -11,7 +11,7 @@
     "capabilities" : ["startup", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
+                "id" : "pt.hive.colony.plugins.work.pool",
                 "version" : "1.x.x"
             }],
     "main_file" : "work_pool_dummy_plugin.py",

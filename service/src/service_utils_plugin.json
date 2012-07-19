@@ -11,7 +11,7 @@
     "capabilities" : ["build_automation_item"],
     "capabilities_allowed" : ["socket_provider", "socket_upgrader"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
+                "id" : "pt.hive.colony.plugins.work.pool",
                 "version" : "1.x.x"
             }],
     "main_file" : "main_service_utils_plugin.py",

@@ -11,7 +11,7 @@
     "capabilities" : ["service.twitter", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.client.http",
+                "id" : "pt.hive.colony.plugins.client.http",
                 "version" : "1.x.x"
             }, {
                 "id" : "pt.hive.colony.plugins.misc.json",
