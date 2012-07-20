@@ -56,6 +56,7 @@ jQuery(document).ready(function() {
                 switch (value) {
                     case "clear" :
                         clear();
+
                         break;
 
                     default :
@@ -87,6 +88,7 @@ jQuery(document).ready(function() {
                                 jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
                             }
                         });
+
                         break;
                 }
 
