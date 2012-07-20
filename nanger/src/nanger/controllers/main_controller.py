@@ -80,7 +80,7 @@ class MainController(controllers.Controller):
         # processes the contents of the template file assigning the
         # appropriate values to it
         template_file = self.retrieve_template_file(
-            "general.html.tpl",
+            "general_w.html.tpl",
             partial_page = "general/console.html.tpl"
         )
         template_file.assign("title", "Console")

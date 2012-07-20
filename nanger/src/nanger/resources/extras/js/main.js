@@ -24,33 +24,88 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 jQuery(document).ready(function() {
-            jQuery(".console").click(function() {
-                        var element = jQuery(this);
-                        var text = jQuery(".text", element);
-                        text.focus();
-                    });
+    jQuery(".console").click(function() {
+                var element = jQuery(this);
+                var text = jQuery(".text", element);
+                text.focus();
+            });
 
-            jQuery(".console .text").keyup(function() {
-                        var element = jQuery(this);
-                        jQuery(".console .line").html(element.val());
-                    });
+    jQuery(".console .text").keyup(function() {
+                var element = jQuery(this);
+                jQuery(".console .line").html(element.val());
+            });
 
-            jQuery(".console .text").keypress(function() {
-                        var element = jQuery(this);
-                        jQuery(".console .line").html(element.val());
-                    });
+    jQuery(".console .text").keypress(function(event) {
+        // retrieves the element
+        var element = jQuery(this);
 
-            jQuery(".console .text").keydown(function() {
-                        var element = jQuery(this);
-                        jQuery(".console .line").html(element.val());
-                    });
+        // retrieves the key value
+        var keyValue = event.keyCode ? event.keyCode : event.charCode
+                ? event.charCode
+                : event.which;
 
-            jQuery(".console .text").focus(function() {
-                        jQuery(".console .cursor").css("display",
-                                "inline-block");
-                    });
+        // switches over the key value
+        switch (keyValue) {
+            case 13 :
+                var value = element.val();
 
-            jQuery(".console .text").blur(function() {
-                        jQuery(".console .cursor").css("display", "none");
-                    });
-        });
+                // tenho de chamar a execucao do comando
+                // neste ponto
+                jQuery.ajax({
+                    url : "console/execute",
+                    data : {
+                        command : value,
+                        instance : jQuery(".console").data("instance")
+                    },
+                    success : function(data) {
+                        var result = data["result"];
+                        var instance = data["instance"];
+
+                        jQuery(".console").data("instance", instance);
+
+                        element.val("");
+                        jQuery(".console .previous").append("<div><span class=\"prompt\"># </span><span>"
+                                + value + "</span></div>");
+                        var resultLine = jQuery("<span></span>");
+                        resultLine.text(result);
+                        var line = resultLine.html();
+                        line = line.replace(/\n/g, "<br/>");
+                        line = line.replace(/ /g, "&nbsp;");
+                        jQuery(".console .previous").append("<div>" + line
+                                + "</div>");
+                        jQuery(".console .line").html("");
+                        jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
+                    }
+                });
+
+                // breaks the switch
+                break;
+
+            default :
+                jQuery(".console .line").html(element.val());
+
+                break;
+        }
+    });
+
+    jQuery(".console .text").keydown(function() {
+                var element = jQuery(this);
+                jQuery(".console .line").html(element.val());
+            });
+
+    jQuery(".console .text").focus(function() {
+                jQuery(".console .cursor").css("display", "inline-block");
+            });
+
+    jQuery(".console .text").blur(function() {
+                jQuery(".console .cursor").css("display", "none");
+            });
+
+    // resets the console text to avoid any possible auto
+    // complete operation
+    jQuery(".console .text").val("");
+
+    // "clicks" in the console so that the focus is started
+    // at the console (immediate interaction)
+    jQuery(".console").click();
+});

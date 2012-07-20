@@ -263,6 +263,7 @@ class ConsoleBase(colony.base.system.System):
         # with the interact operation, this should begin a loop
         # that will only end at the exit call
         locals = {
+            "manager" : plugin_manager,
             "plugin_manager" : plugin_manager
         }
         python_console = code.InteractiveConsole(locals = locals)

@@ -57,7 +57,8 @@ class NangerPlugin(colony.base.system.Plugin):
         "mvc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
         "nanger.system"
@@ -69,6 +70,9 @@ class NangerPlugin(colony.base.system.Plugin):
 
     mvc_utils_plugin = None
     """ The mvc utils plugin """
+
+    json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -130,3 +134,7 @@ class NangerPlugin(colony.base.system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.mvc.utils")
     def set_mvc_utils_plugin(self, mvc_utils_plugin):
         self.mvc_utils_plugin = mvc_utils_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
