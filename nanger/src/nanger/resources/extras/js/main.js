@@ -33,10 +33,37 @@ jQuery(document).ready(function() {
     jQuery(".console .text").keyup(function() {
                 var element = jQuery(this);
                 var value = element.val();
-                word = splitValue(value);
+                word = splitValue(value, true);
 
                 jQuery(".console .line").html(word);
             });
+
+    jQuery(".console .text").keydown(function() {
+        // retrieves the key value
+        var keyValue = event.keyCode ? event.keyCode : event.charCode
+                ? event.charCode
+                : event.which;
+
+        console.info(keyValue);
+
+        switch (keyValue) {
+            case 37 :
+                break;
+
+            case 39 :
+                break;
+
+            default :
+                break;
+        }
+
+        var element = jQuery(this);
+
+        var value = element.val();
+        word = splitValue(value, true);
+
+        jQuery(".console .line").html(word);
+    });
 
     jQuery(".console .text").keypress(function(event) {
         // retrieves the element
@@ -51,7 +78,7 @@ jQuery(document).ready(function() {
         switch (keyValue) {
             case 13 :
                 var value = element.val();
-                value = jQuery.trim(value);
+                var command = jQuery.trim(value);
 
                 switch (value) {
                     case "clear" :
@@ -65,26 +92,33 @@ jQuery(document).ready(function() {
                         jQuery.ajax({
                             url : "console/execute",
                             data : {
-                                command : value,
+                                command : command,
                                 instance : jQuery(".console").data("instance")
                             },
                             success : function(data) {
+                                // unpacks the resulting json data into the result
+                                // and the instance part, so that they may be used
+                                // in the processing and printing of the result
                                 var result = data["result"];
                                 var instance = data["instance"];
 
+                                // sets the instance (identifier) value in the console
+                                // for latter usage of the value
                                 jQuery(".console").data("instance", instance);
 
+                                // resets the element value (virtual value) and clear the
+                                // console line (to the original value)
                                 element.val("");
+                                jQuery(".console .line").html("");
+
                                 jQuery(".console .previous").append("<div><span class=\"prompt\"># </span><span>"
-                                        + value + "</span></div>");
+                                        + splitValue(value, true)
+                                        + "</span></div>");
                                 var resultLine = jQuery("<span></span>");
-                                resultLine.text(result);
-                                var line = resultLine.html();
-                                line = line.replace(/\n/g, "<br/>");
-                                line = line.replace(/ /g, "&nbsp;");
+
+                                var line = splitValue(result, true);
                                 jQuery(".console .previous").append("<div>"
                                         + line + "</div>");
-                                jQuery(".console .line").html("");
                                 jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
                             }
                         });
@@ -97,22 +131,13 @@ jQuery(document).ready(function() {
 
             default :
                 var value = element.val();
-                word = splitValue(value);
+                word = splitValue(value, true);
 
                 jQuery(".console .line").html(word);
 
                 break;
         }
     });
-
-    jQuery(".console .text").keydown(function() {
-                var element = jQuery(this);
-
-                var value = element.val();
-                word = splitValue(value);
-
-                jQuery(".console .line").html(word);
-            });
 
     jQuery(".console .text").focus(function() {
                 jQuery(".console .cursor").css("display", "inline-block");
@@ -122,21 +147,28 @@ jQuery(document).ready(function() {
                 jQuery(".console .cursor").css("display", "none");
             });
 
-    var splitValue = function(value) {
+    var escapeHtml = function(value) {
+        return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g,
+                "&gt;").replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
+    }
+
+    var splitValue = function(value, escape) {
         var length = value.length;
 
         var slices = [];
 
-        for (var index = 0; index < length; index += 10) {
-            var slice = value.slice(index, index + 10);
+        for (var index = 0; index < length; index += 1) {
+            var slice = value.slice(index, index + 1);
             slices.push(slice);
         }
 
         var word = "";
+        var slice = "";
 
         var sliceLength = slices.length;
         for (var index = 0; index < sliceLength; index++) {
-            word += slices[index] + "<wbr></wbr>";
+            slice = escape ? escapeHtml(slices[index]) : slices[index];
+            word += slice + "<wbr></wbr>";
         }
 
         return word;
