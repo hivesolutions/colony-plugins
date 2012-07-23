@@ -71,6 +71,10 @@ jQuery(document).ready(function() {
 
                 break;
 
+            case 27 :
+                jQuery(".console .autocomplete").hide();
+                break;
+
             case 35 :
                 jQuery(".console").data("cursor", -1);
                 refresh();
@@ -397,23 +401,30 @@ jQuery(document).ready(function() {
                         var list = jQuery(".console .autocomplete ul");
                         list.empty();
 
+                        // iterates over all the values to be inserted into
+                        // the autocomplete options list
                         for (var index = 0; index < result.length; index++) {
-
+                            // retrieves the current value in iteration to
+                            // adds it to the options list
                             var value = result[index];
 
-                            list.append("<li><span class=\"high\">" + value
-                                    + "</span>" + "</li>");
+                            // retrieves the highlight and the remainder part
+                            // of the value using the command length as base
+                            var highlight = value.slice(0, command.length);
+                            var remainder = value.slice(command.length);
 
-                            /*
-                             * list.append("<li><span class=\"high\">" + value + "</span>" +
-                             * values[index] + "</li>");
-                             */
+                            // creates the new item with both the highlight and
+                            // the remaind part and adds it to the list of options
+                            list.append("<li><span class=\"high\">" + highlight
+                                    + "</span>" + remainder + "</li>");
                         }
 
                         // sets the instance (identifier) value in the console
                         // for latter usage of the value
                         jQuery(".console").data("instance", instance);
 
+                        // sets the first child of the autocomplete list as the
+                        // currently selected child element
                         jQuery(":first-child", list).addClass("selected");
                     }
                 });

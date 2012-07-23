@@ -289,7 +289,8 @@ pre {
 .console .autocomplete {
     background-color: #ffffff;
     color: #4d4d4d;
-    font-size: 12px;
+    font-family: Arial, "serif";
+    font-size: 10px;
     margin-left: 24px;
     min-width: 200px;
     position: absolute;
@@ -303,7 +304,7 @@ pre {
 .console .autocomplete ul > li {
     cursor: pointer;
     margin: 0px 0px 0px 0px;
-    padding: 1px 6px 1px 6px;
+    padding: 0px 6px 0px 6px;
 }
 
 .console .autocomplete ul > li .high {
