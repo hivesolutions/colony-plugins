@@ -50,8 +50,6 @@ jQuery(document).ready(function() {
         var cancel = true;
 
         if (event.ctrlKey) {
-            console.info(keyValue);
-
             switch (keyValue) {
                 case 32 :
                     autocomplete(true);
@@ -113,9 +111,6 @@ jQuery(document).ready(function() {
                 if (historyIndex != history.length - 1) {
                     historyIndex++;
                 }
-
-                console.info("history -> " + history);
-                console.info("historyIndex -> " + historyIndex);
 
                 jQuery(".console").data("text", value)
                 jQuery(".console").data("history_index", historyIndex)
