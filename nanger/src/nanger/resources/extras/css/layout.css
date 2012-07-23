@@ -29,7 +29,6 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
-
 #header {
 }
 
@@ -283,16 +282,25 @@ pre {
 }
 
 .console .cursor {
+    background-color: transparent;
+}
+
+.console.focus .cursor {
     background-color: #b0b0b0;
 }
 
 .console .autocomplete {
     background-color: #ffffff;
+    border: 1px solid #aaaaaa;
     color: #4d4d4d;
+    display: none;
     font-family: Arial, "serif";
     font-size: 10px;
     margin-left: 24px;
+    max-height: 212px;
     min-width: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: absolute;
 }
 
@@ -302,9 +310,10 @@ pre {
 }
 
 .console .autocomplete ul > li {
+    background: transparent url(../images/method.png) no-repeat 6px center;
     cursor: pointer;
     margin: 0px 0px 0px 0px;
-    padding: 0px 6px 0px 6px;
+    padding: 0px 6px 0px 18px;
 }
 
 .console .autocomplete ul > li .high {
@@ -317,5 +326,5 @@ pre {
 }
 
 .console .autocomplete ul > li.selected {
-    background-color: #cccccc;
+    background-color: #dddddd;
 }

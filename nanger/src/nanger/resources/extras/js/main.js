@@ -24,8 +24,8 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 jQuery(document).ready(function() {
-	// registers for the click event in the console to
-	// propagate the focus event to the text area
+    // registers for the click event in the console to
+    // propagate the focus event to the text area
     jQuery(".console").click(function() {
                 var element = jQuery(this);
                 var text = jQuery(".text", element);
@@ -48,6 +48,19 @@ jQuery(document).ready(function() {
         // sets the default value for the canceling operation
         // (no default behavior) as true (most of the times)
         var cancel = true;
+
+        if (event.ctrlKey) {
+            console.info(keyValue);
+
+            switch (keyValue) {
+                case 32 :
+                    autocomplete(true);
+                    break;
+
+                default :
+                    break;
+            }
+        }
 
         switch (keyValue) {
             case 8 :
@@ -294,24 +307,25 @@ jQuery(document).ready(function() {
                 // the visual part of it
                 jQuery(".console").data("text", value);
                 refresh();
-                autocomplete();
+                autocomplete(true);
 
                 // breaks the switch
                 break;
         }
 
+        // stops the event propagation and prevents the default
+        // behavior (no printing in the text area)
         event.stopPropagation();
         event.stopImmediatePropagation();
         event.preventDefault();
     });
 
     jQuery(".console .text").focus(function() {
-                jQuery(".console .cursor").css("background-color", "#b0b0b0");
+                jQuery(".console").addClass("focus");
             });
 
     jQuery(".console .text").blur(function() {
-                jQuery(".console .cursor").css("background-color",
-                        "transparent");
+                jQuery(".console").removeClass("focus");
             });
 
     var escapeHtml = function(value) {
@@ -354,7 +368,7 @@ jQuery(document).ready(function() {
         word = splitValue(value, true, cursor);
         jQuery(".console .line").html(word);
         jQuery(".console").scrollTop(scrollHeight);
-        autocomplete();
+        autocomplete(false);
     };
 
     /**
@@ -371,10 +385,15 @@ jQuery(document).ready(function() {
         refresh();
     };
 
-    var autocomplete = function() {
+    var autocomplete = function(force) {
+        var isVisible = jQuery(".console .autocomplete").is(":visible");
+        if (!force && !isVisible) {
+            return;
+        }
+
         // retrieves the current console command in execution
         // to retrieve the associated autocomplete value
-        var command = jQuery(".console").data("text");
+        var command = jQuery(".console").data("text") || "";
 
         jQuery.ajax({
                     url : "console/autocomplete",
@@ -419,6 +438,13 @@ jQuery(document).ready(function() {
                         // sets the first child of the autocomplete list as the
                         // currently selected child element
                         jQuery(":first-child", list).addClass("selected");
+
+                        // forces the display of the autocomplete in case there
+                        // are results available otherwise hides the autocomplete
+                        // list (no need to display the result)
+                        result.length
+                                ? jQuery(".console .autocomplete").show()
+                                : jQuery(".console .autocomplete").hide();
                     }
                 });
 
@@ -495,6 +521,10 @@ jQuery(document).ready(function() {
                 }
                 jQuery(".console").data("history", history);
                 jQuery(".console").data("history_index", 0);
+
+                // hides the autocomplete window, no need to display
+                // it durring the initial part of the line processing
+                jQuery(".console .autocomplete").hide();
 
                 // runs the process command again to continue the processing
                 // of the current queue

@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import code
 import uuid
+import types
 import cStringIO
 
 import colony.libs.import_util
@@ -186,15 +187,23 @@ class ConsoleController(controllers.Controller):
         # autocomplete values for the client side
         commands = []
 
-        # iterates over the complete list of locals to test the
+        # splits the command into the various sub components so that its possible
+        # to use the partials value to recursively resolve the appropriate sequence
+        # to be iterated for searching
+        command_split = command.rsplit(".", 1)
+        base = command_split[-1]
+        partials = command_split[:-1]
+        values = self._resolve_value(partials, locals)
+
+        # iterates over the complete list of values to test the
         # beginning of each name against the command name
-        for local in locals:
-            # in case the current local value does not starts
+        for value in values:
+            # in case the current value does not start
             # with the command text must be skipped, otherwise
             # adds the local name to the list of valid commands
             # for the autocomplete operation
-            if not local.startswith(command): continue
-            commands.append(local)
+            if not value.startswith(base): continue
+            commands.append(value)
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
@@ -208,3 +217,30 @@ class ConsoleController(controllers.Controller):
         # sets the (resulting) contents in the rest request and sets the
         # appropriate mime type according to the serialization
         self.set_contents(rest_request, result, content_type = mime_type)
+
+    def _resolve_value(self, partials, names):
+        # in case the names list is not valid (probably an unset
+        # value from a resolution error) returns an empty map
+        if not names: return {}
+
+        # in case there are no more partials for resolution the
+        # final values sequence must be returned, note that an
+        # appropriate conversion is done in case no map type is
+        # present (object value)
+        if not partials: return type(names) == types.DictType and names or dir(names)
+
+        # retrieves the first partial values, this value
+        # is going to be used as the reference value for
+        # the attribute retrieval
+        partial = partials[0]
+        names_type = type(names)
+
+        # uses the appropriate strategy to retrieve the value taking
+        # into account the appropriate type
+        if names_type == types.DictType: value = names.get(partial, None)
+        else: value = hasattr(names, partial) and getattr(names, partial) or None
+
+        # returns the result of the recursion step on top of the
+        # the currently resolve value and the remainder list of
+        # partials (new partials)
+        return self._resolve_value(partials[1:], value)
