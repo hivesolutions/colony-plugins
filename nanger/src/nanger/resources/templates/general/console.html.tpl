@@ -4,5 +4,8 @@
     <div>Python 2.6.6 (r266:84297, Aug 24 2010, 18:46:32) [MSC v.1500 32 bit (Intel)]</div>
     <div>Type "help" for more information.</div>
     <div class="previous"></div>
-    <div><span class="prompt"># </span><span class="line"></span><span class="cursor"></span></div>
+    <div><span class="prompt"># </span><span class="line"><span class="cursor">&nbsp;</span></span></div>
+    <div class="autocomplete">
+        <ul></ul>
+    </div>
 </div>

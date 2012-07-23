@@ -52,7 +52,7 @@ class MainController(controllers.Controller):
         Handles the given index rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The index rest request to be handled.
+        @param rest_request: The rest request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         """
@@ -72,7 +72,7 @@ class MainController(controllers.Controller):
         Handles the given console rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The console rest request to be handled.
+        @param rest_request: The rest request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         """
@@ -92,7 +92,7 @@ class MainController(controllers.Controller):
         Handles the given about rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The console rest request to be handled.
+        @param rest_request: The rest request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         """

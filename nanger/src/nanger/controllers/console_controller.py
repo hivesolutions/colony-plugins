@@ -67,7 +67,7 @@ class ConsoleController(controllers.Controller):
         server side and then return the result of execution.
 
         @type rest_request: RestRequest
-        @param rest_request: The index rest request to be handled.
+        @param rest_request: The rest request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         """
@@ -95,7 +95,9 @@ class ConsoleController(controllers.Controller):
         buffer_out = cStringIO.StringIO()
         buffer_err = cStringIO.StringIO()
 
-        # creates the map containing the
+        # creates the map containing the various local names to be used
+        # in the interpreter, these are the values that will be made available
+        # as entrance points to the end user
         locals = {
             "manager" : plugin_manager,
             "plugin_manager" : plugin_manager
@@ -126,6 +128,78 @@ class ConsoleController(controllers.Controller):
         # final result contents, should retrieve the appropriate mime type
         response = {
             "result" : result,
+            "instance" : instance
+        }
+        result = json_plugin.dumps(response)
+        mime_type = json_plugin.get_mime_type()
+
+        # sets the (resulting) contents in the rest request and sets the
+        # appropriate mime type according to the serialization
+        self.set_contents(rest_request, result, content_type = mime_type)
+
+    def handle_autocomplete(self, rest_request, parameters = {}):
+        """
+        Handles the given autocomplete rest request.
+        This request should try to find a series of results
+        that may be used as "tips" for the correct command.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manager = self.plugin.manager
+
+        # retrieves the json plugin for the encoding of the
+        # response value (serialized value)
+        json_plugin = self.plugin.json_plugin
+
+        # retrieves the command that it's meant to be executed by
+        # the current python virtual machine, then retrieves the
+        # id of the interpreter instance to be used
+        command = self.get_field(rest_request, "command", "")
+        instance = self.get_field(rest_request, "instance", None)
+
+        # in case no instance (identifier) is found a new randomly generated
+        # value is created for it (secure generation)
+        instance = instance or str(uuid.uuid4())
+
+        # creates the map containing the various local names to be used
+        # in the interpreter, these are the values that will be made available
+        # as entrance points to the end user
+        locals = {
+            "manager" : plugin_manager,
+            "plugin_manager" : plugin_manager
+        }
+
+        # tries to retrieve the correct interpreter from the interpreters
+        # map in case it does not exists creates a new one, then sets it
+        # back in the interpreters map for latter usage
+        interpreter = self.interpreters.get(instance, None)
+        interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
+        self.interpreters[instance] = interpreter
+
+        # creates a new list to hold the various commands to be sent as valid
+        # autocomplete values for the client side
+        commands = []
+
+        # iterates over the complete list of locals to test the
+        # beginning of each name against the command name
+        for local in locals:
+            # in case the current local value does not starts
+            # with the command text must be skipped, otherwise
+            # adds the local name to the list of valid commands
+            # for the autocomplete operation
+            if not local.startswith(command): continue
+            commands.append(local)
+
+        # creates the response map and serializes it with json to create the
+        # final result contents, should retrieve the appropriate mime type
+        response = {
+            "result" : commands,
             "instance" : instance
         }
         result = json_plugin.dumps(response)
