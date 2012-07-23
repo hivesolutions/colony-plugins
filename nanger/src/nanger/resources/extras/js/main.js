@@ -24,17 +24,8 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 jQuery(document).ready(function() {
-    var RESERVED = {
-        8 : true,
-        35 : true,
-        36 : true,
-        37 : true,
-        38 : true,
-        39 : true,
-        40 : true,
-        46 : true
-    };
-
+	// registers for the click event in the console to
+	// propagate the focus event to the text area
     jQuery(".console").click(function() {
                 var element = jQuery(this);
                 var text = jQuery(".text", element);
@@ -42,8 +33,11 @@ jQuery(document).ready(function() {
             });
 
     jQuery(".console .text").keydown(function(event) {
+        // retrieves the current element
         var element = jQuery(this);
 
+        // retrieves the text currently in used for the context
+        // of the console (current command)
         var value = jQuery(".console").data("text") || "";
 
         // retrieves the key value
@@ -51,12 +45,13 @@ jQuery(document).ready(function() {
                 ? event.charCode
                 : event.which;
 
+        // sets the default value for the canceling operation
+        // (no default behavior) as true (most of the times)
         var cancel = true;
 
         switch (keyValue) {
             case 8 :
                 var cursor = jQuery(".console").data("cursor");
-
                 if (cursor == value.length - 1) {
                     break;
                 }
@@ -68,7 +63,6 @@ jQuery(document).ready(function() {
                 jQuery(".console").data("text", value)
 
                 refresh();
-
                 break;
 
             case 27 :
@@ -145,7 +139,6 @@ jQuery(document).ready(function() {
 
             case 46 :
                 var cursor = jQuery(".console").data("cursor");
-
                 if (cursor == -1) {
                     break;
                 }
