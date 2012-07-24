@@ -25,29 +25,33 @@
 
 jQuery(document).ready(function() {
 
-    var ensureVisible = function(elem) {
-        var docViewTop = jQuery(".console .autocomplete").scrollTop();
-        var docViewBottom = docViewTop
+    var ensureVisible = function(element) {
+        var parentTop = jQuery(".console .autocomplete").scrollTop();
+        var parentBottom = parentTop
                 + jQuery(".console .autocomplete").height();
 
-        var elemTop = jQuery(elem).offset().top
+        var elementTop = jQuery(element).offset().top
                 - jQuery(".console .autocomplete ul").offset().top;
-        var elemBottom = elemTop + jQuery(elem).outerHeight();
+        var elementBottom = elementTop + jQuery(element).outerHeight();
 
-        var isVisible = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        // checks if the element is visible in the current context
+        // and in case it's retunrs immediately no need to change the
+        // parent element to ensure visibility
+        var isVisible = elementBottom <= parentBottom
+                && elementTop >= parentTop;
         if (isVisible) {
             return;
         }
 
         // calculates the signal using the relative position of the
         // element to determine if it should be negative or positive
-        var signal = elemTop > docViewTop ? 1 : -1;
+        var signal = elementTop > parentTop ? 1 : -1;
 
         // retrieves the previous scroll top and uses it to calculate
         // the new one using an optimistic approach
         var previous = jQuery(".console .autocomplete").scrollTop();
         jQuery(".console .autocomplete").scrollTop(previous
-                + (elemBottom - elemTop) * signal);
+                + (elementBottom - elementTop) * signal);
     };
 
     // registers for the click event in the console to
@@ -178,8 +182,6 @@ jQuery(document).ready(function() {
                 break;
 
             case 40 :
-                console.info("cenas")
-
                 var isVisible = jQuery(".console .autocomplete").is(":visible");
 
                 if (isVisible) {
