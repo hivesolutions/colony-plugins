@@ -26,13 +26,14 @@
 jQuery(document).ready(function() {
 
     var ensureVisible = function(element) {
+        var parentHeight = jQuery(".console .autocomplete").height();
         var parentTop = jQuery(".console .autocomplete").scrollTop();
-        var parentBottom = parentTop
-                + jQuery(".console .autocomplete").height();
+        var parentBottom = parentTop + parentHeight;
 
+        var elementHeight = jQuery(element).outerHeight();
         var elementTop = jQuery(element).offset().top
                 - jQuery(".console .autocomplete ul").offset().top;
-        var elementBottom = elementTop + jQuery(element).outerHeight();
+        var elementBottom = elementTop + elementHeight;
 
         // checks if the element is visible in the current context
         // and in case it's retunrs immediately no need to change the
@@ -47,11 +48,13 @@ jQuery(document).ready(function() {
         // element to determine if it should be negative or positive
         var signal = elementTop > parentTop ? 1 : -1;
 
-        // retrieves the previous scroll top and uses it to calculate
-        // the new one using an optimistic approach
-        var previous = jQuery(".console .autocomplete").scrollTop();
-        jQuery(".console .autocomplete").scrollTop(previous
-                + (elementBottom - elementTop) * signal);
+        // calculates the (new) current scroll position base on the
+        // signal (relative position) of the element in relation with
+        // the current scroll position
+        var current = signal == 1
+                ? elementTop - (parentHeight - elementHeight)
+                : elementTop;
+        jQuery(".console .autocomplete").scrollTop(current);
     };
 
     // registers for the click event in the console to
@@ -92,6 +95,8 @@ jQuery(document).ready(function() {
             }
         }
 
+        console.info(keyValue);
+
         switch (keyValue) {
             case 8 :
                 var cursor = jQuery(".console").data("cursor");
@@ -110,6 +115,38 @@ jQuery(document).ready(function() {
 
             case 27 :
                 jQuery(".console .autocomplete").hide();
+                break;
+
+            case 33 :
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+
+                if (isVisible) {
+                    var selected = jQuery(".console .autocomplete ul > li.selected");
+                    selected.removeClass("selected");
+                    var target = jQuery(".console .autocomplete ul > li:first-child");
+                    target.addClass("selected");
+                    ensureVisible(target);
+
+                    // breaks the switch
+                    break;
+                }
+
+                break;
+
+            case 34 :
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+
+                if (isVisible) {
+                    var selected = jQuery(".console .autocomplete ul > li.selected");
+                    selected.removeClass("selected");
+                    var target = jQuery(".console .autocomplete ul > li:last-child");
+                    target.addClass("selected");
+                    ensureVisible(target);
+
+                    // breaks the switch
+                    break;
+                }
+
                 break;
 
             case 35 :
@@ -142,13 +179,12 @@ jQuery(document).ready(function() {
                     if (selected.is(":first-child")) {
                         return;
                     }
+                    selected.removeClass("selected");
                     var selectedIndex = selected.index();
-                    jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
                     var target = jQuery(".console .autocomplete ul > li:nth-child("
                             + (selectedIndex) + ")");
 
                     target.addClass("selected");
-
                     ensureVisible(target);
 
                     // breaks the switch
@@ -189,13 +225,11 @@ jQuery(document).ready(function() {
                     if (selected.is(":last-child")) {
                         return;
                     }
+                    selected.removeClass("selected");
                     var selectedIndex = selected.index();
-
-                    jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
                     var target = jQuery(".console .autocomplete ul > li:nth-child("
                             + (selectedIndex + 2) + ")");
                     target.addClass("selected");
-
                     ensureVisible(target);
 
                     // breaks the switch
@@ -491,6 +525,11 @@ jQuery(document).ready(function() {
         // to retrieve the associated autocomplete value
         var command = jQuery(".console").data("text") || "";
 
+        // para sacar o token actual tenho de sacar o cursor
+        // TODO VER ESTA CENA MUITO BEM
+
+        // runs the remove query to retrieve the various autcomplete
+        // results (this query is meant to be fast 100ms maximum)
         jQuery.ajax({
                     url : "console/autocomplete",
                     data : {
