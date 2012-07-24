@@ -51,15 +51,19 @@ jQuery(document).ready(function() {
     };
 
     var fullscreen = function() {
+        // adds the fullscrren class to the console element
+        // so that the specific style are applied to it
         jQuery(".console").addClass("fullscreen");
-
-        jQuery("body").change()
 
         // retrieves the window
         var _window = jQuery(window);
 
         // registers the resize in the window
         _window.resize(function(event) {
+                    // hides the autocomplete window so that no visual
+                    // disturbances are displayed as a result of the new size
+                    jQuery(".console .autocomplete").hide();
+
                     // refreshes the current console window to fill the
                     // newly available space
                     maximize();
@@ -68,6 +72,26 @@ jQuery(document).ready(function() {
         // maximizes the current window to fill the currently
         // available space (in body)
         maximize();
+    };
+
+    var checkVisible = function(element, parent) {
+        // retrieves the various measures of the parent for the
+        // partial calculus of the visibility status of the element
+        var parentHeight = parent.height();
+        var parentTop = parent.scrollTop();
+        var parentBottom = parentTop + parentHeight;
+
+        // retrieves the measures for the element in order to be able
+        // to calculate its own visibility status
+        var elementHeight = element.outerHeight();
+        var elementTop = element.offset().top;
+        var elementBottom = elementTop + elementHeight;
+
+        // checks if the element is visible in the current context
+        // and returns that result to the caller method
+        var isVisible = elementBottom <= parentBottom
+                && elementTop >= parentTop;
+        return isVisible;
     };
 
     var ensureVisible = function(element, parent) {
@@ -627,82 +651,104 @@ jQuery(document).ready(function() {
         // runs the remove query to retrieve the various autcomplete
         // results (this query is meant to be fast 100ms maximum)
         jQuery.ajax({
-                    url : "console/autocomplete",
-                    data : {
-                        command : token,
-                        instance : jQuery(".console").data("instance")
-                    },
-                    success : function(data) {
-                        // unpacks the resulting json data into the result
-                        // and the instance part, so that they may be used
-                        // in the processing of the results
-                        var result = data["result"];
-                        var offset = data["offset"];
-                        var instance = data["instance"];
+            url : "console/autocomplete",
+            data : {
+                command : token,
+                instance : jQuery(".console").data("instance")
+            },
+            success : function(data) {
+                // unpacks the resulting json data into the result
+                // and the instance part, so that they may be used
+                // in the processing of the results
+                var result = data["result"];
+                var offset = data["offset"];
+                var instance = data["instance"];
 
-                        // retrieves the autocomplete list item and clears
-                        // all of its items (component reset)
-                        var list = jQuery(".console .autocomplete ul");
-                        list.empty();
+                // retrieves the autocomplete list item and clears
+                // all of its items (component reset)
+                var list = jQuery(".console .autocomplete ul");
+                list.empty();
 
-                        // iterates over all the values to be inserted into
-                        // the autocomplete options list
-                        for (var index = 0; index < result.length; index++) {
-                            // retrieves the current value in iteration to
-                            // add it to the options list, then unpacks it into
-                            // name and the type part of the "tuple"
-                            var value = result[index];
-                            var name = value[0];
-                            var type = value[1];
+                // iterates over all the values to be inserted into
+                // the autocomplete options list
+                for (var index = 0; index < result.length; index++) {
+                    // retrieves the current value in iteration to
+                    // add it to the options list, then unpacks it into
+                    // name and the type part of the "tuple"
+                    var value = result[index];
+                    var name = value[0];
+                    var type = value[1];
 
-                            // retrieves the highlight and the remainder part
-                            // of the name using the command length as base
-                            var highlight = name.slice(0, token.length - offset);
-                            var remainder = name.slice(token.length - offset);
+                    // retrieves the highlight and the remainder part
+                    // of the name using the command length as base
+                    var highlight = name.slice(0, token.length - offset);
+                    var remainder = name.slice(token.length - offset);
 
-                            // creates the new item with both the highlight and
-                            // the remaind part and adds it to the list of options
-                            list.append("<li class=\"" + type
-                                    + "\"><span class=\"high\">" + highlight
-                                    + "</span>" + remainder + "</li>");
-                        }
+                    // creates the new item with both the highlight and
+                    // the remaind part and adds it to the list of options
+                    list.append("<li class=\"" + type
+                            + "\"><span class=\"high\">" + highlight
+                            + "</span>" + remainder + "</li>");
+                }
 
-                        // sets the instance (identifier) value in the console
-                        // for latter usage of the value
-                        jQuery(".console").data("instance", instance);
+                // sets the instance (identifier) value in the console
+                // for latter usage of the value
+                jQuery(".console").data("instance", instance);
 
-                        // sets the first child of the autocomplete list as the
-                        // currently selected child element
-                        jQuery(":first-child", list).addClass("selected");
+                // sets the first child of the autocomplete list as the
+                // currently selected child element
+                jQuery(":first-child", list).addClass("selected");
 
-                        // forces the display of the autocomplete in case there
-                        // are results available otherwise hides the autocomplete
-                        // list (no need to display the result)
-                        result.length
-                                ? jQuery(".console .autocomplete").show()
-                                : jQuery(".console .autocomplete").hide();
+                // forces the display of the autocomplete in case there
+                // are results available otherwise hides the autocomplete
+                // list (no need to display the result)
+                result.length
+                        ? jQuery(".console .autocomplete").show()
+                        : jQuery(".console .autocomplete").hide();
 
-                        var offsetTop = jQuery(".console .line").offset().top
-                                + jQuery(".console .line").outerHeight();
-                        jQuery(".console .autocomplete").css("top",
-                                offsetTop + "px");
-                        jQuery(".console .autocomplete").scrollTop(0);
+                // in case there are no results to be displayed no additional
+                // processing should occur (not significant) returns immediately
+                if (!result.length) {
+                    return;
+                }
 
-                        // retrieves the current token structure and uses it to
-                        // retrieve the start index of the token (for autocomplete
-                        // box positioning)
-                        var tokenStructure = getToken();
-                        var startIndex = tokenStructure[1];
+                var offsetTop = jQuery(".console .line").offset().top
+                        + jQuery(".console .line").outerHeight();
+                jQuery(".console .autocomplete").css("top", offsetTop + "px");
+                jQuery(".console .autocomplete").scrollTop(0);
 
-                        // retrieves the size of the font currently being used for the
-                        // text and converts it into an integer value then uses it to
-                        // calculate the offset to be used in the autocomplete
-                        var fontSize = jQuery(".console .text").css("font-size");
-                        fontSize = parseInt(fontSize);
-                        jQuery(".console .autocomplete").css("margin-left",
-                                (startIndex * fontSize + 24) + "px");
-                    }
-                });
+                // retrieves the current token structure and uses it to
+                // retrieve the start index of the token (for autocomplete
+                // box positioning)
+                var tokenStructure = getToken();
+                var startIndex = tokenStructure[1];
+
+                // retrieves the size of the font currently being used for the
+                // text and converts it into an integer value then uses it to
+                // calculate the offset to be used in the autocomplete
+                var fontSize = jQuery(".console .text").css("font-size");
+                fontSize = parseInt(fontSize);
+                jQuery(".console .autocomplete").css("margin-left",
+                        (startIndex * fontSize + 24) + "px");
+
+                // updates the autocomplete window margin so that the window is
+                // displayed bellow the current line and then checks if it's
+                // visible, in case it's not it must be placed above the line
+                jQuery(".console .autocomplete").css("margin-top", "2px");
+                var isVisible = checkVisible(jQuery(".console .autocomplete"),
+                        jQuery(window));
+
+                // calculates the margin top position to be used to place
+                // the autocomplete window above the current line and then
+                // in case the window is not visible places it such
+                // place (notice the minus sign in the margin)
+                var aboveMargin = jQuery(".console .autocomplete").outerHeight()
+                        + jQuery(".console .line").outerHeight() + 2;
+                !isVisible
+                        && jQuery(".console .autocomplete").css("margin-top",
+                                (aboveMargin * -1) + "px");
+            }
+        });
 
     };
 
