@@ -29,7 +29,9 @@ jQuery(document).ready(function() {
     jQuery(".console").click(function() {
                 var element = jQuery(this);
                 var text = jQuery(".text", element);
+                var autocomplete = jQuery(".autocomplete", element);
                 text.focus();
+                autocomplete.hide();
             });
 
     jQuery(".console .text").keydown(function(event) {
