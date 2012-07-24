@@ -301,10 +301,19 @@ jQuery(document).ready(function() {
 
                     var _text = jQuery(".console").data("text");
                     var textElements = _text.split(".");
+                    var textElements = textElements.slice(0, textElements.length - 1);
+                    textElements.push(text);
+                    var text = textElements.join(".")
 
-                    var tobias = textElements.slice(0, textElements.length - 1);
-                    tobias.push(text);
-                    var text = tobias.join(".")
+                    // in case the currently selected item is a method or a function
+                    // extra care must be taken to provide the calling part
+                    if (selected.hasClass("method")
+                            || selected.hasClass("function")) {
+                        // appends the calling part of the line and sets the cursor
+                        // position to the initial part of the method call
+                        text += "()";
+                        jQuery(".console").data("cursor", 0);
+                    }
 
                     jQuery(".console").data("text", text);
                     jQuery(".console .autocomplete").hide();
