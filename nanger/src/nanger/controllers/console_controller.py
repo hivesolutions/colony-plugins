@@ -116,7 +116,7 @@ class ConsoleController(controllers.Controller):
         # the standard output and error back to the original values
         sys.stdout = buffer_out
         sys.stderr = buffer_err
-        try: interpreter.runsource(command)
+        try: interpreter.runsource(command, symbol = "exec")
         finally: sys.stdout = sys.__stdout__; sys.stderr = sys.__stderr__
 
         # retrieves the values from the standard output and error and checks if
