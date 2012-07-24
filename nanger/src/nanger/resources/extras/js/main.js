@@ -25,6 +25,10 @@
 
 jQuery(document).ready(function() {
 
+    // the offset in pixels of the autocomplete
+    // window relative to the console line
+    AUTOCOMPLETE_OFFSET = 2;
+
     var maximize = function() {
         // retrieves the window
         var _window = jQuery(window);
@@ -734,7 +738,8 @@ jQuery(document).ready(function() {
                 // updates the autocomplete window margin so that the window is
                 // displayed bellow the current line and then checks if it's
                 // visible, in case it's not it must be placed above the line
-                jQuery(".console .autocomplete").css("margin-top", "2px");
+                jQuery(".console .autocomplete").css("margin-top",
+                        AUTOCOMPLETE_OFFSET + "px");
                 var isVisible = checkVisible(jQuery(".console .autocomplete"),
                         jQuery(window));
 
@@ -743,7 +748,8 @@ jQuery(document).ready(function() {
                 // in case the window is not visible places it such
                 // place (notice the minus sign in the margin)
                 var aboveMargin = jQuery(".console .autocomplete").outerHeight()
-                        + jQuery(".console .line").outerHeight() + 2;
+                        + jQuery(".console .line").outerHeight()
+                        + AUTOCOMPLETE_OFFSET;
                 !isVisible
                         && jQuery(".console .autocomplete").css("margin-top",
                                 (aboveMargin * -1) + "px");
