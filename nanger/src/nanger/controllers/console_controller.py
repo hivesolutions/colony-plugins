@@ -192,7 +192,7 @@ class ConsoleController(controllers.Controller):
         # splits the command into the various sub components so that its possible
         # to use the partials value to recursively resolve the appropriate sequence
         # to be iterated for searching
-        command_split = command.rsplit(".", 1)
+        command_split = command.rsplit(".")
         base = command_split[-1]
         partials = command_split[:-1]
         values, container = self._resolve_value(partials, locals)

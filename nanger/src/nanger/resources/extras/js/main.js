@@ -25,15 +25,30 @@
 
 jQuery(document).ready(function() {
 
-    function isScrolledIntoView(elem) {
-        var docViewTop = $(".console").scrollTop();
-        var docViewBottom = docViewTop + $(".console").outerHeight();
+    var ensureVisible = function(elem) {
+        var docViewTop = jQuery(".console .autocomplete").scrollTop();
+        var docViewBottom = docViewTop
+                + jQuery(".console .autocomplete").height();
 
-        var elemTop = $(elem).offset().top;
-        var elemBottom = elemTop + $(elem).outerHeight();
+        var elemTop = jQuery(elem).offset().top
+                - jQuery(".console .autocomplete ul").offset().top;
+        var elemBottom = elemTop + jQuery(elem).outerHeight();
 
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-    }
+        var isVisible = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        if (isVisible) {
+            return;
+        }
+
+        // calculates the signal using the relative position of the
+        // element to determine if it should be negative or positive
+        var signal = elemTop > docViewTop ? 1 : -1;
+
+        // retrieves the previous scroll top and uses it to calculate
+        // the new one using an optimistic approach
+        var previous = jQuery(".console .autocomplete").scrollTop();
+        jQuery(".console .autocomplete").scrollTop(previous
+                + (elemBottom - elemTop) * signal);
+    };
 
     // registers for the click event in the console to
     // propagate the focus event to the text area
@@ -120,11 +135,19 @@ jQuery(document).ready(function() {
 
                 if (isVisible) {
                     var selected = jQuery(".console .autocomplete ul > li.selected");
+                    if (selected.is(":first-child")) {
+                        return;
+                    }
                     var selectedIndex = selected.index();
                     jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
-                    jQuery(".console .autocomplete ul > li:nth-child("
-                            + (selectedIndex) + ")").addClass("selected");
+                    var target = jQuery(".console .autocomplete ul > li:nth-child("
+                            + (selectedIndex) + ")");
 
+                    target.addClass("selected");
+
+                    ensureVisible(target);
+
+                    // breaks the switch
                     break;
                 }
 
@@ -155,16 +178,25 @@ jQuery(document).ready(function() {
                 break;
 
             case 40 :
+                console.info("cenas")
+
                 var isVisible = jQuery(".console .autocomplete").is(":visible");
 
                 if (isVisible) {
                     var selected = jQuery(".console .autocomplete ul > li.selected");
+                    if (selected.is(":last-child")) {
+                        return;
+                    }
                     var selectedIndex = selected.index();
+
                     jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
                     var target = jQuery(".console .autocomplete ul > li:nth-child("
                             + (selectedIndex + 2) + ")");
                     target.addClass("selected");
 
+                    ensureVisible(target);
+
+                    // breaks the switch
                     break;
                 }
 
@@ -172,7 +204,7 @@ jQuery(document).ready(function() {
                 var historyIndex = jQuery(".console").data("history_index")
                         || 0;
 
-                var value = history[history.length - historyIndex - 1];
+                var value = history[history.length - historyIndex];
                 if (historyIndex != 0) {
                     historyIndex--;
                 }
@@ -219,6 +251,8 @@ jQuery(document).ready(function() {
         // retrieves the element
         var element = jQuery(this);
 
+        // sets a timeout so that the complete paste data
+        // is set in the text area (deferred event)
         setTimeout(function() {
                     // retrieves the current value of the element and clears
                     // the contents of the text element to avoid  any duplicate
@@ -226,6 +260,8 @@ jQuery(document).ready(function() {
                     var character = element.val();
                     element.val("");
 
+                    // retrieves the current console text to be able to be used
+                    // as teh base data for the paste operation
                     var text = jQuery(".console").data("text") || "";
 
                     // adds the new character into the text buffer
@@ -299,9 +335,10 @@ jQuery(document).ready(function() {
                     var selected = jQuery(".console .autocomplete ul > li.selected");
                     var text = selected.text();
 
-                    var _text = jQuery(".console").data("text");
+                    var _text = jQuery(".console").data("text") || "";
                     var textElements = _text.split(".");
-                    var textElements = textElements.slice(0, textElements.length - 1);
+                    var textElements = textElements.slice(0,
+                            textElements.length - 1);
                     textElements.push(text);
                     var text = textElements.join(".")
 
@@ -513,6 +550,7 @@ jQuery(document).ready(function() {
                                 + jQuery(".console .line").outerHeight();
                         jQuery(".console .autocomplete").css("top",
                                 offsetTop + "px");
+                        jQuery(".console .autocomplete").scrollTop(0);
                     }
                 });
 
