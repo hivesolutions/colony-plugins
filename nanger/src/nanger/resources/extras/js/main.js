@@ -27,111 +27,7 @@ jQuery(document).ready(function() {
 
     // the offset in pixels of the autocomplete
     // window relative to the console line
-    AUTOCOMPLETE_OFFSET = 2;
-
-    var maximize = function() {
-        // retrieves the window
-        var _window = jQuery(window);
-
-        // TODO: O MELHOR E POR ISTO A SER UMA CLASSE
-        jQuery("body").css("margin", "0px 0px 0px 0px");
-        jQuery("body").css("padding", "0px 0px 0px 0px");
-
-        jQuery("html").css("overflow-y", "hidden");
-
-        var windowHeight = _window.height();
-        var windowWidth = _window.width();
-
-        jQuery(".console").css("margin", "0px 0px 0px 0px");
-
-        jQuery(".console").css("position", "absolute");
-        jQuery(".console").css("top", "0px");
-        jQuery(".console").css("left", "0px");
-        jQuery(".console").height(windowHeight - 8);
-        jQuery(".console").width(windowWidth - 8);
-
-        var scrollHeight = jQuery(".console")[0].scrollHeight;
-        jQuery(".console").scrollTop(scrollHeight);
-    };
-
-    var fullscreen = function() {
-        // adds the fullscrren class to the console element
-        // so that the specific style are applied to it
-        jQuery(".console").addClass("fullscreen");
-
-        // retrieves the window
-        var _window = jQuery(window);
-
-        // registers the resize in the window
-        _window.resize(function(event) {
-                    // hides the autocomplete window so that no visual
-                    // disturbances are displayed as a result of the new size
-                    jQuery(".console .autocomplete").hide();
-
-                    // refreshes the current console window to fill the
-                    // newly available space
-                    maximize();
-                });
-
-        // maximizes the current window to fill the currently
-        // available space (in body)
-        maximize();
-    };
-
-    var checkVisible = function(element, parent) {
-        // retrieves the various measures of the parent for the
-        // partial calculus of the visibility status of the element
-        var parentHeight = parent.height();
-        var parentTop = parent.scrollTop();
-        var parentBottom = parentTop + parentHeight;
-
-        // retrieves the measures for the element in order to be able
-        // to calculate its own visibility status
-        var elementHeight = element.outerHeight();
-        var elementTop = element.offset().top;
-        var elementBottom = elementTop + elementHeight;
-
-        // checks if the element is visible in the current context
-        // and returns that result to the caller method
-        var isVisible = elementBottom <= parentBottom
-                && elementTop >= parentTop;
-        return isVisible;
-    };
-
-    var ensureVisible = function(element, parent) {
-        // retrieves the various measures of the parent for the
-        // partial calculus of the visibility status of the element
-        var parentHeight = parent.height();
-        var parentTop = parent.scrollTop();
-        var parentBottom = parentTop + parentHeight;
-
-        // retrieves the measures for the element in order to be able
-        // to calculate its own visibility status
-        var elementHeight = element.outerHeight();
-        var elementTop = element.offset().top - element.parent().offset().top;
-        var elementBottom = elementTop + elementHeight;
-
-        // checks if the element is visible in the current context
-        // and in case it's retunrs immediately no need to change the
-        // parent element to ensure visibility
-        var isVisible = elementBottom <= parentBottom
-                && elementTop >= parentTop;
-        if (isVisible) {
-            return;
-        }
-
-        // calculates the signal using the relative position of the
-        // element to determine if it should be negative or positive
-        var signal = elementTop > parentTop ? 1 : -1;
-
-        // calculates the (new) current scroll position base on the
-        // signal (relative position) of the element in relation with
-        // the current scroll position
-        var current = signal == 1
-                ? elementTop - (parentHeight - elementHeight)
-                : elementTop;
-        parent.scrollTop(current);
-    };
+    var AUTOCOMPLETE_OFFSET = 2;
 
     // registers for the click event in the console to
     // propagate the focus event to the text area
@@ -875,6 +771,110 @@ jQuery(document).ready(function() {
         var token = command.slice(startIndex, endIndex);
 
         return [token, startIndex, endIndex];
+    };
+
+    var maximize = function() {
+        // retrieves the window
+        var _window = jQuery(window);
+
+        // TODO: O MELHOR E POR ISTO A SER UMA CLASSE
+        jQuery("body").css("margin", "0px 0px 0px 0px");
+        jQuery("body").css("padding", "0px 0px 0px 0px");
+
+        jQuery("html").css("overflow-y", "hidden");
+
+        var windowHeight = _window.height();
+        var windowWidth = _window.width();
+
+        jQuery(".console").css("margin", "0px 0px 0px 0px");
+
+        jQuery(".console").css("position", "absolute");
+        jQuery(".console").css("top", "0px");
+        jQuery(".console").css("left", "0px");
+        jQuery(".console").height(windowHeight - 4);
+        jQuery(".console").width(windowWidth - 8);
+
+        var scrollHeight = jQuery(".console")[0].scrollHeight;
+        jQuery(".console").scrollTop(scrollHeight);
+    };
+
+    var fullscreen = function() {
+        // adds the fullscrren class to the console element
+        // so that the specific style are applied to it
+        jQuery(".console").addClass("fullscreen");
+
+        // retrieves the window
+        var _window = jQuery(window);
+
+        // registers the resize in the window
+        _window.resize(function(event) {
+                    // hides the autocomplete window so that no visual
+                    // disturbances are displayed as a result of the new size
+                    jQuery(".console .autocomplete").hide();
+
+                    // refreshes the current console window to fill the
+                    // newly available space
+                    maximize();
+                });
+
+        // maximizes the current window to fill the currently
+        // available space (in body)
+        maximize();
+    };
+
+    var checkVisible = function(element, parent) {
+        // retrieves the various measures of the parent for the
+        // partial calculus of the visibility status of the element
+        var parentHeight = parent.height();
+        var parentTop = parent.scrollTop();
+        var parentBottom = parentTop + parentHeight;
+
+        // retrieves the measures for the element in order to be able
+        // to calculate its own visibility status
+        var elementHeight = element.outerHeight();
+        var elementTop = element.offset().top;
+        var elementBottom = elementTop + elementHeight;
+
+        // checks if the element is visible in the current context
+        // and returns that result to the caller method
+        var isVisible = elementBottom <= parentBottom
+                && elementTop >= parentTop;
+        return isVisible;
+    };
+
+    var ensureVisible = function(element, parent) {
+        // retrieves the various measures of the parent for the
+        // partial calculus of the visibility status of the element
+        var parentHeight = parent.height();
+        var parentTop = parent.scrollTop();
+        var parentBottom = parentTop + parentHeight;
+
+        // retrieves the measures for the element in order to be able
+        // to calculate its own visibility status
+        var elementHeight = element.outerHeight();
+        var elementTop = element.offset().top - element.parent().offset().top;
+        var elementBottom = elementTop + elementHeight;
+
+        // checks if the element is visible in the current context
+        // and in case it's retunrs immediately no need to change the
+        // parent element to ensure visibility
+        var isVisible = elementBottom <= parentBottom
+                && elementTop >= parentTop;
+        if (isVisible) {
+            return;
+        }
+
+        // calculates the signal using the relative position of the
+        // element to determine if it should be negative or positive
+        var signal = elementTop > parentTop ? 1 : -1;
+
+        // calculates the (new) current scroll position base on the
+        // signal (relative position) of the element in relation with
+        // the current scroll position
+        var current = signal == 1
+                ? elementTop - (parentHeight - elementHeight)
+                : elementTop;
+        parent.scrollTop(current);
     };
 
     // initializes the cursor position at the end
