@@ -39,6 +39,80 @@ jQuery(document).ready(function() {
                 autocomplete.hide();
             });
 
+    jQuery(".console").bind("dragenter", function(event) {
+                // retrieves the current element and
+                // adds the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.addClass("drag");
+            });
+
+    jQuery(".console").bind("dragover", function(event) {
+                // retrieves the current element and
+                // adds the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.addClass("drag");
+            });
+
+    jQuery(".console").bind("dragleave", function(event) {
+                // retrieves the current element and
+                // removes the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.removeClass("drag");
+            });
+
+    jQuery(".console").bind("drop", function(event) {
+                // retrieves the current element and
+                // removes the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.removeClass("drag");
+
+                // prevents the default event (avoids browser showing
+                // the file in raw mode)
+                event.preventDefault();
+
+                // retrieves the first file and create a new file
+                // reader object to handle the loading of the file
+                var dataTransfer = event.originalEvent.dataTransfer;
+                var file = dataTransfer.files[0];
+                reader = new FileReader();
+                reader.onload = function(event) {
+                    // retrieves the provided text value from
+                    // the event to be processed by the console
+                    var value = event.target.result;
+
+                    // splits the various lines of the value arround
+                    // the newline character to retrieve the commands
+                    var commands = value.split("\n");
+
+                    // in case there are multiple commands the multiline
+                    // mode is activated and execution of the commands
+                    // is ensured immediately
+                    if (commands.length > 1) {
+                        var _commands = jQuery(".console").data("commands")
+                                || [];
+                        for (var index = 0; index < commands.length; index++) {
+                            var command = jQuery.trim(commands[index]);
+                            if (command == "") {
+                                continue;
+                            }
+                            _commands.push("for i in range(10):\n    print sys.version_info");
+                        }
+                        jQuery(".console").data("commands", _commands);
+                        process();
+                    }
+                };
+                reader.readAsText(file);
+
+                // stops the event propagation to avoid any possible
+                // problem with upper handlers
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+            });
+
     jQuery(".console .text").keydown(function(event) {
         // retrieves the current element
         var element = jQuery(this);

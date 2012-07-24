@@ -249,7 +249,6 @@ pre {
     text-align: center;
 }
 
-
 .recursion {
     margin: 0px 12px 0px 12px;
     text-align: center;
@@ -268,6 +267,10 @@ pre {
     overflow-y: auto;
     padding: 4px 8px 4px 8px;
     text-align: left;
+}
+
+.console.drag {
+    background-color: #555555;
 }
 
 .console.fullscreen {
@@ -306,7 +309,7 @@ pre {
     overflow: hidden;
     position: fixed;
     resize: none;
-    width: 1px;   ;
+    width: 1px;
 }
 
 .console .cursor {
