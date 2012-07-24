@@ -101,7 +101,7 @@ class ConsoleController(controllers.Controller):
         # as entrance points to the end user
         locals = {
             "manager" : plugin_manager,
-            "plugin_manager" : plugin_manager
+            "plugins" : plugin_manager.plugins
         }
 
         # tries to retrieve the correct interpreter from the interpreters
@@ -173,7 +173,7 @@ class ConsoleController(controllers.Controller):
         # as entrance points to the end user
         locals = {
             "manager" : plugin_manager,
-            "plugin_manager" : plugin_manager
+            "plugins" : plugin_manager.plugins
         }
 
         # tries to retrieve the correct interpreter from the interpreters
