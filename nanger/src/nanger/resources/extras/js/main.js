@@ -95,8 +95,6 @@ jQuery(document).ready(function() {
             }
         }
 
-        console.info(keyValue);
-
         switch (keyValue) {
             case 8 :
                 var cursor = jQuery(".console").data("cursor");
@@ -127,6 +125,10 @@ jQuery(document).ready(function() {
                     target.addClass("selected");
                     ensureVisible(target);
 
+                    // prevernts the default behavior (avoids the top level window
+                    // from moving, expected behavior)
+                    event.preventDefault();
+
                     // breaks the switch
                     break;
                 }
@@ -142,6 +144,10 @@ jQuery(document).ready(function() {
                     var target = jQuery(".console .autocomplete ul > li:last-child");
                     target.addClass("selected");
                     ensureVisible(target);
+
+                    // prevernts the default behavior (avoids the top level window
+                    // from moving, expected behavior)
+                    event.preventDefault();
 
                     // breaks the switch
                     break;
@@ -371,24 +377,48 @@ jQuery(document).ready(function() {
                     var selected = jQuery(".console .autocomplete ul > li.selected");
                     var text = selected.text();
 
+                    // retrieves the current's console text and then retrieves
+                    // the token structure for the currrently selected text
                     var _text = jQuery(".console").data("text") || "";
-                    var textElements = _text.split(".");
-                    var textElements = textElements.slice(0,
-                            textElements.length - 1);
-                    textElements.push(text);
-                    var text = textElements.join(".")
+                    var tokenStructure = getToken();
+
+                    var token = tokenStructure[0];
+                    var startIndex = tokenStructure[1];
+                    var endIndex = tokenStructure[2];
+
+                    var tokenElements = token.split(".");
+                    var tokenElements = tokenElements.slice(0,
+                            tokenElements.length - 1);
+                    tokenElements.push(text);
+                    token = tokenElements.join(".")
+
+                    var start = _text.slice(0, startIndex);
+                    var end = _text.slice(endIndex);
+
+                    call = false;
 
                     // in case the currently selected item is a method or a function
                     // extra care must be taken to provide the calling part
                     if (selected.hasClass("method")
                             || selected.hasClass("function")) {
-                        // appends the calling part of the line and sets the cursor
-                        // position to the initial part of the method call
-                        text += "()";
-                        jQuery(".console").data("cursor", 0);
+                        // appends the calling part of the line to the token
+                        // to provide calling shortcut
+                        token += "()";
+                        call = true;
                     }
 
+                    // creates the final text value to be set in the line using
+                    // the start part the token and the (final) end part
+                    text = start + token + end;
+
+                    // calculates the new cursor position based on the partial
+                    // token values and the start string length and takes into
+                    // account the possible offset for the call situations
+                    var cursor = text.length
+                            - (start.length + token.length + (call ? 0 : 1))
+
                     jQuery(".console").data("text", text);
+                    jQuery(".console").data("cursor", cursor);
                     jQuery(".console .autocomplete").hide();
                     refresh();
 
@@ -433,10 +463,11 @@ jQuery(document).ready(function() {
                 var value = first + character + second;
 
                 // updates the text value of the console and refreshes
-                // the visual part of it
+                // the visual part of it, note that the autocomplete
+                // is only run in case the character is not a space
                 jQuery(".console").data("text", value);
                 refresh();
-                autocomplete(true);
+                character != " " && autocomplete(true);
 
                 // breaks the switch
                 break;
@@ -521,19 +552,15 @@ jQuery(document).ready(function() {
             return;
         }
 
-        // retrieves the current console command in execution
-        // to retrieve the associated autocomplete value
-        var command = jQuery(".console").data("text") || "";
-
-        // para sacar o token actual tenho de sacar o cursor
-        // TODO VER ESTA CENA MUITO BEM
+        var tokenStructure = getToken();
+        var token = tokenStructure[0];
 
         // runs the remove query to retrieve the various autcomplete
         // results (this query is meant to be fast 100ms maximum)
         jQuery.ajax({
                     url : "console/autocomplete",
                     data : {
-                        command : command,
+                        command : token,
                         instance : jQuery(".console").data("instance")
                     },
                     success : function(data) {
@@ -561,9 +588,8 @@ jQuery(document).ready(function() {
 
                             // retrieves the highlight and the remainder part
                             // of the name using the command length as base
-                            var highlight = name.slice(0, command.length
-                                            - offset);
-                            var remainder = name.slice(command.length - offset);
+                            var highlight = name.slice(0, token.length - offset);
+                            var remainder = name.slice(token.length - offset);
 
                             // creates the new item with both the highlight and
                             // the remaind part and adds it to the list of options
@@ -592,6 +618,20 @@ jQuery(document).ready(function() {
                         jQuery(".console .autocomplete").css("top",
                                 offsetTop + "px");
                         jQuery(".console .autocomplete").scrollTop(0);
+
+                        // retrieves the current token structure and uses it to
+                        // retrieve the start index of the token (for autocomplete
+                        // box positioning)
+                        var tokenStructure = getToken();
+                        var startIndex = tokenStructure[1];
+
+                        // retrieves the size of the font currently being used for the
+                        // text and converts it into an integer value then uses it to
+                        // calculate the offset to be used in the autocomplete
+                        var fontSize = jQuery(".console .text").css("font-size");
+                        fontSize = parseInt(fontSize);
+                        jQuery(".console .autocomplete").css("margin-left",
+                                (startIndex * fontSize + 24) + "px");
                     }
                 });
 
@@ -680,6 +720,40 @@ jQuery(document).ready(function() {
                 process();
             }
         });
+    };
+
+    var getToken = function() {
+        // retrieves the current console command in execution
+        // to retrieve the associated autocomplete value
+        var command = jQuery(".console").data("text") || "";
+
+        // retrieves the current cursor position and uses it to
+        // try to find the index of the token to be used in the retrieval
+        var cursor = jQuery(".console").data("cursor") || -1;
+        for (var index = command.length - cursor - 2; index >= 0; index--) {
+            if (command[index] != " ") {
+                continue;
+            }
+            break;
+        }
+
+        index++;
+
+        // saves the current index position as the start index position
+        // for the command (the reference to the first letter)
+        var startIndex = index;
+
+        for (var index = startIndex; index < command.length; index++) {
+            if (command[index] != " ") {
+                continue;
+            }
+            break;
+        }
+
+        var endIndex = index;
+        var token = command.slice(startIndex, endIndex);
+
+        return [token, startIndex, endIndex];
     };
 
     // initializes the cursor position at the end
