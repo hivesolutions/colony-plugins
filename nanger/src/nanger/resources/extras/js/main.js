@@ -25,14 +25,62 @@
 
 jQuery(document).ready(function() {
 
-    var ensureVisible = function(element) {
-        var parentHeight = jQuery(".console .autocomplete").height();
-        var parentTop = jQuery(".console .autocomplete").scrollTop();
+    var maximize = function() {
+        // retrieves the window
+        var _window = jQuery(window);
+
+        // TODO: O MELHOR E POR ISTO A SER UMA CLASSE
+        jQuery("body").css("margin", "0px 0px 0px 0px");
+        jQuery("body").css("padding", "0px 0px 0px 0px");
+
+        jQuery("html").css("overflow-y", "hidden");
+
+        var windowHeight = _window.height();
+        var windowWidth = _window.width();
+
+        jQuery(".console").css("margin", "0px 0px 0px 0px");
+
+        jQuery(".console").css("position", "absolute");
+        jQuery(".console").css("top", "0px");
+        jQuery(".console").css("left", "0px");
+        jQuery(".console").height(windowHeight - 8);
+        jQuery(".console").width(windowWidth - 8);
+
+        var scrollHeight = jQuery(".console")[0].scrollHeight;
+        jQuery(".console").scrollTop(scrollHeight);
+    };
+
+    var fullscreen = function() {
+        jQuery(".console").addClass("fullscreen");
+
+        jQuery("body").change()
+
+        // retrieves the window
+        var _window = jQuery(window);
+
+        // registers the resize in the window
+        _window.resize(function(event) {
+                    // refreshes the current console window to fill the
+                    // newly available space
+                    maximize();
+                });
+
+        // maximizes the current window to fill the currently
+        // available space (in body)
+        maximize();
+    };
+
+    var ensureVisible = function(element, parent) {
+        // retrieves the various measures of the parent for the
+        // partial calculus of the visibility status of the element
+        var parentHeight = parent.height();
+        var parentTop = parent.scrollTop();
         var parentBottom = parentTop + parentHeight;
 
-        var elementHeight = jQuery(element).outerHeight();
-        var elementTop = jQuery(element).offset().top
-                - jQuery(".console .autocomplete ul").offset().top;
+        // retrieves the measures for the element in order to be able
+        // to calculate its own visibility status
+        var elementHeight = element.outerHeight();
+        var elementTop = element.offset().top - element.parent().offset().top;
         var elementBottom = elementTop + elementHeight;
 
         // checks if the element is visible in the current context
@@ -54,7 +102,7 @@ jQuery(document).ready(function() {
         var current = signal == 1
                 ? elementTop - (parentHeight - elementHeight)
                 : elementTop;
-        jQuery(".console .autocomplete").scrollTop(current);
+        parent.scrollTop(current);
     };
 
     // registers for the click event in the console to
@@ -97,6 +145,10 @@ jQuery(document).ready(function() {
 
         switch (keyValue) {
             case 8 :
+                // prevents the default behavior for the backspace
+                // key because it would focus the window on the text area
+                event.preventDefault();
+
                 var cursor = jQuery(".console").data("cursor");
                 if (cursor == value.length - 1) {
                     break;
@@ -123,7 +175,7 @@ jQuery(document).ready(function() {
                     selected.removeClass("selected");
                     var target = jQuery(".console .autocomplete ul > li:first-child");
                     target.addClass("selected");
-                    ensureVisible(target);
+                    ensureVisible(target, jQuery(".console .autocomplete"));
 
                     // prevernts the default behavior (avoids the top level window
                     // from moving, expected behavior)
@@ -143,7 +195,7 @@ jQuery(document).ready(function() {
                     selected.removeClass("selected");
                     var target = jQuery(".console .autocomplete ul > li:last-child");
                     target.addClass("selected");
-                    ensureVisible(target);
+                    ensureVisible(target, jQuery(".console .autocomplete"));
 
                     // prevernts the default behavior (avoids the top level window
                     // from moving, expected behavior)
@@ -191,7 +243,7 @@ jQuery(document).ready(function() {
                             + (selectedIndex) + ")");
 
                     target.addClass("selected");
-                    ensureVisible(target);
+                    ensureVisible(target, jQuery(".console .autocomplete"));
 
                     // breaks the switch
                     break;
@@ -236,7 +288,7 @@ jQuery(document).ready(function() {
                     var target = jQuery(".console .autocomplete ul > li:nth-child("
                             + (selectedIndex + 2) + ")");
                     target.addClass("selected");
-                    ensureVisible(target);
+                    ensureVisible(target, jQuery(".console .autocomplete"));
 
                     // breaks the switch
                     break;
@@ -258,6 +310,10 @@ jQuery(document).ready(function() {
                 break;
 
             case 46 :
+                // prevents the default behavior for the delete
+                // key because it would focus the window on the text area
+                event.preventDefault();
+
                 var cursor = jQuery(".console").data("cursor");
                 if (cursor == -1) {
                     break;
@@ -431,7 +487,18 @@ jQuery(document).ready(function() {
                     case "clear" :
                         // clears the current console display removing the various
                         // information contained in it
-                        clear();
+                        clear(true);
+                        event.preventDefault();
+
+                        // breaks the switch
+                        break;
+
+                    case "fullscreen" :
+                        // puts the current console window into the fullscreen mode
+                        // this action should change the current body and window status
+                        // so it should be used carefully to avoid side effects
+                        fullscreen();
+                        clear(false);
                         event.preventDefault();
 
                         // breaks the switch
@@ -537,12 +604,12 @@ jQuery(document).ready(function() {
      * the previous lines and the text field. At the end of the execution the
      * console is refreshed.
      */
-    var clear = function() {
+    var clear = function(complete) {
         jQuery(".console").data("text", "");
         jQuery(".console").data("cursor", -1);
         jQuery(".console .text").val("");
         jQuery(".console .line").empty();
-        jQuery(".console .previous").empty();
+        complete && jQuery(".console .previous").empty();
         refresh();
     };
 
@@ -552,6 +619,8 @@ jQuery(document).ready(function() {
             return;
         }
 
+        // retrieves the token structure and uses it to retrieve
+        // the currently selected token (selected word)
         var tokenStructure = getToken();
         var token = tokenStructure[0];
 
