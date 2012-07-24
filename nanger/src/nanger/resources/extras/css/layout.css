@@ -270,6 +270,22 @@ pre {
     text-align: left;
 }
 
+.console::-webkit-scrollbar {
+    width: 10px;
+}
+
+.console::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.console::-webkit-scrollbar-thumb {
+    background-color: #aaaaaa;
+}
+
+.console::-webkit-scrollbar-thumb:window-inactive {
+    background-color: #bbbbbb; ;
+}
+
 .console .text {
     font-family: monospace;
     font-size: 8px;
@@ -297,11 +313,28 @@ pre {
     font-family: Arial, "serif";
     font-size: 10px;
     margin-left: 24px;
-    max-height: 212px;
+    margin-top: 1px;
+    max-height: 210px;
     min-width: 200px;
     overflow-x: hidden;
     overflow-y: auto;
     position: absolute;
+}
+
+.console .autocomplete::-webkit-scrollbar {
+    width: 4px;
+}
+
+.console .autocomplete::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.console .autocomplete::-webkit-scrollbar-thumb {
+    background-color: #888888;
+}
+
+.console .autocomplete::-webkit-scrollbar-thumb:window-inactive {
+    background-color: #aaaaaa; ;
 }
 
 .console .autocomplete ul {
@@ -310,10 +343,22 @@ pre {
 }
 
 .console .autocomplete ul > li {
-    background: transparent url(../images/method.png) no-repeat 6px center;
+    background: transparent url(../images/object.png) no-repeat 6px center;
     cursor: pointer;
     margin: 0px 0px 0px 0px;
     padding: 0px 6px 0px 18px;
+}
+
+.console .autocomplete ul > li.object {
+    background-image: url(../images/object.png);
+}
+
+.console .autocomplete ul > li.method {
+    background-image: url(../images/method.png);
+}
+
+.console .autocomplete ul > li.function {
+    background-image: url(../images/function.png);
 }
 
 .console .autocomplete ul > li .high {

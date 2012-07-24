@@ -24,6 +24,17 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 jQuery(document).ready(function() {
+
+    function isScrolledIntoView(elem) {
+        var docViewTop = $(".console").scrollTop();
+        var docViewBottom = docViewTop + $(".console").outerHeight();
+
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop + $(elem).outerHeight();
+
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
     // registers for the click event in the console to
     // propagate the focus event to the text area
     jQuery(".console").click(function() {
@@ -105,6 +116,18 @@ jQuery(document).ready(function() {
                 break;
 
             case 38 :
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+
+                if (isVisible) {
+                    var selected = jQuery(".console .autocomplete ul > li.selected");
+                    var selectedIndex = selected.index();
+                    jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
+                    jQuery(".console .autocomplete ul > li:nth-child("
+                            + (selectedIndex) + ")").addClass("selected");
+
+                    break;
+                }
+
                 var history = jQuery(".console").data("history") || [];
                 var historyIndex = jQuery(".console").data("history_index")
                         || 0;
@@ -132,6 +155,19 @@ jQuery(document).ready(function() {
                 break;
 
             case 40 :
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+
+                if (isVisible) {
+                    var selected = jQuery(".console .autocomplete ul > li.selected");
+                    var selectedIndex = selected.index();
+                    jQuery(".console .autocomplete ul > li.selected").removeClass("selected");
+                    var target = jQuery(".console .autocomplete ul > li:nth-child("
+                            + (selectedIndex + 2) + ")");
+                    target.addClass("selected");
+
+                    break;
+                }
+
                 var history = jQuery(".console").data("history") || [];
                 var historyIndex = jQuery(".console").data("history_index")
                         || 0;
@@ -226,12 +262,6 @@ jQuery(document).ready(function() {
                 }, 0);
     });
 
-    var isIgnorableKey = function(e) {
-        // for now just filter alt+tab that we receive on some platforms when
-        // user switches windows (goes away from the browser)
-        return ((e.keyCode == 18 || e.keyCode == 192) && e.altKey);
-    };
-
     jQuery(".console .text").keypress(function(event) {
         // retrieves the element
         var element = jQuery(this);
@@ -263,6 +293,26 @@ jQuery(document).ready(function() {
         // switches over the key value
         switch (keyValue) {
             case 13 :
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+
+                if (isVisible) {
+                    var selected = jQuery(".console .autocomplete ul > li.selected");
+                    var text = selected.text();
+
+                    var _text = jQuery(".console").data("text");
+                    var textElements = _text.split(".");
+
+                    var tobias = textElements.slice(0, textElements.length - 1);
+                    tobias.push(text);
+                    var text = tobias.join(".")
+
+                    jQuery(".console").data("text", text);
+                    jQuery(".console .autocomplete").hide();
+                    refresh();
+
+                    break;
+                }
+
                 var value = jQuery(".console").data("text") || "";
 
                 switch (value) {
@@ -323,6 +373,7 @@ jQuery(document).ready(function() {
 
     jQuery(".console .text").blur(function() {
                 jQuery(".console").removeClass("focus");
+                jQuery(".console .autocomplete").hide();
             });
 
     var escapeHtml = function(value) {
@@ -403,6 +454,7 @@ jQuery(document).ready(function() {
                         // and the instance part, so that they may be used
                         // in the processing of the results
                         var result = data["result"];
+                        var offset = data["offset"];
                         var instance = data["instance"];
 
                         // retrieves the autocomplete list item and clears
@@ -414,17 +466,22 @@ jQuery(document).ready(function() {
                         // the autocomplete options list
                         for (var index = 0; index < result.length; index++) {
                             // retrieves the current value in iteration to
-                            // adds it to the options list
+                            // add it to the options list, then unpacks it into
+                            // name and the type part of the "tuple"
                             var value = result[index];
+                            var name = value[0];
+                            var type = value[1];
 
                             // retrieves the highlight and the remainder part
-                            // of the value using the command length as base
-                            var highlight = value.slice(0, command.length);
-                            var remainder = value.slice(command.length);
+                            // of the name using the command length as base
+                            var highlight = name.slice(0, command.length
+                                            - offset);
+                            var remainder = name.slice(command.length - offset);
 
                             // creates the new item with both the highlight and
                             // the remaind part and adds it to the list of options
-                            list.append("<li><span class=\"high\">" + highlight
+                            list.append("<li class=\"" + type
+                                    + "\"><span class=\"high\">" + highlight
                                     + "</span>" + remainder + "</li>");
                         }
 
@@ -442,6 +499,11 @@ jQuery(document).ready(function() {
                         result.length
                                 ? jQuery(".console .autocomplete").show()
                                 : jQuery(".console .autocomplete").hide();
+
+                        var offsetTop = jQuery(".console .line").offset().top
+                                + jQuery(".console .line").outerHeight();
+                        jQuery(".console .autocomplete").css("top",
+                                offsetTop + "px");
                     }
                 });
 
@@ -507,6 +569,8 @@ jQuery(document).ready(function() {
                 jQuery(".console .previous").append("<div>" + line + "</div>");
                 jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
 
+                // retrieves the sequence object that contains the various
+                // command strings that compose the history of the console
                 var history = jQuery(".console").data("history") || [];
 
                 // checks if the current value to be inserted

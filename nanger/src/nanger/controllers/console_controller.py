@@ -178,10 +178,12 @@ class ConsoleController(controllers.Controller):
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
-        # back in the interpreters map for latter usage
+        # back in the interpreters map for latter usage, at the final part
+        # of the execution updates the current locals reference
         interpreter = self.interpreters.get(instance, None)
         interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
         self.interpreters[instance] = interpreter
+        locals = interpreter.locals
 
         # creates a new list to hold the various commands to be sent as valid
         # autocomplete values for the client side
@@ -193,7 +195,11 @@ class ConsoleController(controllers.Controller):
         command_split = command.rsplit(".", 1)
         base = command_split[-1]
         partials = command_split[:-1]
-        values = self._resolve_value(partials, locals)
+        values, container = self._resolve_value(partials, locals)
+
+        # calculates the offset position where the value used in the command calculus
+        # is starting, this value may be used for the prefix calculation at the client
+        offset = len(command) - len(base)
 
         # iterates over the complete list of values to test the
         # beginning of each name against the command name
@@ -203,12 +209,29 @@ class ConsoleController(controllers.Controller):
             # adds the local name to the list of valid commands
             # for the autocomplete operation
             if not value.startswith(base): continue
-            commands.append(value)
+
+            # retrieves the object associated with the current value (name)
+            # taking into account the type of the container object (different
+            # strategies apply for different container types)
+            if type(container) == types.DictType: object = container[value]
+            else: object = getattr(container, value)
+
+            # retrieves the (python) object type and then uses it to convert
+            # the type into the "normalized" string representation
+            object_type = type(object)
+            if object_type == types.MethodType: object_type_s = "method"
+            elif object_type == types.FunctionType: object_type_s = "function"
+            else: object_type_s = "object"
+
+            # adds the value and the object type values as a tuple to the list
+            # of commands (to be interpreted by the client side)
+            commands.append((value, object_type_s))
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
         response = {
             "result" : commands,
+            "offset" : offset,
             "instance" : instance
         }
         result = json_plugin.dumps(response)
@@ -221,13 +244,13 @@ class ConsoleController(controllers.Controller):
     def _resolve_value(self, partials, names):
         # in case the names list is not valid (probably an unset
         # value from a resolution error) returns an empty map
-        if not names: return {}
+        if not names: return ({}, {})
 
         # in case there are no more partials for resolution the
         # final values sequence must be returned, note that an
         # appropriate conversion is done in case no map type is
         # present (object value)
-        if not partials: return type(names) == types.DictType and names or dir(names)
+        if not partials: return type(names) == types.DictType and (names, names) or (dir(names), names)
 
         # retrieves the first partial values, this value
         # is going to be used as the reference value for
