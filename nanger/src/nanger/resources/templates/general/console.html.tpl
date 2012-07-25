@@ -6,6 +6,11 @@
     <div class="previous"></div>
     <div class="current"><span class="prompt"># </span><span class="line"><span class="cursor">&nbsp;</span></span></div>
     <div class="autocomplete">
+        <div class="tooltip">
+            <div class="doc"></div>
+            <div class="params"></div>
+            <div class="return"></div>
+        </div>
         <ul></ul>
     </div>
 </div>
