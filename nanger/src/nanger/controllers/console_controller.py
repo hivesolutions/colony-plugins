@@ -43,6 +43,7 @@ import uuid
 import types
 import cStringIO
 
+import colony.libs.map_util
 import colony.libs.import_util
 
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
@@ -218,6 +219,10 @@ class ConsoleController(controllers.Controller):
         self.interpreters[instance] = interpreter
         locals = interpreter.locals
 
+        # copies the built in symbols (globally present) into the locals map
+        # this allows the autocomplete to couple with these symbols
+        colony.libs.map_util.map_copy(__builtins__, locals)
+
         # creates a new list to hold the various commands to be sent as valid
         # autocomplete values for the client side
         commands = []
@@ -260,7 +265,11 @@ class ConsoleController(controllers.Controller):
 
             # adds the value and the object type values as a tuple to the list
             # of commands (to be interpreted by the client side)
-            commands.append((value, object_type_s))
+            commands.append((value, object_type_s, {}))
+
+        # sorts the commands according to their default (alphabetic order) so
+        # that they are presented to the end user in the best way possible
+        commands.sort()
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
