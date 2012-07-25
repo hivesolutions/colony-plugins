@@ -111,13 +111,45 @@ class ConsoleController(controllers.Controller):
         interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
         self.interpreters[instance] = interpreter
 
+        try:
+            # tries to compile the command using the single line strategy
+            # so that the return value is printed to the standard output, this
+            # may fail in case a multiple line command is present
+            command_code = code.compile_command(command, symbol = "single")
+        except:
+            # compiles the provided command into the appropriate code representation
+            # using the "exec" strategy, this operation should return an invalid value
+            # in case the provided code is not complete (spans multiple lines)
+            try: command_code = code.compile_command(command, symbol = "exec")
+            except: command_code = None; exception = True
+            else: exception = False
+        else:
+            # unsets the exception flag because no exception occurred while compiling
+            # the command using the single line strategy
+            exception = False
+
+        # calculates the pending flag value using the returning command code value
+        # and the exception flag to do it (this value is going to be sent to the client
+        # side to be possible to continuously interpret it)
+        pending = not command_code and True or False
+        pending = not exception and pending or False
+
         # updates the standard output and error buffer files to the new buffer
         # and then runs the command at the interpreter after the execution restore
         # the standard output and error back to the original values
         sys.stdout = buffer_out
         sys.stderr = buffer_err
-        try: interpreter.runsource(command, symbol = "exec")
-        finally: sys.stdout = sys.__stdout__; sys.stderr = sys.__stderr__
+        try:
+            # tries to run from either the "compiled" code object or from
+            # the source code in case the exception mode was activated
+            # this should allow syntax errors to be printed
+            if command_code: interpreter.runcode(command_code)
+            elif exception: interpreter.runsource(command, symbol = "exec")
+        finally:
+            # restores both the standard output and the standard error streams
+            # into the original values (further writes will be handled normally)
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
 
         # retrieves the values from the standard output and error and checks if
         # the resulting string values should be the error or the output
@@ -129,6 +161,7 @@ class ConsoleController(controllers.Controller):
         # final result contents, should retrieve the appropriate mime type
         response = {
             "result" : result,
+            "pending" : pending,
             "instance" : instance
         }
         result = json_plugin.dumps(response)
