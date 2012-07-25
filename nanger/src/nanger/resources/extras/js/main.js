@@ -515,6 +515,17 @@ jQuery(document).ready(function() {
                         // breaks the switch
                         break;
 
+                    case "window" :
+                        // puts the current console window into the window mode
+                        // this action should change the current body and window status
+                        // so it should be used carefully to avoid side effects
+                        _window();
+                        clear(false);
+                        event.preventDefault();
+
+                        // breaks the switch
+                        break;
+
                     default :
                         // runs the process of the "remote" command this should trigger
                         // the execution of the server side execution
@@ -756,7 +767,7 @@ jQuery(document).ready(function() {
      * least one command there. The order of execution is first in first out
      * (fifo) and one command is executed then only after the return from the
      * server side is completed the next command is executed.
-     * 
+     *
      * @param {Boolean}
      *            silent Flag that controls if the processing of the command
      *            should generate console output.
@@ -931,17 +942,15 @@ jQuery(document).ready(function() {
         // retrieves the window
         var _window = jQuery(window);
 
-        // TODO: O MELHOR E POR ISTO A SER UMA CLASSE
+        jQuery("html").css("overflow-y", "hidden");
+
         jQuery("body").css("margin", "0px 0px 0px 0px");
         jQuery("body").css("padding", "0px 0px 0px 0px");
-
-        jQuery("html").css("overflow-y", "hidden");
 
         var windowHeight = _window.height();
         var windowWidth = _window.width();
 
         jQuery(".console").css("margin", "0px 0px 0px 0px");
-
         jQuery(".console").css("position", "absolute");
         jQuery(".console").css("top", "0px");
         jQuery(".console").css("left", "0px");
@@ -952,28 +961,71 @@ jQuery(document).ready(function() {
         jQuery(".console").scrollTop(scrollHeight);
     };
 
+    var minimize = function() {
+        jQuery("html").css("overflow-y", null);
+
+        jQuery("body").css("margin", null);
+        jQuery("body").css("padding", null);
+
+        jQuery(".console").css("margin", null);
+        jQuery(".console").css("position", null);
+        jQuery(".console").css("top", null);
+        jQuery(".console").css("left", null);
+        jQuery(".console").css("height", null);
+        jQuery(".console").css("width", null);
+
+        var scrollHeight = jQuery(".console")[0].scrollHeight;
+        jQuery(".console").scrollTop(scrollHeight);
+    };
+
     var fullscreen = function() {
         // adds the fullscrren class to the console element
         // so that the specific style are applied to it
         jQuery(".console").addClass("fullscreen");
 
-        // retrieves the window
+        // creates the function that will be used to update the
+        // size of the console on a resize of the parent
+        var resize = function(event) {
+            // hides the autocomplete window so that no visual
+            // disturbances are displayed as a result of the new size
+            jQuery(".console .autocomplete").hide();
+
+            // refreshes the current console window to fill the
+            // newly available space
+            maximize();
+        };
+
+        // retrieves the window and registers the resize in
+        // the window to update the console size
         var _window = jQuery(window);
+        _window.resize(resize);
 
-        // registers the resize in the window
-        _window.resize(function(event) {
-                    // hides the autocomplete window so that no visual
-                    // disturbances are displayed as a result of the new size
-                    jQuery(".console .autocomplete").hide();
-
-                    // refreshes the current console window to fill the
-                    // newly available space
-                    maximize();
-                });
+        // saves the resize function in the console to be latter
+        // used in the unbind process of the window resize event
+        jQuery(".console").data("resize", resize);
 
         // maximizes the current window to fill the currently
         // available space (in body)
         maximize();
+    };
+
+    var _window = function() {
+        // removes the fullscreen class from the console element
+        // to avoid unexpected visuals in the console
+        jQuery(".console").removeClass("fullscreen");
+
+        // retrieves the currently used resize function from the
+        // console to be used in the unset of the event handler
+        var resize = jQuery(".console").data("resize", resize);
+
+        // retrieves the window and uses it to unbind the resize
+        // event (currently set) from it
+        var _window = jQuery(window);
+        _window.unbind("resize", resize)
+
+        // minimizes the console removing all the custom style
+        // applied to the current environment
+        minimize();
     };
 
     var checkVisible = function(element, parent) {
