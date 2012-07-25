@@ -84,26 +84,19 @@ jQuery(document).ready(function() {
                     // the event to be processed by the console
                     var value = event.target.result;
 
-                    // splits the various lines of the value arround
-                    // the newline character to retrieve the commands
-                    var commands = value.split("\n");
+                    // retrieves the current console commands and appends
+                    // the complete file value into it (for execution) then
+                    // puts the commands value back into the console
+                    var _commands = jQuery(".console").data("commands") || [];
+                    _commands.push(value);
+                    jQuery(".console").data("commands", _commands);
 
-                    // in case there are multiple commands the multiline
-                    // mode is activated and execution of the commands
-                    // is ensured immediately
-                    if (commands.length > 1) {
-                        var _commands = jQuery(".console").data("commands")
-                                || [];
-                        for (var index = 0; index < commands.length; index++) {
-                            var command = jQuery.trim(commands[index]);
-                            if (command == "") {
-                                continue;
-                            }
-                            _commands.push("for i in range(10):\n    print sys.version_info");
-                        }
-                        jQuery(".console").data("commands", _commands);
-                        process();
-                    }
+                    // runs the process command on the console and waits for the
+                    // response to print the newline with the information regarding
+                    // the execution of the file
+                    process(true, function(result) {
+                                newline("load " + file.name, "", result);
+                            });
                 };
                 reader.readAsText(file);
 
@@ -156,6 +149,21 @@ jQuery(document).ready(function() {
                 var second = value.slice(value.length - cursor - 1,
                         value.length);
                 var value = first + second;
+                jQuery(".console").data("text", value)
+
+                refresh();
+                break;
+
+            case 9 :
+                // prevents the default behavior for the tab key
+                // to avoid the focus from jumping to a different element
+                event.preventDefault();
+
+                var cursor = jQuery(".console").data("cursor");
+                var first = value.slice(0, value.length - cursor - 1);
+                var second = value.slice(value.length - cursor - 1,
+                        value.length);
+                var value = first + "    " + second;
                 jQuery(".console").data("text", value)
 
                 refresh();
@@ -728,13 +736,30 @@ jQuery(document).ready(function() {
 
     };
 
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, "");
+    }
+    String.prototype.ltrim = function() {
+        return this.replace(/^\s+/, "");
+    }
+    String.prototype.rtrim = function() {
+        return this.replace(/\s+$/, "");
+    }
+
     /**
      * Processes one command from the current console queue in case there's at
      * least one command there. The order of execution is first in first out
      * (fifo) and one command is executed then only after the return from the
      * server side is completed the next command is executed.
+     *
+     * @param {Boolean}
+     *            silent Flag that controls if the processing of the command
+     *            should generate console output.
+     * @param {Function}
+     *            callback The callback function to be called at the end of each
+     *            command processed durring this process call.
      */
-    var process = function() {
+    var process = function(silent, callback) {
         // tries to retrieve the command queue and checks if it's empty
         // in such case must return immediately
         var commands = jQuery(".console").data("commands") || [];
@@ -742,75 +767,125 @@ jQuery(document).ready(function() {
             return;
         }
 
+        // retrieves the currently pending data to be flushed to the
+        // server side (important for multiple line commands)
+        var _pending = jQuery(".console").data("pending") || "";
+
         // retrieves the current command and then retrives the remaining
         // parts of the commands queue
         var value = commands[0];
         var next = commands[1] || "";
-        command = jQuery.trim(value);
+        var command = value.rtrim();
         commands = commands.slice(1);
         jQuery(".console").data("commands", commands);
 
+        // in case there is pendind data to be sent and the command is not
+        // empty (end of pending operation) must delay command processing
+        if (_pending && command) {
+            newline(value, next, "", _pending + "\n" + value, true);
+            return;
+        }
+
+        // updates the command value by prepending the pending part
+        // of the command to the command itself (this will allow for
+        // complete execution of the previous lines)
+        command = _pending + "\n" + command;
+
         jQuery.ajax({
-            url : "console/execute",
-            data : {
-                command : command,
-                instance : jQuery(".console").data("instance")
-            },
-            success : function(data) {
-                // unpacks the resulting json data into the result
-                // and the instance part, so that they may be used
-                // in the processing and printing of the result
-                var result = data["result"];
-                var instance = data["instance"];
+                    url : "console/execute",
+                    data : {
+                        command : command,
+                        instance : jQuery(".console").data("instance")
+                    },
+                    success : function(data) {
+                        // unpacks the resulting json data into the result
+                        // and the instance part, so that they may be used
+                        // in the processing and printing of the result
+                        var result = data["result"];
+                        var pending = data["pending"];
+                        var instance = data["instance"];
 
-                // trims the resulting value to avoid any possible extra
-                // newline values (typical for some interpreters)
-                result = jQuery.trim(result);
+                        // sets the instance (identifier) value in the console
+                        // for latter usage of the value only in case the instance
+                        // value is defined (otherwise leave as it is)
+                        instance
+                                && jQuery(".console").data("instance", instance);
 
-                // sets the instance (identifier) value in the console
-                // for latter usage of the value
-                jQuery(".console").data("instance", instance);
+                        // in case the current processing mode is not silent
+                        // must create a newline with the current context (verbose)
+                        !silent
+                                && newline(value, next, result, command,
+                                        pending);
 
-                // resets the element value (virtual value) and clear the
-                // console line (to the original value)
-                jQuery(".console").data("text", next);
-                jQuery(".console .line").html("<span class=\"cursor\">&nbsp;</span>");
+                        // in case the callback is defined calls it with
+                        // the resulting values from the client side
+                        callback && callback(result, pending, instance);
 
-                // resets the cursor position to the top right most position
-                // of the current line in printing
-                jQuery(".console").data("cursor", -1);
+                        // runs the process command again to continue the processing
+                        // of the current queue
+                        process(silent, callback);
+                    }
+                });
+    };
 
-                jQuery(".console .previous").append("<div><span class=\"prompt\"># </span><span>"
-                        + splitValue(value, true) + "</span></div>");
-                var resultLine = jQuery("<span></span>");
+    var newline = function(value, next, result, command, pending) {
+        // recalculates the pending command value using the
+        // pending flag as the guide for this operation and
+        // then sets the new pending string in the console
+        _pending = pending ? command : "";
+        jQuery(".console").data("pending", _pending);
 
-                var line = splitValue(result, true);
-                jQuery(".console .previous").append("<div>" + line + "</div>");
-                jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
+        // retrieves the value of the currently displayed prompt
+        // as the previous prompt and "calculates" the value for
+        // the next primpt string
+        var previousPrompt = jQuery(".console .current .prompt").html();
+        var prompt = pending ? ". " : "# ";
 
-                // retrieves the sequence object that contains the various
-                // command strings that compose the history of the console
-                var history = jQuery(".console").data("history") || [];
+        // trims the resulting value to avoid any possible extra
+        // newline values (typical for some interpreters)
+        result = result.rtrim();
 
-                // checks if the current value to be inserted
-                // into the history is not equal to the one already
-                // present at the top of the history only in that
-                // situation shall the value be inserted in history
-                if (value != history[history.length - 1]) {
-                    history.push(value);
-                }
-                jQuery(".console").data("history", history);
-                jQuery(".console").data("history_index", 0);
+        // resets the element value (virtual value) and clear the
+        // console line (to the original value) and updates the
+        // prompt value with the "calculated" one
+        jQuery(".console").data("text", next);
+        jQuery(".console .line").html("<span class=\"cursor\">&nbsp;</span>");
+        jQuery(".console .current .prompt").html(prompt);
 
-                // hides the autocomplete window, no need to display
-                // it durring the initial part of the line processing
-                jQuery(".console .autocomplete").hide();
+        // resets the cursor position to the top right most position
+        // of the current line in printing
+        jQuery(".console").data("cursor", -1);
 
-                // runs the process command again to continue the processing
-                // of the current queue
-                process();
-            }
-        });
+        // creates a new previous line and adds it to the previous container
+        // this line will contain the values of the executed command
+        jQuery(".console .previous").append("<div><span class=\"prompt\">"
+                + previousPrompt + "</span><span>" + splitValue(value, true)
+                + "</span></div>");
+
+        // splits the result value (into the appropriate components) and
+        // also adds it to the previous action container, then scrolls
+        // the current console area to the lower part
+        var line = splitValue(result, true);
+        jQuery(".console .previous").append("<div>" + line + "</div>");
+        jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
+
+        // retrieves the sequence object that contains the various
+        // command strings that compose the history of the console
+        var history = jQuery(".console").data("history") || [];
+
+        // checks if the current value to be inserted
+        // into the history is not equal to the one already
+        // present at the top of the history only in that
+        // situation shall the value be inserted in history
+        if (value != history[history.length - 1]) {
+            history.push(value);
+        }
+        jQuery(".console").data("history", history);
+        jQuery(".console").data("history_index", 0);
+
+        // hides the autocomplete window, no need to display
+        // it durring the initial part of the line processing
+        jQuery(".console .autocomplete").hide();
     };
 
     var getToken = function() {
