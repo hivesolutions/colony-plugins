@@ -164,14 +164,14 @@ class AuthenticationPython(colony.base.system.System):
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
 
-        # retrieves the authentication python handler plugin id
-        authentication_python_handler_plugin_id = self.plugin.id
+        # retrieves the plugin id
+        plugin_id = self.plugin.id
 
         # resolves the configuration file path
-        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + authentication_python_handler_plugin_id + "%/authentication.py", True)
+        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + plugin_id + "%/authentication.py", True)
 
         # retrieves the authentication python handler plugin path
-        authentication_python_handler_plugin_path = plugin_manager.get_plugin_path_by_id(authentication_python_handler_plugin_id)
+        authentication_python_handler_plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
 
         # creates the authentication configuration file path
         authentication_configuration_file_path = authentication_python_handler_plugin_path + "/" +  CONFIGURATION_PATH + "/authentication_configuration.py"
