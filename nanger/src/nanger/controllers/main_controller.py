@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
 import colony.libs.import_util
 
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
@@ -77,6 +79,16 @@ class MainController(controllers.Controller):
         @param parameters: The handler parameters.
         """
 
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manager = self.plugin.manager
+
+        # retrieves the current system information map to be used to
+        # expose the system information to the console then retrieves
+        # the python interpreter information from the system module
+        system_information_map = plugin_manager.get_system_information_map()
+        version = sys.version
+
         # processes the contents of the template file assigning the
         # appropriate values to it
         template_file = self.retrieve_template_file(
@@ -85,6 +97,8 @@ class MainController(controllers.Controller):
         )
         template_file.assign("title", "Console")
         template_file.assign("area", "console")
+        template_file.assign("version", version)
+        template_file.assign("information", system_information_map)
         self.process_set_contents(rest_request, template_file)
 
     def handle_about(self, rest_request, parameters = {}):
