@@ -374,6 +374,10 @@ pre {
     background-image: url(../images/method.png);
 }
 
+.console .autocomplete ul > li.keyword {
+    background-image: url(../images/keyword.png);
+}
+
 .console .autocomplete ul > li.command {
     background-image: url(../images/command.png);
 }

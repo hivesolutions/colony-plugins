@@ -49,6 +49,27 @@ import colony.libs.import_util
 mvc_utils = colony.libs.import_util.__import__("mvc_utils")
 controllers = colony.libs.import_util.__import__("controllers")
 
+BASE_KEYWORDS = ("break", "continue", "pass")
+""" The set of python keywords that are considered
+basic because their are not suffixed """
+
+SPACE_KEYWORDS = (
+    "and", "as", "assert",
+    "class", "def", "del",
+    "elif", "except", "exec",
+    "for", "from", "global",
+    "if", "import", "in",
+    "is", "lambda", "not",
+    "or", "raise", "return",
+    "while", "with", "yield"
+)
+""" The set of python keywords that are meant to
+be suffixed with a space character """
+
+DOT_KEYWORDS = ("else", "finally", "try")
+""" The set of python keywords that are meant to
+be suffixed with a dot character """
+
 class ConsoleController(controllers.Controller):
     """
     The nanger console controller.
@@ -266,6 +287,27 @@ class ConsoleController(controllers.Controller):
             # adds the value and the object type values as a tuple to the list
             # of commands (to be interpreted by the client side)
             commands.append((value, object_type_s, {}))
+
+        # iterates over all the base keywords in order to be able to
+        # filter and add them to the commands list, these keywords
+        # will have no extra values associated (basic keywords)
+        for keyword in BASE_KEYWORDS:
+            if not keyword.startswith(command): continue
+            commands.append((keyword, "keyword", {}))
+
+        # iterates over all the space keywords in order to be able to
+        # filter and add them to the commands list, these keywords
+        # will have the extra space character appended
+        for keyword in SPACE_KEYWORDS:
+            if not keyword.startswith(command): continue
+            commands.append((keyword, "keyword", {"extra" : " "}))
+
+        # iterates over all the base keywords in order to be able to
+        # filter and add them to the commands list, these keywords
+        # will have the extra dot character appended
+        for keyword in DOT_KEYWORDS:
+            if not keyword.startswith(command): continue
+            commands.append((keyword, "keyword", {"extra" : ":"}))
 
         # sorts the commands according to their default (alphabetic order) so
         # that they are presented to the end user in the best way possible

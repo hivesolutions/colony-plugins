@@ -663,6 +663,7 @@ jQuery(document).ready(function() {
                     var value = result[index];
                     var name = value[0];
                     var type = value[1];
+                    var options = value[2];
 
                     // retrieves the highlight and the remainder part
                     // of the name using the command length as base
@@ -671,9 +672,11 @@ jQuery(document).ready(function() {
 
                     // creates the new item with both the highlight and
                     // the remaind part and adds it to the list of options
-                    list.append("<li class=\"" + type
+                    var item = jQuery("<li class=\"" + type
                             + "\"><span class=\"high\">" + highlight
                             + "</span>" + remainder + "</li>");
+                    list.append(item);
+                    item.data("options", options);
                 }
 
                 // sets the instance (identifier) value in the console
@@ -833,14 +836,20 @@ jQuery(document).ready(function() {
     };
 
     var flushAutocomplete = function() {
+        // retrieves the currently selected autocomplete element and
+        // then retrieves its value and its options map (in case one
+        // is available)
         var selected = jQuery(".console .autocomplete ul > li.selected");
         var text = selected.text();
+        var options = selected.data("options") || {};
 
         // retrieves the current's console text and then retrieves
         // the token structure for the currrently selected text
         var _text = jQuery(".console").data("text") || "";
         var tokenStructure = getToken();
 
+        // unpacks the token structure into the various components
+        // of it, the token and the start and end indexes
         var token = tokenStructure[0];
         var startIndex = tokenStructure[1];
         var endIndex = tokenStructure[2];
@@ -852,6 +861,10 @@ jQuery(document).ready(function() {
 
         var start = _text.slice(0, startIndex);
         var end = _text.slice(endIndex);
+
+        // in case there is an extra string value to be added to the token
+        // adds it (this will appear at the front of the value)
+        token += options["extra"] || "";
 
         call = false;
 
