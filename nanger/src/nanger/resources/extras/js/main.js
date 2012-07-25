@@ -29,6 +29,10 @@ jQuery(document).ready(function() {
     // window relative to the console line
     var AUTOCOMPLETE_OFFSET = 2;
 
+    // the basic commands of the console to be
+    // executed at the client side
+    var COMMANDS = ["clear", "fullscreen", "window"];
+
     // registers for the click event in the console to
     // propagate the focus event to the text area
     jQuery(".console").click(function() {
@@ -82,7 +86,10 @@ jQuery(document).ready(function() {
                 reader.onload = function(event) {
                     // retrieves the provided text value from
                     // the event to be processed by the console
+                    // then replaces the windows style newlines
+                    // with the basic unix styled ones
                     var value = event.target.result;
+                    value = value.replace(/\r\n/g, "\n");
 
                     // retrieves the current console commands and appends
                     // the complete file value into it (for execution) then
@@ -158,6 +165,15 @@ jQuery(document).ready(function() {
                 // prevents the default behavior for the tab key
                 // to avoid the focus from jumping to a different element
                 event.preventDefault();
+
+                // checks if the autocomplete window is visible and in case
+                // it is flushes the currently selected autocomplete option
+                // to the console (autocomplete selection)
+                var isVisible = jQuery(".console .autocomplete").is(":visible");
+                if (isVisible) {
+                    flushAutocomplete();
+                    break;
+                }
 
                 var cursor = jQuery(".console").data("cursor");
                 var first = value.slice(0, value.length - cursor - 1);
@@ -438,57 +454,12 @@ jQuery(document).ready(function() {
         // switches over the key value
         switch (keyValue) {
             case 13 :
+                // checks if the autocomplete window is visible and in case
+                // it is flushes the currently selected autocomplete option
+                // to the console (autocomplete selection)
                 var isVisible = jQuery(".console .autocomplete").is(":visible");
-
                 if (isVisible) {
-                    var selected = jQuery(".console .autocomplete ul > li.selected");
-                    var text = selected.text();
-
-                    // retrieves the current's console text and then retrieves
-                    // the token structure for the currrently selected text
-                    var _text = jQuery(".console").data("text") || "";
-                    var tokenStructure = getToken();
-
-                    var token = tokenStructure[0];
-                    var startIndex = tokenStructure[1];
-                    var endIndex = tokenStructure[2];
-
-                    var tokenElements = token.split(".");
-                    var tokenElements = tokenElements.slice(0,
-                            tokenElements.length - 1);
-                    tokenElements.push(text);
-                    token = tokenElements.join(".")
-
-                    var start = _text.slice(0, startIndex);
-                    var end = _text.slice(endIndex);
-
-                    call = false;
-
-                    // in case the currently selected item is a method or a function
-                    // extra care must be taken to provide the calling part
-                    if (selected.hasClass("method")
-                            || selected.hasClass("function")) {
-                        // appends the calling part of the line to the token
-                        // to provide calling shortcut
-                        token += "()";
-                        call = true;
-                    }
-
-                    // creates the final text value to be set in the line using
-                    // the start part the token and the (final) end part
-                    text = start + token + end;
-
-                    // calculates the new cursor position based on the partial
-                    // token values and the start string length and takes into
-                    // account the possible offset for the call situations
-                    var cursor = text.length
-                            - (start.length + token.length + (call ? 0 : 1))
-
-                    jQuery(".console").data("text", text);
-                    jQuery(".console").data("cursor", cursor);
-                    jQuery(".console .autocomplete").hide();
-                    refresh();
-
+                    flushAutocomplete();
                     break;
                 }
 
@@ -635,6 +606,17 @@ jQuery(document).ready(function() {
         refresh();
     };
 
+    var joinResult = function(token, result) {
+        for (var index = 0; index < COMMANDS.length; index++) {
+            var current = COMMANDS[index];
+            var offset = current.indexOf(token);
+            if (offset != 0) {
+                continue;
+            }
+            result.push([current, "command"]);
+        }
+    };
+
     var autocomplete = function(force) {
         var isVisible = jQuery(".console .autocomplete").is(":visible");
         if (!force && !isVisible) {
@@ -661,6 +643,11 @@ jQuery(document).ready(function() {
                 var result = data["result"];
                 var offset = data["offset"];
                 var instance = data["instance"];
+
+                // joins the received result set with the local commands
+                // set so that the local commands may also appear in the
+                // autocomplete list
+                joinResult(token, result);
 
                 // retrieves the autocomplete list item and clears
                 // all of its items (component reset)
@@ -799,6 +786,7 @@ jQuery(document).ready(function() {
         // empty (end of pending operation) must delay command processing
         if (_pending && command) {
             newline(value, next, "", _pending + "\n" + value, true);
+            process(silent, callback);
             return;
         }
 
@@ -842,6 +830,54 @@ jQuery(document).ready(function() {
                         process(silent, callback);
                     }
                 });
+    };
+
+    var flushAutocomplete = function() {
+        var selected = jQuery(".console .autocomplete ul > li.selected");
+        var text = selected.text();
+
+        // retrieves the current's console text and then retrieves
+        // the token structure for the currrently selected text
+        var _text = jQuery(".console").data("text") || "";
+        var tokenStructure = getToken();
+
+        var token = tokenStructure[0];
+        var startIndex = tokenStructure[1];
+        var endIndex = tokenStructure[2];
+
+        var tokenElements = token.split(".");
+        var tokenElements = tokenElements.slice(0, tokenElements.length - 1);
+        tokenElements.push(text);
+        token = tokenElements.join(".")
+
+        var start = _text.slice(0, startIndex);
+        var end = _text.slice(endIndex);
+
+        call = false;
+
+        // in case the currently selected item is a method or a function
+        // extra care must be taken to provide the calling part
+        if (selected.hasClass("method") || selected.hasClass("function")) {
+            // appends the calling part of the line to the token
+            // to provide calling shortcut
+            token += "()";
+            call = true;
+        }
+
+        // creates the final text value to be set in the line using
+        // the start part the token and the (final) end part
+        text = start + token + end;
+
+        // calculates the new cursor position based on the partial
+        // token values and the start string length and takes into
+        // account the possible offset for the call situations
+        var cursor = text.length
+                - (start.length + token.length + (call ? 0 : 1))
+
+        jQuery(".console").data("text", text);
+        jQuery(".console").data("cursor", cursor);
+        jQuery(".console .autocomplete").hide();
+        refresh();
     };
 
     var newline = function(value, next, result, command, pending) {
