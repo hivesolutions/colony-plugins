@@ -366,12 +366,12 @@ pre {
     background-image: url(../images/object.png);
 }
 
-.console .autocomplete ul > li.method {
-    background-image: url(../images/method.png);
-}
-
 .console .autocomplete ul > li.function {
     background-image: url(../images/function.png);
+}
+
+.console .autocomplete ul > li.method {
+    background-image: url(../images/method.png);
 }
 
 .console .autocomplete ul > li.command {

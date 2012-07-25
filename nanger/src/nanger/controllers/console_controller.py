@@ -257,10 +257,10 @@ class ConsoleController(controllers.Controller):
             # retrieves the (python) object type and then uses it to convert
             # the type into the "normalized" string representation
             object_type = type(object)
-            if object_type == types.MethodType: object_type_s = "method"
-            elif object_type == types.BuiltinMethodType: object_type_s = "method"
-            elif object_type == types.FunctionType: object_type_s = "function"
+            if object_type == types.FunctionType: object_type_s = "function"
             elif object_type == types.BuiltinFunctionType: object_type_s = "function"
+            elif object_type == types.MethodType: object_type_s = "method"
+            elif object_type == types.BuiltinMethodType: object_type_s = "method"
             else: object_type_s = "object"
 
             # adds the value and the object type values as a tuple to the list
