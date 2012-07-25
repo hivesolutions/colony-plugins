@@ -173,6 +173,11 @@ jQuery(document).ready(function() {
                 jQuery(".console .autocomplete").hide();
                 break;
 
+            case 32 :
+                jQuery(".console .autocomplete").hide();
+                cancel = false;
+                break;
+
             case 33 :
                 var isVisible = jQuery(".console .autocomplete").is(":visible");
 
@@ -751,7 +756,7 @@ jQuery(document).ready(function() {
      * least one command there. The order of execution is first in first out
      * (fifo) and one command is executed then only after the return from the
      * server side is completed the next command is executed.
-     *
+     * 
      * @param {Boolean}
      *            silent Flag that controls if the processing of the command
      *            should generate console output.
