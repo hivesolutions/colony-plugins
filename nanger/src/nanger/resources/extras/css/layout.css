@@ -374,6 +374,10 @@ pre {
     background-image: url(../images/function.png);
 }
 
+.console .autocomplete ul > li.command {
+    background-image: url(../images/command.png);
+}
+
 .console .autocomplete ul > li .high {
     color: #0d0d0d;
     font-weight: bolder;
