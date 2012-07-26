@@ -479,3 +479,11 @@ pre {
     font-style: italic;
     text-transform: lowercase;
 }
+
+.filter-more {
+    padding: 26px 0px 26px 0px;
+}
+
+.filter-more:hover {
+    background-color: #f6f6f6;
+}
