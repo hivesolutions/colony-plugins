@@ -83,6 +83,104 @@ class ConsoleController(controllers.Controller):
         controllers.Controller.__init__(self, plugin, system)
         self.interpreters = {}
 
+    def handle_init(self, rest_request, parameters = {}):
+        """
+        Handles the given initialization rest request.
+        This request should start an execution instance and
+        return the identifier to the caller.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manager = self.plugin.manager
+
+        # retrieves the json plugin for the encoding of the
+        # response value (serialized value)
+        json_plugin = self.plugin.json_plugin
+
+        # retrieves the id of the interpreter instance to be used
+        # in case the instance id exists none is created
+        instance = self.get_field(rest_request, "instance", None)
+
+        # in case no instance (identifier) is found a new randomly generated
+        # value is created for it (secure generation)
+        instance = instance or str(uuid.uuid4())
+
+        # creates the memory buffer that will hold the contents
+        # resulting from the execution of the python code
+        buffer_out = cStringIO.StringIO()
+        buffer_err = cStringIO.StringIO()
+
+        # creates the map containing the various local names to be used
+        # in the interpreter, these are the values that will be made available
+        # as entrance points to the end user
+        locals = {
+            "manager" : plugin_manager,
+            "plugins" : plugin_manager.plugins
+        }
+
+        # tries to retrieve the correct interpreter from the interpreters
+        # map in case it does not exists creates a new one, then sets it
+        # back in the interpreters map for latter usage
+        interpreter = self.interpreters.get(instance, None)
+        interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
+        self.interpreters[instance] = interpreter
+
+        # resolves the configuration init file path using the plugins manager
+        # then ensures that it exists falling back to the local resources init
+        # file that is contained in the bundle
+        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + self.plugin.id + "%/initrc", True)
+        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id )
+        init_file_path = plugin_path + "/nanger/resources/default/initrc"
+        colony.libs.path_util.ensure_file_path(configuration_file_path, init_file_path)
+
+        # opens the configuration (init) file and reads the complete set of
+        # contents in it (to be executed in the current instance)
+        file = open(configuration_file_path, "r")
+        try: contents = file.read()
+        except: file.close()
+
+        # updates the standard output and error buffer files to the new buffer
+        # and then runs the command at the interpreter after the execution restore
+        # the standard output and error back to the original values
+        sys.stdout = buffer_out
+        sys.stderr = buffer_err
+
+        try:
+            # tries to run the source code extracted from the execution
+            # file under the "exec" mode (this should print the results
+            # to the standard output)
+            interpreter.runsource(contents, configuration_file_path, symbol = "exec")
+        finally:
+            # restores both the standard output and the standard error streams
+            # into the original values (further writes will be handled normally)
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+
+        # retrieves the values from the standard output and error and checks if
+        # the resulting string values should be the error or the output
+        result_out = buffer_out.getvalue()
+        result_err = buffer_err.getvalue()
+        result = result_err or result_out
+
+        # creates the response map and serializes it with json to create the
+        # final result contents, should retrieve the appropriate mime type
+        response = {
+            "result" : result,
+            "instance" : instance
+        }
+        result = json_plugin.dumps(response)
+        mime_type = json_plugin.get_mime_type()
+
+        # sets the (resulting) contents in the rest request and sets the
+        # appropriate mime type according to the serialization
+        self.set_contents(rest_request, result, content_type = mime_type)
+
     def handle_execute(self, rest_request, parameters = {}):
         """
         Handles the given execute rest request.
@@ -284,9 +382,22 @@ class ConsoleController(controllers.Controller):
             elif object_type == types.BuiltinMethodType: object_type_s = "method"
             else: object_type_s = "object"
 
+            # retrieves the documentation part of the object, this is a raw
+            # string and should be processed for correct handling
+            doc = object.__doc__
+            doc, params, _return = self.process_doc(doc)
+
+            # creates the map of options that contains the base documentation
+            # string an also the tuple containing the parameters reference
+            options = {
+                "doc" : doc,
+                "params" : params,
+                "return" : _return
+            }
+
             # adds the value and the object type values as a tuple to the list
             # of commands (to be interpreted by the client side)
-            commands.append((value, object_type_s, {}))
+            commands.append((value, object_type_s, options))
 
         # iterates over all the base keywords in order to be able to
         # filter and add them to the commands list, these keywords
@@ -326,6 +437,189 @@ class ConsoleController(controllers.Controller):
         # sets the (resulting) contents in the rest request and sets the
         # appropriate mime type according to the serialization
         self.set_contents(rest_request, result, content_type = mime_type)
+
+    def process_doc(self, doc):
+        """
+        Processes a normalized documentation string according
+        to the global python documentation specification.
+
+        Initial validations are run to ensure that the provided
+        documentation string complies with the specification in
+        case it does not returns immediately the unprocessed
+        string value (fallback situation).
+
+        The processing of the documentation is an expensive
+        task and should be cached whenever possible.
+
+        @type doc: String
+        @param doc: The documentation string be parsed and
+        processed with the objective of return structure.
+        @rtype: Tuple
+        @return: Tuple containing the base documentation string
+        the various parameters and the returns value.
+        """
+
+        # in case the provided documentation element is not
+        # valid must return immediately with the default values
+        if not doc: return doc, (), None
+
+        # in case the documentation element does not comply with
+        # the standard structure for the parsing must return
+        # with the default values immediately
+        if not doc[0] == "\n": return doc, (), None
+
+        # splits the various doc string lines around their newline
+        # character, this should be able to return  the various lines
+        # in the documentation
+        lines = doc.split("\n")
+
+        # initializes the basic structures that controls the documentation
+        # lines the parameters and the return value
+        _lines = []
+        params = []
+        params_map = {}
+        _return = None
+
+        # unsets the flag that controls if the current value is in transit
+        # meaning that lines are pending for completion
+        in_transit = False
+
+        # starts the local reference to the currently used parameter and the
+        # flag that controls if the current token is part of a the basic
+        # documentation part of the string
+        param = None
+        is_doc = True
+
+        # iterates over all the lines in the documentation string to parse them
+        # and create the appropriate structures for returning
+        for line in lines:
+            # strips the current line removing any extra space like characters
+            # available (required for a better look and feel)
+            line = line.strip()
+
+            # in case the in transit flag is set data may be pending to be
+            # added to the currently loaded parameter observation
+            if in_transit:
+                # in case the line is not valid (empty) must continue immediately
+                # cannot process an empty line
+                if not line: continue
+
+                # in case the line refers a special argument an unexpected situation
+                # has occurred must skip the in transit situation otherwise must
+                # process the in transit line and add it to the currently processing
+                # parameters observations
+                if line[0] == "@": in_transit = False
+                else:
+                    # in case the end line dot is the final character in the current
+                    # line must unset the in transit situation (end of in transit)
+                    if line[-1] == ".": in_transit = False
+
+                    # in case there is a selected parameter and an observations field
+                    # in it must add the current line into it
+                    if param and param[2]:
+                        # adds the current line to the observations part of the parameter
+                        # and skips the current line processing
+                        param[2] += "\n" + line
+                        continue
+
+            # in case the current line refers the parameter special token
+            # must process the parameter observations
+            if line.startswith("@param"):
+                # splits the current line around the separator and then
+                # uses the result to unpack the name and description
+                parts = line[6:].split(":", 1)
+                param_name = parts[0].strip()
+                param_desc = "".join(parts[1:]).strip()
+
+                # checks if the current parameter is not present in the map
+                # containing the parameters and tries to retrieve it from there
+                is_new = not param_name in params_map
+                param = params_map.get(param_name, [param_name, None, None])
+                param[2] = param_desc
+
+                # in case the parameter is new adds it to the parameters map
+                # and to the list of parameters
+                if is_new: params_map[param_name] = param; params.append(param)
+
+                # unsets the is documentation flag so that the in transit flag
+                # may be set for multiple line parameter descriptions
+                is_doc = False
+
+            # in case the current line refers the type special token
+            # must process the parameter type
+            elif line.startswith("@type"):
+                # splits the current line around the separator and then
+                # uses the result to unpack the name and type
+                parts = line[5:].split(":", 1)
+                param_name = parts[0].strip()
+                param_type = "".join(parts[1:]).strip()
+
+                # checks if the current parameter is not present in the map
+                # containing the parameters and tries to retrieve it from there
+                is_new = not param_name in params_map
+                param = params_map.get(param_name, [param_name, None, None])
+                param[1] = param_type
+
+                # in case the parameter is new adds it to the parameters map
+                # and to the list of parameters
+                if is_new: params_map[param_name] = param; params.append(param)
+
+                # sets the is documentation flag to prevent the is transit flag
+                # from being set (not required)
+                is_doc = True
+
+            # in case the current line refers the return special token
+            # must process the return value observations
+            elif line.startswith("@return"):
+                # retrieves the second part of the line as the description
+                # of the return value
+                description = line[8:].strip()
+
+                # tries to retrieve the currently set return value or creates
+                # a new one and sets the values on it
+                _return = _return or ["return", None, None]
+                _return[2] = description
+
+                # sets the return value as the current parameter in processing
+                # and unsets the is documentation flag to allow in transit set
+                param = _return
+                is_doc = False
+
+            # in case the current line refers the rtype special token
+            # must process the return value type
+            elif line.startswith("@rtype"):
+                # retrieves the second part of the line as the type
+                # of the return value
+                _type = line[7:].strip()
+
+                # tries to retrieve the currently set return value or creates
+                # a new one and sets the values on it
+                _return = _return or ["return", None, None]
+                _return[1] = _type
+
+                # sets the return value as the current parameter in processing
+                # and sets the is documentation flag to avoid in transit set
+                param = _return
+                is_doc = True
+
+            # otherwise it must be a line belonging to the base observations
+            # string (and must be processed as such)
+            else:
+                # adds the current line to the list of lines (for the base documentation)
+                # and sets the is documentation flag to present the in transit flag
+                _lines.append(line)
+                is_doc = True
+
+            # in case the current token does not belong to a documentation
+            # and there is a valid line as there is no dot at the end the
+            # in transit flag is set to provide multiple line processing
+            if not is_doc and line and not line[-1] == ".": in_transit = True
+
+        # joins the various loaded line into a single documentation string
+        # and then returns the a tuple containing that string, the parameters
+        # list and the return tuple (processed information)
+        _doc = "\n".join(_lines).strip()
+        return _doc, params, _return
 
     def _resolve_value(self, partials, names):
         # in case the names list is not valid (probably an unset
