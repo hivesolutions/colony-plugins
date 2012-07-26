@@ -29,6 +29,26 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #dddddd;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #bbbbbb;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aaaaaa;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+    background-color: #cccccc;
+}
+
 #header {
 }
 
@@ -235,12 +255,14 @@ pre {
 }
 
 .online,
-.passed {
+.passed,
+.valid {
     color: #32951b;
 }
 
 .offline,
-.failed {
+.failed,
+.invalid {
     color: #c31f30;
 }
 
@@ -305,8 +327,12 @@ pre {
     background-color: #aaaaaa;
 }
 
+.console::-webkit-scrollbar-thumb:hover {
+    background-color: #999999;
+}
+
 .console::-webkit-scrollbar-thumb:window-inactive {
-    background-color: #bbbbbb; ;
+    background-color: #bbbbbb;
 }
 
 .console .text {
