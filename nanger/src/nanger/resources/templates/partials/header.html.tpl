@@ -7,6 +7,12 @@
             <a href="${out_none value=base_path /}index">home</a>
         ${/if}
         //
+        ${if item=area value="plugins" operator=eq}
+            <a href="${out_none value=base_path /}plugins" class="active">plugins</a>
+        ${else /}
+            <a href="${out_none value=base_path /}plugins">plugins</a>
+        ${/if}
+        //
         ${if item=area value="console" operator=eq}
             <a href="${out_none value=base_path /}console" class="active">console</a>
         ${else /}
