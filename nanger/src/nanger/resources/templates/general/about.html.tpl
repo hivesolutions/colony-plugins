@@ -32,5 +32,9 @@
             <td class="right label" width="50%">release date</td>
             <td class="left value" width="50%">${out_none value=information.release_date xml_escape=True /} </td>
         </tr>
+        <tr>
+            <td class="right label" width="50%">uptime</td>
+            <td class="left value" width="50%">${out_none value=manager.get_uptime xml_escape=True /} </td>
+        </tr>
     </tbody>
 </table>
