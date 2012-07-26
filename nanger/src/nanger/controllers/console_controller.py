@@ -498,8 +498,8 @@ class ConsoleController(controllers.Controller):
         task and should be cached whenever possible.
 
         @type doc: String
-        @param doc: The documentation string be parsed and
-        processed with the objective of return structure.
+        @param doc: The documentation string to be parsed and
+        processed with the objective of returning a structure.
         @rtype: Tuple
         @return: Tuple containing the base documentation string
         the various parameters and the returns value.
