@@ -69,6 +69,26 @@ class MainController(controllers.Controller):
         template_file.assign("area", "home")
         self.process_set_contents(rest_request, template_file)
 
+    def handle_plugins(self, rest_request, parameters = {}):
+        """
+        Handles the given plugins rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # processes the contents of the template file assigning the
+        # appropriate values to it
+        template_file = self.retrieve_template_file(
+            "general.html.tpl",
+            partial_page = "general/plugins.html.tpl"
+        )
+        template_file.assign("title", "Plugins")
+        template_file.assign("area", "plugins")
+        self.process_set_contents(rest_request, template_file)
+
     def handle_console(self, rest_request, parameters = {}):
         """
         Handles the given console rest request.
