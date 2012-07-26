@@ -83,6 +83,7 @@ class Nanger(colony.base.system.System):
             (r"^nanger/plugins$", self.main_controller.handle_plugins, "get"),
             (r"^nanger/console$", self.main_controller.handle_console, "get"),
             (r"^nanger/about$", self.main_controller.handle_about, "get"),
+            (r"^nanger/plugins/list$", self.plugin_controller.handle_list, "get"),
             (r"^nanger/console/init$", self.console_controller.handle_init, ("get", "post")),
             (r"^nanger/console/execute$", self.console_controller.handle_execute, ("get", "post")),
             (r"^nanger/console/autocomplete$", self.console_controller.handle_autocomplete, ("get", "post"))
