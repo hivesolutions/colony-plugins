@@ -80,6 +80,7 @@ class Nanger(colony.base.system.System):
         return (
             (r"^nanger/?$", self.main_controller.handle_index, "get"),
             (r"^nanger/index$", self.main_controller.handle_index, "get"),
+            (r"^nanger/plugins$", self.main_controller.handle_plugins, "get"),
             (r"^nanger/console$", self.main_controller.handle_console, "get"),
             (r"^nanger/about$", self.main_controller.handle_about, "get"),
             (r"^nanger/console/init$", self.console_controller.handle_init, ("get", "post")),
