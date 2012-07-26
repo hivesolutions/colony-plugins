@@ -385,7 +385,7 @@ class ConsoleController(controllers.Controller):
             # retrieves the documentation part of the object, this is a raw
             # string and should be processed for correct handling
             doc = object.__doc__
-            doc, params, _return = self.process_doc(doc)
+            doc, params, _return = self._process_doc(doc)
 
             # creates the map of options that contains the base documentation
             # string an also the tuple containing the parameters reference
@@ -438,7 +438,34 @@ class ConsoleController(controllers.Controller):
         # appropriate mime type according to the serialization
         self.set_contents(rest_request, result, content_type = mime_type)
 
-    def process_doc(self, doc):
+    def _resolve_value(self, partials, names):
+        # in case the names list is not valid (probably an unset
+        # value from a resolution error) returns an empty map
+        if not names: return ({}, {})
+
+        # in case there are no more partials for resolution the
+        # final values sequence must be returned, note that an
+        # appropriate conversion is done in case no map type is
+        # present (object value)
+        if not partials: return type(names) == types.DictType and (names, names) or (dir(names), names)
+
+        # retrieves the first partial values, this value
+        # is going to be used as the reference value for
+        # the attribute retrieval
+        partial = partials[0]
+        names_type = type(names)
+
+        # uses the appropriate strategy to retrieve the value taking
+        # into account the appropriate type
+        if names_type == types.DictType: value = names.get(partial, None)
+        else: value = hasattr(names, partial) and getattr(names, partial) or None
+
+        # returns the result of the recursion step on top of the
+        # the currently resolve value and the remainder list of
+        # partials (new partials)
+        return self._resolve_value(partials[1:], value)
+
+    def _process_doc(self, doc):
         """
         Processes a normalized documentation string according
         to the global python documentation specification.
@@ -620,30 +647,3 @@ class ConsoleController(controllers.Controller):
         # list and the return tuple (processed information)
         _doc = "\n".join(_lines).strip()
         return _doc, params, _return
-
-    def _resolve_value(self, partials, names):
-        # in case the names list is not valid (probably an unset
-        # value from a resolution error) returns an empty map
-        if not names: return ({}, {})
-
-        # in case there are no more partials for resolution the
-        # final values sequence must be returned, note that an
-        # appropriate conversion is done in case no map type is
-        # present (object value)
-        if not partials: return type(names) == types.DictType and (names, names) or (dir(names), names)
-
-        # retrieves the first partial values, this value
-        # is going to be used as the reference value for
-        # the attribute retrieval
-        partial = partials[0]
-        names_type = type(names)
-
-        # uses the appropriate strategy to retrieve the value taking
-        # into account the appropriate type
-        if names_type == types.DictType: value = names.get(partial, None)
-        else: value = hasattr(names, partial) and getattr(names, partial) or None
-
-        # returns the result of the recursion step on top of the
-        # the currently resolve value and the remainder list of
-        # partials (new partials)
-        return self._resolve_value(partials[1:], value)
