@@ -149,6 +149,7 @@ class MainController(controllers.Controller):
         )
         template_file.assign("title", "About")
         template_file.assign("area", "about")
+        template_file.assign("manager", plugin_manager)
         template_file.assign("version", version)
         template_file.assign("information", system_information_map)
         self.process_set_contents(rest_request, template_file)
