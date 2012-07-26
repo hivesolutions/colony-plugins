@@ -81,7 +81,7 @@ class PluginController(controllers.Controller):
 
         # converts the filter into a lower cased representation to be able to
         # perform a case insensitive comparison
-        _filter = filter.lower();
+        _filter = filter.lower()
 
         # iterates over all the loaded plugins to be able to filter the ones
         # that comply with the provided query

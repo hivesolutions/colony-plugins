@@ -135,7 +135,7 @@ class ConsoleController(controllers.Controller):
         # then ensures that it exists falling back to the local resources init
         # file that is contained in the bundle
         configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + self.plugin.id + "%/initrc", True)
-        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id )
+        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         init_file_path = plugin_path + "/nanger/resources/default/initrc"
         colony.libs.path_util.ensure_file_path(configuration_file_path, init_file_path)
 
