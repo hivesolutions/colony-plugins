@@ -487,3 +487,7 @@ pre {
 .filter-more:hover {
     background-color: #f6f6f6;
 }
+
+.filter-more.loading {
+    visibility: hidden;
+}
