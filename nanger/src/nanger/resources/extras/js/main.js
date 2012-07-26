@@ -655,6 +655,11 @@ jQuery(document).ready(function() {
      * Clears the contents of the console, this should include the current line,
      * the previous lines and the text field. At the end of the execution the
      * console is refreshed.
+     *
+     * @param {Boolean}
+     *            complete If the clearing of the consol should be complete
+     *            (previous elements removed) or if only the current line is to
+     *            be removed.
      */
     var clear = function(complete) {
         jQuery(".console").data("text", "");
@@ -677,6 +682,9 @@ jQuery(document).ready(function() {
     };
 
     var autocomplete = function(force) {
+        // checks if the autocomplete window is currently visible
+        // in case it's not and the force flag is not set avoid
+        // the processing of the autocomplete elements
         var isVisible = jQuery(".console .autocomplete").is(":visible");
         if (!force && !isVisible) {
             return;
