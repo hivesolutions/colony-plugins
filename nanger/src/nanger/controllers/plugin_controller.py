@@ -71,9 +71,9 @@ class PluginController(controllers.Controller):
         start_record = self.get_field(rest_request, "start_record", 0, int)
         number_records = self.get_field(rest_request, "number_records", 9, int)
 
-        # ues the plugin manager to retrieve the list of all loaded plugin
-        # instances (this is a list of object and as such is not serializable)
-        loaded_plugins = plugin_manager.get_all_loaded_plugins()
+        # uses the plugin manager to retrieve the list of all plugin instances
+        # (this is a list of object and as such is not serializable)
+        loaded_plugins = plugin_manager.get_all_plugins()
 
         # creates the list that will hold the various plugin description maps
         # to be generates for the filtered plugins
@@ -97,7 +97,8 @@ class PluginController(controllers.Controller):
             # name of the plugin and then adds it to the plugins list
             plugin = {
                 "id" : loaded_plugin.id,
-                "name" : loaded_plugin.name
+                "name" : loaded_plugin.name,
+                "short_name" : loaded_plugin.short_name
             }
             plugins.append(plugin)
 
@@ -114,3 +115,109 @@ class PluginController(controllers.Controller):
         # sets the (resulting) contents in the rest request and sets the
         # appropriate mime type according to the serialization
         self.set_contents(rest_request, result, content_type = mime_type)
+
+    def handle_show(self, rest_request, parameters = {}):
+        """
+        Handles the given show rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manger = self.plugin.manager
+
+        # retrieves the identifier of the plugin to be used for the
+        # current request and tries to retrieve the associated plugin
+        # from the plugin manager, in case it fails raises exception
+        plugin_id = self.get_pattern(parameters, "plugin_id")
+        plugin = plugin_manger._get_plugin(plugin_id)
+        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+
+        # processes the contents of the template file assigning the
+        # appropriate values to it
+        template_file = self.retrieve_template_file(
+            "general.html.tpl",
+            partial_page = "plugin/show.html.tpl"
+        )
+        template_file.assign("title", plugin.name)
+        template_file.assign("area", "plugins")
+        template_file.assign("section", "plugins.html.tpl")
+        template_file.assign("sub_area", "info")
+        template_file.assign("plugin", plugin)
+        self.process_set_contents(rest_request, template_file)
+
+    def handle_load(self, rest_request, parameters = {}):
+        """
+        Handles the given load rest request.
+        This request should load the associated plugin into
+        the currently loaded plugin manager.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manger = self.plugin.manager
+
+        # retrieves the identifier of the plugin to be used for the
+        # current request and tries to retrieve the associated plugin
+        # from the plugin manager, in case it fails raises exception
+        plugin_id = self.get_pattern(parameters, "plugin_id")
+        plugin = plugin_manger._get_plugin(plugin_id)
+        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+
+        # loads the just retrieved plugin using its main identifier as
+        # the trigger element for the loading
+        plugin_manger.load_plugin(plugin.id)
+
+        # redirects the user agent to the show page for the plugin
+        # instance (default behavior)
+        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
+
+    def handle_unload(self, rest_request, parameters = {}):
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manger = self.plugin.manager
+
+        # retrieves the identifier of the plugin to be used for the
+        # current request and tries to retrieve the associated plugin
+        # from the plugin manager, in case it fails raises exception
+        plugin_id = self.get_pattern(parameters, "plugin_id")
+        plugin = plugin_manger._get_plugin(plugin_id)
+        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+
+        # unloads the just retrieved plugin using its main identifier as
+        # the trigger element for the loading
+        plugin_manger.unload_plugin(plugin.id)
+
+        # redirects the user agent to the show page for the plugin
+        # instance (default behavior)
+        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
+
+    def handle_reload(self, rest_request, parameters = {}):
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manger = self.plugin.manager
+
+        # retrieves the identifier of the plugin to be used for the
+        # current request and tries to retrieve the associated plugin
+        # from the plugin manager, in case it fails raises exception
+        plugin_id = self.get_pattern(parameters, "plugin_id")
+        plugin = plugin_manger._get_plugin(plugin_id)
+        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+
+        # loads and then unloads (reloading process) the just retrieved
+        # plugin using its main identifier as the trigger element for the loading
+        plugin_manger.unload_plugin(plugin.id)
+        plugin_manger.load_plugin(plugin.id)
+
+        # redirects the user agent to the show page for the plugin
+        # instance (default behavior)
+        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)

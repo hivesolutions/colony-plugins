@@ -84,6 +84,10 @@ class Nanger(colony.base.system.System):
             (r"^nanger/console$", self.main_controller.handle_console, "get"),
             (r"^nanger/about$", self.main_controller.handle_about, "get"),
             (r"^nanger/plugins/list$", self.plugin_controller.handle_list, "get"),
+            (r"^nanger/plugins/(?P<plugin_id>[\w]+)$", self.plugin_controller.handle_show, "get"),
+            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/load$", self.plugin_controller.handle_load, "get"),
+            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/unload$", self.plugin_controller.handle_unload, "get"),
+            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/reload$", self.plugin_controller.handle_reload, "get"),
             (r"^nanger/console/init$", self.console_controller.handle_init, ("get", "post")),
             (r"^nanger/console/execute$", self.console_controller.handle_execute, ("get", "post")),
             (r"^nanger/console/autocomplete$", self.console_controller.handle_autocomplete, ("get", "post"))
