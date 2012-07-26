@@ -23,6 +23,49 @@
 // __copyright__ = Copyright (c) 2008-2012 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+(function($) {
+    jQuery.fn.uxconsole = function(query, callback, options) {
+        // the default values for the data query
+        var defaults = {};
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = jQuery.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+        };
+
+        // initializes the plugin
+        initialize();
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
 jQuery(document).ready(function() {
 
     // the offset in pixels of the autocomplete
@@ -203,6 +246,7 @@ jQuery(document).ready(function() {
                     var target = jQuery(".console .autocomplete ul > li:first-child");
                     target.addClass("selected");
                     ensureVisible(target, jQuery(".console .autocomplete"));
+                    selectAutocomplete();
 
                     // prevernts the default behavior (avoids the top level window
                     // from moving, expected behavior)
@@ -223,6 +267,7 @@ jQuery(document).ready(function() {
                     var target = jQuery(".console .autocomplete ul > li:last-child");
                     target.addClass("selected");
                     ensureVisible(target, jQuery(".console .autocomplete"));
+                    selectAutocomplete();
 
                     // prevernts the default behavior (avoids the top level window
                     // from moving, expected behavior)
@@ -271,6 +316,7 @@ jQuery(document).ready(function() {
 
                     target.addClass("selected");
                     ensureVisible(target, jQuery(".console .autocomplete"));
+                    selectAutocomplete();
 
                     // breaks the switch
                     break;
@@ -316,6 +362,7 @@ jQuery(document).ready(function() {
                             + (selectedIndex + 2) + ")");
                     target.addClass("selected");
                     ensureVisible(target, jQuery(".console .autocomplete"));
+                    selectAutocomplete();
 
                     // breaks the switch
                     break;
@@ -437,6 +484,8 @@ jQuery(document).ready(function() {
         var text = jQuery(".console").data("text") || "";
         var cancel = jQuery(".console").data("cancel") || false;
 
+        // in case the cancel flag is set the key press must
+        // be ignored and the call returned immediately
         if (cancel) {
             return false;
         }
@@ -549,12 +598,22 @@ jQuery(document).ready(function() {
                 jQuery(".console .autocomplete").hide();
             });
 
+    jQuery(window).scroll(function() {
+                jQuery(".console .autocomplete").hide();
+            });
+
     var escapeHtml = function(value) {
         return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g,
                 "&gt;").replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
     };
 
     var splitValue = function(value, escape, cursor) {
+        // in case there is no value defined there is no need
+        // to split because there is no definition of it
+        if (value == null) {
+            return value;
+        }
+
         var length = value.length;
 
         var slices = [];
@@ -700,6 +759,10 @@ jQuery(document).ready(function() {
                     return;
                 }
 
+                // calculates the offset to the top of the screen based
+                // on the current line position and offset to the top,
+                // then scrolls the autocomplete scrolling back the top
+                // (considered to be the original position)
                 var offsetTop = jQuery(".console .line").offset().top
                         + jQuery(".console .line").outerHeight();
                 jQuery(".console .autocomplete").css("top", offsetTop + "px");
@@ -729,14 +792,22 @@ jQuery(document).ready(function() {
 
                 // calculates the margin top position to be used to place
                 // the autocomplete window above the current line and then
-                // in case the window is not visible places it such
+                // in case the window is not visible places in such
                 // place (notice the minus sign in the margin)
                 var aboveMargin = jQuery(".console .autocomplete").outerHeight()
                         + jQuery(".console .line").outerHeight()
                         + AUTOCOMPLETE_OFFSET;
-                !isVisible
-                        && jQuery(".console .autocomplete").css("margin-top",
-                                (aboveMargin * -1) + "px");
+                if (isVisible) {
+                    jQuery(".console .autocomplete").removeClass("above");
+                } else {
+                    jQuery(".console .autocomplete").addClass("above");
+                    jQuery(".console .autocomplete").css("margin-top",
+                            (aboveMargin * -1) + "px");
+                }
+
+                // selects the autocomplete item, this should trigger the
+                // placement of the tooltip window at the appropriate side
+                selectAutocomplete();
             }
         });
 
@@ -953,6 +1024,110 @@ jQuery(document).ready(function() {
         jQuery(".console .autocomplete").hide();
     };
 
+    var selectAutocomplete = function() {
+        // retrieves the currently selected autocomplete item to
+        // be used for the selection process
+        var selected = jQuery(".console .autocomplete ul > li.selected");
+
+        // retrieves the various options from the selected item defaulting
+        // to the basic values in case of non existence
+        var options = selected.data("options") || {};
+        var doc = options["doc"] || "";
+        var params = options["params"] || [];
+        var _return = options["return"] || null;
+        doc = doc.trim();
+
+        // hides the tooltip window (default behavior) and in case there
+        // is documentation string available returns immediately (not tooltip
+        // will be shown for this case)
+        jQuery(".console .autocomplete .tooltip").hide();
+        if (!doc) {
+            return;
+        }
+
+        // shows the tooltip window back to the screen to ensure visibility
+        // of the it (documentation exists)
+        jQuery(".console .autocomplete .tooltip").show();
+
+        jQuery(".console .autocomplete .tooltip").css("margin-left",
+                jQuery(".console .autocomplete").outerWidth() + 4);
+
+        var _doc = jQuery(".console .autocomplete .tooltip").data("doc") || "";
+        if (doc != _doc) {
+            jQuery(".console .autocomplete .tooltip .doc").html(splitValue(doc,
+                    true));
+        }
+        jQuery(".console .autocomplete .tooltip").data("doc", doc);
+
+        var _params = jQuery(".console .autocomplete .tooltip").data("params")
+                || [];
+        if (params != _params) {
+            jQuery(".console .autocomplete .tooltip .params").empty();
+
+            for (var index = 0; index < params.length; index++) {
+                var param = params[index];
+                jQuery(".console .autocomplete .tooltip .params").append("<div class=\"param\"><span class=\"name\">"
+                        + param[0]
+                        + "</span>&nbsp;<span class=\"type\">("
+                        + param[1]
+                        + ")</span><br />&nbsp;&nbsp;<span class=\"description\">"
+                        + splitValue(param[2], true) + "</span></div>")
+            }
+        }
+        jQuery(".console .autocomplete .tooltip").data("params", params);
+
+        var __return = jQuery(".console .autocomplete .tooltip").data("return")
+                || [];
+        if (_return != __return) {
+            jQuery(".console .autocomplete .tooltip .return").empty();
+
+            _return
+                    && jQuery(".console .autocomplete .tooltip .return").append("<div class=\"param\"><span class=\"name\">"
+                            + _return[0]
+                            + "</span>&nbsp;<span class=\"type\">("
+                            + _return[1]
+                            + ")</span><br />&nbsp;&nbsp;<span class=\"description\">"
+                            + splitValue(_return[2], true) + "</span></div>")
+        }
+        jQuery(".console .autocomplete .tooltip").data("return", _return);
+
+        var isAbove = jQuery(".console .autocomplete").hasClass("above");
+
+        var autocompleteHeight = jQuery(".console .autocomplete").outerHeight();
+        var tooltipHeight = jQuery(".console .autocomplete .tooltip").outerHeight();
+        var borderBottom = parseInt(jQuery(".console .autocomplete").css("border-bottom"));
+        var delta = autocompleteHeight - tooltipHeight - borderBottom;
+
+        delta = delta < 0 ? delta : null;
+        delta = isAbove ? delta : null;
+
+        jQuery(".console .autocomplete .tooltip").css("margin-top", delta);
+
+        var isVisible = checkVisible(jQuery(".console .autocomplete .tooltip"),
+                jQuery(window));
+
+        var aboveMargin = jQuery(".console .autocomplete").outerHeight()
+                + jQuery(".console .line").outerHeight() + AUTOCOMPLETE_OFFSET;
+
+        if (!isVisible) {
+            isAbove = true
+
+            jQuery(".console .autocomplete").addClass("above");
+            jQuery(".console .autocomplete").css("margin-top",
+                    (aboveMargin * -1) + "px");
+
+            var delta = autocompleteHeight - tooltipHeight - marginBottom;
+
+            delta = delta < 0 ? delta : null;
+            delta = isAbove ? delta : null;
+
+            jQuery(".console .autocomplete .tooltip").css("margin-top", delta);
+
+            var isVisible = checkVisible(
+                    jQuery(".console .autocomplete .tooltip"), jQuery(window));
+        }
+    };
+
     var getToken = function() {
         // retrieves the current console command in execution
         // to retrieve the associated autocomplete value
@@ -1132,6 +1307,40 @@ jQuery(document).ready(function() {
         parent.scrollTop(current);
     };
 
+    var init = function() {
+        // hides the current line, no input will be possible durring
+        // the initial loading of the console
+        jQuery(".console .current").hide();
+
+        // runs the remove query to retrieve the various autcomplete
+        // results (this query is meant to be fast 100ms maximum)
+        jQuery.ajax({
+            url : "console/init",
+            success : function(data) {
+                // unpacks the resulting json data into the result
+                // and the instance part, so that they may be used
+                // in the processing of the results
+                var result = data["result"];
+                var instance = data["instance"];
+
+                // splits the result value (into the appropriate components) and
+                // also adds it to the previous action container, then scrolls
+                // the current console area to the lower part
+                var line = splitValue(result, true);
+                jQuery(".console .previous").append("<div>" + line + "</div>");
+                jQuery(".console").scrollTop(jQuery(".console")[0].scrollHeight);
+
+                // sets the instance (identifier) value in the console
+                // for latter usage of the value
+                jQuery(".console").data("instance", instance);
+
+                // restores the current line display, because the loading is now
+                // considered complete
+                jQuery(".console .current").show();
+            }
+        });
+    };
+
     // initializes the cursor position at the end
     // of the console line (initial position)
     jQuery(".console").data("cursor", -1);
@@ -1143,4 +1352,9 @@ jQuery(document).ready(function() {
     // "clicks" in the console so that the focus is started
     // at the console (immediate interaction)
     jQuery(".console").click();
+
+    // initializes the console by requesting the initial instace
+    // from the client side (initialization scripts should be
+    // executed at this stage)
+    init();
 });
