@@ -25,4 +25,7 @@
             <a href="${out_none value=base_path /}about">about</a>
         ${/if}
     </div>
+    ${if item=section value=None operator=neq}
+        ${include file_value=section /}
+    ${/if}
 </div>
