@@ -439,6 +439,25 @@ class ConsoleController(controllers.Controller):
         self.set_contents(rest_request, result, content_type = mime_type)
 
     def _resolve_value(self, partials, names):
+        """
+        Resolves a list of partial values into a proper list of
+        names using the provided map of names for resolution.
+
+        The provided names may also be an object like element
+        and in such case the attributes reference will be used.
+
+        @type partials: List
+        @param partials: List of names considered to be the path
+        until the element to be retrieved.
+        @type names: Dictionary/Object
+        @param names: The map or object used as the basic dictionary
+        for the resolution of the value.
+        @rtype: Tuple
+        @return: The tuple containing both the names contained in
+        the target element defined by the list of partials and the
+        "proper" object pointed by the same list of partials.
+        """
+
         # in case the names list is not valid (probably an unset
         # value from a resolution error) returns an empty map
         if not names: return ({}, {})
