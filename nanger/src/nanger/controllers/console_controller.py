@@ -147,7 +147,7 @@ class ConsoleController(controllers.Controller):
 
         # replaces the windows styled newlines with the normalized unix like
         # newline styled values (compatibility issues)
-        contents.replace("\r\n", "\n")
+        contents = contents.replace("\r\n", "\n")
 
         # updates the standard output and error buffer files to the new buffer
         # and then runs the command at the interpreter after the execution restore
