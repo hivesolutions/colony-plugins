@@ -141,9 +141,13 @@ class ConsoleController(controllers.Controller):
 
         # opens the configuration (init) file and reads the complete set of
         # contents in it (to be executed in the current instance)
-        file = open(configuration_file_path, "r")
+        file = open(configuration_file_path, "rb")
         try: contents = file.read()
         except: file.close()
+        
+        # replaces the windows styled newlines with the normalized unix like
+        # newline styled values (compatibility issues)
+        contents.replace("\r\n", "\n")
 
         # updates the standard output and error buffer files to the new buffer
         # and then runs the command at the interpreter after the execution restore
