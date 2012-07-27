@@ -144,7 +144,7 @@ class ConsoleController(controllers.Controller):
         file = open(configuration_file_path, "rb")
         try: contents = file.read()
         except: file.close()
-        
+
         # replaces the windows styled newlines with the normalized unix like
         # newline styled values (compatibility issues)
         contents.replace("\r\n", "\n")
