@@ -106,7 +106,7 @@ class Random(colony.base.system.System):
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s%s"  % (SECRET_KEY, process_id_absolute, thread_id_absolute, current_time_integer, random_key)
+        random = "%s%s%s%s%s" % (SECRET_KEY, process_id_absolute, thread_id_absolute, current_time_integer, random_key)
 
         # returns the random value
         return random

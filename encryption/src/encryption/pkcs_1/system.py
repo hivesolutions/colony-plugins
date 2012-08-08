@@ -421,7 +421,7 @@ class Pkcs1Structure:
         # retrieves the extras values
         exponent_1 = extras["fe"]
         exponent_2 = extras["se"]
-        coefficient  = extras["c"]
+        coefficient = extras["c"]
 
         # creates the ber structure
         ber_structure = self.ber_plugin.create_structure({})

@@ -627,7 +627,7 @@ class Console(colony.base.system.System):
 
                 # in case the base character and the alternative
                 # character are not the same
-                if not base_character ==  alternative_character:
+                if not base_character == alternative_character:
                     # unsets the valid flag
                     valid = False
 

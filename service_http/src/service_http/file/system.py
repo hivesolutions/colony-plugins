@@ -372,7 +372,7 @@ class ServiceHttpFile(colony.base.system.System):
             file_path = complete_path + "/" + directory_name
 
             # normalizes the file path
-            file_path =  colony.libs.path_util.normalize_path(file_path)
+            file_path = colony.libs.path_util.normalize_path(file_path)
 
             # retrieves the file stat
             file_stat = os.stat(file_path)

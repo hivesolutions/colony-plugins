@@ -536,7 +536,7 @@ class EntityManager:
 
             # loads the information map from the meta information
             # file and then tries to retrieve the default options
-            information = self._load_meta( directory_path + "/meta.json")
+            information = self._load_meta(directory_path + "/meta.json")
             full_mode = information.get("full_mode", False)
             encoding = information.get("encoding", DEFAULT_ENCODING)
 
@@ -1151,7 +1151,7 @@ class EntityManager:
             for _target_entity in target_entity:
                 # retrieves the current target entity identifier value to be used
                 # for validation in the result map
-                id_value =  _target_entity.get_id_value()
+                id_value = _target_entity.get_id_value()
 
                 # continues the loop, the entity does not contains
                 # an identifier value (not persisted) or the entity

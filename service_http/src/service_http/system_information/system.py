@@ -258,7 +258,7 @@ class ServiceHttpSystemInformation(colony.base.system.System):
         plugins_string, replicas_string, instances_string = self._get_plugin_strings(plugin_manager_instances)
 
         # creates the framework information map
-        framework_information =  colony.libs.structures_util.OrderedMap()
+        framework_information = colony.libs.structures_util.OrderedMap()
 
         # sets the framework information (map) values
         framework_information["uid"] = plugin_manager_uid

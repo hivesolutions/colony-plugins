@@ -187,8 +187,31 @@ class PaypalClient:
 
         # returns the paypal structure
         return paypal_structure
-
-    def do_direct_payment(self, ip_address, amount, card, buyer, address):
+    
+    def do_direct_payment(self, ip_address, amount, card, payer, address, order = {}, shipping_address = {}):
+        """
+        Directly performs payment by issuing a request to paypal with the specified information.
+        
+        This method is synchronous, and paypal will directly reply with the information stating
+        if the payment was processed correctly or not (an exception will be raised in case it
+        isn't).
+        
+        @type ip_address: String
+        @param ip_address: The ip address from where the customer performed the payment.
+        @type amount: float
+        @param amount: The amount being paid.
+        @type card: Dictionary
+        @param card: The card to be used to pay for the order.
+        @type payer: Dictionary
+        @param payer: The payer that is to pay the order.
+        @type order: Dictionary
+        @param order: Map with details about the order being paid (lines and totals).
+        @type shipping_address: Dictionary
+        @param shipping_address: The address details of where the order is to be shipped.
+        @rtype: Dictionary
+        @return: The paypal response data.
+        """
+        
         # sets the retrieval url, this is always the same
         # value the command control is on the parameters
         retrieval_url = BASE_SANDBOX_REST_SECURE_URL
@@ -200,28 +223,71 @@ class PaypalClient:
         # of the request to be executed
         self._set_base_parameters(parameters)
 
+        # unpacks the provided structures
+        order_lines = order.get("lines", [])
+
         # sets the global wide parameters for the current request
         # they don't depend on any sequence
         parameters["METHOD"] = "DoDirectPayment"
+        parameters["PAYMENTACTION"] = "Sale"
         parameters["IPADDRESS"] = ip_address
+        parameters["RETURNFMFDETAILS"] = "1"
+        
+        # sets the payment details in the parameters map
         parameters["AMT"] = "%.2f" % amount
+        if "currency" in order: parameters["CURRENCYCODE"] = order["currency"]
+        if "item" in order: parameters["ITEMAMT"] = "%.2f" % order["item"]
+        if "shipping" in order: parameters["SHIPPINGAMT"] = "%.2f" % order["shipping"]
+        if "tax" in order: parameters["TAXAMT"] = "%.2f" % order["tax"]
+        if "invoice_number" in order: parameters["INVNUM"] = order["invoice_number"]
+
+        # calculates the number of order lines
+        number_order_lines = len(order_lines)
+        
+        # sets the order line structure values in the parameters map
+        for order_line_index in range(number_order_lines):
+            # retrieves the order line
+            order_line = order_lines[order_line_index]
+            
+            # sets the order line attributes in the parameters
+            if "name" in order_line: parameters["L_NAME%d" % order_line_index] = order_line["name"]
+            if "description" in order_line: parameters["L_DESC%d" % order_line_index] = order_line["description"]
+            if "amount" in order_line: parameters["L_AMT%d" % order_line_index] = "%.2f" % order_line["amount"]
+            if "code" in order_line: parameters["L_NUMBER%d" % order_line_index] = order_line["code"]
+            if "quantity" in order_line: parameters["L_QTY%d" % order_line_index] = order_line["quantity"]
+            if "tax" in order_line: parameters["L_TAXAMT%d" % order_line_index] = "%.2f" % order_line["tax"]
 
         # sets the card structure values in the parameters map
         parameters["ACCT"] = card["number"]
         parameters["EXPDATE"] = card["expiration"]
+        if "type" in card: parameters["CREDITCARDTYPE"] = card["type"]
         if "cvv2" in card: parameters["CVV2"] = card["cvv2"]
-
+        if "start_date" in card: parameters["STARTDATE"] = card["start_date"]
+        if "issue_number" in card: parameters["ISSUENUMBER"] = card["issue_number"]
+        
         # sets the buyer structure values in the parameters map
-        parameters["FIRSTNAME"] = buyer["first_name"]
-        parameters["LASTNAME"] = buyer["last_name"]
-
+        parameters["FIRSTNAME"] = payer["first_name"]
+        parameters["LASTNAME"] = payer["last_name"]
+        if "email" in payer: parameters["EMAIL"] = payer["email"]
+        
         # sets the address structure values in the parameters map
         parameters["STREET"] = address["street"]
         parameters["CITY"] = address["city"]
         parameters["STATE"] = address["state"]
         parameters["COUNTRYCODE"] = address["country"]
-        parameters["ZIP"] = address["zip"]
-
+        parameters["ZIP"] = address["zip_code"]
+        if "phone_number" in address: parameters["SHIPTOPHONENUM"] = address["phone_number"]
+        
+        # sets the shipping address structure values in the parameters map
+        if shipping_address:
+            parameters["SHIPTONAME"] = shipping_address["name"]
+            parameters["SHIPTOSTREET"] = shipping_address["street_name"]
+            parameters["SHIPTOCITY"] = shipping_address["city"]
+            parameters["SHIPTOSTATE"] = shipping_address["state"]
+            parameters["SHIPTOZIP"] = shipping_address["zip_code"]
+            parameters["SHIPTOCOUNTRY"] = shipping_address["country"]
+            if "phone_number" in shipping_address: parameters["SHIPTOPHONENUM"] = shipping_address["phone_number"]
+        
         # fetches the retrieval url with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
@@ -239,7 +305,10 @@ class PaypalClient:
         # updates the current paypal structure according to the attributes
         # that have just been retrieved from the data structure
         self.paypal_structure.transaction_id = transaction_id
-
+        
+        # returns the response data
+        return data
+        
     def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
         # sets the retrieval url, this is always the same
         # value the command control is on the parameters

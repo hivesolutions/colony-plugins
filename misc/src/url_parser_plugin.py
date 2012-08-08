@@ -78,4 +78,4 @@ class UrlParserPlugin(colony.base.system.Plugin):
         @return: The url object representing the url
         """
 
-        return self.url_parser_system.parse_url(url)
+        return self.url_parser.parse_url(url)

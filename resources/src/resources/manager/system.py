@@ -1138,7 +1138,7 @@ class ResourcesManager(colony.base.system.System):
 
         # in case the length of the resources name is greater or equal than the resources suffix length
         # and the last item of the resources name item is the same as the resources suffix value
-        is_resource_name  = len(resource_name) >= RESOURCES_SUFFIX_LENGTH and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
+        is_resource_name = len(resource_name) >= RESOURCES_SUFFIX_LENGTH and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
 
         # returns the result of the is resource
         # name test

@@ -768,7 +768,7 @@ class ServiceHttpProxy(colony.base.system.System):
         server_identifier = request.get_server_identifier()
 
         # sets the via header in the headers map
-        headers_map[VIA_VALUE] = protocol_version_number  + " " + host + " (" +  server_identifier + ")"
+        headers_map[VIA_VALUE] = protocol_version_number + " " + host + " (" + server_identifier + ")"
 
         # returns the headers map
         return headers_map

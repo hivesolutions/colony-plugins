@@ -276,7 +276,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
                 current = self
 
                 # iterates over all the entity manager reference values
-                # splitted in parts, this will percolate all the partial
+                # split in parts, this will percolate all the partial
                 # values to find the "final" entity manager reference
                 for entity_manager_reference_value in entity_manager_reference_splitted:
                     # retrieves the current value using the entity

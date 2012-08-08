@@ -604,7 +604,7 @@ class ServiceHttp(colony.base.system.System):
             "socket_parameters" : socket_parameters,
             "chunk_size" : CHUNK_SIZE,
             "service_configuration" : service_configuration,
-            "extra_parameters" :  extra_parameters,
+            "extra_parameters" : extra_parameters,
             "pool_configuration" : pool_configuration,
             "service_type" : service_type,
             "client_connection_timeout" : client_connection_timeout,
@@ -913,7 +913,7 @@ class HttpClientServiceHandler:
 
         # retrieves the connection information
         # from the service connection
-        connection_host, _connection_port =  service_connection.connection_address
+        connection_host, _connection_port = service_connection.connection_address
 
         # retrieves the user id
         user_id = "-"

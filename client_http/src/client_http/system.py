@@ -1700,7 +1700,7 @@ class HttpRequest:
         unicode_value = unicode(string_value)
 
         # encodes the unicode value
-        unicode_value_encoded =  unicode_value.encode(self.content_type_charset)
+        unicode_value_encoded = unicode_value.encode(self.content_type_charset)
 
         # returns the encoded unicode value
         return unicode_value_encoded

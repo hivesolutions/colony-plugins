@@ -526,7 +526,7 @@ class Scheduler(colony.base.system.System):
             current_date_time = datetime.datetime.utcnow()
 
             # create the delta date time object
-            delta_date_time = datetime.timedelta(days = recursion_list[0], hours = recursion_list[1], minutes = recursion_list[2], seconds = recursion_list[3],  microseconds = recursion_list[4])
+            delta_date_time = datetime.timedelta(days = recursion_list[0], hours = recursion_list[1], minutes = recursion_list[2], seconds = recursion_list[3], microseconds = recursion_list[4])
 
             # creates the new date time object
             new_date_time = current_date_time + delta_date_time
