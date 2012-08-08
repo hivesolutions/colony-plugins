@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import datetime
 
+import colony.libs.time_util
 import colony.libs.string_util
 
 import utils
@@ -512,7 +513,7 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
     """
     "Transactional" method to be used as the main entry
     point of persistence in the model structure.
-    This method should be "overriden" in case additional
+    This method should be "overridden" in case additional
     business logic is necessary in the saving process.
 
     @type persist_type: int
@@ -1335,7 +1336,7 @@ def resolve_to_one_value(self, map, model_class):
 
     # in case the id value is an empty value, the entity
     # is set as invalid (unset value)
-    if id_value == "": entity =  None
+    if id_value == "": entity = None
 
     # otherwise in case the the id value is set must try
     # to get it from the data source (load action)

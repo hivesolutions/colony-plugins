@@ -200,7 +200,6 @@ class MysqlEngine:
     def lock(self, entity_class, id_value = None, fields = None, lock_parents = True):
         # @tODO: explicar que o fields e o lock parents sao mutuamente exclusivos
 
-
         # retrieves the table name and id associated
         # with the entity class to be locked, these
         # values are going to be used to set the appropriate

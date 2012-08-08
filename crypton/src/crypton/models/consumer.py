@@ -39,18 +39,24 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import root_entity
 
-STATUS_ACTIVE = 1
-""" The consumer status active """
-
-STATUS_INACTIVE = 2
-""" The consumer status inactive """
-
 class Consumer(root_entity.RootEntity):
     """
     The consumer class, which represents a generic
     consumer client with an api key.
     """
 
+    STATUS_ACTIVE = 1
+    """ The consumer status active """
+    
+    STATUS_INACTIVE = 2
+    """ The consumer status inactive """
+    
+    STATUS_ENUM = (
+        STATUS_ACTIVE,
+        STATUS_INACTIVE
+    )
+    """ The status enumeration """
+    
     name = {
         "data_type" : "text",
         "mandatory" : True,
@@ -80,7 +86,7 @@ class Consumer(root_entity.RootEntity):
         root_entity.RootEntity.__init__(self)
         self.name = None
         self.api_key = None
-        self.status = STATUS_INACTIVE
+        self.status = Consumer.STATUS_INACTIVE
 
     def set_validation(self):
         """
@@ -90,14 +96,6 @@ class Consumer(root_entity.RootEntity):
 
         # adds the inherited validations
         root_entity.RootEntity.set_validation(self)
-
-        # defines the status validation properties
-        status_validation_properties = {
-            "values" : (
-                STATUS_ACTIVE,
-                STATUS_INACTIVE
-            )
-        }
 
         # adds the validation methods to the name attribute
         self.add_validation_method("name", "not_none", True)
@@ -109,7 +107,7 @@ class Consumer(root_entity.RootEntity):
 
         # adds the validation methods to the status attribute
         self.add_validation_method("status", "not_none", True)
-        self.add_validation_method("status", "in_enumeration", properties = status_validation_properties)
+        self.add_validation_method("status", "in_enumeration", properties = {"values" : Consumer.STATUS_ENUM})
 
     def _generate_api_key(self):
         # retrieves the random plugin

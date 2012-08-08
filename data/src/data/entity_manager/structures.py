@@ -48,6 +48,7 @@ import colony.libs.map_util
 import colony.libs.lazy_util
 import colony.libs.list_util
 import colony.libs.string_util
+import colony.libs.structures_util
 
 SAFE_CHARACTER = "_"
 """ The character to be used in table names as the prefix that
@@ -2540,7 +2541,7 @@ class EntityClass(object):
             # in case the value type is not valid as
             # a field (function or method) continues the
             # loop, functions or method are not items
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod):  continue
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
 
             # sets the value in the map of fields
             # for the current key value

@@ -137,9 +137,9 @@ class ConsoleInterfaceWin32:
                 return
 
             # in case there is a character (key) available
-            if msvcrt.kbhit():
+            if msvcrt.kbhit(): #@UndefinedVariable
                 # reads a character from the standard input (locks)
-                character = msvcrt.getch()
+                character = msvcrt.getch() #@UndefinedVariable
             # otherwise
             else:
                 # sleeps for a while
@@ -153,9 +153,9 @@ class ConsoleInterfaceWin32:
 
             # in case the character ordinal value is possibly "special"
             # and there is a keyboard hit
-            if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit():
+            if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit(): #@UndefinedVariable
                 # reads a character from the standard input (locks)
-                extra_character = msvcrt.getch()
+                extra_character = msvcrt.getch() #@UndefinedVariable
 
                 # convert the extra character to ordinal
                 extra_character_ordinal = ord(extra_character)
@@ -245,7 +245,7 @@ class ConsoleInterfaceWin32:
         is_tty = sys.stdin.isatty()
 
         # tries to set the binary mode
-        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
+        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT) #@UndefinedVariable
 
         # in case the current standard input is not tty
         # or the mode value is not valid

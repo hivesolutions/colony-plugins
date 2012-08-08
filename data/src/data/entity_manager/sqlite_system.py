@@ -216,7 +216,7 @@ class SqliteEngine:
         @return: The cursor that was used for the query execution
         it must be closed in the outside context.
         """
-
+   
         # retrieves the current connection from the associated
         # entity manager and then retrieves the internal database
         # connection for data access
@@ -236,7 +236,7 @@ class SqliteEngine:
             # context for the engine
             cursor.execute(query)
             final = time.time()
-
+     
             if final - initial > 0.025: print "[WARNING] <sqlite - %f> %s" % (final - initial, query) # ! REMOVE THIS !
         except:
             # closes the cursor (safe closing)

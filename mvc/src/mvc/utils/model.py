@@ -849,7 +849,7 @@ def validate(self):
         # to validate a non existent attribute (it's not going to be
         # persisted and the value in the data source was already validated)
         # the data model remains consistent for sure
-        if self.is_stored() and not self.has_value(attribute_name):  continue
+        if self.is_stored() and not self.has_value(attribute_name): continue
 
         # retrieves the attribute value
         attribute_value = self.get_value(attribute_name)

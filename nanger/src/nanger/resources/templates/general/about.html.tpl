@@ -1,6 +1,6 @@
 <div class="quote">
     The complete project was developed by the <a href="http://hive.pt">Hive Solutions</a><br />
-    developement team using only spare time.
+    development team using only spare time.
 </div>
 <div class="separator-horizontal"></div>
 <div class="quote">

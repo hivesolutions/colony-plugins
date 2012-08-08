@@ -67,7 +67,7 @@ class FormcodePlugin(colony.base.system.Plugin):
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
         import misc.formcode.system
-        self.formcode =  misc.formcode.system.Formcode(self)
+        self.formcode = misc.formcode.system.Formcode(self)
 
     def dumps(self, object):
         return self.formcode.dumps(object)

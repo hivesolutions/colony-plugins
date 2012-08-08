@@ -189,7 +189,7 @@ class EasypayClient:
         # returns the easypay structure
         return easypay_structure
 
-    def generate_reference(self, amount, reference_key, entity, reference_type = "auto", name = None, description = None, mobile = None, email = None):
+    def generate_reference(self, amount, transaction_key, entity, reference_type = "auto", name = None, description = None, mobile = None, email = None):
         # sets the retrieval url, using the test url
         # in case the client is running in test mode
         retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
@@ -203,7 +203,7 @@ class EasypayClient:
         # sets the amount, reference key, entity, reference
         # type, country and language in the parameters
         parameters["t_value"] = amount
-        parameters["t_key"] = reference_key
+        parameters["t_key"] = transaction_key
         parameters["ep_entity"] = entity
         parameters["ep_ref_type"] = reference_type
         parameters["ep_country"] = self.easypay_structure.country

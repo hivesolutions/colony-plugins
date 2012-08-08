@@ -43,6 +43,7 @@ import hashlib
 import datetime
 
 import colony.base.system
+import colony.libs.quote_util
 import colony.libs.encode_util
 import colony.libs.string_util
 import colony.libs.string_buffer_util
