@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import root_entity
 
+root_entity = root_entity
+
 class Consumer(root_entity.RootEntity):
     """
     The consumer class, which represents a generic
