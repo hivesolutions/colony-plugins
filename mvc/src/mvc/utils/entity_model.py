@@ -509,6 +509,52 @@ def _class_apply_context(class_reference, options = {}, context_request = None, 
     return options
 
 @utils.transaction_method("_entity_manager")
+def delete(self, persist_type, entity_manager = None):
+    """
+    "Transactional" method to be used as the main entry
+    point of removal in the model structure.
+    This method should be "overridden" in case additional
+    business logic is necessary in the saving process.
+
+    @type persist_type: int
+    @param persist_type: The type of persist to be used
+    in the entity.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # tries to call the pre delete method, in order to notify the
+    # current instance about the starting of the delete procedure
+    if hasattr(self, "pre_delete") and persist_type & PERSIST_UPDATE_TYPE: self.pre_delete(persist_type)
+    if hasattr(self, "pre_remove") and persist_type & PERSIST_UPDATE_TYPE: self.pre_remove(persist_type)
+
+    try:
+        # tries to call the on delete method, in order to notify the
+        # current instance about the starting of the delete procedure
+        if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE_TYPE: self.on_store(persist_type)
+        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE_TYPE: self.on_save(persist_type)
+
+        # removes the current entity from the data source defined in
+        # the provided entity manager, this is a non reversible and
+        # final operation from the data source point of view
+        self.remove(entity_manager = entity_manager)
+    except BaseException, exception:
+        # tries to call the fail store method, in order to notify the
+        # current instance about the failure of the store procedure
+        if hasattr(self, "fail_delete"): self.fail_delete(persist_type, exception)
+        if hasattr(self, "fail_remove"): self.fail_remove(persist_type, exception)
+
+        # re-raises the exception to the upper levels, no need to
+        # to except at this level
+        raise
+
+    # tries to call the post delete method, in order to notify the
+    # current instance about the finishing of the delete procedure
+    if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE_TYPE: self.post_delete(persist_type)
+    if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE_TYPE: self.post_remove(persist_type)
+
+@utils.transaction_method("_entity_manager")
 def store(self, persist_type, validate = True, force_persist = False, raise_exception = False, entity_manager = None):
     """
     "Transactional" method to be used as the main entry
