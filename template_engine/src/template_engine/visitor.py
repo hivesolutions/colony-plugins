@@ -1482,9 +1482,22 @@ class Visitor:
         attribute_format = attributes_map[FORMAT_VALUE]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
-        # in case the value is not defined
-        if not attribute_value_value:
-            # returns immediately
+        # in case the default exists in the attributes map
+        if DEFAULT_VALUE in attributes_map:
+            # retrieves attribute default value
+            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default_value = self.get_value(attribute_default, localize = True)
+        # otherwise
+        else:
+            # unsets the attribute default value
+            attribute_default_value = None
+
+        # in case the value is not defined, the default
+        # value must be used instead
+        if attribute_value_value == None:
+            # writes the default attribute value to
+            # the string buffer and returns immediately
+            self.string_buffer.write(attribute_default_value)
             return
 
         # converts the attribute format literal value to string, in order
@@ -1514,11 +1527,24 @@ class Visitor:
         attribute_format = attributes_map[FORMAT_VALUE]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
-        # in case the value is not defined
-        if not attribute_value_value:
-            # returns immediately
-            return
+        # in case the default exists in the attributes map
+        if DEFAULT_VALUE in attributes_map:
+            # retrieves attribute default value
+            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default_value = self.get_value(attribute_default, localize = True)
+        # otherwise
+        else:
+            # unsets the attribute default value
+            attribute_default_value = None
 
+        # in case the value is not defined, the default
+        # value must be used instead
+        if attribute_value_value == None:
+            # writes the default attribute value to
+            # the string buffer and returns immediately
+            self.string_buffer.write(attribute_default_value)
+            return
+        
         # converts the attribute format literal value to string, in order
         # to avoid possible problems with string formatting
         attribute_format_literal_value = str(attribute_format_literal_value)
@@ -1558,12 +1584,24 @@ class Visitor:
             # value value
             attribute_value_value = datetime.datetime.now()
 
-        # in case the attribute value value
-        # is not valid
-        if not attribute_value_value:
-            # return immediately no write
-            return
+        # in case the default exists in the attributes map
+        if DEFAULT_VALUE in attributes_map:
+            # retrieves attribute default value
+            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default_value = self.get_value(attribute_default, localize = True)
+        # otherwise
+        else:
+            # unsets the attribute default value
+            attribute_default_value = None
 
+        # in case the value is not defined, the default
+        # value must be used instead
+        if attribute_value_value == None:
+            # writes the default attribute value to
+            # the string buffer and returns immediately
+            self.string_buffer.write(attribute_default_value)
+            return
+        
         # retrieves the time tuple from the date time
         # attribute and then converts it to timestamp
         # and then into a string
