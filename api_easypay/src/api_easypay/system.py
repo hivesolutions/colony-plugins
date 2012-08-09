@@ -79,6 +79,12 @@ TEST_BASE_REST_SECURE_URL = "http://test.easypay.pt/_s/"
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
 
+DEFAULT_COUNTRY = "PT"
+""" The default country """
+
+DEFAULT_LANGUAGE = "PT"
+""" The default language """
+
 class ApiEasypay(colony.base.system.System):
     """
     The api easypay class.
@@ -157,7 +163,7 @@ class EasypayClient:
         # closes the http client in case it is defined
         if self.http_client: self.http_client.close({})
 
-    def generate_easypay_structure(self, username, cin, country, language, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_easypay_structure(self, username, cin, country = DEFAULT_COUNTRY, language = DEFAULT_LANGUAGE, api_version = DEFAULT_API_VERSION, set_structure = True):
         """
         Generates the easypay structure for the given arguments.
 
