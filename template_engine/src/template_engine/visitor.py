@@ -1497,6 +1497,7 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
+            attribute_default_value = str(attribute_default_value)
             self.string_buffer.write(attribute_default_value)
             return
 
@@ -1542,6 +1543,7 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
+            attribute_default_value = str(attribute_default_value)
             self.string_buffer.write(attribute_default_value)
             return
         
@@ -1599,6 +1601,7 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
+            attribute_default_value = str(attribute_default_value)
             self.string_buffer.write(attribute_default_value)
             return
         
