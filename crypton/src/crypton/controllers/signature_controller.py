@@ -101,7 +101,7 @@ class SignatureController(controllers.Controller):
         return_value = ssl_structure.verify_base_64(public_key_path, signature, message_decoded)
 
         # retrieves the return value in (simple) string mode
-        return_value_string = return_value and "0" or "1"
+        return_value_string = return_value and "1" or "0"
 
         # returns the return value string
         return return_value_string
