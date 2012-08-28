@@ -960,7 +960,7 @@ class RestRequest:
         # clock value (useful for benchmarking)
         self._generation_time = time.time()
         self._generation_clock = time.clock()
-
+    
     def start_session(self, force = False, session_id = None, timeout = DEFAULT_TIMEOUT, maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT):
         """
         Starts the session for the given session id,
@@ -1646,6 +1646,36 @@ class RestRequest:
 
         self.request.status_code = status_code
 
+    def get_address(self):
+        """
+        Retrieves the (ip) address of the service connection
+        associated with the rest request.
+        
+        @rtype: String
+        @return: The (ip) address of the service connection.
+        """
+        
+        # retrieves the service connection for the request,
+        # unpacks the connection address into the address
+        service_connection = self.request.service_connection
+        address = service_connection.connection_address[0]
+        return address
+    
+    def get_port(self):
+        """
+        Retrieves the (tcp) port of the service connection
+        associated with the rest request.
+        
+        @rtype: String
+        @return: The (tcp) port of the service connection.
+        """
+        
+        # retrieves the service connection for the request,
+        # unpacks the connection port into the port
+        service_connection = self.request.service_connection
+        port = service_connection.connection_address[1]
+        return port
+    
     def _update_session_cookie(self):
         """
         Updates the current session.
