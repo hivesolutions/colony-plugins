@@ -125,7 +125,40 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
 
         return "Insufficient http information - %s" % self.message
 
-class ModelValidationError(MvcUtilsExceptionException):
+class ValidationError(MvcUtilsExceptionException):
+    """
+    The validation error class.
+    """
+
+    variable = None
+    """ The variable that failed the validation """
+    
+    def __init__(self, message, variable = None):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type variable: String
+        @param variable: The name of the variable
+        associated with the validation error.
+        """
+
+        MvcUtilsExceptionException.__init__(self)
+        self.message = message
+        self.variable = variable
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Validation error - %s" % self.message
+    
+class ModelValidationError(ValidationError):
     """
     The model validation error class.
     """
@@ -143,7 +176,7 @@ class ModelValidationError(MvcUtilsExceptionException):
         @param model: The model that failed the validation.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        ValidationError.__init__(self)
         self.message = message
         self.model = model
 
@@ -157,7 +190,7 @@ class ModelValidationError(MvcUtilsExceptionException):
 
         return "Model validation error - %s" % self.message
 
-class ControllerValidationError(MvcUtilsExceptionException):
+class ControllerValidationError(ValidationError):
     """
     The controller validation error class.
     """
@@ -175,7 +208,7 @@ class ControllerValidationError(MvcUtilsExceptionException):
         @param controller: The controller that failed the validation.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        ValidationError.__init__(self)
         self.message = message
         self.controller = controller
 
