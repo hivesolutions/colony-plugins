@@ -176,7 +176,7 @@ class ModelValidationError(ValidationError):
         @param model: The model that failed the validation.
         """
 
-        ValidationError.__init__(self)
+        ValidationError.__init__(self, message)
         self.message = message
         self.model = model
 
@@ -208,7 +208,7 @@ class ControllerValidationError(ValidationError):
         @param controller: The controller that failed the validation.
         """
 
-        ValidationError.__init__(self)
+        ValidationError.__init__(self, message)
         self.message = message
         self.controller = controller
 
