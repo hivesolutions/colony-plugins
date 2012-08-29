@@ -1546,7 +1546,7 @@ class Visitor:
             attribute_default_value = str(attribute_default_value)
             self.string_buffer.write(attribute_default_value)
             return
-        
+
         # converts the attribute format literal value to string, in order
         # to avoid possible problems with string formatting
         attribute_format_literal_value = str(attribute_format_literal_value)
@@ -1604,7 +1604,7 @@ class Visitor:
             attribute_default_value = str(attribute_default_value)
             self.string_buffer.write(attribute_default_value)
             return
-        
+
         # retrieves the time tuple from the date time
         # attribute and then converts it to timestamp
         # and then into a string

@@ -49,16 +49,16 @@ class Consumer(root_entity.RootEntity):
 
     STATUS_ACTIVE = 1
     """ The consumer status active """
-    
+
     STATUS_INACTIVE = 2
     """ The consumer status inactive """
-    
+
     STATUS_ENUM = (
         STATUS_ACTIVE,
         STATUS_INACTIVE
     )
     """ The status enumeration """
-    
+
     name = {
         "data_type" : "text",
         "mandatory" : True,

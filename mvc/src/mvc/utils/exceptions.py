@@ -132,7 +132,7 @@ class ValidationError(MvcUtilsExceptionException):
 
     variable = None
     """ The variable that failed the validation """
-    
+
     def __init__(self, message, variable = None):
         """
         Constructor of the class.
@@ -157,7 +157,7 @@ class ValidationError(MvcUtilsExceptionException):
         """
 
         return "Validation error - %s" % self.message
-    
+
 class ModelValidationError(ValidationError):
     """
     The model validation error class.
