@@ -503,6 +503,14 @@ pre {
     text-transform: lowercase;
 }
 
+.filter {
+    user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
 .filter-more {
     padding: 26px 0px 26px 0px;
 }
