@@ -1497,8 +1497,8 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
-            attribute_default_value = str(attribute_default_value)
-            self.string_buffer.write(attribute_default_value)
+            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
+            attribute_default_value and self.string_buffer.write(attribute_default_value)
             return
 
         # converts the attribute format literal value to string, in order
@@ -1543,8 +1543,8 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
-            attribute_default_value = str(attribute_default_value)
-            self.string_buffer.write(attribute_default_value)
+            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
+            attribute_default_value and self.string_buffer.write(attribute_default_value)
             return
 
         # converts the attribute format literal value to string, in order
@@ -1601,8 +1601,8 @@ class Visitor:
         if attribute_value_value == None:
             # writes the default attribute value to
             # the string buffer and returns immediately
-            attribute_default_value = str(attribute_default_value)
-            self.string_buffer.write(attribute_default_value)
+            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
+            attribute_default_value and self.string_buffer.write(attribute_default_value)
             return
 
         # retrieves the time tuple from the date time
