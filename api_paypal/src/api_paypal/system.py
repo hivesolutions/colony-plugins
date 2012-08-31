@@ -121,6 +121,30 @@ class PaypalClient:
     The class that represents a paypal client connection.
     """
 
+    REFUND_TYPE_FULL = "Full"
+    """ The full refund type """
+
+    REFUND_TYPE_PARTIAL = "Partial"
+    """ The partial refund type """
+
+    REFUND_TYPE_EXTERNAL_DISPUTE = "ExternalDispute"
+    """ The external dispute refund type """
+
+    REFUND_TYPE_OTHER = "Other"
+    """ The other refund type """
+
+    REFUND_SOURCE_ANY = "any"
+    """ The any refund source """
+
+    REFUND_SOURCE_DEFAULT = "default"
+    """ The default refund source """
+
+    REFUND_SOURCE_INSTANT = "instant"
+    """ The instant refund source """
+
+    REFUND_SOURCE_ECHECK = "echeck"
+    """ The echeck refund source """
+
     client_http_plugin = None
     """ The client http plugin """
 
@@ -307,6 +331,70 @@ class PaypalClient:
         self.paypal_structure.transaction_id = transaction_id
 
         # returns the response data
+        return data
+
+    def refund_transaction(self, transaction_id, refund_type = REFUND_TYPE_FULL, refund_source = REFUND_SOURCE_INSTANT, amount = None, currency_code = None, refund_item_details = None, note = None):
+        """
+        Refunds the specified transaction, with the specified amount and refund source.
+
+        This method is synchronous, and paypal will directly reply with the information stating
+        if the payment was processed correctly or not (an exception will be raised in case it
+        isn't).
+
+        @type transaction_id: String
+        @param transaction_id: The unique identifier of the paypal transaction that is to be
+        refunded.
+        @type refund_type: String
+        @param refund_type: The type of refund to be performed: Full, Partial, ExternalDispute,
+        Other).
+        @type refund_source: String
+        @param refund_source: The source used to refund the transaction: any, default (source
+        will be retrieved from merchant configuration), instant (balance will be used), echeck.
+        @type amount: float
+        @param amount: The amount to be refunded in case this is a partial refund (otherwise
+        the amount should not be specified).
+        @type currency_code: String
+        @param currency_code: The code of the currency in which to perform the refund.
+        @type refund_item_details: String
+        @param refund_item_details: Details about the item being refunded.
+        @type note: String
+        @param note: Optional notes about the refund.
+        @rtype: Dictionary
+        @return: The paypal response data.
+        """
+
+        # sets the retrieval url, this is always the same
+        # value the command control is on the parameters
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters, required for the authentication
+        # of the request to be executed
+        self._set_base_parameters(parameters)
+
+        # sets the refund details in the parameters map
+        parameters["METHOD"] = "RefundTransaction"
+        parameters["TRANSACTIONID"] = transaction_id
+        parameters["REFUNDTYPE"] = refund_type
+        parameters["REFUNDSOURCE"] = refund_source
+        if amount: parameters["AMT"] = "%.2f" % amount
+        if currency_code: parameters["CURRENCYCODE"] = currency_code
+        if refund_item_details: parameters["REFUNDITEMDETAILS"] = refund_item_details
+        if note: parameters["NOTE"] = note
+
+        # fetches the retrieval url with the given parameters retrieving
+        # the resulting key value pairs to be decoded and then parses
+        # them as a "normal" query string
+        response_text = self._fetch_url(retrieval_url, parameters)
+        data = self._parse_query_string(response_text)
+
+        # checks the current data map for error in the previously
+        # defined attribute names
+        self._check_paypal_errors(data)
+
+        # returns the data
         return data
 
     def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
