@@ -381,7 +381,7 @@ def _class_valid(class_reference, entity_manager = None):
     # default "embedded" entity manager, then uses it
     # to retrieve the entity class
     entity_manager = entity_manager or class_reference._entity_manager
-    entity_class = entity_manager.get_registered_entity_class(class_reference.__name__)
+    entity_class = entity_manager.get_entity(class_reference.__name__)
 
     # in case the entity class was correctly found, the class
     # is considered to be valid
