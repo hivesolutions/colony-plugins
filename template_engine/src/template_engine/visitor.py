@@ -1106,7 +1106,7 @@ class Visitor:
 
                 is_last = index == len(attribute_from_value)
                 self.global_map["is_last"] = is_last
-                
+
                 if attribute_index_literal_value:
                     self.global_map[attribute_index_literal_value] = index
 
@@ -1125,10 +1125,10 @@ class Visitor:
             for attribute_from_value_item in attribute_from_value:
                 # sets the attribute from value item in the global map
                 self.global_map[attribute_item_literal_value] = attribute_from_value_item
-                
+
                 is_last = index == len(attribute_from_value)
                 self.global_map["is_last"] = is_last
-                
+
                 if attribute_index_literal_value:
                     self.global_map[attribute_index_literal_value] = index
 
