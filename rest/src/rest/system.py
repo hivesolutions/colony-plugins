@@ -1039,11 +1039,15 @@ class RestRequest:
         a set of predefined techniques.
         """
 
-        # updates the session using the cookie method
-        self._update_session_cookie()
-
         # updates the session using the attribute method
+        # this strategy goes through the especially designated
+        # session id attribute to load the session
         self._update_session_attribute()
+
+        # updates the session using the cookie method, this
+        # strategy loads the cookie from the session id attribute
+        # defined in the cookie header
+        self._update_session_cookie()
 
     def touch(self):
         """
@@ -1058,7 +1062,7 @@ class RestRequest:
 
     def touch_date(self, secure_delta = DEFAULT_TOUCH_SECURE_DELTA):
         """
-        Touches the last modified timestmap value, setting it
+        Touches the last modified timestamp value, setting it
         to the current date information including a "small"
         security oriented delta value to avoid browser problems.
 
@@ -1720,9 +1724,8 @@ class RestRequest:
         session_id = self.request.get_attribute(SESSION_ID_VALUE)
 
         # in case there is no valid session id
-        if not session_id:
-            # returns immediately
-            return
+        # returns immediately
+        if not session_id: return
 
         # retrieves the session from the session id
         self.session = self.rest.get_session(session_id)
