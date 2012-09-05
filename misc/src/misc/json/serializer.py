@@ -264,8 +264,12 @@ def dump_parts(object):
                 # yields the comma separator
                 yield ","
 
+            # converts the key into the string representation
+            # to conform with the current json specification
+            key_s = str(key)
+
             # iterates over all the parts of the key
-            for part in dump_parts(key):
+            for part in dump_parts(key_s):
                 # yields the part
                 yield part
 
@@ -431,8 +435,12 @@ def dump_parts_pretty(object, indentation = 0):
                 # yields the indentation value
                 yield INDENTATION_VALUE
 
+            # converts the key into the string representation
+            # to conform with the current json specification
+            key_s = str(key)
+
             # iterates over all the parts of the key
-            for part in dump_parts_pretty(key, indentation):
+            for part in dump_parts_pretty(key_s, indentation):
                 # yields the part
                 yield part
 
@@ -613,8 +621,12 @@ def dump_parts_buffer(object, string_buffer):
                 # writes the comma separator
                 string_buffer.write(",")
 
+            # converts the key into the string representation
+            # to conform with the current json specification
+            key_s = str(key)
+
             # dumps the key parts
-            dump_parts_buffer(key, string_buffer)
+            dump_parts_buffer(key_s, string_buffer)
 
             # writes the separator
             string_buffer.write(":")
