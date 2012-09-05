@@ -1687,6 +1687,10 @@ class RestRequest:
         update the session based in the session id.
         """
 
+        # in case there's already a loaded session for
+        # the current rest request returns immediately
+        if self.session: return
+
         # retrieves the cookie value from the request
         cookie_value = self.request.get_header(COOKIE_VALUE)
 
@@ -1720,6 +1724,10 @@ class RestRequest:
         update the session based in the session id.
         """
 
+        # in case there's already a loaded session for
+        # the current rest request returns immediately
+        if self.session: return
+
         # retrieves the session id attribute value from the request
         session_id = self.request.get_attribute(SESSION_ID_VALUE)
 
@@ -1730,10 +1738,9 @@ class RestRequest:
         # retrieves the session from the session id
         self.session = self.rest.get_session(session_id)
 
-        # if no session is selected
-        if not self.session:
-            # raises an invalid session exception
-            raise exceptions.InvalidSession("no session started or session timed out")
+        # if no session is selected, raises an invalid session
+        # exception to indicate the error
+        if not self.session: raise exceptions.InvalidSession("no session started or session timed out")
 
     def _get_domain(self):
         """
