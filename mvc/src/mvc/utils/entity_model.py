@@ -415,6 +415,88 @@ def _class_is_reference(class_reference):
     # a data reference)
     return False
 
+def _class_create_filter(class_reference, data, defaults = {}):
+    """
+    Class method that creates a filter map from the provided
+    (form) data map and using the provided map of default
+    values for reference.
+
+    The new filter map is created according to the predefined
+    syntax rules for the sort and for the filter fields.
+
+    @type data: Dictionary
+    @param data: The form data map, resulting from the processing
+    of the associated request.
+    @type defaults: Dictionary
+    @param defaults: The map of default values to be used in the
+    construction of the filter map.
+    @rtype: Dictionary
+    @return: The resulting filter string that can be used in the
+    entity manager for filtering of a result set.
+    """
+
+    # retrieves the various default values from the map
+    # of default values, these are going to be the fallback
+    # values for each of these filter components
+    name = defaults.get("name", None)
+    order_by = defaults.get("order_by", None)
+    eager = defaults.get("eager", ())
+    map = defaults.get("map", False)
+
+    # retrieves the various components of the form elements
+    # defaulting to the pre-defined default values
+    filter_string = data.get("filter_string", "")
+    sort = data.get("sort", None)
+    filters = data.get("filters", [])
+    start_record = data.get("start_record", 0)
+    number_records = data.get("number_records", 5)
+
+    # normalizes the sort value into the accepter order by
+    # value defaulting to the fallback value in case the
+    # sort value is the default
+    sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
+    order_by = not sort_value == "default" and (sort_value, sort_order) or order_by
+
+    # creates the list that will hold the various filters
+    # to be sent in the data query, the filter string filter
+    # is pre-created in case the name value is set
+    _filters = name and [
+        {
+            "type" : "like",
+            "fields" : {
+                name : filter_string
+            }
+        },
+    ] or []
+
+    # iterates over all the serialized filter values to create
+    # the normalized filter values
+    for filter in filters:
+        # unpacks the filter string into attribute, operation
+        # and value and then creates the normalized version of
+        # filter and adds it to the filters list, note that the
+        # value is first "casted" to the expected data type
+        attribute, operation, value = filter.split(":", 2)
+        _value = class_reference._cast_value(attribute, value)
+        _filter = {
+            "type" : operation,
+            "fields" : {
+                attribute : _value
+            }
+        }
+        _filters.append(_filter)
+
+    # creates the complete filter value according to the provided
+    # specification and returns it to the caller method
+    filter = {
+        "range" : (start_record, number_records),
+        "order_by" : order_by and (order_by,) or (),
+        "eager" : eager,
+        "filters" : _filters,
+        "map" : map
+    }
+    return filter
+
 def _class_apply_context(class_reference, options = {}, context_request = None, context = None, namespace_name = None, entity_manager = None):
     """
     Applies the context information to the retrieval operation,

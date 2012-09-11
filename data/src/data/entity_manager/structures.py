@@ -93,7 +93,8 @@ PYTHON_TYPES_MAP = {
         types.NoneType
     )
 }
-""" The map containing the association between the entity types and the valid values for python types """
+""" The map containing the association between the entity
+types and the valid values for python types """
 
 INVALID_NAMES = set((
     "__module__",
@@ -139,7 +140,8 @@ INVALID_NAMES = set((
     "mapping_options",
     "id_attribute_name"
 ))
-""" The tuple containing all the names that are considered to be invalid for the entity model """
+""" The tuple containing all the names that are
+considered to be invalid for the entity model """
 
 class Connection:
     """
@@ -3193,6 +3195,41 @@ class EntityClass(object):
         # returns the (attribute) value, the
         # value should represent a converted value
         return value
+
+    @classmethod
+    def _cast_value(cls, name, value):
+        """
+        Casts the provided attribute value expressed as a string into
+        the appropriate type defined in the entity class specification.
+        
+        This method is useful for situations where a serialization
+        processes requires the value to be a string.
+        
+        @type name: String
+        @param name: The name of the attribute to be used as
+        reference to the casting of the values.
+        @type value: String
+        @param value: The string based value to be converted into
+        the correct representation for the attribute referred.
+        @rtype: Object
+        @return: The casted value in the type expected by the attribute
+        defined by the provided name.
+        """
+        
+        # retrieves the data type associated with the attribute
+        # defined by the name, then uses it to convert into the
+        # valid python types sequence 
+        attribute_data_type = cls._get_data_type(name)
+        valid_types = PYTHON_TYPES_MAP.get(attribute_data_type, ())
+
+        # retrieves the first valid type in case the sequence is valid
+        # then uses the type to convert the value (default conversion)
+        type = valid_types and valid_types[0] or None
+        casted_value = type and type(value) or None
+        
+        # returns the "final" casted value, that should be handled
+        # correctly by the underlying entity manager structure
+        return casted_value
 
     @classmethod
     def _validate_name(cls, name):
