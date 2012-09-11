@@ -415,7 +415,7 @@ def _class_is_reference(class_reference):
     # a data reference)
     return False
 
-def _class_create_filter(class_reference, data, defaults = {}):
+def _class_create_filter(class_reference, data, defaults = {}, entity_manager = None):
     """
     Class method that creates a filter map from the provided
     (form) data map and using the provided map of default
@@ -433,7 +433,19 @@ def _class_create_filter(class_reference, data, defaults = {}):
     @rtype: Dictionary
     @return: The resulting filter string that can be used in the
     entity manager for filtering of a result set.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
     """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # normalizes the options map, so that is possible to
+    # operate in it without any possible harm to the the
+    # internal structure of it
+    defaults = entity_manager.normalize_options(defaults)
 
     # retrieves the various default values from the map
     # of default values, these are going to be the fallback
@@ -455,7 +467,7 @@ def _class_create_filter(class_reference, data, defaults = {}):
     # value defaulting to the fallback value in case the
     # sort value is the default
     sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
-    order_by = not sort_value == "default" and (sort_value, sort_order) or order_by
+    order_by = not sort_value == "default" and ((sort_value, sort_order),) or order_by
 
     # creates the list that will hold the various filters
     # to be sent in the data query, the filter string filter
@@ -469,28 +481,82 @@ def _class_create_filter(class_reference, data, defaults = {}):
         },
     ] or []
 
+    def resolve(cls, eager, path):
+        # retrieves the base value from the path and
+        # the remaining list of elements in the path
+        base = path[0]
+        remaining = path[1:]
+
+        # in case the base value is not present
+        # in the eager map returns immediately with
+        # an invalid value
+        if not base in eager: return None, None
+
+        # retrieves the base (name) value from the eager
+        # map and then in case there are no more names
+        # remaining returns this map (end of recursion)
+        map = eager[base]
+        target = cls.get_target(base)
+        if not remaining: return map, target
+
+        # retrieves the eager (loaded) relations map
+        # from the current map and runs the resolve
+        # recursive step for the remaining list
+        eager = map.get("eager", {})
+        resolve(target, eager, remaining)
+
     # iterates over all the serialized filter values to create
     # the normalized filter values
     for filter in filters:
         # unpacks the filter string into attribute, operation
-        # and value and then creates the normalized version of
-        # filter and adds it to the filters list, note that the
-        # value is first "casted" to the expected data type
+        # and value to be used for the filter
         attribute, operation, value = filter.split(":", 2)
-        _value = class_reference._cast_value(attribute, value)
+
+        # splits the attribute (complete) name using the dot based
+        # separator and then retrieves the base (path) value and
+        # the trailing name value
+        path = attribute.rsplit(".")
+        base, name = path[:-1], path[-1]
+
+        # in case the base value is defined a resolution operation
+        # must occur to retrieve the relation map and the target class
+        if base:
+            # resolvers the eager values according to the provided
+            # base value in case the returned relation is invalid
+            # skips the current filter (invalid)
+            relation, target = resolve(class_reference, eager, base)
+            if relation == None: continue
+
+            # retrieves the filters map and sets it in the relation map
+            # (for cases where it does not already exists)
+            __filters = relation.get("filters", [])
+            relation["filters"] = __filters
+
+        # otherwise the normal values are used for the filters nap
+        # and for the target class
+        else:
+            __filters = _filters
+            target = class_reference
+
+        # casts the value for the current name using the target
+        # class resulting from the resolution of the base and then
+        # creates the filter according to the (top) name and value
+        # and to the provided operation then adds the filter to
+        # the list of filters
+        _value = target._cast_value(name, value)
         _filter = {
             "type" : operation,
             "fields" : {
-                attribute : _value
+                name : value
             }
         }
-        _filters.append(_filter)
+        __filters.append(_filter)
 
     # creates the complete filter value according to the provided
     # specification and returns it to the caller method
     filter = {
         "range" : (start_record, number_records),
-        "order_by" : order_by and (order_by,) or (),
+        "order_by" : order_by or (),
         "eager" : eager,
         "filters" : _filters,
         "map" : map
