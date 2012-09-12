@@ -96,6 +96,17 @@ PYTHON_TYPES_MAP = {
 """ The map containing the association between the entity
 types and the valid values for python types """
 
+PYTHON_CAST_MAP = {
+    "text" : unicode,
+    "string" : unicode,
+    "integer" : int,
+    "float" : float,
+    "date" : float,
+    "relation" : None
+}
+""" The map containing the association between the entity
+type and the best cast type for the value """
+
 INVALID_NAMES = set((
     "__module__",
     "__doc__",
@@ -3201,10 +3212,10 @@ class EntityClass(object):
         """
         Casts the provided attribute value expressed as a string into
         the appropriate type defined in the entity class specification.
-        
+
         This method is useful for situations where a serialization
         processes requires the value to be a string.
-        
+
         @type name: String
         @param name: The name of the attribute to be used as
         reference to the casting of the values.
@@ -3215,18 +3226,18 @@ class EntityClass(object):
         @return: The casted value in the type expected by the attribute
         defined by the provided name.
         """
-        
+
         # retrieves the data type associated with the attribute
         # defined by the name, then uses it to convert into the
-        # valid python types sequence 
+        # valid python types sequence
         attribute_data_type = cls._get_data_type(name)
-        valid_types = PYTHON_TYPES_MAP.get(attribute_data_type, ())
+        cast_type = PYTHON_CAST_MAP.get(attribute_data_type, None)
 
-        # retrieves the first valid type in case the sequence is valid
-        # then uses the type to convert the value (default conversion)
-        type = valid_types and valid_types[0] or None
-        casted_value = type and type(value) or None
-        
+        # in case the cast type value is defined uses it to create
+        # a new value that is "acceptable" as the conversion for
+        # the associated attribute name
+        casted_value = cast_type and cast_type(value) or None
+
         # returns the "final" casted value, that should be handled
         # correctly by the underlying entity manager structure
         return casted_value
