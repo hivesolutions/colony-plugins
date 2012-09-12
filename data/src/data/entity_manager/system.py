@@ -42,6 +42,8 @@ import uuid
 import time
 import types
 import zipfile
+import calendar
+import datetime
 import tempfile
 import mysql_system
 import pgsql_system
@@ -4708,6 +4710,85 @@ class EntityManager:
             # writes the filter into the sql query value (the field name
             # is validated as null)
             query_buffer.write(field_name + " is not null")
+
+    def _process_filter_in_day(self, entity_class, table_name, filter, query_buffer):
+        # retrieves the filter fields
+        filter_fields = filter["fields"]
+
+        # checks if the current filter is of type post
+        # in such case an patch may have to be applied
+        # to force post processing
+        is_post = filter.get("post", False)
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the filter fields
+        # to set the equals filter
+        for filter_field in filter_fields:
+            # in case the is first flag
+            # is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise the or operand must
+            # be added to the query buffer
+            else:
+                # adds the or operator in the query
+                # buffer
+                query_buffer.write(" or ")
+
+            # retrieves the filter field name and value
+            # this are the values that are going to be
+            # used for filtering
+            filter_field_name = filter_field["name"]
+            filter_field_value = filter_field["value"]
+
+            # validates that the filter field name exists in the
+            # context of the entity class and validates that the
+            # value of filter field value is also valid as a type
+            # (this is a security validation to avoid possible injection)
+            entity_class._validate_name(filter_field_name)
+            entity_class._validate_value(filter_field_name, filter_field_value)
+
+            # process the "complete" table name (includes back relation references)
+            # and then uses it to construct the complete field name
+            _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
+            field_name = _table_name + "." + filter_field_name + (is_post and " + 0" or "")
+
+            # retrieves the attribute value type
+            value_type = type(filter_field_value)
+
+            # in case the attribute value type is an integer
+            # or float (must be a timestamp value)
+            if value_type in (types.IntType, types.FloatType):
+                # converts the attribute value (integer)
+                # into a float value and then converts it
+                # into a string representation
+                filter_field_value = datetime.datetime.utcfromtimestamp(filter_field_value)
+
+            # creates the base (date) time value using the filter field value
+            # year, month and day the resulting value should "point" to the
+            # beginning of the day in the date time
+            base_time = datetime.datetime(filter_field_value.year, filter_field_value.month, filter_field_value.day)
+
+            # retrieves the date time tuple and then uses it to
+            # create the date time timestamp value
+            base_time_tuple = base_time.utctimetuple()
+            base_timestamp = calendar.timegm(base_time_tuple)
+
+            # calculates the top timestamp value by incrementing a complete
+            # day number of seconds to the base timestamp
+            top_timestamp = base_timestamp + 86400
+
+            # converts both the base timestamp and the top timestamp
+            # to the string representation (normal conversion)
+            base_timestamp = str(base_timestamp)
+            top_timestamp = str(top_timestamp)
+
+            # creates the sql query using the float base interval range to constrain
+            # the domain of the result to a certain day range
+            query_buffer.write("(" + field_name + " > " + base_timestamp + " and " + field_name + " < " + top_timestamp + ")")
 
     def _process_filter_or(self, entity_class, table_name, filter, query_buffer):
         # retrieves the filters

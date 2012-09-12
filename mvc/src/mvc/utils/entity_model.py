@@ -547,7 +547,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
         _filter = {
             "type" : operation,
             "fields" : {
-                name : value
+                name : _value
             }
         }
         __filters.append(_filter)
