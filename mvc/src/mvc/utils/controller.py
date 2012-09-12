@@ -209,6 +209,9 @@ ACCEPT_LANGUAGE_VALUE = "Accept-Language"
 PARAMETERS_VALUE = "_parameters"
 """ The parameters value """
 
+JSON_DATA_PRIVATE_VALUE = "_json_data"
+""" The json data value to be used to store json data cache """
+
 FORM_DATA_PRIVATE_VALUE = "_form_data"
 """ The form data value to be used to store form data cache """
 
@@ -296,6 +299,14 @@ DEFAULT_RELATION_VALUES_MAP = {
     TO_MANY_RELATION_VALUE : []
 }
 """ The default relation values map """
+
+CONTENT_TYPE_MAP = {
+    "application/x-www-form-urlencoded" : "form",
+    "multipart/form-data" : "form",
+    "application/json" : "json",
+}
+""" The map associating the various content type
+values with the simplifies type names """
 
 FORM_DATA_MAP_KEY_FORMAT = "%s[%s]"
 """ The form data map key format """
@@ -906,11 +917,21 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     @return: The value for the field being request from
     the form data.
     """
+    
+    # retrieves the content type from the rest request and
+    # then uses it to normalize the type for parsing
+    content_type = rest_request.get_type()
+    type = CONTENT_TYPE_MAP.get(content_type, "form")
 
-    # processes (and retrieves) the form data map from the
+    # creates the method name using the "just" retrieved type
+    # and then retrieves the associated method
+    method_name = "process_%s_data" % type
+    method = getattr(self, method_name)
+
+    # processes (and retrieves) the data map from the
     # rest request and then used it to retrieve the field
     # from it (the retrieval of the form data may be cached)
-    form_data_map = self.process_form_data(rest_request)
+    form_data_map = method(rest_request)
     field_value = form_data_map.get(field_name, default_field_value)
 
     # in case the cast type is set runs the casting in a safe
@@ -1126,6 +1147,41 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
 
     # returns the form data map
     return form_data_map
+
+def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = False):
+    """
+    Processes the json data (attributes), creating a map containing
+    the hierarchy of defined structure for the "json" contents.
+    
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type encoding: String
+    @param encoding: The encoding to be used when retrieving
+    the attribute values.
+    @type force: bool
+    @param force: If any cached data should be discarded and the
+    the rest request information re-parsed if necessary.
+    @rtype: Dictionary
+    @return: The map containing the hierarchy of defined structure
+    for the "json" contents.
+    """
+    
+    # tries to retrieves the base attributes map from the
+    # "cached" data in the rest request
+    data_map = rest_request.get_parameter(JSON_DATA_PRIVATE_VALUE)
+
+    # in case there is cached data pending in the
+    # rest request and the force flag is not set
+    # uses it immediately
+    if not force and data_map: return data_map
+
+    # reads the contents from the rest request and then "loads"
+    # the structure json structure from them, stores the result
+    # in the private json data value and returns the data map
+    contents = rest_request.read()
+    data_map = self.json_plugin.loads(contents)
+    rest_request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
+    return data_map
 
 def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify = False, force = False):
     """

@@ -1075,6 +1075,19 @@ class RestRequest:
         # time value reduced by the secure delta value
         self.request.last_modified_timestamp = time.time() - secure_delta
 
+    def read(self):
+        """
+        Reads the contents of the request associated with this
+        rest request, this operation may take some performance
+        impact as the complete data is stored in memory.
+
+        @rtype: String
+        @return: The complete data contents of the request associated
+        with the current rest request.
+        """
+
+        return self.request.read()
+
     def parse_post(self):
         """
         Parses the post message using the default,
@@ -1489,6 +1502,23 @@ class RestRequest:
             # releases the session lock allowing
             # usage by other thread
             session.release()
+
+    def get_type(self):
+        """
+        Retrieves the content type for the current rest request
+        using the associated header and processing it.
+
+        @rtype: String
+        @return: The content type value (base value) for the
+        current request.
+        """
+
+        # retrieves the content type header from the current rest request
+        # the treats it in case it's a valid content type and returns it
+        # to the caller method
+        content_type = self.get_header("Content-Type")
+        content_type = content_type and content_type.split(";")[0].strip() or None
+        return content_type
 
     def get_resource_name(self):
         """
