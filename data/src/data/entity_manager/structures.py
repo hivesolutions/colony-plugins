@@ -2315,6 +2315,26 @@ class EntityClass(object):
         is_reference = getattr(cls, "data_reference")
         return is_reference
 
+    def reset(self):
+        """
+        Resets the current entity by removing all the relation values
+        and setting them as lazy loaded attributes.
+
+        This operation is useful for situations where a simple vision
+        on the entity is required in order to avoid mixed scope issues.
+        """
+
+        # retrieves the entity class associated with the current
+        # entity and then uses it to retrieves the complete set
+        # of relations for the entity hierarchy
+        entity_class = self.__class__
+        all_relations = entity_class.get_all_relations()
+
+        # iterates over all the relations and sets the entity
+        # attributes for them as lazy loaded values
+        for relation in all_relations:
+            setattr(self, relation, colony.libs.lazy_util.Lazy)
+
     def use_scope(self, scope_entity):
         """"
         Sets (uses) the scope and entities map attributes in the current
@@ -2402,7 +2422,7 @@ class EntityClass(object):
         self._scope["attached"] = attach_level > 0
         self._scope["attach_level"] = attach_level
 
-    def detach(self, force = True):
+    def detach(self, force = True, reset = False):
         """
         Detaches the current entity from the data source (off-line)
         the current diffusion scope is changed into detached state.
@@ -2416,10 +2436,16 @@ class EntityClass(object):
         If such behavior is meant to be ignored the force flag should
         be set to false (enabling the usage of the stack).
 
+        An optional flag controls if the entity should have the relation
+        defaulted (reseted) after the detach operation.
+
         @type force: bool
         @param force: Flag that controls if the detaching should be
         forced or if the stack oriented operation should be respected
         and if the zero level is required for detaching.
+        @type reset: bool
+        @param reset: Flag that controls if the entity should have the
+        relations removed (set as lazy loaded) after the detach operation.
         """
 
         # retrieves and updates the attach level to decrement
@@ -2435,6 +2461,11 @@ class EntityClass(object):
         # scope definition map
         self._scope["attached"] = attach_level > 0
         self._scope["attach_level"] = attach_level
+
+        # resets the current structure, this operation removes
+        # all the current relations, useful in order to avoid
+        # mixed scopes in relations
+        reset and self.reset()
 
     def is_attached(self):
         """
