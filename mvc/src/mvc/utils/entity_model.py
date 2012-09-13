@@ -465,6 +465,11 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     start_record = data.get("start_record", 0)
     number_records = data.get("number_records", 5)
 
+    # forces the type of the filters to be a list, this avoids
+    # problems handling immutable types (tuples) resulting from
+    # the normalization process
+    filters = list(filters)
+
     # normalizes the sort value into the accepter order by
     # value defaulting to the fallback value in case the
     # sort value is the default
