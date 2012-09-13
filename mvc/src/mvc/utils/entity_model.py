@@ -454,13 +454,14 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     type = defaults.get("type", "both")
     order_by = defaults.get("order_by", None)
     eager = defaults.get("eager", ())
+    filters = defaults.get("filters", [])
     map = defaults.get("map", False)
 
     # retrieves the various components of the form elements
     # defaulting to the pre-defined default values
     filter_string = data.get("filter_string", "")
     sort = data.get("sort", None)
-    filters = data.get("filters", [])
+    filters_s = data.get("filters", [])
     start_record = data.get("start_record", 0)
     number_records = data.get("number_records", 5)
 
@@ -469,19 +470,6 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     # sort value is the default
     sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
     order_by = not sort_value == "default" and ((sort_value, sort_order),) or order_by
-
-    # creates the list that will hold the various filters
-    # to be sent in the data query, the filter string filter
-    # is pre-created in case the name value is set
-    _filters = name and [
-        {
-            "type" : "like",
-            "like_type" : type,
-            "fields" : {
-                name : filter_string
-            }
-        },
-    ] or []
 
     def resolve(cls, eager, path):
         # retrieves the base value from the path and
@@ -506,14 +494,8 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
         # recursive step for the remaining list
         eager = map.get("eager", {})
         resolve(target, eager, remaining)
-
-    # iterates over all the serialized filter values to create
-    # the normalized filter values
-    for filter in filters:
-        # unpacks the filter string into attribute, operation
-        # and value to be used for the filter
-        attribute, operation, value = filter.split(":", 2)
-
+        
+    def resolve_s(attribute):
         # splits the attribute (complete) name using the dot based
         # separator and then retrieves the base (path) value and
         # the trailing name value
@@ -527,18 +509,49 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
             # base value in case the returned relation is invalid
             # skips the current filter (invalid)
             relation, target = resolve(class_reference, eager, base)
-            if relation == None: continue
+            if relation == None: return (None, None, None)
 
             # retrieves the filters map and sets it in the relation map
             # (for cases where it does not already exists)
-            __filters = relation.get("filters", [])
-            relation["filters"] = __filters
+            _filters = relation.get("filters", [])
+            relation["filters"] = _filters
 
         # otherwise the normal values are used for the filters nap
         # and for the target class
         else:
-            __filters = _filters
+            # sets the filters map as the current global filters
+            # map and the target as the current class (reference)
+            _filters = filters
             target = class_reference
+            
+        return (_filters, target, name)
+
+    # in case the name is defined the "special" wildcard filter
+    # is added to the list of filters to be used in the query
+    # this is the base value for the search 
+    if name :
+        _filters, _target, name = resolve_s(name)
+        _filters.append({
+            "type" : "like",
+            "like_type" : type,
+            "fields" : {
+                name : filter_string
+            }
+        })
+
+    # iterates over all the serialized filter values to create
+    # the normalized filter values
+    for filter in filters_s:
+        # unpacks the filter string into attribute, operation
+        # and value to be used for the filter
+        attribute, operation, value = filter.split(":", 2)
+
+        # resolves the attribute path, retrieving the target
+        # filters map to be used the target entity class referenced
+        # by the various relations and the name of the "trailing"
+        # attribute (the last result of the split)
+        _filters, target, name = resolve_s(attribute)
+        if _filters == None: continue
 
         # casts the value for the current name using the target
         # class resulting from the resolution of the base and then
@@ -552,7 +565,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
                 name : _value
             }
         }
-        __filters.append(_filter)
+        _filters.append(_filter)
 
     # creates the complete filter value according to the provided
     # specification and returns it to the caller method
@@ -560,7 +573,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
         "range" : (start_record, number_records),
         "order_by" : order_by or (),
         "eager" : eager,
-        "filters" : _filters,
+        "filters" : filters,
         "map" : map
     }
     return filter
