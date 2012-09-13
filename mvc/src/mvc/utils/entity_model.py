@@ -451,7 +451,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     # of default values, these are going to be the fallback
     # values for each of these filter components
     name = defaults.get("name", None)
-    type = defaults.get("type", "both")
+    type_s = defaults.get("type", "both")
     order_by = defaults.get("order_by", None)
     eager = defaults.get("eager", ())
     filters = defaults.get("filters", [])
@@ -494,7 +494,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
         # recursive step for the remaining list
         eager = map.get("eager", {})
         resolve(target, eager, remaining)
-        
+
     def resolve_s(attribute):
         # splits the attribute (complete) name using the dot based
         # separator and then retrieves the base (path) value and
@@ -509,7 +509,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
             # base value in case the returned relation is invalid
             # skips the current filter (invalid)
             relation, target = resolve(class_reference, eager, base)
-            if relation == None: return (None, None, None)
+            if relation == None: return None, None, None
 
             # retrieves the filters map and sets it in the relation map
             # (for cases where it does not already exists)
@@ -523,21 +523,47 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
             # map and the target as the current class (reference)
             _filters = filters
             target = class_reference
-            
-        return (_filters, target, name)
+
+        # returns the tuple containing the target filters map
+        # the target (class) and the top level name of the attribute
+        return _filters, target, name
 
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query
-    # this is the base value for the search 
+    # this is the base value for the search
     if name :
-        _filters, _target, name = resolve_s(name)
-        _filters.append({
+        # retrieves the data type for the name attribute and in
+        # case it's not a sequence converts it to a immutable
+        # sequence (tuple) for iteration
+        name_type = type(name)
+        if not name_type in (types.ListType, types.TupleType): name = (name,)
+
+        # retrieves the first name element from the sequence and uses
+        # it to resolver the value, retrieving the filter structure
+        # in which the filter will be inserted
+        first = name[0]
+        _filters, _target, _name = resolve_s(first)
+
+        # creates the wildcard based filter with an empty set of field
+        # (empty map) that is populated with the various field names
+        # contained in the name sequence
+        _filter = {
             "type" : "like",
-            "like_type" : type,
-            "fields" : {
-                name : filter_string
-            }
-        })
+            "like_type" : type_s,
+            "fields" : {}
+        }
+
+        # retrieves the fields part of the filter and adds the various
+        # partial names to it with the filter string as the value
+        fields = _filter["fields"]
+        for _name in name:
+            _name =_name.rsplit(".", 1)[-1]
+            fields[_name] = filter_string
+
+        # adds the "just" created filter to the filters structure resulting
+        # from the resolution of the first name, this fact forces all the
+        # names to be at the same relation level
+        _filters.append(_filter)
 
     # iterates over all the serialized filter values to create
     # the normalized filter values

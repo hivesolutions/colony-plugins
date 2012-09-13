@@ -917,7 +917,7 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     @return: The value for the field being request from
     the form data.
     """
-    
+
     # retrieves the content type from the rest request and
     # then uses it to normalize the type for parsing
     content_type = rest_request.get_type()
@@ -1152,7 +1152,7 @@ def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = F
     """
     Processes the json data (attributes), creating a map containing
     the hierarchy of defined structure for the "json" contents.
-    
+
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
     @type encoding: String
@@ -1165,7 +1165,7 @@ def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = F
     @return: The map containing the hierarchy of defined structure
     for the "json" contents.
     """
-    
+
     # tries to retrieves the base attributes map from the
     # "cached" data in the rest request
     data_map = rest_request.get_parameter(JSON_DATA_PRIVATE_VALUE)
