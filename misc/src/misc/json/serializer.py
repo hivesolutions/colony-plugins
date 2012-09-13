@@ -206,19 +206,42 @@ def dumps_buffer(object):
     # returns the string value
     return string_value
 
-def dump_parts(object):
+def dump_parts(object, objects = None, cycles = False):
     """
     Dumps (converts to json) the given object parts using the "normal"
     approach.
 
     @type object: Object
     @param object: The object to have the parts dumped.
+    @type objects: Dictionary
+    @param objects: The set of object identifiers that have
+    already been serialized (avoids circular references).
+    @type cycles: bool
+    @param cycles: Flag that controls if cycles should be detected
+    and avoided (gracefully handled).
     @rtype: String
     @return: The dumped json string.
     """
 
-    # retrieves the object type
+    # in case the objects reference is not initializes
+    # starts a new map to hold the contents
+    if objects == None: objects = {}
+
+    # retrieves the object type and the
+    # identifier of the object
+    object_id = id(object)
     object_type = type(object)
+
+    # in case the object identifier exists in
+    # the list of objects serialized
+    if object_id in objects:
+        # yields the null value and returns
+        # immediately to the calling method
+        yield "null"; return
+
+    # sets the object identifier reference in the
+    # map of "already" parsed elements
+    if cycles: objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -269,7 +292,7 @@ def dump_parts(object):
             key_s = str(key)
 
             # iterates over all the parts of the key
-            for part in dump_parts(key_s):
+            for part in dump_parts(key_s, objects, cycles):
                 # yields the part
                 yield part
 
@@ -277,7 +300,7 @@ def dump_parts(object):
             yield ":"
 
             # iterates over all the parts of the value
-            for part in dump_parts(value):
+            for part in dump_parts(value, objects, cycles):
                 # yields the part
                 yield part
 
@@ -307,7 +330,7 @@ def dump_parts(object):
                 yield ","
 
             # iterates over all the parts of the item
-            for part in dump_parts(item):
+            for part in dump_parts(item, objects, cycles):
                 # yields the part
                 yield part
 
@@ -356,7 +379,7 @@ def dump_parts(object):
             yield "\"" + object_item + "\"" + ":"
 
             # iterates over the object value parts
-            for part in dump_parts(object_value):
+            for part in dump_parts(object_value, objects, cycles):
                 # yields the part
                 yield part
 
@@ -367,21 +390,48 @@ def dump_parts(object):
         # raises the json encode exception
         raise exceptions.JsonEncodeException(object)
 
-def dump_parts_pretty(object, indentation = 0):
+    # removes the current object identifier from
+    # the map of object already serialized
+    if cycles: del objects[object_id]
+
+def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     """
     Dumps (converts to json) the given object parts using the "normal"
     approach.
 
     @type object: Object
     @param object: The object to have the parts dumped.
+    @type objects: Dictionary
+    @param objects: The set of object identifiers that have
+    already been serialized (avoids circular references).
     @type indentation: int
     @param indentation: The current indentation value.
+    @type cycles: bool
+    @param cycles: Flag that controls if cycles should be detected
+    and avoided (gracefully handled).
     @rtype: String
     @return: The dumped json string.
     """
 
-    # retrieves the object type
+    # in case the objects reference is not initializes
+    # starts a new map to hold the contents
+    if objects == None: objects = {}
+
+    # retrieves the object type and the
+    # identifier of the object
+    object_id = id(object)
     object_type = type(object)
+
+    # in case the object identifier exists in
+    # the list of objects serialized
+    if object_id in objects:
+        # yields the null value and returns
+        # immediately to the calling method
+        yield "null"; return
+
+    # sets the object identifier reference in the
+    # map of "already" parsed elements
+    if cycles: objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -440,7 +490,7 @@ def dump_parts_pretty(object, indentation = 0):
             key_s = str(key)
 
             # iterates over all the parts of the key
-            for part in dump_parts_pretty(key_s, indentation):
+            for part in dump_parts_pretty(key_s, objects, indentation, cycles):
                 # yields the part
                 yield part
 
@@ -448,7 +498,7 @@ def dump_parts_pretty(object, indentation = 0):
             yield " : "
 
             # iterates over all the parts of the value
-            for part in dump_parts_pretty(value, indentation + 1):
+            for part in dump_parts_pretty(value, objects, indentation + 1, cycles):
                 # yields the part
                 yield part
 
@@ -486,7 +536,7 @@ def dump_parts_pretty(object, indentation = 0):
                 yield ", "
 
             # iterates over all the parts of the item
-            for part in dump_parts_pretty(item, indentation):
+            for part in dump_parts_pretty(item, object, indentation, cycles):
                 # yields the part
                 yield part
 
@@ -543,7 +593,7 @@ def dump_parts_pretty(object, indentation = 0):
             yield "\"" + object_item + "\"" + " : "
 
             # iterates over the object value parts
-            for part in dump_parts_pretty(object_value, indentation + 1):
+            for part in dump_parts_pretty(object_value, objects, indentation + 1, cycles):
                 # yields the part
                 yield part
 
@@ -562,19 +612,49 @@ def dump_parts_pretty(object, indentation = 0):
         # raises the json encode exception
         raise exceptions.JsonEncodeException(object)
 
-def dump_parts_buffer(object, string_buffer):
+    # removes the current object identifier from
+    # the map of object already serialized
+    if cycles: del objects[object_id]
+
+def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     """
     Dumps (converts to json) the given object parts using the "buffered"
     approach.
 
     @type object: Object
     @param object: The object to have the parts dumped.
+    @type string_buffer: StringBuffer
+    @param string_buffer: The string buffer that is going to be
+    used to store the partial dump results.
+    @type objects: Dictionary
+    @param objects: The set of object identifiers that have
+    already been serialized (avoids circular references).
+    @type cycles: bool
+    @param cycles: Flag that controls if cycles should be detected
+    and avoided (gracefully handled).
     @rtype: String
     @return: The dumped json string.
     """
 
-    # retrieves the object type
+    # in case the objects reference is not initializes
+    # starts a new map to hold the contents
+    if objects == None: objects = {}
+
+    # retrieves the object type and the
+    # identifier of the object
+    object_id = id(object)
     object_type = type(object)
+
+    # in case the object identifier exists in
+    # the list of objects serialized
+    if object_id in objects:
+        # writes the null value and returns
+        # immediately to the calling method
+        string_buffer.write("null"); return
+
+    # sets the object identifier reference in the
+    # map of "already" parsed elements
+    if cycles: objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -626,13 +706,13 @@ def dump_parts_buffer(object, string_buffer):
             key_s = str(key)
 
             # dumps the key parts
-            dump_parts_buffer(key_s, string_buffer)
+            dump_parts_buffer(key_s, string_buffer, objects, cycles)
 
             # writes the separator
             string_buffer.write(":")
 
             # dumps the value parts
-            dump_parts_buffer(value, string_buffer)
+            dump_parts_buffer(value, string_buffer, objects, cycles)
 
         # writes the dictionary final value
         string_buffer.write("}")
@@ -659,7 +739,7 @@ def dump_parts_buffer(object, string_buffer):
                 string_buffer.write(",")
 
             # dumps the item parts
-            dump_parts_buffer(item, string_buffer)
+            dump_parts_buffer(item, string_buffer, objects, cycles)
 
         # writes the list final value
         string_buffer.write("]")
@@ -707,7 +787,7 @@ def dump_parts_buffer(object, string_buffer):
             string_buffer.write("\"" + object_item + "\"" + ":")
 
             # dumps the object value parts
-            dump_parts_buffer(object_value, string_buffer)
+            dump_parts_buffer(object_value, string_buffer, objects, cycles)
 
         # writes the dictionary final value
         string_buffer.write("}")
@@ -715,6 +795,10 @@ def dump_parts_buffer(object, string_buffer):
     else:
         # raises a json encode exception
         raise exceptions.JsonEncodeException(object)
+
+    # removes the current object identifier from
+    # the map of object already serialized
+    if cycles: del objects[object_id]
 
 def loads(data):
     # initializes the stack
