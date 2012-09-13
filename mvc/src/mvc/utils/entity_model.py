@@ -451,6 +451,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     # of default values, these are going to be the fallback
     # values for each of these filter components
     name = defaults.get("name", None)
+    type = defaults.get("type", "both")
     order_by = defaults.get("order_by", None)
     eager = defaults.get("eager", ())
     map = defaults.get("map", False)
@@ -475,6 +476,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     _filters = name and [
         {
             "type" : "like",
+            "like_type" : type,
             "fields" : {
                 name : filter_string
             }

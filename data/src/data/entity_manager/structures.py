@@ -3601,7 +3601,9 @@ class EntityClass(object):
         # entities that are associated with the current
         # entity in the appropriate (reverse) relation
         options = {
-            "eager" : (name,),
+            "eager" : (
+                name,
+            ),
             "entities" : self._entities,
             "scope" : self._scope,
             "minimal" : True
