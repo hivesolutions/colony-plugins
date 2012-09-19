@@ -80,6 +80,9 @@ CLASS_VALUE = "_class"
 PARAMETERS_VALUE = "_parameters"
 """ The parameters value """
 
+MODIFIED_TIME_VALUE = "_mtime"
+""" The modified time value """
+
 VALIDATION_FAILED_MESSAGE = "validation failed"
 """ The (default) validation failed message """
 
@@ -248,7 +251,7 @@ def apply(self, map):
         for item_name, item_value in map.items():
             # in case the class or the parameters (reserved values)
             # item is found, special handling is required
-            if item_name in (CLASS_VALUE, PARAMETERS_VALUE):
+            if item_name in (CLASS_VALUE, PARAMETERS_VALUE, MODIFIED_TIME_VALUE):
                 # sets the class or parameters "directly"
                 # in the model
                 setattr(self, item_name, item_value)
