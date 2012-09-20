@@ -110,6 +110,8 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "integer" : int,
     "float" : float,
     "date" : colony.libs.time_util.timestamp_datetime,
+    "data" : unicode,
+    "metadata" : dict,
     "relation" : None
 }
 """ The map associating the data types with the cast types """
@@ -285,10 +287,9 @@ def apply(self, map):
             value_secure = class_value.get(SECURE_VALUE, False)
 
             # in case the value is a secure attribute
-            # (cannot change it automatically)
-            if value_secure:
-                # continues the loop cannot change it
-                continue
+            # (cannot change it automatically), continues
+            # the loop cannot change the value
+            if value_secure: continue
 
             # in case the data type of the field is relation
             # (presence of an object relation)
