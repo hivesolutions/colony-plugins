@@ -50,6 +50,18 @@ import colony.libs.list_util
 import colony.libs.string_util
 import colony.libs.structures_util
 
+SERIALIZERS = (
+    "json",
+    "pickle"
+)
+""" The list to hold the various serializers
+in order of preference for serialization """
+
+SERIALIZERS_MAP = None
+""" The map associating the encoding type for
+the serialization with the appropriate serializer
+object to handle it """
+
 SAFE_CHARACTER = "_"
 """ The character to be used in table names as the prefix that
 provides safety to the creation of them (no reserved names) """
@@ -91,6 +103,12 @@ PYTHON_TYPES_MAP = {
         types.StringType,
         types.UnicodeType,
         types.NoneType
+    ),
+    "metadata" : (
+        types.DictType,
+        types.StringType,
+        types.UnicodeType,
+        types.NoneType
     )
 }
 """ The map containing the association between the entity
@@ -102,6 +120,8 @@ PYTHON_CAST_MAP = {
     "integer" : int,
     "float" : float,
     "date" : float,
+    "data" : unicode,
+    "metadata" : dict,
     "relation" : None
 }
 """ The map containing the association between the entity
@@ -3135,6 +3155,7 @@ class EntityClass(object):
             # returns the escaped attribute value with the
             # string separators
             return "'" + escaped_value + "'"
+
         # in case the attribute data type is date, the date time
         # structure must be converted to a float value
         elif data_type == "date":
@@ -3176,6 +3197,42 @@ class EntityClass(object):
                 # returns the attribute value converted
                 # into string
                 return value_string
+
+        elif data_type == "metadata":
+            # retrieves the attribute value type
+            # to be used for conditional conversion
+            value_type = type(value)
+
+            # in case the value is of type string direct
+            # insertion is made into the data source
+            if value_type in types.StringTypes:
+                # escapes the (already string) value and
+                # returns it with the string separators
+                value_string = cls._escape_text(value)
+                return "'" + value + "'"
+
+            # in case the value is of type dictionary the
+            # default dump operation must be performed
+            elif value_type == types.DictType:
+                # dumps the value using the currently selected
+                # serialized, then escapes the text and returns
+                # the string value with the string separators
+                serializer, name = cls.get_serializer()
+                value_string = serializer.dumps(value)
+                value_string = name + ":" + value_string
+                value_string = cls._escape_text(value_string)
+                return "'" + value_string + "'"
+
+            # otherwise the default string encoding is used
+            # on the value
+            else:
+                # uses the default string encoder and then
+                # escapes the text and returns it with the
+                # string separators
+                value_string = str(value)
+                value_string = cls._escape_text(value)
+                return "'" + value_string + "'"
+
         # otherwise it must be a default value and it is
         # converted using the default string converter
         else:
@@ -3233,6 +3290,28 @@ class EntityClass(object):
             # returns the date time (converted) value it may
             # be used in a coherent
             return date_time_value
+
+        # in case the data type id metadata the string
+        # value must be unpacked and the associated serializer
+        # must be used to create the metadata structure
+        if data_type == "metadata":
+            try:
+                # encodes the value using the serialization
+                # encoding and then unpacks the value into
+                # the serializer name and the value then uses
+                # it so load the value
+                value = value.encode("utf-8")
+                name, value = value.split(":", 1)
+                serializer, _name = cls.get_serializer(name)
+                metadata_value = serializer.loads(value)
+            except:
+                # sets the metadata value as invalid in case
+                # an error occured while unpacking the metadata
+                metadata_value = None
+
+            # returns the date time (converted) value it may
+            # be used in a coherent
+            return metadata_value
 
         # returns the (attribute) value, the
         # value should represent a converted value
@@ -3619,3 +3698,60 @@ class EntityClass(object):
         # returns the attribute that has just been found (this
         # attribute is not going to be "lazy loaded" again)
         return attribute
+
+    @classmethod
+    def get_serializer(cls, name = None):
+        # in case the serializers map is not defined triggers the
+        # initial loading of the serializer, then in case the serializers
+        # list is empty (or invalid) raises the no serializer error
+        if SERIALIZERS_MAP == None: load_serializers()
+        if not SERIALIZERS: raise exceptions.InvalidSerializerError("no serializer available")
+
+        # in case no (serializer) name is provided the first
+        # (and preferred) serializer name is used then retrieves
+        # the associated serializer object and in case it fails
+        # raises an error
+        name = name or SERIALIZERS[0]
+        serializer = SERIALIZERS_MAP.get(name, None)
+        if not serializer: raise exceptions.InvalidSerializerError("no serializer available for '%s'", name)
+
+        # creates the serializer tuple containing both
+        # the serializer object and the name
+        serializer_tuple = (serializer, name)
+        return serializer_tuple
+
+def load_serializers():
+    """
+    Loads the various serializer objects according
+    to the associated module names.
+
+    This method ignores the import problems for non
+    existent serializers, removing them from the
+    associated data structures.
+    """
+
+    global SERIALIZERS_MAP
+
+    # creates the list that will hold the various
+    # names to be removed from the serializers list
+    removal = []
+
+    # initializes the serializers map that will associate
+    # the name of the serializer with the object
+    SERIALIZERS_MAP = {}
+
+    # iterates over all the (serializer) names in the
+    # serializers list to try to import the module and
+    # alter the affected data structures
+    for name in SERIALIZERS:
+        # tries to import the module associated with the
+        # serializer and in case it fails adds the name
+        # to the removal list otherwise sets the serializer
+        # in the associated map
+        try: object = __import__(name)
+        except: removal.append(name)
+        else: SERIALIZERS_MAP[name] = object
+
+    # iterates overl all the (serializer) names to be
+    # removed and removes them from the serializers list
+    for name in removal: SERIALIZERS.remove(name)
