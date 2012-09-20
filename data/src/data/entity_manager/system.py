@@ -126,7 +126,8 @@ SQL_TYPES_MAP = {
     "long" : "bigint",
     "float" : "double precision",
     "date" : "double precision",
-    "data" : "text"
+    "data" : "text",
+    "metadata" : "text"
 }
 """ The map containing the association of the entity types with
 the corresponding sql types """
@@ -1654,12 +1655,8 @@ class EntityManager:
     def has_table_definition(self, table_name):
         return self.engine.has_table_definition(table_name)
 
-
-
-
     def synced_definition(self, entity_class):
         return self.engine.synced_definition(entity_class)
-
 
     def has_generator(self):
         return self.engine.has_table_definition(GENERATOR_VALUE)
