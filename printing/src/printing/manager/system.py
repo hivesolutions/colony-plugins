@@ -84,16 +84,16 @@ class PrintingManager(colony.base.system.System):
 
     def print_printing_language(self, printing_language_string, printing_options = {}):
         # creates a new printing language parser
-        parser = parser.PrintingLanguageParser()
+        _parser = parser.PrintingLanguageParser()
 
         # sets the printing language string in the parser
-        parser.string = printing_language_string
+        _parser.string = printing_language_string
 
         # parses the string
-        parser.parse_string()
+        _parser.parse_string()
 
         # retrieves the printing document
-        printing_document = parser.get_value()
+        printing_document = _parser.get_value()
 
         # retrieves the printing plugin for the given
         # printing options

@@ -146,20 +146,20 @@ class PrintingWin32(colony.base.system.System):
 
     def print_printing_language(self, printing_document, printing_options = {}):
         # creates the win32 printing visitor
-        visitor = visitor.Visitor()
+        _visitor = visitor.Visitor()
 
         # retrieves the printer handler
         printer_handler = self.get_printer_handler(printing_options)
 
         # sets the printer handler in the visitor
-        visitor.set_printer_handler(printer_handler)
+        _visitor.set_printer_handler(printer_handler)
 
         # sets the printing options in the visitor
-        visitor.set_printing_options(printing_options)
+        _visitor.set_printing_options(printing_options)
 
         # accepts the visitor in the printing document,
         # using double visiting mode
-        printing_document.accept_double(visitor)
+        printing_document.accept_double(_visitor)
 
         # retrieves the handler device context
         handler_device_context = printer_handler[0]

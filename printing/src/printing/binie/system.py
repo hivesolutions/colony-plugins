@@ -67,11 +67,11 @@ class PrintingBinie(colony.base.system.System):
 
     def print_printing_language(self, printing_document, printing_options = {}):
         # creates the binie printing visitor
-        visitor = visitor.Visitor()
+        _visitor = visitor.Visitor()
 
         # sets the printing options in the visitor
-        visitor.set_printing_options(printing_options)
+        _visitor.set_printing_options(printing_options)
 
         # accepts the visitor in the printing document,
         # using double visiting mode
-        printing_document.accept_double(visitor)
+        printing_document.accept_double(_visitor)
