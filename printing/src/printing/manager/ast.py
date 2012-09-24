@@ -173,6 +173,14 @@ class PrintingDocument(AstNode):
     def __init__(self):
         AstNode.__init__(self)
 
+class Block(AstNode):
+    """
+    The block class.
+    """
+
+    def __init__(self):
+        AstNode.__init__(self)
+
 class Paragraph(AstNode):
     """
     The paragraph class.
