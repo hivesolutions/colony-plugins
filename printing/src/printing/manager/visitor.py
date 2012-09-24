@@ -226,6 +226,10 @@ class Visitor:
     def visit_printing_document(self, node):
         print "PrintingDocument: " + str(node)
 
+    @_visit(ast.Block)
+    def visit_block(self, node):
+        print "Block: " + str(node)
+
     @_visit(ast.Paragraph)
     def visit_paragraph(self, node):
         print "Paragraph: " + str(node)

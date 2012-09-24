@@ -366,7 +366,21 @@ class Visitor:
 
             # removes the context information
             self.remove_context_information(node)
+    
+    @_visit(printing.manager.ast.Block)
+    def visit_block(self, node):
+        if self.visit_index == 0:
+            # adds the node as the context information, this way
+            # the complete set of symbols for the block are exposed
+            # to the underlying nodes (block opening)
+            self.add_context_information(node)
+            self.push_context_information("biggest_height", 0)
 
+        # in case it's the second visit
+        elif self.visit_index == 1:
+            # removes the context information
+            self.remove_context_information(node)
+            
     @_visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0:

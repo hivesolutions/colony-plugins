@@ -314,9 +314,17 @@ class Visitor:
         elif self.visit_index == 1:
             # retrieves the printing document name
             printing_document_name = node.name
+            printing_document_width = int(node.width)
+            printing_document_height = int(node.height)
 
             # packs the header value as a binary string
-            header = struct.pack("<256sI", str(printing_document_name), len(self.elements_list))
+            header = struct.pack(
+                "<256sIII",
+                str(printing_document_name),
+                printing_document_width,
+                printing_document_height,
+                len(self.elements_list)
+            )
             self.printing_options["file"].write(header)
 
             # iterates over all the elements list to create their header
@@ -334,6 +342,20 @@ class Visitor:
                 self.printing_options["file"].write(element_header)
                 self.printing_options["file"].write(element_data)
 
+            # removes the context information
+            self.remove_context_information(node)
+
+    @_visit(printing.manager.ast.Block)
+    def visit_block(self, node):
+        if self.visit_index == 0:
+            # adds the node as the context information, this way
+            # the complete set of symbols for the block are exposed
+            # to the underlying nodes (block opening)
+            self.add_context_information(node)
+            self.push_context_information("biggest_height", 0)
+
+        # in case it's the second visit
+        elif self.visit_index == 1:
             # removes the context information
             self.remove_context_information(node)
 
@@ -429,6 +451,34 @@ class Visitor:
             else:
                 # sets the default margin right
                 margin_right = 0
+                
+            if self.has_context_information("x"):
+                # retrieves the x position (block position)
+                position_x = int(self.get_context_information("x"))
+            else:
+                # retrieves the x position (default and global position)
+                position_x = 0
+
+            if self.has_context_information("y"):
+                # retrieves the y position (block position)
+                position_y = int(self.get_context_information("y"))
+            else:
+                # retrieves the y position (default and global position)
+                position_y = 0
+
+            if self.has_context_information("width"):
+                # retrieves the width (block width)
+                block_width = int(self.get_context_information("width"))
+            else:
+                # retrieves the width (default and global width)
+                block_width = 0
+
+            if self.has_context_information("height"):
+                # retrieves the height (block height)
+                block_height = int(self.get_context_information("height"))
+            else:
+                # retrieves the height (default and global height)
+                block_height = 0
 
             # sets the default values for the text weight and for
             # the italic enumeration
@@ -462,7 +512,23 @@ class Visitor:
             # packs the element text element structure containing all the meta
             # information that makes part of it then adds the "just" created
             # element to the elements list
-            element = struct.pack("<ii256sIIIIIII", 0, current_position_context_y, font_name, font_size, text_align_int, text_weight_int, text_italic_int, margin_left, margin_right, len(text_encoded) + 1)
+            element = struct.pack(
+                "<ii256sIIIIIIIIIII",
+                0,
+                current_position_context_y,
+                font_name,
+                font_size,
+                text_align_int,
+                text_weight_int,
+                text_italic_int,
+                margin_left,
+                margin_right,
+                position_x,
+                position_y,
+                block_width,
+                block_height,
+                len(text_encoded) + 1
+            )
             element += text_encoded
             element += "\0"
             self.elements_list.append((1, element))
@@ -593,7 +659,9 @@ class Visitor:
 
     def get_context_information(self, context_information_name):
         if not self.has_context_information(context_information_name):
-            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName(
+                "the context information name: " + context_information_name + " is invalid"
+            )
 
         return self.peek_context_information(context_information_name)
 
@@ -617,13 +685,17 @@ class Visitor:
 
     def pop_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName(
+                "the context information name: " + context_information_name + " is invalid"
+            )
 
         self.context_information_map[context_information_name].pop()
 
     def peek_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName(
+                "the context information name: " + context_information_name + " is invalid"
+            )
 
         return self.context_information_map[context_information_name][-1]
 
@@ -641,7 +713,9 @@ class Visitor:
         """
 
         if not context_information_name in self.context_information_map:
-            raise exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise exceptions.InvalidContextInformationName(
+                "the context information name: " + context_information_name + " is invalid"
+            )
 
         self.context_information_map[context_information_name][-1] = context_information_value
 
