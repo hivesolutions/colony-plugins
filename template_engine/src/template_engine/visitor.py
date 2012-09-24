@@ -47,6 +47,7 @@ import datetime
 import xml.sax.saxutils
 
 import colony.libs.quote_util
+import colony.libs.barcode_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
@@ -130,6 +131,9 @@ XML_QUOTE_VALUE = "xml_quote"
 NEWLINE_CONVERT_VALUE = "newline_convert"
 """ The newline convert value """
 
+CONVERT_VALUE = "convert"
+""" The convert value """
+
 DEFAULT_VALUE = "default"
 """ The default value """
 
@@ -179,7 +183,7 @@ LINE_BREAK_TAG = "<br/>"
 """ The line break tag """
 
 SEQUENCE_TYPES = (types.ListType, types.TupleType)
-""" The tuple containaing the types considered to be sequences """
+""" The tuple containing the types considered to be sequences """
 
 SERIALIZABLE_TYPES = (types.ListType, types.TupleType)
 """ The tuple containing the set of types that can be
@@ -188,6 +192,12 @@ SERIALIZABLE_TYPES = (types.ListType, types.TupleType)
 RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.libs.structures_util.FormatTuple)
 """ The tuple containing the set of types that can be
 "resolved" in the localization context """
+
+CONVERSION_MAP = {
+    "2_of_5" : colony.libs.barcode_util.encode_2_of_5
+}
+""" The map associating the name of the conversion
+function with the conversion function symbol reference """
 
 COMPARISION_FUNCTIONS = {
     "eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
@@ -648,6 +658,16 @@ class Visitor:
             # unsets the attribute newline convert value
             attribute_newline_convert_value = False
 
+        # in case the convert exists in the attributes map
+        if CONVERT_VALUE in attributes_map:
+            # retrieves attribute convert value
+            attribute_convert = attributes_map[CONVERT_VALUE]
+            attribute_convert_value = self.get_value(attribute_convert)
+        # otherwise
+        else:
+            # unsets the attribute convert value
+            attribute_convert_value = None
+
         # in case the default exists in the attributes map
         if DEFAULT_VALUE in attributes_map:
             # retrieves attribute default value
@@ -670,6 +690,14 @@ class Visitor:
         # in such case there's no need to re-decode it
         is_unicode = type(attribute_value_value) == types.UnicodeType
         attribute_value_value = is_unicode and attribute_value_value or unicode(attribute_value_value)
+
+        # in case the attribute convert value is set
+        if attribute_convert_value:
+            # retrieves the conversion method for the string
+            # value representing it and uses it to convert
+            # the attribute value to the target encoding
+            conversion_method = CONVERSION_MAP.get(attribute_convert_value, None)
+            attribute_value_value = conversion_method and conversion_method(attribute_value_value) or attribute_convert_value
 
         # in case the variable encoding is defined
         if self.variable_encoding:
@@ -777,6 +805,16 @@ class Visitor:
             # unsets the attribute newline convert value
             attribute_newline_convert_value = False
 
+        # in case the convert exists in the attributes map
+        if CONVERT_VALUE in attributes_map:
+            # retrieves attribute convert value
+            attribute_convert = attributes_map[CONVERT_VALUE]
+            attribute_convert_value = self.get_value(attribute_convert)
+        # otherwise
+        else:
+            # unsets the attribute convert value
+            attribute_convert_value = None
+
         # in case the allow empty exists in the attributes map
         if ALLOW_EMPTY_VALUE in attributes_map:
             # retrieves attribute allow empty value
@@ -818,6 +856,14 @@ class Visitor:
         # in such case there's no need to re-decode it
         is_unicode = type(attribute_value_value) == types.UnicodeType
         attribute_value_value = is_unicode and attribute_value_value or unicode(attribute_value_value)
+
+        # in case the attribute convert value is set
+        if attribute_convert_value:
+            # retrieves the conversion method for the string
+            # value representing it and uses it to convert
+            # the attribute value to the target encoding
+            conversion_method = CONVERSION_MAP.get(attribute_convert_value, None)
+            attribute_value_value = conversion_method and conversion_method(attribute_value_value) or attribute_convert_value
 
         # in case the variable encoding is defined
         if self.variable_encoding:
