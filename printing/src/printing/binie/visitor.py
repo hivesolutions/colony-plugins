@@ -314,8 +314,8 @@ class Visitor:
         elif self.visit_index == 1:
             # retrieves the printing document name
             printing_document_name = node.name
-            printing_document_width = int(node.width)
-            printing_document_height = int(node.height)
+            printing_document_width = hasattr(node, "width") and int(node.width) or 0
+            printing_document_height = hasattr(node, "height") and int(node.height) or 0
 
             # packs the header value as a binary string
             header = struct.pack(
