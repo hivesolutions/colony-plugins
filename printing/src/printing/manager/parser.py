@@ -153,7 +153,9 @@ class PrintingLanguageParser(Parser):
         node_name = printing_document_element.nodeName
         printing_document_child_nodes = printing_document.child_nodes
 
-        if node_name == "paragraph":
+        if node_name == "block":
+            printing_document_child_nodes.append(self.parse_block(printing_document_element))
+        elif node_name == "paragraph":
             printing_document_child_nodes.append(self.parse_paragraph(printing_document_element))
         elif node_name == "line":
             printing_document_child_nodes.append(self.parse_line(printing_document_element))
@@ -161,6 +163,28 @@ class PrintingLanguageParser(Parser):
             printing_document_child_nodes.append(self.parse_text(printing_document_element))
         elif node_name == "image":
             printing_document_child_nodes.append(self.parse_image(printing_document_element))
+
+    def parse_block(self, block):
+        block_structure = ast.Block()
+        child_nodes = block.childNodes
+
+        # parses the element attributes
+        self.parse_element_attributes(block, block_structure)
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_block_element(child_node, block_structure)
+
+        return block_structure
+
+    def parse_block_element(self, block_element, block):
+        node_name = block_element.nodeName
+        block_child_nodes = block.child_nodes
+
+        if node_name == "text":
+            block_child_nodes.append(self.parse_text(block_element))
+        elif node_name == "image":
+            block_child_nodes.append(self.parse_image(block_element))
 
     def parse_paragraph(self, paragraph):
         paragraph_structure = ast.Paragraph()
