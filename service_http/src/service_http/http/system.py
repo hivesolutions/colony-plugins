@@ -2800,7 +2800,7 @@ class HttpRequest:
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0):
+    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
         """
         Executes the given callable object in a background
         thread.
@@ -2815,12 +2815,16 @@ class HttpRequest:
         @type timeout: float
         @param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
+        @type timestamp: float
+        @param timestamp: The unix second based timestamp for the
+        first execution of the callable.
         """
 
         self.service_connection.execute_background(
             callable,
             retries = retries,
-            timeout = timeout
+            timeout = timeout,
+            timestamp = timestamp
         )
 
     def read(self):

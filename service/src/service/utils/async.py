@@ -1069,7 +1069,7 @@ class ClientConnection(Connection):
 
         self.service.poll_instance.unregister(socket_fd, operations)
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0):
+    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
         """
         Executes the given callable object in a background
         thread.
@@ -1084,13 +1084,17 @@ class ClientConnection(Connection):
         @type timeout: float
         @param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
+        @type timestamp: float
+        @param timestamp: The unix second based timestamp for the
+        first execution of the callable.
         """
 
         # adds the callable to the service execution thread
         self.service_execution_thread.add_callable(
             callable,
             retries = retries,
-            timeout = timeout
+            timeout = timeout,
+            timestamp = timestamp
         )
 
     def send(self, message, response_timeout = None, retries = None, write_front = False):
