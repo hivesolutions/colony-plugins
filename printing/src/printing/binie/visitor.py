@@ -451,7 +451,7 @@ class Visitor:
             else:
                 # sets the default margin right
                 margin_right = 0
-                
+
             if self.has_context_information("x"):
                 # retrieves the x position (block position)
                 position_x = int(self.get_context_information("x"))

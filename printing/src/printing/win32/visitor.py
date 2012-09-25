@@ -366,7 +366,7 @@ class Visitor:
 
             # removes the context information
             self.remove_context_information(node)
-    
+
     @_visit(printing.manager.ast.Block)
     def visit_block(self, node):
         if self.visit_index == 0:
@@ -380,7 +380,7 @@ class Visitor:
         elif self.visit_index == 1:
             # removes the context information
             self.remove_context_information(node)
-            
+
     @_visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0:
