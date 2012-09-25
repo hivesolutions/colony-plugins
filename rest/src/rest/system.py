@@ -1219,7 +1219,7 @@ class RestRequest:
         # sets the location header (using the quoted target path)
         self.request.set_header(LOCATION_VALUE, target_path_quoted)
 
-    def execute_background(self, callable):
+    def execute_background(self, callable, retries = 0, timeout = 0.0):
         """
         Executes the given callable object in a background
         thread.
@@ -1228,9 +1228,19 @@ class RestRequest:
 
         @type callable: Callable
         @param callable: The callable to be called in background.
+        @type retries: int
+        @param retries: The number of times to retry executing the
+        callable in case exception is raised.
+        @type timeout: float
+        @param timeout: The time to be set in between calls of the
+        callable, used together with the retry value.
         """
 
-        self.request.execute_background(callable)
+        self.request.execute_background(
+            callable,
+            retries = retries,
+            timeout = timeout
+        )
 
     def allow_cookies(self):
         """

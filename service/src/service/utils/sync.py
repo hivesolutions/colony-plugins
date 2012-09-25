@@ -1723,7 +1723,7 @@ class ServiceConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def execute_background(self, callable):
+    def execute_background(self, callable, retries = 0, timeout = 0.0):
         """
         Executes the given callable object in a background
         thread.
@@ -1732,10 +1732,20 @@ class ServiceConnection:
 
         @type callable: Callable
         @param callable: The callable to be called in background.
+        @type retries: int
+        @param retries: The number of times to retry executing the
+        callable in case exception is raised.
+        @type timeout: float
+        @param timeout: The time to be set in between calls of the
+        callable, used together with the retry value.
         """
 
         # adds the callable to the service execution thread
-        self.service_execution_thread.add_callable(callable)
+        self.service_execution_thread.add_callable(
+            callable,
+            retries = retries,
+            timeout = timeout
+        )
 
     def receive(self, request_timeout = None, chunk_size = None, retries = RECEIVE_RETRIES):
         """

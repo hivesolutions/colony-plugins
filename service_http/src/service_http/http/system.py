@@ -2800,7 +2800,7 @@ class HttpRequest:
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
 
-    def execute_background(self, callable):
+    def execute_background(self, callable, retries = 0, timeout = 0.0):
         """
         Executes the given callable object in a background
         thread.
@@ -2809,9 +2809,19 @@ class HttpRequest:
 
         @type callable: Callable
         @param callable: The callable to be called in background.
+        @type retries: int
+        @param retries: The number of times to retry executing the
+        callable in case exception is raised.
+        @type timeout: float
+        @param timeout: The time to be set in between calls of the
+        callable, used together with the retry value.
         """
 
-        self.service_connection.execute_background(callable)
+        self.service_connection.execute_background(
+            callable,
+            retries = retries,
+            timeout = timeout
+        )
 
     def read(self):
         return self.received_message
