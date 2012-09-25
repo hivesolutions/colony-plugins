@@ -481,7 +481,7 @@ class Controller(object):
         Constructor of the class.
 
         @type plugin: Plugin
-        @param plugin: The owner plguin of the controller class
+        @param plugin: The owner plugin of the controller class
         to be used to obtain external references.
         @type system: System
         @param system: The system object used to call inner
