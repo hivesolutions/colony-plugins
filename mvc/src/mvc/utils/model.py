@@ -45,6 +45,7 @@ import colony.libs.crypt_util
 import colony.libs.control_util
 import colony.libs.structures_util
 
+import utils
 import exceptions
 
 VALIDATION_METHOD_SUFFIX = "_validate"
@@ -115,6 +116,15 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "relation" : None
 }
 """ The map associating the data types with the cast types """
+
+METHOD_TYPES = (
+    types.MethodType,
+    types.FunctionType,
+    types.BuiltinMethodType,
+    types.BuiltinFunctionType
+)
+""" The tuple containing the various types considered to be
+functions or methods """
 
 def _start_model(self):
     """
@@ -189,9 +199,14 @@ def _class_new(class_reference, map = None, rest_request = None):
     already "populated" with the map contents.
     """
 
+    # checks if the provided map (reference) is in fact a sequence
+    # and so a proxy model (for sequences) must be created, this way
+    # it's possible to offer bulk operations
+    is_sequence = type(map) in (types.ListType, types.TupleType)
+
     # creates a new model from the class reference
     # the default values should be applied
-    model = class_reference()
+    model = ModelProxy(class_reference, len(map)) if is_sequence else class_reference()
 
     # sets the rest request in the model according
     # to the provided reference value, this is used
@@ -1779,3 +1794,117 @@ def _get_complete_name(name, namespace_name = None):
     # name to the (session attribute) name and returns it
     complete_name = namespace_name + "." + name
     return complete_name
+
+class ModelProxy(list):
+    """
+    Proxy model class uses to handle operation
+    on multiple models at the same pipe.
+
+    Using this class it's possible to create and
+    update models in bulk fashion without any change
+    in the business logic.
+    """
+
+    class_reference = None
+    """ The reference to the model classes to be used
+    int he current model """
+
+    count = 0
+    """ The number of models to be created and represented
+    by the current proxy object """
+
+    models = None
+    """ The list of the various models created and that
+    are meant to be represented by the current proxy """
+
+    def __init__(self, class_reference, count):
+        """
+        Constructor of the class.
+
+        @type class_referece: Model
+        @param class_reference: The model class reference
+        to be used in the creation of the underlying model
+        objects.
+        @type count: int
+        @param count: The number of models to be created
+        and represented by the proxy object.
+        """
+
+        self.class_reference = class_reference
+        self.count = count
+        self._build()
+
+    def __getattr__(self, name):
+        first = self.first()
+
+        if hasattr(first, name):
+            value = getattr(first, name)
+            value_type = type(value)
+
+            if not value_type in METHOD_TYPES: return value
+
+        def proxy_method(*args, **kwargs):
+            for model in self.models:
+                method = getattr(model, name)
+                method(*args, **kwargs)
+
+        return proxy_method
+
+    def __iter__(self):
+        return self.models.__iter__()
+
+    def first(self):
+        """
+        Retrieves the first model in the models
+        sequence, and returns it in case a valid
+        is found or invalid otherwise.
+
+        @rtype: Model
+        @return: The first valid model in enclosed in the
+        current proxy object.
+        """
+
+        if not self.models: return None
+        return self.models[0]
+
+    def apply(self, map):
+        """
+        Pipes the apply method of the model into
+        each of the models contained in the proxy.
+
+        @type map: List
+        @param map: The list of map objects to be used
+        in the apply method for each of the models.
+        """
+
+        for model, _map in zip(self.models, map):
+            model.apply(_map)
+
+    @utils.transaction_method("_entity_manager")
+    def store(self, *args, **kwargs):
+        """
+        Proxy method used to create a transaction context
+        that evolves a sequence of store operations around
+        the various models.
+        """
+
+        for model in self.models:
+            model.store(*args, **kwargs)
+
+    def _build(self):
+        """
+        Method that builds the various model objects
+        to be used in the proxy.
+
+        The construction of the models is done using
+        the class reference set in the instance.
+        """
+
+        # creates the list that will hold the various
+        # model objects to be created, then iterates
+        # over the map (list) object to create one
+        # item for each of the elements
+        self.models = []
+        for _index in range(self.count):
+            model = self.class_reference()
+            self.models.append(model)
