@@ -566,6 +566,34 @@ class Visitor:
             # retrieves the text align
             text_align = self.get_context_information("text_align")
 
+            if self.has_context_information("x"):
+                # retrieves the x position (block position)
+                position_x = int(self.get_context_information("x"))
+            else:
+                # retrieves the x position (default and global position)
+                position_x = 0
+
+            if self.has_context_information("y"):
+                # retrieves the y position (block position)
+                position_y = int(self.get_context_information("y"))
+            else:
+                # retrieves the y position (default and global position)
+                position_y = 0
+
+            if self.has_context_information("width"):
+                # retrieves the width (block width)
+                block_width = int(self.get_context_information("width"))
+            else:
+                # retrieves the width (default and global width)
+                block_width = 0
+
+            if self.has_context_information("height"):
+                # retrieves the height (block height)
+                block_height = int(self.get_context_information("height"))
+            else:
+                # retrieves the height (default and global height)
+                block_height = 0
+
             # in case the image path is defined
             if image_path:
                 # opens the bitmap image
@@ -625,7 +653,17 @@ class Visitor:
             # packs the element image element structure containing all the meta
             # information that makes part of it then adds the "just" created
             # element to the elements list
-            element = struct.pack("<iiII", 0, current_position_y, text_align_int, len(buffer))
+            element = struct.pack(
+                "<iiIIIIII",
+                0,
+                current_position_y,
+                text_align_int,
+                position_x,
+                position_y,
+                block_width,
+                block_height,
+                len(buffer)
+            )
             element += buffer
             self.elements_list.append((2, element))
 
