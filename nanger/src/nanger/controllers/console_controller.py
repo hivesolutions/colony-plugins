@@ -207,9 +207,12 @@ class ConsoleController(controllers.Controller):
 
         # retrieves the command that it's meant to be executed by
         # the current python virtual machine, then retrieves the
-        # id of the interpreter instance to be used
+        # id of the interpreter instance to be used and the final
+        # field attribute is the (is) file flag indicating if the
+        # command should be compiled in multiple or single line mode
         command = self.get_field(rest_request, "command", "")
         instance = self.get_field(rest_request, "instance", None)
+        file = self.get_field(rest_request, "file", 0, int)
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -239,7 +242,7 @@ class ConsoleController(controllers.Controller):
             # tries to compile the command using the single line strategy
             # so that the return value is printed to the standard output, this
             # may fail in case a multiple line command is present
-            command_code = code.compile_command(command, symbol = "single")
+            command_code = code.compile_command(command, symbol = file and "exec" or "file")
         except:
             # compiles the provided command into the appropriate code representation
             # using the "exec" strategy, this operation should return an invalid value
@@ -268,7 +271,7 @@ class ConsoleController(controllers.Controller):
             # the source code in case the exception mode was activated
             # this should allow syntax errors to be printed
             if command_code: interpreter.runcode(command_code)
-            elif exception: interpreter.runsource(command, symbol = "exec")
+            elif exception: interpreter.runsource(command, filename = file and "file.py" or "<input>", symbol = "exec")
         finally:
             # restores both the standard output and the standard error streams
             # into the original values (further writes will be handled normally)
