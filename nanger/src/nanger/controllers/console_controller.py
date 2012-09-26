@@ -218,10 +218,10 @@ class ConsoleController(controllers.Controller):
         # value is created for it (secure generation)
         instance = instance or str(uuid.uuid4())
 
-        # in case the current command represents a file, a final pass statement
+        # in case the current command represents a file, a final newline token
         # must be included so that the interpreter knows that no more data
         # is coming, this avoids problems in the compilation
-        if file: command += "\npass"
+        if file: command += "\n"
 
         # creates the memory buffer that will hold the contents
         # resulting from the execution of the python code
