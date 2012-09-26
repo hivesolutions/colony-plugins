@@ -49,12 +49,12 @@ class DataFileManager(colony.base.system.System):
     file_manager_plugin = None
     """ The file manager plugin """
 
-    file_manager_engine_plugins_map = {}
-    """ The map of file manager engine plugins """
+    file_engine_plugins_map = {}
+    """ The map of file engine plugins """
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
-        self.file_manager_engine_plugins_map = {}
+        self.file_engine_plugins_map = {}
 
     def load_file_manager(self, engine_name, properties = {}):
         """
@@ -76,30 +76,30 @@ class DataFileManager(colony.base.system.System):
         self.plugin.debug("Loading new file manager with engine: %s" % engine_name)
 
         # retrieves the file mager engine plugin
-        file_manager_engine_plugin = self.file_manager_engine_plugins_map[engine_name]
+        file_engine_plugin = self.file_engine_plugins_map[engine_name]
 
-        # creates a new file manager with the file manager engine plugin, file classes list
+        # creates a new file manager with the file engine plugin, file classes list
         # and the file classes map
-        file_manager = FileManager(file_manager_engine_plugin)
+        file_manager = FileManager(file_engine_plugin)
 
         # returns the file manager
         return file_manager
 
-    def register_file_manager_engine_plugin(self, file_manager_engine_plugin):
+    def register_file_engine_plugin(self, file_engine_plugin):
         # retrieves the plugin engine name
-        engine_name = file_manager_engine_plugin.get_engine_name()
+        engine_name = file_engine_plugin.get_engine_name()
 
-        # sets the file manager engine plugin in the file manager
+        # sets the file engine plugin in the file manager
         # engine plugins map
-        self.file_manager_engine_plugins_map[engine_name] = file_manager_engine_plugin
+        self.file_engine_plugins_map[engine_name] = file_engine_plugin
 
-    def unregister_file_manager_engine_plugin(self, file_manager_engine_plugin):
+    def unregister_file_engine_plugin(self, file_engine_plugin):
         # retrieves the plugin engine name
-        engine_name = file_manager_engine_plugin.get_engine_name()
+        engine_name = file_engine_plugin.get_engine_name()
 
-        # removes the file manager engine plugin from the file manager
+        # removes the file engine plugin from the file manager
         # engine plugins map
-        del self.file_manager_engine_plugins_map[engine_name]
+        del self.file_engine_plugins_map[engine_name]
 
 class FileManager:
     """
@@ -108,8 +108,8 @@ class FileManager:
     the underlying driver for file access.
     """
 
-    file_manager_engine_plugin = None
-    """ The file manager engine plugin """
+    file_engine_plugin = None
+    """ The file engine plugin """
 
     connection = None
     """ The current available (global) connection """
@@ -120,15 +120,15 @@ class FileManager:
     connection_parameters = {}
     """ The map containing the connection parameters """
 
-    def __init__(self, file_manager_engine_plugin):
+    def __init__(self, file_engine_plugin):
         """
         Constructor of the class.
 
-        @type file_manager_engine_plugin: FileManagerEnginePlugin
-        @param file_manager_engine_plugin: The engine file manager plugin to be used.
+        @type file_engine_plugin: FileManagerEnginePlugin
+        @param file_engine_plugin: The engine file manager plugin to be used.
         """
 
-        self.file_manager_engine_plugin = file_manager_engine_plugin
+        self.file_engine_plugin = file_engine_plugin
 
         self.connection_parameters = {}
 
@@ -142,7 +142,7 @@ class FileManager:
         connection.
         """
 
-        return self.file_manager_engine_plugin.get_engine_name()
+        return self.file_engine_plugin.get_engine_name()
 
     def get_internal_version(self):
         """
@@ -154,7 +154,7 @@ class FileManager:
         connection.
         """
 
-        return self.file_manager_engine_plugin.get_internal_version()
+        return self.file_engine_plugin.get_internal_version()
 
     def get_connection(self):
         """
@@ -195,7 +195,7 @@ class FileManager:
         if not self.file_connection:
             # creates the file connection to the specified engine with the
             # specified connection parameters
-            self.file_connection = self.file_manager_engine_plugin.create_connection(self.connection_parameters)
+            self.file_connection = self.file_engine_plugin.create_connection(self.connection_parameters)
 
         return self.file_connection
 
@@ -208,7 +208,7 @@ class FileManager:
         file_connection = self.get_file_connection()
 
         # closes the file connection to the specified engine
-        self.file_manager_engine_plugin.close_connection(file_connection)
+        self.file_engine_plugin.close_connection(file_connection)
 
     def set_connection_parameters(self, connection_parameters):
         """
@@ -226,7 +226,7 @@ class FileManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        return self.file_manager_engine_plugin.get(connection, file_name)
+        return self.file_engine_plugin.get(connection, file_name)
 
     def put(self, file_path, file_name = None):
         # retrieves the connection object
@@ -236,31 +236,31 @@ class FileManager:
         # file path name in case no file name is defined
         file_name = file_name or os.path.basename(file_path)
 
-        return self.file_manager_engine_plugin.put(connection, file_path, file_name)
+        return self.file_engine_plugin.put(connection, file_path, file_name)
 
     def put_file(self, file, file_name):
         # retrieves the connection object
         connection = self.get_connection()
 
-        return self.file_manager_engine_plugin.put_file(connection, file, file_name)
+        return self.file_engine_plugin.put_file(connection, file, file_name)
 
     def put_data(self, data, file_name):
         # retrieves the connection object
         connection = self.get_connection()
 
-        return self.file_manager_engine_plugin.put_data(connection, data, file_name)
+        return self.file_engine_plugin.put_data(connection, data, file_name)
 
     def delete(self, file_name):
         # retrieves the connection object
         connection = self.get_connection()
 
-        return self.file_manager_engine_plugin.delete(connection, file_name)
+        return self.file_engine_plugin.delete(connection, file_name)
 
     def list(self, directory_name):
         # retrieves the connection object
         connection = self.get_connection()
 
-        return self.file_manager_engine_plugin.list(connection, directory_name)
+        return self.file_engine_plugin.list(connection, directory_name)
 
 class Connection:
     """

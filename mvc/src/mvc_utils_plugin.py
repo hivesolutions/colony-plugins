@@ -60,7 +60,7 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file_manager", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file.manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
@@ -183,7 +183,7 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.file_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.file.manager")
     def set_file_manager_plugin(self, file_manager_plugin):
         self.file_manager_plugin = file_manager_plugin
 

@@ -49,9 +49,9 @@ ENGINE_NAME = "zip"
 ZIP_FILE_EXTENSION = ".zip"
 """ The zip file extension value """
 
-class FileManagerZip(colony.base.system.System):
+class FileZip(colony.base.system.System):
     """
-    The file manager zip class.
+    The file zip class.
     """
 
     def get_engine_name(self):

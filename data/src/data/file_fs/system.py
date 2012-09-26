@@ -47,9 +47,9 @@ ENGINE_NAME = "fs"
 BUFFER_SIZE = 4096
 """ The size of the buffer for writing """
 
-class FileManagerFs(colony.base.system.System):
+class FileFs(colony.base.system.System):
     """
-    The file manager fs class.
+    The file fs class.
     """
 
     def __init__(self, plugin):
@@ -286,7 +286,8 @@ class FsConnection:
     """ The name of the persistence context """
 
     base_path = None
-    """ The base path used for the persistence for the files in the file system """
+    """ The base path used for the persistence
+    for the files in the file system """
 
     def __init__(self, context_name, base_path):
         """

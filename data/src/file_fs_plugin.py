@@ -39,68 +39,60 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class FileManagerGridfsEnginePlugin(colony.base.system.Plugin):
+class FileFsPlugin(colony.base.system.Plugin):
     """
-    The main class for the File Manager Gridfs plugin.
+    The main class for the File File System Engine plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.file_manager.gridfs"
-    name = "File Manager Gridfs"
-    description = "File Manager Gridfs Plugin"
+    id = "pt.hive.colony.plugins.data.file.fs"
+    name = "File File System Engine"
+    description = "File File System Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "threads",
-        "file_manager_engine"
-    ]
-    dependencies = [
-        colony.base.system.PackageDependency("MongoDB python bindings", "pymongo", "1.6.x", "http://mongodb.org"),
-        colony.base.system.PackageDependency("MongoDB GridFS python bindings", "gridfs", "1.6.x", "http://mongodb.org")
+        "file_engine"
     ]
     main_modules = [
-        "data.file_manager_gridfs.system"
+        "data.file_fs.system"
     ]
 
-    file_manager_gridfs = None
-    """ The file manager gridfs """
-
-    business_helper_plugin = None
-    """ The business helper plugin """
+    file_fs = None
+    """ The file fs """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_gridfs.system
-        self.file_manager_gridfs = data.file_manager_gridfs.system.FileManagerGridfsEngine(self)
+        import data.file_fs.system
+        self.file_fs = data.file_fs.system.FileFs(self)
 
     def get_engine_name(self):
-        return self.file_manager_gridfs.get_engine_name()
+        return self.file_fs.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_manager_gridfs.get_internal_version()
+        return self.file_fs.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_manager_gridfs.create_connection(connection_parameters)
+        return self.file_fs.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_manager_gridfs.close_connection(connection)
+        return self.file_fs.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_manager_gridfs.get(connection, file_name)
+        return self.file_fs.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_manager_gridfs.put(connection, file_path, file_name)
+        return self.file_fs.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_manager_gridfs.put_file(connection, file, file_name)
+        return self.file_fs.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_manager_gridfs.put_data(connection, data, file_name)
+        return self.file_fs.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_manager_gridfs.delete(connection, file_name)
+        return self.file_fs.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_manager_gridfs.list(connection, directory_name)
+        return self.file_fs.list(connection, directory_name)

@@ -46,8 +46,11 @@ import colony.libs.string_buffer_util
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution """
 
-class MysqlSystem:
-
+class EntityMysql:
+    """
+    The entity mysql class.
+    """
+    
     def get_engine_name(self):
         return ENGINE_NAME
 
@@ -58,6 +61,11 @@ class MysqlSystem:
         return MysqlEngine(self, entity_manager)
 
 class MysqlEngine:
+    """
+    The engine class that handles all the adaptation
+    process from the general entity manager structures
+    to the specifications of the data source.
+    """
 
     mysql_system = None
     """ The reference to the "owning" system entity """

@@ -44,7 +44,7 @@ class FileManagerPlugin(colony.base.system.Plugin):
     The main class for the File Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.file_manager"
+    id = "pt.hive.colony.plugins.data.file.manager"
     name = "File Manager"
     description = "The plugin that manages the file system abstraction sub system"
     version = "1.0.0"
@@ -56,7 +56,7 @@ class FileManagerPlugin(colony.base.system.Plugin):
         "file_manager"
     ]
     capabilities_allowed = [
-        "file_manager_engine"
+        "file_engine"
     ]
     main_modules = [
         "data.file_manager.system"
@@ -107,8 +107,8 @@ class FileManagerPlugin(colony.base.system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("file_manager_engine")
     def file_manager_engine_load_allowed(self, plugin, capability):
-        self.file_manager.register_file_manager_engine_plugin(plugin)
+        self.file_manager.register_file_engine_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("file_manager_engine")
     def file_manager_engine_unload_allowed(self, plugin, capability):
-        self.file_manager.unregister_file_manager_engine_plugin(plugin)
+        self.file_manager.unregister_file_engine_plugin(plugin)

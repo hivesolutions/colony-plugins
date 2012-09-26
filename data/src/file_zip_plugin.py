@@ -39,63 +39,60 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class FileManagerZipPlugin(colony.base.system.Plugin):
+class FileZipPlugin(colony.base.system.Plugin):
     """
-    The main class for the File Manager Zip Engine plugin.
+    The main class for the File Zip Engine plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.file_manager.zip"
-    name = "File Manager Zip Engine"
-    description = "File Manager Zip Engine Plugin"
+    id = "pt.hive.colony.plugins.data.file.zip"
+    name = "File Zip Engine"
+    description = "File Zip Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
         colony.base.system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "file_manager_engine"
+        "file_engine"
     ]
     main_modules = [
-        "data.file_manager_zip.system"
+        "data.file_zip.system"
     ]
 
-    file_manager_zip = None
-    """ The file manager zip """
-
-    business_helper_plugin = None
-    """ The business helper plugin """
+    file_zip = None
+    """ The file zip """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager_zip.system
-        self.file_manager_zip = data.file_manager_zip.system.FileManagerZip(self)
+        import data.file_zip.system
+        self.file_zip = data.file_zip.system.FileZip(self)
 
     def get_engine_name(self):
-        return self.file_manager_zip.get_engine_name()
+        return self.file_zip.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_manager_zip.get_internal_version()
+        return self.file_zip.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_manager_zip.create_connection(connection_parameters)
+        return self.file_zip.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_manager_zip.close_connection(connection)
+        return self.file_zip.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_manager_zip.get(connection, file_name)
+        return self.file_zip.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_manager_zip.put(connection, file_path, file_name)
+        return self.file_zip.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_manager_zip.put_file(connection, file, file_name)
+        return self.file_zip.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_manager_zip.put_data(connection, data, file_name)
+        return self.file_zip.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_manager_zip.delete(connection, file_name)
+        return self.file_zip.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_manager_zip.list(connection, directory_name)
+        return self.file_zip.list(connection, directory_name)

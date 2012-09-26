@@ -45,9 +45,9 @@ import colony.base.system
 ENGINE_NAME = "gridfs"
 """ The engine name """
 
-class FileManagerGridfsEngine(colony.base.system.System):
+class FileGridfsEngine(colony.base.system.System):
     """
-    The file manager gridfs class.
+    The file gridfs class.
     """
 
     def get_engine_name(self):
