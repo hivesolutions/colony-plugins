@@ -218,6 +218,11 @@ class ConsoleController(controllers.Controller):
         # value is created for it (secure generation)
         instance = instance or str(uuid.uuid4())
 
+        # in case the current command represents a file, a final pass statement
+        # must be included so that the interpreter knows that no more data
+        # is coming, this avoids problems in the compilation
+        if file: command += "\npass"
+
         # creates the memory buffer that will hold the contents
         # resulting from the execution of the python code
         buffer_out = cStringIO.StringIO()
@@ -242,7 +247,7 @@ class ConsoleController(controllers.Controller):
             # tries to compile the command using the single line strategy
             # so that the return value is printed to the standard output, this
             # may fail in case a multiple line command is present
-            command_code = code.compile_command(command, symbol = file and "exec" or "file")
+            command_code = code.compile_command(command, symbol = file and "exec" or "single")
         except:
             # compiles the provided command into the appropriate code representation
             # using the "exec" strategy, this operation should return an invalid value
