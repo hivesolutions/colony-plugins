@@ -63,7 +63,7 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
         "business_logic_bundle"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity.manager", "1.x.x")
     ]
     main_modules = [
         "business_helper.system"
@@ -150,7 +150,7 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
     def get_business_logic_classes_namespaces(self, namespaces):
         return self.business_helper.get_business_logic_classes_namespaces(namespaces)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity.manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
