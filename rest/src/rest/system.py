@@ -351,7 +351,7 @@ class Rest(colony.base.system.System):
                 # retrieves the rest service plugin using the plugin id
                 rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
 
-                # handles the rest request to the rest servicxe plugin
+                # handles the rest request to the rest service plugin
                 rest_service_plugin.handle_rest_request(rest_request)
 
                 # returns immediately
@@ -720,6 +720,17 @@ class Rest(colony.base.system.System):
         if session_id in self.rest_session_map:
             # unsets the session from the rest session map
             del self.rest_session_map[session_id]
+            
+    def clear_sessions(self):
+        """
+        Removes all the session from the current internal
+        structures, this is equivalent to the invalidation
+        of all the session in the rest manager.
+        """
+        
+        # clears the rest session map, removing all the
+        # registered session from it
+        self.rest_session_map.clear()
 
     def get_session(self, session_id):
         """
