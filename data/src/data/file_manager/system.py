@@ -86,19 +86,15 @@ class DataFileManager(colony.base.system.System):
         return file_manager
 
     def register_file_engine_plugin(self, file_engine_plugin):
-        # retrieves the plugin engine name
+        # retrieves the plugin engine name and sets the file
+        # engine plugin in the file engine plugins map
         engine_name = file_engine_plugin.get_engine_name()
-
-        # sets the file engine plugin in the file manager
-        # engine plugins map
         self.file_engine_plugins_map[engine_name] = file_engine_plugin
 
     def unregister_file_engine_plugin(self, file_engine_plugin):
-        # retrieves the plugin engine name
+        # retrieves the plugin engine name and removes the
+        # file engine plugin from the file engine plugins map
         engine_name = file_engine_plugin.get_engine_name()
-
-        # removes the file engine plugin from the file manager
-        # engine plugins map
         del self.file_engine_plugins_map[engine_name]
 
 class FileManager:

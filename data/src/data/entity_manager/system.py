@@ -45,9 +45,6 @@ import zipfile
 import calendar
 import datetime
 import tempfile
-import mysql_system
-import pgsql_system
-import sqlite_system
 
 import colony.base.system
 import colony.libs.path_util
@@ -146,27 +143,19 @@ class DataEntityManager(colony.base.system.System):
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
 
-        self.entity_engine_plugins_map = {
-            "sqlite" : sqlite_system.SqliteSystem(),
-            "mysql" : mysql_system.MysqlSystem(),
-            "pgsql" : pgsql_system.PgsqlSystem()
-        }
+        self.entity_engine_plugins_map = {}
         self.loaded_entity_manager_map = {}
 
     def register_entity_engine_plugin(self, entity_engine_plugin):
-        # retrieves the plugin engine name
+        # retrieves the plugin engine name and sets the entity
+        # engine plugin in the entity engine plugins map
         engine_name = entity_engine_plugin.get_engine_name()
-
-        # sets the entity engine plugin in the entity manager
-        # engine plugins map
         self.entity_engine_plugins_map[engine_name] = entity_engine_plugin
 
     def unregister_entity_engine_plugin(self, entity_engine_plugin):
-        # retrieves the plugin engine name
+        # retrieves the plugin engine name and removes the
+        # entity engine plugin from the entity engine plugins map
         engine_name = entity_engine_plugin.get_engine_name()
-
-        # removes the entity engine plugin from the entity manager
-        # engine plugins map
         del self.entity_engine_plugins_map[engine_name]
 
     def load_entity_manager(self, engine_name, properties = {}):

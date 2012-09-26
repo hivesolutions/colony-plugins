@@ -50,7 +50,7 @@ class EntityMysql:
     """
     The entity mysql class.
     """
-    
+
     def get_engine_name(self):
         return ENGINE_NAME
 

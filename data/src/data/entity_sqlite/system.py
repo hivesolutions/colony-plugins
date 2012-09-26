@@ -51,7 +51,10 @@ INTERNAL_VERSION = "1.0.1"
 """ The version number that represents the internal
 implementation details """
 
-class SqliteSystem:
+class EntitySqlite:
+    """
+    The entity sqlite class.
+    """
 
     def get_engine_name(self):
         return ENGINE_NAME

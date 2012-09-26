@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class EntityMysqlPlugin(colony.base.system.Plugin):
+class EntityPgsqlPlugin(colony.base.system.Plugin):
     """
-    The main class for the Entity Mysql plugin.
+    The main class for the Entity Pgsql plugin.
     """
 
     id = "pt.hive.colony.plugins.data.entity.mysql"
     name = "Entity Mysql"
-    description = "The plugin that manages the mysql adaptation structures for the entity manager"
+    description = "The plugin that manages the postgresql adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -56,25 +56,25 @@ class EntityMysqlPlugin(colony.base.system.Plugin):
         "entity_engine"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("MySQL-Python extension module", "MySQLdb", "1.x.x", "http://mysql-python.sourceforge.net")
+        colony.base.system.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb", "4.x", "http://www.pygresql.org")
     ]
     main_modules = [
-        "data.entity_mysql.system"
+        "data.entity_pgsql.system"
     ]
 
-    entity_mysql = None
-    """ The entity mysql """
+    entity_pgsql = None
+    """ The entity pgsql """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import data.entity_mysql.system
-        self.entity_mysql = data.entity_mysql.system.EntityMysql(self)
+        import data.entity_pgsql.system
+        self.entity_pgsql = data.entity_pgsql.system.EntityPgsql(self)
 
     def get_engine_name(self):
-        return self.entity_mysql.get_engine_name()
+        return self.entity_pgsql.get_engine_name()
 
     def get_internal_version(self):
-        return self.entity_mysql.get_internal_version()
+        return self.entity_pgsql.get_internal_version()
 
     def create_engine(self, entity_manager):
-        return self.entity_mysql.create_engine(entity_manager)
+        return self.entity_pgsql.create_engine(entity_manager)
