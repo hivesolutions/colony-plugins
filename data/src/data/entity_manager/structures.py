@@ -459,12 +459,6 @@ class EntityClass(object):
             # returns the value, immediately
             return value
 
-        # in case the "referred" attribute is not a relation
-        # (it's not a lazy loaded relation, for sure)
-        if not self.__class__.is_relation(name):
-            # returns the value, immediately
-            return value
-
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
@@ -473,10 +467,15 @@ class EntityClass(object):
             # returns the value, immediately
             return value
 
+        # checks if the current attribute name refers a relation
+        # so that options on how to lazy load it can be defined
+        is_relation = self.__class__.is_relation(name)
+
         # loads the lazy loaded relation with the provided
         # name, this will trigger an access to the data
-        # source (slow operation)
-        attribute = self._load_lazy(name)
+        # source (slow operation) or loads the lazy loaded
+        # attribute using (a concrete class load approach)
+        attribute = self._load_lazy(name) if is_relation else self._load_lazy_attr(name)
 
         # returns the retrieves (lazy) attribute
         return attribute
@@ -3697,6 +3696,79 @@ class EntityClass(object):
 
         # returns the attribute that has just been found (this
         # attribute is not going to be "lazy loaded" again)
+        return attribute
+
+    def _load_lazy_attr(self, name):
+        """
+        Loads a lazy loaded base attribute, this will be used in
+        entities that have been loaded using polymorphism and for
+        which only a certain level of attributes is loaded.
+
+        Loading the attribute will trigger a concrete loading of
+        the entity values and all of them will be updated.
+
+        This method accesses the data source so it's considered
+        to be an "expensive" operation.
+
+        @type name: String
+        @param name: The name of the attribute to be used as reference
+        in the loading of the concrete class (lazy load).
+        @rtype: Object
+        @return: The value for the attribute that triggered the concrete
+        load of the class (lazy load).
+        """
+
+        # checks if the current entity (and diffusion scope) is
+        # attached to the data source in case it's not a lazy
+        # loading object is returned (not possible to load it)
+        is_attached = self.is_attached()
+        if not is_attached: return colony.libs.lazy_util.Lazy
+
+        # retrieves id value from the entity instance and checks
+        # if the value is correctly set in case it's not it's not
+        # possible to retrieve (load) the relation must set the
+        # relation as lazy loaded
+        table_id_value = self.get_id_value()
+        if table_id_value == None: return colony.libs.lazy_util.Lazy
+
+        # retrieves the entity class associated with the current entity
+        # to be able to access class level attributes
+        entity_class = self.__class__
+
+        # creates the map of options to load the various
+        # base value for the concrete entity defined, this way
+        # it will be possible to populate all the base names
+        options = {
+            "scope" : self._scope
+        }
+
+        # runs the "finding" the appropriate (place holder) entity
+        # then retrieves the attribute from it and retrieves the
+        # map of names to be used for the setting
+        _entity = self._entity_manager.get(self.__class__, table_id_value, options)
+        attribute = getattr(_entity, name)
+        names_map = entity_class.get_names_map()
+
+        # iterates over all the names present in the complete
+        # entity class hierarchy to update with the new values
+        for name in names_map:
+            # in case the current name in iteration is
+            # not present in the (new) entity no need to
+            # retrieve it and set it in the entity
+            if not _entity.has_value(name):
+                # continues the loop the name is not present
+                # in the (new) entity it's impossible to update
+                # it in the entity
+                continue
+
+            # retrieves the value for the current
+            # name in the (new) entity and sets it in
+            # the entity to be reloaded (attribute update)
+            value = _entity.get_value(name)
+            self.set_value(name, value)
+
+        # returns the attribute value that triggered the lazy load
+        # of the class concrete values
         return attribute
 
     @classmethod
