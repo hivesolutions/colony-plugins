@@ -84,7 +84,7 @@ class FileZip(colony.base.system.System):
         context_name = connection_parameters.get("context_name", "default")
         base_path = connection_parameters.get("base_path", "%configuration:" + self.plugin.id + "%")
 
-        # creates the zip file anme from the context name
+        # creates the zip file name from the context name
         zip_file_name = context_name + ZIP_FILE_EXTENSION
 
         # creates the (full) base path by appending the zip file name and
