@@ -65,9 +65,6 @@ class EntityManagerPlugin(colony.base.system.Plugin):
     main_modules = [
         "data.entity_manager.decorators",
         "data.entity_manager.exceptions",
-        "data.entity_manager.mysql_system",
-        "data.entity_manager.pgsql_system",
-        "data.entity_manager.sqlite_system"
         "data.entity_manager.structures",
         "data.entity_manager.system",
         "data.entity_manager.test_mocks",
@@ -188,6 +185,14 @@ class EntityManagerPlugin(colony.base.system.Plugin):
 
     def get_plugin_test_case_bundle(self):
         return self.entity_manager_test.get_plugin_test_case_bundle()
+
+    @colony.base.decorators.load_allowed_capability("entity_engine")
+    def entity_engine_load_allowed(self, plugin, capability):
+        self.file_manager.register_entity_engine_plugin(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("entity_engine")
+    def entity_engine_unload_allowed(self, plugin, capability):
+        self.file_manager.unregister_entity_engine_plugin(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):

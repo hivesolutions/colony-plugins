@@ -137,8 +137,8 @@ class DataEntityManager(colony.base.system.System):
     The data entity manager class.
     """
 
-    entity_manager_engine_plugins_map = {}
-    """ The map of entity manager engine plugins """
+    entity_engine_plugins_map = {}
+    """ The map of entity engine plugins """
 
     loaded_entity_manager_map = {}
     """ The map associating the id with the (loaded) entity manager """
@@ -146,28 +146,28 @@ class DataEntityManager(colony.base.system.System):
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
 
-        self.entity_manager_engine_plugins_map = {
+        self.entity_engine_plugins_map = {
             "sqlite" : sqlite_system.SqliteSystem(),
             "mysql" : mysql_system.MysqlSystem(),
             "pgsql" : pgsql_system.PgsqlSystem()
         }
         self.loaded_entity_manager_map = {}
 
-    def register_entity_manager_engine_plugin(self, entity_manager_engine_plugin):
+    def register_entity_engine_plugin(self, entity_engine_plugin):
         # retrieves the plugin engine name
-        engine_name = entity_manager_engine_plugin.get_engine_name()
+        engine_name = entity_engine_plugin.get_engine_name()
 
-        # sets the entity manager engine plugin in the entity manager
+        # sets the entity engine plugin in the entity manager
         # engine plugins map
-        self.entity_manager_engine_plugins_map[engine_name] = entity_manager_engine_plugin
+        self.entity_engine_plugins_map[engine_name] = entity_engine_plugin
 
-    def unregister_entity_manager_engine_plugin(self, entity_manager_engine_plugin):
+    def unregister_entity_engine_plugin(self, entity_engine_plugin):
         # retrieves the plugin engine name
-        engine_name = entity_manager_engine_plugin.get_engine_name()
+        engine_name = entity_engine_plugin.get_engine_name()
 
-        # removes the entity manager engine plugin from the entity manager
+        # removes the entity engine plugin from the entity manager
         # engine plugins map
-        del self.entity_manager_engine_plugins_map[engine_name]
+        del self.entity_engine_plugins_map[engine_name]
 
     def load_entity_manager(self, engine_name, properties = {}):
         """
@@ -200,8 +200,8 @@ class DataEntityManager(colony.base.system.System):
 
         # in case the engine name does not exist in the entity manager
         # engine plugins map
-        if not engine_name in self.entity_manager_engine_plugins_map:
-            # raises the entity manager engine not found exception
+        if not engine_name in self.entity_engine_plugins_map:
+            # raises the entity engine not found exception
             raise exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
 
         # in case the id is already defined in the loaded
@@ -222,14 +222,14 @@ class DataEntityManager(colony.base.system.System):
         # prints a debug message
         self.plugin.debug("Loading new entity manager with engine: %s" % engine_name)
 
-        # retrieves the entity mager engine plugin
-        entity_manager_engine_plugin = self.entity_manager_engine_plugins_map[engine_name]
+        # retrieves the entity engine plugin
+        entity_engine_plugin = self.entity_engine_plugins_map[engine_name]
 
-        # creates a new entity manager with the entity manager plugin, entity manager engine
+        # creates a new entity manager with the entity manager plugin, entity engine
         # plugin, (entity manager) id and the map containing the initial entities to set the
         # context for the entity manager, this action does not trigger any loading of entities
         # of any major internal structure change
-        entity_manager = EntityManager(self.plugin, entity_manager_engine_plugin, id, entities_map, options)
+        entity_manager = EntityManager(self.plugin, entity_engine_plugin, id, entities_map, options)
 
         # in case the id of the entity manager is defined
         # (need to set the entity manager in the map)
