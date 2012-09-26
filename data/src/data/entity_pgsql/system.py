@@ -202,12 +202,18 @@ class PgsqlEngine:
             # the lock may be row level or table level (depending on
             # the definition or not of the id value)
             parent_table_name = parent.get_name()
-            self.lock_table(parent_table_name, {"field_name" : table_id, "field_value" : id_sql_value})
+            self.lock_table(parent_table_name, {
+                "field_name" : table_id,
+                "field_value" : id_sql_value
+            })
 
         # locks the table associated with the current entity class
         # the lock may be row level or table level (depending on
         # the definition or not of the id value)
-        self.lock_table(table_name, {"field_name" : table_id, "field_value" : id_sql_value})
+        self.lock_table(table_name, {
+            "field_name" : table_id,
+            "field_value" : id_sql_value
+        })
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)

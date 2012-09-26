@@ -185,7 +185,9 @@ class SqliteEngine:
     def lock(self, entity_class, id_value = None, lock_parents = True):
         table_name = entity_class.get_name()
         table_id = entity_class.get_id()
-        self.lock_table(table_name, {"field_name" : table_id})
+        self.lock_table(table_name, {
+            "field_name" : table_id
+        })
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)

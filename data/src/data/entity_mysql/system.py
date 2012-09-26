@@ -228,7 +228,7 @@ class MysqlEngine:
         # sql representation for query usage (casting) this
         # is only done in case the id value is considered valid
         id_sql_value = id_value_valid and entity_class._get_sql_value(table_id, id_value) or None
-        
+
         # retrieves the complete set of parents from the entity class
         # and default to an empty sequence in case the lock parents flag
         # is not set (no parents to be locked)
@@ -242,12 +242,18 @@ class MysqlEngine:
             # the lock may be row level or table level (depending on
             # the definition or not of the id value)
             parent_table_name = parent.get_name()
-            self.lock_table(parent_table_name, {"field_name" : table_id, "field_value" : id_sql_value})            
+            self.lock_table(parent_table_name, {
+                "field_name" : table_id,
+                "field_value" : id_sql_value
+            })
 
         # locks the table associated with the current entity class
         # the lock may be row level or table level (depending on
         # the definition or not of the id value)
-        self.lock_table(table_name, {"field_name" : table_id, "field_value" : id_sql_value})
+        self.lock_table(table_name, {
+            "field_name" : table_id,
+            "field_value" : id_sql_value
+        })
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)
