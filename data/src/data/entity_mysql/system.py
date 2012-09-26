@@ -208,8 +208,6 @@ class MysqlEngine:
         self._rollback()
 
     def lock(self, entity_class, id_value = None, fields = None, lock_parents = True):
-        # @tODO: explicar que o fields e o lock parents sao mutuamente exclusivos
-
         # retrieves the table name and id associated
         # with the entity class to be locked, these
         # values are going to be used to set the appropriate
@@ -230,18 +228,26 @@ class MysqlEngine:
         # sql representation for query usage (casting) this
         # is only done in case the id value is considered valid
         id_sql_value = id_value_valid and entity_class._get_sql_value(table_id, id_value) or None
+        
+        # retrieves the complete set of parents from the entity class
+        # and default to an empty sequence in case the lock parents flag
+        # is not set (no parents to be locked)
+        parents = entity_class.get_all_parents() if lock_parents else ()
+
+        # iterates over all the parents from the current entity class
+        # to lock their respective table so that the entity is protected
+        # in all it's levels oh inheritance
+        for parent in parents:
+            # locks the table associated with the current parent class
+            # the lock may be row level or table level (depending on
+            # the definition or not of the id value)
+            parent_table_name = parent.get_name()
+            self.lock_table(parent_table_name, {"field_name" : table_id, "field_value" : id_sql_value})            
 
         # locks the table associated with the current entity class
         # the lock may be row level or table level (depending on
         # the definition or not of the id value)
-        self.lock_table(table_name, {"field_name" : entity_class.get_id(), "field_value" : id_sql_value})
-
-
-        # ALGORITMO (parcial)
-        # 1. tenho de sacar os parents e chamar o lock para eles
-        # caso o lock parents esteja activo
-
-
+        self.lock_table(table_name, {"field_name" : table_id, "field_value" : id_sql_value})
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)
@@ -469,7 +475,7 @@ class MysqlEngine:
         return query
 
     def _lock_table_query(self, table_name, parameters):
-        # retrieves the field name amd value from the
+        # retrieves the field name and value from the
         # parameters these is going to be used in the
         # locking query for locking the provided table
         field_name = parameters["field_name"]
