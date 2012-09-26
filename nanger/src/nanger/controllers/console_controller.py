@@ -213,6 +213,7 @@ class ConsoleController(controllers.Controller):
         command = self.get_field(rest_request, "command", "")
         instance = self.get_field(rest_request, "instance", None)
         file = self.get_field(rest_request, "file", 0, int)
+        name = self.get_field(rest_request, "name", "<input>")
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -222,6 +223,10 @@ class ConsoleController(controllers.Controller):
         # must be included so that the interpreter knows that no more data
         # is coming, this avoids problems in the compilation
         if file: command += "\n"
+
+        # retrieves the final (file) name defaulting to the input token in case
+        # no file flag is set (command came from console)
+        name = name if file else "<input>"
 
         # creates the memory buffer that will hold the contents
         # resulting from the execution of the python code
@@ -276,7 +281,7 @@ class ConsoleController(controllers.Controller):
             # the source code in case the exception mode was activated
             # this should allow syntax errors to be printed
             if command_code: interpreter.runcode(command_code)
-            elif exception: interpreter.runsource(command, filename = file and "file.py" or "<input>", symbol = "exec")
+            elif exception: interpreter.runsource(command, filename = name, symbol = "exec")
         finally:
             # restores both the standard output and the standard error streams
             # into the original values (further writes will be handled normally)

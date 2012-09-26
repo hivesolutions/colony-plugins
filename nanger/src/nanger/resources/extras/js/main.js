@@ -144,7 +144,7 @@ jQuery(document).ready(function() {
                     // runs the process command on the console and waits for the
                     // response to print the newline with the information regarding
                     // the execution of the file
-                    process(true, function(result) {
+                    process(true, file.name, function(result) {
                                 newline("load " + file.name, "", result);
                             });
                 };
@@ -840,11 +840,15 @@ jQuery(document).ready(function() {
      * @param {Boolean}
      *            silent Flag that controls if the processing of the command
      *            should generate console output.
+     * @param {String}
+     *            name The name of the file representing the command to be
+     *            executed, this value should null in case the command was
+     *            created by a console.
      * @param {Function}
      *            callback The callback function to be called at the end of each
      *            command processed durring this process call.
      */
-    var process = function(silent, callback) {
+    var process = function(silent, name, callback) {
         // tries to retrieve the command queue and checks if it's empty
         // in such case must return immediately
         var commands = jQuery(".console").data("commands") || [];
@@ -866,13 +870,15 @@ jQuery(document).ready(function() {
 
         // checks if the current command refers a file oriented value
         // (contains multiple lines) or if it's just a single command line
-        var file = command.indexOf("\n") == -1 ? 0 : 1;
+        // in case the name is defined this the commands are considered
+        // to be originated from a file
+        var file = name ? 1 : 0;
 
         // in case there is pendind data to be sent and the command is not
         // empty (end of pending operation) must delay command processing
         if (_pending && command) {
             newline(value, next, "", _pending + "\n" + value, true);
-            process(silent, callback);
+            process(silent, name, callback);
             return;
         }
 
@@ -886,7 +892,8 @@ jQuery(document).ready(function() {
                     data : {
                         command : command,
                         instance : jQuery(".console").data("instance"),
-                        file : file
+                        file : file,
+                        name : name
                     },
                     success : function(data) {
                         // unpacks the resulting json data into the result
@@ -914,7 +921,7 @@ jQuery(document).ready(function() {
 
                         // runs the process command again to continue the processing
                         // of the current queue
-                        process(silent, callback);
+                        process(silent, name, callback);
                     }
                 });
     };
