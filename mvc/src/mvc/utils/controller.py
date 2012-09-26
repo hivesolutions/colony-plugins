@@ -892,7 +892,7 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     # returns if the relation is valid
     return valid_relation
 
-def get_field(self, rest_request, field_name, default_field_value = None, cast_type = None):
+def get_field(self, rest_request, field_name, default_field_value = None, cast_type = None, split = False, token = ","):
     """
     Retrieves a field value from the processed form data
     of the rest request.
@@ -901,6 +901,9 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
 
     It's possible to automatically cast the field to the
     requested cast type in case the argument is provided.
+    
+    In case the split flag is set the values are separated
+    using the provided token as the separator character.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
@@ -913,6 +916,12 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     @type cast_type: Type
     @param cast_type: The type to be used in the optional casting
     of the field value.
+    @type split: bool
+    @param split: Flag indicating if the field value should be
+    divided into multiple values using the token as separator.
+    @type token: String
+    @param token: The token to be used in the split operation in
+    case the split flag is set.
     @rtype: Object
     @return: The value for the field being request from
     the form data.
@@ -934,9 +943,19 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     form_data_map = method(rest_request)
     field_value = form_data_map.get(field_name, default_field_value)
 
+    # in case the split flag is set the field value is divided
+    # into multiple values "around" the token value
+    if split: field_value = field_value.split(token)
+
     # in case the cast type is set runs the casting in a safe
-    # manner to avoid raising exceptions
-    if cast_type: field_value = self._cast_safe(field_value, cast_type, default_field_value)
+    # manner to avoid raising exceptions, this is the execution
+    # for the split values (sequences) 
+    if cast_type and split: field_value = [self._cast_safe(value, cast_type, default_field_value) for value in field_value]
+
+    # in case the cast type is set runs the casting in a safe
+    # manner to avoid raising exceptions, this is the execution
+    # for the not split values (not sequences)
+    if cast_type and not split: field_value = self._cast_safe(field_value, cast_type, default_field_value)
 
     # returns the retrieved field value
     return field_value
@@ -3784,11 +3803,9 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     @return: The value casted to the defined type.
     """
 
-    # in case the value is none
-    # it's a special case (type)
-    if value == None:
-        # returns the value immediately
-        return value
+    # in case the value is none it's a special
+    # case (type) and must return immediately
+    if value == None: return value
 
     try:
         # retrieves the value type
