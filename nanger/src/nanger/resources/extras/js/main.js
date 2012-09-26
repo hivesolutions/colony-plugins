@@ -864,6 +864,10 @@ jQuery(document).ready(function() {
         commands = commands.slice(1);
         jQuery(".console").data("commands", commands);
 
+        // checks if the current command refers a file oriented value
+        // (contains multiple lines) or if it's just a single command line
+        var file = command.indexOf("\n") == -1 ? 0 : 1;
+
         // in case there is pendind data to be sent and the command is not
         // empty (end of pending operation) must delay command processing
         if (_pending && command) {
@@ -881,7 +885,8 @@ jQuery(document).ready(function() {
                     url : "console/execute",
                     data : {
                         command : command,
-                        instance : jQuery(".console").data("instance")
+                        instance : jQuery(".console").data("instance"),
+                        file : file
                     },
                     success : function(data) {
                         // unpacks the resulting json data into the result
