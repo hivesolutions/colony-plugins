@@ -188,11 +188,11 @@ class EntityManagerPlugin(colony.base.system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("entity_engine")
     def entity_engine_load_allowed(self, plugin, capability):
-        self.file_manager.register_entity_engine_plugin(plugin)
+        self.entity_manager.register_entity_engine_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("entity_engine")
     def entity_engine_unload_allowed(self, plugin, capability):
-        self.file_manager.unregister_entity_engine_plugin(plugin)
+        self.entity_manager.unregister_entity_engine_plugin(plugin)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
