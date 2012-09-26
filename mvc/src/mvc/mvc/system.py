@@ -89,6 +89,10 @@ class Mvc(colony.base.system.System):
     mvc_communication_handler = None
     """ The mvc communication handler """
 
+    clear_pending = False
+    """ Flag that controls if the rest sessions should be
+    cleared at the next tick of handling """
+
     matching_regex_list = []
     """ The list of matching regex to be used in
     patterns matching """
@@ -215,10 +219,14 @@ class Mvc(colony.base.system.System):
         @return: The result of the handling.
         """
 
-        # retrieves the path list
-        path_list = rest_request.get_path_list()
+        # in case the clear pending flag is set must remove
+        # (clear) all the current sessions from the rest manager
+        # this is a global reset (side problems may occur)
+        if self.clear_pending: rest_request.clear_sessions(); self.clear_pending = False
 
-        # joins the path list to creates the resource path
+        # retrieves the path list, then joins the path list
+        # to create the resource path
+        path_list = rest_request.get_path_list()
         resource_path = "/".join(path_list)
 
         # iterates over all the resource matching regex in the resource matching regex list
@@ -384,6 +392,10 @@ class Mvc(colony.base.system.System):
         @type mvc_service_plugin: Plugin
         @param mvc_service_plugin: The mvc service plugin to be unloaded.
         """
+
+        # sets the clear (session) pending flag so that the sessions
+        # are cleared for the next handling tick
+        self.clear_pending = True
 
         # retrieves the mvc service plugin patterns
         mvc_service_plugin_patterns = mvc_service_plugin.get_patterns()
