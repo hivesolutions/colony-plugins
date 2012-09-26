@@ -41,13 +41,15 @@ import pgdb
 
 import colony.libs.string_buffer_util
 
+import colony.base.system
+
 OPERATORS_MAP = {
     "length" : "char_length"
 }
 """ The map that resolves the various specific operator
 for the pgsql implementation from the generic ones """
 
-class EntityPgsql:
+class EntityPgsql(colony.base.system.System):
     """
     The entity pgsql class.
     """

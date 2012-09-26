@@ -52,10 +52,6 @@ class FileFs(colony.base.system.System):
     The file fs class.
     """
 
-    def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
-        self.plugin = plugin
-
     def get_engine_name(self):
         """
         Retrieves the name of the engine.

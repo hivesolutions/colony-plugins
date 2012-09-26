@@ -44,6 +44,8 @@ import tempfile
 
 import colony.libs.string_buffer_util
 
+import colony.base.system
+
 ENGINE_NAME = "sqlite"
 """ The name of the engine currently in execution """
 
@@ -51,7 +53,7 @@ INTERNAL_VERSION = "1.0.1"
 """ The version number that represents the internal
 implementation details """
 
-class EntitySqlite:
+class EntitySqlite(colony.base.system.System):
     """
     The entity sqlite class.
     """

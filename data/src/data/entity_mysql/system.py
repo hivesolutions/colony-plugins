@@ -43,10 +43,12 @@ import MySQLdb
 
 import colony.libs.string_buffer_util
 
+import colony.base.system
+
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution """
 
-class EntityMysql:
+class EntityMysql(colony.base.system.System):
     """
     The entity mysql class.
     """
