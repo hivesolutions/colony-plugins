@@ -415,9 +415,10 @@ def _class_lock_row_g(class_reference, name, value, entity_manager = None):
     # current class and then creates the parameters map
     # containing the definition of the field for locking
     table_name = class_reference.get_name()
+    sql_value = class_reference._get_sql_value(name, value)
     parameters = {
         "field_name" : name,
-        "field_value" : value
+        "field_value" : sql_value
     }
 
     # locks the entity manager (table) data source for the given
