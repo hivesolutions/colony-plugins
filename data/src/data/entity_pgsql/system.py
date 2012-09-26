@@ -262,7 +262,7 @@ class PgsqlEngine:
         cursor = cursor or _connection.cursor()
 
         try:
-            print "<pgsql> %s" % query # ! REMOVE THIS !
+            #print "<pgsql> %s" % query # ! REMOVE THIS !
 
             # executes the query in the current cursor
             # context for the engine
@@ -436,15 +436,24 @@ class PgsqlEngine:
         # retrieves the field name and value from the
         # parameters these is going to be used in the
         # locking query for locking the provided table
-        field_name = parameters["field_name"]
+        field_name = parameters.get("field_name", None)
         field_value = parameters.get("field_value", None)
+
+        # retrieves the list of fields (names) to be locked
+        # in the table (can't be accessed)
+        fields = parameters.get("fields", None)
+
+        # constructs the fields part of the query separated
+        # by commas, in case no set of fields is provided all
+        # the table fields are locked (uses "wildcard")
+        fields_string = fields and ", ".join(fields) or "*"
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (selecting the table for update in
         # the required field values will lock the appropriate rows)
         query_buffer = colony.libs.string_buffer_util.StringBuffer()
-        query_buffer.write("select * from %s" % table_name)
-        field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
+        query_buffer.write("select %s from %s" % (fields_string, table_name))
+        field_name and field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
         query_buffer.write(" for update")
 
         # retrieves the "final" query value from

@@ -484,7 +484,7 @@ class MysqlEngine:
         # retrieves the field name and value from the
         # parameters these is going to be used in the
         # locking query for locking the provided table
-        field_name = parameters["field_name"]
+        field_name = parameters.get("field_name", None)
         field_value = parameters.get("field_value", None)
 
         # retrieves the list of fields (names) to be locked
@@ -501,7 +501,7 @@ class MysqlEngine:
         # the required field values will lock the appropriate rows)
         query_buffer = colony.libs.string_buffer_util.StringBuffer()
         query_buffer.write("select %s from %s" % (fields_string, table_name))
-        field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
+        field_name and field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
         query_buffer.write(" for update")
 
         # retrieves the "final" query value from
