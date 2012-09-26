@@ -901,7 +901,7 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
 
     It's possible to automatically cast the field to the
     requested cast type in case the argument is provided.
-    
+
     In case the split flag is set the values are separated
     using the provided token as the separator character.
 
@@ -949,7 +949,7 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
 
     # in case the cast type is set runs the casting in a safe
     # manner to avoid raising exceptions, this is the execution
-    # for the split values (sequences) 
+    # for the split values (sequences)
     if cast_type and split: field_value = [self._cast_safe(value, cast_type, default_field_value) for value in field_value]
 
     # in case the cast type is set runs the casting in a safe
