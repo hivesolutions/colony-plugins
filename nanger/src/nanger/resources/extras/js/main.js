@@ -698,6 +698,7 @@ jQuery(document).ready(function() {
         // runs the remove query to retrieve the various autcomplete
         // results (this query is meant to be fast 100ms maximum)
         jQuery.ajax({
+            type : "post",
             url : "console/autocomplete",
             data : {
                 command : token,
@@ -888,6 +889,7 @@ jQuery(document).ready(function() {
         command = _pending + "\n" + command;
 
         jQuery.ajax({
+                    type : "post",
                     url : "console/execute",
                     data : {
                         command : command,
@@ -1335,6 +1337,7 @@ jQuery(document).ready(function() {
         // runs the remove query to retrieve the various autcomplete
         // results (this query is meant to be fast 100ms maximum)
         jQuery.ajax({
+            type : "post",
             url : "console/init",
             success : function(data) {
                 // unpacks the resulting json data into the result
