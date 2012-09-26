@@ -339,7 +339,7 @@ def _class_lock_g(class_reference, id_value, entity_manager = None):
     Class method that locks the entity manager data source
     for the entity model with the given id value.
     This method allows the indirect access to the entity
-    manager for the usage of the find method.
+    manager for the usage of the lock method.
 
     @type id_value: Object
     @param id_value: The value for the identifier attribute
@@ -356,6 +356,73 @@ def _class_lock_g(class_reference, id_value, entity_manager = None):
     # locks the entity manager data source for the given
     # class and the given id value
     entity_manager.lock(class_reference, id_value)
+
+def _class_lock_table_g(class_reference, parameters, entity_manager = None):
+    """
+    Class method that locks the entity manager data source
+    for the table associated with the current entity class.
+    This method allows the indirect access to the entity
+    manager for the usage of the lock table method.
+
+    @type parameters: Dictionary
+    @param parameters: The map containing the parameters to be
+    used in the lock of the table.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # retrieves the name of the table associated with the
+    # current class to be used in the locking
+    table_name = class_reference.get_name()
+
+    # locks the entity manager (table) data source for the given
+    # parameters (provided from the signature)
+    entity_manager.lock_table(table_name, parameters)
+
+def _class_lock_row_g(class_reference, name, value, entity_manager = None):
+    """
+    Class method that locks the entity manager data source
+    for the row defined by the name/value filter in the table
+    associated with the current class.
+    This method allows the indirect access to the entity
+    manager for the usage of the lock table method.
+
+    Note that only the bottom table hierarchy level can be
+    used in the name field (no top naming can be used).
+
+    @type name: String
+    @param name: The name of the attribute to be used in the
+    filtering, must belong to the table in the bottom of the
+    entity class hierarchy.
+    @type value: Object
+    @param value: The value to be used for the name in the
+    filter, must be of a valid type for the attribute.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or class_reference._entity_manager
+
+    # retrieves the name of the table associated with the
+    # current class and then creates the parameters map
+    # containing the definition of the field for locking
+    table_name = class_reference.get_name()
+    parameters = {
+        "field_name" : name,
+        "field_value" : value
+    }
+
+    # locks the entity manager (table) data source for the given
+    # parameters (field definition)
+    entity_manager.lock_table(table_name, parameters)
 
 def _class_valid(class_reference, entity_manager = None):
     """
