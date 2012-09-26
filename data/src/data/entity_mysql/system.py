@@ -296,7 +296,7 @@ class MysqlEngine:
         cursor = cursor or _connection.cursor()
 
         try:
-            print "<mysql> %s" % query # ! REMOVE THIS !
+            #print "<mysql> %s" % query # ! REMOVE THIS !
 
             import time
             initial = time.time()
