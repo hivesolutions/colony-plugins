@@ -2502,6 +2502,72 @@ class EntityClass(object):
         is_attached = self._scope.get("attached", True)
         return is_attached
 
+    def get_map(self, recursive = True):
+        """
+        Retrieves a map containing the "exact" same data
+        representative of this entity.
+
+        The retrieved map may contain the complete set
+        of relation of the entity or only the first level.
+
+        @type recursive: bool
+        @param recursive: If the entity relations for the
+        current level should be included in the returning map.
+        @rtype: Dictionary
+        @return: The map representation of the current entity
+        including the relation in case the recursion is required.
+        """
+
+        # creates the map structure that will load the data
+        # representing the current entity
+        map = {}
+
+        # retrieves the entity class from the current entity to
+        # be used in class level methods
+        entity_class = self.__class__
+
+        # retrieves the names map containing the complete set of
+        # names associated with the class level of owning
+        names_map = self.get_names_map()
+
+        # iterates over all the names in the names map to retrieve
+        # the associated values and set them in the map
+        for name in names_map:
+            # check if the current name contains a value in the
+            # model and in case it does not continues the loop
+            has_value = self.has_value(name)
+            if not has_value: continue
+
+            # checks if the current name refers a relation in the
+            # model and in case it does and the current mapping
+            # mode is not recursive continues the loop, not going
+            # to step into the recursive mode
+            is_relation = entity_class.is_relation(name)
+            if is_relation and not recursive: continue
+
+            # retrieves the value for the current name in the mode
+            # (it may be a sequence or a value)
+            value = self.get_value(name)
+
+            # in case the current name refers a relation and there's
+            # a valid value recursive approach applies
+            if is_relation and value:
+                # checks if the current name refers a to many relation
+                # and in case it does serializes the various elements
+                # contained in it, otherwise serializes only the value
+                # because no sequence exists
+                is_to_many = entity_class.is_to_many(name)
+                if is_to_many: value = [value.get_map(recursive = recursive) for value in value]
+                else: value = value.get_map(recursive = recursive)
+
+            # sets the current value in iteration (already converted
+            # into the map mode) in the current map
+            map[name] = value
+
+        # returns the completely constructed map to the called
+        # method, it's now completely populated
+        return map
+
     def nullify(self, recursive = False):
         """
         "Nullifies" the current entity instance by setting all
@@ -2699,7 +2765,7 @@ class EntityClass(object):
         (_mtime) attribute in the update and save operations.
 
         This is an expensive operation, and so it must be used
-        carrefully and in localized situations.
+        carefully and in localized situations.
 
         @type entity_class: EntityClass
         @param entity_class: The entity class to be used as
