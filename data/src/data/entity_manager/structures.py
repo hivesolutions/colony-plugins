@@ -2508,7 +2508,7 @@ class EntityClass(object):
         representative of this entity.
 
         The retrieved map may contain the complete set
-        of relation of the entity or only the first level.
+        of relations for the entity or only the first level.
 
         @type recursive: bool
         @param recursive: If the entity relations for the
