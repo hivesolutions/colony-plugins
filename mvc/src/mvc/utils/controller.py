@@ -1120,7 +1120,7 @@ def create_form_data_string(self, rest_request, data_map):
             # adds the form data map item to the list
             form_data_map_items.append(form_data_map_item)
 
-        # sets the remaning form data map
+        # sets the remaining form data map
         # as the form data map
         form_data_map = remaining_form_data_map
 
