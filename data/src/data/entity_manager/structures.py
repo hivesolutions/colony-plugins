@@ -2564,6 +2564,23 @@ class EntityClass(object):
             # into the map mode) in the current map
             map[name] = value
 
+        # sets the entity class name as the class attribute for
+        # the current map structure level
+        map["_class"] = entity_class.__name__
+
+        # iterates over all the set of reserved names to update
+        # the map value with their values
+        for name in RESERVED_NAMES:
+            # checks if the current model contains the current
+            # reserved name value set in case it does not continues
+            # the loop not possible to set the value
+            if not hasattr(self, name): continue
+
+            # retrieves the reserved value and sets it in the
+            # current map for setting
+            value = getattr(self, name)
+            map[name] = value
+
         # returns the completely constructed map to the called
         # method, it's now completely populated
         return map
