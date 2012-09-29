@@ -2435,7 +2435,7 @@ class EntityManager:
             id_set = id_set or item_value.get("id", False)
 
         # in case the entity class does not have any
-        # parents (it's the top level class) the "descriminator"
+        # parents (it's the top level class) the "discriminator"
         # attribute must be written into it for latter
         # type discovery in retrieval of values
         if not entity_class.has_parents():
@@ -2443,7 +2443,7 @@ class EntityManager:
             # is first flag is not set
             is_first = not is_first and query_buffer.write(", ")
 
-            # writes the class (descriminator) attribute definition
+            # writes the class (discriminator) attribute definition
             # into the create table query
             query_buffer.write("_class text")
 
@@ -2620,7 +2620,7 @@ class EntityManager:
 
             # in case the entity class has no parents (it's
             # the top level class) time to write the class
-            # (descriminator) column reference
+            # (discriminator) column reference
             if not _entity_class.has_parents():
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
@@ -2695,7 +2695,7 @@ class EntityManager:
 
             # in case the entity class has no parents (it's
             # the top level class) time to write the class
-            # (descriminator) column value
+            # (discriminator) column value
             if not _entity_class.has_parents():
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
@@ -3642,7 +3642,7 @@ class EntityManager:
         if not names or "_class" in names:
             # retrieves the top parent to be able to use it for the
             # construction of the fully qualified attribute name
-            # of the class (descriminator) field
+            # of the class (discriminator) field
             top_parent = entity_class.get_top_parent()
             top_parent_name = top_parent.get_name()
 
@@ -3650,7 +3650,7 @@ class EntityManager:
             # is first flag is not set
             is_first = not is_first and query_buffer.write(", ")
 
-            # writes the class (descriminator) reference to the select
+            # writes the class (discriminator) reference to the select
             # query and adds the field to the list of fields, it's going
             # to be used latter for correct class matching
             query_buffer.write(top_parent_name + "._class")
@@ -4926,7 +4926,7 @@ class EntityManager:
             # the current entity
             id = result_map[table_id]
 
-            # retrieves the current class using the "descriminator"
+            # retrieves the current class using the "discriminator"
             # for the retrieval of the entity definition
             current_class_name = result_map["_class"]
             current_class = self.entities_map.get(current_class_name, structures.EntityClass)
@@ -5045,7 +5045,7 @@ class EntityManager:
                     # it may be used to retrieve a possible existing entity
                     # so it may be re-used
                     else:
-                        # retrieves the target class using the "descriminator"
+                        # retrieves the target class using the "discriminator"
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
                         target_class_name = result_map[current_path + "_class"]
@@ -5230,7 +5230,7 @@ class EntityManager:
             # the current entity
             id = result_map[table_id]
 
-            # retrieves the current class using the "descriminator"
+            # retrieves the current class using the "discriminator"
             # for the retrieval of the entity definition
             current_class_name = result_map["_class"]
             current_class = self.entities_map.get(current_class_name, structures.EntityClass)
@@ -5358,7 +5358,7 @@ class EntityManager:
                     # it may be used to retrieve a possible existing entity
                     # so it may be re-used
                     else:
-                        # retrieves the target class using the "descriminator"
+                        # retrieves the target class using the "discriminator"
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
                         target_class_name = result_map[current_path + "_class"]
