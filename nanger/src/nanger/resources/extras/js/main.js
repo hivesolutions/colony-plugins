@@ -557,6 +557,9 @@
                                 ? event.keyCode
                                 : event.charCode ? event.charCode : event.which;
 
+                        // retrieves the valid key code and converts it into
+                        // a character value, then retrieves the current text
+                        // and cancel value from the console
                         var keyCode = event.keyCode || event.which;
                         var character = String.fromCharCode(keyCode);
                         var text = console.data("text") || "";
@@ -670,20 +673,32 @@
                     });
 
             text.focus(function() {
+                        // retrieves the current element and uses it to retrieve
+                        // the parent console element
                         var element = jQuery(this);
                         var console = element.parents(".console");
+
+                        // adds the focus class to the console element
                         console.addClass("focus");
                     });
 
             text.blur(function() {
+                        // retrieves the current element and uses it to retrieve
+                        // the parent console element, then uses it to retrieve
+                        // the reference to the autocomplete panel element
                         var element = jQuery(this);
                         var console = element.parents(".console");
                         var _autocomplete = jQuery(".autocomplete", console);
+
+                        // removes the focus class from the console and hides the
+                        // autocomplete panel
                         console.removeClass("focus");
                         _autocomplete.hide();
                     });
 
             __window.scroll(function() {
+                        // hides the autocomplete panel to avoid problems with
+                        // outdated positions
                         _autocomplete.hide();
                     });
         };
@@ -701,20 +716,32 @@
                 return value;
             }
 
+            // starts the list to hold the various character slices and
+            // then retrieves the length of the value to be used durring
+            // the iteration for value slicing
+            var slices = [];
             var length = value.length;
 
-            var slices = [];
-
+            // iterates over the length of the value (string) to populate
+            // the list of slices with all the value characters
             for (var index = 0; index < length; index += 1) {
                 var slice = value.slice(index, index + 1);
                 slices.push(slice);
             }
 
+            // starts the strings that will hold both the world and
+            // the (temporary) slices and then retrieves the size of
+            // the slices list to be used in the iteration
             var word = "";
             var slice = "";
-
             var sliceLength = slices.length;
+
+            // iterates over all the slices to escape their values and
+            // set the cursor position (if defined)
             for (var index = 0; index < sliceLength; index++) {
+                // escapes the slice value, then adds the cursor tag
+                // (in case it's set) and then appends the word break tag
+                // into the final value to be appended to the word
                 slice = escape ? escapeHtml(slices[index]) : slices[index];
                 slice = length - cursor - 1 == index
                         ? "<span class=\"cursor\">" + slice + "</span>"
@@ -722,20 +749,41 @@
                 word += slice + "<wbr></wbr>";
             }
 
+            // in case the cursor is not set (invalid) adds the cursor
+            // to the end of the word
             if (cursor == -1) {
                 word += "<span class=\"cursor\">&nbsp;</span>"
             }
 
+            // returns the final word with all the characters separated
+            // with word break tags (for word breaking)
             return word;
         };
 
         var refresh = function(console) {
+            // retrieves the current line element assciated with
+            // the console to update its value
             var line = jQuery(".line", console);
+
+            // retrieves the current console text value or default
+            // to an empty string then retrieves the current cursor
+            // position
             var value = console.data("text") || "";
-            var scrollHeight = console[0].scrollHeight;
             var cursor = console.data("cursor");
-            word = splitValue(value, true, cursor);
+
+            // retrieves the scroll height value from the console
+            // to be used to scroll the console to the bottom
+            var scrollHeight = console[0].scrollHeight;
+
+            // splits the value into the appropriate word representation
+            // and used it to set the line html value
+            var word = splitValue(value, true, cursor);
             line.html(word);
+
+            // scrolls the current console to the bottom position and
+            // runs the autocomplete processing operation, avoiding the
+            // processing of data in case no autocomplete is visible
+            // (avoids excessive remote calls)
             console.scrollTop(scrollHeight);
             autocomplete(console, false);
         };
