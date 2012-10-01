@@ -282,6 +282,9 @@
                             break;
                         }
 
+                        // retrieves the console cursor position and adds a sequence
+                        // of four spaces between the current parts of the values
+                        // then updates the text value of the console
                         var cursor = console.data("cursor");
                         var first = value.slice(0, value.length - cursor - 1);
                         var second = value.slice(value.length - cursor - 1,
@@ -289,6 +292,8 @@
                         var value = first + "    " + second;
                         console.data("text", value)
 
+                        // refreshs the console layout to update the console
+                        // text value
                         refresh(console);
                         break;
 
@@ -1204,18 +1209,32 @@
             // of the it (documentation exists)
             tooltip.show();
 
-            tooltip.css("margin-left", _autocomplete.outerWidth() + 4);
+            // sets the tooltip margin left position to the right of the tooltip
+            // and with a small spacing
+            var marginLeft = _autocomplete.outerWidth() + 4
+            tooltip.css("margin-left", marginLeft);
 
+            // retrieves the documentation element from the tooltip data and in
+            // case the current documentation value to be set is different updates
+            // the layout value accordingly, then saves the new value in teh data
+            // in order to avoid unnecessary updates
             var _doc = tooltip.data("doc") || "";
             if (doc != _doc) {
                 tooltipDoc.html(splitValue(doc, true));
             }
             tooltip.data("doc", doc);
 
+            // retrieves the complete set of parameters from the tooltip
+            // and only in case the current parameters are different the
+            // the tooltip parameters are created (performance decision)
             var _params = tooltip.data("params") || [];
             if (params != _params) {
+                // clears the tooltip parameters element in order to place
+                // new parameter element in there
                 tooltipParams.empty();
 
+                // iterates over all the parameters to create it's strucutre
+                // and add them to the tooltip parameters section
                 for (var index = 0; index < params.length; index++) {
                     var param = params[index];
                     tooltipParams.append("<div class=\"param\"><span class=\"name\">"
@@ -1226,12 +1245,22 @@
                             + splitValue(param[2], true) + "</span></div>")
                 }
             }
+
+            // updates the parameters list in the tooltip data to avoid
+            // unnecessary layout updates
             tooltip.data("params", params);
 
+            // retrieves the complete return value from the tooltip
+            // and only in case the current return value is different the
+            // the tooltip return value is created (performance decision)
             var __return = tooltip.data("return") || [];
             if (_return != __return) {
+                // clears the tooltip return element in order to place
+                // new return element in there
                 tooltipReturn.empty();
 
+                // in case the return value is valid creates the element
+                // and adds it to the tooltip return element
                 _return
                         && tooltipReturn.append("<div class=\"param\"><span class=\"name\">"
                                 + _return[0]
@@ -1241,18 +1270,33 @@
                                 + splitValue(_return[2], true)
                                 + "</span></div>")
             }
+
+            // updates the return value in the tooltip data to avoid
+            // unnecessary layout updates
             tooltip.data("return", _return);
 
+            // checks if the current autocomplete position is at
+            // the above of the current baseline, in order to make
+            // decisions about the relative position of the tooltip
             var isAbove = _autocomplete.hasClass("above");
 
+            // retrieves both the autocomplete height, the tooltip
+            // height and the autocomplete border botttom and uses
+            // them to calculate the delta value for the tooltip
             var autocompleteHeight = _autocomplete.outerHeight();
             var tooltipHeight = tooltip.outerHeight();
             var borderBottom = parseInt(_autocomplete.css("border-bottom"));
             var delta = autocompleteHeight - tooltipHeight - borderBottom;
 
+            // in case the delta value is less than zero it's considered
+            // to be a valid delta otherwise set's it as null, then validates
+            // again if the position is above the baseline and only in such
+            // case the delta value is considered valid
             delta = delta < 0 ? delta : null;
             delta = isAbove ? delta : null;
 
+            // updates the top margin of the tooltip with the "final" delta
+            // value resulting from the validations
             tooltip.css("margin-top", delta);
         };
 
@@ -1291,20 +1335,31 @@
         };
 
         var maximize = function(console) {
-            // retrieves the window
+            // retrieves the window element to retrieve some
+            // of its dimensions
             var _window = jQuery(window);
 
+            // retrieves the html and body global elements
+            // to be able to operate over them
             var _html = jQuery("html");
             var _body = jQuery("body");
 
+            // removes the current overflow y scroll bar (avoids
+            // duplicate scroll bar)
             _html.css("overflow-y", "hidden");
 
+            // removes the complete set of margin and padding values
+            // for the body element
             _body.css("margin", "0px 0px 0px 0px");
             _body.css("padding", "0px 0px 0px 0px");
 
+            // retrieves both the window heigh and width dimensions
+            // to be used in the console
             var windowHeight = _window.height();
             var windowWidth = _window.width();
 
+            // updates the various console attributes to set it as
+            // full occupying area of the window
             console.css("margin", "0px 0px 0px 0px");
             console.css("position", "absolute");
             console.css("top", "0px");
@@ -1312,19 +1367,30 @@
             console.height(windowHeight - 4);
             console.width(windowWidth - 8);
 
+            // retrieves the scroll height from the console
+            // and updates the console scroll position to
+            // position it at the bottom
             var scrollHeight = console[0].scrollHeight;
             console.scrollTop(scrollHeight);
         };
 
         var minimize = function(console) {
+            // retrieves the html and body global elements
+            // to be able to operate over them
             var _html = jQuery("html");
             var _body = jQuery("body");
 
+            // removes the overflow attribute from the html
+            // element to restore it (show scroll)
             _html.css("overflow-y", null);
 
+            // removes the margin and padding attributes from
+            // the body element
             _body.css("margin", null);
             _body.css("padding", null);
 
+            // removes the complete set of css attributes
+            // from the console to restore the original size
             console.css("margin", null);
             console.css("position", null);
             console.css("top", null);
@@ -1332,6 +1398,9 @@
             console.css("height", null);
             console.css("width", null);
 
+            // retrieves the scroll height from the console
+            // and updates the console scroll position to
+            // position it at the bottom
             var scrollHeight = console[0].scrollHeight;
             console.scrollTop(scrollHeight);
         };
