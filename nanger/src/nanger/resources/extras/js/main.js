@@ -892,10 +892,15 @@
                     _autocomplete.css("margin-left",
                             (startIndex * fontSize + 24) + "px");
 
+                    // retrieves the current window scroll top position to be used
+                    // as offset for the position of the autocomplete panel
+                    var windowScroll = _window.scrollTop();
+                    var marginTop = AUTOCOMPLETE_OFFSET - windowScroll;
+
                     // updates the autocomplete window margin so that the window is
                     // displayed bellow the current line and then checks if it's
                     // visible, in case it's not it must be placed above the line
-                    _autocomplete.css("margin-top", AUTOCOMPLETE_OFFSET + "px");
+                    _autocomplete.css("margin-top", marginTop + "px");
                     var isVisible = checkVisible(_autocomplete, _window);
 
                     // calculates the margin top position to be used to place
@@ -903,7 +908,8 @@
                     // in case the window is not visible places in such
                     // place (notice the minus sign in the margin)
                     var aboveMargin = _autocomplete.outerHeight()
-                            + line.outerHeight() + AUTOCOMPLETE_OFFSET;
+                            + line.outerHeight() + AUTOCOMPLETE_OFFSET
+                            + windowScroll;
                     if (isVisible) {
                         _autocomplete.removeClass("above");
                     } else {
