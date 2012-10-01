@@ -253,6 +253,10 @@ class Person(RootEntity):
             "is_mapper" : True
         }
 
+    @staticmethod
+    def _attr_double_age(instance):
+        return Person._attr(instance, "age") * 2
+
 class Employee(Person, Logable, Taxable):
     """
     The employee entity class, the set of attributes
