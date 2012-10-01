@@ -184,6 +184,30 @@ jQuery(document).ready(function() {
             }
         }
 
+        if (event.shiftKey) {
+            switch (keyValue) {
+                case 70 :
+                    // checks if the current console is currently displayed
+                    // in fullscreen and then checks if the autocomplete box
+                    // is visible
+                    var isFullscreen = jQuery(".console").hasClass("fullscreen");
+                    var isAutocompleteVisible = jQuery(".console .autocomplete").is(":visible");
+
+                    // in case the current mode is fullscreen, changes to the
+                    // window model otherwise changes to fullscreen, then in
+                    // case the autocomplete window is shows runs the layout
+                    // update in it using the autocomplete function
+                    isFullscreen ? _window() : fullscreen();
+                    isAutocompleteVisible && autocomplete(true);
+
+                    // prevents the default event to avoid unwanted behavior
+                    event.preventDefault();
+
+                    // breaks the swith
+                    break;
+            }
+        }
+
         switch (keyValue) {
             case 8 :
                 // prevents the default behavior for the backspace
