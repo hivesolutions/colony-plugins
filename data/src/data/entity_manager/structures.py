@@ -2447,7 +2447,7 @@ class EntityClass(object):
         # is retrieve using the normal map accessor otherwise
         # reflection is used to retrieve the instance attribute
         if instance_type == types.DictType: return instance[name]
-        else: return getattr(instance, name)
+        else: return instance.get_value(name)
 
     def reset(self):
         """
