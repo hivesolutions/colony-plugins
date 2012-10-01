@@ -539,6 +539,91 @@ class EntityClass(object):
         return SAFE_CHARACTER + colony.libs.string_util.to_underscore(cls.__name__)
 
     @classmethod
+    def get_all_attr_methods(cls):
+        # in case the all attr methods are already "cached" in
+        # the current class (fast retrieval)
+        if "_all_attr_methods" in cls.__dict__:
+            # returns the cached all attr methods from the entity
+            # class object reference
+            return cls._all_attr_methods
+
+        # creates the map to hold the complete set of
+        # attr methods from the class structure
+        all_attr_methods = {}
+
+        # retrieves the attr methods present at the current
+        # entity class level
+        attr_methods = cls.get_attr_methods()
+
+        # retrieves the parent entity classes from
+        # the current class
+        parents = cls.get_parents()
+
+        # iterates over all the parents to extend the all
+        # attr methods with the parent attr methods
+        for parent in parents:
+            # retrieves the (all) attr methods from the parents
+            # and extends the all attr methods map with them
+            _attr_methods = parent.get_all_attr_methods()
+            colony.libs.map_util.map_extend(all_attr_methods, _attr_methods, copy_base_map = False)
+
+        # extends the all attr methods map with the attr methods
+        # from the current entity class
+        colony.libs.map_util.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
+
+        # caches the all attr methods element in the class
+        # to provide fast access in latter access
+        cls._all_attr_methods = all_attr_methods
+
+        # returns the map that contains all the attr methods
+        # from all the parent entity classes
+        return all_attr_methods
+
+    @classmethod
+    def get_attr_methods(cls):
+        # in case the attr methods are already "cached" in the current
+        # class (fast retrieval)
+        if "_attr_methods" in cls.__dict__:
+            # returns the cached attr methods from the entity
+            # class object reference
+            return cls._attr_methods
+
+        # retrieves the items from the class, this
+        # map of items may contain extra symbols
+        items = cls._items()
+
+        # creates the map to hold the attr methods
+        # in the current class context
+        attr_methods = {}
+
+        # iterate over all the items in the current context
+        # to filter the ones that do not correspond to a valid
+        # attr method attribute, sets the appropriate ones in
+        # the attr methods map (meta information)
+        for key, value in items.items():
+            # in case the current key does not start with the
+            # attr method prefix
+            if not key.startswith("_attr_"): continue
+
+            # in case the type is a function or a method it
+            # should be ignored (not a name)
+            if not type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+
+            # retrieves the name of the attribute associated with
+            # the attr method and sets the current value in the attr
+            # methods map for the name
+            name = key[6:]
+            attr_methods[name] = cls
+
+        # caches the attr methods element in the class
+        # to provide fast access in latter access
+        cls._attr_methods = attr_methods
+
+        # returns the map that contains the attr methods
+        # from the current class level
+        return attr_methods
+
+    @classmethod
     def get_items_map(cls):
         # in case the items map are already "cached" in the current
         # class (fast retrieval)
@@ -2333,6 +2418,34 @@ class EntityClass(object):
         # it to the calling method
         is_reference = getattr(cls, "data_reference")
         return is_reference
+
+    @classmethod
+    def _attr(cls, instance, name):
+        """
+        Retrieves the value of an attribute from the provided
+        name, the provided instance may be both a map or a class
+        based instance and the value is returned using the appropriate
+        accessor method.
+
+        @type instance: Object/Dictionary
+        @param instance: The object or map structure to be used
+        to retrieve the attribute value.
+        @type name: String
+        @param name: The name of the attribute to be retrieved.
+        @rtype: Object
+        @return: The value of the attribute to be retrieved.
+        """
+
+        # retrieves the type of the provided instance
+        # it can be both a map or a concrete object
+        # from a defined model class
+        instance_type = type(instance)
+
+        # in case the provided instance is a map the value
+        # is retrieve using the normal map accessor otherwise
+        # reflection is used to retrieve the instance attribute
+        if instance_type == types.DictType: return instance[name]
+        else: return getattr(instance, name)
 
     def reset(self):
         """

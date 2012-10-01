@@ -4859,6 +4859,14 @@ class EntityManager:
         if map: result = self._unpack_result_m(entity_class, field_names, options, result_set)
         else: result = self._unpack_result_e(entity_class, field_names, options, result_set)
 
+        # iterates over all the values in the result to be able
+        # to calculate the generated attributes for the various
+        # retrieves entities, the calculus is differentiated for
+        # both the entity and map structures
+        for value in result:
+            if map: self.calc_attr_m(entity_class, value)
+            else: self.calc_attr_e(entity_class, value)
+
         # returns the unpacked result set that must contain either
         # a set of maps or a set of instances
         return result
@@ -5709,6 +5717,34 @@ class EntityManager:
             # commits the current transaction into the data source
             # because everything succeed as expected
             self.commit()
+
+    def calc_attr_m(self, entity_class, map):
+        # retrieves the complete set of (calculated) attribute
+        # method to be used to calculate the attributes for
+        # the current map structure
+        attr_methods = entity_class.get_all_attr_methods()
+
+        # iterates over all the names that are meant to be calculated
+        # and retrieves the associated method for calculus then updates
+        # the value in the structure
+        for name, _class in attr_methods.items():
+            method = getattr(_class, "_attr_" + name)
+            attribute = method(map)
+            map[name] = attribute
+
+    def calc_attr_e(self, entity_class, entity):
+        # retrieves the complete set of (calculated) attribute
+        # method to be used to calculate the attributes for
+        # the current entity structure
+        attr_methods = entity_class.get_all_attr_methods()
+
+        # iterates over all the names that are meant to be calculated
+        # and retrieves the associated method for calculus then updates
+        # the value in the structure
+        for name, _class in attr_methods.items():
+            method = getattr(_class, "_attr_" + name)
+            attribute = method(entity)
+            setattr(entity, name, attribute)
 
     def _export_class(self, entity_class, serializer, depth = 1, range = None, filters = None):
         # creates the map to hold the various options to be sent
