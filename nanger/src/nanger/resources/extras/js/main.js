@@ -1494,5 +1494,7 @@
 })(jQuery);
 
 jQuery(document).ready(function() {
+            // starts the ux console plugin for the selected console
+            // component (normal starting)
             jQuery(".console").uxconsole();
         });
