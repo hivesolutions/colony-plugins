@@ -293,7 +293,7 @@
                         console.data("text", value)
 
                         // refreshs the console layout to update the console
-                        // text value
+                        // text value and other structures
                         refresh(console);
                         break;
 
