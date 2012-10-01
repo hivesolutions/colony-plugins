@@ -754,20 +754,35 @@
          *            to be removed.
          */
         var clear = function(console, complete) {
+            // retrieves the various text related elements from
+            // the console, to be used to clear their values
             var text = jQuery(".text", console);
             var line = jQuery(".line", console);
             var previous = jQuery(".previous", console);
 
+            // resets the text and cursor value in te console
+            // data to the original values
             console.data("text", "");
             console.data("cursor", -1);
+
+            // updates the element values to the original values
+            // (visual clear operation)
             text.val("");
             line.empty();
             complete && previous.empty();
+
+            // refreshes the console layout to reflect the
+            // changes in the console structure
             refresh(console);
         };
 
         var joinResult = function(token, result) {
+            // iterates over all the commands and tries to find the
+            // ones that match the required token string start
             for (var index = 0; index < COMMANDS.length; index++) {
+                // retrieves the current command and check if it starts
+                // with the provided token in case it does adds it to
+                // the result list (set)
                 var current = COMMANDS[index];
                 var offset = current.indexOf(token);
                 if (offset != 0) {
