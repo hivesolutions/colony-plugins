@@ -4856,17 +4856,17 @@ class EntityManager:
         # in case the map option is set the map method must be
         # used, otherwise the entity (instances) based method
         # should be used instead
-        if map: result_l, _result_m, entities = self._unpack_result_m(entity_class, field_names, options, result_set)
-        else: result_l, _result_m, entities = self._unpack_result_e(entity_class, field_names, options, result_set)
+        if map: result_l, _result_m, _visited_m = self._unpack_result_m(entity_class, field_names, options, result_set)
+        else: result_l, _result_m, _visited_m = self._unpack_result_e(entity_class, field_names, options, result_set)
 
         # iterates over all the values in the result to be able
         # to calculate the generated attributes for the various
         # retrieved entities, the calculus is differentiated for
         # both the entity and map structures
-        for _class, values in entities.items():
-            for _id, entity in values.items():
-                if map: self.calc_attr_m(entity_class, entity)
-                else: self.calc_attr_e(entity_class, entity)
+        for _id, entity_tuple in _visited_m.items():
+            entity, entity_class = entity_tuple
+            if map: self.calc_attr_m(entity_class, entity)
+            else: self.calc_attr_e(entity_class, entity)
 
         # returns the unpacked result set that must contain either
         # a set of maps or a set of instances
@@ -4901,16 +4901,15 @@ class EntityManager:
         _entities_map = {}
         _entities_list = []
 
+        # creates the map that will hold the complete set of entities
+        # that have been "visited" during the unpack operation for the
+        # current query (indexed by an identifier)
+        _visited_map = {}
+
         # retrieves the table id attribute of the
         # current entity class, provides way to get
         # the unique id value for indexing
         table_id = entity_class.get_id()
-
-        total_time_map = 0
-        total_time_set = 0
-        total_time_populate = 0
-        total_time_relation_loading = 0
-        total_time_proper_setting = 0
 
         # retrieves the database encoding, this is going to
         # be used in the value conversion from sql
@@ -4920,15 +4919,11 @@ class EntityManager:
         # result set to populate the various entity
         # classes
         for result in result_set:
-            intial = time.clock()
-
             # creates the "result map" containing a map
             # associating the various field names with
             # the values of them, this map is useful
             # for key based access to the result
             result_map = dict(zip(field_names, result))
-
-            total_time_map += time.clock() - intial
 
             # retrieves the id (value) from the result
             # to check if it has been already indexed
@@ -4958,10 +4953,11 @@ class EntityManager:
                 entities[current_class][id] = current_class.build(self, entities, scope)
 
             # retrieves the entity reference from the map
-            # of entities cache (cache retrieval)
+            # of entities cache (cache retrieval) and then
+            # sets the entity in the list of visited entities
             entity = entities[current_class][id]
-
-            intial = time.clock()
+            if not entity in _visited_map:
+                _visited_map[entity] = (entity, entity.__class__)
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -4973,10 +4969,6 @@ class EntityManager:
                 # entities in an ordered fashion
                 _entities_map[id] = entity
                 _entities_list.append(entity)
-
-            total_time_set += time.clock() - intial
-
-            intial = time.clock()
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
@@ -5011,8 +5003,6 @@ class EntityManager:
                 # necessary
                 current_path = str()
 
-
-                intial_relation_loading = time.clock()
 
                 # "traverses" the complete attribute path to
                 # progressively retrieve or create the relation
@@ -5080,8 +5070,11 @@ class EntityManager:
                         # retrieves the "new" entity from the entities map, taking
                         # into account the proper target class and the current
                         # identifier value (the new entity is the entity for the
-                        # current iteration cycle)
+                        # current iteration cycle), then sets the new entity in
+                        # the map of visited entities
                         _new_entity = entities[target_class][target_id_value]
+                        if not _new_entity in _visited_map:
+                            _visited_map[_new_entity] = (_new_entity, _new_entity.__class__)
 
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
@@ -5122,10 +5115,6 @@ class EntityManager:
                     _entity = _new_entity
                     _class = _entity and target_class
 
-                total_time_relation_loading += time.clock() - intial_relation_loading
-
-                intial_proper = time.clock()
-
                 # in case the error flag is set,
                 # this attribute must be skipped
                 if error_flag == True:
@@ -5152,16 +5141,6 @@ class EntityManager:
                 # it into the entity, sql conversion
                 _entity.set_sql_value(attribute_name, item_value, encoding = database_encoding)
 
-                total_time_proper_setting += time.clock() - intial_proper
-
-            total_time_populate += time.clock() - intial
-
-        #print "map: " + str(total_time_map)
-        #print "set: " + str(total_time_set)
-        #print "populate: " + str(total_time_populate)
-        #print "relation_loading: " + str(total_time_relation_loading)
-        #print "proper_setting: " + str(total_time_proper_setting)
-
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
         # the list of retrieved entities immediately
@@ -5175,7 +5154,7 @@ class EntityManager:
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
-        return _entities_list, _entities_map, entities
+        return _entities_list, _entities_map, _visited_map
 
     def _unpack_result_m(self, entity_class, field_names, options, result_set):
         # retrieves the map of entities, per class for fast
@@ -5211,28 +5190,23 @@ class EntityManager:
         _entities_map = {}
         _entities_list = []
 
+        # creates the map that will hold the complete set of entities
+        # that have been "visited" during the unpack operation for the
+        # current query
+        _visited_map = {}
+
         # retrieves the database encoding, this is going to
         # be used in the value conversion from sql
         database_encoding = self.engine.get_database_encoding()
 
-        total_time_map = 0
-        total_time_set = 0
-        total_time_populate = 0
-        total_time_relation_loading = 0
-        total_time_proper_setting = 0
-
         # iterates over all the results present in the
         # result set to populate the various maps
         for result in result_set:
-            intial = time.clock()
-
             # creates the "result map" containing a map
             # associating the various field names with
             # the values of them, this map is useful
             # for key based access to the result
             result_map = dict(zip(field_names, result))
-
-            total_time_map += time.clock() - intial
 
             # retrieves the id (value) from the result
             # to check if it has been already indexed
@@ -5273,7 +5247,12 @@ class EntityManager:
             # of entities cache (cache retrieval)
             entity = entities[current_class][id]
 
-            intial = time.clock()
+            # calculates the identifier value for the entity (position
+            # in memory) and uses it to check if the entity should be added
+            # to the map of visited entities
+            _id = id(entity)
+            if not _id in _visited_map:
+                _visited_map[_id] = (entity, entity.__class__)
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -5285,11 +5264,6 @@ class EntityManager:
                 # entities in an ordered fashion
                 _entities_map[id] = entity
                 _entities_list.append(entity)
-
-
-            total_time_set += time.clock() - intial
-
-            intial = time.clock()
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
@@ -5325,7 +5299,6 @@ class EntityManager:
                 current_path = str()
 
 
-                intial_relation_loading = time.clock()
 
                 # "traverses" the complete attribute path to
                 # progressively retrieve or create the relation
@@ -5405,6 +5378,13 @@ class EntityManager:
                         # current iteration cycle)
                         _new_entity = entities[target_class][target_id_value]
 
+                        # calculates the identifier value for the new entity (position
+                        # in memory) and uses it to check if the new entity should be added
+                        # to the map of visited entities
+                        _id = id(_new_entity)
+                        if not _id in _visited_map:
+                            _visited_map[_id] = (_new_entity, _new_entity.__class__)
+
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
                     relation_type = relation["type"]
@@ -5443,10 +5423,6 @@ class EntityManager:
                     _entity = _new_entity
                     _class = not _entity == None and target_class
 
-                total_time_relation_loading += time.clock() - intial_relation_loading
-
-                intial_proper = time.clock()
-
                 # in case the error flag is set,
                 # this attribute must be skipped
                 if error_flag == True:
@@ -5466,16 +5442,6 @@ class EntityManager:
                 # the correct attribute name
                 _entity[attribute_name] = _class._from_sql_value(attribute_name, item_value, encoding = database_encoding)
 
-                total_time_proper_setting += time.clock() - intial_proper
-
-            total_time_populate += time.clock() - intial
-
-        #print "map: " + str(total_time_map)
-        #print "set: " + str(total_time_set)
-        #print "populate: " + str(total_time_populate)
-        #print "relation_loading: " + str(total_time_relation_loading)
-        #print "proper_setting: " + str(total_time_proper_setting)
-
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
         # the list of retrieved entities immediately
@@ -5489,7 +5455,7 @@ class EntityManager:
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
-        return _entities_list, _entities_map, entities
+        return _entities_list, _entities_map, _visited_map
 
     def _sort_to_many_e(self, entity, entity_class, visited = None):
         # creates the visited map in case it's not already defined
