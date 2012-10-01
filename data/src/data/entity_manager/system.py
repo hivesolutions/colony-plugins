@@ -4856,20 +4856,21 @@ class EntityManager:
         # in case the map option is set the map method must be
         # used, otherwise the entity (instances) based method
         # should be used instead
-        if map: result = self._unpack_result_m(entity_class, field_names, options, result_set)
-        else: result = self._unpack_result_e(entity_class, field_names, options, result_set)
+        if map: result_l, _result_m, entities = self._unpack_result_m(entity_class, field_names, options, result_set)
+        else: result_l, _result_m, entities = self._unpack_result_e(entity_class, field_names, options, result_set)
 
         # iterates over all the values in the result to be able
         # to calculate the generated attributes for the various
-        # retrieves entities, the calculus is differentiated for
+        # retrieved entities, the calculus is differentiated for
         # both the entity and map structures
-        for value in result:
-            if map: self.calc_attr_m(entity_class, value)
-            else: self.calc_attr_e(entity_class, value)
+        for _class, values in entities.items():
+            for _id, entity in values.items():
+                if map: self.calc_attr_m(entity_class, entity)
+                else: self.calc_attr_e(entity_class, entity)
 
         # returns the unpacked result set that must contain either
         # a set of maps or a set of instances
-        return result
+        return result_l
 
     def _unpack_result_e(self, entity_class, field_names, options, result_set):
         # retrieves the map of entities, per class for fast
@@ -5174,7 +5175,7 @@ class EntityManager:
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
-        return _entities_list
+        return _entities_list, _entities_map, entities
 
     def _unpack_result_m(self, entity_class, field_names, options, result_set):
         # retrieves the map of entities, per class for fast
@@ -5488,7 +5489,7 @@ class EntityManager:
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
-        return _entities_list
+        return _entities_list, _entities_map, entities
 
     def _sort_to_many_e(self, entity, entity_class, visited = None):
         # creates the visited map in case it's not already defined
@@ -5719,6 +5720,11 @@ class EntityManager:
             self.commit()
 
     def calc_attr_m(self, entity_class, map):
+        # in case the flag that controls if the value has
+        # already been calculated is set not calculation
+        # takes place (duplicated operation)
+        if "_calc_attr" in map: return
+
         # retrieves the complete set of (calculated) attribute
         # method to be used to calculate the attributes for
         # the current map structure
@@ -5733,7 +5739,16 @@ class EntityManager:
             except: pass
             else: map[name] = attribute
 
+        # sets the flag that controls the calculus of the
+        # attribute so that no duplicate operation takes place
+        map["_calc_attr"] = True
+
     def calc_attr_e(self, entity_class, entity):
+        # in case the flag that controls if the value has
+        # already been calculated is set not calculation
+        # takes place (duplicated operation)
+        if hasattr(entity, "_calc_attr"): return
+
         # retrieves the complete set of (calculated) attribute
         # method to be used to calculate the attributes for
         # the current entity structure
@@ -5747,6 +5762,10 @@ class EntityManager:
             try: attribute = method(entity)
             except: pass
             else: setattr(entity, name, attribute)
+
+        # sets the flag that controls the calculus of the
+        # attribute so that no duplicate operation takes place
+        entity._calc_attr = True
 
     def _export_class(self, entity_class, serializer, depth = 1, range = None, filters = None):
         # creates the map to hold the various options to be sent
