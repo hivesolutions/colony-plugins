@@ -4957,7 +4957,7 @@ class EntityManager:
             # sets the entity in the list of visited entities
             entity = entities[current_class][id]
             if not entity in _visited_map:
-                _visited_map[entity] = (entity, entity.__class__)
+                _visited_map[entity] = (entity, current_class)
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -5074,7 +5074,7 @@ class EntityManager:
                         # the map of visited entities
                         _new_entity = entities[target_class][target_id_value]
                         if not _new_entity in _visited_map:
-                            _visited_map[_new_entity] = (_new_entity, _new_entity.__class__)
+                            _visited_map[_new_entity] = (_new_entity, target_class)
 
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
@@ -5199,6 +5199,10 @@ class EntityManager:
         # be used in the value conversion from sql
         database_encoding = self.engine.get_database_encoding()
 
+        # "saves" the id provider function for latter usage, this
+        # way its possible to used the reserved symbol name
+        id_f = __builtins__.get("id", None)
+
         # iterates over all the results present in the
         # result set to populate the various maps
         for result in result_set:
@@ -5250,9 +5254,9 @@ class EntityManager:
             # calculates the identifier value for the entity (position
             # in memory) and uses it to check if the entity should be added
             # to the map of visited entities
-            _id = id(entity)
+            _id = id_f(entity)
             if not _id in _visited_map:
-                _visited_map[_id] = (entity, entity.__class__)
+                _visited_map[_id] = (entity, current_class)
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -5381,9 +5385,9 @@ class EntityManager:
                         # calculates the identifier value for the new entity (position
                         # in memory) and uses it to check if the new entity should be added
                         # to the map of visited entities
-                        _id = id(_new_entity)
+                        _id = id_f(_new_entity)
                         if not _id in _visited_map:
-                            _visited_map[_id] = (_new_entity, _new_entity.__class__)
+                            _visited_map[_id] = (_new_entity, target_class)
 
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
