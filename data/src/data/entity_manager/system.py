@@ -5729,8 +5729,9 @@ class EntityManager:
         # the value in the structure
         for name, _class in attr_methods.items():
             method = getattr(_class, "_attr_" + name)
-            attribute = method(map)
-            map[name] = attribute
+            try: attribute = method(map)
+            except: pass
+            else: map[name] = attribute
 
     def calc_attr_e(self, entity_class, entity):
         # retrieves the complete set of (calculated) attribute
@@ -5743,8 +5744,9 @@ class EntityManager:
         # the value in the structure
         for name, _class in attr_methods.items():
             method = getattr(_class, "_attr_" + name)
-            attribute = method(entity)
-            setattr(entity, name, attribute)
+            try: attribute = method(entity)
+            except: pass
+            else: setattr(entity, name, attribute)
 
     def _export_class(self, entity_class, serializer, depth = 1, range = None, filters = None):
         # creates the map to hold the various options to be sent
