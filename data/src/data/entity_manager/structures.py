@@ -148,6 +148,7 @@ INVALID_NAMES = set((
     "_id",
     "_parents",
     "_abstract_parents",
+    "_attr_methods",
     "_items_map",
     "_names_map",
     "_generated_map",
@@ -157,6 +158,7 @@ INVALID_NAMES = set((
     "_indirect_relations_map",
     "_to_one_map",
     "_to_many_map",
+    "_all_attr_methods",
     "_all_relations",
     "_all_parents",
     "_all_abstract_parents",
@@ -539,47 +541,6 @@ class EntityClass(object):
         return SAFE_CHARACTER + colony.libs.string_util.to_underscore(cls.__name__)
 
     @classmethod
-    def get_all_attr_methods(cls):
-        # in case the all attr methods are already "cached" in
-        # the current class (fast retrieval)
-        if "_all_attr_methods" in cls.__dict__:
-            # returns the cached all attr methods from the entity
-            # class object reference
-            return cls._all_attr_methods
-
-        # creates the map to hold the complete set of
-        # attr methods from the class structure
-        all_attr_methods = {}
-
-        # retrieves the attr methods present at the current
-        # entity class level
-        attr_methods = cls.get_attr_methods()
-
-        # retrieves the parent entity classes from
-        # the current class
-        parents = cls.get_parents()
-
-        # iterates over all the parents to extend the all
-        # attr methods with the parent attr methods
-        for parent in parents:
-            # retrieves the (all) attr methods from the parents
-            # and extends the all attr methods map with them
-            _attr_methods = parent.get_all_attr_methods()
-            colony.libs.map_util.map_extend(all_attr_methods, _attr_methods, copy_base_map = False)
-
-        # extends the all attr methods map with the attr methods
-        # from the current entity class
-        colony.libs.map_util.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
-
-        # caches the all attr methods element in the class
-        # to provide fast access in latter access
-        cls._all_attr_methods = all_attr_methods
-
-        # returns the map that contains all the attr methods
-        # from all the parent entity classes
-        return all_attr_methods
-
-    @classmethod
     def get_attr_methods(cls):
         # in case the attr methods are already "cached" in the current
         # class (fast retrieval)
@@ -622,6 +583,47 @@ class EntityClass(object):
         # returns the map that contains the attr methods
         # from the current class level
         return attr_methods
+
+    @classmethod
+    def get_all_attr_methods(cls):
+        # in case the all attr methods are already "cached" in
+        # the current class (fast retrieval)
+        if "_all_attr_methods" in cls.__dict__:
+            # returns the cached all attr methods from the entity
+            # class object reference
+            return cls._all_attr_methods
+
+        # creates the map to hold the complete set of
+        # attr methods from the class structure
+        all_attr_methods = {}
+
+        # retrieves the attr methods present at the current
+        # entity class level
+        attr_methods = cls.get_attr_methods()
+
+        # retrieves the parent entity classes from
+        # the current class
+        parents = cls.get_parents()
+
+        # iterates over all the parents to extend the all
+        # attr methods with the parent attr methods
+        for parent in parents:
+            # retrieves the (all) attr methods from the parents
+            # and extends the all attr methods map with them
+            _attr_methods = parent.get_all_attr_methods()
+            colony.libs.map_util.map_extend(all_attr_methods, _attr_methods, copy_base_map = False)
+
+        # extends the all attr methods map with the attr methods
+        # from the current entity class
+        colony.libs.map_util.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
+
+        # caches the all attr methods element in the class
+        # to provide fast access in latter access
+        cls._all_attr_methods = all_attr_methods
+
+        # returns the map that contains all the attr methods
+        # from all the parent entity classes
+        return all_attr_methods
 
     @classmethod
     def get_items_map(cls):
