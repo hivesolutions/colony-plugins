@@ -353,42 +353,66 @@
                         break;
 
                     case 35 :
+                        // updates the cursor position to the rightmost position
+                        // (end operation) and then refreshs the console layout
+                        // to update the console text value and other structures
                         console.data("cursor", -1);
                         refresh(console);
                         break;
 
                     case 36 :
+                        // updates the cursor position to the leftmost position
+                        // (end operation) and then refreshs the console layout
+                        // to update the console text value and other structures
                         console.data("cursor", value.length - 1);
                         refresh(console);
                         break;
 
                     case 37 :
+                        // retrieves the current cursor position in order
+                        // to move it to the left, in case the position is the
+                        // last breaks the switch (nothing to be done)
                         var cursor = console.data("cursor");
                         if (cursor == value.length - 1) {
                             break;
                         }
+
+                        // increments the cursor position (moves it to the left)
+                        // and updates the value in the console data
                         cursor++;
                         console.data("cursor", cursor);
 
+                        // refreshs the console layout to update the console
+                        // text value and other structures
                         refresh(console);
-
                         break;
 
                     case 38 :
+                        // checks if the autocomplete panel is currently visible
+                        // for such situations the currently selected item in it
+                        // should be replaced by the previous one (move down)
                         var isVisible = _autocomplete.is(":visible");
-
                         if (isVisible) {
+                            // retrieves the currently selected item and in case
+                            // it's the first element returns immediately, can't
+                            // move it up from that position
                             var selected = jQuery("ul > li.selected",
                                     _autocomplete);
                             if (selected.is(":first-child")) {
                                 return;
                             }
+
+                            // removes the selected class from the selected element
+                            // and retrieves its index position
                             selected.removeClass("selected");
                             var selectedIndex = selected.index();
+
+                            // retrieves the target element (previous element) and selects
+                            // it by adding the selected class and ensuring its visibility
+                            // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:nth-child("
                                             + (selectedIndex) + ")",
                                     _autocomplete);
-
                             target.addClass("selected");
                             ensureVisible(target, _autocomplete);
                             selectAutocomplete();
@@ -397,42 +421,70 @@
                             break;
                         }
 
+                        // retrieves the current history list and the current index
+                        // for the history, going to be used to update the text
                         var history = console.data("history") || [];
                         var historyIndex = console.data("history_index") || 0;
 
+                        // retrieves the current (text) value from the history list
+                        // and then increments the index (pointer) for the history
                         var value = history[history.length - historyIndex - 1];
                         if (historyIndex != history.length - 1) {
                             historyIndex++;
                         }
 
+                        // updates the console data information for the "new" text
+                        // value and for the history index
                         console.data("text", value)
                         console.data("history_index", historyIndex)
 
+                        // refreshs the console layout to update the console
+                        // text value and other structures
                         refresh(console);
                         break;
 
                     case 39 :
+                        // retrieves the current cursor position in order
+                        // to move it to the right, in case the position is the
+                        // last breaks the switch (nothing to be done)
                         var cursor = console.data("cursor");
                         if (cursor == -1) {
                             break;
                         }
+
+                        // decrements the cursor position (moves it to the right)
+                        // and updates the value in the console data
                         cursor--;
                         console.data("cursor", cursor);
 
+                        // refreshs the console layout to update the console
+                        // text value and other structures
                         refresh(console);
                         break;
 
                     case 40 :
+                        // checks if the autocomplete panel is currently visible
+                        // for such situations the currently selected item in it
+                        // should be replaced by the next one (move down)
                         var isVisible = _autocomplete.is(":visible");
-
                         if (isVisible) {
+                            // retrieves the currently selected item and in case
+                            // it's the last element returns immediately, can't
+                            // move it down from that position
                             var selected = jQuery("ul > li.selected",
                                     _autocomplete);
                             if (selected.is(":last-child")) {
                                 return;
                             }
+
+                            // removes the selected class from the selected element
+                            // and retrieves its index position
                             selected.removeClass("selected");
                             var selectedIndex = selected.index();
+
+                            // retrieves the target element (next element) and selects
+                            // it by adding the selected class and ensuring its visibility
+                            // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:nth-child("
                                             + (selectedIndex + 2) + ")",
                                     _autocomplete);
@@ -444,17 +496,25 @@
                             break;
                         }
 
+                        // retrieves the current history list and the current index
+                        // for the history, going to be used to update the text
                         var history = console.data("history") || [];
                         var historyIndex = console.data("history_index") || 0;
 
+                        // retrieves the current (text) value from the history list
+                        // and then decrements the index (pointer) for the history
                         var value = history[history.length - historyIndex];
                         if (historyIndex != 0) {
                             historyIndex--;
                         }
 
+                        // updates the console data information for the "new" text
+                        // value and for the history index
                         console.data("text", value)
                         console.data("history_index", historyIndex)
 
+                        // refreshs the console layout to update the console
+                        // text value and other structures
                         refresh(console);
                         break;
 
@@ -463,19 +523,28 @@
                         // key because it would focus the window on the text area
                         event.preventDefault();
 
+                        // retrieves the currently set cursor from the console
+                        // and in case it's not set breaks immediately
                         var cursor = console.data("cursor");
                         if (cursor == -1) {
                             break;
                         }
 
+                        // retrieves the firt and second part of the current line
+                        // and removes a character at the position of the cursor
+                        // this should be able to replicate the delete "effect"
                         var first = value.slice(0, value.length - cursor - 1);
                         var second = value.slice(value.length - cursor,
                                 value.length);
                         var value = first + second;
 
+                        // updates the text (value) in the console and "moves" the
+                        // cursor one position
                         console.data("text", value)
                         console.data("cursor", cursor - 1)
 
+                        // refreshs the console layout to update the console
+                        // text value and other structures
                         refresh(console);
                         break;
 
