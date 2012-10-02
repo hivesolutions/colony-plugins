@@ -133,17 +133,17 @@ class MvcCommunicationHandler:
         # retrieves the request command
         command = request.get_attribute("command")
 
-        # in case the command is not defined
+        # in case the command is not defined raises the
+        # invalid communication command exception
         if not command:
-            # raises the invalid communication command exception
             raise exceptions.InvalidCommunicationCommandException(None, 406)
 
         # creates the process method name
         process_method_name = "process_" + command
 
-        # in case the process method does not exists
+        # in case the process method does not exists raises
+        # the invalid communication command exception
         if not hasattr(self, process_method_name):
-            # raises the invalid communication command exception
             raise exceptions.InvalidCommunicationCommandException(command, 406)
 
         # retrieves the process method for the given method
@@ -181,9 +181,9 @@ class MvcCommunicationHandler:
         # tries to retrieve the communication connection
         communication_connection = self._get_connection(request, connection_name)
 
-        # in case no communication connection is available
+        # in case no communication connection is available raises
+        # the communication command exception
         if not communication_connection:
-            # raises the communication command exception
             raise exceptions.CommunicationCommandException("no communication connection available")
 
         # sets the request as delayed (for latter writing)
