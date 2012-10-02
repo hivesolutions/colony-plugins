@@ -70,10 +70,6 @@
             // complete operation
             text.val("");
 
-            // "clicks" in the console so that the focus is started
-            // at the console (immediate interaction)
-            matchedObject.click();
-
             // iterates over each of the matched object to start "their"
             // console structures
             matchedObject.each(function(index, element) {
@@ -298,21 +294,33 @@
                         break;
 
                     case 27 :
+                        // hides the autocomplete panel, cancelation operation
+                        // occurred (should take effect immediately)
                         _autocomplete.hide();
                         break;
 
                     case 32 :
+                        // hides the autocomplete panel, cancelation operation
+                        // occurred (should take effect immediately)
                         _autocomplete.hide();
                         cancel = false;
                         break;
 
                     case 33 :
+                        // checks if the autocomplete panel is currently visible
+                        // for such situations the currently selected item in it
+                        // should be replaced by the first one (page up)
                         var isVisible = _autocomplete.is(":visible");
-
                         if (isVisible) {
+                            // retrieves the currently selected item and removes the
+                            // selected class from it
                             var selected = jQuery("ul > li.selected",
                                     _autocomplete);
                             selected.removeClass("selected");
+
+                            // retrieves the target element (first element) and selects
+                            // it by adding the selected class and ensuring its visibility
+                            // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:first-child",
                                     _autocomplete);
                             target.addClass("selected");
@@ -327,15 +335,24 @@
                             break;
                         }
 
+                        // breaks the switch
                         break;
 
                     case 34 :
+                        // checks if the autocomplete panel is currently visible
+                        // for such situations the currently selected item in it
+                        // should be replaced by the last one (page down)
                         var isVisible = _autocomplete.is(":visible");
-
                         if (isVisible) {
+                            // retrieves the currently selected item and removes the
+                            // selected class from it
                             var selected = jQuery("ul > li.selected",
                                     _autocomplete);
                             selected.removeClass("selected");
+
+                            // retrieves the target element (last element) and selects
+                            // it by adding the selected class and ensuring its visibility
+                            // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:last-child",
                                     _autocomplete);
                             target.addClass("selected");
@@ -350,6 +367,7 @@
                             break;
                         }
 
+                        // breaks the switch
                         break;
 
                     case 35 :
@@ -1696,6 +1714,9 @@
 
 jQuery(document).ready(function() {
             // starts the ux console plugin for the selected console
-            // component (normal starting)
-            jQuery(".console").uxconsole();
+            // component (normal starting) then clicks in it to trigger
+            // the immediate selection of the console
+            var console = jQuery(".console");
+            console.uxconsole();
+            console.click();
         });
