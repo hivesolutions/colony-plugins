@@ -209,6 +209,8 @@
                 if (event.ctrlKey) {
                     switch (keyValue) {
                         case 32 :
+                            // forces the showing of the autocomplete panel
+                            // to display it accordingly
                             autocomplete(console, true);
                             break;
 
@@ -250,17 +252,24 @@
                         // key because it would focus the window on the text area
                         event.preventDefault();
 
+                        // retrieves the current cursor position and in case the
+                        // position is the first (leftmost) nothing is to be done
                         var cursor = console.data("cursor");
                         if (cursor == value.length - 1) {
                             break;
                         }
 
+                        // retrieves the firt and second part of the current line
+                        // and removes a character at the position of the cursor
+                        // this should be able to replicate the backspace "effect"
                         var first = value.slice(0, value.length - cursor - 2);
                         var second = value.slice(value.length - cursor - 1,
                                 value.length);
                         var value = first + second;
                         console.data("text", value)
 
+                        // refreshes the console layout to update the console
+                        // text value and other structures
                         refresh(console);
                         break;
 
@@ -288,7 +297,7 @@
                         var value = first + "    " + second;
                         console.data("text", value)
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -372,7 +381,7 @@
 
                     case 35 :
                         // updates the cursor position to the rightmost position
-                        // (end operation) and then refreshs the console layout
+                        // (end operation) and then refreshes the console layout
                         // to update the console text value and other structures
                         console.data("cursor", -1);
                         refresh(console);
@@ -380,7 +389,7 @@
 
                     case 36 :
                         // updates the cursor position to the leftmost position
-                        // (end operation) and then refreshs the console layout
+                        // (end operation) and then refreshes the console layout
                         // to update the console text value and other structures
                         console.data("cursor", value.length - 1);
                         refresh(console);
@@ -400,7 +409,7 @@
                         cursor++;
                         console.data("cursor", cursor);
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -456,7 +465,7 @@
                         console.data("text", value)
                         console.data("history_index", historyIndex)
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -475,7 +484,7 @@
                         cursor--;
                         console.data("cursor", cursor);
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -531,7 +540,7 @@
                         console.data("text", value)
                         console.data("history_index", historyIndex)
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -561,7 +570,7 @@
                         console.data("text", value)
                         console.data("cursor", cursor - 1)
 
-                        // refreshs the console layout to update the console
+                        // refreshes the console layout to update the console
                         // text value and other structures
                         refresh(console);
                         break;
@@ -1212,11 +1221,16 @@
             var startIndex = tokenStructure[1];
             var endIndex = tokenStructure[2];
 
+            // splits the token arround the part separator and retrieves the path
+            // (first part) that will remain static and then add the new text into
+            // the structure and joint the list creating the "final" token value
             var tokenElements = token.split(".");
             var tokenElements = tokenElements.slice(0, tokenElements.length - 1);
             tokenElements.push(text);
             token = tokenElements.join(".")
 
+            // retrieves the remaining parts of the line (the ones not to be changed)
+            // to be appended and prepended to the just created token value
             var start = _text.slice(0, startIndex);
             var end = _text.slice(endIndex);
 
@@ -1224,6 +1238,8 @@
             // adds it (this will appear at the front of the value)
             token += options["extra"] || "";
 
+            // starts the is (method/function) call flag as unset, by default
+            // no (method/function) call will occur
             call = false;
 
             // in case the currently selected item is a method or a function
@@ -1242,9 +1258,12 @@
             // calculates the new cursor position based on the partial
             // token values and the start string length and takes into
             // account the possible offset for the call situations
-            var cursor = text.length
-                    - (start.length + token.length + (call ? 0 : 1))
+            var cursor = text.length - (start.length + token.length);
+            cursor -= call ? 0 : 1;
 
+            // updates the console text and cursor values, then hides the
+            // autocomplete panel and refreshes the console layout to update
+            // the console text value and other structures
             console.data("text", text);
             console.data("cursor", cursor);
             _autocomplete.hide();
@@ -1465,12 +1484,16 @@
                 break;
             }
 
+            // increments the index by one value, in order to compensate the
+            // space character used as the final in the previous iteration
             index++;
 
             // saves the current index position as the start index position
             // for the command (the reference to the first letter)
             var startIndex = index;
 
+            // iterates over the range between the start index and the command
+            // length to try to find the next space character and end the token
             for (var index = startIndex; index < command.length; index++) {
                 if (command[index] != " ") {
                     continue;
@@ -1478,9 +1501,13 @@
                 break;
             }
 
+            // sets the end index as the current index and uses it together
+            // with the start index to retrieve the (complete) token value
             var endIndex = index;
             var token = command.slice(startIndex, endIndex);
 
+            // returns a list representing a tuple containing the token the
+            // start and end index for it (in the line)
             return [token, startIndex, endIndex];
         };
 
