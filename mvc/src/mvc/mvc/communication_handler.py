@@ -322,7 +322,7 @@ class MvcCommunicationHandler:
         @type request: HttpRequest
         @param request: The http request to be used to retrieve
         the id.
-        @type connection_name: Srring
+        @type connection_name: String
         @param connection_name: The name of the connection to be
         retrieved.
         @rtype: CommunicationConnection
