@@ -66,25 +66,32 @@ class MvcCommunicationHandler:
     """ The mvc plugin """
 
     connection_name_connections_map = {}
-    """ The map associating the connection name with the connections """
+    """ The map associating the connection
+    name with the connections """
 
     service_connection_connections_map = {}
-    """ The map associating the service connection with the connections """
+    """ The map associating the service
+    connection with the connections """
 
     connection_complete_information_connection_map = {}
-    """ The map associating the connection complete information with the connection """
+    """ The map associating the connection
+    complete information with the connection """
 
     connection_queue = []
-    """ The queue that holds the connections with messages ready to be processed """
+    """ The queue that holds the connections
+    with messages ready to be processed """
 
     connection_queue_lock = None
-    """ The lock that controls the access to the connection (messages) queue """
+    """ The lock that controls the access to
+    the connection (messages) queue """
 
     connection_queue_event = None
-    """ The event that controls the existence of new messages in the connection queue """
+    """ The event that controls the existence
+    of new messages in the connection queue """
 
     connection_processing_thread = None
-    """ The thread that controls the processing of the messages """
+    """ The thread that controls the processing
+    of the messages """
 
     def __init__(self, mvc_plugin):
         """
@@ -115,7 +122,8 @@ class MvcCommunicationHandler:
         @type data_handler_method: Method
         @param data_handler_method: The method for data handling.
         @type connection_changed_handler_method: Method
-        @param connection_changed_handler_method: The method for connection changed handling.
+        @param connection_changed_handler_method: The method for
+        connection changed handling.
         @type connection_name: String
         @param connection_name: The name of the connection.
         @rtype: bool
@@ -219,6 +227,9 @@ class MvcCommunicationHandler:
         Sends a broadcast message to all the clients in the connection
         with the given name.
 
+        The usage of this method implies that no security measured will
+        be applied to the message (public message).
+
         @type connection_name: String
         @param connection_name: The name of the connection to be used
         to send the message.
@@ -229,7 +240,8 @@ class MvcCommunicationHandler:
         # retrieves the communication connections
         communication_connections = self.get_connections_by_connection_name(connection_name)
 
-        # iterates over all the communication connections
+        # iterates over all the communication connections to send
+        # the message into their queues (all queues allowed)
         for communication_connection in communication_connections:
             # adds the message to the communication connection queue
             communication_connection.add_message_queue(message)
