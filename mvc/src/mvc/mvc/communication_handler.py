@@ -138,7 +138,8 @@ class MvcCommunicationHandler:
         if not command:
             raise exceptions.InvalidCommunicationCommandException(None, 406)
 
-        # creates the process method name
+        # creates the process method name by appending the command name
+        # to the base prefix process name
         process_method_name = "process_" + command
 
         # in case the process method does not exists raises
@@ -146,10 +147,16 @@ class MvcCommunicationHandler:
         if not hasattr(self, process_method_name):
             raise exceptions.InvalidCommunicationCommandException(command, 406)
 
-        # retrieves the process method for the given method
+        # retrieves the process method for the given method and calls it
+        # with the request to be handled, the data handler method
         process_method = getattr(self, process_method_name)
-
-        return process_method(request, data_handler_method, connection_changed_handler_method, connection_name)
+        process_method(
+            request,
+            data_handler_method,
+            connection_changed_handler_method,
+            connection_name
+        )
+        return True
 
     def process_connect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         # retrieves the random plugin
@@ -158,24 +165,23 @@ class MvcCommunicationHandler:
         # retrieves the service connection
         service_connection = request.get_service_connection()
 
-        # generates a new connection id
+        # generates a new connection id, then uses it to create the
+        # communication connection and adds it to the internal structures
         connection_id = random_plugin.generate_random_md5_string()
-
-        # creates a new communication connection from the service connection
-        communication_connection = CommunicationConnection(self, connection_id, connection_name, service_connection)
-
-        # adds the communication connection
+        communication_connection = CommunicationConnection(
+            self,
+            connection_id,
+            connection_name,
+            service_connection
+        )
         self._add_communication_connection(communication_connection)
 
-        # writes the success message
+        # writes the success message to the client end point to
+        # notify it about the success
         self._write_message(request, communication_connection, "success")
 
-        # returns true (valid)
-        return True
-
     def process_disconnect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
-        # returns true (valid)
-        return True
+        pass
 
     def process_update(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         # tries to retrieve the communication connection
@@ -201,12 +207,8 @@ class MvcCommunicationHandler:
         communication_element = (communication_connection, request, target_time)
         self.connection_processing_thread.add_queue(communication_element)
 
-        # returns true (valid)
-        return True
-
     def process_data(self, request, data_handler_method, connection_changed_handler_method, connection_name):
-        # returns true (valid)
-        return True
+        pass
 
     def get_connections_by_connection_name(self, connection_name):
         """
@@ -431,7 +433,9 @@ class ConnectionProcessingThread(threading.Thread):
     """ Flag controlling the execution of the thread """
 
     processing_queue = []
-    """ The processing queue """
+    """ The processing queue to be used to store the
+    various communication elements that contain the
+    request associated with the connection to be sent """
 
     processing_map = []
     """ The processing map """

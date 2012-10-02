@@ -231,13 +231,10 @@ class Mvc(colony.base.system.System):
 
         # iterates over all the resource matching regex in the resource matching regex list
         for resource_matching_regex in self.resource_matching_regex_list:
-            # tries to math the resource path
+            # tries to math the resource path in case there is no
+            # valid resource path match must continue the loop
             resource_path_match = resource_matching_regex.match(resource_path)
-
-            # in case there is no valid resource path match
-            if not resource_path_match:
-                # continues the loop
-                continue
+            if not resource_path_match: continue
 
             # handles the match, returning the result of the handling
             self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
@@ -250,13 +247,10 @@ class Mvc(colony.base.system.System):
 
         # iterates over all the communication matching regex in the communication matching regex list
         for communication_matching_regex in self.communication_matching_regex_list:
-            # tries to math the communication path
+            # tries to math the communication path in case there is no
+            # valid communication path match must continue the loop
             communication_path_match = communication_matching_regex.match(resource_path)
-
-            # in case there is no valid communication path match
-            if not communication_path_match:
-                # continues the loop
-                continue
+            if not communication_path_match: continue
 
             # handles the match, returning the result of the handling
             self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
@@ -269,21 +263,16 @@ class Mvc(colony.base.system.System):
 
         # iterates over all the matching regex in the matching regex list
         for matching_regex in self.matching_regex_list:
-            # tries to math the resource path
+            # tries to math the resource path in case there is
+            # no valid resource path match must continue the loop
             resource_path_match = matching_regex.match(resource_path)
+            if not resource_path_match: continue
 
-            # in case there is no valid resource path match
-            if not resource_path_match:
-                # continues the loop
-                continue
-
-            # validate the match and retrieves the handle tuple
+            # validate the match and retrieves the handle tuple and in
+            # case the handle tuple is invalid continues immediately
+            # because it's not possible to process the request
             handle_tuple = self._validate_match(rest_request, resource_path, resource_path_match, matching_regex)
-
-            # in case the handle tuple is not valid
-            if not handle_tuple:
-                # continues the loop
-                continue
+            if not handle_tuple: continue
 
             # handles the match, returning the result of the handling
             self._handle_match(rest_request, handle_tuple)
@@ -294,7 +283,8 @@ class Mvc(colony.base.system.System):
             # returns immediately
             return
 
-        # raises the mvc request not handled exception
+        # raises the mvc request not handled exception, because no mvc
+        # service was found for the current request constraints
         raise exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
 
     def load_mvc_service_plugin(self, mvc_service_plugin):
@@ -433,10 +423,8 @@ class Mvc(colony.base.system.System):
 
                 # in case the pattern attributes list is not empty, there are
                 # more patterns associated with the pattern key, no need
-                # to remove the patter key references
-                if pattern_attributes_list:
-                    # continues the loop
-                    continue
+                # to remove the patter key references, continues the loop
+                if pattern_attributes_list: continue
 
                 # removes the pattern attributes list from the mvc service patterns map
                 del self.mvc_service_patterns_map[pattern_key_escaped]
@@ -506,10 +494,9 @@ class Mvc(colony.base.system.System):
         group_index = resource_path_match.lastindex
 
         # calculates the mvc service index from the base value,
-        # the group index and subtracts one value
+        # the group index and subtracts one value and uses it
+        # to retrieves the resource pattern
         mvc_service_index = base_value + group_index - 1
-
-        # retrieves the resource pattern for the mvc service index
         pattern = self.mvc_service_resource_patterns_list[mvc_service_index]
 
         # retrieves the resource information
@@ -519,9 +506,8 @@ class Mvc(colony.base.system.System):
         resource_base_path, resource_initial_token = resource_information
 
         # in case the resource path does not start with the resource
-        # initial token
+        # initial token  raises the invalid token value
         if not resource_path.startswith(resource_initial_token):
-            # raises the invalid token value
             raise exceptions.InvalidTokenValue("invalid initial path request")
 
         # retrieves the resources initial token length
@@ -541,10 +527,9 @@ class Mvc(colony.base.system.System):
         group_index = communication_path_match.lastindex
 
         # calculates the mvc service index from the base value,
-        # the group index and subtracts one value
+        # the group index and subtracts one value and uses it to
+        # retrieves the communication pattern
         mvc_service_index = base_value + group_index - 1
-
-        # retrieves the communication pattern for the mvc service index
         pattern = self.mvc_service_communication_patterns_list[mvc_service_index]
 
         # retrieves the communication information
@@ -564,10 +549,9 @@ class Mvc(colony.base.system.System):
         group_index = resource_path_match.lastindex
 
         # calculates the mvc service index from the base value,
-        # the group index and subtracts one value
+        # the group index and subtracts one value and uses it to
+        # retrieve the pattern
         mvc_service_index = base_value + group_index - 1
-
-        # retrieves the pattern for the mvc service index
         pattern = self.mvc_service_patterns_list[mvc_service_index]
 
         # retrieves the pattern attributes list from the
@@ -585,10 +569,9 @@ class Mvc(colony.base.system.System):
             return_value = self.__validate_match(rest_request, handler_attributes, resource_path)
 
             # in case the return value is not valid
-            # (no success in validation)
-            if not return_value:
-                # continues the loop
-                continue
+            # (no success in validation) must continue
+            # the loop (keep trying)
+            if not return_value: continue
 
             # breaks the loop (valid match)
             break
@@ -900,8 +883,8 @@ class Mvc(colony.base.system.System):
         resource_path_validation_match = handler_validation_regex.match(resource_path)
 
         # in case there is no resource path validation match
+        # # raises the runtime request exception
         if not resource_path_validation_match:
-            # raises the runtime request exception
             raise exceptions.RuntimeRequestException("invalid resource path validation match")
 
         # retrieves the length of the handler arguments
@@ -1002,13 +985,11 @@ class Mvc(colony.base.system.System):
         @return: The casted tuple value.
         """
 
-        # in case the value is invalid
-        if value == None:
-            # returns the value
-            return value
+        # in case the value is invalid, returns
+        # the value immediately
+        if value == None: return value
 
-        # creates the tuple value from the value
+        # creates the tuple value from the value and returns
+        # the value to the caller method
         tuple_value = type(value) == types.TupleType and value or (value,)
-
-        # returns the tuple value
         return tuple_value
