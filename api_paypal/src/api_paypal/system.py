@@ -158,7 +158,7 @@ class PaypalClient:
         """
         Constructor of the class.
 
-        @type client_http_plugin: MainClientHttpPlugin
+        @type client_http_plugin: ClientHttpPlugin
         @param client_http_plugin: The client http plugin.
         @type paypal_structure: PaypalStructure
         @param paypal_structure: The paypal structure.
