@@ -46,7 +46,7 @@ import colony.libs.string_buffer_util
 
 import exceptions
 import file_handler
-import communication_handler
+import communication
 
 NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value """
@@ -162,7 +162,7 @@ class Mvc(colony.base.system.System):
         self.mvc_service_resource_patterns_list = []
 
         self.mvc_file_handler = file_handler.MvcFileHandler(plugin)
-        self.mvc_communication_handler = communication_handler.MvcCommunicationHandler(plugin)
+        self.mvc_communication_handler = communication.MvcCommunicationHandler(plugin)
 
     def start_system(self):
         """
@@ -484,7 +484,7 @@ class Mvc(colony.base.system.System):
 
     def process_mvc_communication_event(self, event_name, connection_name, message):
         # sends the broadcast message
-        self.mvc_communication_handler.send_broadcast_message(connection_name, message)
+        self.mvc_communication_handler.send_broadcast(connection_name, message)
 
     def _handle_resource_match(self, rest_request, resource_path, resource_path_match, resource_matching_regex):
         # retrieves the base value for the matching regex
