@@ -1055,15 +1055,16 @@ def send_broadcast_message(self, parameters, connection_name = "default", messag
     message is used in case none is defined).
     """
 
-    # retrieves the communication handler
+    # retrieves the communication handler and in case there
+    # is no communication handler defined, impossible to
+    # send the message (returns immediately)
     communication_handler = parameters.get("communication_handler", None)
-
-    # in case there is no communication handler defined,
-    # impossible to send the message (returns immediately)
     if not communication_handler: return
 
     # sends the broadcast message using the communication handler
-    communication_handler.send_broadcast_message(connection_name, message)
+    # this message is going to be displayed to every connection
+    # (security measures will no apply, public message)
+    communication_handler.send_broadcast(connection_name, message)
 
 def create_form_data_string(self, rest_request, data_map):
     """
