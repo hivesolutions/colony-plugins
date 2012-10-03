@@ -74,7 +74,10 @@ class MvcCommunicationHandler:
     this value is considered the connection information.
 
     A communication element is a three element tuple for connection,
-    request and (target) timestamp for sending/writing.
+    request and (target) timestamp for timeout (maximum wait time).
+    This communication element represents a request from the client
+    and the (rest request) associated must be flushed or the else the
+    client will remain waiting indefinitely.
     """
 
     mvc_plugin = None
@@ -789,19 +792,24 @@ class CommunicationConnection:
     """ The communication handler """
 
     connection_id = None
-    """ The connection id """
+    """ The connection id, should be a randomly and non
+    colliding value """
 
     connection_name = None
-    """ The connection name """
+    """ The connection name, abstract name of the diffusion
+    scope associated with the connection """
 
     service_connection = None
-    """ The service connection for the connection """
+    """ The service connection for the connection, this
+    is the lower level socket connection (data connection) """
 
     message_queue = []
-    """ The queue of messages pending to be sent """
+    """ The queue of messages pending to be sent, may contain
+    both unicode and string based messages """
 
     message_queue_lock = None
-    """ The lock for the access to the message queue """
+    """ The lock for the access to the message queue,
+    avoids collision under simultaneous access """
 
     message_queue_event = None
     """ The event about the new message operation
