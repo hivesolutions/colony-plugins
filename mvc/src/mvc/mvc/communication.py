@@ -147,16 +147,16 @@ class MvcCommunicationHandler:
         # the message into their queues (all queues allowed)
         for connection in connections: connection.add_message_queue(message)
 
-    def handle_request(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def handle_request(self, request, data_method, changed_method, connection_name):
         """
         Handles the given http request.
 
         @type request: HttpRequest
         @param request: The http request to be handled.
-        @type data_handler_method: Method
-        @param data_handler_method: The method for data handling.
-        @type connection_changed_handler_method: Method
-        @param connection_changed_handler_method: The method for
+        @type data_method: Method
+        @param data_method: The method for data handling.
+        @type changed_method: Method
+        @param changed_method: The method for
         connection changed handling.
         @type connection_name: String
         @param connection_name: The name of the connection.
@@ -186,13 +186,13 @@ class MvcCommunicationHandler:
         process_method = getattr(self, process_method_name)
         process_method(
             request,
-            data_handler_method,
-            connection_changed_handler_method,
+            data_method,
+            changed_method,
             connection_name
         )
         return True
 
-    def process_connect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def process_connect(self, request, data_method, changed_method, connection_name):
         # retrieves the random plugin
         random_plugin = self.mvc_plugin.random_plugin
 
@@ -214,10 +214,10 @@ class MvcCommunicationHandler:
         # notify it about the success
         self._write_message(request, connection, "success")
 
-    def process_disconnect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def process_disconnect(self, request, data_method, changed_method, connection_name):
         pass
 
-    def process_update(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def process_update(self, request, data_method, changed_method, connection_name):
         # tries to retrieve the (communication) connection
         connection = self._get_connection(request, connection_name)
 
@@ -241,7 +241,7 @@ class MvcCommunicationHandler:
         communication_element = (connection, request, target_time)
         self.connection_processing_thread.add_queue(communication_element)
 
-    def process_data(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def process_data(self, request, data_method, changed_method, connection_name):
         pass
 
     def get_connections(self, connection_name):

@@ -536,10 +536,10 @@ class Mvc(colony.base.system.System):
         communication_information = self.mvc_service_communication_patterns_map[pattern]
 
         # unpacks the communication information
-        data_handler_method, connection_changed_handler_method, connection_name = communication_information
+        data_method, changed_method, connection_name = communication_information
 
         # handles the given request by the mvc communication handler
-        self.mvc_communication_handler.handle_request(rest_request.request, data_handler_method, connection_changed_handler_method, connection_name)
+        self.mvc_communication_handler.handle_request(rest_request.request, data_method, changed_method, connection_name)
 
     def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex
