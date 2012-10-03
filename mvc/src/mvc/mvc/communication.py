@@ -78,6 +78,12 @@ class MvcCommunicationHandler:
     This communication element represents a request from the client
     and the (rest request) associated must be flushed or the else the
     client will remain waiting indefinitely.
+
+    There are two types of queues in the communication sub-system, the
+    message queue (for each connection) that contains the various messages
+    pending to be sent for the connection and the connection queue (global
+    wide) that contains the various connections with messages pending to
+    be sent.
     """
 
     mvc_plugin = None
