@@ -73,7 +73,7 @@ class MvcPlugin(colony.base.system.Plugin):
         "mvc.communication"
     ]
     main_modules = [
-        "mvc.mvc.communication_handler",
+        "mvc.mvc.communication",
         "mvc.mvc.exceptions",
         "mvc.mvc.file_handler",
         "mvc.mvc.system"
