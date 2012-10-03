@@ -720,14 +720,14 @@ class Rest(colony.base.system.System):
         if session_id in self.rest_session_map:
             # unsets the session from the rest session map
             del self.rest_session_map[session_id]
-            
+
     def clear_sessions(self):
         """
         Removes all the sessions from the current internal
         structures, this is equivalent to the invalidation
         of all the sessions in the rest manager.
         """
-        
+
         # clears the rest session map, removing all the
         # registered session from it
         self.rest_session_map.clear()
@@ -1040,14 +1040,14 @@ class RestRequest:
 
         # removes the session from the rest
         self.rest.remove_session(self.session)
-        
+
     def clear_sessions(self):
         """
         Removes all the sessions from the rest manager internal
         structures, this is equivalent to the invalidation
         of all the sessions in the rest manager.
         """
-        
+
         # clears the session related structures, removing all
         # the sessions from the rest manager and then invalidate
         # the current session
