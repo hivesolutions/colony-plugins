@@ -53,9 +53,11 @@ VALID_STATUS_CODE = 200
 
 class MvcCommunicationHandler:
     """
-    The mvc communication handler class.
+    The mvc communication (handler) class.
+    
     The concept of communication in the mvc context is expressed
     through long polling.
+    
     A communication connection is the virtual connection created
     between peers through various http request.
     A communication element is the three element tuple for connection,
@@ -224,7 +226,7 @@ class MvcCommunicationHandler:
 
         return self.connection_name_connections_map.get(connection_name, [])
 
-    def send_broadcast_message(self, connection_name, message):
+    def send_broadcast(self, connection_name, message):
         """
         Sends a broadcast message to all the clients in the connection
         with the given name.
@@ -239,14 +241,13 @@ class MvcCommunicationHandler:
         @param message: The message to be sent in broadcast mode.
         """
 
-        # retrieves the communication connections
-        communication_connections = self.get_connections_by_connection_name(connection_name)
+        # retrieves the complete set of (communication) connections for
+        # the current connection name
+        connections = self.get_connections_by_connection_name(connection_name)
 
         # iterates over all the communication connections to send
         # the message into their queues (all queues allowed)
-        for communication_connection in communication_connections:
-            # adds the message to the communication connection queue
-            communication_connection.add_message_queue(message)
+        for connection in connections: connection.add_message_queue(message)
 
     def start_processing(self):
         """
@@ -477,10 +478,9 @@ class ConnectionProcessingThread(threading.Thread):
 
         # iterates continuously
         while True:
-            # in case the stop flag is set
-            if self.stop_flag:
-                # breaks the loop
-                break
+            # in case the stop flag is set must break
+            # the loop (end of iteration)
+            if self.stop_flag: break
 
             # acquires the processing queue lock
             self.processing_queue_lock.acquire()
