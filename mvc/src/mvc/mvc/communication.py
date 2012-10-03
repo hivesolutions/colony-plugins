@@ -102,6 +102,16 @@ class MvcCommunicationHandler:
     """ The map associating the connection
     complete information with the connection """
 
+    channels_map = {}
+    """ The map associating the (complete) channel name with
+    a list containing the various connection registered for
+    them (useful for fast channel member accessing) """
+
+    channels_map_i = {}
+    """ The inverted map associating the various connections
+    with lists containing the various channels for which they
+    are registered (useful for unregistering connections) """
+
     connection_queue = []
     """ The queue that holds the connections
     with messages ready to be processed """
@@ -131,12 +141,60 @@ class MvcCommunicationHandler:
         self.connections_map = {}
         self.service_connections_map = {}
         self.connection_informations_map = {}
+        self.channels_map = {}
+        self.channels_map_i = {}
 
         self.connection_queue = []
         self.connection_queue_lock = threading.RLock()
         self.connection_queue_event = threading.Event()
 
         self.connection_processing_thread = ConnectionProcessingThread(self)
+
+    def send(self, connection_name, message, channels = ("public",)):
+        """
+        Sends a broadcast message to the clients that are registered
+        for the channels in the connection with the given name.
+
+        The usage of this method implies that a security layer secures
+        the assigning of the various channels to the connections (private
+        message).
+
+        @type connection_name: String
+        @param connection_name: The name of the connection to be used
+        to send the message.
+        @type message: String
+        @param message: The message to be sent to the various defined
+        channels (provided by argument)
+        @type channels: Tuple
+        @param channels: The various channels to be used for sending
+        the message.
+        """
+
+        # 1. Tenho de sacar primeiro mapa de channels para o connection
+        #    name pedido
+        # 2. Tenho de scar a lista de conecoes para esse channel
+        # 3. Tenho de adicionar a mensagem a essas conexoes
+
+        # NOTAS - Tenho de ter um mapa invertido para rapidamente fazer
+        #         o unregister das conexoes das channels
+
+        # ESTRUTURAS - channels_map - associa fqn do channel (connection_name/channel_name)
+        #                             com a conexao
+        #              channels_map_i - associa a conexao com channels que esta registado
+
+        # iterates over all the channels to send the message and
+        # retrieves the connection to be used to send the message
+        for channel in channels:
+            # creates the fully qualified name for the channel
+            # by prepending the connection name to it and then
+            # retrieves the complete set of connections registered
+            # for the channel
+            channel_fqn = connection_name + "/" + channel
+            connections = self.channels_map.get(channel_fqn, [])
+
+            # iterates over all the (communication) connections to send
+            # the message into their queues (for the channel)
+            for connection in connections: connection.add_message_queue(message)
 
     def send_broadcast(self, connection_name, message):
         """
@@ -414,6 +472,20 @@ class MvcCommunicationHandler:
         self.__remove_connection_name_map(connection)
         self.__remove_service_connections_map(connection)
         self.__unset_connection_information_map(connection)
+
+    def _register_channels(self, connection, channels):
+        for channel in channels:
+            if not channel in self.channels_map:
+                self.channels_map[channel] = []
+
+            connections_list = self.channels_map[channel]
+            connections_list.append(connection)
+
+        channels_list = self.channels_map_i.get(connection, [])
+        self.channels_map_i[connection] = channels_list + list(channels)
+
+    def _unregister_channels(self, connection, channels):
+        pass
 
     def __add_connection_name_map(self, connection):
         # retrieves the connection name, to be used to determine
