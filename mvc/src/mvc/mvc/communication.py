@@ -54,28 +54,37 @@ VALID_STATUS_CODE = 200
 class MvcCommunicationHandler:
     """
     The mvc communication (handler) class.
-    
+
     The concept of communication in the mvc context is expressed
-    through long polling.
-    
+    through long polling. Other systems may exist on top of the
+    infra-structure using the modular approach.
+
+    The connection name (abstract value) is a value that defined
+    a domain for which messages are diffused (diffusion scope).
+
     A communication connection is the virtual connection created
-    between peers through various http request.
+    between peers through various http requests or any other proxy
+    communication infra-structure. The communication connection may
+    be identified by the connection name and the id of the connection,
+    this value is considered the connection information.
+
     A communication element is the three element tuple for connection,
-    request and timestamp.
+    request and (target) timestamp for sending/writing.
     """
 
     mvc_plugin = None
     """ The mvc plugin """
 
-    connection_name_connections_map = {}
-    """ The map associating the connection
-    name with the connections """
+    connections_map = {}
+    """ The map associating the connection name with
+    the list of connections belonging to the domain """
 
-    service_connection_connections_map = {}
-    """ The map associating the service
-    connection with the connections """
+    service_connections_map = {}
+    """ The map associating the service connection
+    (http connection) with the connections belonging
+    to the it (multiplexing may exist) """
 
-    connection_complete_information_connection_map = {}
+    connection_informations_map = {}
     """ The map associating the connection
     complete information with the connection """
 
@@ -105,15 +114,38 @@ class MvcCommunicationHandler:
 
         self.mvc_plugin = mvc_plugin
 
-        self.connection_name_connections_map = {}
-        self.service_connection_connections_map = {}
-        self.connection_complete_information_connection_map = {}
+        self.connections_map = {}
+        self.service_connections_map = {}
+        self.connection_informations_map = {}
 
         self.connection_queue = []
         self.connection_queue_lock = threading.RLock()
         self.connection_queue_event = threading.Event()
 
         self.connection_processing_thread = ConnectionProcessingThread(self)
+
+    def send_broadcast(self, connection_name, message):
+        """
+        Sends a broadcast message to all the clients in the connection
+        with the given name.
+
+        The usage of this method implies that no security measured will
+        be applied to the message (public message).
+
+        @type connection_name: String
+        @param connection_name: The name of the connection to be used
+        to send the message.
+        @type message: String
+        @param message: The message to be sent in broadcast mode.
+        """
+
+        # retrieves the complete set of (communication) connections for
+        # the current connection name
+        connections = self.get_connections(connection_name)
+
+        # iterates over all the (communication) connections to send
+        # the message into their queues (all queues allowed)
+        for connection in connections: connection.add_message_queue(message)
 
     def handle_request(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         """
@@ -168,30 +200,30 @@ class MvcCommunicationHandler:
         service_connection = request.get_service_connection()
 
         # generates a new connection id, then uses it to create the
-        # communication connection and adds it to the internal structures
+        # (communication) connection and adds it to the internal structures
         connection_id = random_plugin.generate_random_md5_string()
-        communication_connection = CommunicationConnection(
+        connection = CommunicationConnection(
             self,
             connection_id,
             connection_name,
             service_connection
         )
-        self._add_communication_connection(communication_connection)
+        self._add_connection(connection)
 
         # writes the success message to the client end point to
         # notify it about the success
-        self._write_message(request, communication_connection, "success")
+        self._write_message(request, connection, "success")
 
     def process_disconnect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         pass
 
     def process_update(self, request, data_handler_method, connection_changed_handler_method, connection_name):
-        # tries to retrieve the communication connection
-        communication_connection = self._get_connection(request, connection_name)
+        # tries to retrieve the (communication) connection
+        connection = self._get_connection(request, connection_name)
 
-        # in case no communication connection is available raises
+        # in case no (communication) connection is available raises
         # the communication command exception
-        if not communication_connection:
+        if not connection:
             raise exceptions.CommunicationCommandException("no communication connection available")
 
         # sets the request as delayed (for latter writing)
@@ -206,16 +238,19 @@ class MvcCommunicationHandler:
 
         # creates the communication element tuple and adds it
         # to the connection elements queue
-        communication_element = (communication_connection, request, target_time)
+        communication_element = (connection, request, target_time)
         self.connection_processing_thread.add_queue(communication_element)
 
     def process_data(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         pass
 
-    def get_connections_by_connection_name(self, connection_name):
+    def get_connections(self, connection_name):
         """
         Retrieves the connections for the given connection
         name.
+
+        In case no connections exists or no connection is
+        defined an empty structure is returned.
 
         @type connection_name: String
         @param connection_name: The connection name to retrieve
@@ -224,30 +259,7 @@ class MvcCommunicationHandler:
         @return: The connections for the given connection name.
         """
 
-        return self.connection_name_connections_map.get(connection_name, [])
-
-    def send_broadcast(self, connection_name, message):
-        """
-        Sends a broadcast message to all the clients in the connection
-        with the given name.
-
-        The usage of this method implies that no security measured will
-        be applied to the message (public message).
-
-        @type connection_name: String
-        @param connection_name: The name of the connection to be used
-        to send the message.
-        @type message: String
-        @param message: The message to be sent in broadcast mode.
-        """
-
-        # retrieves the complete set of (communication) connections for
-        # the current connection name
-        connections = self.get_connections_by_connection_name(connection_name)
-
-        # iterates over all the communication connections to send
-        # the message into their queues (all queues allowed)
-        for connection in connections: connection.add_message_queue(message)
+        return self.connections_map.get(connection_name, [])
 
     def start_processing(self):
         """
@@ -306,21 +318,38 @@ class MvcCommunicationHandler:
         # returns the pop queue
         return pop_queue
 
-    def _write_message(self, request, communication_connection, result_message):
+    def _write_message(self, request, connection, message):
+        """
+        Serializes and writes a message using the appropriate
+        structures available in the connection.
+
+        This method should be used to avoid inappropriate
+        serialization of messages.
+
+        @type request: HttpRequest
+        @param request: The http request to be used in the
+        writing operation to be performed.
+        @type connection: CommunicationConnection
+        @param connection: The communication connection to used
+        in the serialization of the message.
+        @type message: String
+        @param message: The message to be serialized and written
+        through the request.
+        """
+
         # retrieves the json plugin
         json_plugin = self.mvc_plugin.json_plugin
 
-        # serializes the result message
-        serialized_result_message = communication_connection.serialize_message(result_message, json_plugin)
-
-        # writes the serialized result message to the request
-        request.write(serialized_result_message)
+        # serializes the message and writes the serialized
+        # message to the request
+        serialized_message = connection.serialize_message(message, json_plugin)
+        request.write(serialized_message)
 
     def _get_connection(self, request, connection_name):
         """
         Retrieves the communication connection for the
-        given request (to use the id of it) and connection
-        name.
+        given request (using the id value from it) and
+        connection name.
 
         @type request: HttpRequest
         @param request: The http request to be used to retrieve
@@ -332,94 +361,122 @@ class MvcCommunicationHandler:
         @return: The communication connection to be retrieved.
         """
 
-        # retrieves the request connection id
+        # retrieves the request connection identifier value to be
+        # used in the creation of the connection information
         connection_id = request.get_attribute("id")
 
-        # creates the connection complete information tuple
-        connection_complete_information = (connection_id, connection_name)
+        # creates the connection information tuple and then
+        # tries to retrieve the communication connection from the
+        # connection information connection map
+        connection_information = (connection_id, connection_name)
+        connection = self.connection_informations_map.get(connection_information, None)
 
-        # tries to retrieve the communication connection from the connection complete
-        # information connection map
-        communication_connection = self.connection_complete_information_connection_map.get(connection_complete_information, None)
+        # returns the (communication) connection
+        return connection
 
-        # returns the communication connection
-        return communication_connection
+    def _add_connection(self, connection):
+        """
+        Adds a (communication) connection to the internal structures
+        of the communication handler, this should update all of the
+        structures and activate the connection immediately.
 
-    def _add_communication_connection(self, communication_connection):
-        self.__add_communication_connection_name_map(communication_connection)
-        self.__add_communication_service_connection_map(communication_connection)
-        self.__set_communication_connection_complete_information_map(communication_connection)
+        @type connection: CommunicationConnection
+        @param connection: The communication connection to be added
+        to the communication handler.
+        """
 
-    def _remove_communication_connection(self, communication_connection):
-        self.__remove_communication_connection_name_map(communication_connection)
-        self.__remove_communication_service_connection_map(communication_connection)
-        self.__unset_communication_connection_complete_information_map(communication_connection)
+        self.__add_connection_name_map(connection)
+        self.__add_service_connections_map(connection)
+        self.__set_connection_information_map(connection)
 
-    def __add_communication_connection_name_map(self, communication_connection):
-        # retrieves the connection name
-        connection_name = communication_connection.get_connection_name()
+    def _remove_connection(self, connection):
+        """
+        Removes a (communication) connection from the internal structures
+        of the communication handlers, this should update all of the
+        structures and deactivate the connection immediately.
 
-        if not connection_name in self.connection_name_connections_map:
-            self.connection_name_connections_map[connection_name] = []
+        @type connection: CommunicationConnection
+        @param connection: The communication connection to be removed
+        from the communication handler.
+        """
 
-        # retrieves the connection list from the connection name connections map
-        # and adds the communication connection to the connections list
-        connections_list = self.connection_name_connections_map[connection_name]
-        connections_list.append(communication_connection)
+        self.__remove_connection_name_map(connection)
+        self.__remove_service_connections_map(connection)
+        self.__unset_connection_information_map(connection)
 
-    def __add_communication_service_connection_map(self, communication_connection):
-        # retrieves the service connection
-        service_connection = communication_connection.get_service_connection()
+    def __add_connection_name_map(self, connection):
+        # retrieves the connection name, to be used to determine
+        # the diffusion domain of the connection
+        connection_name = connection.get_connection_name()
 
-        if not service_connection in self.service_connection_connections_map:
-            self.service_connection_connections_map[service_connection] = []
+        # in case the connection name does nor already exists
+        # in the connections map must create a new sequence to
+        # hold the various connections
+        if not connection_name in self.connections_map:
+            self.connections_map[connection_name] = []
 
-        # retrieves the connection list from the service connection connections map
-        # and adds the communication connection to the connections list
-        connections_list = self.service_connection_connections_map[service_connection]
-        connections_list.append(communication_connection)
+        # retrieves the connection list from the connection map and
+        # adds the (communication) connection to the connections list
+        connections_list = self.connections_map[connection_name]
+        connections_list.append(connection)
 
-    def __set_communication_connection_complete_information_map(self, communication_connection):
-        # retrieves the connection complete information
-        connection_complete_information = communication_connection.get_connection_complete_information()
+    def __add_service_connections_map(self, connection):
+        # retrieves the service connection (low level socket connection)
+        # for the (communication) connection
+        service_connection = connection.get_service_connection()
 
-        # set the communication connection in the connection complete information connection map
-        self.connection_complete_information_connection_map[connection_complete_information] = communication_connection
+        # in case the service connection does nor already exists
+        # in the service connections map must create a new sequence to
+        # hold the various connections
+        if not service_connection in self.service_connections_map:
+            self.service_connections_map[service_connection] = []
 
-    def __remove_communication_connection_name_map(self, communication_connection):
-        # retrieves the connection name
-        connection_name = communication_connection.get_connection_name()
+        # retrieves the connection list from the service connections map
+        # and adds the (communication) connection to the connections list
+        connections_list = self.service_connections_map[service_connection]
+        connections_list.append(connection)
 
-        # retrieves the connection list from the connection name connections map
-        # and removes the communication connection from the connections list
-        connections_list = self.connection_name_connections_map[connection_name]
-        connections_list.remove(communication_connection)
+    def __set_connection_information_map(self, connection):
+        # retrieves the connection information and uses it to associate
+        # the (communication) connection in the connection informations map
+        connection_information = connection.get_connection_information()
+        self.connection_informations_map[connection_information] = connection
 
-        # in case the connections list is empty
-        if not connections_list:
-            # removes the connection from the connection name connections map
-            del self.connection_name_connections_map[connection_name]
+    def __remove_connection_name_map(self, connection):
+        # retrieves the connection name, to be used to determine
+        # the diffusion domain of the connection
+        connection_name = connection.get_connection_name()
 
-    def __remove_communication_service_connection_map(self, communication_connection):
-        # retrieves the service connection
-        service_connection = communication_connection.get_service_connection()
+        # retrieves the connection list from the connections  map
+        # and removes the (communication) connection from the connections list
+        connections_list = self.connections_map[connection_name]
+        connections_list.remove(connection)
 
-        # retrieves the connection list from the service connection connections map
-        # and remove the communication connection from the connections list
-        connections_list = self.service_connection_connections_map[service_connection]
-        connections_list.remove(communication_connection)
+        # in case the connections list is empty, removes the
+        # connection list from the connections map (performs
+        # garbage collection operation)
+        if not connections_list: del self.connections_map[connection_name]
 
-        # in case the connections list is empty
-        if not connections_list:
-            # removes the connection from the service connection connections map
-            del self.service_connection_connections_map[service_connection]
+    def __remove_service_connections_map(self, connection):
+        # retrieves the service connection (low level socket connection)
+        # for the (communication) connection
+        service_connection = connection.get_service_connection()
 
-    def __unset_communication_connection_complete_information_map(self, communication_connection):
-        # retrieves the connection complete information
-        connection_complete_information = communication_connection.get_connection_complete_information()
+        # retrieves the connection list from the service connections map
+        # and removes the (communication) connection from the connections list
+        connections_list = self.service_connections_map[service_connection]
+        connections_list.remove(connection)
 
-        # unsets the communication connection in the connection complete information connection map
-        del self.connection_complete_information_connection_map[connection_complete_information]
+        # in case the connections list is empty, removes the
+        # connection list from the service connections map
+        # (performs garbage collection operation)
+        if not connections_list: del self.service_connections_map[service_connection]
+
+    def __unset_connection_information_map(self, connection):
+        # retrieves the connection information and uses it to remove
+        # the (communication) connection from the connection informations map
+        connection_information = connection.get_connection_information()
+        del self.connection_informations_map[connection_information]
 
 class ConnectionProcessingThread(threading.Thread):
     """
@@ -493,10 +550,10 @@ class ConnectionProcessingThread(threading.Thread):
                 self.processing_queue_lock.release()
 
             # iterates over the connection queue "connections"
-            for communication_connection in connection_queue:
+            for connection in connection_queue:
                 # retrieves the communication element from the processing
                 # map using the connection and processes them
-                communication_elements = self.processing_map.get(communication_connection, [])
+                communication_elements = self.processing_map.get(connection, [])
                 self.process_communication_elements(communication_elements)
 
             # retrieves the "overflown" communication elements
@@ -565,7 +622,7 @@ class ConnectionProcessingThread(threading.Thread):
 
         try:
             # unpacks the communication element
-            communication_connection, _request, target_timestamp = communication_element
+            connection, _request, target_timestamp = communication_element
 
             # in case the target timestamp is not yet present
             # in the timestamp list
@@ -583,16 +640,16 @@ class ConnectionProcessingThread(threading.Thread):
 
             # retrieves the communication elements list for the communication
             # connection (if any) and adds the communication element to the list
-            communication_elements = self.processing_map.get(communication_connection, [])
+            communication_elements = self.processing_map.get(connection, [])
             communication_elements.append(communication_element)
-            self.processing_map[communication_connection] = communication_elements
+            self.processing_map[connection] = communication_elements
 
             # adds the communication element to the processing queue
             self.processing_queue.append(communication_element)
 
-            # in case the communication connection message queue is not empty
+            # in case the (communication) connection message queue is not empty
             # processes the communication elements (flushes queue)
-            not communication_connection.is_empty() and self.process_communication_elements(communication_elements)
+            not connection.is_empty() and self.process_communication_elements(communication_elements)
         finally:
             # releases the processing queue lock
             self.processing_queue_lock.release()
@@ -609,7 +666,7 @@ class ConnectionProcessingThread(threading.Thread):
                 return
 
             # unpacks the communication element
-            communication_connection, request, target_timestamp = communication_element
+            connection, request, target_timestamp = communication_element
 
             # retrieves the service connection from the request and
             # checks if the service connection (data connection) is still open
@@ -634,9 +691,9 @@ class ConnectionProcessingThread(threading.Thread):
                 self.timestamp_list.remove(target_timestamp)
 
             # retrieves the communication elements associated with the
-            # communication connection and removes the current communication
+            # (communication) connection and removes the current communication
             # element from the communication elements
-            communication_elements = self.processing_map[communication_connection]
+            communication_elements = self.processing_map[connection]
             communication_elements.remove(communication_element)
 
             # in case the communication elements list is empty
@@ -644,13 +701,13 @@ class ConnectionProcessingThread(threading.Thread):
             if not communication_elements:
                 # removes the communication elements list
                 # reference from the processing map (it's empty)
-                del self.processing_map[communication_connection]
+                del self.processing_map[connection]
 
                 # in case the service connection is
                 # not open anymore
                 if not service_connection_is_open:
-                    # removes the communication connection (no more communication elements)
-                    self.communication_handler._remove_communication_connection(communication_connection)
+                    # removes the (communication) connection (no more communication elements)
+                    self.communication_handler._remove_connection(connection)
 
             # removes the communication element from the "main"
             # processing queue
@@ -660,9 +717,9 @@ class ConnectionProcessingThread(threading.Thread):
             self.processing_queue_lock.release()
 
     def _process_element(self, element):
-        # unpacks the element into the communication connection the request
+        # unpacks the element into the (communication) connection the request
         # and the target timestamp
-        communication_connection, request, _target_timestamp = element
+        connection, request, _target_timestamp = element
 
         # retrieves the request elements
         http_client_service_handler = request.http_client_service_handler
@@ -679,12 +736,12 @@ class ConnectionProcessingThread(threading.Thread):
             return True
 
         # retrieves the message queue
-        message_queue = communication_connection.pop_message_queue()
+        message_queue = connection.pop_message_queue()
 
         # writes the message queue into the message and processes
         # the request in the http client service handler (this represents
         # the final part of the delayed processing of the request)
-        self.communication_handler._write_message(request, communication_connection, message_queue)
+        self.communication_handler._write_message(request, connection, message_queue)
         http_client_service_handler.process_request(request, service_connection)
 
         # returns true (the element should be removed)
@@ -743,8 +800,9 @@ class CommunicationConnection:
         """
         Serializes the given message, using the given
         serializer method.
-        The serializartion take into account the current connection
-        information.
+
+        The serialization takes into account the current
+        connection information (exposed in the message).
 
         @type result_message: String
         @param result_message: The message to be serialized.
@@ -837,12 +895,14 @@ class CommunicationConnection:
         # return the result of the message queue empty test
         return message_queue_is_empty
 
-    def get_connection_complete_information(self):
+    def get_connection_information(self):
         """
-        Retrieves the connection complete information.
+        Retrieves the connection information, containing
+        both the identifier of the connection and the name
+        (domain) of it.
 
         @rtype: Tuple
-        @return: The connection complete information.
+        @return: The connection information.
         """
 
         return (
