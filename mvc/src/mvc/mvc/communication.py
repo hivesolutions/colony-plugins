@@ -542,14 +542,13 @@ class ConnectionProcessingThread(threading.Thread):
             # acquires the processing queue lock
             self.processing_queue_lock.acquire()
 
-            try:
-                # pops the "current" connection queue from the communication handler
-                connection_queue = self.communication_handler.pop_connection_queue()
-            finally:
-                # releases the processing queue lock
-                self.processing_queue_lock.release()
+            # pops the "current" connection queue from the communication handler
+            # and then released the processing queue lock
+            try: connection_queue = self.communication_handler.pop_connection_queue()
+            finally: self.processing_queue_lock.release()
 
-            # iterates over the connection queue "connections"
+            # iterates over the connection queue "connections" to process
+            # its communication elements
             for connection in connection_queue:
                 # retrieves the communication element from the processing
                 # map using the connection and processes them
@@ -771,7 +770,8 @@ class CommunicationConnection:
     """ The lock for the access to the message queue """
 
     message_queue_event = None
-    """ The event about the new message operation in the message queue """
+    """ The event about the new message operation
+    in the message queue """
 
     def __init__(self, communication_handler, connection_id, connection_name, service_connection):
         """
@@ -796,7 +796,7 @@ class CommunicationConnection:
         self.message_queue_lock = threading.RLock()
         self.message_queue_event = threading.Event()
 
-    def serialize_message(self, result_message, serializer):
+    def serialize_message(self, message, serializer):
         """
         Serializes the given message, using the given
         serializer method.
@@ -804,8 +804,9 @@ class CommunicationConnection:
         The serialization takes into account the current
         connection information (exposed in the message).
 
-        @type result_message: String
-        @param result_message: The message to be serialized.
+        @type message: String
+        @param message: The message to be serialized, this
+        value will be marked as return.
         @type serializer: Method
         @param serializer: The serializer method to be used
         in the serialization.
@@ -817,7 +818,7 @@ class CommunicationConnection:
         # sets the message map values
         message_map["id"] = self.connection_id
         message_map["name"] = self.connection_name
-        message_map["result"] = result_message
+        message_map["result"] = message
 
         # serializes the message map
         serialized_message_map = serializer.dumps(message_map)
