@@ -3447,7 +3447,7 @@ class HttpRequest:
             # splits the content disposition attribute
             content_disposition_attribute_splitted = content_disposition_attribute_stripped.split("=")
 
-            # retrieves the lenght of the content disposition attribute splitted
+            # retrieves the length of the content disposition attribute splitted
             content_disposition_attribute_splitted_length = len(content_disposition_attribute_splitted)
 
             # in case the length is two (key and value)
