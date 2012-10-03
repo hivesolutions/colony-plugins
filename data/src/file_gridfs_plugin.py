@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.system
 
-class FileGridfsEnginePlugin(colony.base.system.Plugin):
+class FileGridfsPlugin(colony.base.system.Plugin):
     """
     The main class for the File Gridfs plugin.
     """
@@ -70,7 +70,7 @@ class FileGridfsEnginePlugin(colony.base.system.Plugin):
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
         import data.file_gridfs.system
-        self.file_gridfs = data.file_gridfs.system.FileGridfsEngine(self)
+        self.file_gridfs = data.file_gridfs.system.FileGridfs(self)
 
     def get_engine_name(self):
         return self.file_gridfs.get_engine_name()
