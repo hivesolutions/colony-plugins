@@ -1899,6 +1899,7 @@ class EntityManager:
         # of indirection for the loading of the relation with
         # the provided options
         _options = {
+            "minimal" : True,
             "eager" : {
                 name : options
             }
@@ -1914,12 +1915,18 @@ class EntityManager:
         # "guide" for the retrieval process
         new_entity = self.get(entity_class, id_value, _options)
 
+        # checks if the current entity is of type to many and
+        # so that the appropriate structure may be created to
+        # represent the empty structure
+        is_to_many = entity_class.is_to_many(name)
+        default = colony.libs.structures_util.JournaledList() if is_to_many else None
+
         # retrieves the relation value from the new entity and
         # uses it to set the value in the entity note that no
         # value is retrieve and re-set in case no valid entity
-        # is retrived from the data source
-        value = new_entity and new_entity.get_value(name)
-        new_entity and entity.set_value(name, value)
+        # is retrieved from the data source
+        value = new_entity.get_value(name) if new_entity else default
+        entity.set_value(name, value)
 
         # enables the entity, providing the entity with the
         # mechanisms necessary for data source communication
