@@ -1909,9 +1909,9 @@ class EntityManager:
         # tries to retrieve the equivalent (new) entity from
         # the data source using the identifier value as the
         # "guide" for the retrieval process
-        new_entity = self.get(entity_class, id_value, options)
+        new_entity = self.get(entity_class, id_value, _options)
 
-
+        
         value = new_entity.get_value(name)
         entity.set_value(name, value)
 
