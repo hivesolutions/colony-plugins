@@ -1250,7 +1250,7 @@ def reload(self, options = {}, entity_manager = None):
     reloading an object.
 
     @type options: Dictionary
-    @param options: The map of options for the retrieval
+    @param options: The map of options for the reloading
     of the entity model.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
@@ -1264,14 +1264,28 @@ def reload(self, options = {}, entity_manager = None):
     # reloads the entity using the entity manager
     entity_manager.reload(self, options)
 
-
 def relation(self, name, options = {}, entity_manager = None):
+    """
+    Loads a relation for the current instance in the
+    data source described in the current entity manager.
+    This method provides the persistence layer for
+    loading of an object's relation.
+
+    @type options: Dictionary
+    @param options: The map of options for the (partial) loading
+    of the entity model's relation.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
 
+    # loads a relation with the provided options (partial
+    # loading) using the entity manager
     entity_manager.relation(self, name, options)
-
 
 def save_update(self, entity_manager = None):
     """

@@ -1895,15 +1895,18 @@ class EntityManager:
         # the entity to retrieve the relation
         entity_class = entity.__class__
 
-
-
+        # creates the (new) options map containing a new level
+        # of indirection for the loading of the relation with
+        # the provided options
         _options = {
             "eager" : {
                 name : options
             }
         }
 
-
+        # retrieves the value of the identifier attribute
+        # of the entity to be used for the retrieval of
+        # the new entity data
         id_value = entity.get_id_value()
 
         # tries to retrieve the equivalent (new) entity from
@@ -1911,9 +1914,12 @@ class EntityManager:
         # "guide" for the retrieval process
         new_entity = self.get(entity_class, id_value, _options)
 
-        
-        value = new_entity.get_value(name)
-        entity.set_value(name, value)
+        # retrieves the relation value from the new entity and
+        # uses it to set the value in the entity note that no
+        # value is retrieve and re-set in case no valid entity
+        # is retrived from the data source
+        value = new_entity and new_entity.get_value(name)
+        new_entity and entity.set_value(name, value)
 
         # enables the entity, providing the entity with the
         # mechanisms necessary for data source communication
