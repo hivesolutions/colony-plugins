@@ -1270,7 +1270,7 @@ def relation(self, name, options = {}, entity_manager = None):
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
 
-    entity_manager.reload(self, name, options)
+    entity_manager.relation(self, name, options)
 
 
 def save_update(self, entity_manager = None):
