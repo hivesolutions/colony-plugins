@@ -1884,6 +1884,41 @@ class EntityManager:
         # mechanisms necessary for data source communication
         self.enable(entity)
 
+    def relation(self, entity, name, options = None):
+        # normalizes the options, this is going to expand the
+        # options map into a larger and easily accessible
+        # map of values (this only happens in case the options
+        # are already defined)
+        options = options and self.normalize_options(options) or {}
+
+        # retrieves the entity class associated with
+        # the entity to retrieve the relation
+        entity_class = entity.__class__
+
+
+
+        _options = {
+            "eager" : {
+                name : options
+            }
+        }
+
+
+        id_value = entity.get_id_value()
+
+        # tries to retrieve the equivalent (new) entity from
+        # the data source using the identifier value as the
+        # "guide" for the retrieval process
+        new_entity = self.get(entity_class, id_value, options)
+
+
+        value = new_entity.get_value(name)
+        entity.set_value(name, value)
+
+        # enables the entity, providing the entity with the
+        # mechanisms necessary for data source communication
+        self.enable(entity)
+
     def map(self, entity):
         """
         Maps the relations of the entity that are considered to

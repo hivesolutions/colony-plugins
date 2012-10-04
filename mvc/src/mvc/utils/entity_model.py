@@ -1264,6 +1264,15 @@ def reload(self, options = {}, entity_manager = None):
     # reloads the entity using the entity manager
     entity_manager.reload(self, options)
 
+
+def relation(self, name, options = {}, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or self._entity_manager
+
+    entity_manager.reload(self, name, options)
+
+
 def save_update(self, entity_manager = None):
     """
     Saves or updates the current instance into the data source
