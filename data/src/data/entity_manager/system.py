@@ -1899,10 +1899,10 @@ class EntityManager:
         # of indirection for the loading of the relation with
         # the provided options
         _options = {
-            "minimal" : True,
             "eager" : {
                 name : options
-            }
+            },
+            "minimal" : True
         }
 
         # retrieves the value of the identifier attribute
