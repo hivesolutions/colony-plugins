@@ -1039,7 +1039,38 @@ def validate_model_exception(self, model, exception_message, error_description =
     # mode (raises exception in case error occurs)
     model.validate_exception(exception_message, error_description)
 
-def send_broadcast_message(self, parameters, connection_name = "default", message = ""):
+def send(self, parameters, connection_name = "default", message = "", channels = ()):
+    """
+    Sends a message to the clients registered for the provided channels
+    in the the connection with the given name.
+    The mvc communication system is used for the unicast sending.
+
+    @type parameters: Dictionary
+    @param parameters: A dictionary of parameters.
+    @type connection_name: String
+    @param connection_name: The name of the connection to be used
+    to send the message (default connection is used if not defined).
+    @type message: String
+    @param message: The message to be sent in channels mode (an empty
+    message is used in case none is defined).
+    @type channels: Tuple
+    @param channels: The various channels to be used to send the message
+    this value should be a partial name and not a fully qualified name.
+    """
+
+    # retrieves the communication handler and in case there
+    # is no communication handler defined, impossible to
+    # send the message (returns immediately)
+    communication_handler = parameters.get("communication_handler", None)
+    if not communication_handler: return
+
+    # sends the message using the communication handler
+    # this message is going to be displayed to the connections
+    # registered in the requested channels (security measures will
+    # apply, private message)
+    communication_handler.send(connection_name, message, channels = channels)
+
+def send_broadcast(self, parameters, connection_name = "default", message = ""):
     """
     Sends a broadcast message to all the clients in the connection
     with the given name.
@@ -1063,7 +1094,7 @@ def send_broadcast_message(self, parameters, connection_name = "default", messag
 
     # sends the broadcast message using the communication handler
     # this message is going to be displayed to every connection
-    # (security measures will no apply, public message)
+    # (security measures will not apply, public message)
     communication_handler.send_broadcast(connection_name, message)
 
 def create_form_data_string(self, rest_request, data_map):
@@ -2993,7 +3024,7 @@ def get_templates_path(self):
     """
     Retrieves the templates path.
 
-    @rtype: Sring
+    @rtype: String
     @return: The templates path.
     """
 
@@ -3013,7 +3044,7 @@ def get_locales_path(self):
     """
     Retrieves the locales path.
 
-    @rtype: Sring
+    @rtype: String
     @return: The locales path.
     """
 
