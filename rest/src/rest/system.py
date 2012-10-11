@@ -143,7 +143,7 @@ DEFAULT_MAXIMUM_TIMEOUT = DEFAULT_TIMEOUT * 64
 """ The default maximum timeout (sixty four times the timeout value) """
 
 DEFAULT_TOUCH_SECURE_DELTA = 360
-""" The default Time delta used to introduce a security
+""" The default time delta used to introduce a security
 factor in the timestamp used in the touching of the
 (modified) date """
 
@@ -728,6 +728,10 @@ class Rest(colony.base.system.System):
         of all the sessions in the rest manager.
         """
 
+        # removes the complete set of session timeout tuples
+        # so that no more session invalidation occurs
+        self.rest_session_list = []
+
         # clears the rest session map, removing all the
         # registered session from it
         self.rest_session_map.clear()
@@ -755,10 +759,9 @@ class Rest(colony.base.system.System):
         # iterates continuously
         while True:
             # in case the rest session list
-            # is not valid (empty)
-            if not self.rest_session_list:
-                # breaks the loop
-                break
+            # is not valid (empty), breaks the
+            # loop since there is nothing to be done
+            if not self.rest_session_list: break
 
             # acquires the rest session lock
             self.rest_session_lock.acquire()
@@ -767,16 +770,23 @@ class Rest(colony.base.system.System):
                 # retrieves the first session information
                 # form the rest session list (ordered list)
                 session_expire_time, session_id = self.rest_session_list[0]
+                
+                # in case the session expire time is still in the
+                # future, breaks the loop because there are no
+                # more sessions to be removed (ordered list)
+                if session_expire_time > current_time: break
 
-                # in case the session expire time is
-                # still in the future
-                if session_expire_time > current_time:
-                    # breaks the loop
-                    break
-
-                # retrieves the session information from the
-                # session id to check for session removal
+                # retrieves the session for the current session id and verifies that it
+                # is valid (exists in the current internal structures) in case it does
+                # not, continues the loop to continue session invalidation
                 session = self.get_session(session_id)
+                if session == None:
+                    # pops the last element from the res
+                    # session list (heap) and continues the loop
+                    heapq.heappop(self.rest_session_list)
+                    continue
+                
+                # retrieves the expire time for the current session
                 session_expire_time_current = session.get_expire_time()
 
                 # in case the session expire time for current time
