@@ -2684,12 +2684,16 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
     # them in sequence, trying to retrieve a valid locale
     # for retrieval (tries to find the best fit)
     for get_locales_method in get_locales_methods:
-        # calls the get locales method to retrieve the
-        # lost of "resolved" locales, then validates them
-        # against the list/tuple of available locales
+        # calls the get locales method to retrieve the list of
+        # "resolved" locales, and sets the complete list as the
+        # default list of available locales
         locales_list = get_locales_method(rest_request)
-        if available_locales: available_locales_list = [value for value in locales_list if value in available_locales]
-        else: available_locales_list = locales_list
+        available_locales_list = locales_list
+
+        # in case the available locales map is not set (invalid value)
+        # no need to continue with the filtering of the locales list
+        if available_locales == None: pass
+        else: available_locales_list = [value for value in locales_list if value in available_locales]
 
         # in case the available locales list is not valid
         # (empty), validates only in case the available
