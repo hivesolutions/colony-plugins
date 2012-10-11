@@ -253,9 +253,9 @@ class Person(RootEntity):
             "is_mapper" : True
         }
 
-    @staticmethod
-    def _attr_double_age(instance):
-        return Person._attr(instance, "age") * 2
+    @classmethod
+    def _attr_double_age(cls, instance):
+        return cls._attr(instance, "age") * 2
 
 class Employee(Person, Logable, Taxable):
     """
