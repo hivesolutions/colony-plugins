@@ -263,6 +263,61 @@ class EasypayClient:
         # returns the data
         return data
 
+    def cancel_reference(self, entity, reference):
+        # sets the retrieval url, using the test url
+        # in case the client is running in test mode
+        retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_00BG.php"
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
+
+        # sets the entity, reference and delete flag in the parameters
+        parameters["ep_entity"] = entity
+        parameters["ep_ref"] = reference
+        parameters["ep_delete"] = "yes"
+
+        # fetches the retrieval url with the given parameters retrieving the xml
+        result = self._fetch_url(retrieval_url, parameters)
+
+        # parses the result (response) and retrieves the root node
+        response_document = xml.dom.minidom.parseString(result)
+        get_reference_root_nodes = response_document.getElementsByTagName("getautoMB")
+        get_reference_root_node = get_reference_root_nodes[0]
+
+        # retrieves the reference values
+        get_reference_status = self.get_xml_node_text(get_reference_root_node, "ep_status")
+        get_reference_message = self.get_xml_node_text(get_reference_root_node, "ep_message")
+        get_reference_cin = self.get_xml_node_text(get_reference_root_node, "ep_cin")
+        get_reference_user = self.get_xml_node_text(get_reference_root_node, "ep_user")
+        get_reference_entity = self.get_xml_node_text(get_reference_root_node, "ep_entity")
+        get_reference_reference = self.get_xml_node_text(get_reference_root_node, "ep_reference")
+        get_reference_value = self.get_xml_node_text(get_reference_root_node, "ep_value")
+        get_reference_key = self.get_xml_node_text(get_reference_root_node, "t_key")
+
+        # processes the casting of the values
+        get_reference_value = float(get_reference_value)
+
+        # initializes the data (map)
+        data = {
+            "status" : get_reference_status,
+            "message" : get_reference_message,
+            "cin" : get_reference_cin,
+            "user" : get_reference_user,
+            "entity" : get_reference_entity,
+            "reference" : get_reference_reference,
+            "value" : get_reference_value,
+            "key" : get_reference_key
+        }
+
+        # checks for easypay errors
+        self._check_easypay_errors(data)
+
+        # returns the data
+        return data
+
     def get_payment_details(self, document_identifier, reference_key):
         # sets the retrieval url, using the test url
         # in case the client is running in test mode
