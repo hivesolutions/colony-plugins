@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 # Hive Colony Framework
 # Copyright (c) 2008-2012 Hive Solutions Lda.
 #
@@ -1266,7 +1267,7 @@ class EntityManager:
                 # relation table
                 continue
 
-            # in case the association (table) is already deifined in the
+            # in case the association (table) is already defined in the
             # current context no need to recreate it
             if self.engine.has_table_definition(relation_unique):
                 # updates the cache value of the relation
