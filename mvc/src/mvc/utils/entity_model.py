@@ -866,7 +866,7 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
 
     # detaches the current entity model in order
     # to avoid any possible loading of relations
-    self.detach(force = False)
+    self.detach_l(force = False)
 
     # sets the current entity in the storing operation, this flag
     # should be able to avoid unnecessary recursion
@@ -910,7 +910,7 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
         # attaches the current entity model back
         # enabling it to communicate with the data
         # source for loading of relations
-        self.attach(force = False)
+        self.attach_l(force = False)
 
     # tries to call the post store method, in order to notify the
     # current instance about the finishing of the store procedure
