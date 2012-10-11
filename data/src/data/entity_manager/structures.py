@@ -428,8 +428,14 @@ class EntityClass(object):
     should be shared around all the elements of the diffusion scope """
 
     _attached = True
+    """ Flag that controls if the current entity is attached to
+    the data source, in case the entity is attached it can retrieve
+    data from it otherwise it's considered "off-line" """
 
     _attach_level = 0
+    """ The current "depth" level of attachment in case the value is
+    zero or less the entity is considered detached otherwise the entity
+    is considered attached (on-line) """
 
     def __init__(self):
         """
@@ -2538,6 +2544,8 @@ class EntityClass(object):
         # set to the minimum required for attaching (forces it)
         if force: attach_level = 1
 
+        # updates the attached and attach level values in the
+        # current entity
         self._attached = attach_level > 0
         self._attach_level = attach_level
 
@@ -2552,7 +2560,7 @@ class EntityClass(object):
         if force: attach_level = 0
 
         # updates the attached and attach level values in the
-        # scope definition map
+        # current entity
         self._attached = attach_level > 0
         self._attach_level = attach_level
 
