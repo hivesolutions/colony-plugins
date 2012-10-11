@@ -2534,41 +2534,6 @@ class EntityClass(object):
         if not entity_class in self._entities: self._entities[entity_class] = {}
         self._entities[entity_class][id_value] = self
 
-    def attach_l(self, force = True):
-        # retrieves and updates the attach level to increment
-        # it according to the attach operation definition
-        attach_level = self._attach_level or 0
-        attach_level += 1
-
-        # in case the force flag is set the attach level is
-        # set to the minimum required for attaching (forces it)
-        if force: attach_level = 1
-
-        # updates the attached and attach level values in the
-        # current entity
-        self._attached = attach_level > 0
-        self._attach_level = attach_level
-
-    def detach_l(self, force = True, reset = False):
-        # retrieves and updates the attach level to decrement
-        # it according to the detach operation definition
-        attach_level = self._attach_level or 1
-        attach_level -= 1
-
-        # in case the force flag is set the attach level is
-        # set to the minimum required for detaching (forces it)
-        if force: attach_level = 0
-
-        # updates the attached and attach level values in the
-        # current entity
-        self._attached = attach_level > 0
-        self._attach_level = attach_level
-
-        # resets the current structure, this operation removes
-        # all the current relations, useful in order to avoid
-        # mixed scopes in relations
-        reset and self.reset()
-
     def attach(self, force = True):
         """
         Attaches the current entity to the data source (on-line)
@@ -2642,6 +2607,81 @@ class EntityClass(object):
         # scope definition map
         self._scope["attached"] = attach_level > 0
         self._scope["attach_level"] = attach_level
+
+        # resets the current structure, this operation removes
+        # all the current relations, useful in order to avoid
+        # mixed scopes in relations
+        reset and self.reset()
+
+    def attach_l(self, force = True):
+        """
+        Attaches the current entity to the data source (on-line)
+        the current scope is not changed as this operation is
+        considered local to the entity.
+
+        The attach operation may used as a stack oriented operation
+        and as such the open/close levels of the attaching must be
+        respected in order to maintain coherence in the attaching.
+        If such behavior is meant to be ignored the force flag should
+        be set to false (enabling the usage of the stack).
+
+        @type force: bool
+        @param force: Flag that controls if the attaching should be
+        forced or if the stack oriented operation should be respected
+        and if the one level is required for attaching.
+        """
+
+        # retrieves and updates the attach level to increment
+        # it according to the attach operation definition
+        attach_level = self._attach_level or 0
+        attach_level += 1
+
+        # in case the force flag is set the attach level is
+        # set to the minimum required for attaching (forces it)
+        if force: attach_level = 1
+
+        # updates the attached and attach level values in the
+        # current entity
+        self._attached = attach_level > 0
+        self._attach_level = attach_level
+
+    def detach_l(self, force = True, reset = False):
+        """
+        Detaches the current entity from the data source (off-line)
+        the current scope is not changed as this operation is
+        considered local to the entity.
+
+        The detach operation may used as a stack oriented operation
+        and as such the open/close levels of the attaching must be
+        respected in order to maintain coherence in the attaching.
+        If such behavior is meant to be ignored the force flag should
+        be set to false (enabling the usage of the stack).
+
+        An optional flag controls if the entity should have the relation
+        defaulted (reseted) after the detach operation.
+
+        @type force: bool
+        @param force: Flag that controls if the detaching should be
+        forced or if the stack oriented operation should be respected
+        and if the zero level is required for detaching.
+        @type reset: bool
+        @param reset: Flag that controls if the entity should have the
+        relations removed (set as lazy loaded) after the detach operation.
+        """
+
+        # retrieves and updates the attach level to decrement
+        # it according to the detach operation definition
+        attach_level = self._attach_level or 1
+        attach_level -= 1
+
+        # in case the force flag is set the attach level is
+        # set to the minimum required for detaching (forces it)
+        if force: attach_level = 0
+
+        # updates the attached and attach level values in the
+        # current entity
+        self._attached = attach_level > 0
+        self._attach_level = attach_level
 
         # resets the current structure, this operation removes
         # all the current relations, useful in order to avoid
