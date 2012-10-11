@@ -5747,7 +5747,7 @@ class EntityManager:
         # and retrieves the associated method for calculus then updates
         # the value in the structure
         for name, _class in attr_methods.items():
-            method = getattr(_class, "_attr_" + name)
+            method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(map)
             except: pass
             else: map[name] = attribute
@@ -5762,7 +5762,7 @@ class EntityManager:
         # and retrieves the associated method for calculus then updates
         # the value in the structure
         for name, _class in attr_methods.items():
-            method = getattr(_class, "_attr_" + name)
+            method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(entity)
             except: pass
             else: setattr(entity, name, attribute)
