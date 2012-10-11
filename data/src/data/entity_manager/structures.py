@@ -134,6 +134,8 @@ INVALID_NAMES = set((
     "_entity_manager",
     "_entities",
     "_scope",
+    "_attach_level",
+    "_attached",
     "_names",
     "_items",
     "_generated",
@@ -424,6 +426,10 @@ class EntityClass(object):
     """ The map containing the various diffusion scope related
     parameters, lazy attaching and other properties, this map
     should be shared around all the elements of the diffusion scope """
+
+    _attached = True
+
+    _attach_level = 0
 
     def __init__(self):
         """
@@ -2522,6 +2528,39 @@ class EntityClass(object):
         if not entity_class in self._entities: self._entities[entity_class] = {}
         self._entities[entity_class][id_value] = self
 
+    def attach_l(self, force = True):
+        # retrieves and updates the attach level to increment
+        # it according to the attach operation definition
+        attach_level = self._attach_level or 0
+        attach_level += 1
+
+        # in case the force flag is set the attach level is
+        # set to the minimum required for attaching (forces it)
+        if force: attach_level = 1
+
+        self._attached = attach_level > 0
+        self._attach_level = attach_level
+
+    def detach_l(self, force = True, reset = False):
+        # retrieves and updates the attach level to decrement
+        # it according to the detach operation definition
+        attach_level = self._attach_level or 1
+        attach_level -= 1
+
+        # in case the force flag is set the attach level is
+        # set to the minimum required for detaching (forces it)
+        if force: attach_level = 0
+
+        # updates the attached and attach level values in the
+        # scope definition map
+        self._attached = attach_level > 0
+        self._attach_level = attach_level
+
+        # resets the current structure, this operation removes
+        # all the current relations, useful in order to avoid
+        # mixed scopes in relations
+        reset and self.reset()
+
     def attach(self, force = True):
         """
         Attaches the current entity to the data source (on-line)
@@ -2614,7 +2653,7 @@ class EntityClass(object):
         data source (on-line).
         """
 
-        is_attached = self._scope.get("attached", True)
+        is_attached = self._attached and self._scope.get("attached", True)
         return is_attached
 
     def get_map(self, recursive = True):
