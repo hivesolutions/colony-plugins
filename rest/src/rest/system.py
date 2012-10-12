@@ -770,7 +770,7 @@ class Rest(colony.base.system.System):
                 # retrieves the first session information
                 # form the rest session list (ordered list)
                 session_expire_time, session_id = self.rest_session_list[0]
-                
+
                 # in case the session expire time is still in the
                 # future, breaks the loop because there are no
                 # more sessions to be removed (ordered list)
@@ -785,7 +785,7 @@ class Rest(colony.base.system.System):
                     # session list (heap) and continues the loop
                     heapq.heappop(self.rest_session_list)
                     continue
-                
+
                 # retrieves the expire time for the current session
                 session_expire_time_current = session.get_expire_time()
 
