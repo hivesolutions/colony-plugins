@@ -632,7 +632,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
         # partial names to it with the filter string as the value
         fields = _filter["fields"]
         for _name in name:
-            _name =_name.rsplit(".", 1)[-1]
+            _name = _name.rsplit(".", 1)[-1]
             fields[_name] = filter_string
 
         # adds the "just" created filter to the filters structure resulting
