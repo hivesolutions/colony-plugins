@@ -679,43 +679,6 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     }
     return filter
 
-def _class_get_context_attribute(class_reference, name, context_request, namespace_name = None):
-    """
-    Retrieves a context attribute with the provided name using the
-    provided context request as the source for the retrieval.
-
-    The method is oriented towards defaulting to invalid values, so
-    if no value is found an invalid value is returned.
-
-    @type name: String
-    @param name: The name of the context attribute to be retrieved.
-    @type context_request: RestRequest
-    @param context_request: The rest request to be used for the
-    retrieval of the context to be used in attribute retrieval.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used in the
-    context session attribute retrieval, avoids domain name collision.
-    @rtype: Object
-    @return: The retrieves context attribute that may assume any valid
-    data type.
-    """
-
-    # in case the context request is defined retrieves the session
-    # associated with it otherwise sets it as invalid (not defined)
-    session = context_request.get_session() if context_request else None
-
-    # retrieves the complete (attribute name) for the context
-    # taking into account the namespace name (prefix)
-    context_name = _get_complete_name("_context", namespace_name)
-
-    # in case the session is defined retrieves the context attribute
-    # from it otherwise default to empty map then uses the context map
-    # to retrieves the attribute for the requested name and returns it
-    # to the caller method
-    context = session.get_attribute(context_name) if session else {}
-    attribute = context.get(name, None)
-    return attribute
-
 def _class_apply_context(class_reference, options = {}, context_request = None, context = None, namespace_name = None, entity_manager = None):
     """
     Applies the context information to the retrieval operation,
