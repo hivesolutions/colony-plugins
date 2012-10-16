@@ -236,6 +236,21 @@ def _class_get_system(class_reference):
 
     return class_reference._system_instance
 
+def _class_get_plugin(class_reference):
+    """
+    Class method that retrieves the plugin instance associated
+    with the current model class.
+    This method should not overlap the get plugin method on the
+    instance, and you should used this one to retrieve the absolute
+    related system instance, avoiding problems with inheritance.
+
+    @rtype: Plugin
+    @return: The plugin instance associated with the current
+    model class.
+    """
+
+    return class_reference._system_instance.plugin
+
 def apply(self, map):
     """
     "Applies" the given map of "form" values into the current
@@ -368,6 +383,19 @@ def get_system(self):
 
     @rtype: Object
     @return: The system instance associated with the current
+    entity model.
+    """
+
+    return self._system_instance
+
+def get_plugin(self):
+    """
+    Retrieves the current (associated) plugin instance
+    reference that can be used to retrieve the plugin
+    internal state and global data reference.
+
+    @rtype: Object
+    @return: The plugin instance associated with the current
     entity model.
     """
 
