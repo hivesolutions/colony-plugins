@@ -230,6 +230,13 @@ DASH_VALUE = "-"
 UNDERSCORE_VALUE = "_"
 """ The underscore value """
 
+SHORT_TIMEOUT = 1800
+""" The short (value) timeout (in seconds) """
+
+SHORT_MAXIMUM_TIMEOUT = SHORT_TIMEOUT * 3
+""" The short (value) maximum timeout (three times
+the timeout value) """
+
 TO_ONE_RELATION_VALUE = 1
 """ The to one relation value """
 
@@ -2349,6 +2356,34 @@ def reset_session(self, rest_request):
     # this allows subsequent calls to create a new session
     rest_request.reset_session()
 
+def set_session_short(self, rest_request):
+    """
+    Sets the current session as short so that the
+    expire value is much shorter than the default
+    (almost eternal) value used by the system.
+
+    This method may be used to provide additional
+    security.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    """
+
+    # tries to retrieve the rest request session in case
+    # it's not found starts a new session and then retrieves
+    # it so that it can have its timeout value changed
+    rest_request_session = rest_request.get_session()
+    if not rest_request_session:
+        rest_request.start_session()
+        rest_request_session = rest_request.get_session()
+
+    # updates the rest request session timeout to a much shorter
+    # value defined (as constant)
+    rest_request.update_timeout(
+        timeout = SHORT_TIMEOUT,
+        maximum_timeout = SHORT_MAXIMUM_TIMEOUT
+    )
+
 def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None, unset_session_attribute = False):
     """
     Retrieves the session attribute from the given rest request
@@ -2445,10 +2480,8 @@ def unset_session_attribute(self, rest_request, session_attribute_name, namespac
     rest_request_session = rest_request.get_session()
 
     # in case the rest request session
-    # is invalid
-    if not rest_request_session:
-        # returns none (invalid)
-        return None
+    # is invalid, returns immediately
+    if not rest_request_session: return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
