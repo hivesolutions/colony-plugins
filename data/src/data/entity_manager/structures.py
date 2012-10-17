@@ -3705,7 +3705,7 @@ class EntityClass(object):
         # to check it against the list of valid types
         # for the current attribute
         value_type = type(value)
-        
+
         # checks if the current value is not set (considered
         # to be universally valid) in such case the control
         # is returned immediately
