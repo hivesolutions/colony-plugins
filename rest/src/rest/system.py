@@ -140,7 +140,8 @@ DEFAULT_TIMEOUT = 10800
 """ The default timeout (three hours of life) """
 
 DEFAULT_MAXIMUM_TIMEOUT = DEFAULT_TIMEOUT * 64
-""" The default maximum timeout (sixty four times the timeout value) """
+""" The default maximum timeout (sixty four
+times the timeout value) """
 
 DEFAULT_TOUCH_SECURE_DELTA = 360
 """ The default time delta used to introduce a security
@@ -688,10 +689,9 @@ class Rest(colony.base.system.System):
         @param session: The session to be added to the map.
         """
 
-        # retrieves the session id
+        # retrieves the session id and the expire
+        # time to be able to create the session tuple
         session_id = session.get_session_id()
-
-        # retrieves the session expire time
         session_expire_time = session.get_expire_time()
 
         # creates the session tuple form the session
@@ -720,6 +720,27 @@ class Rest(colony.base.system.System):
         if session_id in self.rest_session_map:
             # unsets the session from the rest session map
             del self.rest_session_map[session_id]
+
+    def update_session(self, session):
+        """
+        Updates a session instance in the current rest request
+        this updates the session list with the new values.
+
+        @type session: RestSession
+        @param session: The session to be updated.
+        """
+
+        # retrieves the session id and the expire
+        # time to be able to create the session tuple
+        session_id = session.get_session_id()
+        session_expire_time = session.get_expire_time()
+
+        # creates the session tuple form the session
+        # expire time and id (to be used for session cancellation)
+        session_tuple = (session_expire_time, session_id)
+
+        # pushes the session tuple to the rest session list (heap)
+        heapq.heappush(self.rest_session_list, session_tuple)
 
     def clear_sessions(self):
         """
@@ -1002,9 +1023,8 @@ class RestRequest:
 
         # in case a session exists and force flag is disabled
         # avoids creation (provides duplicate creation blocking)
-        if self.session and not force:
-            # returns immediately
-            return
+        # must return immediately
+        if self.session and not force: return
 
         # in case no session id is defined
         if not session_id:
@@ -1016,7 +1036,11 @@ class RestRequest:
 
         # creates a new rest session and sets
         # it as the current session (uses the timeout information)
-        self.session = RestSession(session_id, timeout, maximum_timeout)
+        self.session = RestSession(
+            session_id,
+            timeout = timeout,
+            maximum_timeout = maximum_timeout
+        )
 
         # retrieves the host name value
         domain = self._get_domain()
@@ -1037,10 +1061,9 @@ class RestRequest:
         Stops the current session.
         """
 
-        # in case no session is defined
-        if not self.session:
-            # crates a new empty session
-            self.session = RestSession()
+        # in case no session is defined, creates
+        # a new empty session
+        if not self.session: self.session = RestSession()
 
         # retrieves the host name value
         domain = self._get_domain()
@@ -1108,6 +1131,42 @@ class RestRequest:
         # updates the last modified timestamp value with the current
         # time value reduced by the secure delta value
         self.request.last_modified_timestamp = time.time() - secure_delta
+
+    def update_timeout(self, timeout, maximum_timeout = None):
+        """
+        Updates the session timeout (and maximum timeout) values
+        so that the session may be extended or shortened.
+
+        This method provides extra security tools for session
+        timing control.
+
+        @type timeout: float
+        @param timeout: The timeout value to be used as the "new"
+        timeout of the session.
+        @type maximum_timeout: float
+        @param maximum_timeout: The maximum timeout value to be
+        used as the "new" maximum timeout of the session.
+        """
+
+        # in case no session is defined must return immediately
+        # not possible to change timeout in case no session is
+        # currently defined
+        if not self.session: return
+
+        # sets the maximum timeout value in case is not currently
+        # set as the triple value of the timeout
+        maximum_timeout = maximum_timeout or timeout * 3
+
+        # updates the session timeout and maximum timeout values
+        # and then generates the expire time from the current
+        # time and the given timeout and maximum timeout
+        self.session.timeout = timeout
+        self.session.maximum_timeout = maximum_timeout
+        self.session._generate_expire_time(timeout, maximum_timeout)
+
+        # updates the session in the rest request, provides
+        # the infra-structure to update expire structures
+        self.rest.update_session(self.session)
 
     def read(self):
         """
@@ -1898,6 +1957,13 @@ class RestSession:
         # and maximum timeout
         self._generate_expire_time(timeout, maximum_timeout)
 
+    def update(self, domain = None, include_sub_domain = False, secure = False):
+        self.start(
+            domain = domain,
+            include_sub_domain = include_sub_domain,
+            secure = secure
+        )
+
     def start(self, domain = None, include_sub_domain = False, secure = False):
         """
         Starts the current session.
@@ -2109,9 +2175,9 @@ class RestSession:
         """
 
         # in case the attribute name exists in
-        # the attributes map
+        # the attributes map must unset it from
+        # the exiting attributes map
         if attribute_name in self.attributes_map:
-            # unsets the attribute from the attributes map
             del self.attributes_map[attribute_name]
 
     def get_attributes_map(self):
