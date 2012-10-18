@@ -3590,7 +3590,7 @@ class EntityClass(object):
                 metadata_value = serializer.loads(value)
             except:
                 # sets the metadata value as invalid in case
-                # an error occured while unpacking the metadata
+                # an error occurred while unpacking the metadata
                 metadata_value = None
 
             # returns the date time (converted) value it may
