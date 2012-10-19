@@ -65,8 +65,14 @@ FUNCTION_TYPES = (
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
+FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\:'\" ]+\)"
+""" The function arguments regular expression value """
+
 LITERAL_ESCAPE_REGEX = re.compile(LITERAL_ESCAPE_REGEX_VALUE)
 """ The literal escape regular expression """
+
+FUCNTION_ARGUMENTS_REGEX = re.compile(FUCNTION_ARGUMENTS_REGEX_VALUE)
+""" The function arguments regular expression """
 
 VALUE_VALUE = "value"
 """ The value value """
@@ -1726,20 +1732,85 @@ class Visitor:
                             else:
                                 # raises the undefined variable exception
                                 raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
-                        # variable is of type object or other
-                        else:
-                            if hasattr(current_variable, variable_name_split):
-                                # retrieves the current variable (from the object)
-                                current_variable = getattr(current_variable, variable_name_split)
 
-                                # retrieves the current variable type
+                        # variable is of type object or other it's
+                        else:
+                            # filters the variable name (split) so that if it's
+                            # a complete method call the arguments part is removed
+                            # this way only the name of the attribute is guaranteed
+                            attribute_name = variable_name_split.split("(", 1)[0]
+
+                            if hasattr(current_variable, attribute_name):
+                                # retrieves the current variable (from the object) and
+                                # checks the type value for it
+                                current_variable = getattr(current_variable, attribute_name)
                                 current_variable_type = type(current_variable)
 
-                                # in case its a variable of type function
+                                # in case its a variable of type function, must proceed
+                                # with the calling of it to retrieve the return value
                                 if current_variable_type in FUNCTION_TYPES:
-                                    # calls the function (without arguments) to
-                                    # retrieve the variable
-                                    current_variable = current_variable()
+                                    # tries to match the complete variable name split against
+                                    # the arguments regular expression, to find out if the call
+                                    # is of type simple or complex (arguments present)
+                                    arguments_match = FUCNTION_ARGUMENTS_REGEX.search(variable_name_split)
+
+                                    # in case there is a valid arguments match, must process the
+                                    # argument name and retrieve its value to be used in the method
+                                    # call (complex call)
+                                    if arguments_match:
+                                        # retrieves the complete group match from the arguments
+                                        # match and removes the calling parentheses
+                                        arguments_s = arguments_match.group()
+                                        arguments_s = arguments_s[1:-1]
+
+                                        # splits the arguments string into the various arguments
+                                        # names and then treats them, converting them into the
+                                        # normal form
+                                        arguments = arguments_s.split(",")
+                                        arguments = [argument.strip().replace(":", ".") for argument in arguments]
+
+                                        # creates the list that will hold the various argument types
+                                        # (maps) to be used to retrieve their value, then iterates over
+                                        # all the arguments to populate the list
+                                        arguments_t = []
+                                        for argument in arguments:
+                                            # retrieves the first character of the argument to be used
+                                            # to try to guess the argument type
+                                            first_char = argument[0]
+
+                                            # checks the type of the argument, using the first character for
+                                            # so, then sets the literal flag in case the value is a number or
+                                            # a string (literal types)
+                                            is_string = first_char == "'" or first_char == "\""
+                                            is_number = ord(first_char) > 0x2f and ord(first_char) < 0x3a
+                                            is_literal = is_string or is_number
+                                            _type = is_literal and LITERAL_VALUE or VARIABLE_VALUE
+
+                                            # retrieves the correct value taking into account the various
+                                            # type based flags
+                                            if is_string: value = argument[1:-1]
+                                            elif is_number: value = int(argument)
+                                            else: value = argument
+
+                                            # creates the argument type map with both the type and the value
+                                            # for the argument then adds it to the list of argument types
+                                            argument_t = {
+                                                TYPE_VALUE : _type,
+                                                VALUE_VALUE : value
+                                            }
+                                            arguments_t.append(argument_t)
+
+                                        # creates the list of argument values by retrieving the values of the
+                                        # various argument types and uses these values in the function call
+                                        arguments_v = [self.get_value(argument_s) for argument_s in arguments_t]
+                                        current_variable = current_variable(*arguments_v)
+
+                                    # otherwise there is no arguments match and so the function is
+                                    # considered simple and a simple call (no arguments) is made
+                                    else:
+                                        # calls the function (without arguments) to
+                                        # retrieve the variable
+                                        current_variable = current_variable()
 
                             elif not self.strict_mode:
                                 # sets the current variable as none
@@ -1750,6 +1821,7 @@ class Visitor:
                             else:
                                 # raises the undefined variable exception
                                 raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+
                 elif not self.strict_mode:
                     # sets the current variable as none
                     current_variable = None
