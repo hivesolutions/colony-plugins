@@ -2059,6 +2059,10 @@ def process_set_contents(self, rest_request, template_file, apply_base_path = Tr
     apply_base_path and self.apply_base_path_template_file(rest_request, template_file)
     assign_session and self.assign_session_template_file(rest_request, template_file)
 
+    # assigns the basic instance attributes to the template file so that
+    # it can access the controller instance and the system and plugin instances
+    self.assign_instance_template_file(template_file)
+
     # processes the template file with the given rest request and variable encoding
     # retrieving the processed template file
     processed_template_file = self.process_template_file(rest_request, template_file, variable_encoding)
@@ -2091,6 +2095,7 @@ def process_template_file(self, rest_request, template_file, variable_encoding =
         ("process_stylesheet_link", self.get_process_method(rest_request, "process_stylesheet_link")),
         ("process_javascript_include", self.get_process_method(rest_request, "process_javascript_include")),
         ("process_ifacl", self.get_process_method(rest_request, "process_ifacl")),
+        ("process_ifaclp", self.get_process_method(rest_request, "process_ifaclp")),
         ("process_ifnotacl", self.get_process_method(rest_request, "process_ifnotacl")),
         ("process_request_time", self.get_process_method(rest_request, "process_request_time"))
     ]
@@ -2183,6 +2188,25 @@ def apply_base_path_template_file(self, rest_request, template_file):
     # assigns the base path value
     template_file.assign(BASE_PATH_VALUE, base_path)
 
+def assign_instance_template_file(self, template_file):
+    """
+    Assigns the various instance related attributes to the
+    given template file.
+
+    The instance attributes include the instance itself, the
+    associated system, and the associated plugin.
+
+    @type template_file: TemplateFile
+    @param template_file: The template to be "applied" with the
+    various instance attributes.
+    """
+
+    # assigns the various instance components to the template file:
+    # the instance itself, the associated system and the associated plugin
+    template_file.assign("self", self)
+    template_file.assign("system_s", self.system)
+    template_file.assign("plugin_s", self.plugin)
+
 def assign_flash_template_file(self, rest_request, template_file):
     """
     Assigns the flash attribute to the given template file.
@@ -2221,10 +2245,9 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
     rest_request_session = rest_request.get_session()
 
     # in case the rest request session
-    # is invalid
-    if not rest_request_session:
-        # returns immediately
-        return
+    # is invalid, returns immediately not
+    # possible to retrieve the values
+    if not rest_request_session: return
 
     # retrieves the various session properties
     session_id = rest_request_session.get_session_id()
@@ -4275,6 +4298,55 @@ def get_process_method(controller, rest_request, process_method_name):
         # retrieves the attribute permission value
         attribute_permission = attributes_map[PERMISSION_VALUE]
         attribute_permission_value = self.get_literal_value(attribute_permission)
+
+        # retrieves the attribute value value
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+
+        # in case the session attribute exists in the attributes map
+        if SESSION_ATTRIBUTE_VALUE in attributes_map:
+            # retrieves the attribute session attribute value
+            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+            attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
+        # otherwise
+        else:
+            # sets the default attribute session attribute value
+            attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
+
+        # retrieves the user acl value
+        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
+
+        # process the acl values, retrieving the permissions value
+        permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
+
+        # sets the initial accept node value
+        accept_node = permissions <= attribute_value_value
+
+        # in case the visit child is set
+        if self.visit_childs:
+            # iterates over all the node child nodes
+            for node_child_node in node.child_nodes:
+                # validates the accept node using the node child node
+                # and the accept node
+                accept_node = self._validate_accept_node(node_child_node, accept_node)
+
+                # in case the accept node is set to invalid
+                # the evaluation is over
+                if accept_node == None:
+                    # returns immediately
+                    return
+
+                # in case the accept node flag is set
+                # accepts the node child node
+                accept_node and node_child_node.accept(self)
+
+    def __process_ifaclp(self, node):
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attribute permission value
+        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission_value = self.get_value(attribute_permission)
 
         # retrieves the attribute value value
         attribute_value = attributes_map[VALUE_VALUE]
