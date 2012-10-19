@@ -4114,6 +4114,6 @@ def load_serializers():
         except: removal.append(name)
         else: SERIALIZERS_MAP[name] = object
 
-    # iterates overl all the (serializer) names to be
+    # iterates over all the (serializer) names to be
     # removed and removes them from the serializers list
     for name in removal: SERIALIZERS.remove(name)
