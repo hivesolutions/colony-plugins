@@ -62,6 +62,18 @@ FUNCTION_TYPES = (
 )
 """ The function types """
 
+SERIALIZERS = (
+    "json",
+    "pickle"
+)
+""" The list to hold the various serializers
+in order of preference for serialization """
+
+SERIALIZERS_MAP = None
+""" The map associating the encoding type for
+the serialization with the appropriate serializer
+object to handle it """
+
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
@@ -145,6 +157,9 @@ DEFAULT_VALUE = "default"
 
 ALLOW_EMPTY_VALUE = "allow_empty"
 """ The allow empty value """
+
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
 
 KEY_SEPARATOR_VALUE = "key_separator"
 """ The key separator value """
@@ -840,6 +855,22 @@ class Visitor:
         else:
             # unsets the attribute default value
             attribute_default_value = None
+
+        # in case the serializer exists in the attributes map
+        if SERIALIZER_VALUE in attributes_map:
+            # retrieves attribute serializer value
+            attribute_serializer = attributes_map[SERIALIZER_VALUE]
+            attribute_serializer_value = self.get_literal_value(attribute_serializer)
+        # otherwise
+        else:
+            # unsets the attribute serializer value
+            attribute_serializer_value = None
+
+        # in case the serializer value is set must try to gather
+        # the serializer and serialize the attribute value using it
+        if attribute_serializer_value:
+            serializer, _name = self._get_serializer(attribute_serializer_value)
+            attribute_value_value = serializer.dumps(attribute_value_value)
 
         # creates the invalid values tuple
         invalid_values = attribute_allow_empty_value and (None,) or (None, "")
@@ -2104,3 +2135,59 @@ class Visitor:
 
         # returns the final serialized value of the sequence
         return value
+
+    def _get_serializer(self, name = None):
+        # in case the serializers map is not defined triggers the
+        # initial loading of the serializer, then in case the serializers
+        # list is empty (or invalid) raises the no serializer error
+        if SERIALIZERS_MAP == None: self._load_serializers()
+        if not SERIALIZERS: raise exceptions.InvalidSerializer("no serializer available")
+
+        # in case no (serializer) name is provided the first
+        # (and preferred) serializer name is used then retrieves
+        # the associated serializer object and in case it fails
+        # raises an error
+        name = name or SERIALIZERS[0]
+        serializer = SERIALIZERS_MAP.get(name, None)
+        if not serializer: raise exceptions.InvalidSerializer("no serializer available for '%s'", name)
+
+        # creates the serializer tuple containing both
+        # the serializer object and the name
+        serializer_tuple = (serializer, name)
+        return serializer_tuple
+
+    def _load_serializers(self):
+        """
+        Loads the various serializer objects according
+        to the associated module names.
+
+        This method ignores the import problems for non
+        existent serializers, removing them from the
+        associated data structures.
+        """
+
+        global SERIALIZERS_MAP
+
+        # creates the list that will hold the various
+        # names to be removed from the serializers list
+        removal = []
+
+        # initializes the serializers map that will associate
+        # the name of the serializer with the object
+        SERIALIZERS_MAP = {}
+
+        # iterates over all the (serializer) names in the
+        # serializers list to try to import the module and
+        # alter the affected data structures
+        for name in SERIALIZERS:
+            # tries to import the module associated with the
+            # serializer and in case it fails adds the name
+            # to the removal list otherwise sets the serializer
+            # in the associated map
+            try: object = __import__(name)
+            except: removal.append(name)
+            else: SERIALIZERS_MAP[name] = object
+
+        # iterates over all the (serializer) names to be
+        # removed and removes them from the serializers list
+        for name in removal: SERIALIZERS.remove(name)
