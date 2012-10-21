@@ -699,9 +699,25 @@ class Visitor:
             # unsets the attribute default value
             attribute_default_value = None
 
+        # in case the serializer exists in the attributes map
+        if SERIALIZER_VALUE in attributes_map:
+            # retrieves attribute serializer value
+            attribute_serializer = attributes_map[SERIALIZER_VALUE]
+            attribute_serializer_value = self.get_literal_value(attribute_serializer)
+        # otherwise
+        else:
+            # unsets the attribute serializer value
+            attribute_serializer_value = None
+
         # changes the attribute value value to the default attribute
         # value in case the value of it is invalid
         if attribute_value_value == None: attribute_value_value = attribute_default_value
+
+        # in case the serializer value is set must try to gather
+        # the serializer and serialize the attribute value using it
+        if attribute_serializer_value:
+            serializer, _name = self._get_serializer(attribute_serializer_value)
+            attribute_value_value = serializer.dumps(attribute_value_value)
 
         # serializes the value into the correct visual representation
         # (in case the attribute type is "serializable", eg: lists, tuples, etc.)
@@ -866,12 +882,6 @@ class Visitor:
             # unsets the attribute serializer value
             attribute_serializer_value = None
 
-        # in case the serializer value is set must try to gather
-        # the serializer and serialize the attribute value using it
-        if attribute_serializer_value:
-            serializer, _name = self._get_serializer(attribute_serializer_value)
-            attribute_value_value = serializer.dumps(attribute_value_value)
-
         # creates the invalid values tuple
         invalid_values = attribute_allow_empty_value and (None,) or (None, "")
 
@@ -880,10 +890,16 @@ class Visitor:
         if attribute_value_value in invalid_values: attribute_value_value = attribute_default_value
 
         # in case the attribute value value is invalid and the default
-        # value is not set (no need to show the value)
+        # value is not set (no need to show the value) must return immediately
+        # nothing will be printed
         if attribute_value_value in invalid_values and attribute_default_value == None:
-            # returns immediately (no write)
             return
+
+        # in case the serializer value is set must try to gather
+        # the serializer and serialize the attribute value using it
+        if attribute_serializer_value:
+            serializer, _name = self._get_serializer(attribute_serializer_value)
+            attribute_value_value = serializer.dumps(attribute_value_value)
 
         # serializes the value into the correct visual representation
         # (in case the attribute type is "serializable", eg: lists, tuples, etc.)
