@@ -132,6 +132,7 @@ INVALID_NAMES = set((
     "__doc__",
     "_system_instance",
     "_entity_manager",
+    "_resources_path",
     "_entities",
     "_scope",
     "_attached",
