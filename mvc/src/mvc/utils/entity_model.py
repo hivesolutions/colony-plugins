@@ -121,7 +121,7 @@ DATA_TYPE_CAST_TYPES_MAP = {
 }
 """ The map associating the data types with the cast types """
 
-def _class_get(class_reference, id_value, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_get(cls, id_value, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves an entity model for
     the given id value and using the given options.
@@ -149,25 +149,25 @@ def _class_get(class_reference, id_value, options = {}, context = None, namespac
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # applies the context to the options according to the current
     # request, note that the (request) context is passed as simply
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = class_reference.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
 
     # retrieves the entity model for the given class, id value
     # and using the given options, then in case the retrieval was
     # successful applies the context as the entity model request
-    entity_model = entity_manager.get(class_reference, id_value, options)
+    entity_model = entity_manager.get(cls, id_value, options)
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
     # returns the retrieved entity model
     return entity_model
 
-def _class_count(class_reference, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_count(cls, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves the number of entity models
     in the data source using the current entity model class
@@ -194,24 +194,24 @@ def _class_count(class_reference, options = {}, context = None, namespace = None
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # applies the context to the options according to the current
     # request, note that the (request) context is passed as simply
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = class_reference.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
 
     # retrieves the count (number of entities) for the given
     # entity class and options
-    result = entity_manager.count(class_reference, options)
+    result = entity_manager.count(cls, options)
 
     # returns the result of the entity model counting operation
     # (number of entity results in the data source)
     return result
 
-def _class_find(class_reference, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_find(cls, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves a set of entity models
     using the given options.
@@ -236,30 +236,30 @@ def _class_find(class_reference, options = {}, context = None, namespace = None,
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # applies the context to the options according to the current
     # request, note that the (request) context is passed as simply
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = class_reference.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
 
     # checks if the class reference is valid for the current
     # context in case it's not a default value is returned
-    if not class_reference.valid(): return []
+    if not cls.valid(): return []
 
     # finds the entity models for the given class and using
     # the given options then applies the context to the complete
     # set of retrieved entity models (only applies the request
     # to the first element because their share the diffusion scope)
-    entity_models = entity_manager.find(class_reference, options)
+    entity_models = entity_manager.find(cls, options)
     entity_models and hasattr(entity_models[0], "set_request") and entity_models[0].set_request(context)
 
     # returns the retrieved entity models
     return entity_models
 
-def _class_find_one(class_reference, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_find_one(cls, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves the first entity model
     using the given options.
@@ -284,28 +284,28 @@ def _class_find_one(class_reference, options = {}, context = None, namespace = N
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # applies the context to the options according to the current
     # request, note that the (request) context is passed as simply
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = class_reference.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
 
     # finds the entity models for the given class and using
     # the given options, limits the number of results to
     # the first result in case at least one is given, then in
     # case the retrieval was successful applies the context as
     # the entity model request
-    entity_models = entity_manager.find(class_reference, options)
+    entity_models = entity_manager.find(cls, options)
     entity_model = entity_models and entity_models[0] or None
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
     # returns the retrieved entity model
     return entity_model
 
-def _class_execute(class_reference, query, entity_manager = None):
+def _class_execute(cls, query, entity_manager = None):
     """
     Class method that executes a sql query "directly" in
     the data source and retrieves the resulting data set.
@@ -324,7 +324,7 @@ def _class_execute(class_reference, query, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # executes the query in the entity manager associated
     # data source and retrieves the resulting data set
@@ -334,7 +334,7 @@ def _class_execute(class_reference, query, entity_manager = None):
     # returns the retrieved result set
     return result_set
 
-def _class_lock_g(class_reference, id_value, entity_manager = None):
+def _class_lock_g(cls, id_value, entity_manager = None):
     """
     Class method that locks the entity manager data source
     for the entity model with the given id value.
@@ -351,13 +351,13 @@ def _class_lock_g(class_reference, id_value, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # locks the entity manager data source for the given
     # class and the given id value
-    entity_manager.lock(class_reference, id_value)
+    entity_manager.lock(cls, id_value)
 
-def _class_lock_table_g(class_reference, parameters, entity_manager = None):
+def _class_lock_table_g(cls, parameters, entity_manager = None):
     """
     Class method that locks the entity manager data source
     for the table associated with the current entity class.
@@ -374,17 +374,17 @@ def _class_lock_table_g(class_reference, parameters, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # retrieves the name of the table associated with the
     # current class to be used in the locking
-    table_name = class_reference.get_name()
+    table_name = cls.get_name()
 
     # locks the entity manager (table) data source for the given
     # parameters (provided from the signature)
     entity_manager.lock_table(table_name, parameters)
 
-def _class_lock_row_g(class_reference, name, value, entity_manager = None):
+def _class_lock_row_g(cls, name, value, entity_manager = None):
     """
     Class method that locks the entity manager data source
     for the row defined by the name/value filter in the table
@@ -409,13 +409,13 @@ def _class_lock_row_g(class_reference, name, value, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # retrieves the name of the table associated with the
     # current class and then creates the parameters map
     # containing the definition of the field for locking
-    table_name = class_reference.get_name()
-    sql_value = class_reference._get_sql_value(name, value)
+    table_name = cls.get_name()
+    sql_value = cls._get_sql_value(name, value)
     parameters = {
         "field_name" : name,
         "field_value" : sql_value
@@ -425,7 +425,7 @@ def _class_lock_row_g(class_reference, name, value, entity_manager = None):
     # parameters (field definition)
     entity_manager.lock_table(table_name, parameters)
 
-def _class_valid(class_reference, entity_manager = None):
+def _class_valid(cls, entity_manager = None):
     """
     Checks if the current model class reference is valid, according
     to the currently defined data reference model.
@@ -443,15 +443,15 @@ def _class_valid(class_reference, entity_manager = None):
 
     # checks if the class is not a data reference, in case
     # it's not it's "automatically" valid
-    if not class_reference.is_reference():
+    if not cls.is_reference():
         # return valid (not a data reference)
         return True
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager, then uses it
     # to retrieve the entity class
-    entity_manager = entity_manager or class_reference._entity_manager
-    entity_class = entity_manager.get_entity(class_reference.__name__)
+    entity_manager = entity_manager or cls._entity_manager
+    entity_class = entity_manager.get_entity(cls.__name__)
 
     # in case the entity class was correctly found, the class
     # is considered to be valid
@@ -461,7 +461,7 @@ def _class_valid(class_reference, entity_manager = None):
     # default return value
     return False
 
-def _class_is_reference(class_reference):
+def _class_is_reference(cls):
     """
     Checks if the current model entity is in fact a (data) reference
     class, for external elements reference.
@@ -476,7 +476,7 @@ def _class_is_reference(class_reference):
     # checks if the class is a data reference, by testing it
     # for the presence of the data reference value and by
     # testing the (possible) existing value against true validation
-    if hasattr(class_reference, DATA_REFERENCE_VALUE) and class_reference.data_reference == True:
+    if hasattr(cls, DATA_REFERENCE_VALUE) and cls.data_reference == True:
         # returns valid (the model class is in fact
         # a data reference model class)
         return True
@@ -485,7 +485,7 @@ def _class_is_reference(class_reference):
     # a data reference)
     return False
 
-def _class_create_filter(class_reference, data, defaults = {}, entity_manager = None):
+def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     """
     Class method that creates a filter map from the provided
     (form) data map and using the provided map of default
@@ -510,7 +510,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # normalizes the options map, so that is possible to
     # operate in it without any possible harm to the the
@@ -583,7 +583,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
             # resolvers the eager values according to the provided
             # base value in case the returned relation is invalid
             # skips the current filter (invalid)
-            relation, target = resolve(class_reference, eager, base)
+            relation, target = resolve(cls, eager, base)
             if relation == None: return None, None, None
 
             # retrieves the filters map and sets it in the relation map
@@ -597,7 +597,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
             # sets the filters map as the current global filters
             # map and the target as the current class (reference)
             _filters = filters
-            target = class_reference
+            target = cls
 
         # returns the tuple containing the target filters map
         # the target (class) and the top level name of the attribute
@@ -679,7 +679,7 @@ def _class_create_filter(class_reference, data, defaults = {}, entity_manager = 
     }
     return filter
 
-def _class_apply_context(class_reference, options = {}, context_request = None, context = None, namespace_name = None, entity_manager = None):
+def _class_apply_context(cls, options = {}, context_request = None, context = None, namespace_name = None, entity_manager = None):
     """
     Applies the context information to the retrieval operation,
     this will change the given options map to handle the filtering
@@ -728,7 +728,7 @@ def _class_apply_context(class_reference, options = {}, context_request = None, 
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manager = entity_manager or class_reference._entity_manager
+    entity_manager = entity_manager or cls._entity_manager
 
     # in case the options map is not defined a new one
     # must be created for the domain of this operation
