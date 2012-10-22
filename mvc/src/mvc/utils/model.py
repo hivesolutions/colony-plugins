@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import re
 import types
 
@@ -178,7 +179,7 @@ def _start_model(self):
     # sets the model started flag as true
     self.model_started = True
 
-def _class_new(class_reference, map = None, rest_request = None):
+def _class_new(cls, map = None, rest_request = None):
     """
     Creates a new model instance, applying the given map
     of "form" options to the created model.
@@ -206,7 +207,7 @@ def _class_new(class_reference, map = None, rest_request = None):
 
     # creates a new model from the class reference
     # the default values should be applied
-    model = ModelProxy(class_reference, len(map)) if is_sequence else class_reference()
+    model = ModelProxy(cls, len(map)) if is_sequence else cls()
 
     # sets the rest request in the model according
     # to the provided reference value, this is used
@@ -221,7 +222,7 @@ def _class_new(class_reference, map = None, rest_request = None):
     # returns the created model
     return model
 
-def _class_get_system(class_reference):
+def _class_get_system(cls):
     """
     Class method that retrieves the system instance associated
     with the current model class.
@@ -234,9 +235,9 @@ def _class_get_system(class_reference):
     model class.
     """
 
-    return class_reference._system_instance
+    return cls._system_instance
 
-def _class_get_plugin(class_reference):
+def _class_get_plugin(cls):
     """
     Class method that retrieves the plugin instance associated
     with the current model class.
@@ -249,9 +250,9 @@ def _class_get_plugin(class_reference):
     model class.
     """
 
-    return class_reference._system_instance.plugin
+    return cls._system_instance.plugin
 
-def _class_get_context_attribute_g(class_reference, name, context_request, namespace_name = None):
+def _class_get_context_attribute_g(cls, name, context_request, namespace_name = None):
     """
     Retrieves a context attribute with the provided name using the
     provided context request as the source for the retrieval.
@@ -288,6 +289,43 @@ def _class_get_context_attribute_g(class_reference, name, context_request, names
     attribute = context.get(name, None)
     return attribute
 
+def _class_get_resource_path(cls, resource_path):
+    """
+    Retrieves the complete and absolute path to the resource
+    identified by the provided (relative) resource path.
+
+    This method assumes that there is a plugin associated with
+    the owner system instance and uses it as reference.
+
+    @type resource_path: String
+    @param resource_path: The (relative) path to the resource
+    to be used for complete path resolution.
+    @rtype: String
+    @return: The complete (and resolved) path to the resource
+    identified by the provided relative path.
+    """
+
+    # retrieves the currently associated plugin (using the provided
+    # system instance) and then retrieves the identifier and the
+    # plugin manager from it
+    plugin = cls._system_instance.plugin
+    plugin_id = plugin.id
+    plugin_manager = plugin.manager
+
+    # retrieves the plugin path for the current plugin associated
+    # with the model (class reference)
+    plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
+
+    # creates the full absolute resource path from the plugin path,
+    # the current resources path and the resource path, then returns
+    # it to the caller method
+    resource_path = os.path.join(
+        plugin_path,
+        cls._resources_path,
+        resource_path
+    )
+    return resource_path
+
 def apply(self, map):
     """
     "Applies" the given map of "form" values into the current
@@ -313,7 +351,7 @@ def apply(self, map):
     try:
         # retrieves the class of the model
         # as the reference class
-        class_reference = self.__class__
+        cls = self.__class__
 
         # iterates over all the items in the map to
         # apply the to the current model
@@ -332,13 +370,13 @@ def apply(self, map):
             # in case the item name is not defined in the class
             # reference an exception should be raised, impossible
             # to retrieve the required information
-            if not hasattr(class_reference, item_name):
+            if not hasattr(cls, item_name):
                 # raises a model apply exception
                 raise exceptions.ModelApplyException("item name '%s' not found in model class" % item_name)
 
             # retrieves the class value and retrieves
             # the type associated with the value
-            class_value = getattr(class_reference, item_name)
+            class_value = getattr(cls, item_name)
             class_value_type = type(class_value)
 
             # in case the class value type is not
@@ -362,7 +400,7 @@ def apply(self, map):
             # (presence of an object relation)
             if value_data_type == RELATION_VALUE:
                 # retrieves the relation information method
-                relation_method = getattr(class_reference, "_relation_" + item_name)
+                relation_method = getattr(cls, "_relation_" + item_name)
 
                 # calls the relation information method to retrieve the relation attributes
                 relation_attributes = relation_method()
@@ -436,7 +474,7 @@ def get_plugin(self):
     entity model.
     """
 
-    return self._system_instance
+    return self._system_instance.plugin
 
 def get_attribute_name(self, attribute_name):
     """
