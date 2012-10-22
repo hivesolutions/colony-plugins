@@ -322,6 +322,12 @@ class MvcUtils(colony.base.system.System):
         entity_manager_plugin = self.plugin.entity_manager_plugin
         business_helper_plugin = self.plugin.business_helper_plugin
 
+        # retrieves the (directory) relative path to the
+        # plugin instance and uses it to create the "default"
+        # resources path to be used
+        plugin_instance_path = self._get_module_path(system_instance)
+        resources_path = os.path.join(plugin_instance_path, RESOURCES_VALUE)
+
         # splits the package path into the extra and base
         # parts to be used in the business helper
         _base_entity_module_name, entity_module_name = package_path.rsplit(".", 1)
@@ -439,10 +445,12 @@ class MvcUtils(colony.base.system.System):
             # start method (also backs up the old start method)
             base_entity_model._start = create_new_start(base_entity_model)
 
-            # sets the entity manager and the system instance (system)
-            # in the base entity model (useful for later reference)
+            # sets the entity manager, the system instance (system)
+            # and the resources path the base entity model (useful
+            # for later reference)
             base_entity_model._entity_manager = entity_manager
             base_entity_model._system_instance = system_instance
+            base_entity_model._resources_path = resources_path
 
             # sets the base entity model in the models module
             # with the base entity name
@@ -463,9 +471,10 @@ class MvcUtils(colony.base.system.System):
             # start method (also backs up the old start method)
             base_model._start = create_new_start(base_model)
 
-            # sets the system instance (system) in the base
-            # model (useful for later reference)
+            # sets the system instance (system) and the resources
+            # path in the base model (useful for later reference)
             base_model._system_instance = system_instance
+            base_model._resources_path = resources_path
 
             # sets the base model in the models module
             # with the base name
