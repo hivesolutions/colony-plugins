@@ -3031,7 +3031,7 @@ def get_resources_path(self):
     """
     Retrieves the resources path.
 
-    @rtype: Sring
+    @rtype: String
     @return: The resources path.
     """
 
