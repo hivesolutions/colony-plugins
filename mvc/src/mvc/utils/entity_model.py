@@ -568,7 +568,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # from the current map and runs the resolve
         # recursive step for the remaining list
         eager = map.get("eager", {})
-        resolve(target, eager, remaining)
+        return resolve(target, eager, remaining)
 
     def resolve_s(attribute):
         # splits the attribute (complete) name using the dot based
