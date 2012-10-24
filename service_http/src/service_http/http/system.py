@@ -3120,6 +3120,9 @@ class HttpRequest:
     def get_operation_type(self):
         return self.operation_type
 
+    def set_operation_type(self, operation_type):
+        self.operation_type = operation_type
+
     def get_method(self):
         """
         Retrieves the method used in the current request
@@ -3133,9 +3136,6 @@ class HttpRequest:
         """
 
         return self.get_operation_type()
-
-    def set_operation_type(self, operation_type):
-        self.operation_type = operation_type
 
     def set_path(self, path, set_original_path = True):
         """
