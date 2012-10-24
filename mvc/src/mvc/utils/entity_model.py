@@ -658,8 +658,11 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # class resulting from the resolution of the base and then
         # creates the filter according to the (top) name and value
         # and to the provided operation then adds the filter to
-        # the list of filters
-        _value = target._cast_value(name, value)
+        # the list of filters, not that the value is set as a sequence
+        # or an invalid value based on the size of the value split this
+        # ensures automatic handling of sequence "typed" filters
+        _value = [target._cast_value(name, value) for value in value.split(";")]
+        _value = None if len(_value) == 0 else _value[0] if len(_value) == 1 else _value
         _filter = {
             "type" : operation,
             "fields" : {
