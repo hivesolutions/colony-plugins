@@ -4308,7 +4308,7 @@ class EntityManager:
             # checks if the filter field value is "iterable" and
             # in case it's not encapsulates the filter field value
             # around a tuple value to make it "iterable"
-            if not hasattr(filter_field_value, "__iter__"): filter_field_value = (filter_field_value,)
+            if not type(filter_field_value) in SEQUENCE_TYPES: filter_field_value = (filter_field_value,)
 
             # validates that the filter field name exists in the
             # context of the entity class and validates that the
@@ -4361,7 +4361,7 @@ class EntityManager:
             # checks if the filter field value is "iterable" and
             # in case it's not encapsulates the filter field value
             # around a tuple value to make it "iterable"
-            if not hasattr(filter_field_value, "__iter__"): filter_field_value = (filter_field_value,)
+            if not type(filter_field_value) in SEQUENCE_TYPES: filter_field_value = (filter_field_value,)
 
             # validates that the filter field name exists in the
             # context of the entity class and validates that the
