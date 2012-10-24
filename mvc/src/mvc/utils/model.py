@@ -286,7 +286,7 @@ def _class_get_context_attribute_g(cls, name, context_request, namespace_name = 
     # to retrieves the attribute for the requested name and returns it
     # to the caller method
     context = session.get_attribute(context_name) if session else {}
-    attribute = context and context.get(name, None) or None 
+    attribute = context and context.get(name, None) or None
     return attribute
 
 def _class_get_resource_path(cls, resource_path):
