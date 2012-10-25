@@ -41,6 +41,7 @@ import types
 import datetime
 
 import colony.base.system
+import colony.libs.structures_util
 
 POWERED_BY_STRING = "colony/%s (%s)"
 """ The string to be used in the powered by http
@@ -157,9 +158,23 @@ class WsgiRequest:
     current request, this value should be capitalized
     so that an uniform version is used """
 
+    original_path = None
+    """ The original path, without unquoting resulting
+    from the joining from both info part of the path
+    and the query string """
+
     uri = None
     """ The "partial" domain name relative part of
     the url that reference the resource """
+
+    attributes_map = {}
+    """ The map containing the various attributes resulting
+    from the parsing of the url encoded part of the get parameters
+    or from the content of a post message """
+
+    received_message = None
+    """ The complete linear buffer containing the set of data
+    sent by the client as the payload of the request """
 
     mediated = False
     """ Flag indicating if the current response is
@@ -173,19 +188,17 @@ class WsgiRequest:
     the provided data otherwise exception will be raised
     by the writing methods """
 
-
-
-
     etag = None
-    """ The etag """
+    """ The etag representing the file in an unique
+    way to, usually through an hash function  """
 
     expiration_timestamp = None
-    """ The expiration timestamp """
+    """ The expiration timestamp for the current request
+    to be send for the client side cache control """
 
     last_modified_timestamp = None
-    """ The last modified timestamp """
-
-
+    """ The last modified timestamp for the current request
+    to be send for the client side cache control """
 
     message_buffer = []
     """ The list containing the message buffer to
@@ -200,6 +213,9 @@ class WsgiRequest:
         request_method = environ.get("REQUEST_METHOD", "")
         path_info = environ.get("PATH_INFO", "")
         query_string = environ.get("QUERY_STRING", "")
+        content_type = environ.get("CONTENT_TYPE", "")
+        content_length = int(environ.get("CONTENT_LENGTH", "") or 0)
+        input = environ.get("wsgi.input", None)
 
         # creates the "final" path info value by adding
         # the "static" path info prefix to it, so that smaller
@@ -211,11 +227,157 @@ class WsgiRequest:
         self.environ = environ
         self.content_type_charset = content_type_charset
         self.operation_type = request_method
-        self.uri = query_string and path_info + "?" + query_string or path_info
+        self.uri = path_info
+        self.original_path = query_string and path_info + "?" + query_string or path_info
+
+        # starts the map that will hold the various attributes
+        # resulting from the parsing of the request
+        self.attributes_map = colony.libs.structures_util.OrderedMap(True)
 
         # starts the "static" message buffer list as an empty
         # list, so that further values are appended
         self.message_buffer = []
+
+        # in case the input object is defined reads the complete
+        # set of contents from it and sets it as the received
+        # message (eager loading of the contents)
+        self.received_message = input and input.read(content_length)
+
+        # parses the get attributes so that the corresponding map
+        # is populated with the arguments, preserving their order
+        self.__parse_get_attributes__()
+
+        # in case the content type of the request is form urlencoded
+        # must parse and process the post attributes
+        if content_type == "application/x-www-form-urlencoded":
+            self.parse_post_attributes()
+
+    def __getattribute__(self, attribute_name):
+        """
+        Retrieves the attribute from the attributes map.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to retrieve.
+        @rtype: Object
+        @return: The retrieved attribute.
+        """
+
+        return self.attributes_map.get(attribute_name, None)
+
+    def __setattribute__(self, attribute_name, attribute_value):
+        """
+        Sets the given attribute in the request. The referenced
+        attribute is the http request attribute and the setting takes
+        into account a possible duplication of the values.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to be set.
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to be set.
+        """
+
+        # in case the attribute name is already defined
+        # in the attributes map (duplicated reference), it
+        # requires a list structure to be used
+        if attribute_name in self.attributes_map:
+            # retrieves the attribute value reference from the attributes map
+            attribute_value_reference = self.attributes_map[attribute_name]
+
+            # retrieves the attribute value reference type
+            attribute_value_reference_type = type(attribute_value_reference)
+
+            # in case the attribute value reference type is (already)
+            # a list
+            if attribute_value_reference_type == types.ListType:
+                # adds the attribute value to the attribute value reference
+                attribute_value_reference.append(attribute_value)
+            # otherwise the attributes is not a list and it must be created
+            # for the first time
+            else:
+                # sets the list with the previously defined attribute reference
+                # and the attribute value
+                self.attributes_map[attribute_name] = [
+                    attribute_value_reference,
+                    attribute_value
+                ]
+        # otherwise the attribute is not defined and a normal
+        # set must be done
+        else:
+            # sets the attribute value in the attributes map
+            self.attributes_map[attribute_name] = attribute_value
+
+    def __parse_get_attributes__(self):
+        # splits the (original) path to get the attributes path of
+        # the request and retrieves the length of this result
+        path_splitted = self.original_path.split("?")
+        path_splitted_length = len(path_splitted)
+
+        # in case there are no arguments to be parsed
+        if path_splitted_length < 2: return
+
+        # retrieves the query string from the path splitted
+        # and sets the arguments values as the query string
+        # then uses these arguments for parsing
+        self.query_string = path_splitted[1]
+        self.arguments = self.query_string
+        self.parse_arguments()
+
+    def parse_post_attributes(self):
+        """
+        Parses the post attributes from the standard post
+        syntax. This call should only be made in case the
+        received message contains an urlencoded value.
+        """
+
+        # sets the arguments as the received message
+        # and then uses this attribute to parse them
+        self.arguments = self.received_message
+        self.parse_arguments()
+
+    def parse_arguments(self):
+        """
+        Parses the arguments, using the currently defined
+        arguments string (in the request).
+        The parsing of the arguments is based in the default get
+        arguments parsing.
+        """
+
+        # retrieves the attribute fields list
+        attribute_fields_list = self.arguments.split("&")
+
+        # iterates over all the attribute fields
+        for attribute_field in attribute_fields_list:
+            # splits the attribute field in the equals operator
+            # and retrieves the length of the result for processing
+            attribute_field_splitted = attribute_field.split("=", 1)
+            attribute_field_splitted_length = len(attribute_field_splitted)
+
+            # in case the attribute field splitted length is invalid,
+            # must continue the loop (invalid value)
+            if attribute_field_splitted_length == 0 or attribute_field_splitted_length > 2:
+                continue
+
+            # in case the attribute field splitted length is two, this
+            # refers a valid (normal) key and value attribute
+            if attribute_field_splitted_length == 2:
+                # retrieves the attribute name and the attribute value,
+                # from the attribute field splitted, then "unquotes" the
+                # attribute value from the url encoding
+                attribute_name, attribute_value = attribute_field_splitted
+                attribute_value = colony.libs.quote_util.unquote_plus(attribute_value)
+
+            # in case the attribute field splitted length is one, this refers
+            # a valid single key attribute (with an unset value)
+            elif attribute_field_splitted_length == 1:
+                # retrieves the attribute name, from the attribute field splitted
+                # and sets the value as invalid (not set)
+                attribute_name, = attribute_field_splitted
+                attribute_value = None
+
+            # "unquotes" the attribute name from the url encoding and sets
+            # the attribute for the current name in the current instance
+            attribute_name = colony.libs.quote_util.unquote_plus(attribute_name)
+            self.__setattribute__(attribute_name, attribute_value)
 
     def get_header(self, header_name):
         # normalizes the header name into the uppercase
@@ -227,6 +389,19 @@ class WsgiRequest:
         header_name = header_name.replace("-", "_")
         header_name = "HTTP_" + header_name
         return self.environ.get(header_name, None)
+
+    def read(self):
+        """
+        Reads the complete set of data present in the current
+        current request, this call may bloc the control (in a
+        blocking service).
+
+        @rtype: String
+        @return: The buffer containing the full data (message body)
+        for the current request.
+        """
+
+        return self.received_message
 
     def write(self, message, flush = 1, encode = True):
         # retrieves the message type and in case it's unicode
@@ -253,10 +428,43 @@ class WsgiRequest:
     def is_chunked_encoded(self):
         return self.chunked_encoding
 
+    def get_attributes_list(self):
+        """
+        Retrieves the list of attribute names in the
+        current attributes map.
 
+        @rtype: List
+        @return: The list of attribute names in the
+        current attributes map.
+        """
 
+        return self.attributes_map.keys()
 
+    def get_attribute(self, attribute_name):
+        return self.__getattribute__(attribute_name)
 
+    def set_attribute(self, attribute_name, attribute_value):
+        self.__setattribute__(attribute_name, attribute_value)
+
+    def get_operation_type(self):
+        return self.operation_type
+
+    def set_operation_type(self, operation_type):
+        self.operation_type = operation_type
+
+    def get_method(self):
+        """
+        Retrieves the method used in the current request
+        object for the current request.
+        This method is an alias to the retrieval of the
+        operation type.
+
+        @rtype: String
+        @return: The method used in the current request
+        context.
+        """
+
+        return self.get_operation_type()
 
     def get_etag(self):
         return self.etag
@@ -275,9 +483,6 @@ class WsgiRequest:
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
-
-
-
 
     def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
         # retrieves the if modified header value and in case the
@@ -315,8 +520,6 @@ class WsgiRequest:
         # returns true (modified or no information for
         # modification test)
         return True
-
-
 
     def mediate(self):
         # iterates continuously, this generator should return
