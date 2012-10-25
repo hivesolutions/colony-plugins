@@ -1840,7 +1840,7 @@ class EntityClass(object):
 
         # retrieves the parent classes
         # for the current class
-        parents = cls.__bases__
+        parents = cls._get_bases()
 
         # in case the (base) entity class is present
         # in the parents list (need to remove it)
@@ -1871,7 +1871,7 @@ class EntityClass(object):
         # retrieves the complete set of parent classes
         # for the current class and then filters the set
         # so that only the abstract parents are selected
-        parents = cls.__bases__
+        parents = cls._get_bases()
         abstract_parents = [parent for parent in parents if parent.is_abstract()]
 
         # caches the abstract parents element in the class
@@ -2036,7 +2036,7 @@ class EntityClass(object):
         # retrieves the parent classes
         # for the current class and then retrieves
         # length of them
-        parents = cls.__bases__
+        parents = cls._get_bases()
         parents_length = len(parents)
 
         # in case there are no parents defined
@@ -2461,6 +2461,31 @@ class EntityClass(object):
         # reflection is used to retrieve the instance attribute
         if instance_type == types.DictType: return instance[name]
         else: return instance.get_value(name)
+
+    @classmethod
+    def _get_bases(cls):
+        """
+        Retrieves the complete set of base (parent) classes for
+        the current class, this method is safe as it removes any
+        class that does not inherit from the entity class.
+
+        @rtype: List/tuple
+        @return: The set containing the various bases classes for
+        the current class that are considered valid.
+        """
+
+        # retrieves the complete set of base classes for
+        # the current class and in case the object is not
+        # the bases set returns the set immediately
+        bases = cls.__bases__
+        if not object in bases: return bases
+
+        # converts the base classes into a list and removes
+        # the object class from it, then returns the new bases
+        # list (without the object class)
+        bases = list(bases)
+        bases.remove(object)
+        return bases
 
     def reset(self):
         """
