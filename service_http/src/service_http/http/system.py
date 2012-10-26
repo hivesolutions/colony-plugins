@@ -2572,6 +2572,8 @@ class HttpRequest:
         self.attributes_map = colony.libs.structures_util.OrderedMap(True)
         self.headers_map = {}
         self.response_headers_map = {}
+        self.headers_in = {}
+        self.headers_out = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
         self.properties = {}
 
