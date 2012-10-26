@@ -1989,13 +1989,16 @@ def redirect_to(self, rest_request, quote = False):
 
     # retrieves the redirect to target value from session, the unsets
     # it after the retrieval (avoid duplicate redirections)
-    redirect_to_target = self.get_session_attribute(rest_request, "redirect_to_target", unset_session_attribute = True)
+    redirect_to_target = self.get_session_attribute(
+        rest_request,
+        "redirect_to_target",
+        unset_session_attribute = True
+    )
 
     # in case no "redirect to" target is found
     # (there was no previous assignment of redirect to)
-    if not redirect_to_target:
-        # returns immediately
-        return
+    # must return immediately
+    if not redirect_to_target: return
 
     # redirects the request to the "redirect to" target
     # the quote flag attribute is propagated
@@ -2018,13 +2021,16 @@ def redirect_to_base_path(self, rest_request, quote = False):
 
     # retrieves the redirect to target value from session, the unsets
     # it after the retrieval (avoid duplicate redirections)
-    redirect_to_target = self.get_session_attribute(rest_request, "redirect_to_target", unset_session_attribute = True)
+    redirect_to_target = self.get_session_attribute(
+        rest_request,
+        "redirect_to_target",
+        unset_session_attribute = True
+    )
 
     # in case no "redirect to" target is found
     # (there was no previous assignment of redirect to)
-    if not redirect_to_target:
-        # returns immediately
-        return
+    # must return immediately
+    if not redirect_to_target: return
 
     # redirects (with base) the request to the "redirect to" target
     self.redirect_base_path(rest_request, redirect_to_target, quote = quote)
