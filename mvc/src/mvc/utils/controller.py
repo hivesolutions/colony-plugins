@@ -3337,7 +3337,7 @@ def _get_host(self, rest_request, prefix_path = None):
     """
 
     # retrieves the host value from the request headers
-    host = rest_request.request.headers_map.get(HOST_VALUE, None)
+    host = rest_request.request.get_header(HOST_VALUE)
 
     # in case there is a prefix path defined
     if prefix_path:
