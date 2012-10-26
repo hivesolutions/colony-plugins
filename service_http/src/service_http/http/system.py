@@ -2745,7 +2745,7 @@ class HttpRequest:
         # retrieves the content type value
         content_type_value = content_type_splitted[0].strip()
 
-        # in case the content type value is not valie
+        # in case the content type value is not valid
         if not content_type_value == MULTIPART_FORM_DATA_VALUE:
             # raises the http invalid multipart request exception
             raise exceptions.HttpInvalidMultipartRequestException("invalid content type defined: " + content_type_value)
