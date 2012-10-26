@@ -43,6 +43,8 @@ import datetime
 import colony.base.system
 import colony.libs.structures_util
 
+import exceptions
+
 POWERED_BY_STRING = "colony/%s (%s)"
 """ The string to be used in the powered by http
 header to be sent to the end used as a sign of
@@ -96,8 +98,15 @@ class Wsgi(colony.base.system.System):
         # data or setting the exception values
         request = WsgiRequest(environ)
         try: rest_plugin.handle_request(request)
-        except BaseException, exception: code = 500; content = [str(exception)]
-        else: code = request.status_code; content = request.message_buffer
+        except BaseException, exception:
+            code = 500
+            content = [str(exception)]
+            headers_out_l = []
+        else:
+            code = request.status_code
+            content = request.message_buffer
+            headers_out = request.headers_out
+            headers_out_l = headers_out.items()
 
         # sets the content type to be returned as the one provided
         # by the request or default to the basic one, then tries
@@ -123,6 +132,7 @@ class Wsgi(colony.base.system.System):
             ("Content-Length", str(content_length)),
             ("X-Powered-By", POWERED_BY_STRING % (manager_version, manager_environment))
         ]
+        response_headers.extend(headers_out_l)
         start_response(status, response_headers)
 
         # returns the content sequence to the caller method so that is
@@ -158,19 +168,42 @@ class WsgiRequest:
     current request, this value should be capitalized
     so that an uniform version is used """
 
+    path = None
+    """ The (url) path created by joining the joining
+    the prefix value and the provided path info, this
+    is the virtual value to be used by colony """
+
     original_path = None
     """ The original path, without unquoting resulting
     from the joining from both info part of the path
-    and the query string """
+    and the query string, this path should reflect the
+    value provided by the server and not the virtual one """
 
     uri = None
     """ The "partial" domain name relative part of
     the url that reference the resource """
 
+    query_string = None
+    """ The string containing the query part of the url
+    that may be parsed for arguments """
+
+    arguments = None
+    """ The arguments part of the query or post data if
+    it's an url encoded value """
+
+    multipart = None
+    """ The multipart string value (contents) of a message
+    that is meant to parsed in multiple contexts (parts) """
+
     attributes_map = {}
     """ The map containing the various attributes resulting
     from the parsing of the url encoded part of the get parameters
     or from the content of a post message """
+
+    headers_out = {}
+    """ The map that hold the set of headers to be sent
+    to the client (output headers) indexed by name and
+    associated with the value for them  """
 
     received_message = None
     """ The complete linear buffer containing the set of data
@@ -211,28 +244,39 @@ class WsgiRequest:
         # map so that the basic request values may be constructed
         # the value are used with default values
         request_method = environ.get("REQUEST_METHOD", "")
+        script_name = environ.get("SCRIPT_NAME", "")
         path_info = environ.get("PATH_INFO", "")
         query_string = environ.get("QUERY_STRING", "")
         content_type = environ.get("CONTENT_TYPE", "")
         content_length = int(environ.get("CONTENT_LENGTH", "") or 0)
         input = environ.get("wsgi.input", None)
 
-        # creates the "final" path info value by adding
+        # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
         # uri's may be used in wsgi
-        path_info = PATH_INFO_PREFIX + path_info
+        path_info_r = PATH_INFO_PREFIX + path_info
+
+        # creates the complete "original" path info value by adding
+        # the script name (routing base value) to the path info, this
+        # value may be used internally as the original (path) value
+        path_info_o = script_name and script_name + path_info or path_info
 
         # sets the various default request values using the "calculated"
         # wsgi based values as reference
         self.environ = environ
         self.content_type_charset = content_type_charset
         self.operation_type = request_method
-        self.uri = path_info
-        self.original_path = query_string and path_info + "?" + query_string or path_info
+        self.uri = path_info_r
+        self.path = query_string and path_info_r + "?" + query_string or path_info_r
+        self.original_path = query_string and path_info_o + "?" + query_string or path_info_o
 
         # starts the map that will hold the various attributes
         # resulting from the parsing of the request
         self.attributes_map = colony.libs.structures_util.OrderedMap(True)
+
+        # creates the map that will hold the various headers to
+        # sent to the client (output headers)
+        self.headers_out = {}
 
         # starts the "static" message buffer list as an empty
         # list, so that further values are appended
@@ -249,8 +293,13 @@ class WsgiRequest:
 
         # in case the content type of the request is form urlencoded
         # must parse and process the post attributes
-        if content_type == "application/x-www-form-urlencoded":
+        if content_type.startswith("application/x-www-form-urlencoded"):
             self.parse_post_attributes()
+
+        # in case the content type of the request is multipart form data
+        # must parse and process the post multipart
+        elif content_type.startswith("multipart/form-data"):
+            self.parse_post_multipart()
 
     def __getattribute__(self, attribute_name):
         """
@@ -334,6 +383,18 @@ class WsgiRequest:
         self.arguments = self.received_message
         self.parse_arguments()
 
+    def parse_post_multipart(self):
+        """
+        Parses the post multipart from the standard post
+        syntax. This call should only be made in case the
+        received message contains an multipart value.
+        """
+
+        # sets the multipart as the received message
+        # and then uses this attribute to parse them
+        self.multipart = self.received_message
+        self.parse_multipart()
+
     def parse_arguments(self):
         """
         Parses the arguments, using the currently defined
@@ -379,6 +440,87 @@ class WsgiRequest:
             attribute_name = colony.libs.quote_util.unquote_plus(attribute_name)
             self.__setattribute__(attribute_name, attribute_value)
 
+    def parse_multipart(self):
+        """
+        Parses the multipart using the currently defined multipart value.
+        The processing of multipart is done according the standard
+        specifications and rfqs.
+
+        @see: http://en.wikipedia.org/wiki/MIME
+        """
+
+        # retrieves the content type header
+        content_type = self.get_header("Content-Type")
+
+        # in case no content type is defined
+        if not content_type:
+            # raises the http invalid multipart request exception
+            raise exceptions.WsgiRuntimeException(
+                "no content type defined"
+            )
+
+        # splits the content type and then strips the first
+        # value of it from any "extra" character
+        content_type_splitted = content_type.split(";")
+        content_type_value = content_type_splitted[0].strip()
+
+        # in case the content type value is not valid raises an
+        # exception indicating the error
+        if not content_type_value == "multipart/form-data":
+            raise exceptions.WsgiRuntimeException(
+                "invalid content type defined: " + content_type_value
+            )
+
+        # retrieves the boundary value and then splits it
+        # into the appropriate values (around the separator
+        # token for the boundary key and value)
+        boundary = content_type_splitted[1].strip()
+        boundary_splitted = boundary.split("=")
+
+        # in case the length of the boundary is not two (invalid)
+        # this is considered invalid and an exception is raised
+        if not len(boundary_splitted) == 2:
+            raise exceptions.WsgiRuntimeException(
+                "invalid boundary value: " + boundary
+            )
+
+        # retrieves (unpacks) the boundary reference and the boundary value
+        # and retrieves the length of the boundary value
+        _boundary, boundary_value = boundary_splitted
+        boundary_value_length = len(boundary_value)
+
+        # sets the initial index as the as the boundary value length
+        # plus the base boundary value of two (equivalent to: --)
+        current_index = boundary_value_length + 2
+
+        # iterates indefinitely for the parsing of the various content
+        # parts, and setting the attributes in the current request
+        while True:
+            # retrieves the end index (boundary start index)
+            end_index = self.multipart.find(boundary_value, current_index)
+
+            # in case the end index is invalid (end of multipart)
+            # must break the loop
+            if end_index == -1: break
+
+            # parses the multipart part retrieving the headers map and the contents
+            # the sent indexes avoid the extra newline values incrementing and decrementing
+            # the value of two at the end and start
+            headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
+
+            # parses the content disposition header retrieving the content
+            # disposition map and list (with the attributes order) then
+            # sets the contents in the content disposition map and retrieves
+            # the name from the content disposition map
+            content_disposition_map = self._parse_content_disposition(headers_map)
+            content_disposition_map["contents"] = contents
+            name = content_disposition_map["name"]
+
+            # sets the attribute attribute in the current request and
+            # then sets the current index as the end index
+            self.__setattribute__(name, content_disposition_map)
+            current_index = end_index + boundary_value_length
+
     def get_header(self, header_name):
         # normalizes the header name into the uppercase
         # and underscore based version and then adds
@@ -387,8 +529,65 @@ class WsgiRequest:
         # the value from the environment map
         header_name = header_name.upper()
         header_name = header_name.replace("-", "_")
-        header_name = "HTTP_" + header_name
-        return self.environ.get(header_name, None)
+        header_name_b = "HTTP_" + header_name
+        header = self.environ.get(header_name, None)
+        return self.environ.get(header_name_b, header)
+
+    def set_header(self, header_name, header_value, encode = True):
+        """
+        Set a response header value on the request.
+        The header that is set is sent to the client after
+        the request handling.
+
+        @type header_name: String
+        @param header_name: The name of the header to be set.
+        @type header_value: Object
+        @param header_value: The value of the header to be sent
+        in the response.
+        @type encode: bool
+        @param encode: If the header value should be encoded in
+        case the type is unicode.
+        """
+
+        # retrieves the header value type
+        header_value_type = type(header_value)
+
+        # in case the header value type is unicode
+        # and the encode flag is set must encode the
+        # header value using the current encoding
+        if header_value_type == types.UnicodeType and encode:
+            header_value = header_value.encode(self.content_type_charset)
+
+        # sets the header value in the headers map so that
+        # any further access to the map will reflect the change
+        self.headers_out[header_name] = header_value
+
+    def append_header(self, header_name, header_value):
+        """
+        Appends an header value to a response header.
+        This method calls the set header method in case the
+        header is not yet defined.
+
+        @type header_name: String
+        @param header_name: The name of the header to be appended with the value.
+        @type header_value: Object
+        @param header_value: The value of the header to be appended
+        in the response.
+        """
+
+        # in case the header is already defined
+        if header_name in self.headers_out:
+            # retrieves the current header value and then creates the
+            # final header value as the appending of both the current
+            # and the concatenation value
+            current_header_value = self.headers_out[header_name]
+            final_header_value = current_header_value + header_value
+        else:
+            # sets the final header value as the header value
+            final_header_value = header_value
+
+        # sets the final header value
+        self.set_header(header_name, final_header_value)
 
     def read(self):
         """
@@ -427,6 +626,22 @@ class WsgiRequest:
 
     def is_chunked_encoded(self):
         return self.chunked_encoding
+
+    def is_secure(self):
+        """
+        Checks if the current request is being transmitted over a secure
+        channel, the verification is made at a connection abstraction
+        level (down socket verification).
+
+        @rtype: bool
+        @return: If the current request is being transmitted over a secure
+        channel (secure request).
+        """
+
+        # retrieves the url scheme for the current request and returns
+        # the result of the comparison of it against the secure scheme
+        url_scheme = self.environ.get("wsgi.url_scheme", None)
+        return url_scheme == "https"
 
     def get_attributes_list(self):
         """
@@ -533,3 +748,114 @@ class WsgiRequest:
             mediated_value = self.mediated_handler.get_chunk(CHUNK_SIZE)
             if not mediated_value: return
             else: yield mediated_value
+
+    def _parse_multipart_part(self, start_index, end_index):
+        """
+        Parses a "part" of the whole multipart content bases on the
+        interval of send indexes.
+
+        @type start_index: int
+        @param start_index: The start index of the "part" to be processed.
+        @type end_index: int
+        @param end_index: The end index of the "part" to be processed.
+        @rtype: Tuple
+        @return: A Tuple with a map of header for the "part" and the content of the "part".
+        """
+
+        # creates the headers map
+        headers_map = {}
+
+        # retrieves the end header index and uses it to retrieve
+        # the headers (string) from the multipart then splits it
+        # "around" the several lines contained in it
+        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
+        headers = self.multipart[start_index:end_header_index]
+        headers_splitted = headers.split("\r\n")
+
+        # iterates over the headers lines to process their header
+        # values (key and value pairs)
+        for header_splitted in headers_splitted:
+            # finds the header separator
+            division_index = header_splitted.find(":")
+
+            # retrieves the header name and vaude from the
+            # splitted value and then sets both of them in
+            # the headers map
+            header_name = header_splitted[:division_index].strip()
+            header_value = header_splitted[division_index + 1:].strip()
+            headers_map[header_name] = header_value
+
+        # retrieves the contents from the multipart then uses them
+        # to return the headers map and the contents as a tuple
+        contents = self.multipart[end_header_index + 4:end_index - 2]
+        return (
+            headers_map,
+            contents
+        )
+
+    def _parse_content_disposition(self, headers_map):
+        """
+        Parses the content disposition value from the headers map.
+        This method returns a map containing associations of key and value
+        of the various content disposition values.
+
+        @type headers_map: Dictionary
+        @param headers_map: The map containing the headers and the values.
+        @rtype: Dictionary
+        @return: The map containing the various disposition values in a map.
+        """
+
+        # retrieves the content disposition header
+        content_disposition = headers_map.get("Content-Disposition", None)
+
+        # in case no content disposition is defined must raise an
+        # exception because the header field is required
+        if not content_disposition:
+            raise exceptions.WsgiRuntimeException(
+                "missing content disposition in multipart value"
+            )
+
+        # splits the content disposition to obtain the attributes and
+        # creates (and starts) the content disposition map
+        content_disposition_attributes = content_disposition.split(";")
+        content_disposition_map = {}
+
+        # iterates over all the content disposition attributes
+        # the content disposition attributes are not stripped
+        for content_disposition_attribute in content_disposition_attributes:
+            # strips and split the content disposition attribute around
+            # the separator token (for key and value) and then retrieves
+            # the length of the result for verification
+            content_disposition_attribute_stripped = content_disposition_attribute.strip()
+            content_disposition_attribute_splitted = content_disposition_attribute_stripped.split("=")
+            content_disposition_attribute_splitted_length = len(content_disposition_attribute_splitted)
+
+            # in case the length is two, it's a "normal" key value
+            # pair based attribute case
+            if content_disposition_attribute_splitted_length == 2:
+                # retrieves the key and the value, then strips
+                # the value from the string items and sets the
+                # key and value association in the map
+                key, value = content_disposition_attribute_splitted
+                value_stripped = value.strip("\"")
+                content_disposition_map[key] = value_stripped
+
+            # in case the length is one the current attribute refers
+            # a single attribute with no value set
+            elif content_disposition_attribute_splitted_length == 1:
+                # retrieves the key value from the content disposition
+                # attribute and set it in the map with an invalid value
+                key = content_disposition_attribute_splitted[0]
+                content_disposition_map[key] = None
+
+            # otherwise it's an invalid value and an exception must
+            # be raised indicating the error
+            else:
+                raise exceptions.WsgiRuntimeException(
+                    "invalid content disposition value in multipart value: " +
+                    content_disposition_attribute_stripped
+                )
+
+        # returns the content disposition map, containing the
+        # complete set of headers for the content disposition
+        return content_disposition_map
