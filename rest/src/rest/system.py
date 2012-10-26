@@ -1889,7 +1889,7 @@ class RestRequest:
         """
 
         # retrieves the host value from the request headers
-        host = self.request.headers_map.get(HOST_VALUE, None)
+        host = self.request.get_header(HOST_VALUE)
 
         # in case the host is not defined
         if not host:
