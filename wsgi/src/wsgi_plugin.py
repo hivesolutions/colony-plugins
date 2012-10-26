@@ -63,6 +63,7 @@ class WsgiPlugin(colony.base.system.Plugin):
         colony.base.system.PluginDependency("pt.hive.colony.plugins.rest", "1.x.x"),
     ]
     main_modules = [
+        "wsgi.exceptions",
         "wsgi.sytem"
     ]
 
