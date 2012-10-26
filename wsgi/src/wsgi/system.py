@@ -68,7 +68,10 @@ knows characters are able to be encoded """
 
 class Wsgi(colony.base.system.System):
     """
-    The wsgi class.
+    The wsgi class, responsible for the implementation
+    of the colony side of the wsgi specification.
+
+    @see: http://www.python.org/dev/peps/pep-0333/
     """
 
     def handle(self, environ, start_response):
