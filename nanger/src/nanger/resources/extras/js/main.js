@@ -212,6 +212,10 @@
                             // forces the showing of the autocomplete panel
                             // to display it accordingly
                             autocomplete(console, true);
+
+                            // prevents the default behaviour to avoid any
+                            // unwanted effect
+                            event.preventDefault();
                             break;
 
                         default :
