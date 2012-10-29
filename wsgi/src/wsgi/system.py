@@ -702,9 +702,9 @@ class WsgiRequest:
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
-        last_modified_date_time = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
-        last_modified_date_time_formatted = last_modified_date_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
-        self.headers_out["Last-Modified"] = last_modified_date_time_formatted
+        last_modified = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
+        last_modified_f = last_modified.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        self.headers_out["Last-Modified"] = last_modified_f
 
     def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
         # retrieves the if modified header value and in case the
