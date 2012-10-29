@@ -689,6 +689,7 @@ class WsgiRequest:
 
     def set_etag(self, etag):
         self.etag = etag
+        self.headers_out["ETag"] = etag
 
     def get_expiration_timestamp(self):
         return self.expiration_timestamp
@@ -701,6 +702,9 @@ class WsgiRequest:
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
+        last_modified_date_time = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
+        last_modified_date_time_formatted = last_modified_date_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        self.headers_out["Last-Modified"] = last_modified_date_time_formatted
 
     def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
         # retrieves the if modified header value and in case the
@@ -730,10 +734,10 @@ class WsgiRequest:
         # checking must be performed
         if_none_match_header = self.get_header("If-None-Match")
         if etag_value and if_none_match_header:
-            # in case the value of the if modified header is the same
+            # in case the value of the if none match header is the same
             # as the etag value of the file (no modification) must
             # return false as there was no modification
-            if if_modified_header == etag_value: return False
+            if if_none_match_header == etag_value: return False
 
         # returns true (modified or no information for
         # modification test)

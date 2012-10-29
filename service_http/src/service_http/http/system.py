@@ -3357,10 +3357,10 @@ class HttpRequest:
         # checking must be performed
         if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
         if etag_value and if_none_match_header:
-            # in case the value of the if modified header is the same
+            # in case the value of the if none match header is the same
             # as the etag value of the file (no modification) must
             # return false as there was no modification
-            if if_modified_header == etag_value: return False
+            if if_none_match_header == etag_value: return False
 
         # returns true (modified or no information for
         # modification test)
