@@ -113,7 +113,8 @@ OPTIONS_KEYS = (
     "entities",
     "scope",
     "sort",
-    "order_names"
+    "order_names",
+    "lock"
 )
 """ The list of keys that may appear in an options map """
 
@@ -1885,6 +1886,104 @@ class EntityManager:
         # mechanisms necessary for data source communication
         self.enable(entity)
 
+
+
+
+
+
+
+    def reload_many(self, entities, options = None):
+        # normalizes the options, this is going to expand the
+        # options map into a larger and easily accessible
+        # map of values (this only happens in case the options
+        # are already defined)
+        options = options and self.normalize_options(options) or {}
+
+        # in case the provided sequence of entities is not valid
+        # or it's empty must returns immediately not possible to
+        # reload invalid sequences
+        if not entities: return
+
+        # retrieves the reference to the first entity in the sequence
+        # to be reloaded (to be used for operations)
+        entity_f = entities[0]
+
+        # retrieves the entity class associated with
+        # the (first) entity to be reloaded
+        entity_class = entity_f.__class__
+
+        # retrieves the map of names and the complete
+        # set of relations for the entity, the first
+        # is going to be used in the names population
+        # of the entity and the second is going to be
+        # used for the erasing of the relation values
+        names_map = entity_class.get_names_map()
+        all_relations = entity_class.get_all_relations()
+
+        id_values = []
+
+        for entity in entities:
+            # iterates over all the relations in the entity
+            # to delete them (flushes relation values)
+            for relation in all_relations: entity.delete_value(relation)
+
+            # retrieves the value of the identifier attribute
+            # of the entity to be used for the retrieval of
+            # the new entity data and appends it to the list
+            # that contains the id values
+            id_value = entity.get_id_value()
+            id_values.append(id_value)
+
+
+        #@TODO TENHO DE MUDAR o NAME para tar softcoded
+        options["filters"].append({
+            "type" : "in",
+            "fields" : {
+                "name" : "object_id",
+                "value" : id_values
+            }
+        })
+
+        new_entities = self.find(entity_class, options)
+
+
+
+
+        # tries to retrieve the equivalent (new) entity from
+        # the data source using the identifier value as the
+        # "guide" for the retrieval process
+        #new_entity = self.get(entity_class, id_value, options)
+
+
+        for new_entity, entity in zip(new_entities, entities):
+            # iterates over all the names present in the complete
+            # entity class hierarchy to update with the new values
+            for name in names_map:
+                # in case the current name in iteration is
+                # not present in the new entity no need to
+                # retrieve it and set it in the entity
+                if not new_entity.has_value(name):
+                    # continues the loop the name is not present
+                    # in the new entity it's impossible to update
+                    # it in the entity
+                    continue
+
+                # retrieves the value for the current
+                # name in the new entity and sets it in
+                # the entity to be reloaded (attribute update)
+                value = new_entity.get_value(name)
+                entity.set_value(name, value)
+
+            # enables the entity, providing the entity with the
+            # mechanisms necessary for data source communication
+            self.enable(entity)
+
+
+
+
+
+
+
     def relation(self, entity, name, options = None):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
@@ -3356,6 +3455,11 @@ class EntityManager:
         # start record and number records values of the options map
         self._limit_query_f(entity_class, options, query_buffer)
 
+        # writes the part of find query dedicated to the lock of
+        # the table structures, the string will be updated based on the
+        # for update part for the locking of the retrieved values
+        self._lock_query_f(entity_class, options, query_buffer)
+
         # retrieves the "final" query value from
         # the query (string) buffer
         query = query_buffer.get_value()
@@ -4046,7 +4150,7 @@ class EntityManager:
 
             # tries to resolve the operator into the appropriate one
             # (uses the engine internals) only does this in case the
-            # operator is correclty set and retrieved
+            # operator is correctly set and retrieved
             operator = operator and self.engine._resolve_operator(operator) or operator
 
             # writes the comma to the query buffer only in case the
@@ -4091,6 +4195,24 @@ class EntityManager:
             # according to the defined start record
             query_buffer.write(" offset ")
             query_buffer.write(str(start_record))
+
+    def _lock_query_f(self, entity_class, options, query_buffer):
+        # tries to retrieve the lock option from the options map
+        # in case it's not available returns immediately no need
+        # to proceed with the query buffer writing
+        lock = options.get("lock", False)
+        if not lock: return
+
+        # checks if the current engine allows (contains support)
+        # for the for update part of the query
+        allow_for_update = self.engine._allow_for_update()
+
+        # writes the "for update" part of the filter query
+        # according to the defined lock flag in case there's
+        # support from the engine for it, otherwise locks the
+        # complete table associated with the entity class
+        if allow_for_update: query_buffer.write(" for update")
+        else: self.lock(entity_class)
 
     def _process_filter(self, entity_class, table_name, filter, query_buffer, is_first = True):
         # in case the is first flag
