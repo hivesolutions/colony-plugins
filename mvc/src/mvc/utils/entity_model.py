@@ -167,6 +167,14 @@ def _class_get(cls, id_value, options = {}, context = None, namespace = None, en
     # returns the retrieved entity model
     return entity_model
 
+def _class_reload_many(cls, models, options = {}, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or cls._entity_manager
+
+    entity_manager.reload_many(models, options)
+
+
 def _class_count(cls, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves the number of entity models
