@@ -1886,12 +1886,6 @@ class EntityManager:
         # mechanisms necessary for data source communication
         self.enable(entity)
 
-
-
-
-
-
-
     def reload_many(self, entities, options = None):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
@@ -1912,6 +1906,10 @@ class EntityManager:
         # the (first) entity to be reloaded
         entity_class = entity_f.__class__
 
+        # retrieves the name of the attribute considered to
+        # be the identifier of the class (for the query)
+        id_name = entity_class.get_id()
+
         # retrieves the map of names and the complete
         # set of relations for the entity, the first
         # is going to be used in the names population
@@ -1920,8 +1918,13 @@ class EntityManager:
         names_map = entity_class.get_names_map()
         all_relations = entity_class.get_all_relations()
 
+        # creates the list that will hold the various identifiers
+        # gathered from the complete set of entities to be reloaded
         id_values = []
 
+        # iterates over all the entities to "delete" it's relation
+        # values and to add the various identifier values to the
+        # list of identifier values
         for entity in entities:
             # iterates over all the relations in the entity
             # to delete them (flushes relation values)
@@ -1934,29 +1937,27 @@ class EntityManager:
             id_value = entity.get_id_value()
             id_values.append(id_value)
 
-
-        #@TODO TENHO DE MUDAR o NAME para tar softcoded
+        # retrieves the filters part of the options and then uses
+        # the sequence to append the "new" in query filter and then
+        # updates the filters reference in the options with it
         filters = options.get("filters", [])
         filters.append({
             "type" : "in",
             "fields" : ({
-                "name" : "object_id",
+                "name" : id_name,
                 "value" : id_values
             },)
         })
         options["filters"] = filters
 
+        # tries to retrieve the complete set of (new) entities from
+        # the data source using the various identifier values as the
+        # "guide" for the retrieval process
         new_entities = self.find(entity_class, options)
 
-
-
-
-        # tries to retrieve the equivalent (new) entity from
-        # the data source using the identifier value as the
-        # "guide" for the retrieval process
-        #new_entity = self.get(entity_class, id_value, options)
-
-
+        # iterates over the complete set of tuple matches (between the
+        # new entities and the entities) to populate the entities with
+        # the values retrieves from the new entities
         for new_entity, entity in zip(new_entities, entities):
             # iterates over all the names present in the complete
             # entity class hierarchy to update with the new values
@@ -1979,12 +1980,6 @@ class EntityManager:
             # enables the entity, providing the entity with the
             # mechanisms necessary for data source communication
             self.enable(entity)
-
-
-
-
-
-
 
     def relation(self, entity, name, options = None):
         # normalizes the options, this is going to expand the
