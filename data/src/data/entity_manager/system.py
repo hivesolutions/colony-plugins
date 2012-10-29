@@ -1936,13 +1936,15 @@ class EntityManager:
 
 
         #@TODO TENHO DE MUDAR o NAME para tar softcoded
-        options["filters"].append({
+        filters = options.get("filters", [])
+        filters.append({
             "type" : "in",
-            "fields" : {
+            "fields" : ({
                 "name" : "object_id",
                 "value" : id_values
-            }
+            },)
         })
+        options["filters"] = filters
 
         new_entities = self.find(entity_class, options)
 
