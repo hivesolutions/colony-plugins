@@ -455,6 +455,9 @@ class SqliteEngine:
     def _allow_alter_drop(self):
         return False
 
+    def _allow_for_update(self):
+        return False
+
 class SqliteConnection:
     """
     Class representing an abstraction on top of

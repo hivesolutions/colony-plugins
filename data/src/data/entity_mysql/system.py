@@ -610,6 +610,9 @@ class MysqlEngine:
     def _allow_alter_drop(self):
         return False
 
+    def _allow_for_update(self):
+        return True
+
 class MysqlConnection:
     """
     Class representing an abstraction on top of

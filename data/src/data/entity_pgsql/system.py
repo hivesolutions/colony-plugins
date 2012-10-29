@@ -536,5 +536,8 @@ class PgsqlEngine:
     def _allow_alter_drop(self):
         return False
 
+    def _allow_for_update(self):
+        return True
+
 class IntegrityError(RuntimeError):
     pass
