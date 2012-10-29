@@ -4502,7 +4502,7 @@ class EntityManager:
             # writes the in clause not in the query buffer
             query_buffer.write("not " + field_name + " in " + filter_field_sql_value)
 
-    def _process_filter_like(self, entity_class, table_name, filter, query_buffer):
+    def _process_filter_like(self, entity_class, table_name, filter, query_buffer, left = True, right = True):
         # retrieves the filter fields and
         # like filter type
         filter_fields = filter["fields"]
@@ -4581,7 +4581,7 @@ class EntityManager:
 
             # in case the like type is left
             # or both, the initial part must be wildcard
-            if like_type in ("left", "both"):
+            if like_type in ("left", "both") and left:
                 # writes the wildcard to the query
                 # buffer
                 query_buffer.write("'%")
@@ -4599,7 +4599,7 @@ class EntityManager:
 
             # in case the like type is right
             # or both, the final part must be wildcard
-            if like_type in ("right", "both"):
+            if like_type in ("right", "both") and right:
                 # writes the wildcard to the query
                 # buffer
                 query_buffer.write("%'")
@@ -4609,6 +4609,12 @@ class EntityManager:
                 # writes the final string to the
                 # query buffer
                 query_buffer.write("'")
+
+    def _process_filter_rlike(self, entity_class, table_name, filter, query_buffer):
+        self._process_filter_like(entity_class, table_name, filter, query_buffer, left = False)
+
+    def _process_filter_llike(self, entity_class, table_name, filter, query_buffer):
+        self._process_filter_like(entity_class, table_name, filter, query_buffer, right = False)
 
     def _process_filter_greater(self, entity_class, table_name, filter, query_buffer):
         # retrieves the filter fields
