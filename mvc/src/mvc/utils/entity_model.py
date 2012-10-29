@@ -121,6 +121,32 @@ DATA_TYPE_CAST_TYPES_MAP = {
 }
 """ The map associating the data types with the cast types """
 
+def _class_reload_many(cls, models, options = {}, entity_manager = None):
+    """
+    Class method that reloads a sequence of entity models
+    retrieving the new data from the data source.
+    This method allows the indirect access to the entity
+    manager for the usage of the reload many method.
+
+    @type models: List
+    @param models: The list of (entity) models to be reloaded
+    from the data source.
+    @type options: Dictionary
+    @param options: The map of options for the reloading of the
+    various entity models.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or cls._entity_manager
+
+    # runs the reloading operation on top of the various
+    # provided (entity) models with the provided options
+    entity_manager.reload_many(models, options)
+
 def _class_get(cls, id_value, options = {}, context = None, namespace = None, entity_manager = None):
     """
     Class method that retrieves an entity model for
@@ -166,14 +192,6 @@ def _class_get(cls, id_value, options = {}, context = None, namespace = None, en
 
     # returns the retrieved entity model
     return entity_model
-
-def _class_reload_many(cls, models, options = {}, entity_manager = None):
-    # retrieves the entity manager to be used or the
-    # default "embedded" entity manager
-    entity_manager = entity_manager or cls._entity_manager
-
-    entity_manager.reload_many(models, options)
-
 
 def _class_count(cls, options = {}, context = None, namespace = None, entity_manager = None):
     """
