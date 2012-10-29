@@ -1849,14 +1849,14 @@ class EntityManager:
         names_map = entity_class.get_names_map()
         all_relations = entity_class.get_all_relations()
 
+        # iterates over all the relations in the entity
+        # to delete them (flushes relation values)
+        for relation in all_relations: entity.delete_value(relation)
+
         # retrieves the value of the identifier attribute
         # of the entity to be used for the retrieval of
         # the new entity data
         id_value = entity.get_id_value()
-
-        # iterates over all the relations in the entity
-        # to delete them (flushes relation values)
-        for relation in all_relations: entity.delete_value(relation)
 
         # tries to retrieve the equivalent (new) entity from
         # the data source using the identifier value as the
