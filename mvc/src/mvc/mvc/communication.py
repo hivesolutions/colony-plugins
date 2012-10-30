@@ -170,18 +170,6 @@ class MvcCommunicationHandler:
         the message.
         """
 
-        # 1. Tenho de sacar primeiro mapa de channels para o connection
-        #    name pedido
-        # 2. Tenho de sacar a lista de conecoes para esse channel
-        # 3. Tenho de adicionar a mensagem a essas conexoes
-
-        # NOTAS - Tenho de ter um mapa invertido para rapidamente fazer
-        #         o unregister das conexoes das channels
-
-        # ESTRUTURAS - channels_map - associa fqn do channel (connection_name/channel_name)
-        #                             com as conexoes
-        #              channels_map_i - associa a conexao com channels que esta registado
-
         # iterates over all the channels to send the message and
         # retrieves the connection to be used to send the message
         for channel in channels:
