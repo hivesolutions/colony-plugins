@@ -413,11 +413,12 @@ def serialize_exceptions(serialization_parameters = None):
                 # in case the serializer is set (uses it as it
                 # is has priority)
                 if serializer:
-                    # dumps the exception map to the serialized form
+                    # dumps the exception map to the serialized form ant then
+                    # sets the serialized map as the rest request contents with
+                    # the appropriate mime type
                     exception_map_serialized = serializer.dumps(exception_map)
-
-                    # sets the serialized map as the rest request contents
-                    self.set_contents(rest_request, exception_map_serialized)
+                    mime_type = serializer.get_mime_type()
+                    self.set_contents(rest_request, exception_map_serialized, content_type = mime_type)
 
                     # sets the return value as invalid (error)
                     return_value = False
