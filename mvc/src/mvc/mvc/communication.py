@@ -152,7 +152,7 @@ class MvcCommunicationHandler:
 
     def send(self, connection_name, message, channels = ("public",)):
         """
-        Sends a broadcast message to the clients that are registered
+        Sends a unicast message to the clients that are registered
         for the channels in the connection with the given name.
 
         The usage of this method implies that a security layer secures
@@ -172,14 +172,14 @@ class MvcCommunicationHandler:
 
         # 1. Tenho de sacar primeiro mapa de channels para o connection
         #    name pedido
-        # 2. Tenho de scar a lista de conecoes para esse channel
+        # 2. Tenho de sacar a lista de conecoes para esse channel
         # 3. Tenho de adicionar a mensagem a essas conexoes
 
         # NOTAS - Tenho de ter um mapa invertido para rapidamente fazer
         #         o unregister das conexoes das channels
 
         # ESTRUTURAS - channels_map - associa fqn do channel (connection_name/channel_name)
-        #                             com a conexao
+        #                             com as conexoes
         #              channels_map_i - associa a conexao com channels que esta registado
 
         # iterates over all the channels to send the message and
@@ -282,6 +282,23 @@ class MvcCommunicationHandler:
         )
         self._add_connection(connection)
 
+        # retrieves the complete sets of channels for which the
+        # connection is going to be initially registered and
+        # verifies them against the associated controller method
+        channels = request.get_attribute("channels") or None
+        channels = channels and channels.split(",") or ()
+        for channel in channels:
+            parameters = {
+                "operation" : "channel",
+                "channel" : channel
+            }
+            changed_method(request, parameters)
+
+        # in case the complete set of channels has been successful
+        # verified (authentication/validation process) can now
+        # safely register the channels for the connection
+        self._register_channels(connection, channels)
+
         # writes the success message to the client end point to
         # notify it about the success
         self._write_message(request, connection, "success")
@@ -291,6 +308,7 @@ class MvcCommunicationHandler:
 
     def process_update(self, request, data_method, changed_method, connection_name):
         # tries to retrieve the (communication) connection
+        # using the current request for it
         connection = self._get_connection(request, connection_name)
 
         # in case no (communication) connection is available raises
@@ -315,6 +333,27 @@ class MvcCommunicationHandler:
 
     def process_data(self, request, data_method, changed_method, connection_name):
         pass
+
+    def process_channel(self, request, data_method, changed_method, connection_name):
+        # tries to retrieve the (communication) connection
+        # using the current request for it
+        connection = self._get_connection(request, connection_name)
+
+        # retrieves the request channel attribute, the
+        # one that the client want's to connect and verifies
+        # the security of the registration by calling the changed
+        # method with the appropriate parameters
+        channel = request.get_attribute("channel")
+        parameters = {
+            "operation" : "channel",
+            "channel" : channel
+        }
+        changed_method(request, parameters)
+
+        # in case the the  channel has been successful
+        # verified (authentication/validation process) can now
+        # safely register the channel for the connection
+        self._register_channels(connection, (channel,))
 
     def get_connections(self, connection_name):
         """
@@ -474,15 +513,32 @@ class MvcCommunicationHandler:
         self.__unset_connection_information_map(connection)
 
     def _register_channels(self, connection, channels):
-        for channel in channels:
-            if not channel in self.channels_map:
-                self.channels_map[channel] = []
+        # retrieves the connection name, to be used to determine
+        # the diffusion domain of the connection and uses it to
+        # creates the fully qualified names for the various channels
+        # that were sent for registration
+        connection_name = connection.get_connection_name()
+        channels_fqn = [connection_name + "/" + channel for channel in channels]
 
-            connections_list = self.channels_map[channel]
+        # iterates over the complete set of channels provided to register
+        # the provided connection for them
+        for channel_fqn in channels_fqn:
+            # in case the channel is not currently present in
+            # the channels map must create a new list to hold
+            # the various connections in it
+            if not channel in self.channels_map:
+                self.channels_map[channel_fqn] = []
+
+            # retrieves the connections list for the current channel
+            # and adds the current connection into it
+            connections_list = self.channels_map[channel_fqn]
             connections_list.append(connection)
 
+        # retrieves the complete set of channels registered for the
+        # current connection and adds the list of channels current
+        # in registration
         channels_list = self.channels_map_i.get(connection, [])
-        self.channels_map_i[connection] = channels_list + list(channels)
+        self.channels_map_i[connection] = channels_list + list(channels_fqn)
 
     def _unregister_channels(self, connection, channels):
         pass
