@@ -1046,6 +1046,65 @@ def validate_model_exception(self, model, exception_message, error_description =
     # mode (raises exception in case error occurs)
     model.validate_exception(exception_message, error_description)
 
+def new_connection(self, parameters, connection_name = "default", channels = ()):
+    """
+    Creates a new connection for the communication sub-system, the
+    new connection is initially registered for the provided channels.
+    The mvc communication system is used for the creation/registration
+    process of the new connection.
+
+    @type parameters: Dictionary
+    @param parameters: A dictionary of parameters.
+    @type connection_name: String
+    @param connection_name: The name of the connection to be used
+    to in new connection (default connection is used if not defined).
+    @type channels: Tuple
+    @param channels: The various channels to be used to register the
+    connection, this value should be a partial name and not a fully
+    qualified name.
+    @rtype: CommunicationConnection
+    @return: The created communication connection that should be ready
+    to be used for any operation.
+    """
+
+    # retrieves the communication handler and in case there
+    # is no communication handler defined, impossible to
+    # create a new connection (returns immediately)
+    communication_handler = parameters.get("communication_handler", None)
+    if not communication_handler: return
+
+    # creates a new connection using the communication handler
+    # and registers it for the required channels (security measures
+    # will apply, validation is required)
+    connection = communication_handler.new_connection(
+        connection_name, channels = channels
+    )
+    return connection
+
+def delete_connection(self, parameters, connection):
+    """
+    Deletes the provided connection from the communication sub-system,
+    the connection should no longer handle messages.
+    The mvc communication system is used for the deletion/unregistration
+    process of the connection.
+
+    @type parameters: Dictionary
+    @param parameters: A dictionary of parameters.
+    @type communication: CommunicationConnection
+    @param communication: The communication connection to be deleted
+    from the communication handler internal structures.
+    """
+
+    # retrieves the communication handler and in case there
+    # is no communication handler defined, impossible to
+    # create a new connection (returns immediately)
+    communication_handler = parameters.get("communication_handler", None)
+    if not communication_handler: return
+
+    # deletes the current connection from the communication handler
+    # unregistering it from the complete set of internal structures
+    communication_handler.delete_connection(connection)
+
 def send(self, parameters, connection_name = "default", message = "", channels = ()):
     """
     Sends a message to the clients registered for the provided channels
