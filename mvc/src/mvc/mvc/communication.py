@@ -529,7 +529,27 @@ class MvcCommunicationHandler:
         self.channels_map_i[connection] = channels_list + list(channels_fqn)
 
     def _unregister_channels(self, connection, channels):
-        pass
+        # retrieves the connection name, to be used to determine
+        # the diffusion domain of the connection and uses it to
+        # creates the fully qualified names for the various channels
+        # that were sent for registration
+        connection_name = connection.get_connection_name()
+        channels_fqn = [connection_name + "/" + channel for channel in channels]
+
+        # iterates over the complete set of channels provided to unregister
+        # the provided connection from them
+        for channel_fqn in channels_fqn:
+            # retrieves the connections list for the current channel
+            # and removes the current connection from it
+            connections_list = self.channels_map.get(channel_fqn, [])
+            if connection in connections_list: connections_list.remove(connection)
+
+        # retrieves the complete set of channels registered for the
+        # current connection and removes the channels current
+        # for unregistration from it
+        channels_list = self.channels_map_i.get(connection, [])
+        for channel_fqn in channels_fqn:
+            if channel_fqn in channels_list: channels_list.remove(channel_fqn)
 
     def __add_connection_name_map(self, connection):
         # retrieves the connection name, to be used to determine
