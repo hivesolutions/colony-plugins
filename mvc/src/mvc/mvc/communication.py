@@ -150,6 +150,35 @@ class MvcCommunicationHandler:
 
         self.connection_processing_thread = ConnectionProcessingThread(self)
 
+    def new_connection(self, connection_name, channels = ()):
+        # retrieves the random plugin
+        random_plugin = self.mvc_plugin.random_plugin
+
+        # generates a new connection id, then uses it to create the
+        # (communication) connection and adds it to the internal structures
+        connection_id = random_plugin.generate_random_md5_string()
+        connection = CommunicationConnection(
+            self,
+            connection_id,
+            connection_name
+        )
+        self._add_connection(connection)
+
+        # in case the complete set of channels has been successful
+        # verified (authentication/validation process) can now
+        # safely register the channels for the connection
+        self._register_channels(connection, channels)
+
+        # returns the connection that was just created, this means
+        # that it was created successfully
+        return connection
+
+    def delete_connection(self, connection):
+        # removes the provided connection from the current internal
+        # structure, this operation should "revert" the system to its
+        # original state (without the connection)
+        self._remove_connection(connection)
+
     def send(self, connection_name, message, channels = ("public",)):
         """
         Sends a unicast message to the clients that are registered
@@ -182,7 +211,7 @@ class MvcCommunicationHandler:
 
             # iterates over all the (communication) connections to send
             # the message into their queues (for the channel)
-            for connection in connections: connection.add_message_queue(message)
+            for connection in connections: self.send_message(connection, message)
 
     def send_broadcast(self, connection_name, message):
         """
@@ -204,8 +233,28 @@ class MvcCommunicationHandler:
         connections = self.get_connections(connection_name)
 
         # iterates over all the (communication) connections to send
-        # the message into their queues (all queues allowed)
-        for connection in connections: connection.add_message_queue(message)
+        # the message into their queues (for the channel)
+        for connection in connections: self.send_message(connection, message)
+
+    def send_message(self, connection, message):
+        """
+        Sends a message described as a string of characters into
+        the provided connection.
+
+        This methods should be able to abstract the caller method
+        from the technical details of sending a message to a certain
+        connection. The connection may assume different forms
+        (eg: websockets, long polling, apn, etc.).
+
+        @type connection: CommunicationConnection
+        @param connection: The communication connection to be used
+        for sending the provided message.
+        @type message: String
+        @param message: The message to be sent to the target connection
+        it must be correctly serialized.
+        """
+
+        connection.send_message(message)
 
     def handle_request(self, request, data_method, changed_method, connection_name):
         """
@@ -419,6 +468,9 @@ class MvcCommunicationHandler:
         Serializes and writes a message using the appropriate
         structures available in the connection.
 
+        The message to be serialized is in fact a sequence
+        of messages pending to be sent to the client.
+
         This method should be used to avoid inappropriate
         serialization of messages.
 
@@ -499,6 +551,7 @@ class MvcCommunicationHandler:
         self.__remove_connection_name_map(connection)
         self.__remove_service_connections_map(connection)
         self.__unset_connection_information_map(connection)
+        self._unregister_channels(connection)
 
     def _register_channels(self, connection, channels):
         # retrieves the connection name, to be used to determine
@@ -514,7 +567,7 @@ class MvcCommunicationHandler:
             # in case the channel is not currently present in
             # the channels map must create a new list to hold
             # the various connections in it
-            if not channel in self.channels_map:
+            if not channel_fqn in self.channels_map:
                 self.channels_map[channel_fqn] = []
 
             # retrieves the connections list for the current channel
@@ -528,13 +581,20 @@ class MvcCommunicationHandler:
         channels_list = self.channels_map_i.get(connection, [])
         self.channels_map_i[connection] = channels_list + list(channels_fqn)
 
-    def _unregister_channels(self, connection, channels):
+    def _unregister_channels(self, connection, channels = None):
         # retrieves the connection name, to be used to determine
         # the diffusion domain of the connection and uses it to
         # creates the fully qualified names for the various channels
         # that were sent for registration
         connection_name = connection.get_connection_name()
-        channels_fqn = [connection_name + "/" + channel for channel in channels]
+
+        # in case the list of channels to be unregistered from
+        # the connection is not defined defaults to the complete
+        # set of channels (unregistering from all) otherwise runs
+        # the resolution of the fully qualified names for the set
+        # of channels provided (channel resolution process)
+        if channels == None: channels_fqn = self.channels_map_i.get(connection, [])
+        else: channels_fqn = [connection_name + "/" + channel for channel in channels]
 
         # iterates over the complete set of channels provided to unregister
         # the provided connection from them
@@ -550,6 +610,12 @@ class MvcCommunicationHandler:
         channels_list = self.channels_map_i.get(connection, [])
         for channel_fqn in channels_fqn:
             if channel_fqn in channels_list: channels_list.remove(channel_fqn)
+
+        # in case the list of channels is currently empty and
+        # the connection exists in the channels map inverted
+        # must run the garbage collector
+        if not channels_list and connection in self.channels_map_i:
+            del self.channels_map_i[connection]
 
     def __add_connection_name_map(self, connection):
         # retrieves the connection name, to be used to determine
@@ -915,8 +981,8 @@ class ConnectionProcessingThread(threading.Thread):
         service_connection_is_open = service_connection.is_open()
         if not service_connection_is_open: return
 
-        # retrieves the current  message queue for the connection by
-        # popping the message queue
+        # retrieves the current message queue for the connection by "popping"
+        # the message queue (retrieves the latest)
         message_queue = connection.pop_message_queue()
 
         # writes the message queue into the message and processes
@@ -945,6 +1011,11 @@ class CommunicationConnection:
     """ The service connection for the connection, this
     is the lower level socket connection (data connection) """
 
+    handlers = []
+    """ The list of (message) handler functions to be used
+    for the sending of the message to external notification
+    system, these calls should not block the flow control """
+
     message_queue = []
     """ The queue of messages pending to be sent, may contain
     both unicode and string based messages """
@@ -957,7 +1028,7 @@ class CommunicationConnection:
     """ The event about the new message operation
     in the message queue """
 
-    def __init__(self, communication_handler, connection_id, connection_name, service_connection):
+    def __init__(self, communication_handler, connection_id, connection_name, service_connection = None):
         """
         Constructor of the class.
 
@@ -976,6 +1047,7 @@ class CommunicationConnection:
         self.connection_name = connection_name
         self.service_connection = service_connection
 
+        self.handlers = []
         self.message_queue = []
         self.message_queue_lock = threading.RLock()
         self.message_queue_event = threading.Event()
@@ -1009,6 +1081,64 @@ class CommunicationConnection:
 
         # returns the serialized message map
         return serialized_message_map
+
+    def send_message(self, message):
+        """
+        Sends the provided message using the complete set of
+        registered handlers for the current connection.
+
+        This method is considered the main abstraction for the
+        interaction with the connection.
+        """
+
+        if self.service_connection: self.add_message_queue(message)
+        for handler in self.handlers: handler(message)
+
+    def add_handler(self, handler):
+        """
+        Adds a new message handler to the current connection so
+        that every time a new message is sent for the current
+        connection the handler is "notified" about it.
+
+        @type handler: Function
+        @param handler: The handler function to be called for
+        every message received in the connection.
+        """
+
+        self.handlers.append(handler)
+
+    def remove_handler(self, handler):
+        """
+        Removes an handler function currently registered in the
+        current connection, avoiding any further handling of
+        messages from it.
+
+        @type handler: Function
+        @param handler: The handler function to be removed from
+        the current connection, no further messages handled.
+        """
+
+        if not handler in self.handlers: return
+        self.handlers.remove(handler)
+
+    def add_print_handler(self):
+        """
+        Adds a "simple" printer handler to the current connection
+        so that any message received will be printed to the standard
+        output of the current executing process.
+        """
+
+        self.add_handler(self.print_handler)
+
+    def print_handler(self, message):
+        """
+        The print handler method, responsible for printing a message
+        to the standard output.
+
+        This method is mainly used for easy debugging purposes.
+        """
+
+        print message
 
     def add_message_queue(self, message):
         """
