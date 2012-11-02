@@ -62,11 +62,11 @@ SANDBOX_PORT = 2195
 """ The port of the apn service to be used when
 in sandbox mode """
 
-KEY_FILE = "c:/apn_key.pem"
+KEY_FILE = "apn_key.pem"
 """ The path to the (private) key file to be used
 in the encrypted communication with the server """
 
-CERT_FILE = "c:/apn_cert.pem"
+CERT_FILE = "apn_cert.pem"
 """ The path to the certificate file to be used
 in the encrypted communication with the server """
 
@@ -77,18 +77,41 @@ class ApnHandler(handler.Handler):
 
     The communication with the service is done in a connection
     per message basis (expensive operation).
+
+    @see: http://en.wikipedia.org/wiki/Apple_Push_Notification_Service
     """
 
+    sockets = {}
+    """ The map containing an association between a tuple of key
+    and certificate file paths and a socket for the connection """
+
     token_string = None
+    """ The string containing the token identifying the end device
+    to be used for the communication, this should be an hexadecimal
+    string (as described in specification) """
+
+    key_file = None
+    """ The path to the (private) key file to be used for the connection
+    to be established for the apn service """
+
+    cert_file = None
+    """ The path to the certificate file to be used for the connection
+    to be established for the apn service """
 
     sandbox = None
+    """ Flag that controls if the sandbox infra-structure should
+    be used instead of the production one (active by default) """
 
     wait = None
+    """ Flag that controls if the current handler should wait
+    for an answer from the server before disconnecting """
 
-    def __init__(self, token_string, sandbox = True, wait = False):
+    def __init__(self, token_string, key_file = None, cert_file = None, sandbox = True, wait = False):
         handler.Handler.__init__(self)
 
         self.token_string = token_string
+        self.key_file = key_file or KEY_FILE
+        self.cert_file = cert_file or CERT_FILE
         self.sandbox = sandbox
         self.wait = wait
 
@@ -100,18 +123,22 @@ class ApnHandler(handler.Handler):
         # plain text values are displayed
         self.add_filter(self.plain_filter)
 
-    def handle(self, message):
-        # filters the message, converting it into the final
-        # state (ready to be processed)
-        message = self.filter(message)
+    def _get_socket(self, key_file, cert_file):
+        # creates the "identification" tuple containing both the
+        # key file and the certificate file then tries to retrieve
+        # the socket from the sockets map for the tuple and in case
+        # the retrieval is verified returns it
+        key_tuple = (key_file, cert_file)
+        _socket = ApnHandler.sockets.get(key_tuple, None)
+        if _socket: return _socket
 
         # creates the socket that will be used for the
         # communication with the remote host and
         _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _socket = ssl.wrap_socket(
             _socket,
-            keyfile = KEY_FILE,
-            certfile = CERT_FILE,
+            keyfile = self.key_file,
+            certfile = self.cert_file,
             server_side = False
         )
 
@@ -119,6 +146,20 @@ class ApnHandler(handler.Handler):
         # and the uses it to connect to the remote host
         address = self.sandbox and (SANDBOX_HOST, SANDBOX_PORT) or (HOST, PORT)
         _socket.connect(address)
+
+        # stores the socket in the socket (cache) map to be used
+        # in further request and then returns the socket
+        ApnHandler.sockets[key_tuple] = _socket
+        return _socket
+
+    def handle(self, message):
+        # filters the message, converting it into the final
+        # state (ready to be processed)
+        message = self.filter(message)
+
+        # retrieves the socket for the required key and cert files
+        # (this should be able to used cached connections)
+        _socket = self._get_socket(KEY_FILE, CERT_FILE)
 
         # creates the message structure using with the
         # message (string) as the alert and then converts
@@ -158,11 +199,7 @@ class ApnHandler(handler.Handler):
         if ready[0]: data = _socket.recv(4096)
         else: data = ""
 
-        # closes the socket (nothing more left to be don
-        # for this notification)
-        _socket.close()
-
-        # prints the response to the just sent request value
-        # this should be an empty string in case everything
-        # went fine with the request
-        print "Response: '%s'" % data
+        # in case there is data received from the server there
+        # must be a problem in the communication, must raise an
+        # exception indicating the problem
+        if data: raise RuntimeError("Problem handling apn communication: '%s'" % data)
