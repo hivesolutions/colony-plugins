@@ -139,6 +139,10 @@ class ApnHandler(handler.Handler):
         _socket = ApnHandler.sockets.get(key_tuple, None)
         if _socket: return _socket
 
+        # in case the ssl module is currently not available
+        # it s not possible to create a new socket
+        if not ssl: return
+
         # creates the socket that will be used for the
         # communication with the remote host and
         _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -165,8 +169,10 @@ class ApnHandler(handler.Handler):
         message = self.filter(message)
 
         # retrieves the socket for the required key and cert files
-        # (this should be able to used cached connections)
+        # (this should be able to used cached connections) in case
+        # no valid socket is retrieved returns immediately
         _socket = self._get_socket(KEY_FILE, CERT_FILE)
+        if not _socket: return
 
         # creates the message structure using with the
         # message (string) as the alert and then converts
