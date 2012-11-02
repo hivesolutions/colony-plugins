@@ -38,11 +38,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import ssl
-import json
 import struct
 import select
 import socket
 import binascii
+
+try: import json
+except: json = None
 
 import handler
 
@@ -69,6 +71,10 @@ in the encrypted communication with the server """
 CERT_FILE = "apn_cert.pem"
 """ The path to the certificate file to be used
 in the encrypted communication with the server """
+
+MESSAGE_TEMPLATE = "{\"aps\":{\"alert\":\"%s\",\"sound\":\"%s\",\"badge\":%d}}"
+""" The template to be used to create the message
+in case the json plugin is currently not available """
 
 class ApnHandler(handler.Handler):
     """
@@ -172,6 +178,7 @@ class ApnHandler(handler.Handler):
             }
         }
         payload = json.dumps(message_s)
+        if not json: payload = MESSAGE_TEMPLATE % (message.replace("\"", "\\\""), "default", 0).encode("utf-8")
 
         # sets the command with the zero value (simplified)
         # then calculates the token and payload lengths
