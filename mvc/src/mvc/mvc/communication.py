@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import threading
 
+import mvc.handlers.apn
+
 import exceptions
 
 DEFAULT_UPDATE_POLL_TIMEOUT = 0.5
@@ -1129,6 +1131,34 @@ class CommunicationConnection:
         """
 
         self.add_handler(self.print_handler)
+
+    def add_apn_handler(self, token_string, key_file = None, cert_file = None, sandbox = True):
+        """
+        Adds an apn (apple push notifications) handler to the current
+        connection to be able to handle communication with ios/osx
+        devices using the apn protocol.
+
+        @type token_string: String
+        @param token_string: The hexadecimal based string containing the
+        token that identifies the device/app uniquely.
+        @type key_file: String
+        @param key_file: The path to the (private) key file to be used in
+        the connection to the apn service.
+        @type cert_file: String
+        @param cert_file: The path to the certificate file to be used in
+        the connection to the apn service.
+        @type sandbox: bool
+        @param sandbox: If the connection with the apn service should be done
+        using the secure sandboxed approach (default) or the production model.
+        """
+
+        apn_handler = mvc.handlers.apn.ApnHandler(
+            token_string,
+            key_file = key_file,
+            cert_file = cert_file,
+            sandbox = sandbox
+        )
+        self.add_handler(apn_handler.handle)
 
     def print_handler(self, message):
         """
