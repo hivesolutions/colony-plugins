@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import threading
 
-import mvc.handlers.apn
+import handlers.apn
 
 import exceptions
 
@@ -1152,7 +1152,7 @@ class CommunicationConnection:
         using the secure sandboxed approach (default) or the production model.
         """
 
-        apn_handler = mvc.handlers.apn.ApnHandler(
+        apn_handler = handlers.apn.ApnHandler(
             token_string,
             key_file = key_file,
             cert_file = cert_file,
