@@ -116,6 +116,10 @@ form {
     width: 540px;
 }
 
+form.small {
+    margin: 22px auto 46px auto;
+}
+
 table {
     margin: 20px 0px 32px 0px;
     width: 620px;
