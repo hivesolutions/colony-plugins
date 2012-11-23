@@ -2435,18 +2435,24 @@ class EntityClass(object):
         return is_reference
 
     @classmethod
-    def _attr(cls, instance, name):
+    def _attr(cls, instance, name, default = None):
         """
         Retrieves the value of an attribute from the provided
         name, the provided instance may be both a map or a class
         based instance and the value is returned using the appropriate
         accessor method.
+        
+        In case no value is retrieved from the provided instance
+        the default value is retrieved instead.
 
         @type instance: Object/Dictionary
         @param instance: The object or map structure to be used
         to retrieve the attribute value.
         @type name: String
         @param name: The name of the attribute to be retrieved.
+        @type default: Object
+        @param default: The default to be used in case no value
+        is retrieved for the provide name.
         @rtype: Object
         @return: The value of the attribute to be retrieved.
         """
@@ -2459,8 +2465,8 @@ class EntityClass(object):
         # in case the provided instance is a map the value
         # is retrieve using the normal map accessor otherwise
         # reflection is used to retrieve the instance attribute
-        if instance_type == types.DictType: return instance[name]
-        else: return instance.get_value(name)
+        if instance_type == types.DictType: return instance.get(name, default)
+        else: return instance.get_value(name, default = default)
 
     @classmethod
     def _get_bases(cls):
@@ -2960,7 +2966,7 @@ class EntityClass(object):
     def has_value(self, name):
         return name in self.__dict__
 
-    def get_value(self, name, load_lazy = False):
+    def get_value(self, name, default = None, load_lazy = False):
         # in case the current entity contains a
         # value for the attribute name (simple
         # case) it's returned normally
@@ -2977,9 +2983,9 @@ class EntityClass(object):
             # and returns it's value
             return self._load_lazy(name)
 
-        # returns an invalid value, not possible to
+        # returns an invalid (default) value, not possible to
         # return a relation using any of the approaches
-        return None
+        return default
 
     def set_value(self, name, value):
         # sets the attribute in the current
