@@ -241,6 +241,18 @@ pre {
     text-align: left;
 }
 
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
 .clear {
     clear: both;
 }
@@ -281,12 +293,14 @@ pre {
     margin: 20px 0px 20px 0px;
 }
 
+.up,
 .online,
 .passed,
 .valid {
     color: #32951b;
 }
 
+.down,
 .offline,
 .failed,
 .invalid {
