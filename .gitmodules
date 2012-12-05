@@ -4,3 +4,6 @@
 [submodule "nanger/src/nanger/resources/extras/libs/uxf"]
 	path = nanger/src/nanger/resources/extras/libs/uxf
 	url = git@github.com:hivesolutions/uxf_bin.git
+[submodule "nanger/src/nanger/resources/extras/libs/layout"]
+	path = nanger/src/nanger/resources/extras/libs/layout
+	url = git@github.com:hivesolutions/layout.git
