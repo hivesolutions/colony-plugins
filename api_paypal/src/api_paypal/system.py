@@ -107,11 +107,12 @@ class ApiPaypal(colony.base.system.System):
         # retrieves the client http plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the paypal structure (if available)
+        # retrieves the paypal structure and test mode (if available)
         paypal_structure = api_attributes.get("paypal_structure", None)
+        test_mode = api_attributes.get("test_mode", False)
 
         # creates a new paypal client with the given options
-        paypal_client = PaypalClient(client_http_plugin, paypal_structure)
+        paypal_client = PaypalClient(client_http_plugin, paypal_structure, test_mode)
 
         # returns the paypal client
         return paypal_client
@@ -151,10 +152,14 @@ class PaypalClient:
     paypal_structure = None
     """ The paypal structure """
 
+    test_mode = None
+    """ Flag indicating the client is supposed to
+    run in test mode (uses different api urls) """
+
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, client_http_plugin = None, paypal_structure = None):
+    def __init__(self, client_http_plugin = None, paypal_structure = None, test_mode = False):
         """
         Constructor of the class.
 
@@ -162,10 +167,14 @@ class PaypalClient:
         @param client_http_plugin: The client http plugin.
         @type paypal_structure: PaypalStructure
         @param paypal_structure: The paypal structure.
+        @type test_mode: bool
+        @param test_mode: Flag indicating if the client is to
+        be run in test mode.
         """
 
         self.client_http_plugin = client_http_plugin
         self.paypal_structure = paypal_structure
+        self.test_mode = test_mode
 
     def open(self):
         """
@@ -212,7 +221,7 @@ class PaypalClient:
         # returns the paypal structure
         return paypal_structure
 
-    def do_direct_payment(self, ip_address, amount, card, payer, address, order = {}, shipping_address = {}):
+    def do_direct_payment(self, ip_address, amount, card, payer, address, order = None, shipping_address = {}):
         """
         Directly performs payment by issuing a request to paypal with the specified information.
 
@@ -236,9 +245,10 @@ class PaypalClient:
         @return: The paypal response data.
         """
 
-        # sets the retrieval url, this is always the same
-        # value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -246,8 +256,10 @@ class PaypalClient:
         # sets the base parameters, required for the authentication
         # of the request to be executed
         self._set_base_parameters(parameters)
-
-        # unpacks the provided structures
+        
+        # sets the order as an empty map in case
+        # none was provided and retrieves its lines
+        order = order or {}
         order_lines = order.get("lines", [])
 
         # sets the global wide parameters for the current request
@@ -305,7 +317,7 @@ class PaypalClient:
         # sets the shipping address structure values in the parameters map
         if shipping_address:
             parameters["SHIPTONAME"] = shipping_address["name"]
-            parameters["SHIPTOSTREET"] = shipping_address["street_name"]
+            parameters["SHIPTOSTREET"] = shipping_address["street"]
             parameters["SHIPTOCITY"] = shipping_address["city"]
             parameters["SHIPTOSTATE"] = shipping_address["state"]
             parameters["SHIPTOZIP"] = shipping_address["zip_code"]
@@ -363,9 +375,10 @@ class PaypalClient:
         @return: The paypal response data.
         """
 
-        # sets the retrieval url, this is always the same
-        # value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -397,10 +410,113 @@ class PaypalClient:
         # returns the data
         return data
 
+    def get_transaction_details(self, transaction_id):
+        """
+        Retrieves details about the specified transaction.
+
+        This method is synchronous, and paypal will directly reply with the information stating
+        if the payment was processed correctly or not (an exception will be raised in case it
+        isn't).
+
+        @type transaction_id: String
+        @param transaction_id: The unique identifier of the paypal transaction whose details
+        are to be retrieved.
+        @rtype: Dictionary
+        @return: The paypal response data.
+        """
+
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters, required for the authentication
+        # of the request to be executed
+        self._set_base_parameters(parameters)
+
+        # sets the refund details in the parameters map
+        parameters["METHOD"] = "GetTransactionDetails"
+        parameters["TRANSACTIONID"] = transaction_id
+
+        # fetches the retrieval url with the given parameters retrieving
+        # the resulting key value pairs to be decoded and then parses
+        # them as a "normal" query string
+        response_text = self._fetch_url(retrieval_url, parameters)
+        data = self._parse_query_string(response_text)
+
+        # checks the current data map for error in the previously
+        # defined attribute names
+        self._check_paypal_errors(data)
+
+        # returns the data
+        return data
+
+    def get_balance(self):
+        """
+        Retrieves the user's balance.
+
+        @rtype: Dictionary
+        @return: The paypal response data.
+        """
+
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters, required for the authentication
+        # of the request to be executed
+        self._set_base_parameters(parameters)
+
+        # sets the refund details in the parameters map
+        parameters["METHOD"] = "GetBalance"
+
+        # fetches the retrieval url with the given parameters retrieving
+        # the resulting key value pairs to be decoded and then parses
+        # them as a "normal" query string
+        response_text = self._fetch_url(retrieval_url, parameters)
+        data = self._parse_query_string(response_text)
+
+        # checks the current data map for error in the previously
+        # defined attribute names
+        self._check_paypal_errors(data)
+
+        # returns the data
+        return data
+
+    def validate_credentials(self):
+        """
+        Validates that the credentials are valid, returning a flag
+        indicating the result.
+
+        This operation will perform the get balance operation as a
+        no-op, since this operation is suppose to succeed in case
+        the credentials are valid, therefore it can be used as a
+        discriminator for the validity of the credentials.
+
+        @rtype: bool
+        @return: Flag indicating if the credentials are valid.
+        """
+
+        # attempts to perform the get balance operation as a no-op,
+        # returning false in case it fails since this operation is
+        # supposed to succeed in case the credentials are valid,
+        # otherwise returns true in case it succeeds
+        try: self.get_balance()
+        except: return False
+        else: return True
+
     def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
-        # sets the retrieval url, this is always the same
-        # value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -458,9 +574,10 @@ class PaypalClient:
         in the paypal api in the express checkout mode.
         """
 
-        # sets the retrieval url, this is always the same
-        # value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_WEB_SECURE_URL
+        # sets the retrieval url (using the sandbox url in
+        # case the test mode is active), this is always the
+        # same value the command control is on the parameters
+        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
