@@ -2202,11 +2202,10 @@ def _validate_relations(self, persist_type):
         relation_value = self.get_value(relation_name)
 
         # in case the relation value is not set or in case it's
-        # lazy loaded no validation should occur
-        if relation_value == None or self.is_lazy_loaded(relation_name):
-            # continues the loop, for more
-            # relation persistence
-            continue
+        # lazy loaded no validation should occur, must continue
+        # the loop, for more relation persistence
+        if relation_value == None: continue
+        if self.is_lazy_loaded(relation_name): continue
 
         # retrieves the attributes of the model for the re current relation
         # in order to retrieve the appropriate persist type, then re-calculate
@@ -2227,7 +2226,6 @@ def _validate_relations(self, persist_type):
         # retrieves the relation value from the entity and then
         # converts it to an enumerable type for compatibility
         # (if required by the relation type)
-        relation_value = self.get_value(relation_name)
         relation_is_to_many = self.is_to_many(relation_name)
         relation_value = not relation_is_to_many and [relation_value] or relation_value
 
@@ -2235,12 +2233,9 @@ def _validate_relations(self, persist_type):
         # in case a validation fails it accumulates the various
         # errors around the storing procedure "soft fail"
         for _relation_value in relation_value:
-            # in case the relation value is not set or in case it's
-            # lazy loaded no validation should occur
-            if relation_value == None or self.is_lazy_loaded(relation_name):
-                # continues the loop, for more
-                # relation persistence
-                continue
+            # in case the (current) relation value is not set must
+            # continue the loop for more relation persistence
+            if _relation_value == None: continue
 
             # validates the relation value, retrieving the result of
             # such validation in case it't valid there's no data
