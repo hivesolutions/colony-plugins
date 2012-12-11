@@ -986,10 +986,11 @@ class TwitterClient:
         """
         Checks the given data for twitter errors.
 
-        @type data: String
+        This method raises an exception in case an error
+        exists in the data to be verified.
+        
+        @type data: Dictionary
         @param data: The data to be checked for twitter errors.
-        @rtype: bool
-        @return: The result of the data error check.
         """
 
         pass

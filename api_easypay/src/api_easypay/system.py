@@ -519,10 +519,11 @@ class EasypayClient:
         """
         Checks the given data for easypay errors.
 
-        @type data: String
+        This method raises an exception in case an error
+        exists in the data to be verified.
+        
+        @type data: Dictionary
         @param data: The data to be checked for easypay errors.
-        @rtype: bool
-        @return: The result of the data error check.
         """
 
         # retrieves the status and

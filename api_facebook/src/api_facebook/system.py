@@ -564,29 +564,24 @@ class FacebookClient:
     def _check_facebook_errors(self, data):
         """
         Checks the given data for facebook errors.
-
-        @type data: String
+        
+        This method raises an exception in case an error
+        exists in the data to be verified.
+        
+        @type data: Dictionary/Object
         @param data: The data to be checked for facebook errors.
-        @rtype: bool
-        @return: The result of the data error check.
         """
 
-        # retrieves the data type
+        # retrieves the data type and returns immediately
+        # in case it is not of type dictionary
         data_type = type(data)
+        if not data_type == types.DictType: return
 
-        # in case the data is not of type dictionary
-        if not data_type == types.DictType:
-            # returns immediately
-            return
-
-        # retrieves the error code
+        # retrieves the error code and returns
+        # immediately in case the error code is not set
         error_code = data.get("error_code", None)
-
-        # in case the error code is not set
-        if not error_code:
-            # returns immediately
-            return
-
+        if not error_code: return
+        
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
@@ -878,29 +873,24 @@ class FacebookClientOauth:
     def _check_facebook_errors(self, data):
         """
         Checks the given data for facebook errors.
-
-        @type data: String
+        
+        This method raises an exception in case an error
+        exists in the data to be verified.
+        
+        @type data: Dictionary/Object
         @param data: The data to be checked for facebook errors.
-        @rtype: bool
-        @return: The result of the data error check.
         """
 
-        # retrieves the data type
+        # retrieves the data type and returns immediately
+        # in case it is not of type dictionary
         data_type = type(data)
+        if not data_type == types.DictType: return
 
-        # in case the data is not of type dictionary
-        if not data_type == types.DictType:
-            # returns immediately
-            return
-
-        # retrieves the error code
+        # retrieves the error code and returns
+        # immediately in case the error code is not set
         error_code = data.get("error_code", None)
-
-        # in case the error code is not set
-        if not error_code:
-            # returns immediately
-            return
-
+        if not error_code: return
+        
         # retrieves the error message
         error_message = data.get("error_msg", None)
 

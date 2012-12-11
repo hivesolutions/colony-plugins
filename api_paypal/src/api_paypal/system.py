@@ -688,11 +688,12 @@ class PaypalClient:
     def _check_paypal_errors(self, data):
         """
         Checks the given data for paypal errors.
+        
+        This method raises an exception in case an error
+        exists in the data to be verified.
 
-        @type data: String
+        @type data: Dictionary
         @param data: The data to be checked for paypal errors.
-        @rtype: bool
-        @return: The result of the data error check.
         """
 
         # retrieves the message value and returns immediately
