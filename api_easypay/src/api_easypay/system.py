@@ -403,6 +403,32 @@ class EasypayClient:
         # returns the data
         return data
 
+    def validate_credentials(self):
+        """
+        Validates that the credentials are valid, returning a flag
+        indicating the result.
+
+        This operation will perform the get payment details operation
+        with invalid arguments as a no-op, in order to check its exception
+        message for the presence of a statement that the credentials are invalid.
+
+        @rtype: bool
+        @return: Flag indicating if the credentials are valid.
+        """
+
+        # initializes the valid flag
+        valid = True
+
+        # attempts to retrieve the payment details
+        # with invalid arguments (no-op) and checks
+        # if a credential failure is in the exception message,
+        # to determine if the credentials are valid
+        try: self.get_payment_details(None, None)
+        except Exception, exception: valid = not "ep_cin not ok" in exception.message
+
+        # returns the valid flag
+        return valid
+
     def get_easypay_structure(self):
         """
         Retrieves the easypay structure.
