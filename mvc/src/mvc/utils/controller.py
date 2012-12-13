@@ -898,7 +898,42 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
 
     # returns if the relation is valid
     return valid_relation
-
+    
+def get_field_models(self, rest_request, field_name, model, data_type = int):
+    """
+    Retrieves the complete set of models for the various identifiers
+    defined in the field with the provided name.
+    
+    In case at least one model fails to be retrieved, an error is raised.
+    
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type field_name: String
+    @param field_name: The name of the field to be used for the retrieval
+    of the models, should contain the identifiers separated by commas.
+    @type model: Model
+    @param model: The model to be used for the retrieval of the entities.
+    @type data_type: Type
+    @param data_type: The type to be used in the cast operation for the
+    various identifier values.
+    """
+    
+    # retrieves the series of identifiers for the requested
+    # field name then splits it around the separator, casting
+    # them to the proper data type
+    model_id = self.get_field(rest_request, field_name, None)
+    model_ids = model_id and model_id.split(",") or []
+    model_ids = [data_type(model_id) for model_id in model_ids]
+    
+    # retrieves the various entities for the requested identifiers,
+    # according to the provided model, in case at least one model
+    # is not retrieved, an error is raised
+    entities = [model.get(model_id, context = rest_request) for model_id in model_ids]
+    if None in entities: raise RuntimeError(
+        "One ore more specified %s entities were not found" % model.__name__
+    )
+    return entities
+    
 def get_field(self, rest_request, field_name, default_field_value = None, cast_type = None, split = False, token = ","):
     """
     Retrieves a field value from the processed form data
