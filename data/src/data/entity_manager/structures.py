@@ -2475,7 +2475,7 @@ class EntityClass(object):
         the current class, this method is safe as it removes any
         class that does not inherit from the entity class.
 
-        @rtype: List/tuple
+        @rtype: List/Tuple
         @return: The set containing the various bases classes for
         the current class that are considered valid.
         """
