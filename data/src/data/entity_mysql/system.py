@@ -48,7 +48,7 @@ import colony.base.system
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution """
 
-ISOLATION_LEVEL = "READ COMMITTED"
+ISOLATION_LEVEL = "read committed"
 """ The isolation level to be used in the connections
 created by the driver, this isolation level should ensure
 compatibility with the expected behavior """
