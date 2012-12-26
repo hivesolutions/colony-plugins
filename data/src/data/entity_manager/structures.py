@@ -2441,7 +2441,7 @@ class EntityClass(object):
         name, the provided instance may be both a map or a class
         based instance and the value is returned using the appropriate
         accessor method.
-        
+
         In case no value is retrieved from the provided instance
         the default value is retrieved instead.
 

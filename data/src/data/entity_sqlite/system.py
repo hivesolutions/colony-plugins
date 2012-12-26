@@ -586,10 +586,10 @@ class SqliteConnection:
     def get_file_path(self):
         return self.file_path
 
-    def _execute_query(self, query):
+    def _execute_query(self, query, connection = None):
         # retrieves the current connection and creates
         # a new cursor object for query execution
-        connection = self.get_connection()
+        connection = connection or self.get_connection()
         cursor = connection.cursor()
 
         # executes the query using the current cursor

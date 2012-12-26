@@ -48,6 +48,11 @@ import colony.base.system
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution """
 
+ISOLATION_LEVEL = "READ COMMITTED"
+""" The isolation level to be used in the connections
+created by the driver, this isolation level should ensure
+compatibility with the expected behavior """
+
 class EntityMysql(colony.base.system.System):
     """
     The entity mysql class.
@@ -673,6 +678,13 @@ class MysqlConnection:
             # in the current thread
             self.transaction_level_map[connection] = 0
 
+            # sets the isolation level for the connection as the one defined
+            # to be the default one by the "driver"
+            self._execute_query(
+                "set session transaction isolation level %s" % ISOLATION_LEVEL,
+                connection = connection
+            )
+
         # returns the correct connection
         # for the current thread
         return connection
@@ -752,10 +764,10 @@ class MysqlConnection:
 
         return is_valid_transaction
 
-    def _execute_query(self, query):
+    def _execute_query(self, query, connection = None):
         # retrieves the current connection and creates
         # a new cursor object for query execution
-        connection = self.get_connection()
+        connection = connection or self.get_connection()
         cursor = connection.cursor()
 
         # executes the query using the current cursor
