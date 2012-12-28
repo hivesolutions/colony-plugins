@@ -321,7 +321,18 @@ class AbstractClient:
         client_connection_socket = self._get_socket(socket_name, socket_parameters)
 
         # retrieves the client connection
-        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, persistent, socket_name, socket_parameters, self.request_timeout, self.response_timeout, self.chunk_size)
+        client_connection = ClientConnection(
+            self.client_plugin,
+            self,
+            client_connection_socket,
+            address,
+            persistent,
+            socket_name,
+            socket_parameters,
+            self.request_timeout,
+            self.response_timeout,
+            self.chunk_size
+        )
 
         # returns the client connection
         return client_connection
