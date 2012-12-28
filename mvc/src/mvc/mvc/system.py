@@ -503,25 +503,26 @@ class Mvc(colony.base.system.System):
         mvc_service_index = base_value + group_index - 1
         pattern = self.resource_patterns_list[mvc_service_index]
 
-        # retrieves the resource information
-        resource_information = self.resource_patterns_map[pattern]
-
-        # unpacks the resource information
-        resource_base_path, resource_initial_token = resource_information
+        # retrieves the (resource) information and then unpacks it
+        # into the base path and the initial token values
+        information = self.resource_patterns_map[pattern]
+        base_path, initial_token = information
 
         # in case the resource path does not start with the resource
-        # initial token  raises the invalid token value
-        if not resource_path.startswith(resource_initial_token):
+        # initial token raises the invalid token value
+        if not resource_path.startswith(initial_token):
             raise exceptions.InvalidTokenValue("invalid initial path request")
 
-        # retrieves the resources initial token length
-        resource_initial_token_length = len(resource_initial_token)
-
-        # creates the file path from the resource base path and file path
-        file_path = resource_base_path + "/" + resource_path[resource_initial_token_length + 1:] + "." + rest_request.encoder_name
+        # retrieves the resources initial token length and uses it
+        # to create the file path from the base path and file path
+        initial_token_l = len(initial_token)
+        file_path = base_path + "/" + resource_path[initial_token_l + 1:] + "." + rest_request.encoder_name
 
         # handles the given request by the mvc file handler
-        self.mvc_file_handler.handle_request(rest_request.request, file_path)
+        self.mvc_file_handler.handle_request(
+            rest_request.request,
+            file_path
+        )
 
     def _handle_communication_match(self, rest_request, resource_path, communication_path_match, communication_matching_regex):
         # retrieves the base value for the matching regex
@@ -536,14 +537,18 @@ class Mvc(colony.base.system.System):
         mvc_service_index = base_value + group_index - 1
         pattern = self.communication_patterns_list[mvc_service_index]
 
-        # retrieves the communication information
-        communication_information = self.communication_patterns_map[pattern]
-
-        # unpacks the communication information
-        data_method, changed_method, connection_name = communication_information
+        # retrieves the (communication) information and then unpacks it
+        # into the data method, changed method and connection name
+        information = self.communication_patterns_map[pattern]
+        data_method, changed_method, connection_name = information
 
         # handles the given request by the mvc communication handler
-        self.mvc_communication_handler.handle_request(rest_request, data_method, changed_method, connection_name)
+        self.mvc_communication_handler.handle_request(
+            rest_request,
+            data_method,
+            changed_method,
+            connection_name
+        )
 
     def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex
