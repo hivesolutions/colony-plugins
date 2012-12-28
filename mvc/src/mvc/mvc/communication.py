@@ -328,6 +328,7 @@ class MvcCommunicationHandler:
         channels = channels and channels.split(",") or ()
         for channel in channels:
             parameters = {
+                "communication_handler" : self,
                 "operation" : "channel",
                 "channel" : channel
             }
@@ -357,8 +358,8 @@ class MvcCommunicationHandler:
 
         # sets the request as delayed (for latter writing)
         # and sets the status code as valid
-        request.delayed = True
-        request.status_code = VALID_STATUS_CODE
+        request.set_delayed(True)
+        request.set_status_code(VALID_STATUS_CODE)
 
         # calculates the target time for timeout of the connection
         # element message
@@ -371,7 +372,21 @@ class MvcCommunicationHandler:
         self.connection_processing_thread.add_queue(element)
 
     def process_data(self, request, data_method, changed_method, connection_name):
-        pass
+        # tries to retrieve the (communication) connection
+        # using the current request for it
+        connection = self._get_connection(request, connection_name)
+
+        data = request.get_attribute("data")
+        parameters = {
+            "communication_handler" : self,
+            "operation" : "data",
+            "data" : data
+        }
+        data_method(request, parameters)
+
+        # writes the success message to the client end point to
+        # notify it about the success of the channel registration
+        self._write_message(request, connection, "success")
 
     def process_channel(self, request, data_method, changed_method, connection_name):
         # tries to retrieve the (communication) connection
@@ -384,6 +399,7 @@ class MvcCommunicationHandler:
         # method with the appropriate parameters
         channel = request.get_attribute("channel")
         parameters = {
+            "communication_handler" : self,
             "operation" : "channel",
             "channel" : channel
         }
@@ -393,6 +409,10 @@ class MvcCommunicationHandler:
         # verified (authentication/validation process) can now
         # safely register the channel for the connection
         self._register_channels(connection, (channel,))
+
+        # writes the success message to the client end point to
+        # notify it about the success of the channel registration
+        self._write_message(request, connection, "success")
 
     def get_connections(self, connection_name):
         """
@@ -921,7 +941,7 @@ class ConnectionProcessingThread(threading.Thread):
 
             # retrieves the service connection from the request and
             # checks if the service connection (data connection) is still open
-            service_connection = request.service_connection
+            service_connection = request.get_service_connection()
             service_connection_is_open = service_connection.is_open()
 
             # retrieves the communication elements associated with the
@@ -972,10 +992,9 @@ class ConnectionProcessingThread(threading.Thread):
         # and the target timestamp
         connection, request, _target_timestamp = element
 
-        # retrieves the request elements, the service handler and the
-        # service connection to be used in the processing
-        http_client_service_handler = request.http_client_service_handler
-        service_connection = request.service_connection
+        # retrieves the service connection so that it's possible
+        # to check if it's still open (bandwidth optimization)
+        service_connection = request.get_service_connection()
 
         # checks if the service connection (data connection) is still open
         # and in case the service connection is not open anymore returns
@@ -988,10 +1007,11 @@ class ConnectionProcessingThread(threading.Thread):
         message_queue = connection.pop_message_queue()
 
         # writes the message queue into the message and processes
-        # the request in the http client service handler (this represents
-        # the final part of the delayed processing of the request)
+        # the request in the service (this represents the final part
+        # of the delayed processing of the request) flushing the data
+        # to the client side
         self.communication_handler._write_message(request, connection, message_queue)
-        http_client_service_handler.process_request(request, service_connection)
+        request.process()
 
 class CommunicationConnection:
     """
