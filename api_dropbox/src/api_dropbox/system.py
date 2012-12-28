@@ -662,7 +662,7 @@ class DropboxClient:
     def _check_dropbox_errors(self, data):
         """
         Checks the given data for dropbox errors.
-        
+
         This method raises an exception in case an error
         exists in the data to be verified.
 

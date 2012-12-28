@@ -564,10 +564,10 @@ class FacebookClient:
     def _check_facebook_errors(self, data):
         """
         Checks the given data for facebook errors.
-        
+
         This method raises an exception in case an error
         exists in the data to be verified.
-        
+
         @type data: Dictionary/Object
         @param data: The data to be checked for facebook errors.
         """
@@ -581,7 +581,7 @@ class FacebookClient:
         # immediately in case the error code is not set
         error_code = data.get("error_code", None)
         if not error_code: return
-        
+
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
@@ -873,10 +873,10 @@ class FacebookClientOauth:
     def _check_facebook_errors(self, data):
         """
         Checks the given data for facebook errors.
-        
+
         This method raises an exception in case an error
         exists in the data to be verified.
-        
+
         @type data: Dictionary/Object
         @param data: The data to be checked for facebook errors.
         """
@@ -890,7 +890,7 @@ class FacebookClientOauth:
         # immediately in case the error code is not set
         error_code = data.get("error_code", None)
         if not error_code: return
-        
+
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
