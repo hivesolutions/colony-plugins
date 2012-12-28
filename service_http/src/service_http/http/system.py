@@ -631,7 +631,9 @@ class ServiceHttp(colony.base.system.System):
 
 class HttpClientServiceHandler:
     """
-    The http client service handler class.
+    The http client service handler class, responsible
+    for the handling of incoming client connection and
+    redirection/routing of data.
     """
 
     service_plugin = None
