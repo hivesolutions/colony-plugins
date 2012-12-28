@@ -157,13 +157,20 @@ class MvcCommunicationHandler:
         random_plugin = self.mvc_plugin.random_plugin
 
         # generates a new connection id, then uses it to create the
-        # (communication) connection and adds it to the internal structures
+        # (communication) connection structure
         connection_id = random_plugin.generate_random_md5_string()
         connection = CommunicationConnection(
             self,
             connection_id,
             connection_name
         )
+
+        # opens the connection, this should update the internal
+        # structures and event handlers (connection start)
+        connection.open()
+
+        # adds the connection to the current internal structures
+        # should include the multiple maps and lists
         self._add_connection(connection)
 
         # in case the complete set of channels has been successful
@@ -176,6 +183,14 @@ class MvcCommunicationHandler:
         return connection
 
     def delete_connection(self, connection):
+        # in case the connection is already closed returns immediately
+        # avoids duplicated close operations
+        if not connection.is_open(): return
+
+        # closes the connection, this should update the internal
+        # structures and event handlers (connection stop)
+        connection.close()
+
         # removes the provided connection from the current internal
         # structure, this operation should "revert" the system to its
         # original state (without the connection)
@@ -309,14 +324,22 @@ class MvcCommunicationHandler:
         service_connection = request.get_service_connection()
 
         # generates a new connection id, then uses it to create the
-        # (communication) connection and adds it to the internal structures
+        # (communication) connection structure
         connection_id = random_plugin.generate_random_md5_string()
         connection = CommunicationConnection(
             self,
             connection_id,
             connection_name,
-            service_connection
+            service_connection,
+            delegate = delegate
         )
+
+        # opens the connection, this should update the internal
+        # structures and event handlers (connection start)
+        connection.open()
+
+        # adds the connection to the current internal structures
+        # should include the multiple maps and lists
         self._add_connection(connection)
 
         # retrieves the complete sets of channels for which the
@@ -598,6 +621,10 @@ class MvcCommunicationHandler:
             connections_list = self.channels_map[channel_fqn]
             connections_list.append(connection)
 
+            # notifies the connection about the changing in the channel
+            # state (it has been registered)
+            connection.on_channel(channel_fqn, unregister = False)
+
         # retrieves the complete set of channels registered for the
         # current connection and adds the list of channels current
         # in registration
@@ -626,6 +653,10 @@ class MvcCommunicationHandler:
             # and removes the current connection from it
             connections_list = self.channels_map.get(channel_fqn, [])
             if connection in connections_list: connections_list.remove(connection)
+
+            # notifies the connection about the changing in the channel
+            # state (it has been unregistered)
+            connection.on_channel(channel_fqn, unregister = True)
 
         # retrieves the complete set of channels registered for the
         # current connection and removes the channels current
@@ -938,12 +969,7 @@ class ConnectionProcessingThread(threading.Thread):
 
             # unpacks the communication element into the various components
             # of it to be for the removing operation
-            connection, request, target_timestamp = element
-
-            # retrieves the service connection from the request and
-            # checks if the service connection (data connection) is still open
-            service_connection = request.get_service_connection()
-            service_connection_is_open = service_connection.is_open()
+            connection, _request, target_timestamp = element
 
             # retrieves the communication elements associated with the
             # target timestamp and removes the current communication
@@ -974,12 +1000,6 @@ class ConnectionProcessingThread(threading.Thread):
                 # removes the communication elements list
                 # reference from the processing map (it's empty)
                 del self.processing_map[connection]
-
-                # in case the service connection is
-                # not open anymore
-                if not service_connection_is_open:
-                    # removes the (communication) connection (no more communication elements)
-                    self.communication_handler._remove_connection(connection)
 
             # removes the communication element from the "main"
             # processing queue
@@ -1034,6 +1054,16 @@ class CommunicationConnection:
     """ The service connection for the connection, this
     is the lower level socket connection (data connection) """
 
+    delegate = None
+    """ The delegate object to be used to redirect
+    event calls for connection actions, the events to
+    be issued include connection and channel changes """
+
+    status = False
+    """ The current (open) status for the connection
+    in case the current connection is open the value
+    should be true otherwise it should be false """
+
     handlers = []
     """ The list of (message) handler functions to be used
     for the sending of the message to external notification
@@ -1051,7 +1081,7 @@ class CommunicationConnection:
     """ The event about the new message operation
     in the message queue """
 
-    def __init__(self, communication_handler, connection_id, connection_name, service_connection = None):
+    def __init__(self, communication_handler, connection_id, connection_name, service_connection = None, delegate = None):
         """
         Constructor of the class.
 
@@ -1063,17 +1093,50 @@ class CommunicationConnection:
         @param connection_name: The name of the connection.
         @type service_connection: ServiceConnection
         @param service_connection: The service connection for the connection.
+        @type delegate: Object
+        @param delegate: The delegate object to be used to redirect
+        event calls for connection actions.
         """
 
         self.communication_handler = communication_handler
         self.connection_id = connection_id
         self.connection_name = connection_name
         self.service_connection = service_connection
+        self.delegate = delegate
 
         self.handlers = []
         self.message_queue = []
         self.message_queue_lock = threading.RLock()
         self.message_queue_event = threading.Event()
+
+    def open(self):
+        """
+        Opens the current connection, should start all the
+        current internal structures.
+
+        The event handlers should also be triggered in case
+        a delegate is registered.
+        """
+
+        self.status = True
+        self.service_connection.add_delegate(self)
+
+        if self.delegate and hasattr(self.delegate, "on_open"):
+            self.delegate.on_open(self)
+
+    def close(self):
+        """
+        Closes the current connection, should stop all the
+        current internal structures.
+
+        The event handlers should also be triggered in case
+        a delegate is registered.
+        """
+
+        self.status = False
+
+        if self.delegate and hasattr(self.delegate, "on_close"):
+            self.delegate.on_close(self)
 
     def serialize_message(self, message, serializer):
         """
@@ -1239,6 +1302,27 @@ class CommunicationConnection:
 
         # returns the pop queue
         return pop_queue
+
+    def on_close(self, connection):
+        self.communication_handler.delete_connection(self)
+
+    def on_channel(self, fqn, unregister = False):
+        connection_name_l = len(self.connection_name)
+        name = fqn[connection_name_l + 1:]
+        if self.delegate and hasattr(self.delegate, "on_channel"):
+            self.delegate.on_channel(self, name, unregister = unregister)
+
+    def is_open(self):
+        """
+        Checks if the current connection status is open
+        and returns the value.
+
+        @rtype: bool
+        @return: If the status for the current connection
+        is open (connection available).
+        """
+
+        return self.status
 
     def is_empty(self):
         """
