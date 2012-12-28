@@ -57,21 +57,6 @@ NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
 
-FILE_HANDLER_VALUE = "file_handler"
-""" The file handler value """
-
-COMMUNICATION_HANDLER_VALUE = "communication_handler"
-""" The communication handler value """
-
-METHOD_VALUE = "method"
-""" The method value """
-
-ENCODER_NAME_VALUE = "encoder_name"
-""" The encoder name value """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
 GET_DEFAULT_PARAMETERS_VALUE = "get_default_parameters"
 """ The get default parameters value """
 
@@ -211,7 +196,13 @@ class Mvc(colony.base.system.System):
 
     def handle_rest_request(self, rest_request):
         """
-        Handles the given rest request.
+        Handles the given rest request, the method starts by
+        trying to match any of the regular expression in the
+        various areas, in case it matches handles it accordingly
+        and processes the request (post request execution).
+
+        The execution follows a order of resources, communication
+        and at last normal (dynamic) handling.
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
@@ -229,39 +220,56 @@ class Mvc(colony.base.system.System):
         path_list = rest_request.get_path_list()
         resource_path = "/".join(path_list)
 
-        # iterates over all the resource matching regex in the resource matching regex list
+        # iterates over all the resource matching regex in the
+        # resource matching regex list to try to match any of
+        # them and execute the proper action if such occurs
         for resource_matching_regex in self.resource_matching_regex_list:
             # tries to math the resource path in case there is no
             # valid resource path match must continue the loop
             resource_path_match = resource_matching_regex.match(resource_path)
             if not resource_path_match: continue
 
-            # handles the match, returning the result of the handling
-            self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
-
-            # runs the process request in the rest request
+            # handles the match using the resource handler, this should update the
+            # response object with the proper contents, then runs the post handling
+            # request processor so that the request object remains in the expected state
+            self._handle_resource_match(
+                rest_request,
+                resource_path,
+                resource_path_match,
+                resource_matching_regex
+            )
             self._process_request(rest_request)
 
-            # returns immediately
+            # returns immediately, no more matching tries should
+            # occur (already matched)
             return
 
-        # iterates over all the communication matching regex in the communication matching regex list
+        # iterates over all the communication matching regex in the
+        # communication matching regex list to try to match any of
+        # them and execute the proper action if such occurs
         for communication_matching_regex in self.communication_matching_regex_list:
             # tries to math the communication path in case there is no
             # valid communication path match must continue the loop
             communication_path_match = communication_matching_regex.match(resource_path)
             if not communication_path_match: continue
 
-            # handles the match, returning the result of the handling
-            self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
-
-            # runs the process request in the rest request
+            # handles the match using the communication handler, this should update the
+            # response object with the proper contents, then runs the post handling
+            # request processor so that the request object remains in the expected state
+            self._handle_communication_match(
+                rest_request,
+                resource_path,
+                communication_path_match,
+                communication_matching_regex
+            )
             self._process_request(rest_request)
 
             # returns immediately
             return
 
-        # iterates over all the matching regex in the matching regex list
+        # iterates over all the (dynamic) matching regex in the
+        # (dynamic) matching regex list to try to match any of
+        # them and execute the proper action if such occurs
         for matching_regex in self.matching_regex_list:
             # tries to math the resource path in case there is
             # no valid resource path match must continue the loop
@@ -274,10 +282,10 @@ class Mvc(colony.base.system.System):
             handle_tuple = self._validate_match(rest_request, resource_path, resource_path_match, matching_regex)
             if not handle_tuple: continue
 
-            # handles the match, returning the result of the handling
+            # handles the match using the (dynamic) handler, this should update the
+            # response object with the proper contents, then runs the post handling
+            # request processor so that the request object remains in the expected state
             self._handle_match(rest_request, handle_tuple)
-
-            # runs the process request in the rest request
             self._process_request(rest_request)
 
             # returns immediately
@@ -366,13 +374,11 @@ class Mvc(colony.base.system.System):
             # adds the pattern to the mvc service resource patterns list
             self.mvc_service_resource_patterns_list.append(pattern_key)
 
-        # updates the matching regex
+        # updates the complete set of matching regex, this should
+        # be able to provide the initial version of the regex handler
+        # methods association
         self._update_matching_regex()
-
-        # updates the communication matching regex
         self._update_communication_matching_regex()
-
-        # updates the resource matching regex
         self._update_resource_matching_regex()
 
     def unload_mvc_service_plugin(self, mvc_service_plugin):
@@ -539,7 +545,7 @@ class Mvc(colony.base.system.System):
         data_method, changed_method, connection_name = communication_information
 
         # handles the given request by the mvc communication handler
-        self.mvc_communication_handler.handle_request(rest_request.request, data_method, changed_method, connection_name)
+        self.mvc_communication_handler.handle_request(rest_request, data_method, changed_method, connection_name)
 
     def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex
@@ -623,9 +629,8 @@ class Mvc(colony.base.system.System):
         rest_request_status_code = rest_request.get_status_code()
 
         # checks if the status code is set in the rest request
+        # and in case it's not sets the default code (no error)
         is_set_status_code = rest_request_status_code and True or False
-
-        # sets the default status code in case it's not already set
         not is_set_status_code and rest_request.set_status_code(DEFAULT_STATUS_CODE)
 
     def _update_matching_regex(self):
@@ -753,10 +758,8 @@ class Mvc(colony.base.system.System):
             # regex compilation
             if index % REGEX_COMPILATION_LIMIT == 0:
                 # retrieves the communication matching regex value from the communication matching
-                # regex value buffer
+                # regex value buffer and compiles it into the proper regex value
                 communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
-
-                # compiles the communication matching regex value
                 reource_matching_regex = re.compile(communication_matching_regex_value)
 
                 # adds the communication matching regex to the matching regex list
@@ -779,9 +782,8 @@ class Mvc(colony.base.system.System):
         communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
 
         # in case the communication matching regex value is invalid (empty)
-        if not communication_matching_regex_value:
-            # returns immediately
-            return
+        # must return immediately
+        if not communication_matching_regex_value: return
 
         # compiles the communication matching regex value
         communication_matching_regex = re.compile(communication_matching_regex_value)
@@ -861,9 +863,8 @@ class Mvc(colony.base.system.System):
         resource_matching_regex_value = resource_matching_regex_value_buffer.get_value()
 
         # in case the resource matching regex value is invalid (empty)
-        if not resource_matching_regex_value:
-            # returns immediately
-            return
+        # must return immediately
+        if not resource_matching_regex_value: return
 
         # compiles the resource matching regex value
         resource_matching_regex = re.compile(resource_matching_regex_value)
@@ -877,101 +878,90 @@ class Mvc(colony.base.system.System):
     def __validate_match(self, rest_request, handler_attributes, resource_path):
         # unpacks the handler attributes, retrieving the handler
         # validation regex and the handler arguments
-        handler_validation_regex, handler_arguments = handler_attributes
+        validation_regex, arguments = handler_attributes
 
         # matches the resource path against the validation match
-        resource_path_validation_match = handler_validation_regex.match(resource_path)
-
-        # in case there is no resource path validation match
-        # # raises the runtime request exception
-        if not resource_path_validation_match:
+        # in case there is no (resource path) validation match
+        # raises the runtime request exception
+        validation_match = validation_regex.match(resource_path)
+        if not validation_match:
             raise exceptions.RuntimeRequestException("invalid resource path validation match")
 
-        # retrieves the length of the handler arguments
-        handler_arguments_length = len(handler_arguments)
+        # retrieves the length of the handler arguments, in order to be able
+        # to conditionally validate the various parameters from it
+        arguments_length = len(arguments)
 
-        # retrieves the handler method from the handler arguments
-        handler_method = handler_arguments_length > 0 and handler_arguments[0] or None
+        # retrieves the complete set of arguments that were provided
+        # to be used as attributes by the handler
+        method = arguments_length > 0 and arguments[0] or None
+        operation_types = arguments_length > 1 and arguments[1] or ("get", "put", "post", "delete")
+        encoders = arguments_length > 2 and arguments[2] or None
+        contraints = arguments_length > 3 and arguments[3] or {}
 
-        # retrieves the handler operation types from the handler arguments
-        handler_operation_types = handler_arguments_length > 1 and handler_arguments[1] or ("get", "put", "post", "delete")
+        # casts both the operation types and the encoders as tuples
+        # so that they remain compatible with the execution code
+        operation_types = self.__cast_tuple(operation_types)
+        encoders = self.__cast_tuple(encoders)
 
-        # retrieves the handler encoders from the handler arguments
-        handler_encoders = handler_arguments_length > 2 and handler_arguments[2] or None
-
-        # retrieves the handler constraints from the handler arguments
-        handler_contraints = handler_arguments_length > 3 and handler_arguments[3] or {}
-
-        # casts the values to tuples
-        handler_operation_types = self.__cast_tuple(handler_operation_types)
-        handler_encoders = self.__cast_tuple(handler_encoders)
-
-        # retrieves the request
+        # retrieves the request from the rest request to be used
+        # in the retrieval of some attributes
         request = rest_request.get_request()
 
-        # retrieves the request operation type
-        request_operation_type = request.operation_type
-
-        # lowers the request operation type
-        request_operation_type = request_operation_type.lower()
-
-        # retrieves the rest request encoder name
-        rest_request_encoder_name = rest_request.encoder_name
+        # retrieves the various attributes associated with both the
+        # request and the rest request that are going to be used in
+        # the validation process
+        operation_type_r = request.operation_type
+        operation_type_r = operation_type_r.lower()
+        encoder_name_r = rest_request.encoder_name
 
         # in case the request operation type does not exists in the
-        # handler operation types
-        if not request_operation_type in handler_operation_types:
-            # returns none (invalid)
-            return None
+        # operation types, must returns with invalid value (validation
+        # of operation type failed)
+        if not operation_type_r in operation_types: return None
 
-        # in case the handler encoders are defined and the rest
-        # request encoder name does not exists in the handler encoders
-        if handler_encoders and not rest_request_encoder_name in handler_encoders:
-            # returns none (invalid)
-            return None
+        # in case the encoders are defined and the request encoder name
+        # does not exists in the encoders set must return with invalid
+        # state (validation of encoder failed)
+        if encoders and not encoder_name_r in encoders: return None
 
-        # iterates over all the handler constraints
-        for handler_contraint_name, handler_contraint_value in handler_contraints.items():
+        # iterates over the complete set of constraints to
+        for contraint_name, contraint_value in contraints.items():
             # retrieves the handler constraint value type
-            handler_contraint_value_type = type(handler_contraint_value)
+            contraint_value_t = type(contraint_value)
 
             # retrieves the attribute value base on the
             # handler constraint name
-            attribute_value = rest_request.get_attribute(handler_contraint_name)
+            attribute_value = rest_request.get_attribute(contraint_name)
 
-            try:
-                # casts the attribute value
-                attribute_value_casted = handler_contraint_value_type(attribute_value)
-            except:
-                # returns none (invalid)
-                return None
+            # tries to cast the attribute value using the constraint
+            # type in case it fails returns in error
+            try: attribute_value_c = contraint_value_t(attribute_value)
+            except: return None
 
             # in case the attribute value (casted) is not equals
-            # to the handler constraint name
-            if not attribute_value_casted == handler_contraint_value:
-                # returns none (invalid)
-                return None
+            # to the handler constraint value must return in error
+            if attribute_value_c == contraint_value: return None
 
-        # retrieves the resource path validation match groups map
-        resource_path_validation_match_groups_map = resource_path_validation_match.groupdict()
+        # retrieves the (resource path) validation match groups map
+        validation_match_groups_map = validation_match.groupdict()
 
-        # sets the parameters as an empty map
-        parameters = {}
+        # creates the map containing the various parameters to be
+        # "pushed" to the lower layer of the mvc stack
+        parameters = {
+            "file_handler" : self.mvc_file_handler,
+            "communication_handler" : self.mvc_communication_handler,
+            "method" : operation_type_r,
+            "encoder_name" : encoder_name_r,
+            "pattern_names" : validation_match_groups_map
+        }
 
-        # sets the extra parameters
-        parameters[FILE_HANDLER_VALUE] = self.mvc_file_handler
-        parameters[COMMUNICATION_HANDLER_VALUE] = self.mvc_communication_handler
-        parameters[METHOD_VALUE] = request_operation_type
-        parameters[ENCODER_NAME_VALUE] = rest_request_encoder_name
-        parameters[PATTERN_NAMES_VALUE] = resource_path_validation_match_groups_map
-
-        # creates the handler tuple
+        # creates the handler tuple, containing both the method to
+        # be used for handling and the parameters to be passed and
+        # returns it to the caller method
         handler_tuple = (
-            handler_method,
+            method,
             parameters
         )
-
-        # returns the handler tuple
         return handler_tuple
 
     def __cast_tuple(self, value):
