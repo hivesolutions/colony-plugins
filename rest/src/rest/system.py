@@ -1181,6 +1181,35 @@ class RestRequest:
 
         return self.request.read()
 
+    def write(self, data):
+        """
+        Writes the provided chunk data to the underlying request
+        structures. The data is not immediately flushed to the
+        client side.
+
+        @type data: String
+        @param data: The data to be written to the underlying
+        request structures.
+        """
+
+        return self.request.write(data)
+
+    def process(self):
+        """
+        Processes the underlying request object, this should
+        start the flushing of the data to the client peer.
+
+        Use this method with care as it may corrupt the request
+        life-cycle and create unexpected issues in the server.
+        """
+
+        # retrieves the request elements, the service handler and the
+        # service connection to be used in the processing then uses
+        # them to process the request (send request to client)
+        service = self.request.get_service()
+        service_connection = self.request.get_service_connection()
+        service.process_request(self.request, service_connection)
+
     def parse_post(self):
         """
         Parses the post message using the default,
@@ -1786,6 +1815,46 @@ class RestRequest:
         """
 
         self.request.status_code = status_code
+
+    def set_delayed(self, value):
+        """
+        Sets the request as delayed, this should avoid automatic
+        processing of the request (response sending).
+
+        If the delayed mode is set an additional call to the
+        process method is required to flush the data to the
+        client side.
+
+        @type value: bool
+        @param value: The boolean value for the setting of
+        the delayed mode flag.
+        """
+
+        self.request.delayed = value
+
+    def get_service(self):
+        """
+        Retrieves the reference to the service responsible for
+        the handling of the current request (owner).
+
+        @rtype: Service
+        @return: The service responsible for the handling of
+        the current request.
+        """
+
+        return self.request.get_service()
+
+    def get_service_connection(self):
+        """
+        Retrieves the reference to the service connection
+        associated with the handling of the request.
+
+        @rtype: ServiceConnection
+        @return: The reference to the service connection
+        associated with the handling of the request.
+        """
+
+        return self.request.get_service_connection()
 
     def get_address(self):
         """
@@ -2429,9 +2498,8 @@ class Cookie:
         @return: The cookie serialized string.
         """
 
-        # in case the attribute value is invalid
-        if attribute_value == None:
-            return attribute_name + ";"
-        # in case the attribute value is valid
-        else:
-            return attribute_name + "=" + str(attribute_value) + ";"
+        # converts the attribute into the correct key value
+        # pair defaulting to a single name attribute in case
+        # no value is defined
+        if attribute_value == None: return attribute_name + ";"
+        else: return attribute_name + "=" + str(attribute_value) + ";"
