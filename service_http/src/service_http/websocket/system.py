@@ -259,7 +259,7 @@ class WebSocketConnection:
         # retrieves the service connection handler for the protocol
         service_connection_handler = self._get_service_connection_handler(protocol)
 
-        # sets the request handler for the http client service handler
+        # sets the request handler for the service
         # this step upgrades the protocol interpretation
         self.service.set_service_connection_request_handler(self.service_connection, service_connection_handler)
 
@@ -272,9 +272,9 @@ class WebSocketConnection:
         Closes the websocket, cleaning the remaining changes.
         """
 
-        # sets the request handler for the http client service handler
-        # as the original (http) request handler, this step downgrades
-        # the protocol interpretation (back to http)
+        # sets the request handler for the service as the original
+        # (http) request handler, this step "downgrades" the protocol
+        # interpretation (back to http)
         self.service.unset_service_connection_request_handler(self.service_connection)
 
     def websocket_service_connection_handler(self, service_connection):
