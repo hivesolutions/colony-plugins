@@ -405,7 +405,9 @@ class MvcUtils(colony.base.system.System):
 
             # retrieves the connection parameters from the entity manager arguments or uses
             # the default connection parameters and resolves them into the proper representation
-            connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
+            connection_parameters = entity_manager_arguments.get(
+                CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS
+            )
             self._resolve_connection_parameters(connection_parameters)
 
             # creates the entity manager properties, the id to be
