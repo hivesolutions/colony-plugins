@@ -544,15 +544,14 @@ class Mvc(colony.base.system.System):
         pattern = self.communication_patterns_list[mvc_service_index]
 
         # retrieves the (communication) information and then unpacks it
-        # into the data method, changed method and connection name
+        # into the delegate (object) and connection name
         information = self.communication_patterns_map[pattern]
-        data_method, changed_method, connection_name = information
+        delegate, connection_name = information
 
         # handles the given request by the mvc communication handler
         self.mvc_communication_handler.handle_request(
             rest_request,
-            data_method,
-            changed_method,
+            delegate,
             connection_name
         )
 

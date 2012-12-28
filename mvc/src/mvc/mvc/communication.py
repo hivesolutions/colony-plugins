@@ -258,24 +258,23 @@ class MvcCommunicationHandler:
 
         connection.send_message(message)
 
-    def handle_request(self, request, data_method, changed_method, connection_name):
+    def handle_request(self, request, delegate, connection_name):
         """
         Handles the given http request.
 
         @type request: HttpRequest
         @param request: The http request to be handled.
-        @type data_method: Method
-        @param data_method: The method for data handling.
-        @type changed_method: Method
-        @param changed_method: The method for
-        connection changed handling.
+        @type delegate: Object
+        @param delegate: The object to be used to delegate
+        operations associated with the communication changes.
         @type connection_name: String
         @param connection_name: The name of the connection.
         @rtype: bool
         @return: The result of the handling.
         """
 
-        # retrieves the request command
+        # retrieves the request command, this value should
+        # identify the operation to be executed
         command = request.get_attribute("command")
 
         # in case the command is not defined raises the
@@ -297,13 +296,12 @@ class MvcCommunicationHandler:
         process_method = getattr(self, process_method_name)
         process_method(
             request,
-            data_method,
-            changed_method,
+            delegate,
             connection_name
         )
         return True
 
-    def process_connect(self, request, data_method, changed_method, connection_name):
+    def process_connect(self, request, delegate, connection_name):
         # retrieves the random plugin
         random_plugin = self.mvc_plugin.random_plugin
 
@@ -332,7 +330,7 @@ class MvcCommunicationHandler:
                 "operation" : "channel",
                 "channel" : channel
             }
-            changed_method(request, parameters)
+            delegate.handle_changed(request, parameters)
 
         # in case the complete set of channels has been successful
         # verified (authentication/validation process) can now
@@ -343,10 +341,10 @@ class MvcCommunicationHandler:
         # notify it about the success
         self._write_message(request, connection, "success")
 
-    def process_disconnect(self, request, data_method, changed_method, connection_name):
+    def process_disconnect(self, request, delegate, connection_name):
         pass
 
-    def process_update(self, request, data_method, changed_method, connection_name):
+    def process_update(self, request, delegate, connection_name):
         # tries to retrieve the (communication) connection
         # using the current request for it
         connection = self._get_connection(request, connection_name)
@@ -371,7 +369,7 @@ class MvcCommunicationHandler:
         element = (connection, request, target_time)
         self.connection_processing_thread.add_queue(element)
 
-    def process_data(self, request, data_method, changed_method, connection_name):
+    def process_data(self, request, delegate, connection_name):
         # tries to retrieve the (communication) connection
         # using the current request for it
         connection = self._get_connection(request, connection_name)
@@ -385,13 +383,13 @@ class MvcCommunicationHandler:
             "operation" : "data",
             "data" : data
         }
-        data_method(request, parameters)
+        delegate.handle_data(request, parameters)
 
         # writes the success message to the client end point to
         # notify it about the success of the channel registration
         self._write_message(request, connection, "success")
 
-    def process_channel(self, request, data_method, changed_method, connection_name):
+    def process_channel(self, request, delegate, connection_name):
         # tries to retrieve the (communication) connection
         # using the current request for it
         connection = self._get_connection(request, connection_name)
@@ -406,7 +404,7 @@ class MvcCommunicationHandler:
             "operation" : "channel",
             "channel" : channel
         }
-        changed_method(request, parameters)
+        delegate.handle_changed(request, parameters)
 
         # in case the the  channel has been successful
         # verified (authentication/validation process) can now
