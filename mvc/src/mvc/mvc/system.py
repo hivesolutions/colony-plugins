@@ -280,7 +280,9 @@ class Mvc(colony.base.system.System):
             # validate the match and retrieves the handle tuple and in
             # case the handle tuple is invalid continues immediately
             # because it's not possible to process the request
-            handle_tuple = self._validate_match(rest_request, resource_path, resource_path_match, matching_regex)
+            handle_tuple = self._validate_match(
+                rest_request, resource_path, resource_path_match, matching_regex
+            )
             if not handle_tuple: continue
 
             # handles the match using the (dynamic) handler, this should update the
@@ -518,7 +520,8 @@ class Mvc(colony.base.system.System):
         # retrieves the resources initial token length and uses it
         # to create the file path from the base path and file path
         initial_token_l = len(initial_token)
-        file_path = base_path + "/" + resource_path[initial_token_l + 1:] + "." + rest_request.encoder_name
+        file_path = base_path + "/" + resource_path[initial_token_l + 1:] +\
+            "." + rest_request.encoder_name
 
         # handles the given request by the mvc file handler
         self.mvc_file_handler.handle_request(
@@ -684,7 +687,7 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-                
+
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
             # the matching regex list and base indexes map
@@ -707,7 +710,7 @@ class Mvc(colony.base.system.System):
         if not matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base indexes map 
+        # the matching regex list and base indexes map
         matching_regex = re.compile(matching_regex_value)
         self.matching_regex_list.append(matching_regex)
         self.matching_regex_base_map[matching_regex] = current_base_index
@@ -720,7 +723,7 @@ class Mvc(colony.base.system.System):
         according to the patterns defined in the internal
         structures.
         """
-        
+
         # starts the matching regex value buffer
         communication_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
@@ -755,7 +758,7 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-                
+
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
             # the matching regex list and base indexes map
@@ -778,7 +781,7 @@ class Mvc(colony.base.system.System):
         if not communication_matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base indexes map 
+        # the matching regex list and base indexes map
         communication_matching_regex = re.compile(communication_matching_regex_value)
         self.communication_matching_regex_list.append(communication_matching_regex)
         self.communication_matching_regex_base_map[communication_matching_regex] = current_base_index
@@ -826,7 +829,7 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-                
+
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
             # the matching regex list and base indexes map
@@ -849,7 +852,7 @@ class Mvc(colony.base.system.System):
         if not resource_matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base indexes map 
+        # the matching regex list and base indexes map
         resource_matching_regex = re.compile(resource_matching_regex_value)
         self.resource_matching_regex_list.append(resource_matching_regex)
         self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
