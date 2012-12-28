@@ -153,8 +153,9 @@ class WebSocketConnection:
     request = None
     """ The http request object """
 
-    http_client_service_handler = None
-    """ The http client service handler """
+    service = None
+    """ The service that was used to handle the
+    request associated (owner service) """
 
     service_connection = None
     """ The service connection """
@@ -179,7 +180,7 @@ class WebSocketConnection:
         self.service_http_websocket_handler = service_http_websocket_handler
         self.request = request
 
-        self.http_client_service_handler = request.http_client_service_handler
+        self.service = request.service
         self.service_connection = request.service_connection
 
     def __repr__(self):
@@ -260,7 +261,7 @@ class WebSocketConnection:
 
         # sets the request handler for the http client service handler
         # this step upgrades the protocol interpretation
-        self.http_client_service_handler.set_service_connection_request_handler(self.service_connection, service_connection_handler)
+        self.service.set_service_connection_request_handler(self.service_connection, service_connection_handler)
 
         # sets the websocket connection values
         self.protocol = protocol
@@ -274,7 +275,7 @@ class WebSocketConnection:
         # sets the request handler for the http client service handler
         # as the original (http) request handler, this step downgrades
         # the protocol interpretation (back to http)
-        self.http_client_service_handler.unset_service_connection_request_handler(self.service_connection)
+        self.service.unset_service_connection_request_handler(self.service_connection)
 
     def websocket_service_connection_handler(self, service_connection):
         # receives the data

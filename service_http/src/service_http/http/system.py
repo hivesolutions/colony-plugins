@@ -2411,8 +2411,9 @@ class HttpRequest:
     The http request class.
     """
 
-    http_client_service_handler = None
-    """ The http client service handler """
+    service = None
+    """ The reference to the http service that
+    is handling the current request (owner service) """
 
     service_connection = None
     """ The service connection """
@@ -2562,8 +2563,8 @@ class HttpRequest:
     properties = {}
     """ The properties """
 
-    def __init__(self, http_client_service_handler = None, service_connection = None, content_type_charset = DEFAULT_CHARSET):
-        self.http_client_service_handler = http_client_service_handler
+    def __init__(self, service = None, service_connection = None, content_type_charset = DEFAULT_CHARSET):
+        self.service = service
         self.service_connection = service_connection
         self.content_type_charset = content_type_charset
 
@@ -3071,6 +3072,18 @@ class HttpRequest:
 
         return SERVER_IDENTIFIER
 
+    def get_service(self):
+        """
+        Returns the service associated with the request
+        the one that owns the current request.
+
+        @rtype: Service
+        @return: The service that owns the current
+        request (request owner/parent).
+        """
+
+        return self.service
+
     def get_service_connection(self):
         """
         Returns a the service connection object, that
@@ -3350,7 +3363,7 @@ class HttpRequest:
                 if modified_date_time <= if_modified_header_data_time: return False
             except:
                 # prints a warning for not being able to check the modification date
-                self.http_client_service_handler.service_plugin.warning("Problem while checking modification date")
+                self.service.service_plugin.warning("Problem while checking modification date")
 
         # retrieves the if none match value and in case it is
         # defined together with the etag value the etag based

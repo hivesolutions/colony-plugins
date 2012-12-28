@@ -727,7 +727,7 @@ class WsgiRequest:
                 if modified_date_time <= if_modified_header_data_time: return False
             except:
                 # prints a warning for not being able to check the modification date
-                self.http_client_service_handler.service_plugin.warning("Problem while checking modification date")
+                self.service.service_plugin.warning("Problem while checking modification date")
 
         # retrieves the if none match value and in case it is
         # defined together with the etag value the etag based
