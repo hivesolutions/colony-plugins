@@ -256,7 +256,7 @@ class PaypalClient:
         # sets the base parameters, required for the authentication
         # of the request to be executed
         self._set_base_parameters(parameters)
-        
+
         # sets the order as an empty map in case
         # none was provided and retrieves its lines
         order = order or {}
@@ -688,7 +688,7 @@ class PaypalClient:
     def _check_paypal_errors(self, data):
         """
         Checks the given data for paypal errors.
-        
+
         This method raises an exception in case an error
         exists in the data to be verified.
 

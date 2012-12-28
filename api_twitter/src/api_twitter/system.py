@@ -988,7 +988,7 @@ class TwitterClient:
 
         This method raises an exception in case an error
         exists in the data to be verified.
-        
+
         @type data: Dictionary
         @param data: The data to be checked for twitter errors.
         """
