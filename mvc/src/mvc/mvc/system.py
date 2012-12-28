@@ -83,7 +83,7 @@ class Mvc(colony.base.system.System):
     """ The list of matching regex to be used in
     patterns matching """
 
-    matching_regex_base_values_map = {}
+    matching_regex_base_map = {}
     """ The map containing the base (values) for the
     various matching regex, this is the base index
     for the computation of index """
@@ -92,16 +92,16 @@ class Mvc(colony.base.system.System):
     """ The list of matching regex to be used in
     communication patterns matching """
 
-    communication_matching_regex_base_values_map = {}
-    """ The map containing the base values for the
+    communication_matching_regex_base_map = {}
+    """ The map containing the base indexes for the
     various communication matching regex """
 
     resource_matching_regex_list = []
     """ The list of matching regex to be used in
     resource patterns matching """
 
-    resource_matching_regex_base_values_map = {}
-    """ The map containing the base values for the
+    resource_matching_regex_base_map = {}
+    """ The map containing the base indexes for the
     various resource matching regex """
 
     patterns_map = {}
@@ -133,11 +133,11 @@ class Mvc(colony.base.system.System):
         colony.base.system.System.__init__(self, plugin)
 
         self.matching_regex_list = []
-        self.matching_regex_base_values_map = {}
+        self.matching_regex_base_map = {}
         self.communication_matching_regex_list = []
-        self.communication_matching_regex_base_values_map = {}
+        self.communication_matching_regex_base_map = {}
         self.resource_matching_regex_list = []
-        self.resource_matching_regex_base_values_map = {}
+        self.resource_matching_regex_base_map = {}
         self.patterns_map = {}
         self.pattern_escaped_map = {}
         self.pattern_compiled_map = {}
@@ -492,17 +492,17 @@ class Mvc(colony.base.system.System):
         self.mvc_communication_handler.send_broadcast(connection_name, message)
 
     def _handle_resource_match(self, rest_request, resource_path, path_match, matching_regex):
-        # retrieves the base value (offset index) for the matching regex
+        # retrieves the base index (offset index) for the matching regex
         # this is going to be used in the calculus of the service index
-        base_value = self.resource_matching_regex_base_values_map[matching_regex]
+        base_index = self.resource_matching_regex_base_map[matching_regex]
 
         # retrieves the group index from the resource path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base value,
+        # calculates the mvc service index from the base index,
         # the group index and subtracts one value and uses it
         # to retrieves the resource pattern
-        mvc_service_index = base_value + group_index - 1
+        mvc_service_index = base_index + group_index - 1
         pattern = self.resource_patterns_list[mvc_service_index]
 
         # retrieves the (resource) information and then unpacks it
@@ -527,17 +527,17 @@ class Mvc(colony.base.system.System):
         )
 
     def _handle_communication_match(self, rest_request, resource_path, path_match, matching_regex):
-        # retrieves the base value (offset index) for the matching regex
+        # retrieves the base index (offset index) for the matching regex
         # this is going to be used in the calculus of the service index
-        base_value = self.communication_matching_regex_base_values_map[matching_regex]
+        base_index = self.communication_matching_regex_base_map[matching_regex]
 
         # retrieves the group index from the communication path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base value,
+        # calculates the mvc service index from the base index,
         # the group index and subtracts one value and uses it to
         # retrieves the communication pattern
-        mvc_service_index = base_value + group_index - 1
+        mvc_service_index = base_index + group_index - 1
         pattern = self.communication_patterns_list[mvc_service_index]
 
         # retrieves the (communication) information and then unpacks it
@@ -554,17 +554,17 @@ class Mvc(colony.base.system.System):
         )
 
     def _validate_match(self, rest_request, resource_path, path_match, matching_regex):
-        # retrieves the base value (offset index) for the matching regex
+        # retrieves the base index (offset index) for the matching regex
         # this is going to be used in the calculus of the service index
-        base_value = self.matching_regex_base_values_map[matching_regex]
+        base_index = self.matching_regex_base_map[matching_regex]
 
         # retrieves the group index from the resource path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base value,
+        # calculates the mvc service index from the base index,
         # the group index and subtracts one value and uses it to
         # retrieve the pattern
-        mvc_service_index = base_value + group_index - 1
+        mvc_service_index = base_index + group_index - 1
         pattern = self.patterns_list[mvc_service_index]
 
         # retrieves the pattern attributes list from the
@@ -616,7 +616,9 @@ class Mvc(colony.base.system.System):
         # after that uses the default parameters to extend the
         # parameters map of the handler tuple
         controller = type(handler_method) == types.MethodType and handler_method.im_self
-        default_parameters = controller and hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE) and controller.get_default_parameters() or {}
+        default_parameters = controller and\
+            hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE) and\
+            controller.get_default_parameters() or {}
         colony.libs.map_util.map_extend(parameters, default_parameters, copy_base_map = False)
 
         # handles the mvc request to the handler method
@@ -652,19 +654,19 @@ class Mvc(colony.base.system.System):
         matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # clears both the matching regex list and the associated
-        # base values map (reset operation)
+        # base indexes map (reset operation)
         self.matching_regex_list = []
-        self.matching_regex_base_values_map.clear()
+        self.matching_regex_base_map.clear()
 
         # starts the various control values to be used in the
         # iteration that will create the matching regex
         index = 0
-        current_base_value = 0
+        current_base_index = 0
         is_first = True
 
         # iterates over all the patterns in the patterns list to
         # add then to the matching regex buffer and to calculate
-        # their base values
+        # their base indexes
         for pattern in self.patterns_list:
             # in case it's not the first iteration adds the
             #or operand to the matching regex value buffer
@@ -682,20 +684,20 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-
+                
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
-            # the matching regex list and base values map
+            # the matching regex list and base indexes map
             matching_regex_value = matching_regex_buffer.get_value()
             matching_regex = re.compile(matching_regex_value)
             self.matching_regex_list.append(matching_regex)
-            self.matching_regex_base_values_map[matching_regex] = current_base_value
+            self.matching_regex_base_map[matching_regex] = current_base_index
 
             # re-sets the current matching regex buffer value and
-            # then updates the base value to the current index and
+            # then updates the base index to the current index and
             # sets the is first flag
             matching_regex_buffer.reset()
-            current_base_value = index
+            current_base_index = index
             is_first = True
 
         # retrieves the (matching) regex value from the matching
@@ -705,10 +707,10 @@ class Mvc(colony.base.system.System):
         if not matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base values map
+        # the matching regex list and base indexes map 
         matching_regex = re.compile(matching_regex_value)
         self.matching_regex_list.append(matching_regex)
-        self.matching_regex_base_values_map[matching_regex] = current_base_value
+        self.matching_regex_base_map[matching_regex] = current_base_index
 
     def _update_communication_matching_regex(self):
         """
@@ -718,24 +720,24 @@ class Mvc(colony.base.system.System):
         according to the patterns defined in the internal
         structures.
         """
-
+        
         # starts the matching regex value buffer
         communication_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # clears both the matching regex list and the associated
-        # base values map (reset operation)
+        # base indexes map (reset operation)
         self.communication_matching_regex_list = []
-        self.communication_matching_regex_base_values_map.clear()
+        self.communication_matching_regex_base_map.clear()
 
         # starts the various control values to be used in the
         # iteration that will create the matching regex
         index = 0
-        current_base_value = 0
+        current_base_index = 0
         is_first = True
 
         # iterates over all the patterns in the patterns list to
         # add then to the matching regex buffer and to calculate
-        # their base values
+        # their base indexes
         for pattern in self.communication_patterns_list:
             # in case it's not the first iteration adds the
             #or operand to the matching regex value buffer
@@ -753,20 +755,20 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-
+                
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
-            # the matching regex list and base values map
+            # the matching regex list and base indexes map
             communication_matching_regex_value = communication_matching_regex_buffer.get_value()
             communication_matching_regex = re.compile(communication_matching_regex_value)
             self.communication_matching_regex_list.append(communication_matching_regex)
-            self.communication_matching_regex_base_values_map[communication_matching_regex] = current_base_value
+            self.communication_matching_regex_base_map[communication_matching_regex] = current_base_index
 
             # re-sets the current matching regex buffer value and
-            # then updates the base value to the current index and
+            # then updates the base index to the current index and
             # sets the is first flag
             communication_matching_regex_buffer.reset()
-            current_base_value = index
+            current_base_index = index
             is_first = True
 
         # retrieves the (matching) regex value from the matching
@@ -776,10 +778,10 @@ class Mvc(colony.base.system.System):
         if not communication_matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base values map
+        # the matching regex list and base indexes map 
         communication_matching_regex = re.compile(communication_matching_regex_value)
         self.communication_matching_regex_list.append(communication_matching_regex)
-        self.communication_matching_regex_base_values_map[communication_matching_regex] = current_base_value
+        self.communication_matching_regex_base_map[communication_matching_regex] = current_base_index
 
     def _update_resource_matching_regex(self):
         """
@@ -794,19 +796,19 @@ class Mvc(colony.base.system.System):
         resource_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # clears both the matching regex list and the associated
-        # base values map (reset operation)
+        # base indexes map (reset operation)
         self.resource_matching_regex_list = []
-        self.resource_matching_regex_base_values_map.clear()
+        self.resource_matching_regex_base_map.clear()
 
         # starts the various control values to be used in the
         # iteration that will create the matching regex
         index = 0
-        current_base_value = 0
+        current_base_index = 0
         is_first = True
 
         # iterates over all the patterns in the patterns list to
         # add then to the matching regex buffer and to calculate
-        # their base values
+        # their base indexes
         for pattern in self.resource_patterns_list:
             # in case it's not the first iteration adds the
             #or operand to the matching regex value buffer
@@ -824,20 +826,20 @@ class Mvc(colony.base.system.System):
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
             if not index % REGEX_COMPILATION_LIMIT == 0: continue
-
+                
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
-            # the matching regex list and base values map
+            # the matching regex list and base indexes map
             resource_matching_regex_value = resource_matching_regex_buffer.get_value()
             resource_matching_regex = re.compile(resource_matching_regex_value)
             self.resource_matching_regex_list.append(resource_matching_regex)
-            self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
+            self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
 
             # re-sets the current matching regex buffer value and
-            # then updates the base value to the current index and
+            # then updates the base index to the current index and
             # sets the is first flag
             resource_matching_regex_buffer.reset()
-            current_base_value = index
+            current_base_index = index
             is_first = True
 
         # retrieves the (matching) regex value from the matching
@@ -847,10 +849,10 @@ class Mvc(colony.base.system.System):
         if not resource_matching_regex_value: return
 
         # compiles the matching regex value and adds it to
-        # the matching regex list and base values map
+        # the matching regex list and base indexes map 
         resource_matching_regex = re.compile(resource_matching_regex_value)
         self.resource_matching_regex_list.append(resource_matching_regex)
-        self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
+        self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
 
     def __validate_match(self, rest_request, handler_attributes, resource_path):
         # unpacks the handler attributes, retrieving the handler
