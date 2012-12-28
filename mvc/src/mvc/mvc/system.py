@@ -61,7 +61,8 @@ GET_DEFAULT_PARAMETERS_VALUE = "get_default_parameters"
 """ The get default parameters value """
 
 DEFAULT_STATUS_CODE = 200
-""" The default status code """
+""" The default status code, by default every request
+is considered to be successful """
 
 class Mvc(colony.base.system.System):
     """
@@ -102,31 +103,30 @@ class Mvc(colony.base.system.System):
     """ The map containing the base values for the
     various resource matching regex """
 
-    mvc_service_patterns_map = {}
-    """ The mvc service patterns map """
+    patterns_map = {}
+    """ The patterns map """
 
-    mvc_service_pattern_escaped_map = {}
-    """ The mvc service pattern escaped map """
+    pattern_escaped_map = {}
+    """ The pattern escaped map """
 
-    mvc_service_pattern_compiled_map = {}
-    """ The mvc service pattern compiled map """
+    pattern_compiled_map = {}
+    """ The pattern compiled map """
 
-    mvc_service_patterns_list = []
-    """ The mvc service patterns list for indexing """
+    patterns_list = []
+    """ The patterns list for indexing """
 
-    mvc_service_communication_patterns_map = {}
-    """ The mvc service communication patterns map """
+    communication_patterns_map = {}
+    """ The communication patterns map """
 
-    mvc_service_communication_patterns_list = []
-    """ The mvc service communication patterns list
+    communication_patterns_list = []
+    """ The communication patterns list
     for indexing """
 
-    mvc_service_resource_patterns_map = {}
-    """ The mvc service resource patterns map """
+    resource_patterns_map = {}
+    """ The resource patterns map """
 
-    mvc_service_resource_patterns_list = []
-    """ The mvc service resource patterns list for
-    indexing """
+    resource_patterns_list = []
+    """ The resource patterns list for indexing """
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
@@ -137,14 +137,14 @@ class Mvc(colony.base.system.System):
         self.communication_matching_regex_base_values_map = {}
         self.resource_matching_regex_list = []
         self.resource_matching_regex_base_values_map = {}
-        self.mvc_service_patterns_map = {}
-        self.mvc_service_pattern_escaped_map = {}
-        self.mvc_service_pattern_compiled_map = {}
-        self.mvc_service_patterns_list = []
-        self.mvc_service_communication_patterns_map = {}
-        self.mvc_service_communication_patterns_list = []
-        self.mvc_service_resource_patterns_map = {}
-        self.mvc_service_resource_patterns_list = []
+        self.patterns_map = {}
+        self.pattern_escaped_map = {}
+        self.pattern_compiled_map = {}
+        self.patterns_list = []
+        self.communication_patterns_map = {}
+        self.communication_patterns_list = []
+        self.resource_patterns_map = {}
+        self.resource_patterns_list = []
 
         self.mvc_file_handler = file_handler.MvcFileHandler(plugin)
         self.mvc_communication_handler = communication.MvcCommunicationHandler(plugin)
@@ -297,32 +297,38 @@ class Mvc(colony.base.system.System):
 
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """
-        Loads the given mvc service plugin.
+        Loads the given mvc service plugin, this process is focused
+        on the extraction of the patterns from the plugin and in
+        the correct update of the internal structures of the mvc
+        to handling these "new" patterns.
 
         @type mvc_service_plugin: Plugin
         @param mvc_service_plugin: The mvc service plugin to be loaded.
         """
 
-        # retrieves the mvc service plugin patterns
-        mvc_service_plugin_patterns = mvc_service_plugin.get_patterns()
+        # retrieves the complete set of patterns from the
+        # mvc service plugin to load them into the internal structures
+        patterns = mvc_service_plugin.get_patterns()
+        communication_patterns = mvc_service_plugin.get_communication_patterns()
+        resource_patterns = mvc_service_plugin.get_resource_patterns()
 
-        # iterates over all the patterns in the mvc service plugin patterns
-        for mvc_service_plugin_pattern in mvc_service_plugin_patterns:
-            # retrieves the pattern key
-            pattern_key = mvc_service_plugin_pattern[0]
+        # iterates over all the patterns to update the internal structures
+        # to reflect their changes
+        for pattern in patterns:
+            # retrieves both the pattern key and value, the first element
+            # of the pattern is the key and the remaining elements are
+            # considered to be the values
+            pattern_key = pattern[0]
+            pattern_value = pattern[1:]
 
-            # retrieves the pattern value
-            pattern_value = mvc_service_plugin_pattern[1:]
-
-            # tries to retrieve the pattern validation regex from the mvc
-            # service pattern compiled map
-            pattern_validation_regex = self.mvc_service_pattern_compiled_map.get(pattern_key, None)
-
-            # compiles (in case it's necessary) the pattern key, retrieving the
-            # pattern validation regex (original regex)
+            # tries to retrieve the pattern validation regex from the
+            # pattern compiled map, then in case it's not found compiles
+            # it (only one compilation should occur)
+            pattern_validation_regex = self.pattern_compiled_map.get(pattern_key, None)
             pattern_validation_regex = pattern_validation_regex or re.compile(pattern_key)
 
-            # creates the pattern attributes (tuple)
+            # creates the pattern attributes (tuple) with both the validation
+            # regex and the value
             pattern_attributes = (
                 pattern_validation_regex,
                 pattern_value
@@ -333,49 +339,41 @@ class Mvc(colony.base.system.System):
             pattern_key_escaped = NAMED_GROUPS_REGEX.sub("\g<1>", pattern_key)
 
             # in case the pattern key escaped does not exists
-            # in the mvc service patterns map
-            if not pattern_key_escaped in self.mvc_service_patterns_map:
+            # in the patterns map must add it to the structures
+            if not pattern_key_escaped in self.patterns_map:
                 # creates a new (pattern attributes) list for the pattern key in the
-                # mvc service patterns map
-                self.mvc_service_patterns_map[pattern_key_escaped] = []
+                # mvc service patterns map and then add the escaped pattern key
+                # to the list of patterns
+                self.patterns_map[pattern_key_escaped] = []
+                self.patterns_list.append(pattern_key_escaped)
 
-                # adds the pattern to the mvc service patterns list
-                self.mvc_service_patterns_list.append(pattern_key_escaped)
-
-            # retrieves the pattern attributes list from the mvc service patterns map
-            pattern_attributes_list = self.mvc_service_patterns_map[pattern_key_escaped]
-
-            # removes the pattern attributes from the pattern attributes list
+            # retrieves the pattern attributes list from the patterns map
+            # and then adds pattern attributes to the pattern attributes list
+            pattern_attributes_list = self.patterns_map[pattern_key_escaped]
             pattern_attributes_list.append(pattern_attributes)
 
             # saves the escaped and compiled values of the pattern for latter usage
-            self.mvc_service_pattern_escaped_map[pattern_key] = pattern_key_escaped
-            self.mvc_service_pattern_compiled_map[pattern_key] = pattern_validation_regex
+            self.pattern_escaped_map[pattern_key] = pattern_key_escaped
+            self.pattern_compiled_map[pattern_key] = pattern_validation_regex
 
-        # retrieves the mvc service plugin communication patterns
-        mvc_service_plugin_communication_patterns = mvc_service_plugin.get_communication_patterns()
+        # iterates over all the communication patterns to add their key and
+        # value to the internal structures
+        for pattern_key, pattern_value in communication_patterns:
+            # adds the pattern to the communication patterns map for the
+            # provided key and the key to the communication patterns list
+            self.communication_patterns_map[pattern_key] = pattern_value
+            self.communication_patterns_list.append(pattern_key)
 
-        # iterates over all the communication patterns in the mvc service plugin communication patterns
-        for pattern_key, pattern_value in mvc_service_plugin_communication_patterns:
-            # adds the pattern to the mvc service communication patterns map
-            self.mvc_service_communication_patterns_map[pattern_key] = pattern_value
-
-            # adds the pattern to the mvc service communication patterns list
-            self.mvc_service_communication_patterns_list.append(pattern_key)
-
-        # retrieves the mvc service plugin resource patterns
-        mvc_service_plugin_resource_patterns = mvc_service_plugin.get_resource_patterns()
-
-        # iterates over all the resource patterns in the mvc service plugin resource patterns
-        for pattern_key, pattern_value in mvc_service_plugin_resource_patterns:
-            # adds the pattern to the mvc service resource patterns map
-            self.mvc_service_resource_patterns_map[pattern_key] = pattern_value
-
-            # adds the pattern to the mvc service resource patterns list
-            self.mvc_service_resource_patterns_list.append(pattern_key)
+        # iterates over all the resource patterns to add their key and
+        # value to the internal structures
+        for pattern_key, pattern_value in resource_patterns:
+            # adds the pattern to the resource patterns map for the
+            # provided key and the key to the resource patterns list
+            self.resource_patterns_map[pattern_key] = pattern_value
+            self.resource_patterns_list.append(pattern_key)
 
         # updates the complete set of matching regex, this should
-        # be able to provide the initial version of the regex handler
+        # be able to provide the correct version of the regex handler
         # methods association
         self._update_matching_regex()
         self._update_communication_matching_regex()
@@ -383,7 +381,12 @@ class Mvc(colony.base.system.System):
 
     def unload_mvc_service_plugin(self, mvc_service_plugin):
         """
-        Unloads the given mvc service plugin.
+        Unloads the given mvc service plugin, this should remove
+        any reference of the various patterns contained in the
+        mvc service plugin from the current internal structures.
+
+        Any further mvc request should not be able to be handled
+        by the plugins's patterns.
 
         @type mvc_service_plugin: Plugin
         @param mvc_service_plugin: The mvc service plugin to be unloaded.
@@ -393,38 +396,43 @@ class Mvc(colony.base.system.System):
         # are cleared for the next handling tick
         self.clear_pending = True
 
-        # retrieves the mvc service plugin patterns
-        mvc_service_plugin_patterns = mvc_service_plugin.get_patterns()
+        # retrieves the complete set of patterns from the
+        # mvc service plugin to unload them from the internal structures
+        patterns = mvc_service_plugin.get_patterns()
+        communication_patterns = mvc_service_plugin.get_communication_patterns()
+        resource_patterns = mvc_service_plugin.get_resource_patterns()
 
-        # iterates over all the patterns in the mvc service plugin patterns
-        for mvc_service_plugin_pattern in mvc_service_plugin_patterns:
-            # retrieves the pattern key
-            pattern_key = mvc_service_plugin_pattern[0]
+        # iterates over all the patterns to update the internal structures
+        # to reflect their changes (removes references)
+        for pattern in patterns:
+            # retrieves both the pattern key and value, the first element
+            # of the pattern is the key and the remaining elements are
+            # considered to be the values
+            pattern_key = pattern[0]
+            pattern_value = pattern[1:]
 
-            # retrieves the pattern value
-            pattern_value = mvc_service_plugin_pattern[1:]
+            # retrieves the pattern key escaped from the pattern
+            # escaped map
+            pattern_key_escaped = self.pattern_escaped_map[pattern_key]
 
-            # retrieves the pattern key escaped from the mvc service
-            # pattern escaped map
-            pattern_key_escaped = self.mvc_service_pattern_escaped_map[pattern_key]
+            # in case the pattern key escaped exists in the patterns map
+            # must update the internal structures
+            if pattern_key_escaped in self.patterns_map:
+                # retrieves the pattern validation regex from the pattern
+                # compiled map
+                pattern_validation_regex = self.pattern_compiled_map[pattern_key]
 
-            # in case the pattern key escaped exists in the mvc service patterns map
-            if pattern_key_escaped in self.mvc_service_patterns_map:
-                # retrieves the pattern validation regex from the mvc service
-                # pattern compiled map
-                pattern_validation_regex = self.mvc_service_pattern_compiled_map[pattern_key]
-
-                # creates the pattern attributes (tuple)
+                # creates the pattern attributes (tuple) with both the validation
+                # regex and the value
                 pattern_attributes = (
                     pattern_validation_regex,
                     pattern_value
                 )
 
                 # retrieves the pattern attributes list from the mvc service
-                # patterns map
-                pattern_attributes_list = self.mvc_service_patterns_map[pattern_key_escaped]
-
-                # removes the pattern attributes from the pattern attributes list
+                # patterns map and then removes the pattern attributes
+                # from the pattern attributes list
+                pattern_attributes_list = self.patterns_map[pattern_key_escaped]
                 pattern_attributes_list.remove(pattern_attributes)
 
                 # in case the pattern attributes list is not empty, there are
@@ -432,52 +440,42 @@ class Mvc(colony.base.system.System):
                 # to remove the patter key references, continues the loop
                 if pattern_attributes_list: continue
 
-                # removes the pattern attributes list from the mvc service patterns map
-                del self.mvc_service_patterns_map[pattern_key_escaped]
+                # removes the pattern attributes list from the patterns map
+                # and then removes the pattern from the patterns list
+                del self.patterns_map[pattern_key_escaped]
+                self.patterns_list.remove(pattern_key_escaped)
 
-                # removes the pattern from the mvc service patterns list
-                self.mvc_service_patterns_list.remove(pattern_key_escaped)
+        # iterates over all the communication patterns to remove their
+        # references from the internal structures
+        for pattern_key, _pattern_value in communication_patterns:
+            # in case the pattern key exists in the current communication
+            # patterns updates both the communication patterns map and
+            # list by removing associations
+            if not pattern_key in self.communication_patterns_map: continue
+            del self.communication_patterns_map[pattern_key]
+            self.communication_patterns_list.remove(pattern_key)
 
-        # retrieves the mvc service plugin communication patterns
-        mvc_service_plugin_communication_patterns = mvc_service_plugin.get_communication_patterns()
+        # iterates over all the resource patterns to remove their
+        # references from the internal structures
+        for pattern_key, _pattern_value in resource_patterns:
+            # in case the pattern key exists in the current
+            # resource patterns updates both the resource patterns
+            # map and list by removing associations
+            if not pattern_key in self.resource_patterns_map: continue
+            del self.resource_patterns_map[pattern_key]
+            self.resource_patterns_list.remove(pattern_key)
 
-        # iterates over all the communication patterns in the mvc service plugin communication patterns
-        for pattern_key, _pattern_value in mvc_service_plugin_communication_patterns:
-            # in case the pattern key exists in the mvc service communication patterns map
-            if pattern_key in self.mvc_service_communication_patterns_map:
-                # removes the pattern from the mvc service communication patterns map
-                del self.mvc_service_communication_patterns_map[pattern_key]
-
-                # removes the pattern from the mvc service communication patterns list
-                self.mvc_service_communication_patterns_list.remove(pattern_key)
-
-        # retrieves the mvc service plugin resource patterns
-        mvc_service_plugin_resource_patterns = mvc_service_plugin.get_resource_patterns()
-
-        # iterates over all the resource patterns in the mvc service plugin resource patterns
-        for pattern_key, _pattern_value in mvc_service_plugin_resource_patterns:
-            # in case the pattern key exists in the mvc service resource patterns map
-            if pattern_key in self.mvc_service_resource_patterns_map:
-                # removes the pattern from the mvc service resource patterns map
-                del self.mvc_service_resource_patterns_map[pattern_key]
-
-                # removes the pattern from the mvc service resource patterns list
-                self.mvc_service_resource_patterns_list.remove(pattern_key)
-
-        # updates the matching regex
+        # updates the complete set of matching regex, this should
+        # be able to provide the correct version of the regex handler
+        # methods association
         self._update_matching_regex()
-
-        # updates the communication matching regex
         self._update_communication_matching_regex()
-
-        # updates the resource matching regex
         self._update_resource_matching_regex()
 
     def process_mvc_patterns_reload_event(self, event_name, plugin):
-        # unloads the mvc service plugin
+        # unloads the mvc service plugin and then load it again
+        # this should reflect a reloading event
         self.unload_mvc_service_plugin(plugin)
-
-        # loads the mvc service plugin
         self.load_mvc_service_plugin(plugin)
 
     def process_mvc_patterns_load_event(self, event_name, plugin):
@@ -503,10 +501,10 @@ class Mvc(colony.base.system.System):
         # the group index and subtracts one value and uses it
         # to retrieves the resource pattern
         mvc_service_index = base_value + group_index - 1
-        pattern = self.mvc_service_resource_patterns_list[mvc_service_index]
+        pattern = self.resource_patterns_list[mvc_service_index]
 
         # retrieves the resource information
-        resource_information = self.mvc_service_resource_patterns_map[pattern]
+        resource_information = self.resource_patterns_map[pattern]
 
         # unpacks the resource information
         resource_base_path, resource_initial_token = resource_information
@@ -536,10 +534,10 @@ class Mvc(colony.base.system.System):
         # the group index and subtracts one value and uses it to
         # retrieves the communication pattern
         mvc_service_index = base_value + group_index - 1
-        pattern = self.mvc_service_communication_patterns_list[mvc_service_index]
+        pattern = self.communication_patterns_list[mvc_service_index]
 
         # retrieves the communication information
-        communication_information = self.mvc_service_communication_patterns_map[pattern]
+        communication_information = self.communication_patterns_map[pattern]
 
         # unpacks the communication information
         data_method, changed_method, connection_name = communication_information
@@ -558,11 +556,11 @@ class Mvc(colony.base.system.System):
         # the group index and subtracts one value and uses it to
         # retrieve the pattern
         mvc_service_index = base_value + group_index - 1
-        pattern = self.mvc_service_patterns_list[mvc_service_index]
+        pattern = self.patterns_list[mvc_service_index]
 
         # retrieves the pattern attributes list from the
         # mvc service patterns map
-        pattern_attributes_list = self.mvc_service_patterns_map[pattern]
+        pattern_attributes_list = self.patterns_map[pattern]
 
         # starts the return value
         return_value = None
@@ -657,7 +655,7 @@ class Mvc(colony.base.system.System):
         current_base_value = 0
 
         # iterates over all the patterns in the mvc service patterns list
-        for pattern in self.mvc_service_patterns_list:
+        for pattern in self.patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
@@ -739,7 +737,7 @@ class Mvc(colony.base.system.System):
         current_base_value = 0
 
         # iterates over all the patterns in the mvc service communication patterns list
-        for pattern in self.mvc_service_communication_patterns_list:
+        for pattern in self.communication_patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
@@ -818,7 +816,7 @@ class Mvc(colony.base.system.System):
         current_base_value = 0
 
         # iterates over all the patterns in the mvc service resource patterns list
-        for pattern in self.mvc_service_resource_patterns_list:
+        for pattern in self.resource_patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
