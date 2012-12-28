@@ -84,8 +84,9 @@ class Mvc(colony.base.system.System):
     patterns matching """
 
     matching_regex_base_values_map = {}
-    """ The map containing the base values for the
-    various matching regex """
+    """ The map containing the base (values) for the
+    various matching regex, this is the base index
+    for the computation of index """
 
     communication_matching_regex_list = []
     """ The list of matching regex to be used in
@@ -490,12 +491,13 @@ class Mvc(colony.base.system.System):
         # sends the broadcast message
         self.mvc_communication_handler.send_broadcast(connection_name, message)
 
-    def _handle_resource_match(self, rest_request, resource_path, resource_path_match, resource_matching_regex):
-        # retrieves the base value for the matching regex
-        base_value = self.resource_matching_regex_base_values_map[resource_matching_regex]
+    def _handle_resource_match(self, rest_request, resource_path, path_match, matching_regex):
+        # retrieves the base value (offset index) for the matching regex
+        # this is going to be used in the calculus of the service index
+        base_value = self.resource_matching_regex_base_values_map[matching_regex]
 
         # retrieves the group index from the resource path match
-        group_index = resource_path_match.lastindex
+        group_index = path_match.lastindex
 
         # calculates the mvc service index from the base value,
         # the group index and subtracts one value and uses it
@@ -524,12 +526,13 @@ class Mvc(colony.base.system.System):
             file_path
         )
 
-    def _handle_communication_match(self, rest_request, resource_path, communication_path_match, communication_matching_regex):
-        # retrieves the base value for the matching regex
-        base_value = self.communication_matching_regex_base_values_map[communication_matching_regex]
+    def _handle_communication_match(self, rest_request, resource_path, path_match, matching_regex):
+        # retrieves the base value (offset index) for the matching regex
+        # this is going to be used in the calculus of the service index
+        base_value = self.communication_matching_regex_base_values_map[matching_regex]
 
         # retrieves the group index from the communication path match
-        group_index = communication_path_match.lastindex
+        group_index = path_match.lastindex
 
         # calculates the mvc service index from the base value,
         # the group index and subtracts one value and uses it to
@@ -550,12 +553,13 @@ class Mvc(colony.base.system.System):
             connection_name
         )
 
-    def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
-        # retrieves the base value for the matching regex
+    def _validate_match(self, rest_request, resource_path, path_match, matching_regex):
+        # retrieves the base value (offset index) for the matching regex
+        # this is going to be used in the calculus of the service index
         base_value = self.matching_regex_base_values_map[matching_regex]
 
         # retrieves the group index from the resource path match
-        group_index = resource_path_match.lastindex
+        group_index = path_match.lastindex
 
         # calculates the mvc service index from the base value,
         # the group index and subtracts one value and uses it to
@@ -638,244 +642,214 @@ class Mvc(colony.base.system.System):
 
     def _update_matching_regex(self):
         """
-        Updates the matching regex.
+        Updates the matching regex, this operation should
+        update the internal structured so that any further
+        requests should be handled according to the patterns
+        defined in the internal structures.
         """
 
         # starts the matching regex value buffer
-        matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+        matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the matching regex list
+        # clears both the matching regex list and the associated
+        # base values map (reset operation)
         self.matching_regex_list = []
-
-        # clears the matching regex base value map
         self.matching_regex_base_values_map.clear()
 
-        # sets the is first flag
+        # starts the various control values to be used in the
+        # iteration that will create the matching regex
+        index = 0
+        current_base_value = 0
         is_first = True
 
-        # starts the index value
-        index = 0
-
-        # starts the current base value
-        current_base_value = 0
-
-        # iterates over all the patterns in the mvc service patterns list
+        # iterates over all the patterns in the patterns list to
+        # add then to the matching regex buffer and to calculate
+        # their base values
         for pattern in self.patterns_list:
-            # in case it's the first
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # adds the or operand to the matching regex value buffer
-                matching_regex_value_buffer.write("|")
+            # in case it's not the first iteration adds the
+            #or operand to the matching regex value buffer
+            if is_first: is_first = False
+            else: matching_regex_buffer.write("|")
 
-            # adds the group name part of the regex to the matching regex value buffer
-            matching_regex_value_buffer.write("(" + pattern + ")")
+            # adds the group name part of the regex to the matching
+            # regex value buffer
+            matching_regex_buffer.write("(" + pattern + ")")
 
-            # increments the index
+            # increments the index value, because one more pattern
+            # was added to the matching regex buffer
             index += 1
 
             # in case the current index is in the limit of the python
-            # regex compilation
-            if index % REGEX_COMPILATION_LIMIT == 0:
-                # retrieves the matching regex value from the matching
-                # regex value buffer
-                matching_regex_value = matching_regex_value_buffer.get_value()
+            # regex compilation, must flush regex operation
+            if not index % REGEX_COMPILATION_LIMIT == 0: continue
 
-                # compiles the matching regex value
-                matching_regex = re.compile(matching_regex_value)
+            # retrieves the matching regex value from the matching
+            # regex value buffer compiles it and adds it to both
+            # the matching regex list and base values map
+            matching_regex_value = matching_regex_buffer.get_value()
+            matching_regex = re.compile(matching_regex_value)
+            self.matching_regex_list.append(matching_regex)
+            self.matching_regex_base_values_map[matching_regex] = current_base_value
 
-                # adds the matching regex to the matching regex list
-                self.matching_regex_list.append(matching_regex)
+            # re-sets the current matching regex buffer value and
+            # then updates the base value to the current index and
+            # sets the is first flag
+            matching_regex_buffer.reset()
+            current_base_value = index
+            is_first = True
 
-                # sets the base value in matching regex base values map
-                self.matching_regex_base_values_map[matching_regex] = current_base_value
+        # retrieves the (matching) regex value from the matching
+        # regex value buffer and in case is not valid returns
+        # immediately no further processing
+        matching_regex_value = matching_regex_buffer.get_value()
+        if not matching_regex_value: return
 
-                # re-sets the current base value
-                current_base_value = index
-
-                # resets the matching regex value buffer
-                matching_regex_value_buffer.reset()
-
-                # sets the is first flag
-                is_first = True
-
-        # retrieves the matching regex value from the matching
-        # regex value buffer
-        matching_regex_value = matching_regex_value_buffer.get_value()
-
-        # in case the matching regex value is invalid (empty)
-        if not matching_regex_value:
-            # returns immediately
-            return
-
-        # compiles the matching regex value
+        # compiles the matching regex value and adds it to
+        # the matching regex list and base values map
         matching_regex = re.compile(matching_regex_value)
-
-        # adds the matching regex to the matching regex list
         self.matching_regex_list.append(matching_regex)
-
-        # sets the base value in matching regex base values map
         self.matching_regex_base_values_map[matching_regex] = current_base_value
 
     def _update_communication_matching_regex(self):
         """
-        Updates the communication matching regex.
+        Updates the communication matching regex, this
+        operation should update the internal structured
+        so that any further requests should be handled
+        according to the patterns defined in the internal
+        structures.
         """
 
-        # starts the communication matching regex value buffer
-        communication_matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+        # starts the matching regex value buffer
+        communication_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the communication matching regex list
+        # clears both the matching regex list and the associated
+        # base values map (reset operation)
         self.communication_matching_regex_list = []
-
-        # clears the communication matching regex base value map
         self.communication_matching_regex_base_values_map.clear()
 
-        # sets the is first flag
+        # starts the various control values to be used in the
+        # iteration that will create the matching regex
+        index = 0
+        current_base_value = 0
         is_first = True
 
-        # starts the index value
-        index = 0
-
-        # starts the current base value
-        current_base_value = 0
-
-        # iterates over all the patterns in the mvc service communication patterns list
+        # iterates over all the patterns in the patterns list to
+        # add then to the matching regex buffer and to calculate
+        # their base values
         for pattern in self.communication_patterns_list:
-            # in case it's the first
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # adds the or operand to the communication matching regex value buffer
-                communication_matching_regex_value_buffer.write("|")
+            # in case it's not the first iteration adds the
+            #or operand to the matching regex value buffer
+            if is_first: is_first = False
+            else: communication_matching_regex_buffer.write("|")
 
-            # adds the group name part of the regex to the communication matching regex value buffer
-            communication_matching_regex_value_buffer.write("(" + pattern + ")")
+            # adds the group name part of the regex to the matching
+            # regex value buffer
+            communication_matching_regex_buffer.write("(" + pattern + ")")
 
-            # increments the index
+            # increments the index value, because one more pattern
+            # was added to the matching regex buffer
             index += 1
 
             # in case the current index is in the limit of the python
-            # regex compilation
-            if index % REGEX_COMPILATION_LIMIT == 0:
-                # retrieves the communication matching regex value from the communication matching
-                # regex value buffer and compiles it into the proper regex value
-                communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
-                reource_matching_regex = re.compile(communication_matching_regex_value)
+            # regex compilation, must flush regex operation
+            if not index % REGEX_COMPILATION_LIMIT == 0: continue
 
-                # adds the communication matching regex to the matching regex list
-                self.communication_matching_regex_list.append(reource_matching_regex)
+            # retrieves the matching regex value from the matching
+            # regex value buffer compiles it and adds it to both
+            # the matching regex list and base values map
+            communication_matching_regex_value = communication_matching_regex_buffer.get_value()
+            communication_matching_regex = re.compile(communication_matching_regex_value)
+            self.communication_matching_regex_list.append(communication_matching_regex)
+            self.communication_matching_regex_base_values_map[communication_matching_regex] = current_base_value
 
-                # sets the base value in communication matching regex base values map
-                self.communication_matching_regex_base_values_map[reource_matching_regex] = current_base_value
+            # re-sets the current matching regex buffer value and
+            # then updates the base value to the current index and
+            # sets the is first flag
+            communication_matching_regex_buffer.reset()
+            current_base_value = index
+            is_first = True
 
-                # re-sets the current base value
-                current_base_value = index
-
-                # resets the matching regex value buffer
-                communication_matching_regex_value_buffer.reset()
-
-                # sets the is first flag
-                is_first = True
-
-        # retrieves the communication matching regex value from the communication matching
-        # regex value buffer
-        communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
-
-        # in case the communication matching regex value is invalid (empty)
-        # must return immediately
+        # retrieves the (matching) regex value from the matching
+        # regex value buffer and in case is not valid returns
+        # immediately no further processing
+        communication_matching_regex_value = communication_matching_regex_buffer.get_value()
         if not communication_matching_regex_value: return
 
-        # compiles the communication matching regex value
+        # compiles the matching regex value and adds it to
+        # the matching regex list and base values map
         communication_matching_regex = re.compile(communication_matching_regex_value)
-
-        # adds the matching regex to the communication matching regex list
         self.communication_matching_regex_list.append(communication_matching_regex)
-
-        # sets the base value in communication matching regex base values map
         self.communication_matching_regex_base_values_map[communication_matching_regex] = current_base_value
 
     def _update_resource_matching_regex(self):
         """
-        Updates the resource matching regex.
+        Updates the resource matching regex, this
+        operation should update the internal structured
+        so that any further requests should be handled
+        according to the patterns defined in the internal
+        structures.
         """
 
-        # starts the resource matching regex value buffer
-        resource_matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+        # starts the matching regex value buffer
+        resource_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the resource matching regex list
+        # clears both the matching regex list and the associated
+        # base values map (reset operation)
         self.resource_matching_regex_list = []
-
-        # clears the resource matching regex base value map
         self.resource_matching_regex_base_values_map.clear()
 
-        # sets the is first flag
+        # starts the various control values to be used in the
+        # iteration that will create the matching regex
+        index = 0
+        current_base_value = 0
         is_first = True
 
-        # starts the index value
-        index = 0
-
-        # starts the current base value
-        current_base_value = 0
-
-        # iterates over all the patterns in the mvc service resource patterns list
+        # iterates over all the patterns in the patterns list to
+        # add then to the matching regex buffer and to calculate
+        # their base values
         for pattern in self.resource_patterns_list:
-            # in case it's the first
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # adds the or operand to the resource matching regex value buffer
-                resource_matching_regex_value_buffer.write("|")
+            # in case it's not the first iteration adds the
+            #or operand to the matching regex value buffer
+            if is_first: is_first = False
+            else: resource_matching_regex_buffer.write("|")
 
-            # adds the group name part of the regex to the resource matching regex value buffer
-            resource_matching_regex_value_buffer.write("(" + pattern + ")")
+            # adds the group name part of the regex to the matching
+            # regex value buffer
+            resource_matching_regex_buffer.write("(" + pattern + ")")
 
-            # increments the index
+            # increments the index value, because one more pattern
+            # was added to the matching regex buffer
             index += 1
 
             # in case the current index is in the limit of the python
-            # regex compilation
-            if index % REGEX_COMPILATION_LIMIT == 0:
-                # retrieves the resource matching regex value from the resource matching
-                # regex value buffer
-                resource_matching_regex_value = resource_matching_regex_value_buffer.get_value()
+            # regex compilation, must flush regex operation
+            if not index % REGEX_COMPILATION_LIMIT == 0: continue
 
-                # compiles the resource matching regex value
-                reource_matching_regex = re.compile(resource_matching_regex_value)
+            # retrieves the matching regex value from the matching
+            # regex value buffer compiles it and adds it to both
+            # the matching regex list and base values map
+            resource_matching_regex_value = resource_matching_regex_buffer.get_value()
+            resource_matching_regex = re.compile(resource_matching_regex_value)
+            self.resource_matching_regex_list.append(resource_matching_regex)
+            self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
 
-                # adds the resource matching regex to the matching regex list
-                self.resource_matching_regex_list.append(reource_matching_regex)
+            # re-sets the current matching regex buffer value and
+            # then updates the base value to the current index and
+            # sets the is first flag
+            resource_matching_regex_buffer.reset()
+            current_base_value = index
+            is_first = True
 
-                # sets the base value in resource matching regex base values map
-                self.resource_matching_regex_base_values_map[reource_matching_regex] = current_base_value
-
-                # re-sets the current base value
-                current_base_value = index
-
-                # resets the matching regex value buffer
-                resource_matching_regex_value_buffer.reset()
-
-                # sets the is first flag
-                is_first = True
-
-        # retrieves the resource matching regex value from the resource matching
-        # regex value buffer
-        resource_matching_regex_value = resource_matching_regex_value_buffer.get_value()
-
-        # in case the resource matching regex value is invalid (empty)
-        # must return immediately
+        # retrieves the (matching) regex value from the matching
+        # regex value buffer and in case is not valid returns
+        # immediately no further processing
+        resource_matching_regex_value = resource_matching_regex_buffer.get_value()
         if not resource_matching_regex_value: return
 
-        # compiles the resource matching regex value
+        # compiles the matching regex value and adds it to
+        # the matching regex list and base values map
         resource_matching_regex = re.compile(resource_matching_regex_value)
-
-        # adds the matching regex to the resource matching regex list
         self.resource_matching_regex_list.append(resource_matching_regex)
-
-        # sets the base value in resource matching regex base values map
         self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
 
     def __validate_match(self, rest_request, handler_attributes, resource_path):
