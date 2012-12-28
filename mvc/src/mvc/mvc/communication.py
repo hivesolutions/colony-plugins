@@ -376,6 +376,9 @@ class MvcCommunicationHandler:
         # using the current request for it
         connection = self._get_connection(request, connection_name)
 
+        # retrieves the data attribute, containing the data to be
+        # handled and constructs the parameters map with it sending
+        # it for data handling in the correct method
         data = request.get_attribute("data")
         parameters = {
             "communication_handler" : self,
