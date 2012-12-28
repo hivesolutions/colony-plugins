@@ -724,6 +724,10 @@ class Connection:
 
     request_data = {}
 
+    delegates = []
+    """ The list of delegate object that are notified
+    about the changes to the connection """
+
     def __init__(self, service, socket, connection_address, connection_port):
         self.service = service
         self.socket = socket
@@ -733,9 +737,24 @@ class Connection:
         self.socket_fd = socket.fileno()
 
         self.request_data = {}
+        self.delegates = []
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_port)
+
+    def call_delegate(self, name, *args, **kwargs):
+        for delegate in self.delegates:
+            if not hasattr(delegate, name): continue
+            method = getattr(delegate, name)
+            method(*args, **kwargs)
+
+    def add_delegate(self, delegate):
+        if delegate in self.delegates: return
+        self.delegates.append(delegate)
+
+    def remove_delegate(self, delegate):
+        if not delegate in self.delegates: return
+        self.delegates.remove(delegate)
 
     def is_secure(self):
         """
@@ -909,13 +928,23 @@ class ClientConnection(Connection):
         self.connection_request_timeout = 10
 
     def open(self):
+        # in case the current connection is already open
+        # must return immediately (no duplicate open)
+        if self.is_open(): return
+
         # sets the connection status to open
         self.connection_status = True
 
-        # handles the open (event) using the client service
+        # handles the open (event) using the client service and
+        # then calls the appropriate delegate method
         self.service.client_service.handle_opened(self)
+        self.call_delegate("on_open", self)
 
     def close(self):
+        # in case the current connection is already closed
+        # must return immediately (no duplicate close)
+        if not self.is_open(): return
+
         # removes the socket from the service, this should
         # properly close the socket
         self.service.remove_socket(self.socket)
@@ -923,8 +952,10 @@ class ClientConnection(Connection):
         # sets the connection status to closed
         self.connection_status = False
 
-        # handles the close (event) using the client service
+        # handles the close (event) using the client service and
+        # then calls the appropriate delegate method
         self.service.client_service.handle_closed(self)
+        self.call_delegate("on_close", self)
 
     def read_handler(self, _socket):
         # iterates continuously
