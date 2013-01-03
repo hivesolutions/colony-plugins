@@ -1040,7 +1040,8 @@ class CommunicationConnection:
     """
 
     communication_handler = None
-    """ The communication handler """
+    """ The communication handler associated with the
+    connection (owner handler) """
 
     connection_id = None
     """ The connection id, should be a randomly and non
