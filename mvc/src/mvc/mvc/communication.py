@@ -789,6 +789,7 @@ class ConnectionProcessingThread(threading.Thread):
 
         self.communication_handler = communication_handler
 
+        self.daemon = True
         self.processing_queue = []
         self.processing_map = {}
         self.timestamp_list = []
