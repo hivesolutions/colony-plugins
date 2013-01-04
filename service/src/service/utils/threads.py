@@ -72,6 +72,7 @@ class ServiceAcceptingThread(threading.Thread):
 
         self.abstract_service = abstract_service
 
+        self.daemon = True
         self.service_tuple_queue = []
 
         self.service_tuple_queue_condition = threading.Condition()
@@ -175,6 +176,7 @@ class ServiceExecutionThread(threading.Thread):
 
         self.abstract_service = abstract_service
 
+        self.daemon = True
         self.callable_queue = []
 
         self.callable_queue_condition = threading.Condition()
