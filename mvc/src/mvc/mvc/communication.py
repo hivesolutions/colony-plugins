@@ -509,10 +509,12 @@ class MvcCommunicationHandler:
         # returns the pop queue
         return pop_queue
 
-    def _write_message(self, request, connection, message):
+    def _write_message(self, request, connection, message, data = ()):
         """
         Serializes and writes a message using the appropriate
         structures available in the connection.
+        An optional data argument may be used to send meta information
+        together with the provided message.
 
         The message to be serialized is in fact a sequence
         of messages pending to be sent to the client.
@@ -529,14 +531,19 @@ class MvcCommunicationHandler:
         @type message: String
         @param message: The message to be serialized and written
         through the request.
+        @type data: List/Tuple
+        @param data: The optional set of data to be delivered to
+        the client as resulting meta information.
         """
 
         # retrieves the json plugin
         json_plugin = self.mvc_plugin.json_plugin
 
         # serializes the message and writes the serialized
-        # message to the request
-        serialized_message = connection.serialize_message(message, json_plugin)
+        # message to the request (message deliver)
+        serialized_message = connection.serialize_message(
+            message, json_plugin, data = data
+        )
         request.write(serialized_message)
 
     def _get_connection(self, request, connection_name):
@@ -1024,7 +1031,8 @@ class ConnectionProcessingThread(threading.Thread):
         service_connection_is_open = service_connection.is_open()
         if not service_connection_is_open: return
 
-        # retrieves the current message queue for the connection by "popping"
+        # retrieves the current message queue (complete set of pending
+        # messages to be delivered) for the connection by "popping"
         # the message queue (retrieves the latest)
         message_queue = connection.pop_message_queue()
 
@@ -1032,7 +1040,9 @@ class ConnectionProcessingThread(threading.Thread):
         # the request in the service (this represents the final part
         # of the delayed processing of the request) flushing the data
         # to the client side
-        self.communication_handler._write_message(request, connection, message_queue)
+        self.communication_handler._write_message(
+            request, connection, "success", data = message_queue
+        )
         request.process()
 
 class CommunicationConnection:
@@ -1140,7 +1150,7 @@ class CommunicationConnection:
         if self.delegate and hasattr(self.delegate, "on_close"):
             self.delegate.on_close(self)
 
-    def serialize_message(self, message, serializer):
+    def serialize_message(self, message, serializer, data = ()):
         """
         Serializes the given message, using the given
         serializer method.
@@ -1154,6 +1164,9 @@ class CommunicationConnection:
         @type serializer: Method
         @param serializer: The serializer method to be used
         in the serialization.
+        @type data: List/Tuple
+        @param data: The optional data sequence to be set in
+        the message to be serialized (meta information).
         """
 
         # creates the map for the message
@@ -1163,6 +1176,7 @@ class CommunicationConnection:
         message_map["id"] = self.connection_id
         message_map["name"] = self.connection_name
         message_map["result"] = message
+        message_map["data"] = data
 
         # serializes the message map
         serialized_message_map = serializer.dumps(message_map)
