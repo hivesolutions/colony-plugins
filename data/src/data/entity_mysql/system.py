@@ -352,8 +352,6 @@ class MysqlEngine:
         connection.call_commit_handlers()
         connection.reset_handlers()
 
-        print "<mysql> COMMIT"
-
     def _rollback(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -363,8 +361,6 @@ class MysqlEngine:
         # resets all the handlers to the original state
         connection.call_commit_handlers()
         connection.reset_handlers()
-
-        print "<mysql> ROLLBACK"
 
     def _execute_query_t(self, query, cursor = None):
         """

@@ -300,8 +300,6 @@ class PgsqlEngine:
         connection.call_commit_handlers()
         connection.reset_handlers()
 
-        print "<pgsql> COMMIT"
-
     def _rollback(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -311,8 +309,6 @@ class PgsqlEngine:
         # resets all the handlers to the original state
         connection.call_rollback_handlers()
         connection.reset_handlers()
-
-        print "<pgsql> ROLLBACK"
 
     def _execute_query_t(self, query, cursor = None):
         """
