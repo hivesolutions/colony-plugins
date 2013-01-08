@@ -275,9 +275,9 @@ class MvcCommunicationHandler:
 
     def handle_request(self, request, delegate, connection_name):
         """
-        Handles the given http request.
+        Handles the given rest request.
 
-        @type request: HttpRequest
+        @type request: RestRequest
         @param request: The http request to be handled.
         @type delegate: Object
         @param delegate: The object to be used to delegate
@@ -522,7 +522,7 @@ class MvcCommunicationHandler:
         This method should be used to avoid inappropriate
         serialization of messages.
 
-        @type request: HttpRequest
+        @type request: RestRequest
         @param request: The http request to be used in the
         writing operation to be performed.
         @type connection: CommunicationConnection
@@ -545,6 +545,13 @@ class MvcCommunicationHandler:
             message, json_plugin, data = data
         )
         request.write(serialized_message)
+
+        # retrieves the mime type associated with the json
+        # plugin and uses it to set the content type in the
+        # provided request object, then flushes the request
+        # so that the content type is set in it
+        mime_type = json_plugin.get_mime_type()
+        request.set_content_type(mime_type, flush = True)
 
     def _get_connection(self, request, connection_name):
         """
@@ -836,7 +843,9 @@ class ConnectionProcessingThread(threading.Thread):
                 self.process_elements(elements)
 
             # retrieves the "overflown" communication elements
-            # and processes them
+            # and processes them so that the data is immediately
+            # sent to the client side (maximum time for the connection
+            # has been reached must unblock connection)
             elements = self.get_overflown_elements()
             self.process_elements(elements)
 
@@ -864,10 +873,9 @@ class ConnectionProcessingThread(threading.Thread):
             removal_list.append(element)
 
         # iterates over all the communication elements
-        # in the removal list
-        for element in removal_list:
-            # removes the communication element from the queue
-            self.remove_queue(element)
+        # in the removal list in order to remove them
+        # from the current queue
+        for element in removal_list: self.remove_queue(element)
 
     def get_all_elements(self):
         # starts the overflown (communication) elements list

@@ -1298,7 +1298,9 @@ class RestRequest:
                 self.request.append_header(SET_COOKIE_VALUE, serialized_session_cookie)
                 self.session.set_cookie(None)
 
-        # sets the content type for the request
+        # sets the content type for the request, this should
+        # be able to asset the correct content type in the
+        # target request object
         self.request.content_type = self.content_type
 
         # writes the result translated and flushes the
@@ -1726,15 +1728,22 @@ class RestRequest:
 
         return self.content_type
 
-    def set_content_type(self, content_type):
+    def set_content_type(self, content_type, flush = False):
         """
-        Sets the content type.
+        Sets the content type, in case the flush
+        flag is set the content type is immediately
+        set on the current target request.
 
         @type content_type: String
         @param content_type: The content type.
+        @type flush: bool
+        @param flush: If the content type should be
+        immediately set on the target request object
+        (underlying layer of abstraction).
         """
 
         self.content_type = content_type
+        if flush: self.request.content_type = content_type
 
     def get_result_translated(self):
         """
