@@ -3697,7 +3697,10 @@ class EntityClass(object):
         # raises an entity manager validation error, indicating the
         # invalid attribute name for the entity class (this may avoid
         # possible security problems)
-        raise exceptions.ValidationError("invalid name '%s', attribute does not exist in '%s'" % (name, cls.__name__))
+        raise exceptions.ValidationError(
+            "invalid name '%s', attribute does not exist in '%s'" %
+                (name, cls.__name__)
+        )
 
     @classmethod
     def _validate_value(cls, name, value):
@@ -3750,7 +3753,10 @@ class EntityClass(object):
         # raises an entity manager validation error, indicating the
         # invalid attribute type for the entity class (this may avoid
         # possible security problems)
-        raise exceptions.ValidationError("invalid value for name '%s' in '%s', expected '%s'" % (name, cls.__name__, attribute_data_type))
+        raise exceptions.ValidationError(
+            "invalid value for name '%s' in '%s', expected '%s'" %
+                (name, cls.__name__, attribute_data_type)
+        )
 
     @classmethod
     def _validate_set(cls, name, value):
@@ -3780,7 +3786,10 @@ class EntityClass(object):
 
         # raises an entity manager validation error, indicating that
         # the request name is not correctly set in the current entity
-        raise exceptions.ValidationError("name '%s' unset for attribute of type '%s', expected attribute set" % (name, cls.__name__))
+        raise exceptions.ValidationError(
+            "name '%s' unset for attribute of type '%s', expected attribute set" %
+                (name, cls.__name__)
+        )
 
     @classmethod
     def _validate_sequence(cls, name, value):
