@@ -3174,7 +3174,7 @@ class EntityClass(object):
         if value == None and not force: value = self.get_value(name)
         self.__class__._validate_relation_value(name, value, self._entity_manager)
 
-    def get_sql_value(self, name, value = None, force = False):
+    def get_sql_value(self, name, value = None, force = False, encoding = "utf-8"):
         # retrieves the value of the attribute for
         # the provided name, (the value is null in
         # case no value is found) in case the value
@@ -3184,7 +3184,7 @@ class EntityClass(object):
 
         # retrieves the sql value for the name and value
         # using the class method (forwarding)
-        sql_value = self.__class__._get_sql_value(name, value)
+        sql_value = self.__class__._get_sql_value(name, value, encoding = encoding)
 
         # returns the converted sql value
         return sql_value
@@ -3445,7 +3445,7 @@ class EntityClass(object):
         return attribute_data_type
 
     @classmethod
-    def _get_sql_value(cls, name, value):
+    def _get_sql_value(cls, name, value, encoding = "utf-8"):
         # in case the name is a reserved one, it's considered
         # to be a special case and the value (must be previously
         # casted according to the sql syntax) is returned as the
@@ -3462,22 +3462,26 @@ class EntityClass(object):
         # null string immediately
         if value == None: return "null"
 
+        # retrieves the attribute value type to be used
+        # for conditional conversion, this is the internal
+        # data type in the current virtual machine, in case the
+        # data type is unicode must encode the string using the
+        # provided encoding value (or the default one)
+        value_type = type(value)
+        if value_type == types.UnicodeType: value = value.encode(encoding)
+
         # in case the attribute data type is text (or string),
         # normal separators must be applied
         if data_type in ("text", "string", "data"):
-            # retrieves the escaped attribute value
-            escaped_value = cls._escape_text(value)
-
+            # retrieves the escaped attribute value and
             # returns the escaped attribute value with the
             # string separators
+            escaped_value = cls._escape_text(value)
             return "'" + escaped_value + "'"
 
         # in case the attribute data type is date, the date time
         # structure must be converted to a float value
         elif data_type == "date":
-            # retrieves the attribute value type
-            value_type = type(value)
-
             # in case the attribute is given in the date time format
             if value_type == datetime.datetime:
                 # retrieves the date time tuple
@@ -3507,18 +3511,12 @@ class EntityClass(object):
             # converted "directly" into a string value
             else:
                 # converts the attribute value to string
-                # (simple conversion)
+                # (simple conversion) then returns the
+                # attribute value converted into string
                 value_string = str(value)
-
-                # returns the attribute value converted
-                # into string
                 return value_string
 
         elif data_type == "metadata":
-            # retrieves the attribute value type
-            # to be used for conditional conversion
-            value_type = type(value)
-
             # in case the value is of type string direct
             # insertion is made into the data source
             if value_type in types.StringTypes:
@@ -3585,7 +3583,8 @@ class EntityClass(object):
             # string and the encoding value is present decode
             # the value creating an unicode representation of it
             value_type = type(value)
-            string_value = encoding and value_type == types.StringType and value.decode(encoding) or value
+            string_value = encoding and value_type == types.StringType and\
+                value.decode(encoding) or value
 
             # returns the "just" converted string representation
             # (probably an unicode object)
