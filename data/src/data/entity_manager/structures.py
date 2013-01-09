@@ -3174,7 +3174,7 @@ class EntityClass(object):
         if value == None and not force: value = self.get_value(name)
         self.__class__._validate_relation_value(name, value, self._entity_manager)
 
-    def get_sql_value(self, name, value = None, force = False, encoding = "utf-8"):
+    def get_sql_value(self, name, value = None, force = False):
         # retrieves the value of the attribute for
         # the provided name, (the value is null in
         # case no value is found) in case the value
@@ -3184,7 +3184,7 @@ class EntityClass(object):
 
         # retrieves the sql value for the name and value
         # using the class method (forwarding)
-        sql_value = self.__class__._get_sql_value(name, value, encoding = encoding)
+        sql_value = self.__class__._get_sql_value(name, value)
 
         # returns the converted sql value
         return sql_value
@@ -3445,7 +3445,7 @@ class EntityClass(object):
         return attribute_data_type
 
     @classmethod
-    def _get_sql_value(cls, name, value, encoding = "utf-8"):
+    def _get_sql_value(cls, name, value):
         # in case the name is a reserved one, it's considered
         # to be a special case and the value (must be previously
         # casted according to the sql syntax) is returned as the
@@ -3462,14 +3462,6 @@ class EntityClass(object):
         # null string immediately
         if value == None: return "null"
 
-        # retrieves the attribute value type to be used
-        # for conditional conversion, this is the internal
-        # data type in the current virtual machine, in case the
-        # data type is unicode must encode the string using the
-        # provided encoding value (or the default one)
-        value_type = type(value)
-        if value_type == types.UnicodeType: value = value.encode(encoding)
-
         # in case the attribute data type is text (or string),
         # normal separators must be applied
         if data_type in ("text", "string", "data"):
@@ -3482,6 +3474,11 @@ class EntityClass(object):
         # in case the attribute data type is date, the date time
         # structure must be converted to a float value
         elif data_type == "date":
+            # retrieves the type from the current value so that it
+            # may be used for conditional execution and interpreting
+            # of the provided values
+            value_type = type(value)
+
             # in case the attribute is given in the date time format
             if value_type == datetime.datetime:
                 # retrieves the date time tuple
@@ -3517,6 +3514,11 @@ class EntityClass(object):
                 return value_string
 
         elif data_type == "metadata":
+            # retrieves the type from the current value so that it
+            # may be used for conditional execution and interpreting
+            # of the provided values
+            value_type = type(value)
+
             # in case the value is of type string direct
             # insertion is made into the data source
             if value_type in types.StringTypes:
@@ -3538,7 +3540,9 @@ class EntityClass(object):
                 return "'" + value_string + "'"
 
             # otherwise the default string encoding is used
-            # on the value
+            # on the value, this is only a fallback strategy
+            # and any value going here is considered almost
+            # invalid according to specification
             else:
                 # uses the default string encoder and then
                 # escapes the text and returns it with the
