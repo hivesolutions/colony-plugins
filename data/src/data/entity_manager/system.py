@@ -537,8 +537,16 @@ class EntityManager:
             # imports the data generated from the containers file
             # that is now located in the temporary directory into
             # the currently loaded data source
-            self.import_data(serializer, directory_path = directory_path + "/data", full_mode = full_mode, encoding = encoding)
-            self.import_generator(serializer, directory_path = directory_path + "/data")
+            self.import_data(
+                serializer,
+                directory_path = directory_path + "/data",
+                full_mode = full_mode,
+                encoding = encoding
+            )
+            self.import_generator(
+                serializer,
+                directory_path = directory_path + "/data"
+            )
         finally:
             # removes the temporary directory files to avoid
             # the leaking of files (garbage collection)
