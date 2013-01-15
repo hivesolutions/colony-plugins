@@ -2910,6 +2910,11 @@ class EntityManager:
         # inside it's scope
         items_map = entity_class.get_items_map()
 
+        # retrieves the map that associates the various
+        # field names with the value for its immutable
+        # property in case it's set to valid
+        immutable_map = entity_class.get_immutable_map()
+
         # creates the list to hold the set of queries
         # generated for updating a set of data
         queries = []
@@ -2928,7 +2933,10 @@ class EntityManager:
             # going to be inserted in the query now, note that the table identifier is
             # excluded because it's considered to be a immutable field (once set cannot be changed)
             # so there is no need to be include in the valid table field for update
-            _entity_fields = dict([(key, value) for key, value in entity_fields.items() if key in table_fields and not key == table_id])
+            # note also that the complete set of keys included in the immutable map
+            # are also excluded (not going to be "touched")
+            _entity_fields = dict([(key, value) for key, value in entity_fields.items()\
+                if key in table_fields and not key == table_id and not key in immutable_map])
 
             # checks if the entity contains unmapped relations for the current
             # entity class parent level, in case it has the update query must

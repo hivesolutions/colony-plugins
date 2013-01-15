@@ -141,6 +141,8 @@ INVALID_NAMES = set((
     "_items",
     "_generated",
     "_indexed",
+    "_mandatory",
+    "_immutable",
     "_relations",
     "_mapped_relations",
     "_unmapped_relations",
@@ -156,6 +158,8 @@ INVALID_NAMES = set((
     "_names_map",
     "_generated_map",
     "_indexed_map",
+    "_mandatory_map",
+    "_immutable_map",
     "_relations_map",
     "_direct_relations_map",
     "_indirect_relations_map",
@@ -825,6 +829,102 @@ class EntityClass(object):
         # the entity classes associated with
         # the maps containing the indexed (names)
         return indexed_map
+
+    @classmethod
+    def get_mandatory_map(cls):
+        # in case the mandatory map are already "cached" in the current
+        # class (fast retrieval)
+        if "_mandatory_map" in cls.__dict__:
+            # returns the cached mandatory map from the entity
+            # class object reference
+            return cls._mandatory_map
+
+        # retrieves the parents for the entity
+        # class, to check them for mandatory map
+        parents = cls.get_parents()
+
+        # creates a new ordered map to hold the various mandatory
+        # for the map, this maintains order useful for creating
+        # queries with organized order
+        mandatory_map = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the parents to iteratively
+        # retrieve the mandatory (names), extending the
+        # mandatory map with them
+        for parent in parents:
+            # in case the current parent is abstract no need
+            # to retrieve its items (not going to be persisted)
+            if parent.is_abstract(): continue
+
+            # retrieves the parent's mandatory map and uses it
+            # to extend the current mandatory map (iteration cycle),
+            # the extension is made with no overriding of keys
+            parent_mandatory_map = parent.get_mandatory_map()
+            colony.libs.map_util.map_extend(mandatory_map, parent_mandatory_map, override = False, copy_base_map = False)
+
+        # retrieves all of the mandatory (names) for the
+        # class and then sets them in the mandatory map
+        # for the current class
+        mandatory = cls.get_mandatory()
+        for _mandatory in mandatory:
+            mandatory_map[_mandatory] = mandatory_map.get(_mandatory, cls)
+
+        # caches the mandatory map in the class
+        # to provide fast access in latter access
+        cls._mandatory_map = mandatory_map
+
+        # returns the mandatory map, containing
+        # the entity classes associated with
+        # the maps containing the mandatory (names)
+        return mandatory_map
+
+    @classmethod
+    def get_immutable_map(cls):
+        # in case the immutable map are already "cached" in the current
+        # class (fast retrieval)
+        if "_immutable_map" in cls.__dict__:
+            # returns the cached immutable map from the entity
+            # class object reference
+            return cls._immutable_map
+
+        # retrieves the parents for the entity
+        # class, to check them for immutable map
+        parents = cls.get_parents()
+
+        # creates a new ordered map to hold the various immutable
+        # for the map, this maintains order useful for creating
+        # queries with organized order
+        immutable_map = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the parents to iteratively
+        # retrieve the immutable (names), extending the
+        # immutable map with them
+        for parent in parents:
+            # in case the current parent is abstract no need
+            # to retrieve its items (not going to be persisted)
+            if parent.is_abstract(): continue
+
+            # retrieves the parent's immutable map and uses it
+            # to extend the current immutable map (iteration cycle),
+            # the extension is made with no overriding of keys
+            parent_immutable_map = parent.get_immutable_map()
+            colony.libs.map_util.map_extend(immutable_map, parent_immutable_map, override = False, copy_base_map = False)
+
+        # retrieves all of the immutable (names) for the
+        # class and then sets them in the immutable map
+        # for the current class
+        immutable = cls.get_immutable()
+        for _immutable in immutable:
+            immutable_map[_immutable] = immutable_map.get(_immutable, cls)
+
+        # caches the immutable map in the class
+        # to provide fast access in latter access
+        cls._immutable_map = immutable_map
+
+        # returns the immutable map, containing
+        # the entity classes associated with
+        # the maps containing the immutable (names)
+        return immutable_map
 
     @classmethod
     def get_relations_map(cls):
@@ -1731,6 +1831,106 @@ class EntityClass(object):
         return indexed
 
     @classmethod
+    def get_mandatory(cls, foreign_relations = False):
+        # in case the mandatory are already "cached" in the current
+        # class (fast retrieval)
+        if foreign_relations and "_mandatory" in cls.__dict__:
+            # returns the cached mandatory from the entity
+            # class object reference
+            return cls._mandatory
+
+        # retrieves the items from the class, this
+        # map of items may contain extra symbols
+        items = cls._items()
+
+        # creates the list to hold the various mandatory (names)
+        # in the current class context
+        mandatory = []
+
+        # iterate over all the items in the current context
+        # to filter the ones that do not correspond to a valid
+        # mandatory attribute (only the name is going to be used)
+        for key, value in items.items():
+            # in case the key is one of the "private" non safe values it
+            # should be ignored (not a name)
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not a name)
+            if key.isupper(): continue
+
+            # in case the type is a function or a method it
+            # should be ignored (not a name)
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+
+            # in case the current key name does not refer a
+            # mandatory value, it is not mean to be added to
+            # the mandatory list
+            if not cls.is_mandatory(key): continue
+
+            # adds the key (name) to the list of mandatory
+            # for the current entity model (class)
+            mandatory.append(key)
+
+        # caches the mandatory element in the class
+        # to provide fast access in latter access
+        cls._mandatory = mandatory
+
+        # returns the list containing the various
+        # mandatory names of the entity class
+        return mandatory
+
+    @classmethod
+    def get_immutable(cls, foreign_relations = False):
+        # in case the immutable are already "cached" in the current
+        # class (fast retrieval)
+        if foreign_relations and "_immutable" in cls.__dict__:
+            # returns the cached immutable from the entity
+            # class object reference
+            return cls._immutable
+
+        # retrieves the items from the class, this
+        # map of items may contain extra symbols
+        items = cls._items()
+
+        # creates the list to hold the various immutable (names)
+        # in the current class context
+        immutable = []
+
+        # iterate over all the items in the current context
+        # to filter the ones that do not correspond to a valid
+        # immutable attribute (only the name is going to be used)
+        for key, value in items.items():
+            # in case the key is one of the "private" non safe values it
+            # should be ignored (not a name)
+            if key in INVALID_NAMES: continue
+
+            # in case the key value is completely based in upper case letters
+            # characters it must be ignored as it is a constant (not a name)
+            if key.isupper(): continue
+
+            # in case the type is a function or a method it
+            # should be ignored (not a name)
+            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+
+            # in case the current key name does not refer a
+            # immutable value, it is not mean to be added to
+            # the immutable list
+            if not cls.is_immutable(key): continue
+
+            # adds the key (name) to the list of immutable
+            # for the current entity model (class)
+            immutable.append(key)
+
+        # caches the immutable element in the class
+        # to provide fast access in latter access
+        cls._immutable = immutable
+
+        # returns the list containing the various
+        # immutable names of the entity class
+        return immutable
+
+    @classmethod
     def has_name(cls, name):
         """
         Checks if the current entity class contains a name
@@ -2130,6 +2330,52 @@ class EntityClass(object):
         # returns the value of the indexed checking
         # value
         return is_indexed
+
+    @classmethod
+    def is_mandatory(cls, attribute_name):
+        # in case the attribute name does not exists
+        # in the class, it sure is not a mandatory
+        if not hasattr(cls, attribute_name):
+            # returns invalid, if the value
+            # does not exists it cannot be
+            # a mandatory name
+            return False
+
+        # retrieves the attribute from the class, and
+        # tests it for the expected dictionary type
+        # if that's the case tries to retrieve the
+        # meta data information from it
+        attribute = getattr(cls, attribute_name)
+        attribute_type = type(attribute)
+        if not attribute_type == types.DictType: return False
+        is_mandatory = attribute.get("mandatory", False)
+
+        # returns the value of the mandatory checking
+        # value
+        return is_mandatory
+
+    @classmethod
+    def is_immutable(cls, attribute_name):
+        # in case the attribute name does not exists
+        # in the class, it sure is not a immutable
+        if not hasattr(cls, attribute_name):
+            # returns invalid, if the value
+            # does not exists it cannot be
+            # a immutable name
+            return False
+
+        # retrieves the attribute from the class, and
+        # tests it for the expected dictionary type
+        # if that's the case tries to retrieve the
+        # meta data information from it
+        attribute = getattr(cls, attribute_name)
+        attribute_type = type(attribute)
+        if not attribute_type == types.DictType: return False
+        is_immutable = attribute.get("immutable", False)
+
+        # returns the value of the immutable checking
+        # value
+        return is_immutable
 
     @classmethod
     def is_relation(cls, attribute_name):
