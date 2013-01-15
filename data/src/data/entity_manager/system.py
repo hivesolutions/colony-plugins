@@ -1755,6 +1755,10 @@ class EntityManager:
         # this should include any generated identifier
         generate and self._generate_fields(entity)
 
+        # runs the global set of validations for the current
+        # entity so that integrity for it is ensured
+        entity.validate_s()
+
         # generates the query for the saving operation and
         # executes it in the context for the data source
         query = self._save_query(entity)
@@ -1778,6 +1782,10 @@ class EntityManager:
         # for the (possible) locking of the entity
         entity_class = entity.__class__
         id_value = entity.get_id_value()
+
+        # runs the global set of validations for the current
+        # entity so that integrity for it is ensured
+        entity.validate_u()
 
         # in case the lock flag is set, locks the
         # data source for the current entity

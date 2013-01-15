@@ -3223,7 +3223,7 @@ class EntityClass(object):
 
         # in case the load lazy flag is set and the
         # current name refers a relation, it can be
-        # lazy loaded an returned (query executed)
+        # lazy loaded and returned (query executed)
         if load_lazy and self.__class__.is_relation(name):
             # loads the lazy loaded relation name
             # and returns it's value
@@ -3289,6 +3289,87 @@ class EntityClass(object):
         # returns invalid (the current entity does not
         # contains unmapped relations)
         return False
+
+    def validate_s(self):
+        """
+        Runs the complete set of validations associated with the
+        save operation for the entity.
+
+        Note that different validation operations should performed
+        for save and update operations.
+        """
+
+        self.validate_mandatory_s()
+
+    def validate_u(self):
+        """
+        Runs the complete set of validations associated with the
+        update operation for the entity.
+
+        Note that different validation operations should performed
+        for save and update operations.
+        """
+
+        self.validate_mandatory_u()
+
+    def validate_mandatory_s(self):
+        # retrieves the entity class associated with
+        # the current entity to be used to access class
+        # level methods
+        entity_class = self.__class__
+
+        # retrieves the map that contains the field names
+        # associated with the mandatory field, only the
+        # fields that are considered mandatory are present
+        # on this map (mandatory bit mask)
+        mandatory_map = entity_class.get_mandatory_map()
+
+        # iterates over the complete set of names in the
+        # mandatory map in order to validate them as defined
+        for key in mandatory_map:
+            # retrieves the value for the current key defaulting
+            # to none in case it's not set (or lazy loaded) and
+            # then continues the loop in case the value is valid
+            # (not none)
+            value = self.get_value(key, default = None)
+            if not value == None: continue
+
+            # raises a validation error for the missing of the
+            # mandatory field
+            raise exceptions.ValidationError(
+                "missing mandatory field '%s', for entity '%s'" %
+                (key, entity_class.__name__)
+            )
+
+    def validate_mandatory_u(self):
+        # retrieves the entity class associated with
+        # the current entity to be used to access class
+        # level methods
+        entity_class = self.__class__
+
+        # retrieves the map that contains the field names
+        # associated with the mandatory field, only the
+        # fields that are considered mandatory are present
+        # on this map (mandatory bit mask)
+        mandatory_map = entity_class.get_mandatory_map()
+
+        # iterates over the complete set of names in the
+        # mandatory map in order to validate them as defined
+        for key in mandatory_map:
+            # retrieves the value for the current key defaulting
+            # to true (valid) in case it's not set (or lazy loaded)
+            # and then continues the loop in case the value is valid
+            # (not none) or in case the value is lazy loaded
+            value = self.get_value(key, default = True)
+            if not value == None: continue
+            if value == colony.libs.lazy_util.Lazy: continue
+
+            # raises a validation error for the missing of the
+            # mandatory field
+            raise exceptions.ValidationError(
+                "missing mandatory fields '%s', for entity '%s'" %
+                (key, entity_class.__name__)
+            )
 
     def validate_value(self, name, value = None, force = False):
         """
