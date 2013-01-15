@@ -1029,9 +1029,7 @@ def validate_exception(self, exception_message = VALIDATION_FAILED_MESSAGE, erro
 
     # in case the model is valid nothing is required to be done
     # and so it returns immediately
-    if model_valid:
-        # return immediately
-        return
+    if model_valid: return
 
     # retrieves the model validation errors map
     # and uses them to raise the appropriate exception
