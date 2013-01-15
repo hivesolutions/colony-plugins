@@ -1989,19 +1989,17 @@ def _load_value(self, key, value):
     """
 
     # in case the current object does not contain
-    # an attribute with the key name
-    if not hasattr(self, key):
-        # returns immediately
-        return
+    # an attribute with the key name must return
+    # immediately cannot load inexistent value
+    if not hasattr(self, key): return
 
     # retrieves the entity class for the current object
     entity_class = self.__class__
 
     # in case the entity class does not contain an
-    # attribute with the key name
-    if not hasattr(entity_class, key):
-        # returns immediately
-        return
+    # attribute with the key name must returns
+    # immediately cannot load inexistent value
+    if not hasattr(entity_class, key): return
 
     # retrieves the class value and retrieves
     # the type associated with the value
@@ -2009,10 +2007,8 @@ def _load_value(self, key, value):
     class_value_type = type(class_value)
 
     # in case the class value type is not
-    # dictionary
-    if not class_value_type == types.DictType:
-        # returns immediately
-        return
+    # dictionary, must return immediately
+    if not class_value_type == types.DictType: return
 
     # retrieves the value data type
     value_data_type = class_value.get(DATA_TYPE_VALUE, None)
@@ -2066,10 +2062,9 @@ def _load_value(self, key, value):
                     value_item_type = type(value_item)
 
                     # in case the type of the value item is
-                    # not dictionary (not valid)
-                    if not value_item_type == types.DictType:
-                        # continues the loop
-                        continue
+                    # not dictionary (not valid) continues the
+                    # current loop
+                    if not value_item_type == types.DictType: continue
 
                     # creates a new target entity instance
                     target_entity_instance = target_entity()
