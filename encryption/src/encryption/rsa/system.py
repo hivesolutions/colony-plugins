@@ -69,7 +69,8 @@ class RsaStructure:
     """
 
     keys = None
-    """ Tuple containing the public, private and extra keys """
+    """ Tuple containing the public, private
+    and extra keys """
 
     def __init__(self, keys):
         """
@@ -174,7 +175,8 @@ class RsaStructure:
         @return: The decrypted message.
         """
 
-        # retrieves the key to be used
+        # retrieves the key to be used either from the provided
+        # private key or from the already stored keys list
         private_key = private_key and private_key or self.keys[1]
 
         # retrieves the private key values
@@ -191,16 +193,27 @@ class RsaStructure:
         """
         Signs the given message using the given private key.
 
+        This method should encrypt the provided message (with the
+        private key) and return it, in compliance with the rsa
+        specification.
+
+        Note that this method is part of the sign standard for rsa
+        that involves the inversion of responsibilities of public/private
+        keys, in this case private key encrypts the message and the
+        public key decrypts it.
+
         @type message: String
         @param message: The encrypted message (cyper) to
         be signed.
         @type private_key: Dictionary
         @param private_key: The map containing the private key.
         @rtype: String
-        @return: The signed message.
+        @return: The signed message encrypted using the provided
+        private key or the locally stored private key.
         """
 
-        # retrieves the key to be used
+        # retrieves the key to be used either from the provided
+        # private key or from the already stored keys list
         private_key = private_key and private_key or self.keys[1]
 
         # retrieves the private key values
@@ -217,15 +230,27 @@ class RsaStructure:
         """
         Verifies the given signed message using the given public key.
 
+        This method should decrypt the provided message (with the
+        public key) and returns it, in compliance with the rsa
+        specification.
+
+        Note that this method is part of the sign standard for rsa
+        that involves the inversion of responsibilities of public/private
+        keys, in this case private key encrypts the message and the
+        public key decrypts it.
+
         @type signed_message: String
         @param signed_message: The signed message to be verified.
         @type public_key: Dictionary
         @param public_key: The map containing the public key.
         @rtype: String
-        @return: The (original) message.
+        @return: The (original) message, decrypted using the provided
+        public key or the locally stored public key.
         """
 
-        # retrieves the public key to be used
+        # retrieves the public key to be used either
+        # from the provided public key or from the already
+        # stored keys list
         public_key = public_key and public_key or self.keys[0]
 
         # retrieves the public key values
