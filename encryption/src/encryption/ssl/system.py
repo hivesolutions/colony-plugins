@@ -67,8 +67,11 @@ class Ssl(colony.base.system.System):
 
 class SslStructure:
     """
-    Class representing the ssl,
-    cryptographic protocol structure.
+    Class representing the ssl, cryptographic
+    protocol structure.
+
+    Should provide a top level interface for the
+    cryptographic operation used in the ssl protocol.
     """
 
     rsa_plugin = None
@@ -111,20 +114,19 @@ class SslStructure:
         # with the given name and retrieving the signature
         signature = self.sign(private_key_path, hash_algorithm_name, base_string_value)
 
-        # encodes the signature into base 64
+        # encodes the signature into base 64 and splits
+        # the various components from it
         signature_base_64 = base64.b64encode(signature)
-
-        # splits the signature base 64 value
         signature_base_64 = self._split_base_64(signature_base_64)
 
         # returns the signature base 64
         return signature_base_64
 
     def verify_base_64(self, public_key_path, signature_base_64, base_string_value):
-        # joins the base 64 value back
+        # joins the base 64 value back, removing any extra newline
+        # characters and then decodes the signature from base 64
+        # back to plain text
         signature_base_64 = self._join_base_64(signature_base_64)
-
-        # decodes the signature base 64
         signature = base64.b64decode(signature_base_64)
 
         # verifies the signature against the base string value,
@@ -134,46 +136,75 @@ class SslStructure:
         # returns the return value
         return return_value
 
+    def encrypt(self, public_key_path, message):
+        # creates the rsa structure
+        rsa_structure = self.rsa_plugin.create_structure({})
+
+        # creates the pkcs 1 structure then loads the public key,
+        # retrieving the keys tuple and sets the keys in the rsa structure
+        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
+        keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
+        rsa_structure.set_keys(keys)
+
+        # runs the encryption process over the message and returns
+        # the resulting encrypted message to the caller method
+        encrypted_message = rsa_structure.encrypt(message)
+        return encrypted_message
+
+    def decrypt(self, private_key_path, encrypted_message):
+        # creates the rsa structure
+        rsa_structure = self.rsa_plugin.create_structure({})
+
+        # creates the pkcs 1 structure then loads the private key,
+        # retrieving the keys tuple and the version value and sets
+        # them in the rsa structure
+        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
+        keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
+        rsa_structure.set_keys(keys)
+
+        # runs the decryption process over the message and returns
+        # the resulting message to the caller method
+        message = rsa_structure.decypt(encrypted_message)
+        return message
+
     def sign(self, private_key_path, hash_algorithm_name, base_string_value):
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure
+        # creates the pkcs 1 structure then loads the private key,
+        # retrieving the keys tuple and the version value and sets
+        # them in the rsa structure
         pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-
-        # loads the private key, retrieving the keys tuple and the version value
         keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
-
-        # sets the keys in the rsa structure
         rsa_structure.set_keys(keys)
 
-        # signs the base string value using the given hash algorithm name
+        # signs the base string value using the given hash
+        # algorithm name and then used the resulting string
+        # value to sign (encrypt) it under rsa using the
+        # private key
         signature_verified = pkcs_1_structure.sign(keys, hash_algorithm_name, base_string_value)
-
-        # signs the signature verified retrieving the signature
         signature = rsa_structure.sign(signature_verified)
 
-        # returns the signature
+        # returns the resulting signature value as a plain
+        # byte sequence string
         return signature
 
     def verify(self, public_key_path, signature, base_string_value):
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure
+        # creates the pkcs 1 structure then loads the public key,
+        # retrieving the keys tuple and sets the keys in the rsa structure
         pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-
-        # loads the public key, retrieving the keys tuple
         keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
-
-        # sets the keys in the rsa structure
         rsa_structure.set_keys(keys)
 
         # verifies the signature (using the public key) and
-        # retrieves the signature verified
+        # retrieves the signature verified (decrypted message),
+        # then uses it to run the final pkcs1 verification
+        # process that will compare the the verified signature
+        # value against the hash value of the provided base string
         signature_verified = rsa_structure.verify(signature)
-
-        # verifies the and tests the signature, retrieving the return value
         return_value = pkcs_1_structure.verify(signature_verified, base_string_value)
 
         # returns the return value
@@ -192,10 +223,9 @@ class SslStructure:
         # iterates continuously
         while True:
             # in case the base index is greater or equal
-            # to the private key der encoded length
-            if base_index >= string_value_length:
-                # breaks the loop
-                break
+            # to the private key der encoded length must
+            # break the loop (end of iteration)
+            if base_index >= string_value_length: break
 
             # calculates the end index from the base index
             end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
@@ -204,10 +234,9 @@ class SslStructure:
             string_value_token = string_value[base_index:end_index]
 
             # creates the string value from the string value token
-            # and a newline character
+            # and a newline character then adds the string value
+            # line to the string value list
             string_value_line = string_value_token + "\n"
-
-            # adds the string value line to the string value list
             string_value_list.append(string_value_line)
 
             # sets the base index as the end index
