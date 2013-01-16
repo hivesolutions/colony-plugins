@@ -119,6 +119,8 @@ class SignatureController(controllers.Controller):
             return
 
         # creates the filter to retrieve the consumer with
+        # the provided api, only existing clients should 
+        # be considered valid according to specification
         filter = {
             "filters" : (
                 {
