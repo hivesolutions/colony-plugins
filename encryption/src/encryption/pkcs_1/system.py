@@ -212,9 +212,8 @@ class Pkcs1Structure:
 
     def load_read_private_key_pem(self, private_key_file_path):
         # reads the file, retrieving the private key pem
+        # and constructs and loads the return tuple
         private_key_pem = self._read_file(private_key_file_path)
-
-        # loads the private key pem, retrieving the return tuple
         return_tuple = self.load_private_key_pem(private_key_pem)
 
         # returns the return tuple
@@ -222,9 +221,8 @@ class Pkcs1Structure:
 
     def load_read_public_key_pem(self, public_key_file_path):
         # reads the file, retrieving the public key pem
+        # and constructs and loads the keys tuple
         public_key_pem = self._read_file(public_key_file_path)
-
-        # loads the public key pem, retrieving the keys tuple
         keys = self.load_public_key_pem(public_key_pem)
 
         # returns the keys tuple
@@ -232,43 +230,35 @@ class Pkcs1Structure:
 
     def sign(self, keys, hash_algorithm_name, string_value):
         # creates a new hash using the given hash algorithm name
+        # updates it with the provided string value and retrieves
+        # the digest from it
         hash = hashlib.new(hash_algorithm_name)
-
-        # updates the hash with the string value
         hash.update(string_value)
-
-        # retrieves the digest value
         digest_value = hash.digest()
 
         # signs the digest value retrieving the signature verified
+        # (final signature) returning it to the caller method
         signature_verified = self._sign(keys, hash_algorithm_name, digest_value)
-
-        # returns the signature verified
         return signature_verified
 
     def verify(self, signature_verified, string_value):
         # verifies the signature verified, retrieving
         # the hash algorithm name and the digest value
+        # this is considered the unpack operation and
+        # should be compliant with the pkcs1 specification
         hash_algorithm_name, digest_value = self._verify(signature_verified)
 
         # creates a new hash using the given hash algorithm name
+        # updates it with the provided string value to be verified
+        # and retrieves its digest
         hash = hashlib.new(hash_algorithm_name)
-
-        # updates the hash with the string value
         hash.update(string_value)
-
-        # retrieves the hash digest
         hash_digest = hash.digest()
 
-        # in case the hash digest value is
-        # the same as the digest value
-        if hash_digest == digest_value:
-            # returns true (valid)
-            return True
-        # otherwise
-        else:
-            # returns false (invalid)
-            return False
+        # verifies that the hash digest is the same
+        # as the provided signature to be verified
+        valid = hash_digest == digest_value
+        return valid
 
     def generate_private_key_pem(self, keys, version = 1):
         """
@@ -877,21 +867,19 @@ class Pkcs1Structure:
         return signature_verified
 
     def _verify(self, signature_verified):
-        # retrieves the first character
+        # retrieves the first character and converts
+        # it into and ordinal value
         first_character = signature_verified[0]
-
-        # converts the first character to ordinal
         first_character_ordinal = ord(first_character)
 
-        # retrieves the second character
+        # retrieves the second character and converts
+        # it into and ordinal value
         second_character = signature_verified[1]
-
-        # converts the second character to ordinal
         second_character_ordinal = ord(second_character)
 
         # in case the first character ordinal is not zero or the second character is not one
+        # must raise and invalid format exception
         if not first_character_ordinal == 0x00 or not second_character_ordinal == 0x01:
-            # raises the invalid format exception
             raise exceptions.InvalidFormatException("invalid signature format")
 
         # creates the ber structure
@@ -910,10 +898,8 @@ class Pkcs1Structure:
             current_character_ordinal = ord(current_character)
 
             # in case the current character ordinal is zero
-            # (end of padding part)
-            if current_character_ordinal == 0x00:
-                # breaks the loop
-                break
+            # (end of padding part) must break the loop
+            if current_character_ordinal == 0x00: break
 
         # retrieves the signature value
         signature_value = signature_verified[index + 1:]
@@ -941,8 +927,8 @@ class Pkcs1Structure:
         digest_value = digest[VALUE_VALUE]
 
         # in case the arguments value is not none
+        # must raise an invalid format exception
         if not arguments_value == None:
-            # raises the invalid format exception
             raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
 
         # retrieves the hash algorithm name
