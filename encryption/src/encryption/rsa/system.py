@@ -162,6 +162,16 @@ class RsaStructure:
 
         return self._encrypt_buffer(message, public_exponent, modulus)
 
+    def encrypt_s(self, message, public_key = None):
+        # retrieves the public key to be used
+        public_key = public_key and public_key or self.keys[0]
+
+        # retrieves the public key values
+        modulus = public_key["n"]
+        public_exponent = public_key["e"]
+
+        return self._encrypt_string(message, public_exponent, modulus)
+
     def decrypt(self, encrypted_message, private_key = None):
         """
         Decrypts the given message using the given private key.
@@ -188,6 +198,21 @@ class RsaStructure:
         modulus = prime_1 * prime_2
 
         return self._decrypt_buffer(encrypted_message, private_exponent, modulus)
+
+    def decrypt_s(self, encrypted_message, private_key = None):
+        # retrieves the key to be used either from the provided
+        # private key or from the already stored keys list
+        private_key = private_key and private_key or self.keys[1]
+
+        # retrieves the private key values
+        private_exponent = private_key["d"]
+        prime_1 = private_key["p"]
+        prime_2 = private_key["q"]
+
+        # calculates the modulus
+        modulus = prime_1 * prime_2
+
+        return self._decrypt_string(encrypted_message, private_exponent, modulus)
 
     def sign(self, message, private_key = None):
         """
@@ -328,10 +353,10 @@ class RsaStructure:
         # iterates over all the message values list
         for message_value in message_values_list:
             # decrypts the message value, retrieving
-            # the current part value
+            # the current part value and adds the current
+            # parts to the list of values that will be joined
+            # at the end of the operation
             current_part_value = self._encrypt_string(message_value, key, modulus)
-
-            # adds the current part value to the part values (list)
             part_values.append(current_part_value)
 
         # joins the parts in the part values list
@@ -345,17 +370,19 @@ class RsaStructure:
         # retrieves the modulus size in bytes
         modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
 
-        # converts the message to integer
+        # converts the message to integer, then uses this integer
+        # value to encrypt it using the rsa algorithm and converts
+        # the resulting encrypted integer back to a string
         message_integer = self._string_to_integer(message)
-
-        # encrypts the message integer value with the given key and modulus
         message_integer_encrypted = self._encrypt_integer(message_integer, key, modulus)
-
-        # converts the integer to string, retrieving the message encrypted
         message_encrypted = self._integer_to_string(message_integer_encrypted, modulus_size_bytes)
 
-        # returns the message encrypted
+        # returns the resulting message encrypted using the rsa
+        # algorithm for cryptographic purposes
         return message_encrypted
+
+    def _decrypt_string(self, message, key, modulus):
+        return self._decrypt_buffer([message], key, modulus)
 
     def _encrypt_integer(self, message, e_value, n_value):
         """
@@ -376,11 +403,9 @@ class RsaStructure:
             return self._encrypt_integer(long(message), e_value, n_value)
 
         if not type(message) is types.LongType:
-            # raises a type error
             raise TypeError("you must pass a long or an int")
 
         if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n_value, 2)):
-            # raises an overflow error
             raise OverflowError("the message is too long")
 
         return pow(message, e_value, n_value)
@@ -389,7 +414,7 @@ class RsaStructure:
         """
         Generates the rsa keys with the given number
         of bits.
-        This method is cpu intensive.
+        This method is very cpu intensive.
 
         @type number_bits: int
         @param number_bits: The number of bits to be used
@@ -409,9 +434,8 @@ class RsaStructure:
             e_value, d_value = self._generate_exponents(p_value, q_value, number_bits)
 
             # tests if the number is positive
-            if d_value > 0:
-                # breaks the loop
-                break
+            # for such cases breaks the loop
+            if d_value > 0: break
 
         # creates a tuple with the generated keys
         generated_keys = (
@@ -506,11 +530,9 @@ class RsaStructure:
             # generates a prime number to serve as q value
             q_value = self._generate_prime_number(number_bits)
 
-            # in case the q value and the p
-            # value are different
-            if not q_value == p_value:
-                # breaks the loop
-                break
+            # in case the q value and the p values
+            # are different, breaks the loop
+            if not q_value == p_value: break
 
         # creates a tuple with the generated
         # prime numbers
@@ -751,10 +773,9 @@ class RsaStructure:
         while integer_value > 0:
             # retrieves the character value for
             # the least significant byte value of
-            # the integer
+            # the integer and adds that character
+            # vale to the list containing the characters
             character_value = chr(integer_value & 0xff)
-
-            # adds the character value to the character list
             characters_list.append(character_value)
 
             # shifts the integer value eight bits
@@ -837,8 +858,7 @@ class RsaStructure:
         # number of bytes in length
         random_data = os.urandom(number_bytes)
 
-        # converts the random data to integer
+        # converts the random data int an integer
+        # vale and returns it to the caller method
         random_integer = self._string_to_integer(random_data)
-
-        # returns the random integer
         return random_integer
