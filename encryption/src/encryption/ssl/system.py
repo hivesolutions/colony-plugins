@@ -146,9 +146,14 @@ class SslStructure:
         keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
         rsa_structure.set_keys(keys)
 
-        # runs the encryption process over the message and returns
-        # the resulting encrypted message to the caller method
-        encrypted_message = rsa_structure.encrypt(message)
+        # runs the encrypt process for the pkcs that should add the
+        # proper padding to the message to be encrypted the uses rsa
+        # to encrypt the message with the public key
+        message_pad = pkcs_1_structure.encrypt(keys, message)
+        encrypted_message = rsa_structure.encrypt_s(message_pad)
+
+        # returns the resulting encrypted message buffer to be used
+        # for cryptographic purposes
         return encrypted_message
 
     def decrypt(self, private_key_path, encrypted_message):
@@ -162,9 +167,14 @@ class SslStructure:
         keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
         rsa_structure.set_keys(keys)
 
-        # runs the decryption process over the message and returns
-        # the resulting message to the caller method
-        message = rsa_structure.decypt(encrypted_message)
+        # runs the decryption process over the message to be able
+        # to retrieve the plain text value and then removes the
+        # padding from it according to the pkcs specification
+        message_pad = rsa_structure.decrypt_s(encrypted_message)
+        message = pkcs_1_structure.decrypt(keys, message_pad)
+
+        # returns the original plain message resulting from the
+        # standard pkcs decryption process
         return message
 
     def sign(self, private_key_path, hash_algorithm_name, base_string_value):
