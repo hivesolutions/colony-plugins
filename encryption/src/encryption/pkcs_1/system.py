@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import math
+import random
+import string
 import base64
 import hashlib
 
@@ -228,6 +230,14 @@ class Pkcs1Structure:
         # returns the keys tuple
         return keys
 
+    def encrypt(self, keys, message):
+        message_pad = self._encrypt(keys, message)
+        return message_pad
+
+    def decrypt(self, keys, message_pad):
+        message = self._decrypt(keys, message_pad)
+        return message
+
     def sign(self, keys, hash_algorithm_name, string_value):
         # creates a new hash using the given hash algorithm name
         # updates it with the provided string value and retrieves
@@ -343,37 +353,41 @@ class Pkcs1Structure:
         return public_key_pem
 
     def load_private_key_pem(self, private_key_pem):
-        # matches the private key pem
+        # matches the public key header/footer token in case no match
+        # is done raises an exception indicating the problem
         private_key_pem_match = PRIVATE_KEY_VALUE_REGEX.match(private_key_pem)
+        if not private_key_pem_match:
+            raise exceptions.InvalidFormatException("private key header/footer not found")
 
-        # retrieves the private key pem contents
+        # retrieves the private key pem contents (avoid header and footer)
+        # and joins the base 64 value back together removing extra newlines
         private_key_pem_contents = private_key_pem_match.group("contents")
-
-        # joins the base 64 value back together
         private_key_pem_contents_joined = self._join_base_64(private_key_pem_contents)
 
         # decodes the private key pem from base 64, obtaining
-        # private key der
+        # private key der in binary format, then loads it retrieving
+        # the return tuple to be returned to the caller method
         private_key_der = base64.b64decode(private_key_pem_contents_joined)
-
-        # loads the private key der, retrieving the return tuple
         return_tuple = self.load_private_key_der(private_key_der)
 
         # returns the return tuple
         return return_tuple
 
     def load_public_key_pem(self, public_key_pem):
-        # matches the public key pem
+        # matches the public key header/footer token in case no match
+        # is done raises an exception indicating the problem
         public_key_pem_match = PUBLIC_KEY_VALUE_REGEX.match(public_key_pem)
+        if not public_key_pem_match:
+            raise exceptions.InvalidFormatException("public key header/footer not found")
 
-        # retrieves the public key pem contents
+        # retrieves the public key pem contents (avoid header and footer)
+        # and joins the base 64 value back together removing extra newlines
         public_key_pem_match_contents = public_key_pem_match.group("contents")
-
-        # joins the base 64 value back together
         public_key_pem_match_contents_joined = self._join_base_64(public_key_pem_match_contents)
 
         # decodes the public key pem from base 64, obtaining
-        # public key der
+        # public key der in binary format the loads it retrieving
+        # the keys tuple to be returned to the caller method
         public_key_der = base64.b64decode(public_key_pem_match_contents_joined)
 
         # loads the public key der, retrieving the keys tuple
@@ -734,13 +748,14 @@ class Pkcs1Structure:
         public_exponent_value = public_exponent[VALUE_VALUE]
 
         # in case the object identifier is not rsa encryption
+        # raises an error as the rsa encryption is the only
+        # supported encryption type
         if not algorithm_value == OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]:
-            # raises the invalid format exception
             raise exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))
 
-        # in case the arguments value is not none
+        # in case the arguments value is not none must raise an exception
+        # indicating the problem in the arguments
         if not arguments_value == None:
-            # raises the invalid format exception
             raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
 
         # creates the public key map
@@ -764,6 +779,51 @@ class Pkcs1Structure:
 
         # returns the keys tuple
         return keys
+
+    def _encrypt(self, keys, message):
+        # unpacks the keys tuple, retrieving the public key,
+        # private key and extras map and then retrieves the
+        # modulus from the public key
+        public_key, _private_key, _extras = keys
+        modulus = public_key["n"]
+
+        # calculates the size of the modulus in terms of bytes
+        # this will be used as the size of the message (including
+        # the padding)
+        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
+
+        # calculates the current size of the message and uses this
+        # value to calculate the size of the pad
+        message_length = len(message)
+        pad_length = modulus_size_bytes - message_length - 3
+
+        # creates the pad with the required size using just lower cased
+        # characters to avoid the zero value and then constructs the final
+        # padded message that includes the created padding
+        pad = "".join(random.choice(string.ascii_lowercase) for _value in range(pad_length))
+        message_pad = "\x00\x02" + pad + "\x00" + message
+        return message_pad
+
+    def _decrypt(self, keys, message_pad):
+        # verifies if the provided message contains the "expected"
+        # padding in case it does not returns the message (no padding)
+        # is contained
+        is_padded = message_pad.startswith("\x00\x02")
+        if not is_padded: return message_pad
+
+        # retrieves the remaining part of the message (excludes the
+        # padding header) and tries to find the token indicating the
+        # start of the message in case it's not found raises an exception
+        # indicating the invalid padding
+        message_pad = message_pad[2:]
+        start_index = message_pad.find("\x00")
+        if start_index == -1:
+            raise exceptions.InvalidFormatException("invalid padding")
+
+        # retrieve the message itself from the "discovered"
+        # start index, this is the message without padding
+        message = message_pad[start_index + 1:]
+        return message
 
     def _sign(self, keys, hash_algorithm_name, digest_value):
         # retrieves the hash algorithm tuple
@@ -1008,12 +1068,11 @@ class Pkcs1Structure:
         # opens the file
         file = open(file_path, "wb")
 
-        try:
-            # writes the string value
-            file.write(string_value)
-        finally:
-            # closes the file
-            file.close()
+        # writes the string value to the file and then
+        # closes the file to avoid any file structure
+        # leaks (may create corruption)
+        try: file.write(string_value)
+        finally: file.close()
 
     def _read_file(self, file_path):
         """
@@ -1029,12 +1088,12 @@ class Pkcs1Structure:
         # opens the file
         file = open(file_path, "rb")
 
-        try:
-            # reads the string value
-            string_value = file.read()
-        finally:
-            # closes the file
-            file.close()
+        # reads the string value from the file and then
+        # closes the file to avoid any file structure
+        # leaks (may create corruption)
+        try: string_value = file.read()
+        finally: file.close()
 
-        # returns the string value
+        # returns the string value that was read from
+        # the file
         return string_value
