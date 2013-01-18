@@ -359,19 +359,17 @@ class AbstractClient:
             # retrieves the socket provider plugin from the socket provider plugins map
             socket_provider_plugin = socket_provider_plugins_map[socket_name]
 
-            # the parameters for the socket provider, the handshake
-            # process in case it's required must be forced
+            # creates the parameters for the socket provider, the
+            # handshake process in case it's required must be forced
+            # then copies the socket parameters to the parameters map
             parameters = {
                 DO_HANDSHAKE_ON_CONNECT_VALUE : True
             }
-
-            # copies the socket parameters to the parameters map
             colony.libs.map_util.map_copy(socket_parameters, parameters)
 
             # creates a new socket with the socket provider plugin
+            # and returns the created socket to the caller method
             socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # returns the created socket
             return socket
         else:
             # raises the socket provider not found exception
