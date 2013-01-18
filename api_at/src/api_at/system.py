@@ -37,27 +37,36 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import base64
+import hashlib
+import datetime
+
 import colony.base.system
+import colony.libs.aes_util
 
 import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
-GET_METHOD_VALUE = "GET"
-""" The get method value """
-
-POST_METHOD_VALUE = "POST"
-""" The post method value """
-
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
-BASE_URL = "http:/servicos.portaldasfinancas.gov.pt:400/fews/faturas"
-""" The base url to be used """
+KEY_FILE_PATH_VALUE = "key_file_path"
+""" The key file path value """
 
-BASE_TEST_URL = "http:/servicos.portaldasfinancas.gov.pt:700/fews/faturas"
-""" The base test url to be used """
+CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
+""" The certificate file path value """
+
+BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
+""" The base url to be used, this is a
+secure https based url"""
+
+BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
+""" The base test url to be used, this is a
+secure https based url but still only for
+testing purposes """
 
 class ApiAt(colony.base.system.System):
     """
@@ -77,15 +86,28 @@ class ApiAt(colony.base.system.System):
         """
 
         # retrieves the client http plugin
+        ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
 
         # retrieves the at structure and test mode (if available)
         at_structure = api_attributes.get("at_structure", None)
         test_mode = api_attributes.get("test_mode", False)
+        key = api_attributes.get("key", False)
+        certificate = api_attributes.get("certificate", False)
 
-        # creates a new at client with the given options and
-        # returns it to the caller method
-        at_client = AtClient(client_http_plugin, at_structure, test_mode)
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
+        at_client = AtClient(
+            self.plugin,
+            ssl_plugin,
+            client_http_plugin,
+            at_structure,
+            test_mode,
+            key,
+            certificate
+        )
+        open_client and at_client.open()
         return at_client
 
 class AtClient:
@@ -94,6 +116,13 @@ class AtClient:
     Will be used to encapsulate the http request
     around a locally usable api.
     """
+    
+    plugin = None
+    """ The plugin associated with the at client this
+    plugin is considered the owner of the client """
+
+    ssl_plugin = None
+    """ The ssl plugin """
 
     client_http_plugin = None
     """ The client http plugin """
@@ -104,14 +133,27 @@ class AtClient:
     test_mode = None
     """ Flag indicating the client is supposed to
     run in test mode (uses different api urls) """
+    
+    key = None
+    """ The path to the private key file to be used
+    in the connection with the server """
+
+    certificate = None
+    """ The path to the certificate file to be used
+    in the connection with the server """
 
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, client_http_plugin = None, at_structure = None, test_mode = False):
+    def __init__(self, plugin, ssl_plugin = None, client_http_plugin = None, at_structure = None, test_mode = False, key = None, certificate = None,):
         """
         Constructor of the class.
 
+        @type plugin: Plugin
+        @param plugin: The plugin associated with the at client this
+        plugin is considered the owner of the client.
+        @type ssl_plugin: SslPlugin
+        @param ssl_plugin: The ssl plugin.
         @type client_http_plugin: ClientHttpPlugin
         @param client_http_plugin: The client http plugin.
         @type at_structure: AtStructure
@@ -119,11 +161,21 @@ class AtClient:
         @type test_mode: bool
         @param test_mode: Flag indicating if the client is to
         be run in test mode.
+        @type key: String
+        @param key: The path to the private key file to be used
+        in the connection with the server.
+        @type certificate: String
+        @param certificate: The path to the certificate file to be used
+        in the connection with the server.        
         """
 
+        self.plugin = plugin
+        self.ssl_plugin = ssl_plugin
         self.client_http_plugin = client_http_plugin
         self.at_structure = at_structure
         self.test_mode = test_mode
+        self.key = key
+        self.certificate = certificate
 
     def open(self):
         """
@@ -141,10 +193,6 @@ class AtClient:
         # (flushing its internal structures
         if self.http_client: self.http_client.close({})
         
-    def submit_invoice(self, soap_payload):
-        # tenho de criar o client o nonce, etc
-        pass
-
     def generate_at_structure(self, username, password, set_structure = True):
         """
         Generates the at structure for the given arguments.
@@ -169,6 +217,104 @@ class AtClient:
 
         # returns the at structure
         return at_structure
+        
+    def get_resource(self, path):
+        # retrieves the current plugin manager associated
+        # with the current context of execution
+        plugin_manager = self.plugin.manager
+        
+        # retrieves the plugin path for the currently associated
+        # (owner) plugin and uses it to retrieve the complete path
+        # for the requested resource then returns that path
+        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
+        path = os.path.join(plugin_path, path)
+        return path
+        
+    def submit_invoice(self, invoice_payload):
+        # retrieves the proper based url according to the current
+        # test mode and uses it to create the complete action url
+        base_url = self.test_mode and BASE_TEST_URL or BASE_URL
+        submit_invoice_url = base_url + "/faturas"
+        
+        # retrieves the proper username and password values
+        # according to the current test mode flag value
+        username = self.test_mode and "599999993/0037" or self.at_structure.username
+        password = self.test_mode and "testes1234" or self.at_structure.password
+
+        # retrieves the block size currently in use
+        # by the aes cryptographic system
+        block_size = colony.libs.aes_util.BLOCK_SIZE
+        
+        # generates a new secret key that will be used in
+        # the aes encoding structures
+        secret = os.urandom(block_size)
+
+        # creates a new aes cipher structure to be
+        # able to encrypt the target fields
+        aes = colony.libs.aes_util.AesCipher(secret)        
+        
+        # retrieves the path to the at public key to be used
+        # in the encryption of the secret value (as nonce)
+        public_key_path = self.get_resource("api_at/resources/at.pem")
+
+        # runs the encryption on the secret value to create an
+        # rsa encrypted representation of it and then encodes
+        # that value in base 64 to create the nonce value
+        ssl_structure = self.ssl_plugin.create_structure({})
+        secret_encrypted = ssl_structure.encrypt(public_key_path, secret)
+        nonce = base64.b64encode(secret_encrypted)
+
+        # encrypts the current password using the aes structure
+        # created for the current context and then encodes it
+        # into a base 64 structure
+        password_encrypted = aes.encrypt(password)
+        password_encrypted_b64 = base64.b64encode(password_encrypted)
+
+        # retrieves the current utc date to be used for temporal
+        # verification of the request on the server side
+        current_date = datetime.datetime.utcnow()
+        current_date_s = current_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        # creates the base digest string from the secret, current
+        # date and password values, and uses it to create the verification
+        # digest responsible for the "signature of the message"
+        digest = secret + current_date_s + password
+        digest_sha1 = hashlib.sha1(digest)
+        digest_hash = digest_sha1.digest()
+        digest_hash_encrypted = aes.encrypt(digest_hash)
+        digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
+
+        # defines the format of the soap envelope to be submitted to at
+        # as a normal string template to be populated with global values
+        envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
+            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+                <S:Header>
+                    <wss:Security xmlns:wss="http://schemas.xmlsoap.org/ws/2002/12/secext">
+                        <wss:UsernameToken>
+                            <wss:Username>%s</wss:Username>
+                            <wss:Password Digest="%s">%s</wss:Password>
+                            <wss:Nonce>%s</wss:Nonce>
+                            <wss:Created>%s</wss:Created>
+                        </wss:UsernameToken>
+                    </wss:Security>
+                </S:Header>
+                <S:Body>
+                    %s
+                </S:Body>
+            </S:Envelope>"""
+
+        # applies the attributes to the soap envelope
+        message = envelope % (
+            username,
+            digest_hash_encrypted_b64,
+            password_encrypted_b64,
+            nonce,
+            current_date_s,
+            invoice_payload
+        )
+
+        xml = self._fetch_url(submit_invoice_url, method = "POST", contents = message)
+        print xml
 
     def validate_credentials(self):
         """
@@ -186,26 +332,63 @@ class AtClient:
         # as no validation is currently possible
         return True
 
-    def _build_url(self, base_url, parameters):
+    def get_at_structure(self):
         """
-        Builds the url for the given url and parameters.
+        Retrieves the at structure.
+
+        @rtype: AtStructure
+        @return: The at structure.
+        """
+
+        return self.at_structure
+
+    def set_at_structure(self, at_structure):
+        """
+        Sets the at structure.
+
+        @type at_structure: AtStructure
+        @param at_structure: The at structure.
+        """
+
+        self.at_structure = at_structure
+
+    def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
+        """
+        Fetches the given url for the given parameters and using
+        the given method.
+        
+        This method should block while the remote communication
+        is on idle or receiving.
 
         @type url: String
-        @param url: The base url to be used.
+        @param url: The url to be fetched.
         @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
+        @param parameters: The parameters to be used the fetch.
+        @type method: String
+        @param method: The method to be used in the fetch.
+        @type contents: String
+        @param contents: The contents.
         @rtype: String
-        @return: The built url for the given parameters.
+        @return: The fetched data.
         """
 
-        # retrieves the http client
+        # in case parameters is not defined creates a new parameters
+        # map instance to be used
+        if not parameters: parameters = {}
+
+        # retrieves the http client and uses it to fetch the provided
+        # url with the provided parameters retrieving the received
+        # message and the contents and returning it to the caller method
         http_client = self._get_http_client()
-
-        # build the url from the base url
-        url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
-
-        # returns the url
-        return url
+        http_response = http_client.fetch_url(
+            url,
+            method,
+            parameters,
+            content_type_charset = DEFAULT_CHARSET,
+            contents = contents
+        )
+        contents = http_response.received_message
+        return contents
 
     def _check_at_errors(self, data):
         """
@@ -244,10 +427,20 @@ class AtClient:
         # in case no http client exists one must be created
         # for the interaction with the api service
         if not self.http_client:
+            # retrieves the base values for both the key and the
+            # certificate files and retrieves the (final) key and
+            # certificate paths according to the current test mode
+            base_key_path = self.get_resource("api_at/resources/key.pem")
+            base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
+            key_path = self.test_mode and base_key_path or self.key
+            certificate_path = self.test_mode and base_certificate_path or self.certificate
+            
             # defines the client parameters to be used in the
             # creation of the http client
             client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
+                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET,
+                KEY_FILE_PATH_VALUE : key_path,
+                CERTIFICATE_FILE_PATH_VALUE : certificate_path
             }
 
             # creates the http client to be used for the api
