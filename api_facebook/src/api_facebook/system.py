@@ -121,12 +121,14 @@ class ApiFacebook(colony.base.system.System):
             FACEBOOK_CLIENT_TYPE_OAUTH : FacebookClientOauth
         }
 
-    def create_client(self, api_attributes):
+    def create_client(self, api_attributes, open_client = True):
         """
         Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
+        @type open_client: bool
+        @param open_client: If the client should be opened.
         @rtype: FacebookClient
         @return: The created client.
         """
@@ -137,19 +139,19 @@ class ApiFacebook(colony.base.system.System):
         # retrieves the json plugin
         json_plugin = self.plugin.json_plugin
 
-        # retrieves the facebook structure (if available)
+        # retrieves the various attributes to be used in the
+        # construction of the facebook client
         facebook_structure = api_attributes.get("facebook_structure", None)
-
-        # retrieves the facebook client type
         facebook_client_type = api_attributes.get("facebook_client_type", DEFAULT_FACEBOOK_CLIENT_TYPE)
 
         # retrieves the facebook client (class) for the "requested" type
         facebook_client_class = self.facebook_client_map.get(facebook_client_type, FacebookClient)
 
-        # creates a new facebook client with the given options
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         facebook_client = facebook_client_class(json_plugin, client_http_plugin, facebook_structure)
-
-        # returns the facebook client
+        open_client and facebook_client.open()
         return facebook_client
 
 class FacebookClient:
@@ -555,7 +557,7 @@ class FacebookClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
@@ -864,7 +866,7 @@ class FacebookClientOauth:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
