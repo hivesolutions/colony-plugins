@@ -90,12 +90,14 @@ class ApiEasypay(colony.base.system.System):
     The api easypay class.
     """
 
-    def create_client(self, api_attributes):
+    def create_client(self, api_attributes, open_client = True):
         """
         Creates a client, with the given api attributes.
 
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
+        @type open_client: bool
+        @param open_client: If the client should be opened.
         @rtype: EasypayClient
         @return: The created client.
         """
@@ -107,10 +109,11 @@ class ApiEasypay(colony.base.system.System):
         easypay_structure = api_attributes.get("easypay_structure", None)
         test_mode = api_attributes.get("test_mode", False)
 
-        # creates a new easypay client with the given options
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         easypay_client = EasypayClient(client_http_plugin, easypay_structure, test_mode)
-
-        # returns the easypay client
+        open_client and easypay_client.open()
         return easypay_client
 
 class EasypayClient:
@@ -509,7 +512,7 @@ class EasypayClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
