@@ -58,7 +58,8 @@ class ApiAtPlugin(colony.base.system.Plugin):
         "api.at"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.ssl", "1.x.x")
     ]
     main_modules = [
         "api_at.exceptions",
@@ -70,6 +71,9 @@ class ApiAtPlugin(colony.base.system.Plugin):
 
     client_http_plugin = None
     """ The client http plugin """
+
+    ssl_plugin = None
+    """ The ssl plugin """
 
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
@@ -95,3 +99,7 @@ class ApiAtPlugin(colony.base.system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
     def set_client_http_plugin(self, client_http_plugin):
         self.client_http_plugin = client_http_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.ssl")
+    def set_ssl_plugin(self, ssl_plugin):
+        self.ssl_plugin = ssl_plugin
