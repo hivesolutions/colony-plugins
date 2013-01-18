@@ -194,6 +194,12 @@ PROTOCOL_VERSION_VALUE = "protocol_version"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
+KEY_FILE_PATH_VALUE = "key_file_path"
+""" The key file path value """
+
+CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
+""" The certificate file path value """
+
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
@@ -202,9 +208,6 @@ DEFAULT_PERSISTENT = True
 
 DEFAULT_KEEP_ALIVE_TIMEOUT = 115
 """ The default keep alive timeout """
-
-DEFAULT_SOCKET_PARAMETERS = {}
-""" The default socket parameters """
 
 UNDEFINED_CONTENT_LENGTH = None
 """ The undefined content length """
@@ -246,16 +249,22 @@ class ClientHttp(colony.base.system.System):
         @return: The created client object.
         """
 
-        # retrieves the protovol version
+        # retrieves the various parameters provided for the
+        # creation of the http client 
         protocol_version = parameters.get(PROTOCOL_VERSION_VALUE, None)
-
-        # retrieves the content type charset
         content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
+        key_file_path = parameters.get(KEY_FILE_PATH_VALUE, None)
+        certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH_VALUE, None)
 
-        # creates the http client
-        http_client = HttpClient(self, protocol_version, content_type_charset)
-
-        # returns the http client
+        # creates the http client with the provided parameters
+        # and returns the created client
+        http_client = HttpClient(
+            self,
+            protocol_version,
+            content_type_charset = content_type_charset,
+            key_file_path = key_file_path,
+            certificate_file_path = certificate_file_path
+        )
         return http_client
 
     def create_request(self, parameters):
@@ -291,6 +300,14 @@ class HttpClient:
     redirect = True
     """ The value controlling the "auto" redirection """
 
+    key_file_path = None
+    """ The path to the (private) key file to be
+    used for a secured connection """    
+    
+    certificate_file_path = None
+    """ The path to the ssl certificate file to be
+    used for a secured connection """
+
     client_connection = None
     """ The current client connection """
 
@@ -300,7 +317,7 @@ class HttpClient:
     _http_client_lock = None
     """ Lock to control the fetching of the queries """
 
-    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET, key_file_path = None, certificate_file_path = None):
         """
         Constructor of the class.
 
@@ -311,26 +328,36 @@ class HttpClient:
         be used.
         @type content_type_charset: String
         @param content_type_charset: The charset to be used by the content.
+        @type key_file_path: String
+        @param key_file_path: The path to the (private) key file to be
+        used for a secured connection.
+        @type certificate_file_path:  String
+        @param certificate_file_path: The path to the ssl certificate
+        file to be used for a secured connection
         """
 
         self.client_http = client_http
         self.protocol_version = protocol_version
         self.content_type_charset = content_type_charset
+        self.key_file_path = key_file_path
+        self.certificate_file_path = certificate_file_path
 
         self._http_client_lock = threading.RLock()
 
-    def open(self, parameters):
-        # generates the parameters
+    def open(self, parameters = None):
+        # retrieves the the parameters defaulting to an empty map
+        # in case they are not provided and then generates the
+        # final parameters map with the default parameters
+        parameters = parameters or {}
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the http client, generating the internal structures
+        # and uses it to start the client
         self._http_client = self.client_http.plugin.client_utils_plugin.generate_client(client_parameters)
-
-        # starts the http client
         self._http_client.start_client()
 
-    def close(self, parameters):
-        # stops the http client
+    def close(self, parameters = None):
+        parameters = parameters or {}
         self._http_client.stop_client()
 
     def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, contents = None, save_message = True, yield_response = False, handlers_map = {}):
@@ -361,7 +388,7 @@ class HttpClient:
         @type yield_response: bool
         @param yield_response: If the response value should be yielded
         for progressive retrieval. Setting this flag changes the return
-        value to an iterator that may be used for reponse retrieval.
+        value to an iterator that may be used for response retrieval.
         @type handlers_map: Dictionary
         @param handlers_map: The map of event handlers for the various
         client events.
@@ -388,8 +415,14 @@ class HttpClient:
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
-        # retrieves the socket parameters (default)
-        socket_parameters = DEFAULT_SOCKET_PARAMETERS
+        # creates the map that will hold the various parameters
+        # to be used in the creation of the socket and sets the
+        # various values in it
+        socket_parameters = {}
+        if self.key_file_path:
+            socket_parameters["key_file_path"] = self.key_file_path
+        if self.certificate_file_path:
+            socket_parameters["certificate_file_path"] = self.certificate_file_path 
 
         # defines the connection parameters
         connection_parameters = (
@@ -428,7 +461,21 @@ class HttpClient:
             # parameters, method, headers, protocol version, content type,
             # content type charset, encode path, contents, url and base url
             # and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, encode_path, contents, url, base_url)
+            request = self.send_request(
+                host,
+                port,
+                path,
+                parameters,
+                method,
+                headers,
+                protocol_version,
+                content_type,
+                content_type_charset,
+                encode_path,
+                contents,
+                url,
+                base_url
+            )
 
             # retrieves the response, controls the saving of the message
             # and calls the appropriate handlers, the yield state is respected
@@ -590,51 +637,51 @@ class HttpClient:
         # creates the string buffer for the message
         message = colony.libs.string_buffer_util.StringBuffer()
 
-        # creates a response object
+        # creates a response object, that will be populated
+        # during the iteration to retrieve the data
         response = HttpResponse(request)
 
-        # creates the start line loaded flag
+        # creates the various flags that will "control" the
+        # parsing of the http response
         start_line_loaded = False
-
-        # creates the header loaded flag
         header_loaded = False
-
-        # creates the message loaded flag
         message_loaded = False
 
         # creates the message offset index, representing the
         # offset byte to the initialization of the message
         message_offset_index = 0
 
-        # creates the message size value
+        # creates the various counters for the size of the
+        # elements from the message
         message_size = 0
-
-        # creates the received data size (counter)
         received_data_size = 0
 
         # unsets the undefined content length finished
+        # (internal control flag)
         undefined_content_length_finished = False
 
-        # continuous loop
+        # runs the loop to parse the complete http message
+        # to be received
         while True:
-            # receives the data
+            # receives the data for the current iteration cycle
+            # according to the defined chunk size
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
-            # in case no valid data was received
+            # in case no valid data was received (empty data)
+            # a proper handling of the problem should be done
             if data == "":
-                # in case the message size is undefined
+                # in case the message size is undefined, assumes
+                # an undefined length message otherwise the message
+                # size must be defined and so an exception is
+                # raised to indicate the problem
                 if message_size == UNDEFINED_CONTENT_LENGTH:
-                    # sets the undefined contents length finished flag
                     undefined_content_length_finished = True
-                # otherwise the message size must be defined
                 else:
-                    # raises the http invalid data exception
                     raise exceptions.HttpInvalidDataException("empty data received")
 
-            # retrieves the data length
+            # retrieves the data length and increments the
+            # received data size (counter) with such value
             data_length = len(data)
-
-            # increments the received data size (counter)
             received_data_size += data_length
 
             # in case the undefined content length
@@ -656,14 +703,20 @@ class HttpClient:
             header_loaded and self._call_handler_data("message_data", handlers_map, response, data)
             if header_loaded and yield_response: yield "message_data", response, data
 
-            # in case the header is not loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size == message_size + message_offset_index:
-                # retrieves the message value from the string buffer
+            # in case the message size is not yet set or is never going to
+            # be set (undefined size) must retrieve the message value
+            if not message_size:
                 message_value = message.get_value()
-            # in case there's no need to inspect the message contents
-            else:
-                # continues the loop
-                continue
+            
+            # in case the header is not loaded or the current message has
+            # been completely received must retrieve the message value
+            elif not header_loaded or\
+                received_data_size == message_size + message_offset_index:
+                message_value = message.get_value()
+            
+            # in case there's no need to inspect the message contents continues
+            # the loop immediately (avoid extra computation)
+            else: continue
 
             # in case the start line is not loaded
             if not start_line_loaded:
@@ -1053,7 +1106,8 @@ class HttpClient:
     def _generate_client_parameters(self, parameters):
         """
         Retrieves the client parameters map from the base parameters
-        map.
+        map. Should set any of the mandatory parameters in case they
+        are not already defined.
 
         @type parameters: Dictionary
         @param parameters: The base parameters map to be used to build
@@ -1070,9 +1124,14 @@ class HttpClient:
         }
 
         # creates the parameters map, from the default parameters
-        parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
-
-        # returns the parameters
+        # this operation should not override the base parameters
+        # but sets the default ones in case their are not already set
+        # the resulting map is then returned to the caller method
+        parameters = colony.libs.map_util.map_extend(
+            parameters,
+            default_parameters,
+            override = False
+        )
         return parameters
 
     def _parse_url(self, url):
@@ -1094,67 +1153,46 @@ class HttpClient:
         # parses the url retrieving the structure
         url_structure = url_parser_plugin.parse_url(url)
 
-        # in case the url structure contains the protocol
-        if url_structure.protocol:
-            # converts the protocol to lower case
-            protocol = url_structure.protocol.lower()
-        else:
-            # raises the http invalid url data exception
-            raise exceptions.HttpInvalidUrlData("missing protocol information: " + url)
+        # in case the url structure contains the protocol sets the
+        # protocol with the value in lower case (normalized) otherwise
+        # raises an exception alerting for the missing protocol information
+        if url_structure.protocol: protocol = url_structure.protocol.lower()
+        else: raise exceptions.HttpInvalidUrlData("missing protocol information: " + url)
 
-        # in case the url structure contains the protocol
+        # in case the url structure contains both the username
+        # and the password information must set it, otherwise
+        # invalidates it (username and password unset)
         if url_structure.username and url_structure.password:
-            # retrieves the username
             username = url_structure.username
-
-            # retrieves the password
             password = url_structure.password
-        else:
-            # sets the username as invalid (not set)
-            username = None
+        else: username = None; password = None
 
-            # sets the password as invalid (not set)
-            password = None
+        # in case the url structure contains the base name sets it
+        # as the host field otherwise raises an exception indicating
+        # the missing of the host information
+        if url_structure.base_name: host = url_structure.base_name
+        else: raise exceptions.HttpInvalidUrlData("missing host information: " + url)
 
-        # in case the url structure contains the base name
-        if url_structure.base_name:
-            # retrieves the base name as the host
-            host = url_structure.base_name
-        else:
-            # raises the http invalid url data exception
-            raise exceptions.HttpInvalidUrlData("missing host information: " + url)
-
-        # in case the url structure contains the port
-        if url_structure.port:
-            # retrieves the port
-            port = url_structure.port
-        else:
-            # sets the port retrieving it from the default port map
-            port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
+        # in case the url structure contains the port (pre defined port)
+        # must use it as it's enforced otherwise uses the map associating
+        # each of the protocols with the default port to retrieve the port
+        if url_structure.port: port = url_structure.port
+        else: port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
 
         # in case the url structure contains the resource reference
-        if url_structure.resource_reference:
-            # retrieves the resource reference as the path
-            path = url_structure.resource_reference
-        else:
-            # sets the default path (root)
-            path = "/"
+        # uses it, otherwise assumes the root path (default behavior)
+        if url_structure.resource_reference: path = url_structure.resource_reference
+        else: path = "/"
 
-        # in case the url structure contains the base url
-        if url_structure.base_url:
-            # retrieves the base url
-            base_url = url_structure.base_url
-        else:
-            # sets the base url as invalid
-            base_url = None
+        # in case the url structure contains the base url sets it
+        # otherwise invalidates the value
+        if url_structure.base_url: base_url = url_structure.base_url
+        else: base_url = None
 
-        # in case the url structure contains the options map
-        if url_structure.options_map:
-            # retrieves the options map
-            options_map = url_structure.options_map
-        else:
-            # sets the options map as empty
-            options_map = {}
+        # in case the url structure contains the options map must set
+        # it otherwise must use an empty map for the options
+        if url_structure.options_map: options_map = url_structure.options_map
+        else: options_map = {}
 
         # returns the tuple containing the protocol, the username,
         # the password, the host, the port, the path, the base url
@@ -1191,14 +1229,13 @@ class HttpClient:
         plugin = self.client_http.plugin
 
         # in case the location value is not set in the response header
-        if not LOCATION_VALUE in response.headers_map:
-            # returns invalid
-            return None
+        # cannot process any redirection operation, must return
+        # immediately with an invalid value
+        if not LOCATION_VALUE in response.headers_map: return None
 
-        # retrieves the location
+        # retrieves the location header from the response
+        # and decodes it with the appropriate charset
         location = response.headers_map[LOCATION_VALUE]
-
-        # decodes the location using the default url charset
         location = location.decode(DEFAULT_URL_CHARSET)
 
         # retrieves the url of the request
