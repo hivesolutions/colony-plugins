@@ -111,10 +111,11 @@ class ApiPaypal(colony.base.system.System):
         paypal_structure = api_attributes.get("paypal_structure", None)
         test_mode = api_attributes.get("test_mode", False)
 
-        # creates a new paypal client with the given options
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         paypal_client = PaypalClient(client_http_plugin, paypal_structure, test_mode)
-
-        # returns the paypal client
+        open_client and paypal_client.open()
         return paypal_client
 
 class PaypalClient:
