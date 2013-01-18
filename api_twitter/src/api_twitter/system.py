@@ -126,26 +126,25 @@ class ApiTwitter(colony.base.system.System):
         # retrieves the json plugin
         json_plugin = self.plugin.json_plugin
 
-        # retrieves the username (if available)
+        # retrieves the various attribute to be used in the
+        # construction of the twitter client
         username = api_attributes.get("username", None)
-
-        # retrieves the password (if available)
         password = api_attributes.get("password", None)
-
-        # retrieves the encoding (if available)
         encoding = api_attributes.get("encoding", None)
-
-        # retrieves the oauth structure (if available)
         oauth_structure = api_attributes.get("oauth_structure", None)
 
-        # creates a new twitter client with the given options
-        twitter_client = TwitterClient(json_plugin, client_http_plugin, username, password, encoding, oauth_structure)
-
-        # in case the client is meant to be open
-        # open the client
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
+        twitter_client = TwitterClient(
+            json_plugin,
+            client_http_plugin,
+            username,
+            password,
+            encoding,
+            oauth_structure
+        )
         open_client and twitter_client.open()
-
-        # returns the twitter client
         return twitter_client
 
 class TwitterClient:
