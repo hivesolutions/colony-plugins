@@ -76,14 +76,11 @@ class ApiYadis(colony.base.system.System):
         # retrieves the yadis structure (if available)
         yadis_structure = api_attributes.get("yadis_structure", None)
 
-        # creates a new yadis client with the given options
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         yadis_client = YadisClient(client_http_plugin, yadis_structure)
-
-        # in case the client is meant to be open
-        # open the client
         open_client and yadis_client.open()
-
-        # returns the yadis client
         return yadis_client
 
 class YadisClient:
@@ -142,9 +139,8 @@ class YadisClient:
         yadis_structure = YadisStructure(provider_url)
 
         # in case the structure is meant to be set
-        if set_structure:
-            # sets the yadis structure
-            self.set_yadis_structure(yadis_structure)
+        # sets the structure in the current instance
+        if set_structure: self.set_yadis_structure(yadis_structure)
 
         # returns the yadis structure
         return yadis_structure
@@ -218,7 +214,7 @@ class YadisClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the built url
