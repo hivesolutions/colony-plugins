@@ -115,6 +115,8 @@ class Crypton(colony.base.system.System):
         """
 
         return (
+            (r"^crypton/encrypt$", self.main_controller.handle_encrypt, "get"),
+            (r"^crypton/decrypt$", self.main_controller.handle_decrypt, "get"),
             (r"^crypton/sign$", self.main_controller.handle_sign, "get"),
             (r"^crypton/verify$", self.main_controller.handle_verify, "get"),
             (r"^crypton/consumers$", self.consumer_controller.handle_create, "post")

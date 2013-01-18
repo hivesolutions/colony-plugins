@@ -51,6 +51,58 @@ class MainController(controllers.Controller):
     The crypton main controller.
     """
 
+    def handle_encrypt(self, rest_request, parameters = {}):
+        """
+        Handles the given crypton encrypt rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The crypton encrypt rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the required controllers
+        signature_controller = self.system.signature_controller
+
+        # processes the form data and retrieves its attributes
+        form_data_map = self.process_form_data(rest_request)
+        api_key = form_data_map.get("api_key", None)
+        key_name = form_data_map["key_name"]
+        message = form_data_map["message"]
+       
+        # encrypts the message and retrieves the encrypted message
+        message_e = signature_controller.encrypt(rest_request, api_key, key_name, message)
+
+        # sets the encrypted message as the contents
+        self.set_contents(rest_request, message_e, "text/plain")
+
+    def handle_decrypt(self, rest_request, parameters = {}):
+        """
+        Handles the given crypton decrypt rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The crypton decrypt rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the required controllers
+        signature_controller = self.system.signature_controller
+
+        # processes the form data and retrieves its attributes
+        form_data_map = self.process_form_data(rest_request)
+        api_key = form_data_map.get("api_key", None)
+        key_name = form_data_map["key_name"]
+        message_e = form_data_map["message_e"]
+      
+        # decrypts the encrypted message, retrieving the original message
+        message = signature_controller.decrypt(rest_request, api_key, key_name, message_e)
+
+        # sets the message as the contents
+        self.set_contents(rest_request, message, "text/plain")
+                          
     def handle_sign(self, rest_request, parameters = {}):
         """
         Handles the given crypton sign rest request.

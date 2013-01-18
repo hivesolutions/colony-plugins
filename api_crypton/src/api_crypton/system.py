@@ -154,7 +154,59 @@ class CryptonClient:
 
         # returns the crypton structure
         return crypton_structure
+    
+    def encrypt(self, message):
+        # retrieves the base url
+        base_url = self.crypton_structure.base_url
 
+        # sets the retrieval url
+        retrieval_url = base_url + "encrypt"
+
+        # encodes the message in base 64
+        message_base_64 = base64.b64encode(message)
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
+
+        # sets the message
+        parameters["message"] = message_base_64
+
+        # fetches the retrieval url with the given parameters
+        # retrieving the (encrypted) message
+        message_e = self._fetch_url(retrieval_url, parameters)
+
+        # returns the (encrypted) message
+        return message_e
+
+    def decrypt(self, message_e):
+        # retrieves the base url
+        base_url = self.crypton_structure.base_url
+
+        # sets the retrieval url
+        retrieval_url = base_url + "decrypt"
+
+        # encodes the message in base 64
+        message_base_64 = base64.b64encode(message_e)
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
+
+        # sets the message
+        parameters["message_e"] = message_base_64
+
+        # fetches the retrieval url with the given parameters
+        # retrieving the (decrypted) message
+        message = self._fetch_url(retrieval_url, parameters)
+
+        # returns the (decrypted) message
+        return message
+    
     def sign(self, message, algorithm_name = None):
         # retrieves the base url
         base_url = self.crypton_structure.base_url
@@ -184,7 +236,7 @@ class CryptonClient:
 
         # returns the signature
         return signature
-
+    
     def verify(self, signature, message):
         # retrieves the base url
         base_url = self.crypton_structure.base_url

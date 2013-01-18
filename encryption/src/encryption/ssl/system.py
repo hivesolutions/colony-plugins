@@ -109,6 +109,32 @@ class SslStructure:
         # writes the keys in pem format
         pkcs_1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
+    def encrypt_base_64(self, public_key_path, message):
+        # encrypts the message, creating the encrypted version
+        # of the message, according to the rsa and pkcs specification
+        message_e = self.encrypt(public_key_path, message)
+
+        # encodes the encrypted message into base 64
+        # and splits the various components from it
+        message_e_base_64 = base64.b64encode(message_e)
+        message_e_base_64 = self._split_base_64(message_e_base_64)
+
+        # returns the encrypted message in base 64
+        return message_e_base_64
+
+    def decrypt_base_64(self, private_key_path, message_e):
+        # decrypts the encrypted message, retrieving the original
+        # message, according to the rsa and pkcs specification
+        message = self.decrypt(private_key_path, message_e)
+
+        # encodes the message into base 64 and splits
+        # the various components from it
+        message_base_64 = base64.b64encode(message)
+        message_base_64 = self._split_base_64(message_base_64)
+
+        # returns the decrypted message in base 64
+        return message_base_64
+
     def sign_base_64(self, private_key_path, hash_algorithm_name, base_string_value):
         # signs the base string value using the hash algorithm
         # with the given name and retrieving the signature

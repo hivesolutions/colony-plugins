@@ -59,6 +59,50 @@ class SignatureController(controllers.Controller):
     The crypton signature controller.
     """
 
+    def encrypt(self, rest_request, api_key, key_name, message):
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+
+        # creates the ssl structure
+        ssl_structure = encryption_ssl_plugin.create_structure({})
+
+        # validates the api key
+        self._validate_api_key(rest_request, api_key)
+
+        # retrieves the public key path for the key name
+        public_key_path = self._get_key_path(key_name, "public_key")
+
+        # decodes the message (using base 64)
+        message_decoded = base64.b64decode(message)
+
+        # encrypts the message (decoded) in base 64
+        message_e = ssl_structure.encrypt_base_64(public_key_path, message_decoded)
+
+        # returns the encrypted message
+        return message_e
+
+    def decrypt(self, rest_request, api_key, key_name, message_e):
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+
+        # creates the ssl structure
+        ssl_structure = encryption_ssl_plugin.create_structure({})
+
+        # validates the api key
+        self._validate_api_key(rest_request, api_key)
+
+        # retrieves the private key path for the key name
+        private_key_path = self._get_key_path(key_name, "private_key")
+
+        # decodes the message (using base 64)
+        message_e_decoded = base64.b64decode(message_e)
+
+        # decrypts the encrypted message (decoded) in base 64
+        message = ssl_structure.encrypt_base_64(private_key_path, message_e_decoded)
+
+        # returns the original message
+        return message
+    
     def sign(self, rest_request, api_key, key_name, message, algorithm_name):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
