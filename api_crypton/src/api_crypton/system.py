@@ -73,14 +73,11 @@ class ApiCrypton(colony.base.system.System):
         # retrieves the crypton structure (if available)
         crypton_structure = api_attributes.get("crypton_structure", None)
 
-        # creates the crypton client
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         crypton_client = CryptonClient(client_http_plugin, crypton_structure)
-
-        # in case the client is meant to be open
-        # opens the client
-        crypton_client and crypton_client.open()
-
-        # returns the crypton client
+        open_client and crypton_client.open()
         return crypton_client
 
 class CryptonClient:
@@ -347,7 +344,7 @@ class CryptonClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url

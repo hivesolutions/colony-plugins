@@ -133,20 +133,16 @@ class ApiDropbox(colony.base.system.System):
         # retrieves the json plugin
         json_plugin = self.plugin.json_plugin
 
-        # retrieves the encoding (if available)
+        # retrieves the various attributes to be used
+        # in the construction of the dropbox client
         encoding = api_attributes.get("encoding", None)
-
-        # retrieves the oauth structure (if available)
         oauth_structure = api_attributes.get("oauth_structure", None)
 
-        # creates a new dropbox client with the given options
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         dropbox_client = DropboxClient(json_plugin, client_http_plugin, encoding, oauth_structure)
-
-        # in case the client is meant to be open
-        # open the client
         open_client and dropbox_client.open()
-
-        # returns the dropbox client
         return dropbox_client
 
 class DropboxClient:
@@ -240,11 +236,9 @@ class DropboxClient:
         oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
 
         # in case the structure is meant to be set
-        if set_structure:
-            # sets the oauth structure
-            self.set_oauth_structure(oauth_structure)
-
-        # returns the oauth structure
+        # sets it in the current instance and returs
+        # the structure that was "just" generated
+        if set_structure: self.set_oauth_structure(oauth_structure)
         return oauth_structure
 
     def open_oauth_request_token(self):
@@ -480,12 +474,10 @@ class DropboxClient:
         # opens the file
         file = open(file_path, "rb")
 
-        try:
-            # reads the file contents
-            file_contents = file.read()
-        finally:
-            # closes the file
-            file.close()
+        # reads the complete file contents and then
+        # closes the file at the end or error
+        try: file_contents = file.read()
+        finally: file.close()
 
         # retrieves the base name to be set for the file
         # (this is the default file name value to be used)
@@ -495,6 +487,8 @@ class DropboxClient:
         # start the parameters map
         parameters = {}
 
+        # creates the url that will be used for the put of the
+        # file on the remove data source
         retrieval_url = CONTENT_REST_SECURE_URL + "files_put/dropbox/" + target_path
 
         # fetches the retrieval url with the given parameters retrieving the json
@@ -598,7 +592,7 @@ class DropboxClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
