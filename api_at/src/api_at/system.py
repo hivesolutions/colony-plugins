@@ -145,7 +145,7 @@ class AtClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, plugin, ssl_plugin = None, client_http_plugin = None, at_structure = None, test_mode = False, key = None, certificate = None,):
+    def __init__(self, plugin, ssl_plugin = None, client_http_plugin = None, at_structure = None, test_mode = False, key = None, certificate = None):
         """
         Constructor of the class.
 
