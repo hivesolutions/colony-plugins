@@ -2129,7 +2129,7 @@ def redirect_to_base_path(self, rest_request, quote = False):
     # redirects (with base) the request to the "redirect to" target
     self.redirect_base_path(rest_request, redirect_to_target, quote = quote)
 
-def process_set_contents(self, rest_request, template_file, apply_base_path = True, assign_session = False, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
+def process_set_contents(self, rest_request, template_file, apply_base_path = True, assign_session = False, assign_flash = True, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
     """
     Processes the template file and set the result of it
     as the contents of the given rest request.
@@ -2146,6 +2146,9 @@ def process_set_contents(self, rest_request, template_file, apply_base_path = Tr
     @type assign_session: bool
     @param assign_session: If the session variables should be assigned on the
     template file to be processed.
+    @type assign_flash: bool
+    @param assign_flash: If the flash information should be automatically
+    assigned to the current template variables.
     @type variable_encoding: String
     @param variable_encoding: The encoding to be used to encode the variables
     in the template file processing.
@@ -2155,9 +2158,11 @@ def process_set_contents(self, rest_request, template_file, apply_base_path = Tr
 
     # applies the base path and assigns the session to the template file in
     # case the apply base path and the assign the session flags are set in
-    # current environment (fast assign)
+    # current environment (fast assign) then in case the assign flash flag
+    # is set assigns the flash information to the template
     apply_base_path and self.apply_base_path_template_file(rest_request, template_file)
     assign_session and self.assign_session_template_file(rest_request, template_file)
+    assign_flash and self.assign_flash_template_file(rest_request, template_file)
 
     # assigns the basic instance attributes to the template file so that
     # it can access the controller instance and the system and plugin instances
