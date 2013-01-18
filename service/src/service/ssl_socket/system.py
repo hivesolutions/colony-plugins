@@ -148,8 +148,15 @@ class SslSocket(colony.base.system.System):
         # tries to retrieve the do handshake on connect value
         do_handshake_on_connect = parameters.get(DO_HANDSHAKE_ON_CONNECT_VALUE, False)
 
-        # warps the normal socket into an ssl socket
-        ssl_socket = self._wrap_socket(normal_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
+        # warps the normal socket into an ssl socket, providing
+        # the extra security layer on top of the normal socket
+        ssl_socket = self._wrap_socket(
+            normal_socket,
+            key_file_path,
+            certificate_file_path,
+            server_side,
+            do_handshake_on_connect = do_handshake_on_connect
+        )
 
         # returns the ssl socket
         return ssl_socket
