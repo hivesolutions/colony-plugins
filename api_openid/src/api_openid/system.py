@@ -242,14 +242,11 @@ class ApiOpenid(colony.base.system.System):
         # retrieves the openid structure (if available)
         openid_structure = api_attributes.get("openid_structure", None)
 
-        # creates the openid client
+        # creates a new client with the given options, opens
+        # it in case it's required and returns the generated
+        # client to the caller method
         openid_client = OpenidClient(self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure)
-
-        # in case the client is meant to be open
-        # opens the client
         open_client and openid_client.open()
-
-        # returns the openid client
         return openid_client
 
     def _verify_nonce(self, nonce_value, provider_url):
