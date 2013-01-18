@@ -1390,7 +1390,7 @@ class OpenidClient:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base urtl
+        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the built url
