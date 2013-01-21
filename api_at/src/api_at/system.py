@@ -118,7 +118,7 @@ class AtClient:
     Will be used to encapsulate the http request
     around a locally usable api.
     """
-    
+
     plugin = None
     """ The plugin associated with the at client this
     plugin is considered the owner of the client """
@@ -135,7 +135,7 @@ class AtClient:
     test_mode = None
     """ Flag indicating the client is supposed to
     run in test mode (uses different api urls) """
-    
+
     key = None
     """ The path to the private key file to be used
     in the connection with the server """
@@ -168,7 +168,7 @@ class AtClient:
         in the connection with the server.
         @type certificate: String
         @param certificate: The path to the certificate file to be used
-        in the connection with the server.        
+        in the connection with the server.
         """
 
         self.plugin = plugin
@@ -194,7 +194,7 @@ class AtClient:
         # in case an http client is defined closes it
         # (flushing its internal structures
         if self.http_client: self.http_client.close({})
-        
+
     def generate_at_structure(self, username, password, set_structure = True):
         """
         Generates the at structure for the given arguments.
@@ -219,42 +219,38 @@ class AtClient:
 
         # returns the at structure
         return at_structure
-        
+
     def get_resource(self, path):
         # retrieves the current plugin manager associated
         # with the current context of execution
         plugin_manager = self.plugin.manager
-        
+
         # retrieves the plugin path for the currently associated
         # (owner) plugin and uses it to retrieve the complete path
         # for the requested resource then returns that path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         path = os.path.join(plugin_path, path)
         return path
-        
+
     def submit_invoice(self, invoice_payload):
         # retrieves the proper based url according to the current
         # test mode and uses it to create the complete action url
         base_url = self.test_mode and BASE_TEST_URL or BASE_URL
         submit_invoice_url = base_url + "/faturas"
-        
+
         # retrieves the proper username and password values
         # according to the current test mode flag value
         username = self.test_mode and "599999993/0037" or self.at_structure.username
         password = self.test_mode and "testes1234" or self.at_structure.password
 
-        # retrieves the block size currently in use
-        # by the aes cryptographic system
-        block_size = colony.libs.aes_util.BLOCK_SIZE
-        
-        # generates a new secret key that will be used in
-        # the aes encoding structures
-        secret = os.urandom(block_size)
-
         # creates a new aes cipher structure to be
-        # able to encrypt the target fields
-        aes = colony.libs.aes_util.AesCipher(secret)        
-        
+        # able to encrypt the target fields and gets
+        # its currently set key as the secret (this
+        # key was generated according to the default
+        # block size defined in the module)
+        aes = colony.libs.aes_util.AesCipher()
+        secret = aes.get_key()
+
         # retrieves the path to the at public key to be used
         # in the encryption of the secret value (as nonce)
         public_key_path = self.get_resource("api_at/resources/at.pem")
@@ -325,7 +321,7 @@ class AtClient:
         """
         Validates that the credentials are valid, returning a flag
         indicating the result.
-        
+
         This operation is considered a mock for the at client as
         it returns valid, provides api compatibility.
 
@@ -361,7 +357,7 @@ class AtClient:
         """
         Fetches the given url for the given parameters and using
         the given method.
-        
+
         This method should block while the remote communication
         is on idle or receiving.
 
@@ -459,7 +455,7 @@ class AtClient:
             base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
             key_path = self.test_mode and base_key_path or self.key
             certificate_path = self.test_mode and base_certificate_path or self.certificate
-            
+
             # defines the client parameters to be used in the
             # creation of the http client
             client_parameters = {
