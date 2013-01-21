@@ -42,6 +42,8 @@ import base64
 import hashlib
 import datetime
 
+import xml.dom.minidom
+
 import colony.base.system
 import colony.libs.aes_util
 
@@ -313,8 +315,11 @@ class AtClient:
             invoice_payload
         )
 
-        xml = self._fetch_url(submit_invoice_url, method = "POST", contents = message)
-        print xml
+        # "fetches" the submit invoice url with the message contents
+        # this should post the invoice and create it in the remote
+        # data source
+        data = self._fetch_url(submit_invoice_url, method = "POST", contents = message)
+        self._check_at_errors(data)
 
     def validate_credentials(self):
         """
@@ -400,20 +405,40 @@ class AtClient:
         @type data: Dictionary
         @param data: The data to be checked for at errors.
         """
+
+        # parses the xml data and retrieves the entry document
+        # structure that will be uses in the parsing
+        document = xml.dom.minidom.parseString(data)
         
-        #@TODO: implement this correctly
+        # tries to retrieve the various elements from the xml data
+        # that represent error information, an error may be either
+        # a normal message based error or a fault
+        fault_strings = document.getElementsByTagName("faultstring")
+        return_codes = document.getElementsByTagName("ReturnCode") 
+        return_messages = document.getElementsByTagName("ReturnMessage") 
+        
+        # in case no fault strings and no returns messages are
+        # defined must return immediately because no error has
+        # been discovered (or raised)
+        if not fault_strings and not return_messages: return
+        
+        # tries to retrieve the return code defaulting to undefined
+        # in case there's a fault string then retrieves the return
+        # message either from the fault string or from the return messages
+        return_code = None if fault_strings else self._text(return_codes[0])
+        return_message = self._text(fault_strings[0]) if fault_strings else self._text(return_messages[0])
+        
+        # "casts" the return code as an integer, in order to convert
+        # it from the "normal" string representation
+        return_code = return_code and int(return_code)
+        
+        # in case the return code is zero no error is currently present
+        # (this is a successful request) must return immediately
+        if return_code == 0: return
 
-        # retrieves the message value and returns immediately
-        # in case it's not defined (no error in request)
-        message = data.get("L_SHORTMESSAGE0", None)
-        if not message: return
-
-        # tries to retrieve the long message to be used for more
-        # in depth diagnostics of the problem
-        long_message = data.get("L_LONGMESSAGE0", None)
-
-        # raises the at api error
-        raise exceptions.AtApiError("error in request: " + message, long_message)
+        # raises the at api error exception associated with the error
+        # that has just been "parsed" 
+        raise exceptions.AtApiError(return_message, return_code)
 
     def _get_http_client(self):
         """
@@ -450,6 +475,12 @@ class AtClient:
 
         # returns the created/existing http client
         return self.http_client
+
+    def _text(self, node):
+        for _node in node.childNodes:
+            if not _node.nodeType == xml.dom.Node.TEXT_NODE: continue
+            return _node.data
+        return None
 
 class AtStructure:
     """
