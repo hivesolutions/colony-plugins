@@ -39,22 +39,22 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.exceptions
 
-class ApiPaypalException(colony.base.exceptions.ColonyException):
+class ApiAtException(colony.base.exceptions.ColonyException):
     """
-    The api paypal exception class.
+    The api at exception class.
     """
 
     message = None
     """ The exception's message """
 
-class PaypalApiError(ApiPaypalException):
+class AtApiError(ApiAtException):
     """
-    The paypal api error class.
+    The at api error class.
     """
 
-    long_message = None
-    """ The longer version of the error message present
-    by the paypal api """
+    error_code = None
+    """ The code associated with the message contained
+    in this api error """
 
     def __init__(self, message, long_message):
         """
@@ -64,10 +64,10 @@ class PaypalApiError(ApiPaypalException):
         @param message: The message to be printed.
         @type long_message: String
         @param long_message: The longer version of the
-        error message present by the paypal api.
+        error message present by the at api.
         """
 
-        ApiPaypalException.__init__(self)
+        ApiAtException.__init__(self)
         self.message = message
         self.long_message = long_message
 
@@ -79,4 +79,4 @@ class PaypalApiError(ApiPaypalException):
         @return: The string representation of the class.
         """
 
-        return "Paypal api error - %s" % self.message
+        return "At api error - %s" % self.message
