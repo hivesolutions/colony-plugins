@@ -47,6 +47,34 @@ class TemplateEngineException(colony.base.exceptions.ColonyException):
     message = None
     """ The exception's message """
 
+class RuntimeError(TemplateEngineException):
+    """
+    The runtime error class.
+    Should be used for general exceptions resulting from
+    the runtime execution of the template engine.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        TemplateEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Runtime error - %s" % self.message
+
 class UndefinedVariable(TemplateEngineException):
     """
     The undefined variable class.

@@ -37,12 +37,14 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import re
 
 import colony.base.system
 
 import ast
 import visitor
+import exceptions
 
 START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
 """ The start tag regular expression value """
@@ -124,14 +126,28 @@ class TemplateEngine(colony.base.system.System):
     """
 
     def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
-        # opens the file for reading
+        # verifies that the template file requested exists in the
+        # file system in case it does not raises an exception
+        if not os.path.exists(file_path):
+            raise exceptions.RuntimeError("'%s' template file not found" % file_path)
+
+        # opens the file for the reading of its contents
+        # the complete data will be read
         file = open(file_path, "r")
 
         try:
-            # parses the file, retrieving the template file
-            template_file = self.parse_file(file, file_path, encoding, process_methods_list, locale_bundles)
+            # parses the file, retrieving the template file structure
+            # that can be used for the execution of it
+            template_file = self.parse_file(
+                file,
+                file_path,
+                encoding,
+                process_methods_list,
+                locale_bundles
+            )
         finally:
-            # closes the file
+            # closes the file no further reading operations
+            # will be done for the file
             file.close()
 
         # returns the template file
