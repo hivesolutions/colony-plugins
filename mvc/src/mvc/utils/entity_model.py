@@ -632,7 +632,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query
     # this is the base value for the search
-    if name :
+    if name:
         # retrieves the data type for the name attribute and in
         # case it's not a sequence converts it to a immutable
         # sequence (tuple) for iteration
