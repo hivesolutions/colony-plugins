@@ -166,7 +166,7 @@ def dispatch_visit():
 
                         return
 
-            # in case of failure to find the proper callbak
+            # in case of failure to find the proper callback
             function(*args, **kwargs)
 
         return decorator_interceptor
