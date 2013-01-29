@@ -110,26 +110,25 @@ def dispatch_visit():
 
             # iterates over all the node value class mro elements
             for node_value_class_mro_element in node_value_class_mro:
-                # in case the node method map exist in the current instance
-                if hasattr(self_value, "node_method_map"):
-                    # retrieves the node method map from the current instance
-                    node_method_map = getattr(self_value, "node_method_map")
+                # in case the node method map does not exists in
+                # the current instance must continue the loop
+                if not hasattr(self_value, "node_method_map"): continue
+                
+                # retrieves the node method map from the current instance
+                # and verifies that the node value class exists in the
+                # node method map, otherwise continues the loop
+                node_method_map = getattr(self_value, "node_method_map")
+                if not node_value_class_mro_element in node_method_map: continue
+                    
+                # retrieves the correct visit method for the element and
+                # then calls it "enclosed" by calls to the before and after
+                # visit handler methods
+                visit_method = node_method_map[node_value_class_mro_element]
+                self_value.before_visit(*args[1:], **kwargs)
+                visit_method(*args, **kwargs)
+                self_value.after_visit(*args[1:], **kwargs)
 
-                    # in case the node value class exists in the node method map
-                    if node_value_class_mro_element in node_method_map:
-                        # retrieves the visit method for the given node value class
-                        visit_method = node_method_map[node_value_class_mro_element]
-
-                        # calls the before visit method
-                        self_value.before_visit(*args[1:], **kwargs)
-
-                        # calls the visit method
-                        visit_method(*args, **kwargs)
-
-                        # calls the after visit method
-                        self_value.after_visit(*args[1:], **kwargs)
-
-                        return
+                return
 
             # in case of failure to find the proper callback
             function(*args, **kwargs)
