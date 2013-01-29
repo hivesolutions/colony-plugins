@@ -74,6 +74,28 @@ RIGHT_TEXT_ALIGN_VALUE = "right"
 CENTER_TEXT_ALIGN_VALUE = "center"
 """ The center text align value """
 
+
+
+
+
+
+
+# -------------- REMOVE -----
+
+import reportlab.pdfgen.canvas
+import reportlab.pdfbase.ttfonts
+import reportlab.pdfbase.pdfmetrics
+import reportlab.lib.units
+
+SCALE = reportlab.lib.units.cm
+ROLL_PAPER = (8 * SCALE, 29.7 * SCALE)
+PAPER_SIZE = ROLL_PAPER
+
+# ------------------------------
+
+
+
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -145,26 +167,25 @@ def dispatch_visit():
 
             # iterates over all the node value class mro elements
             for node_value_class_mro_element in node_value_class_mro:
-                # in case the node method map exist in the current instance
-                if hasattr(self_value, "node_method_map"):
-                    # retrieves the node method map from the current instance
-                    node_method_map = getattr(self_value, "node_method_map")
+                # in case the node method map does not exists in
+                # the current instance must continue the loop
+                if not hasattr(self_value, "node_method_map"): continue
+                
+                # retrieves the node method map from the current instance
+                # and verifies that the node value class exists in the
+                # node method map, otherwise continues the loop
+                node_method_map = getattr(self_value, "node_method_map")
+                if not node_value_class_mro_element in node_method_map: continue
+                    
+                # retrieves the correct visit method for the element and
+                # then calls it "enclosed" by calls to the before and after
+                # visit handler methods
+                visit_method = node_method_map[node_value_class_mro_element]
+                self_value.before_visit(*args[1:], **kwargs)
+                visit_method(*args, **kwargs)
+                self_value.after_visit(*args[1:], **kwargs)
 
-                    # in case the node value class exists in the node method map
-                    if node_value_class_mro_element in node_method_map:
-                        # retrieves the visit method for the given node value class
-                        visit_method = node_method_map[node_value_class_mro_element]
-
-                        # calls the before visit method
-                        self_value.before_visit(*args[1:], **kwargs)
-
-                        # calls the visit method
-                        visit_method(*args, **kwargs)
-
-                        # calls the after visit method
-                        self_value.after_visit(*args[1:], **kwargs)
-
-                        return
+                return
 
             # in case of failure to find the proper callback
             function(*args, **kwargs)
@@ -310,8 +331,32 @@ class Visitor:
             self.current_position = (
                 0, 0
             )
+            
+            # ------------------------- REMOVE ----------------------
+            
+            canvas = reportlab.pdfgen.canvas.Canvas(
+                "c:/out.pdf",
+                pagesize = PAPER_SIZE
+            )
+            width, height = PAPER_SIZE
+            
+            self.printing_options["canvas"] = canvas
+            self.printing_options["width"] = width
+            self.printing_options["height"] = height
+            
+            #  ------------------------------------------------------------
+            
         # in case it's the second visit
         elif self.visit_index == 1:
+            
+            #  ------------------------------------------------------------
+            
+            canvas = self.printing_options["canvas"]
+            canvas.save()
+            
+            #  ------------------------------------------------------------
+            
+            
             # retrieves the printing document name
             printing_document_name = node.name
             printing_document_width = hasattr(node, "width") and int(node.width) or 0
@@ -532,6 +577,16 @@ class Visitor:
             element += text_encoded
             element += "\0"
             self.elements_list.append((1, element))
+            
+            # ------------------------- REMOVE ----------------------
+            
+            canvas = self.printing_options["canvas"]
+            height = self.printing_options["height"]
+            canvas.drawString(position_x, current_position_context_y + height, text_encoded)
+            
+            # ----------------------------------------
+            
+            
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
@@ -547,128 +602,7 @@ class Visitor:
     @_visit(printing.manager.ast.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
-            # adds the node as the context information
             self.add_context_information(node)
-
-            # sets the image path object
-            image_path = None
-
-            # starts the image source object
-            image_source = None
-
-            if self.has_context_information("path"):
-                # retrieves the image path
-                image_path = self.get_context_information("path")
-            elif self.has_context_information("source"):
-                # retrieves the image source
-                image_source = self.get_context_information("source")
-
-            # retrieves the text align
-            text_align = self.get_context_information("text_align")
-
-            if self.has_context_information("x"):
-                # retrieves the x position (block position)
-                position_x = int(self.get_context_information("x"))
-            else:
-                # retrieves the x position (default and global position)
-                position_x = 0
-
-            if self.has_context_information("y"):
-                # retrieves the y position (block position)
-                position_y = int(self.get_context_information("y"))
-            else:
-                # retrieves the y position (default and global position)
-                position_y = 0
-
-            if self.has_context_information("width"):
-                # retrieves the width (block width)
-                block_width = int(self.get_context_information("width"))
-            else:
-                # retrieves the width (default and global width)
-                block_width = 0
-
-            if self.has_context_information("height"):
-                # retrieves the height (block height)
-                block_height = int(self.get_context_information("height"))
-            else:
-                # retrieves the height (default and global height)
-                block_height = 0
-
-            # in case the image path is defined
-            if image_path:
-                # opens the bitmap image
-                bitmap_image = PIL.Image.open(image_path)
-            # in case the image source is defined
-            elif image_source:
-                # decodes the image source
-                image_source_decoded = base64.b64decode(image_source)
-
-                # creates the image buffer
-                image_source_buffer = colony.libs.string_buffer_util.StringBuffer(False)
-
-                # writes the image source decoded in the image source buffer
-                image_source_buffer.write(image_source_decoded)
-
-                # goes to the beginning of the file
-                image_source_buffer.seek(0)
-
-                # opens the bitmap image
-                bitmap_image = PIL.Image.open(image_source_buffer)
-
-            # retrieves the bitmap image width and height
-            bitmap_image_width, bitmap_image_height = bitmap_image.size
-
-            # creates a new image without transparency settings, so that
-            # no extra color is used ands copies the bitmap image into it
-            other_image = PIL.Image.new("RGB", (bitmap_image_width, bitmap_image_height), color = "white")
-            other_image.paste(bitmap_image, bitmap_image)
-
-            # retrieves the current position in x and y
-            _current_position_x, current_position_y = self.current_position
-
-            # in case the text align is left
-            if text_align == LEFT_TEXT_ALIGN_VALUE:
-                text_align_int = 1
-
-            # in case the text align is right
-            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
-                text_align_int = 2
-
-            # in case the text align is left
-            elif text_align == CENTER_TEXT_ALIGN_VALUE:
-                text_align_int = 3
-
-            # sets the real bitmap image height as the bitmap
-            # image height (value copy)
-            real_bitmap_image_height = bitmap_image_height
-
-            # creates a new string buffer for the image
-            string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
-
-            # saves the new image into the string buffer and then
-            # retrieve the buffer data
-            other_image.save(string_buffer, "bmp")
-            buffer = string_buffer.get_value()
-
-            # packs the element image element structure containing all the meta
-            # information that makes part of it then adds the "just" created
-            # element to the elements list
-            element = struct.pack(
-                "<iiIIIIII",
-                0,
-                current_position_y,
-                text_align_int,
-                position_x,
-                position_y,
-                block_width,
-                block_height,
-                len(buffer)
-            )
-            element += buffer
-            self.elements_list.append((2, element))
-
-            if self.get_context_information("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context_information("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
             self.remove_context_information(node)
@@ -772,7 +706,8 @@ class Visitor:
 
         # in case the context information name exists in the
         # context information map and is not invalid
-        if context_information_name in self.context_information_map and self.context_information_map[context_information_name]:
+        if context_information_name in self.context_information_map and\
+            self.context_information_map[context_information_name]:
             # returns true
             return True
         # otherwise
