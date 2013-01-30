@@ -54,11 +54,34 @@ IMAGE_SCALE_FACTOR = 10
 """ The image scale factor """
 
 EXCLUSION_LIST = [
-    "__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__",
-    "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__",
-    "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__",
-    "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node",
-    "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"
+    "__class__",
+    "__delattr__",
+    "__dict__",
+    "__doc__",
+    "__getattribute__",
+    "__hash__",
+    "__init__",
+    "__module__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__str__",
+    "__weakref__",
+    "__format__",
+    "__sizeof__",
+    "__subclasshook__",
+    "accept",
+    "accept_double",
+    "accept_post_order",
+    "add_child_node",
+    "remove_child_node",
+    "set_indent",
+    "set_value",
+    "indent",
+    "value",
+    "child_nodes"
 ]
 """ The exclusion list """
 
@@ -219,7 +242,7 @@ class Visitor:
     current_position = None
     """ The current position """
 
-    context_information_map = {}
+    context_map = {}
     """ The context information map """
 
     def __init__(self):
@@ -230,7 +253,7 @@ class Visitor:
         self.printing_options = {}
         self.elements_list = []
         self.current_position = None
-        self.context_information_map = {}
+        self.context_map = {}
 
         self.update_node_method_map()
 
@@ -297,7 +320,7 @@ class Visitor:
         # in case it's the first visit
         if self.visit_index == 0:
             # adds the node as the context information
-            self.add_context_information(node)
+            self.add_context(node)
 
             # retrieves the printing document name
             printing_document_name = node.name
@@ -342,7 +365,7 @@ class Visitor:
                 self.printing_options["file"].write(element_data)
 
             # removes the context information
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     @_visit(printing.manager.ast.Block)
     def visit_block(self, node):
@@ -350,135 +373,83 @@ class Visitor:
             # adds the node as the context information, this way
             # the complete set of symbols for the block are exposed
             # to the underlying nodes (block opening)
-            self.add_context_information(node)
-            self.push_context_information("biggest_height", 0)
+            self.add_context(node)
+            self.push_context("biggest_height", 0)
 
         # in case it's the second visit
         elif self.visit_index == 1:
             # removes the context information
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     @_visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0:
-            self.add_context_information(node)
+            self.add_context(node)
         elif self.visit_index == 1:
             # removes the context information
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     @_visit(printing.manager.ast.Line)
     def visit_line(self, node):
         if self.visit_index == 0:
-            self.add_context_information(node)
+            self.add_context(node)
 
-            self.push_context_information("biggest_height", 0)
+            self.push_context("biggest_height", 0)
 
-            if self.has_context_information("margin_top"):
-                # retrieves the margin top
-                margin_top = int(self.get_context_information("margin_top"))
-            else:
-                # sets the default margin top
-                margin_top = 0
+            # retrieves the margin top value defined
+            # for the current context
+            margin_top = int(self.get_context("margin_top", "0"))
 
             # retrieves the current position in x and y
+            # and then updates the current position
             current_position_x, current_position_y = self.current_position
-
-            # updates the current position values
             self.current_position = (
                 current_position_x,
                 current_position_y - margin_top * FONT_SCALE_FACTOR
             )
+            
         elif self.visit_index == 1:
-            biggest_height = self.get_context_information("biggest_height")
+            biggest_height = self.get_context("biggest_height")
 
-            self.pop_context_information("biggest_height")
+            self.pop_context("biggest_height")
 
-            if self.has_context_information("margin_bottom"):
-                # retrieves the margin bottom
-                margin_bottom = int(self.get_context_information("margin_bottom"))
-            else:
-                # sets the default margin bottom
-                margin_bottom = 0
+            # retrieves the margin bottom value defined
+            # for the current context
+            margin_bottom = int(self.get_context("margin_bottom", "0"))
 
             # retrieves the current position in x and y
+            # and then updates the current position
             current_position_x, current_position_y = self.current_position
-
-            # sets the new current position
             self.current_position = (
                 0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
             )
 
             # removes the context information
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     @_visit(printing.manager.ast.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
             # adds the node as the context information
-            self.add_context_information(node)
+            self.add_context(node)
 
             # retrieves the text and encodes it using
             # the default encoder and ignoring possible errors
             text_encoded = node.text.encode(DEFAULT_ENCODER, "ignore")
 
-            # retrieves the font name
-            font_name = str(self.get_context_information("font"))
-
-            # retrieves the font size
-            font_size = int(self.get_context_information("font_size"))
-
-            # retrieves the text align
-            text_align = self.get_context_information("text_align")
-
-            if self.has_context_information("font_style"):
-                # retrieves the font style
-                font_style = self.get_context_information("font_style")
-            else:
-                # sets the font style
-                font_style = "regular"
-
-            if self.has_context_information("margin_left"):
-                # retrieves the margin left
-                margin_left = int(self.get_context_information("margin_left"))
-            else:
-                # sets the default margin left
-                margin_left = 0
-
-            if self.has_context_information("margin_right"):
-                # retrieves the margin right
-                margin_right = int(self.get_context_information("margin_right"))
-            else:
-                # sets the default margin right
-                margin_right = 0
-
-            if self.has_context_information("x"):
-                # retrieves the x position (block position)
-                position_x = int(self.get_context_information("x"))
-            else:
-                # retrieves the x position (default and global position)
-                position_x = 0
-
-            if self.has_context_information("y"):
-                # retrieves the y position (block position)
-                position_y = int(self.get_context_information("y"))
-            else:
-                # retrieves the y position (default and global position)
-                position_y = 0
-
-            if self.has_context_information("width"):
-                # retrieves the width (block width)
-                block_width = int(self.get_context_information("width"))
-            else:
-                # retrieves the width (default and global width)
-                block_width = 0
-
-            if self.has_context_information("height"):
-                # retrieves the height (block height)
-                block_height = int(self.get_context_information("height"))
-            else:
-                # retrieves the height (default and global height)
-                block_height = 0
-
+            # retrieves the complete set of attributes for the current
+            # context to be used for the processing of the node
+            font_name = str(self.get_context("font"))
+            font_size = int(self.get_context("font_size"))
+            text_align = self.get_context("text_align")
+            font_style = self.get_context("font_style", "regular")
+            margin_left = int(self.get_context("margin_left", "0"))
+            margin_right = int(self.get_context("margin_right", "0"))
+            position_x = int(self.get_context("x", "0"))
+            position_y = int(self.get_context("y", "0"))
+            block_width = int(self.get_context("width", "0"))
+            block_height = int(self.get_context("height", "0"))
+            
             # sets the default values for the text weight and for
             # the italic enumeration
             text_weight_int = 0
@@ -534,20 +505,20 @@ class Visitor:
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
-            if self.get_context_information("biggest_height") < text_height:
+            if self.get_context("biggest_height") < text_height:
                 # substitutes the new biggest height with the text height
-                self.put_context_information("biggest_height", text_height)
+                self.put_context("biggest_height", text_height)
 
         # in case it's the second visit
         elif self.visit_index == 1:
             # removes the context information
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     @_visit(printing.manager.ast.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
             # adds the node as the context information
-            self.add_context_information(node)
+            self.add_context(node)
 
             # sets the image path object
             image_path = None
@@ -555,40 +526,40 @@ class Visitor:
             # starts the image source object
             image_source = None
 
-            if self.has_context_information("path"):
+            if self.has_context("path"):
                 # retrieves the image path
-                image_path = self.get_context_information("path")
-            elif self.has_context_information("source"):
+                image_path = self.get_context("path")
+            elif self.has_context("source"):
                 # retrieves the image source
-                image_source = self.get_context_information("source")
+                image_source = self.get_context("source")
 
             # retrieves the text align
-            text_align = self.get_context_information("text_align")
+            text_align = self.get_context("text_align")
 
-            if self.has_context_information("x"):
+            if self.has_context("x"):
                 # retrieves the x position (block position)
-                position_x = int(self.get_context_information("x"))
+                position_x = int(self.get_context("x"))
             else:
                 # retrieves the x position (default and global position)
                 position_x = 0
 
-            if self.has_context_information("y"):
+            if self.has_context("y"):
                 # retrieves the y position (block position)
-                position_y = int(self.get_context_information("y"))
+                position_y = int(self.get_context("y"))
             else:
                 # retrieves the y position (default and global position)
                 position_y = 0
 
-            if self.has_context_information("width"):
+            if self.has_context("width"):
                 # retrieves the width (block width)
-                block_width = int(self.get_context_information("width"))
+                block_width = int(self.get_context("width"))
             else:
                 # retrieves the width (default and global width)
                 block_width = 0
 
-            if self.has_context_information("height"):
+            if self.has_context("height"):
                 # retrieves the height (block height)
-                block_height = int(self.get_context_information("height"))
+                block_height = int(self.get_context("height"))
             else:
                 # retrieves the height (default and global height)
                 block_height = 0
@@ -666,11 +637,11 @@ class Visitor:
             element += buffer
             self.elements_list.append((2, element))
 
-            if self.get_context_information("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context_information("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+            if self.get_context("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
+                self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
-            self.remove_context_information(node)
+            self.remove_context(node)
 
     def get_current_position_context(self):
         """
@@ -694,75 +665,76 @@ class Visitor:
         # returns the current position context
         return current_position_context
 
-    def get_context_information(self, context_information_name):
-        if not self.has_context_information(context_information_name):
+    def get_context(self, context_name, default = None):
+        if not self.has_context(context_name):
+            if not default == None: return default
             raise exceptions.InvalidContextInformationName(
-                "the context information name: " + context_information_name + " is invalid"
+                "the context information name: " + context_name + " is invalid"
             )
 
-        return self.peek_context_information(context_information_name)
+        return self.peek_context(context_name)
 
-    def add_context_information(self, node):
+    def add_context(self, node):
         valid_attributes = [(value, getattr(node, value)) for value in dir(node) if value not in EXCLUSION_LIST]
 
         for valid_attribute_name, valid_attribute_value in valid_attributes:
-            self.push_context_information(valid_attribute_name, valid_attribute_value)
+            self.push_context(valid_attribute_name, valid_attribute_value)
 
-    def remove_context_information(self, node):
+    def remove_context(self, node):
         valid_attribute_names = [value for value in dir(node) if value not in EXCLUSION_LIST]
 
         for valid_attribute_name in valid_attribute_names:
-            self.pop_context_information(valid_attribute_name)
+            self.pop_context(valid_attribute_name)
 
-    def push_context_information(self, context_information_name, context_information_value):
-        if not context_information_name in self.context_information_map:
-            self.context_information_map[context_information_name] = []
+    def push_context(self, context_name, context_value):
+        if not context_name in self.context_map:
+            self.context_map[context_name] = []
 
-        self.context_information_map[context_information_name].append(context_information_value)
+        self.context_map[context_name].append(context_value)
 
-    def pop_context_information(self, context_information_name):
-        if not context_information_name in self.context_information_map:
+    def pop_context(self, context_name):
+        if not context_name in self.context_map:
             raise exceptions.InvalidContextInformationName(
-                "the context information name: " + context_information_name + " is invalid"
+                "the context information name: " + context_name + " is invalid"
             )
 
-        self.context_information_map[context_information_name].pop()
+        self.context_map[context_name].pop()
 
-    def peek_context_information(self, context_information_name):
-        if not context_information_name in self.context_information_map:
+    def peek_context(self, context_name):
+        if not context_name in self.context_map:
             raise exceptions.InvalidContextInformationName(
-                "the context information name: " + context_information_name + " is invalid"
+                "the context information name: " + context_name + " is invalid"
             )
 
-        return self.context_information_map[context_information_name][-1]
+        return self.context_map[context_name][-1]
 
-    def put_context_information(self, context_information_name, context_information_value):
+    def put_context(self, context_name, context_value):
         """
         Puts the given context information in the context
         information map.
 
-        @type context_information_name: String
-        @param context_information_name: The name of the context information
+        @type context_name: String
+        @param context_name: The name of the context information
         to be put in the context information map.
-        @type context_information_value: Object
-        @param context_information_value: The value of the context information to be put
+        @type context_value: Object
+        @param context_value: The value of the context information to be put
         in the context information map.
         """
 
-        if not context_information_name in self.context_information_map:
+        if not context_name in self.context_map:
             raise exceptions.InvalidContextInformationName(
-                "the context information name: " + context_information_name + " is invalid"
+                "the context information name: " + context_name + " is invalid"
             )
 
-        self.context_information_map[context_information_name][-1] = context_information_value
+        self.context_map[context_name][-1] = context_value
 
-    def has_context_information(self, context_information_name):
+    def has_context(self, context_name):
         """
         Tests if the given context information name exists
         in the current context information map.
 
-        @type context_information_name: String
-        @param context_information_name: The context information name
+        @type context_name: String
+        @param context_name: The context information name
         to be tested against the current context information map.
         @rtype: bool
         @return: If the context information name exists in the
@@ -771,10 +743,6 @@ class Visitor:
 
         # in case the context information name exists in the
         # context information map and is not invalid
-        if context_information_name in self.context_information_map and self.context_information_map[context_information_name]:
-            # returns true
-            return True
-        # otherwise
-        else:
-            # returns false
-            return False
+        if context_name in self.context_map and\
+            self.context_map[context_name]: return True
+        else: return False
