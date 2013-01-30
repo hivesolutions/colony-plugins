@@ -451,10 +451,9 @@ class Visitor:
             margin_left = int(self.get_context("margin_left", "0"))
             margin_right = int(self.get_context("margin_right", "0"))
 
-            # sets the text weight as the default one
+            # sets the default values for the text weigh and italic
+            # parameters, their are going to be changed as required
             text_weight = DEFAULT_TEXT_WEIGH
-
-            # unsets the text italic flag
             text_italic = False
 
             if font_style == "bold" or font_style == "bold_italic":
@@ -480,13 +479,14 @@ class Visitor:
             # retrieves the current position in x and y
             _current_position_x, _current_position_y = self.current_position
 
-            # retrieves the text width and height
+            # retrieves the text width and height and then calculates
+            # the current clip box values to be used in the calculus of
+            # the appropriate text position
             text_width, text_height = handler_device_context.GetTextExtent(text_encoded)
-
-            # retrieves the current clip box values
             _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
 
-            # initializes the text x coordinate
+            # initializes the text x coordinate with the margin defined
+            # for the current node (difference of margins)
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
             
             # calculates the appropriate text position according to the
