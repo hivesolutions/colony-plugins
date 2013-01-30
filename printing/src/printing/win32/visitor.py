@@ -405,11 +405,8 @@ class Visitor:
 
     @_visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
-        if self.visit_index == 0:
-            self.add_context(node)
-        elif self.visit_index == 1:
-            # removes the context information
-            self.remove_context(node)
+        if self.visit_index == 0: self.add_context(node)
+        elif self.visit_index == 1: self.remove_context(node)
 
     @_visit(printing.manager.ast.Line)
     def visit_line(self, node):
@@ -527,8 +524,8 @@ class Visitor:
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
-            if self.get_context("biggest_height") < text_height:
-                # substitutes the new biggest height with the text height
+            biggest_height = self.get_context("biggest_height")
+            if biggest_height < text_height:
                 self.put_context("biggest_height", text_height)
 
         # in case it's the second visit
@@ -546,23 +543,28 @@ class Visitor:
             self.add_context(node)
 
             # sets the default values for both the image path
-            # and source
+            # and source, both values are unset by default
             image_path = None
             image_source = None
 
-            # retrieves the path and source value to be used
-            # in the retrieval
+            # retrieves the path or source value to be used
+            # in the retrieval (only one value is set)
             if self.has_context("path"): image_path = self.get_context("path")
             elif self.has_context("source"): image_source = self.get_context("source")
 
-            # retrieves the text align
+            # retrieves the complete set of attributes for the current
+            # context to be used for the processing of the node
             text_align = self.get_context("text_align")
 
-            # in case the image path is defined
+            # in case the image path is defined must load the
+            # image data from the file system
             if image_path:
-                # opens the bitmap image
+                # opens the bitmap image directly from the current
+                # file system, no dynamically loaded image
                 bitmap_image = PIL.Image.open(image_path)
-            # in case the image source is defined
+            
+            # in case the image source is defined must load the
+            # base 64 image data from the attribute
             elif image_source:
                 # decodes the image source from the default base 64
                 # encoding to be used for the loading
@@ -622,7 +624,8 @@ class Visitor:
                 current_position_y
             )
 
-            if self.get_context("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
+            biggest_height = self.get_context("biggest_height")
+            if biggest_height < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
                 self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:

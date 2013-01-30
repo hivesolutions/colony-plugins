@@ -383,11 +383,8 @@ class Visitor:
 
     @_visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
-        if self.visit_index == 0:
-            self.add_context(node)
-        elif self.visit_index == 1:
-            # removes the context information
-            self.remove_context(node)
+        if self.visit_index == 0: self.add_context(node)
+        elif self.visit_index == 1: self.remove_context(node)
 
     @_visit(printing.manager.ast.Line)
     def visit_line(self, node):
@@ -505,8 +502,8 @@ class Visitor:
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
-            if self.get_context("biggest_height") < text_height:
-                # substitutes the new biggest height with the text height
+            biggest_height = self.get_context("biggest_height")
+            if biggest_height < text_height:
                 self.put_context("biggest_height", text_height)
 
         # in case it's the second visit
@@ -520,69 +517,44 @@ class Visitor:
             # adds the node as the context information
             self.add_context(node)
 
-            # sets the image path object
+            # sets the default values for both the image path
+            # and source, both values are unset by default
             image_path = None
-
-            # starts the image source object
             image_source = None
 
-            if self.has_context("path"):
-                # retrieves the image path
-                image_path = self.get_context("path")
-            elif self.has_context("source"):
-                # retrieves the image source
-                image_source = self.get_context("source")
+            # retrieves the path or source value to be used
+            # in the retrieval (only one value is set)
+            if self.has_context("path"): image_path = self.get_context("path")
+            elif self.has_context("source"): image_source = self.get_context("source")
 
-            # retrieves the text align
+            # retrieves the complete set of attributes for the current
+            # context to be used for the processing of the node
             text_align = self.get_context("text_align")
+            position_x = int(self.get_context("x", "0"))
+            position_y = int(self.get_context("y", "0"))
+            block_width = int(self.get_context("width", "0"))
+            block_height = int(self.get_context("height", "0"))
 
-            if self.has_context("x"):
-                # retrieves the x position (block position)
-                position_x = int(self.get_context("x"))
-            else:
-                # retrieves the x position (default and global position)
-                position_x = 0
-
-            if self.has_context("y"):
-                # retrieves the y position (block position)
-                position_y = int(self.get_context("y"))
-            else:
-                # retrieves the y position (default and global position)
-                position_y = 0
-
-            if self.has_context("width"):
-                # retrieves the width (block width)
-                block_width = int(self.get_context("width"))
-            else:
-                # retrieves the width (default and global width)
-                block_width = 0
-
-            if self.has_context("height"):
-                # retrieves the height (block height)
-                block_height = int(self.get_context("height"))
-            else:
-                # retrieves the height (default and global height)
-                block_height = 0
-
-            # in case the image path is defined
+            # in case the image path is defined must load the
+            # image data from the file system
             if image_path:
-                # opens the bitmap image
+                # opens the bitmap image directly from the current
+                # file system, no dynamically loaded image
                 bitmap_image = PIL.Image.open(image_path)
-            # in case the image source is defined
+            
+            # in case the image source is defined must load the
+            # base 64 image data from the attribute
             elif image_source:
-                # decodes the image source
+                # decodes the image source from the default base 64
+                # encoding to be used for the loading
                 image_source_decoded = base64.b64decode(image_source)
 
-                # creates the image buffer
+                # creates the image buffer then writes the decoded
+                # image into it and opens the file object with the
+                # created buffer (image loading into structure)
                 image_source_buffer = colony.libs.string_buffer_util.StringBuffer(False)
-
-                # writes the image source decoded in the image source buffer
                 image_source_buffer.write(image_source_decoded)
-
-                # goes to the beginning of the file
                 image_source_buffer.seek(0)
-
-                # opens the bitmap image
                 bitmap_image = PIL.Image.open(image_source_buffer)
 
             # retrieves the bitmap image width and height
@@ -590,7 +562,11 @@ class Visitor:
 
             # creates a new image without transparency settings, so that
             # no extra color is used ands copies the bitmap image into it
-            other_image = PIL.Image.new("RGB", (bitmap_image_width, bitmap_image_height), color = "white")
+            other_image = PIL.Image.new(
+                "RGB",
+                (bitmap_image_width, bitmap_image_height),
+                color = "white"
+            )
             other_image.paste(bitmap_image, bitmap_image)
 
             # retrieves the current position in x and y
@@ -637,7 +613,8 @@ class Visitor:
             element += buffer
             self.elements_list.append((2, element))
 
-            if self.get_context("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
+            biggest_height = self.get_context("biggest_height")
+            if biggest_height < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
                 self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
