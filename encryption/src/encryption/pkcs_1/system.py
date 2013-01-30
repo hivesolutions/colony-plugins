@@ -1017,10 +1017,9 @@ class Pkcs1Structure:
         # iterates continuously
         while True:
             # in case the base index is greater or equal
-            # to the private key der encoded length
-            if base_index >= string_value_length:
-                # breaks the loop
-                break
+            # to the private key der encoded length the
+            # string splitting has reached the end
+            if base_index >= string_value_length: break
 
             # calculates the end index from the base index
             end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
@@ -1029,10 +1028,9 @@ class Pkcs1Structure:
             string_value_token = string_value[base_index:end_index]
 
             # creates the string value from the string value token
-            # and a newline character
+            # and a newline character and adds it to the list of
+            # string values to be joined
             string_value_line = string_value_token + "\n"
-
-            # adds the string value line to the string value list
             string_value_list.append(string_value_line)
 
             # sets the base index as the end index
