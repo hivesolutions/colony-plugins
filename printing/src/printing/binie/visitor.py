@@ -88,15 +88,6 @@ EXCLUSION_LIST = [
 DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
-LEFT_TEXT_ALIGN_VALUE = "left"
-""" The left text align value """
-
-RIGHT_TEXT_ALIGN_VALUE = "right"
-""" The right text align value """
-
-CENTER_TEXT_ALIGN_VALUE = "center"
-""" The center text align value """
-
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -389,7 +380,6 @@ class Visitor:
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context(node)
-
             self.push_context("biggest_height", 0)
 
             # retrieves the margin top value defined
@@ -406,7 +396,6 @@ class Visitor:
 
         elif self.visit_index == 1:
             biggest_height = self.get_context("biggest_height")
-
             self.pop_context("biggest_height")
 
             # retrieves the margin bottom value defined
@@ -460,17 +449,11 @@ class Visitor:
             # retrieves the current position in x and y
             _current_position_context_x, current_position_context_y = self.current_position
 
-            # in case the text align is left
-            if text_align == LEFT_TEXT_ALIGN_VALUE:
-                text_align_int = 1
-
-            # in case the text align is right
-            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
-                text_align_int = 2
-
-            # in case the text align is left
-            elif text_align == CENTER_TEXT_ALIGN_VALUE:
-                text_align_int = 3
+            # converts the provided text align value into the
+            # appropriate integer value representing it
+            if text_align == "left": text_align_int = 1
+            elif text_align == "right": text_align_int = 2
+            elif text_align == "center": text_align_int = 3
 
             # calculates the text height from the font scale factor
             text_height = font_size * FONT_SCALE_FACTOR;
@@ -571,17 +554,11 @@ class Visitor:
             # retrieves the current position in x and y
             _current_position_x, current_position_y = self.current_position
 
-            # in case the text align is left
-            if text_align == LEFT_TEXT_ALIGN_VALUE:
-                text_align_int = 1
-
-            # in case the text align is right
-            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
-                text_align_int = 2
-
-            # in case the text align is left
-            elif text_align == CENTER_TEXT_ALIGN_VALUE:
-                text_align_int = 3
+            # converts the provided text align value into the
+            # appropriate integer value representing it
+            if text_align == "left": text_align_int = 1
+            elif text_align == "right": text_align_int = 2
+            elif text_align == "center": text_align_int = 3
 
             # sets the real bitmap image height as the bitmap
             # image height (value copy)

@@ -99,15 +99,6 @@ BOLD_TEXT_WEIGHT = 800
 DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
 """ The default text weight """
 
-LEFT_TEXT_ALIGN_VALUE = "left"
-""" The left text align value """
-
-RIGHT_TEXT_ALIGN_VALUE = "right"
-""" The right text align value """
-
-CENTER_TEXT_ALIGN_VALUE = "center"
-""" The center text align value """
-
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -411,7 +402,6 @@ class Visitor:
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context(node)
-
             self.push_context("biggest_height", 0)
 
             # retrieves the margin top value defined
@@ -428,7 +418,6 @@ class Visitor:
 
         elif self.visit_index == 1:
             biggest_height = self.get_context("biggest_height")
-
             self.pop_context("biggest_height")
 
             # retrieves the margin bottom value defined
@@ -504,15 +493,12 @@ class Visitor:
 
             # initializes the text x coordinate
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
-
-            # in case the text align is left
-            if text_align == LEFT_TEXT_ALIGN_VALUE:
-                text_x += 0
-            # in case the text align is right
-            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
-                text_x += clip_box_right - text_width
-            # in case the text align is left
-            elif text_align == CENTER_TEXT_ALIGN_VALUE:
+            
+            # calculates the appropriate text position according to the
+            # "requested" horizontal text alignment
+            if text_align == "left": text_x += 0
+            elif text_align == "right": text_x += clip_box_right - text_width
+            elif text_align == "center":
                 text_x += int(clip_box_right / 2) - int(text_width / 2)
 
             # sets the text y as the current position context y
@@ -594,14 +580,12 @@ class Visitor:
             # retrieves the current clip box values
             _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
 
-            # in case the text align is left
-            if text_align == LEFT_TEXT_ALIGN_VALUE:
-                real_bitmap_x1 = 0
-            # in case the text align is right
-            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
+            # calculates the appropriate bitmap position according to the
+            # "requested" horizontal text alignment
+            if text_align == "left": real_bitmap_x1 = 0
+            elif text_align == "right":
                 real_bitmap_x1 = clip_box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
-            # in case the text align is center
-            elif text_align == CENTER_TEXT_ALIGN_VALUE:
+            elif text_align == "center":
                 real_bitmap_x1 = int(clip_box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
             real_bitmap_y1 = current_position_y
