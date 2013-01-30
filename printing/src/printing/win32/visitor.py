@@ -270,12 +270,14 @@ class Visitor:
             # retrieves the real element value
             self_class_real_element = getattr(self_class, self_class_element)
 
-            # in case the current class real element contains an ast node class reference
-            if hasattr(self_class_real_element, "ast_node_class"):
-                # retrieves the ast node class from the current class real element
-                ast_node_class = getattr(self_class_real_element, "ast_node_class")
-
-                self.node_method_map[ast_node_class] = self_class_real_element
+            # in case the current class real element does not contain
+            # an ast node class reference must continue the loop
+            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            
+            # retrieves the ast node class from the current class real element
+            # and sets it in the node method map
+            ast_node_class = getattr(self_class_real_element, "ast_node_class")
+            self.node_method_map[ast_node_class] = self_class_real_element
 
     def get_printer_handler(self):
         """
@@ -349,19 +351,13 @@ class Visitor:
             # retrieves the printing document name
             printing_document_name = node.name
 
-            # starts the document
+            # starts the document (and page) and sets the default
+            # mode for the mapping and the initial pen (ink) to
+            # be used in the text "drawing" and selects it
             handler_device_context.StartDoc(printing_document_name)
-
-            # starts the first page
             handler_device_context.StartPage()
-
-            # sets the map mode
             handler_device_context.SetMapMode(win32con.MM_TWIPS)
-
-            # creates a pen with the given scale factor
             pen = win32ui.CreatePen(0, FONT_SCALE_FACTOR, 0)
-
-            # selects the pen object
             handler_device_context.SelectObject(pen)
 
             # sets the initial position
@@ -370,10 +366,9 @@ class Visitor:
             )
         # in case it's the second visit
         elif self.visit_index == 1:
-            # ends the current page
+            # ends the current page and document (flushes the data
+            # to the printer) processing the print request
             handler_device_context.EndPage()
-
-            # ends the document
             handler_device_context.EndDoc()
 
             # removes the context information
@@ -483,13 +478,13 @@ class Visitor:
             handler_device_context.SelectObject(font)
 
             # retrieves the current position in x and y
-            _current_position_context_x, current_position_context_y = self.current_position
+            _current_position_x, _current_position_y = self.current_position
 
             # retrieves the text width and height
             text_width, text_height = handler_device_context.GetTextExtent(text_encoded)
 
             # retrieves the current clip box values
-            _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
+            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
 
             # initializes the text x coordinate
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
@@ -497,12 +492,12 @@ class Visitor:
             # calculates the appropriate text position according to the
             # "requested" horizontal text alignment
             if text_align == "left": text_x += 0
-            elif text_align == "right": text_x += clip_box_right - text_width
+            elif text_align == "right": text_x += box_right - text_width
             elif text_align == "center":
-                text_x += int(clip_box_right / 2) - int(text_width / 2)
+                text_x += int(box_right / 2) - int(text_width / 2)
 
             # sets the text y as the current position context y
-            text_y = current_position_context_y
+            text_y = _current_position_y
 
             # outputs the text to the handler device context
             handler_device_context.TextOut(text_x, text_y, text_encoded)
@@ -578,15 +573,15 @@ class Visitor:
             _current_position_x, current_position_y = self.current_position
 
             # retrieves the current clip box values
-            _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
+            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
 
             # calculates the appropriate bitmap position according to the
             # "requested" horizontal text alignment
             if text_align == "left": real_bitmap_x1 = 0
             elif text_align == "right":
-                real_bitmap_x1 = clip_box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
+                real_bitmap_x1 = box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
             elif text_align == "center":
-                real_bitmap_x1 = int(clip_box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+                real_bitmap_x1 = int(box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
             real_bitmap_y1 = current_position_y
             real_bitmap_x2 = real_bitmap_x1 + (real_bitmap_image_width * IMAGE_SCALE_FACTOR)

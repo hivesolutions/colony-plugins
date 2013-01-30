@@ -194,12 +194,14 @@ class Visitor:
             # retrieves the real element value
             self_class_real_element = getattr(self_class, self_class_element)
 
-            # in case the current class real element contains an ast node class reference
-            if hasattr(self_class_real_element, "ast_node_class"):
-                # retrieves the ast node class from the current class real element
-                ast_node_class = getattr(self_class_real_element, "ast_node_class")
-
-                self.node_method_map[ast_node_class] = self_class_real_element
+            # in case the current class real element does not contain
+            # an ast node class reference must continue the loop
+            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            
+            # retrieves the ast node class from the current class real element
+            # and sets it in the node method map
+            ast_node_class = getattr(self_class_real_element, "ast_node_class")
+            self.node_method_map[ast_node_class] = self_class_real_element
 
     @dispatch_visit()
     def visit(self, node):

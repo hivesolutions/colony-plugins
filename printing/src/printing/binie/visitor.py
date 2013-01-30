@@ -259,12 +259,14 @@ class Visitor:
             # retrieves the real element value
             self_class_real_element = getattr(self_class, self_class_element)
 
-            # in case the current class real element contains an ast node class reference
-            if hasattr(self_class_real_element, "ast_node_class"):
-                # retrieves the ast node class from the current class real element
-                ast_node_class = getattr(self_class_real_element, "ast_node_class")
-
-                self.node_method_map[ast_node_class] = self_class_real_element
+            # in case the current class real element does not contain
+            # an ast node class reference must continue the loop
+            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            
+            # retrieves the ast node class from the current class real element
+            # and sets it in the node method map
+            ast_node_class = getattr(self_class_real_element, "ast_node_class")
+            self.node_method_map[ast_node_class] = self_class_real_element
 
     def get_printing_options(self):
         """
@@ -324,7 +326,8 @@ class Visitor:
             )
         # in case it's the second visit
         elif self.visit_index == 1:
-            # retrieves the printing document name
+            # retrieves the printing document name and dimensions
+            # to be able to update the structure
             printing_document_name = node.name
             printing_document_width = hasattr(node, "width") and int(node.width) or 0
             printing_document_height = hasattr(node, "height") and int(node.height) or 0
@@ -447,7 +450,7 @@ class Visitor:
                 text_italic_int = 1
 
             # retrieves the current position in x and y
-            _current_position_context_x, current_position_context_y = self.current_position
+            _current_position_x, _current_position_y = self.current_position
 
             # converts the provided text align value into the
             # appropriate integer value representing it
@@ -464,7 +467,7 @@ class Visitor:
             element = struct.pack(
                 "<ii256sIIIIIIIIIII",
                 0,
-                current_position_context_y,
+                _current_position_y,
                 font_name,
                 font_size,
                 text_align_int,
