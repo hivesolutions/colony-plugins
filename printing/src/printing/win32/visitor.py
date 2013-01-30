@@ -165,16 +165,15 @@ def dispatch_visit():
             @param kwargs: The function arguments map.
             """
 
-            # retrieves the self values
+            # unpacks the provided arguments to the decorator
+            # to be used in the processing
             self_value = args[0]
-
-            # retrieves the node value
             node_value = args[1]
 
-            # retrieves the node value class
+            # retrieves the node value class and uses it to
+            # get the associated mro structure to be used in
+            # the values iteration
             node_value_class = node_value.__class__
-
-            # retrieves the mro list from the node value class
             node_value_class_mro = node_value_class.mro()
 
             # iterates over all the node value class mro elements
@@ -182,13 +181,13 @@ def dispatch_visit():
                 # in case the node method map does not exists in
                 # the current instance must continue the loop
                 if not hasattr(self_value, "node_method_map"): continue
-                
+
                 # retrieves the node method map from the current instance
                 # and verifies that the node value class exists in the
                 # node method map, otherwise continues the loop
                 node_method_map = getattr(self_value, "node_method_map")
                 if not node_value_class_mro_element in node_method_map: continue
-                    
+
                 # retrieves the correct visit method for the element and
                 # then calls it "enclosed" by calls to the before and after
                 # visit handler methods
@@ -218,10 +217,10 @@ def dispatch_visit():
         @return: The decorator interceptor function.
         """
 
-        # creates the decorator interceptor with the given function
+        # creates the decorator interceptor with the given
+        # function (creating the clojure) and returns the
+        # resulting function to the caller method
         decorator_interceptor_function = create_decorator_interceptor(function)
-
-        # returns the interceptor to be used
         return decorator_interceptor_function
 
     # returns the created decorator
@@ -426,7 +425,7 @@ class Visitor:
                 current_position_x,
                 current_position_y - margin_top * FONT_SCALE_FACTOR
             )
-            
+
         elif self.visit_index == 1:
             biggest_height = self.get_context("biggest_height")
 
@@ -562,7 +561,7 @@ class Visitor:
                 # opens the bitmap image directly from the current
                 # file system, no dynamically loaded image
                 bitmap_image = PIL.Image.open(image_path)
-            
+
             # in case the image source is defined must load the
             # base 64 image data from the attribute
             elif image_source:

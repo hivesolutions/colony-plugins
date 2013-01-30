@@ -176,16 +176,15 @@ def dispatch_visit():
             @param kwargs: The function arguments map.
             """
 
-            # retrieves the self values
+            # unpacks the provided arguments to the decorator
+            # to be used in the processing
             self_value = args[0]
-
-            # retrieves the node value
             node_value = args[1]
 
-            # retrieves the node value class
+            # retrieves the node value class and uses it to
+            # get the associated mro structure to be used in
+            # the values iteration
             node_value_class = node_value.__class__
-
-            # retrieves the mro list from the node value class
             node_value_class_mro = node_value_class.mro()
 
             # iterates over all the node value class mro elements
@@ -193,13 +192,13 @@ def dispatch_visit():
                 # in case the node method map does not exists in
                 # the current instance must continue the loop
                 if not hasattr(self_value, "node_method_map"): continue
-                
+
                 # retrieves the node method map from the current instance
                 # and verifies that the node value class exists in the
                 # node method map, otherwise continues the loop
                 node_method_map = getattr(self_value, "node_method_map")
                 if not node_value_class_mro_element in node_method_map: continue
-                    
+
                 # retrieves the correct visit method for the element and
                 # then calls it "enclosed" by calls to the before and after
                 # visit handler methods
@@ -237,6 +236,7 @@ def dispatch_visit():
 
     # returns the created decorator
     return decorator
+
 
 class Visitor:
     """
@@ -354,32 +354,32 @@ class Visitor:
             self.current_position = (
                 0, 0
             )
-            
+
             # ------------------------- REMOVE ----------------------
-            
+
             canvas = reportlab.pdfgen.canvas.Canvas(
                 "c:/out.pdf",
                 pagesize = PAPER_SIZE
             )
             width, height = PAPER_SIZE
-            
+
             self.printing_options["canvas"] = canvas
             self.printing_options["width"] = width
             self.printing_options["height"] = height
-            
+
             #  ------------------------------------------------------------
-            
+
         # in case it's the second visit
         elif self.visit_index == 1:
-            
+
             #  ------------------------------------------------------------
-            
+
             canvas = self.printing_options["canvas"]
             canvas.save()
-            
+
             #  ------------------------------------------------------------
-            
-            
+
+
             # retrieves the printing document name
             printing_document_name = node.name
             printing_document_width = hasattr(node, "width") and int(node.width) or 0
@@ -594,15 +594,15 @@ class Visitor:
             element += text_encoded
             element += "\0"
             self.elements_list.append((1, element))
-            
+
             # ------------------------- REMOVE ----------------------
-            
+
             canvas = self.printing_options["canvas"]
             height = self.printing_options["height"]
             canvas.drawString(position_x, current_position_context_y + height, text_encoded)
-            
+
             # ----------------------------------------
-            
+
         # in case it's the second visit
         elif self.visit_index == 1:
             # removes the context information
