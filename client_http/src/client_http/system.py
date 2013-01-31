@@ -200,6 +200,9 @@ KEY_FILE_PATH_VALUE = "key_file_path"
 CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 """ The certificate file path value """
 
+SSL_VERSION_VALUE = "ssl_version"
+""" The ssl version value """
+
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
@@ -255,6 +258,7 @@ class ClientHttp(colony.base.system.System):
         content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
         key_file_path = parameters.get(KEY_FILE_PATH_VALUE, None)
         certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH_VALUE, None)
+        ssl_version = parameters.get(SSL_VERSION_VALUE, None)
 
         # creates the http client with the provided parameters
         # and returns the created client
@@ -263,7 +267,8 @@ class ClientHttp(colony.base.system.System):
             protocol_version,
             content_type_charset = content_type_charset,
             key_file_path = key_file_path,
-            certificate_file_path = certificate_file_path
+            certificate_file_path = certificate_file_path,
+            ssl_version = ssl_version
         )
         return http_client
 
@@ -308,6 +313,10 @@ class HttpClient:
     """ The path to the ssl certificate file to be
     used for a secured connection """
 
+    ssl_version = None
+    """ The version of the ssl specification to be 
+    used as base for the current connection """
+
     client_connection = None
     """ The current client connection """
 
@@ -317,7 +326,7 @@ class HttpClient:
     _http_client_lock = None
     """ Lock to control the fetching of the queries """
 
-    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET, key_file_path = None, certificate_file_path = None):
+    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET, key_file_path = None, certificate_file_path = None, ssl_version = None):
         """
         Constructor of the class.
 
@@ -334,6 +343,9 @@ class HttpClient:
         @type certificate_file_path:  String
         @param certificate_file_path: The path to the ssl certificate
         file to be used for a secured connection
+        @type ssl_version: String
+        @param ssl_version: The version of the ssl specification to be used
+        as the based verified one to the connection
         """
 
         self.client_http = client_http
@@ -341,6 +353,7 @@ class HttpClient:
         self.content_type_charset = content_type_charset
         self.key_file_path = key_file_path
         self.certificate_file_path = certificate_file_path
+        self.ssl_version = ssl_version
 
         self._http_client_lock = threading.RLock()
 
@@ -422,7 +435,9 @@ class HttpClient:
         if self.key_file_path:
             socket_parameters["key_file_path"] = self.key_file_path
         if self.certificate_file_path:
-            socket_parameters["certificate_file_path"] = self.certificate_file_path 
+            socket_parameters["certificate_file_path"] = self.certificate_file_path
+        if self.ssl_version:
+            socket_parameters["ssl_version"] = self.ssl_version 
 
         # defines the connection parameters
         connection_parameters = (
