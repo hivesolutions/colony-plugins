@@ -37,10 +37,15 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import struct
 import base64
 
 import PIL.Image
+
+import reportlab.lib.utils
+import reportlab.lib.units
+import reportlab.pdfgen.canvas
+import reportlab.pdfbase.ttfonts
+import reportlab.pdfbase.pdfmetrics
 
 import colony.libs.string_buffer_util
 
@@ -50,7 +55,7 @@ import printing.manager.ast
 FONT_SCALE_FACTOR = 1
 """ The font scale factor """
 
-IMAGE_SCALE_FACTOR = 1
+IMAGE_SCALE_FACTOR = 0.5
 """ The image scale factor """
 
 EXCLUSION_LIST = [
@@ -85,19 +90,31 @@ EXCLUSION_LIST = [
 ]
 """ The exclusion list """
 
+FONT_SUFFIX_MAP = {
+    "regular" : "",
+    "bold" : "b",
+    "italic" : "i",
+    "bold_italic" : "z"
+}
+""" The map associating the type of font
+and the suffix to be appended to the name
+to created the full font name """
+
 DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
-
-
-import reportlab.pdfgen.canvas
-import reportlab.pdfbase.ttfonts
-import reportlab.pdfbase.pdfmetrics
-import reportlab.lib.units
-
 SCALE = reportlab.lib.units.cm
-ROLL_PAPER = (8 * SCALE, 29.7 * SCALE)
+""" The scale value to be used in the conversion
+of the centimeter value into the pdf point """
+
+ROLL_PAPER = (7.2, 29.7)
+""" The default size (dimensions) for a roll paper
+based structure, this includes the additional
+margin values normally created by receipt printers """
+
 PAPER_SIZE = ROLL_PAPER
+""" The default paper size to be used when no paper
+size value is defined for the print operation """
 
 def _visit(ast_node_class):
     """
@@ -237,11 +254,30 @@ class Visitor:
     printing_options = {}
     """ The printing options """
 
-    elements_list = []
-    """ The list containing the various elements """
+    canvas = None
+    """ The reference to the canvas object to be used
+    for manipulating the various pdf elements """
+
+    size = None
+    """ The size of the document to be printed, this
+    is the width and height measured in pdf points """
+
+    width = None
+    """ The width of the document to be printed, this
+    is the width measured in pdf points """
+
+    height = None
+    """ The height of the document to be printed, this
+    is the height measured in pdf points """
 
     current_position = None
-    """ The current position """
+    """ The current position in the document measured
+    as pdf points """
+
+    fonts = {}
+    """ The map containing the various loaded fonts
+    to avoid multiple loading of fonts (redundancy is
+    removed to avoid errors) """
 
     context_map = {}
     """ The context information map """
@@ -252,8 +288,11 @@ class Visitor:
         self.visit_next = True
         self.visit_index = 0
         self.printing_options = {}
-        self.elements_list = []
+        self.canvas = None
+        self.width = 0
+        self.height = 0
         self.current_position = None
+        self.fonts = {}
         self.context_map = {}
 
         self.update_node_method_map()
@@ -273,7 +312,7 @@ class Visitor:
             # in case the current class real element does not contain
             # an ast node class reference must continue the loop
             if not hasattr(self_class_real_element, "ast_node_class"): continue
-            
+
             # retrieves the ast node class from the current class real element
             # and sets it in the node method map
             ast_node_class = getattr(self_class_real_element, "ast_node_class")
@@ -325,48 +364,48 @@ class Visitor:
             # adds the node as the context information
             self.add_context(node)
 
-            # resets the list of elements in the document
-            self.elements_list = []
+            # retrieves both the file (buffer) to be used for the output
+            # of the pdf file contents and the expected size for the pdf
+            # document, in case no size is provided a default one is used
+            file = self.printing_options["file"]
+            size = self.printing_options.get("size", PAPER_SIZE)
 
-            # sets the initial position
+            # unpacks the size tuple into the width and height
+            # components and recalculates the size in pdf point
+            # according to the defined scale value
+            width, height = size
+            self.width = width * SCALE
+            self.height = height * SCALE
+            self.size = (self.width, self.height)
+
+            # creates the canvas object to be used as the primary
+            # entry point for operation on the pdf
+            self.canvas = reportlab.pdfgen.canvas.Canvas(
+                file,
+                pagesize = self.size
+            )
+
+            # sets the initial position so that the "virtual" cursor
+            # position is situated at the top left corner of the page
             self.current_position = (
-                0, 0
-            )
-            
-            
-            # ------------------------- REMOVE ----------------------
-            
-            # @TODO tenho de tirar as variaveis da estrutura de printing
-            # options e meter as mesmas num sitio melhor !!!
-
-            canvas = reportlab.pdfgen.canvas.Canvas(
-                "c:/out.pdf",
-                pagesize = PAPER_SIZE
-            )
-            width, height = PAPER_SIZE
-            
-            calibri = reportlab.pdfbase.ttfonts.TTFont("Calibri", "calibri.ttf")
-            reportlab.pdfbase.pdfmetrics.registerFont(calibri)
-
-            self.printing_options["canvas"] = canvas
-            self.printing_options["width"] = width
-            self.printing_options["height"] = height
-            
-            # sets the initial position
-            self.current_position = (
-                0, height
+                0, self.height
             )
 
-            #  ------------------------------------------------------------
-            
-            
         # in case it's the second visit
         elif self.visit_index == 1:
-            # ------------------------- REMOVE ----------------------
-            canvas = self.printing_options["canvas"]
-            canvas.save()
+            # saves the final canvas structure flushing the data to
+            # the associated file object, this is considered the final
+            # operation for the creation of the pdf file
+            self.canvas.save()
+
             #  ------------------------------------------------------------
-            
+            file = self.printing_options["file"]
+            data = file.get_value()
+            pdf_file = open("c:/out.pdf", "wb")
+            try: pdf_file.write(data)
+            finally: pdf_file.close()
+            ## ---------------------
+
             # removes the context information
             self.remove_context(node)
 
@@ -443,32 +482,54 @@ class Visitor:
             font_style = self.get_context("font_style", "regular")
             margin_left = int(self.get_context("margin_left", "0"))
             margin_right = int(self.get_context("margin_right", "0"))
-            position_x = int(self.get_context("x", "0"))
-            position_y = int(self.get_context("y", "0"))
-            block_width = int(self.get_context("width", "0"))
-            block_height = int(self.get_context("height", "0"))
 
-            # retrieves the current position in x and y
+            # calculates the resized font size so that it's normalized
+            # according to the printing language specification, the value
+            # is rounded to one decimal place so that no major visual
+            # rounding problems occur
+            font_size_r = round(font_size / 1.2, 1)
+
+            # retrieves the proper suffix for the requested font style
+            # and uses it to create the complete font name ensuring that
+            # it's currently loaded in the pdf context
+            suffix = FONT_SUFFIX_MAP.get(font_style, "")
+            font_name_c = font_name + suffix
+            self.ensure_font(font_name_c)
+
+            # sets the complete computed font in the current canvas context
+            # note that the leading value is overriden to avoid font sizing
+            # problems in accordance with the printing language specification
+            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
+
+            # retrieves the current position in x and y unpacking the values
+            # from the current position tuple
             _current_position_x, current_position_y = self.current_position
 
             # calculates the text height from the font scale factor
+            # and measures the text width using the underlying rendering
+            # infra-structure (avoids possible problems)
             text_height = font_size * FONT_SCALE_FACTOR;
-            
-            ###  ----------------------------------------
-            
-            # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            # @TODO: tenho de fazer o ensure MUITO IMPORTANTE
-            # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #self.ensure_font(font_name, "calibri.ttf")
-            
+            text_width = self.canvas.stringWidth(text_encoded)
 
-            canvas = self.printing_options["canvas"]
-            
-            
-            canvas.setFont(font_name, font_size)
-            canvas.drawString(position_x, current_position_y, text_encoded)
-            
-            ## -------------------------------
+            # initializes the text x coordinate with the margin defined
+            # for the current node (difference of margins)
+            text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
+
+            # calculates the appropriate text position according to the
+            # "requested" horizontal text alignment
+            if text_align == "left": text_x += 0
+            elif text_align == "right": text_x += self.width - text_width
+            elif text_align == "center":
+                text_x += int(self.width / 2) - int(text_width / 2)
+
+            # sets the text y as the current position context y
+            # default position for the text is the current position
+            text_y = current_position_y - text_height
+
+            # draws the text string at the calculated position the text
+            # is encoded in the expected encoding so that no encoding
+            # problems occur
+            self.canvas.drawString(text_x, text_y, text_encoded)
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
@@ -500,10 +561,6 @@ class Visitor:
             # retrieves the complete set of attributes for the current
             # context to be used for the processing of the node
             text_align = self.get_context("text_align")
-            position_x = int(self.get_context("x", "0"))
-            position_y = int(self.get_context("y", "0"))
-            block_width = int(self.get_context("width", "0"))
-            block_height = int(self.get_context("height", "0"))
 
             # in case the image path is defined must load the
             # image data from the file system
@@ -539,61 +596,53 @@ class Visitor:
             )
             other_image.paste(bitmap_image, bitmap_image)
 
-            # retrieves the current position in x and y
+            # retrieves the current position in x and y unpacking the values
+            # from the current position tuple
             _current_position_x, current_position_y = self.current_position
 
-            # converts the provided text align value into the
-            # appropriate integer value representing it
-            if text_align == "left": text_align_int = 1
-            elif text_align == "right": text_align_int = 2
-            elif text_align == "center": text_align_int = 3
+            # calculates the appropriate bitmap position according to the
+            # "requested" horizontal text alignment
+            if text_align == "left": real_bitmap_x = 0
+            elif text_align == "right":
+                real_bitmap_x = self.width - bitmap_image_width * IMAGE_SCALE_FACTOR
+            elif text_align == "center":
+                real_bitmap_x = int(self.width / 2) - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
-            # sets the real bitmap image height as the bitmap
-            # image height (value copy)
-            real_bitmap_image_height = bitmap_image_height
+            # calculates the real bitmap vertical position from the current
+            # vertical position minus the height of the image
+            real_bitmap_y = current_position_y - (bitmap_image_height * IMAGE_SCALE_FACTOR)
 
-            # creates a new string buffer for the image
-            string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
-
-            # saves the new image into the string buffer and then
-            # retrieve the buffer data
-            other_image.save(string_buffer, "bmp")
-            buffer = string_buffer.get_value()
-
-            # packs the element image element structure containing all the meta
-            # information that makes part of it then adds the "just" created
-            # element to the elements list
-            element = struct.pack(
-                "<iiIIIIII",
-                0,
-                current_position_y,
-                text_align_int,
-                position_x,
-                position_y,
-                block_width,
-                block_height,
-                len(buffer)
+            # loads the image image using the proper image reader structure
+            # and uses the structure to "draw" the image into the canvas at
+            # the current position
+            image_reader = reportlab.lib.utils.ImageReader(other_image)
+            self.canvas.drawImage(
+                image_reader,
+                real_bitmap_x,
+                real_bitmap_y,
+                bitmap_image_width * IMAGE_SCALE_FACTOR,
+                bitmap_image_height * IMAGE_SCALE_FACTOR
             )
-            element += buffer
-            self.elements_list.append((2, element))
 
+            # in case the current image height is bigger than the current
+            # context biggest height, updates the information
             biggest_height = self.get_context("biggest_height")
-            if biggest_height < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+            if biggest_height < bitmap_image_height * IMAGE_SCALE_FACTOR:
+                self.put_context("biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
             self.remove_context(node)
-    
-    def ensure_font(self, font_name, file_path):
+
+    def ensure_font(self, font_name, file_path = None):
         """
         Ensures that the font is present in the current
         canvas object, loading it into the pdf context
         in case it's required.
-        
+
         The provided file path may be an absolute path
         or a relative (file name) to the system's default
         font directory.
-        
+
         @type font_name: String
         @param font_name: The name of the font to be ensured
         to be loaded in the current context.
@@ -602,8 +651,28 @@ class Visitor:
         that should be loaded for the font (may be a relative
         or absolute path)
         """
-        
-        pass
+
+        # in case the font is already present in the fonts
+        # map it's considered to be loaded and so the control
+        # must be returned immediately
+        if font_name in self.fonts: return
+
+        # converts the font name into a lower cased version and
+        # then uses it to create the default font path in case
+        # none is provided (uses the default true type extension)
+        font_name_l = font_name.lower()
+        file_path = file_path or font_name_l + ".ttf"
+
+        # creates the font structure for the font name and path
+        # and the registers it in the the current report lab
+        # metrics (to be used in further operations)
+        font = reportlab.pdfbase.ttfonts.TTFont(font_name, file_path)
+        reportlab.pdfbase.pdfmetrics.registerFont(font)
+
+        # updates the fonts map so that the current font is associated
+        # with the corresponding loaded file path, this marks the
+        # font as loaded for the current context
+        self.fonts[font_name] = file_path
 
     def get_current_position_context(self):
         """
