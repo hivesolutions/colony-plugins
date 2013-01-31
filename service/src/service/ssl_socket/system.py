@@ -80,7 +80,9 @@ SSL_VERSIONS = {
 }
 """ The map associating the string based description
 values for the various ssl protocols with the corresponding
-constants in the ssl infra-structure """
+constants in the ssl infra-structure, note that the map
+is constructed taking into account the existence of the
+constants in the ssl module defaulting to invalid otherwise """
 
 class SslSocket(colony.base.system.System):
     """
