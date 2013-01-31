@@ -488,11 +488,6 @@ class Visitor:
             font_name_c = font_name + suffix
             self.ensure_font(font_name_c)
 
-            # sets the complete computed font in the current canvas context
-            # note that the leading value is overriden to avoid font sizing
-            # problems in accordance with the printing language specification
-            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
-
             # retrieves the current position in x and y unpacking the values
             # from the current position tuple
             _current_position_x, current_position_y = self.current_position
@@ -517,6 +512,14 @@ class Visitor:
             # sets the text y as the current position context y
             # default position for the text is the current position
             text_y = current_position_y - text_height
+            text_y = self.ensure_y(text_y, offset = text_height)
+
+            # sets the complete computed font in the current canvas context
+            # note that the leading value is overriden to avoid font sizing
+            # problems in accordance with the printing language specification,
+            # the font must be set after the ensure vertical operation so that
+            # in case a new page is created the new font is set correctly in it
+            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
 
             # draws the text string at the calculated position the text
             # is encoded in the expected encoding so that no encoding
@@ -601,8 +604,13 @@ class Visitor:
                 real_bitmap_x = int(self.width / 2) - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
             # calculates the real bitmap vertical position from the current
-            # vertical position minus the height of the image
+            # vertical position minus the height of the image and ensures the
+            # position, recalculating a new y position in case the page overflows
             real_bitmap_y = current_position_y - (bitmap_image_height * IMAGE_SCALE_FACTOR)
+            real_bitmap_y = self.ensure_y(
+                real_bitmap_y,
+                offset = bitmap_image_height * IMAGE_SCALE_FACTOR
+            )
 
             # loads the image image using the proper image reader structure
             # and uses the structure to "draw" the image into the canvas at
@@ -624,6 +632,44 @@ class Visitor:
 
         elif self.visit_index == 1:
             self.remove_context(node)
+
+    def ensure_y(self, y_position, offset):
+        """
+        Ensures that the provided vertical position is valid for
+        the current page (no overflow) in case it's not a new page
+        is created and the returned position is the new one.
+
+        The calculation of the new vertical position takes into
+        account the provided offset value.
+
+        @type y_position: float
+        @param y_position: The vertical position as a pdf point value
+        to be validated against the current page metrics.
+        @type offset: float
+        @param offset: The vertical offset to be applied to the new's
+        page vertical value in case a new page is created.
+        @rtype: float
+        @return: The resulting vertical position taking into account
+        creation of new pages.
+        """
+
+        # verifies if the current vertical position "overflows"
+        # the page value (lower than zero) in case it does not
+        # returns immediately with the provided position (no
+        # overflow has occurred)
+        if y_position >= 0.0: return y_position
+
+        # updates the current position with the initial top left
+        # corner position of the new page and update the vertical
+        # position coordinate with the offset value
+        self.current_position = (0, self.height)
+        y_position = self.height - offset
+
+        # shows a new page in the current canvas (creating a new
+        # page) and then returns the new vertical position to the
+        # caller method
+        self.canvas.showPage()
+        return y_position
 
     def ensure_font(self, font_name, file_path = None):
         """
