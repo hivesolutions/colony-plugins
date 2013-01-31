@@ -398,14 +398,6 @@ class Visitor:
             # operation for the creation of the pdf file
             self.canvas.save()
 
-            #  ------------------------------------------------------------
-            file = self.printing_options["file"]
-            data = file.get_value()
-            pdf_file = open("c:/out.pdf", "wb")
-            try: pdf_file.write(data)
-            finally: pdf_file.close()
-            ## ---------------------
-
             # removes the context information
             self.remove_context(node)
 
