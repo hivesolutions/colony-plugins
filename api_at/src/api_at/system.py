@@ -61,6 +61,9 @@ KEY_FILE_PATH_VALUE = "key_file_path"
 CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 """ The certificate file path value """
 
+SSL_VERSION_VALUE = "ssl_version"
+""" The ssl version value """
+
 BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base url to be used, this is a
 secure https based url"""
@@ -461,7 +464,8 @@ class AtClient:
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET,
                 KEY_FILE_PATH_VALUE : key_path,
-                CERTIFICATE_FILE_PATH_VALUE : certificate_path
+                CERTIFICATE_FILE_PATH_VALUE : certificate_path,
+                SSL_VERSION_VALUE : "tls1"
             }
 
             # creates the http client to be used for the api
