@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import base64
 
 import PIL.Image
@@ -726,6 +727,7 @@ class Visitor:
                 # the font path is empty the default system wide
                 # search will be used
                 file_path_f = font_path + file_path
+                file_path_f = os.path.expanduser(file_path_f)
 
                 # creates the font structure for the font name and path
                 # and the registers it in the the current report lab
@@ -739,7 +741,7 @@ class Visitor:
         # exception, indicating that it was not possible to load
         # the associated font file
         if error: raise exceptions.InvalidFont(
-            "not possible to load '%s' / '%s'" % (font_name, file_path)
+            "not possible to load '%s' - '%s'" % (font_name, file_path)
         )
 
         # updates the fonts map so that the current font is associated
