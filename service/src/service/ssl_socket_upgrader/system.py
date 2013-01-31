@@ -55,11 +55,24 @@ CERTIFICATE_FILE_PATH = "certificate_file_path"
 SERVER_SIDE_VALUE = "server_side"
 """ The server side value """
 
+SSL_VERSION_VALUE = "ssl_version"
+""" The ssl version value """
+
 DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 """ The do handshake on connect value """
 
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
+
+SSL_VERSIONS = {
+    "ssl2" : ssl.PROTOCOL_SSLv2,
+    "ssl3" : ssl.PROTOCOL_SSLv3,
+    "ssl23" : ssl.PROTOCOL_SSLv23,
+    "tls1" : ssl.PROTOCOL_TLSv1
+}
+""" The map associating the string based description
+values for the various ssl protocols with the corresponding
+constants in the ssl infra-structure """
 
 class SslSocketUpgrader(colony.base.system.System):
     """
@@ -138,16 +151,32 @@ class SslSocketUpgrader(colony.base.system.System):
         # tries to retrieve the do handshake on connect value
         do_handshake_on_connect = parameters.get(DO_HANDSHAKE_ON_CONNECT_VALUE, True)
 
+        # tries to retrieve the server side value, that will
+        # control the accepted versions of the protocol
+        ssl_version = parameters.get(SSL_VERSION_VALUE, None)
+        ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
+
         # warps the socket into an ssl socket
-        ssl_socket = self._wrap_socket(socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
+        ssl_socket = self._wrap_socket(
+            socket,
+            key_file_path,
+            certificate_file_path,
+            server_side,
+            ssl_version = ssl_version,
+            do_handshake_on_connect = do_handshake_on_connect
+        )
 
         # returns the ssl socket
         return ssl_socket
 
-    def _wrap_socket(self, base_socket, key_file_path, certificate_file_path, server_side = False, do_handshake_on_connect = True):
+    def _wrap_socket(self, base_socket, key_file_path, certificate_file_path, server_side = False, ssl_version = ssl.PROTOCOL_SSLv23, do_handshake_on_connect = True):
         """
         Wraps the base socket into an ssl socket using the given
         key file, certificate file and attributes.
+
+        Note that the version of the ssl implementation may be
+        controlled and in some cases it's required to be controlled
+        for security purposes.
 
         @type base_socket: Socket
         @param base_socket: The base socket to be used for wrapping.
@@ -157,6 +186,9 @@ class SslSocketUpgrader(colony.base.system.System):
         @param certificate_file_path: The path to the certificate file.
         @type server_side: bool
         @param server_side: If the socket should be created for a server.
+        @type ssl_version: int
+        @param ssl_version: The version  of the ssl protocol stack that
+        is allowed to be executed for the socket to wrapped.
         @type do_handshake_on_connect: bool
         @param do_handshake_on_connect: If a handshake should be done on connect.
         @rtype: Socket
@@ -164,7 +196,14 @@ class SslSocketUpgrader(colony.base.system.System):
         """
 
         # warps the base socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = False)
+        ssl_socket = ssl.wrap_socket(
+            base_socket,
+            key_file_path,
+            certificate_file_path,
+            server_side,
+            ssl_version = ssl_version,
+            do_handshake_on_connect = False
+        )
 
         # does the handshake (on connect)
         do_handshake_on_connect and self._do_handshake(ssl_socket)
