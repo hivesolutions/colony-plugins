@@ -73,10 +73,10 @@ WSAEWOULDBLOCK = 10035
 """ The wsa would block error code """
 
 SSL_VERSIONS = {
-    "ssl2" : ssl.PROTOCOL_SSLv2,
-    "ssl3" : ssl.PROTOCOL_SSLv3,
-    "ssl23" : ssl.PROTOCOL_SSLv23,
-    "tls1" : ssl.PROTOCOL_TLSv1
+    "ssl2" : ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,
+    "ssl3" : ssl.PROTOCOL_SSLv3 if hasattr(ssl, "PROTOCOL_SSLv3") else -1,
+    "ssl23" : ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1,
+    "tls1" : ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1
 }
 """ The map associating the string based description
 values for the various ssl protocols with the corresponding
