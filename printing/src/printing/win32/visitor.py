@@ -273,7 +273,7 @@ class Visitor:
             # in case the current class real element does not contain
             # an ast node class reference must continue the loop
             if not hasattr(self_class_real_element, "ast_node_class"): continue
-            
+
             # retrieves the ast node class from the current class real element
             # and sets it in the node method map
             ast_node_class = getattr(self_class_real_element, "ast_node_class")
@@ -488,7 +488,7 @@ class Visitor:
             # initializes the text x coordinate with the margin defined
             # for the current node (difference of margins)
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
-            
+
             # calculates the appropriate text position according to the
             # "requested" horizontal text alignment
             if text_align == "left": text_x += 0
