@@ -116,6 +116,10 @@ PAPER_SIZE = ROLL_PAPER
 """ The default paper size to be used when no paper
 size value is defined for the print operation """
 
+FONT_PATHS = ("", "~/.fonts/")
+""" The set of base paths to be used for searching
+for fonts on the current system """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -708,11 +712,35 @@ class Visitor:
         font_name_l = font_name.lower()
         file_path = file_path or font_name_l + ".ttf"
 
-        # creates the font structure for the font name and path
-        # and the registers it in the the current report lab
-        # metrics (to be used in further operations)
-        font = reportlab.pdfbase.ttfonts.TTFont(font_name, file_path)
-        reportlab.pdfbase.pdfmetrics.registerFont(font)
+        # sets the error flag as true by default the loading of
+        # the font is not possible in case one of the steps
+        # completes the error flag is unset
+        error = True
+
+        # iterate over all the font path trying to find a path
+        # that can correctly load the requested font
+        for font_path in FONT_PATHS:
+            try:
+                # creates the complete font path with the current
+                # base path in iteration and the font name in case
+                # the font path is empty the default system wide
+                # search will be used
+                file_path_f = font_path + file_path
+
+                # creates the font structure for the font name and path
+                # and the registers it in the the current report lab
+                # metrics (to be used in further operations)
+                font = reportlab.pdfbase.ttfonts.TTFont(font_name, file_path_f)
+                reportlab.pdfbase.pdfmetrics.registerFont(font)
+            except: continue
+            else: error = False; break
+
+        # in case the error flag is set raises the invalid font
+        # exception, indicating that it was not possible to load
+        # the associated font file
+        if error: raise exceptions.InvalidFont(
+            "not possible to load '%s' / '%s'" % (font_name, file_path)
+        )
 
         # updates the fonts map so that the current font is associated
         # with the corresponding loaded file path, this marks the
