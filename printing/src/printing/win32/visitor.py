@@ -566,9 +566,6 @@ class Visitor:
             # image library (this is device independent image)
             dib_image = PIL.ImageWin.Dib(bitmap_image)
 
-            real_bitmap_image_width = bitmap_image_width
-            real_bitmap_image_height = bitmap_image_height
-
             # retrieves the current position in x and y
             _current_position_x, current_position_y = self.current_position
 
@@ -579,13 +576,13 @@ class Visitor:
             # "requested" horizontal text alignment
             if text_align == "left": real_bitmap_x1 = 0
             elif text_align == "right":
-                real_bitmap_x1 = box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
+                real_bitmap_x1 = box_right - bitmap_image_width * IMAGE_SCALE_FACTOR
             elif text_align == "center":
-                real_bitmap_x1 = int(box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+                real_bitmap_x1 = int(box_right / 2) - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
             real_bitmap_y1 = current_position_y
-            real_bitmap_x2 = real_bitmap_x1 + (real_bitmap_image_width * IMAGE_SCALE_FACTOR)
-            real_bitmap_y2 = real_bitmap_y1 - (real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+            real_bitmap_x2 = real_bitmap_x1 + (bitmap_image_width * IMAGE_SCALE_FACTOR)
+            real_bitmap_y2 = real_bitmap_y1 - (bitmap_image_height * IMAGE_SCALE_FACTOR)
 
             # retrieves the output for the handler device context
             handler_device_context_output = handler_device_context.GetHandleOutput()
@@ -603,8 +600,8 @@ class Visitor:
             )
 
             biggest_height = self.get_context("biggest_height")
-            if biggest_height < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+            if biggest_height < bitmap_image_height * IMAGE_SCALE_FACTOR:
+                self.put_context("biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
             self.remove_context(node)
