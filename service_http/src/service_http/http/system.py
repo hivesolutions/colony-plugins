@@ -929,10 +929,12 @@ class HttpClientServiceHandler:
         # retrieves the protocol version
         protocol_version = request.protocol_version
 
-        # retrieves the status code
-        status_code = request.status_code
+        # retrieves the status code (defaults to zero,
+        # one or invalid)
+        status_code = request.status_code or 0
 
-        # retrieves the content length (default to minus one or invalid)
+        # retrieves the content length (defaults to zero,
+        # one or invalid)
         content_length = request.content_length or 0
 
         # retrieves the current date time value
@@ -941,8 +943,19 @@ class HttpClientServiceHandler:
         # formats the current date time
         current_date_time_formatted = current_date_time.strftime("%d/%b/%Y:%H:%M:%S +0000")
 
-        # creates the log line value
-        log_line_value = "%s - %s [%s] \"%s %s %s\" %d %d\n" % (connection_host, user_id, current_date_time_formatted, operation_type, resource_path, protocol_version, status_code, content_length)
+        # creates the log line value with all the aggregated
+        # parameters, the log line will conform with the common
+        # log form (according to the specification)
+        log_line_value = "%s - %s [%s] \"%s %s %s\" %d %d\n" % (
+            connection_host,
+            user_id,
+            current_date_time_formatted,
+            operation_type,
+            resource_path,
+            protocol_version,
+            status_code,
+            content_length
+        )
 
         # writes the log line value to the log file
         self.log_file.write(log_line_value)
