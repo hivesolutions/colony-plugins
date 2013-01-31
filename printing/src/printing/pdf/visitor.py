@@ -657,13 +657,20 @@ class Visitor:
         # the page value (lower than zero) in case it does not
         # returns immediately with the provided position (no
         # overflow has occurred)
-        if y_position >= 0.0: return y_position
+        b_position = y_position - offset
+        if b_position >= 0.0: return y_position
+
+        # calculates the delta position (inside the new page)
+        # according to the current y position in case it's positive
+        # it should be ignored otherwise uses it as the offset
+        d_position = 0.0 if y_position >= 0.0 else y_position
 
         # updates the current position with the initial top left
         # corner position of the new page and update the vertical
-        # position coordinate with the offset value
-        self.current_position = (0, self.height)
-        y_position = self.height - offset
+        # position coordinate with the offset value and the bottom
+        # position (used as an offset)
+        self.current_position = (0, self.height + d_position)
+        y_position = self.height + d_position - offset
 
         # shows a new page in the current canvas (creating a new
         # page) and then returns the new vertical position to the
