@@ -493,6 +493,13 @@ class Visitor:
             font_name_c = font_name + suffix
             self.ensure_font(font_name_c)
 
+            # sets the complete computed font in the current canvas context
+            # note that the leading value is overriden to avoid font sizing
+            # problems in accordance with the printing language specification,
+            # this is the "first" font setting and ensures that the measuring
+            # of the font size is the correct one (required by algorithm)
+            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
+
             # retrieves the current position in x and y unpacking the values
             # from the current position tuple
             _current_position_x, current_position_y = self.current_position
