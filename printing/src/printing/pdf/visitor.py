@@ -108,7 +108,7 @@ SCALE = reportlab.lib.units.cm
 """ The scale value to be used in the conversion
 of the centimeter value into the pdf point """
 
-ROLL_PAPER = (7.2, 29.7)
+ROLL_PAPER = (7.2132 * SCALE, 29123.7 * SCALE)
 """ The default size (dimensions) for a roll paper
 based structure, this includes the additional
 margin values normally created by receipt printers """
@@ -376,11 +376,9 @@ class Visitor:
             size = self.printing_options.get("size", PAPER_SIZE)
 
             # unpacks the size tuple into the width and height
-            # components and recalculates the size in pdf point
-            # according to the defined scale value
-            width, height = size
-            self.width = width * SCALE
-            self.height = height * SCALE
+            # components and sets the tuple containing both values
+            # as the size to be used for the document
+            self.width, self.height = size
             self.size = (self.width, self.height)
 
             # creates the canvas object to be used as the primary
