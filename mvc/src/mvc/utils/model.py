@@ -350,8 +350,11 @@ def apply(self, map):
 
     try:
         # retrieves the class of the model
-        # as the reference class
+        # as the reference class and then uses
+        # it to retrieve the complete set of
+        # attr method for it (to be ignored)
         cls = self.__class__
+        attr_methods = cls.get_all_attr_methods()
 
         # iterates over all the items in the map to
         # apply the to the current model
@@ -367,12 +370,20 @@ def apply(self, map):
                 # continue with the casting
                 continue
 
+            # in case the item name is set in the attribute methods
+            # map it refers a "calculated" attribute and as such must
+            # be ignored as it's just a stub value
+            if item_name in attr_methods: continue
+
             # in case the item name is not defined in the class
             # reference an exception should be raised, impossible
             # to retrieve the required information
             if not hasattr(cls, item_name):
                 # raises a model apply exception
-                raise exceptions.ModelApplyException("item name '%s' not found in model class" % item_name)
+                raise exceptions.ModelApplyException(
+                    "item name '%s' not found in model class '%s'" %
+                    (item_name, cls.__name__)
+                )
 
             # retrieves the class value and retrieves
             # the type associated with the value
@@ -384,7 +395,10 @@ def apply(self, map):
             # cannot retrieve the required information
             if not class_value_type == types.DictType:
                 # raises a model apply exception
-                raise exceptions.ModelApplyException("item name '%s' not defined in model class" % item_name)
+                raise exceptions.ModelApplyException(
+                    "item name '%s' not defined in model class '%s'" %
+                    (item_name, cls.__name__)
+                )
 
             # retrieves the value data type and secure
             # attributes to "take some decisions"
