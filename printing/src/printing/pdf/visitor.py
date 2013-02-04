@@ -108,12 +108,17 @@ SCALE = reportlab.lib.units.cm
 """ The scale value to be used in the conversion
 of the centimeter value into the pdf point """
 
-ROLL_PAPER = (7.2132 * SCALE, 29123.7 * SCALE)
+A4_PAPER = (21.0 * SCALE, 29.7 * SCALE)
+""" The default size (dimensions) for an a4 paper
+based structure, this includes the additional
+margin values normally created by full size printers """
+
+ROLL_PAPER = (7.2 * SCALE, 29.7 * SCALE)
 """ The default size (dimensions) for a roll paper
 based structure, this includes the additional
 margin values normally created by receipt printers """
 
-PAPER_SIZE = ROLL_PAPER
+PAPER_SIZE = A4_PAPER
 """ The default paper size to be used when no paper
 size value is defined for the print operation """
 
