@@ -560,11 +560,11 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     filters_s = data.get("filters", [])
     start_record = data.get("start_record", 0)
     number_records = data.get("number_records", 5)
-    
+
     # converts the various integer arguments into the appropriate
     # representations to be used internally
     start_record = int(start_record)
-    number_records = int(number_records)    
+    number_records = int(number_records)
 
     # forces the type of the filters to be a list, this avoids
     # problems handling immutable types (tuples) resulting from
