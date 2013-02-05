@@ -924,7 +924,13 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
         # stores the various relations of the entity model persisting
         # them into the data source and then persists the entity model
         # itself, names persistence
-        self.store_relations(persist_type, validate = validate, force_persist = force_persist, raise_exception = raise_exception, entity_manager = entity_manager)
+        self.store_relations(
+            persist_type,
+            validate = validate,
+            force_persist = force_persist,
+            raise_exception = raise_exception,
+            entity_manager = entity_manager
+        )
         self.persist(persist_type, entity_manager = entity_manager)
     except BaseException, exception:
         # tries to call the fail store method, in order to notify the
