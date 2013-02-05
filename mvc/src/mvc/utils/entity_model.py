@@ -1960,7 +1960,7 @@ def clear_errors_r(self):
         # values using the recursive approach (recursive step)
         for _relation_value in relation_value: _relation_value.clear_errors_r()
 
-def _get_entity_class_pluralized(self):
+def _get_entity_class_name(self):
     """
     Converts the name of the current entity instance
     class to a pluralized form.
@@ -1975,15 +1975,30 @@ def _get_entity_class_pluralized(self):
 
     # retrieves the entity class name
     entity_class_name = entity_class.__name__
+    entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
+    return entity_class_name
 
-    # lower cased entity class name
+def _get_entity_class_pluralized(self):
+    """
+    Converts the name of the current entity instance
+    class to a pluralized form.
+    This method is a utility for this common task.
+
+    @rtype: String
+    @return: The entity class name in pluralized form.
+    """
+
+    # retrieves the class of the current object
+    entity_class = self.__class__
+
+    # retrieves the entity class name converts it to under
+    entity_class_name = entity_class.__name__
     lower_cased_entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
+    entity_class_pluralized = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
 
-    # pluralizes the entity class name
-    controller_path = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
-
-    # returns the controller path
-    return controller_path
+    # returns the "just" created entity class
+    # pluralized value to the caller method
+    return entity_class_pluralized
 
 def _load_value(self, key, value):
     """
