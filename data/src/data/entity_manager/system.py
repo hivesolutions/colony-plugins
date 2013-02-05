@@ -1851,8 +1851,10 @@ class EntityManager:
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
-        # are already defined)
+        # are already defined), then sets the scope as the scope
+        # defined in the current entity
         options = options and self.normalize_options(options) or {}
+        options["scope"] = entity._scope
 
         # retrieves the entity class associated with
         # the entity to be reloaded
@@ -1917,6 +1919,11 @@ class EntityManager:
         # retrieves the reference to the first entity in the sequence
         # to be reloaded (to be used for operations)
         entity_f = entities[0]
+
+        # sets the scope to be used in the options as the one defined
+        # in the first entity to be reloaded (should be the same as
+        # the one defined for the other entities)
+        options["scope"] = entity_f._scope
 
         # retrieves the entity class associated with
         # the (first) entity to be reloaded
@@ -2015,7 +2022,7 @@ class EntityManager:
             "eager" : {
                 name : options
             },
-            "scope" : self._scope,
+            "scope" : entity._scope,
             "minimal" : True
         }
 
