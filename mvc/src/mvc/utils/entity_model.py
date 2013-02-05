@@ -1321,6 +1321,10 @@ def relation(self, name, options = {}, entity_manager = None):
     # loading) using the entity manager
     entity_manager.relation(self, name, options)
 
+    # ensures that the context is loaded for the complete
+    # set of relations defined in the provided name
+    self.ensure_context(name)
+
 def save_update(self, entity_manager = None):
     """
     Saves or updates the current instance into the data source
@@ -1913,6 +1917,42 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
         # sets the context value in the model this will provide
         # a transparent process for context value saving
         setattr(self, context_name, context_value)
+
+def ensure_context(self, name, entity_manager = None):
+    """
+    Ensures that a context is defined in the relations
+    defined by the provided name.
+
+    The context to be set is the provided entity manager
+    entity or the one loaded in the current entity in
+    case none is provided.
+
+    The method works for both "to one" relations and
+    "to many" relations.
+
+    @type name: String
+    @param name: The name of the relation to be "ensured"
+    to have the context set.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or self._entity_manager
+
+    # verifies if the relation with the current name is of type
+    # to many and in case it's not sets the complete set of
+    # loaded relations as a single item tuple
+    is_to_many = self.is_to_many(name)
+    relation = getattr(self, name)
+    relations = relation if is_to_many else (relation,)
+
+    # iterates over all the loaded relation value and sets the
+    # current context in them so that they may be used correctly
+    for relation in relations:
+        relation.set_context(entity_manager = entity_manager)
 
 def clear_errors_r(self):
     """
