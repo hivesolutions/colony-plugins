@@ -2015,6 +2015,7 @@ class EntityManager:
             "eager" : {
                 name : options
             },
+            "scope" : self._scope,
             "minimal" : True
         }
 
