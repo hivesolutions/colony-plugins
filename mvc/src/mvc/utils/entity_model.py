@@ -1962,36 +1962,53 @@ def clear_errors_r(self):
 
 def _get_entity_class_name(self):
     """
-    Converts the name of the current entity instance
-    class to a pluralized form.
+    Retrieves the name of the current class associated
+    with the instance in the "standard" underscore based
+    form so that it may be used in routing.
+
     This method is a utility for this common task.
 
     @rtype: String
-    @return: The entity class name in pluralized form.
+    @return: The entity class name in the "standard"
+    underscore based form.
     """
 
-    # retrieves the class of the current object
+    # retrieves the class of the current object to be
+    # used for the retrieval of the class name
     entity_class = self.__class__
 
-    # retrieves the entity class name
+    # retrieves the entity class name, then converts it
+    # into the underscore notation
     entity_class_name = entity_class.__name__
     entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
+
+    # returns the "just" created entity class
+    # name value to the caller method
     return entity_class_name
 
 def _get_entity_class_pluralized(self):
     """
     Converts the name of the current entity instance
     class to a pluralized form.
+
+    The name is also converted into the underscore
+    notation as it's considered the default one.
+
     This method is a utility for this common task.
 
     @rtype: String
-    @return: The entity class name in pluralized form.
+    @return: The entity class name in pluralized form
+    and in underscore notation
     """
 
-    # retrieves the class of the current object
+    # retrieves the class of the current object to be
+    # used for the retrieval of the class name
     entity_class = self.__class__
 
-    # retrieves the entity class name converts it to under
+    # retrieves the entity class name, then converts it
+    # into the underscore notation and converts it into
+    # the pluralized version using the default suffix based
+    # strategy (may create syntactic errors)
     entity_class_name = entity_class.__name__
     lower_cased_entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
     entity_class_pluralized = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
