@@ -382,7 +382,7 @@ def apply(self, map):
                 # raises a model apply exception
                 raise exceptions.ModelApplyException(
                     "item name '%s' not found in model class '%s'" %
-                    (item_name, cls.__name__)
+                        (item_name, cls.__name__)
                 )
 
             # retrieves the class value and retrieves
@@ -397,7 +397,7 @@ def apply(self, map):
                 # raises a model apply exception
                 raise exceptions.ModelApplyException(
                     "item name '%s' not defined in model class '%s'" %
-                    (item_name, cls.__name__)
+                        (item_name, cls.__name__)
                 )
 
             # retrieves the value data type and secure
