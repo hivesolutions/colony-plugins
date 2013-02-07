@@ -151,7 +151,7 @@ class CryptonClient:
 
         # returns the crypton structure
         return crypton_structure
-    
+
     def encrypt(self, message):
         # retrieves the base url
         base_url = self.crypton_structure.base_url
@@ -203,7 +203,7 @@ class CryptonClient:
 
         # returns the (decrypted) message
         return message
-    
+
     def sign(self, message, algorithm_name = None):
         # retrieves the base url
         base_url = self.crypton_structure.base_url
@@ -233,7 +233,7 @@ class CryptonClient:
 
         # returns the signature
         return signature
-    
+
     def verify(self, signature, message):
         # retrieves the base url
         base_url = self.crypton_structure.base_url
