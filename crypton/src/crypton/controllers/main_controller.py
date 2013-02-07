@@ -70,7 +70,7 @@ class MainController(controllers.Controller):
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         message = form_data_map["message"]
-       
+
         # encrypts the message and retrieves the encrypted message
         message_e = signature_controller.encrypt(rest_request, api_key, key_name, message)
 
@@ -96,13 +96,13 @@ class MainController(controllers.Controller):
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         message_e = form_data_map["message_e"]
-      
+
         # decrypts the encrypted message, retrieving the original message
         message = signature_controller.decrypt(rest_request, api_key, key_name, message_e)
 
         # sets the message as the contents
         self.set_contents(rest_request, message, "text/plain")
-                          
+
     def handle_sign(self, rest_request, parameters = {}):
         """
         Handles the given crypton sign rest request.
