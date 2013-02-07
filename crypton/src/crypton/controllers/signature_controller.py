@@ -102,7 +102,7 @@ class SignatureController(controllers.Controller):
 
         # returns the original message
         return message
-    
+
     def sign(self, rest_request, api_key, key_name, message, algorithm_name):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
@@ -163,7 +163,7 @@ class SignatureController(controllers.Controller):
             return
 
         # creates the filter to retrieve the consumer with
-        # the provided api, only existing clients should 
+        # the provided api, only existing clients should
         # be considered valid according to specification
         filter = {
             "filters" : (
