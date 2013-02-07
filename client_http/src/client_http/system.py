@@ -253,7 +253,7 @@ class ClientHttp(colony.base.system.System):
         """
 
         # retrieves the various parameters provided for the
-        # creation of the http client 
+        # creation of the http client
         protocol_version = parameters.get(PROTOCOL_VERSION_VALUE, None)
         content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
         key_file_path = parameters.get(KEY_FILE_PATH_VALUE, None)
@@ -307,14 +307,14 @@ class HttpClient:
 
     key_file_path = None
     """ The path to the (private) key file to be
-    used for a secured connection """    
-    
+    used for a secured connection """
+
     certificate_file_path = None
     """ The path to the ssl certificate file to be
     used for a secured connection """
 
     ssl_version = None
-    """ The version of the ssl specification to be 
+    """ The version of the ssl specification to be
     used as base for the current connection """
 
     client_connection = None
@@ -437,7 +437,7 @@ class HttpClient:
         if self.certificate_file_path:
             socket_parameters["certificate_file_path"] = self.certificate_file_path
         if self.ssl_version:
-            socket_parameters["ssl_version"] = self.ssl_version 
+            socket_parameters["ssl_version"] = self.ssl_version
 
         # defines the connection parameters
         connection_parameters = (
@@ -722,13 +722,13 @@ class HttpClient:
             # be set (undefined size) must retrieve the message value
             if not message_size:
                 message_value = message.get_value()
-            
+
             # in case the header is not loaded or the current message has
             # been completely received must retrieve the message value
             elif not header_loaded or\
                 received_data_size == message_size + message_offset_index:
                 message_value = message.get_value()
-            
+
             # in case there's no need to inspect the message contents continues
             # the loop immediately (avoid extra computation)
             else: continue
