@@ -23,7 +23,7 @@
 // __copyright__ = Copyright (c) 2008-2012 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
-(function($) {
+(function(jQuery) {
     jQuery.fn.uxconsole = function(query, callback, options) {
         // the offset in pixels of the autocomplete
         // window relative to the console line
