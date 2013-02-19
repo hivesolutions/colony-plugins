@@ -134,6 +134,7 @@ INVALID_NAMES = set((
     "_entity_manager",
     "_resources_path",
     "_entities",
+    "_class",
     "_scope",
     "_attached",
     "_attach_level",
