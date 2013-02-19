@@ -4290,6 +4290,10 @@ class EntityClass(object):
         done with extreme care.
         """
 
+        # sets the class (name) attribute for the current
+        # instance according to the associated class name
+        self._class = self.__class__.__name__
+
         # creates the required maps for the entities and
         # for the scope in case they are required not
         # already set in the entity
