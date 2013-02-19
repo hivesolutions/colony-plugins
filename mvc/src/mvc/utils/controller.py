@@ -1994,13 +1994,11 @@ def redirect_base_path(self, rest_request, target, status_code = 302, quote = Tr
     redirect url.
     """
 
-    # retrieves the base path
+    # retrieves the base path and uses it to crate
+    # the target base path using the provided target
+    # then redirects the agent to it
     base_path = self.get_base_path(rest_request)
-
-    # creates the "new" target with the base path
     target_base_path = base_path + target
-
-    # redirects to the target base path
     self.redirect(rest_request, target_base_path, status_code, quote, attributes_map)
 
 def redirect_mvc_path(self, rest_request, target, status_code = 302, quote = True, attributes_map = None):
@@ -2024,13 +2022,11 @@ def redirect_mvc_path(self, rest_request, target, status_code = 302, quote = Tru
     redirect url.
     """
 
-    # retrieves the mvc path
+    # retrieves the mvc path and uses it to crate
+    # the target mvc path using the provided target
+    # then redirects the agent to it
     mvc_path = self.get_mvc_path(rest_request)
-
-    # creates the "new" target with the mvc path
     target_mvc_path = mvc_path + target
-
-    # redirects to the target mvc path
     self.redirect(rest_request, target_mvc_path, status_code, quote, attributes_map)
 
 def redirect_back(self, rest_request, default_target = "/", status_code = 302, quote = False, attributes_map = None):
