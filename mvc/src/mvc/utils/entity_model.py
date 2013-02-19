@@ -1986,16 +1986,23 @@ def _get_entity_class_name(self):
     # name value to the caller method
     return entity_class_name
 
-def _get_entity_class_pluralized(self):
+def _get_entity_class_pluralized(self, entity_class = None):
     """
     Converts the name of the current entity instance
     class to a pluralized form.
+
+    Alternatively an entity class may be passed as an argument,
+    overriding the current instance's class.
 
     The name is also converted into the underscore
     notation as it's considered the default one.
 
     This method is a utility for this common task.
 
+    @type entity_class: Class
+    @param entity_class: The class to be used as reference
+    for the generation of the name, in case it's not provided,
+    the current instance's class is used.
     @rtype: String
     @return: The entity class name in pluralized form
     and in underscore notation
@@ -2003,7 +2010,7 @@ def _get_entity_class_pluralized(self):
 
     # retrieves the class of the current object to be
     # used for the retrieval of the class name
-    entity_class = self.__class__
+    entity_class = entity_class or self.__class__
 
     # retrieves the entity class name, then converts it
     # into the underscore notation and converts it into
