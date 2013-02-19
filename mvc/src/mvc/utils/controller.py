@@ -1762,7 +1762,7 @@ def redirect(self, rest_request, target, status_code = 302, quote = True, attrib
     # sets the contents (null)
     self.set_contents(rest_request)
 
-def redirect_list(self, rest_request, entity, status_code = 302, quote = True, attributes_map = None):
+def redirect_list(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the list action
     of the given entity (instance).
@@ -1771,6 +1771,9 @@ def redirect_list(self, rest_request, entity, status_code = 302, quote = True, a
     @param rest_request: The rest request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
     @type status_code: int
     @param status_code: The status code to be used.
     @type quote: bool
@@ -1781,16 +1784,66 @@ def redirect_list(self, rest_request, entity, status_code = 302, quote = True, a
     redirect url.
     """
 
-    # converts the entity class name to pluralized version
-    entity_class_pluralized = entity._get_entity_class_pluralized()
+    # in case the entity level value is set the entity is re-created
+    # with the proper inheritance level defined, useful for the
+    # retrieval of the proper name
+    if level: entity = super(level, entity)
+    level = level or entity.__class__
 
+    # converts the entity class name to pluralized version, then
     # creates the target (list url) from the pluralized entity name
+    # and redirects the request to the defined target
+    entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized
-
-    # redirects the request to the target (path)
     self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
 
-def redirect_create(self, rest_request, entity, status_code = 302, quote = True, attributes_map = None):
+def redirect_action(self, rest_request, entity, action = None, level = None, status_code = 302, quote = True, attributes_map = None):
+    """
+    Redirects the current request a custom entity action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type action: String
+    @param action: The name of the action to be used for the
+    redirection process, this value may contain an extension
+    (eg: sales.json).
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    @type attributes_map: Dictionary
+    @param attributes_map: Map containing the series of
+    attributes to be sent over the target path in the
+    redirect url.
+    """
+
+    # in case the entity level value is set the entity is re-created
+    # with the proper inheritance level defined, useful for the
+    # retrieval of the proper name
+    if level: entity = super(level, entity)
+    level = level or entity.__class__
+
+    # converts the entity class name to pluralized version using
+    # the defined inheritance level and then retrieves the identifier
+    # value for the current entity and converts it into a string
+    entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
+    entity_id_attribute_value = entity.get_id_attribute_value()
+    entity_id_attribute_value_string = str(entity_id_attribute_value)
+
+    # creates the target (edit url) from the pluralized entity name
+    # and the entity id attribute value string and redirects the
+    # request to the target (path)
+    target = entity_class_pluralized + "/" + entity_id_attribute_value_string +\
+        ("/" if action else "")
+    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
+
+def redirect_create(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the create action
     of the given entity (instance).
@@ -1799,6 +1852,9 @@ def redirect_create(self, rest_request, entity, status_code = 302, quote = True,
     @param rest_request: The rest request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
     @type status_code: int
     @param status_code: The status code to be used.
     @type quote: bool
@@ -1809,16 +1865,20 @@ def redirect_create(self, rest_request, entity, status_code = 302, quote = True,
     redirect url.
     """
 
-    # converts the entity class name to pluralized version
-    entity_class_pluralized = entity._get_entity_class_pluralized()
+    # in case the entity level value is set the entity is re-created
+    # with the proper inheritance level defined, useful for the
+    # retrieval of the proper name
+    if level: entity = super(level, entity)
+    level = level or entity.__class__
 
+    # converts the entity class name to pluralized version then
     # creates the target (create url) from the pluralized entity name
+    # and redirects the request to the target (path)
+    entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized + "/new"
-
-    # redirects the request to the target (path)
     self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
 
-def redirect_show(self, rest_request, entity, status_code = 302, quote = True, attributes_map = None):
+def redirect_show(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the show action
     of the given entity (instance).
@@ -1827,6 +1887,9 @@ def redirect_show(self, rest_request, entity, status_code = 302, quote = True, a
     @param rest_request: The rest request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
     @type status_code: int
     @param status_code: The status code to be used.
     @type quote: bool
@@ -1837,24 +1900,16 @@ def redirect_show(self, rest_request, entity, status_code = 302, quote = True, a
     redirect url.
     """
 
-    # converts the entity class name to pluralized version
-    entity_class_pluralized = entity._get_entity_class_pluralized()
+    self.redirect_action(
+        rest_request,
+        entity,
+        level = level,
+        status_code = status_code,
+        quote = quote,
+        attributes_map = attributes_map
+    )
 
-    # retrieves the entity id attribute value from the entity
-    entity_id_attribute_value = entity.get_id_attribute_value()
-
-    # retrieves the entity id attribute value,
-    # and converts it to string
-    entity_id_attribute_value_string = str(entity_id_attribute_value)
-
-    # creates the target (show url) from the pluralized entity name
-    # and the entity id attribute value string
-    target = entity_class_pluralized + "/" + entity_id_attribute_value_string
-
-    # redirects the request to the target (path)
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
-
-def redirect_edit(self, rest_request, entity, status_code = 302, quote = True, attributes_map = None):
+def redirect_edit(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the edit action
     of the given entity (instance).
@@ -1863,6 +1918,9 @@ def redirect_edit(self, rest_request, entity, status_code = 302, quote = True, a
     @param rest_request: The rest request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
     @type status_code: int
     @param status_code: The status code to be used.
     @type quote: bool
@@ -1873,24 +1931,17 @@ def redirect_edit(self, rest_request, entity, status_code = 302, quote = True, a
     redirect url.
     """
 
-    # converts the entity class name to pluralized version
-    entity_class_pluralized = entity._get_entity_class_pluralized()
+    self.redirect_action(
+        rest_request,
+        entity,
+        action = "edit",
+        level = level,
+        status_code = status_code,
+        quote = quote,
+        attributes_map = attributes_map
+    )
 
-    # retrieves the entity id attribute value from the entity
-    entity_id_attribute_value = entity.get_id_attribute_value()
-
-    # retrieves the entity id attribute value,
-    # and converts it to string
-    entity_id_attribute_value_string = str(entity_id_attribute_value)
-
-    # creates the target (edit url) from the pluralized entity name
-    # and the entity id attribute value string
-    target = entity_class_pluralized + "/" + entity_id_attribute_value_string + "/edit"
-
-    # redirects the request to the target (path)
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
-
-def redirect_delete(self, rest_request, entity, status_code = 302, quote = True, attributes_map = None):
+def redirect_delete(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the delete action
     of the given entity (instance).
@@ -1899,6 +1950,9 @@ def redirect_delete(self, rest_request, entity, status_code = 302, quote = True,
     @param rest_request: The rest request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
+    @type level: Class
+    @param level: Optional class level to be used to retrieve
+    custom redirection names for upper inheritance.
     @type status_code: int
     @param status_code: The status code to be used.
     @type quote: bool
@@ -1909,22 +1963,15 @@ def redirect_delete(self, rest_request, entity, status_code = 302, quote = True,
     redirect url.
     """
 
-    # converts the entity class name to pluralized version
-    entity_class_pluralized = entity._get_entity_class_pluralized()
-
-    # retrieves the entity id attribute value from the entity
-    entity_id_attribute_value = entity.get_id_attribute_value()
-
-    # retrieves the entity id attribute value,
-    # and converts it to string
-    entity_id_attribute_value_string = str(entity_id_attribute_value)
-
-    # creates the target (delete url) from the pluralized entity name
-    # and the entity id attribute value string
-    target = entity_class_pluralized + "/" + entity_id_attribute_value_string + "/delete"
-
-    # redirects the request to the target (path)
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
+    self.redirect_action(
+        rest_request,
+        entity,
+        action = "delete",
+        level = level,
+        status_code = status_code,
+        quote = quote,
+        attributes_map = attributes_map
+    )
 
 def redirect_base_path(self, rest_request, target, status_code = 302, quote = True, attributes_map = None):
     """
