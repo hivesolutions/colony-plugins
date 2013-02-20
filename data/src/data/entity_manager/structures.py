@@ -1960,6 +1960,13 @@ class EntityClass(object):
         return  has_name
 
     @classmethod
+    def get_cls(cls, name):
+        names_map = cls.get_names_map()
+        name_cls = names_map.get(name, None)
+
+        return  name_cls
+
+    @classmethod
     def get_id(cls):
         """
         Retrieves the name of the id attribute of the
