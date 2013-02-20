@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import inspect
+
 import exceptions
 
 ERROR_STATUS_CODE = 500
@@ -243,6 +245,15 @@ def transaction_method(entity_manager_reference, raise_exception = True):
         @param function: The callback function.
         """
 
+        # retrieves the function specification and uses
+        # it to verify if the yield argument is part of
+        # it and sets the flag that controls such existence
+        # in accordance with the existence of it
+        function_spec = inspect.getargspec(function)
+        function_args = function_spec.args
+        if "_yield" in function_args: is_yield = True
+        else: is_yield = False
+
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the transaction_method decorator.
@@ -255,16 +266,12 @@ def transaction_method(entity_manager_reference, raise_exception = True):
 
             # retrieves the self reference
             self = args[0]
-            
-            #######################################
-            import inspect
-            keyword = inspect.getargspec(function).defaults
-            if "test_mode" in keyword:
-                test_mode = kwargs.get("test_mode", False)
-                is_test = True 
-            else:
-                is_test = False
-            #######################################
+
+            # in case the yield mode is set tries to retrieve
+            # the value of such variable, as it will control
+            # the behavior of the function call
+            if is_yield: _yield = kwargs.get("_yield", False)
+            else: _yield = None
 
             # in case the current object contains the entity
             # manager reference, no need to try to find it
@@ -307,9 +314,12 @@ def transaction_method(entity_manager_reference, raise_exception = True):
                 # calls the callback function and gets the return value
                 # this code should be executed code inside the transaction
                 # all the operation will be pending until commit or "rollback"
-                # is performed in the current transaction context
+                # is performed in the current transaction context, note that
+                # in case the operation is of type yield and the yield flag
+                # is not the complete set of iterations are performed on the
+                # function (simulating the normal function behavior)
                 return_value = function(*args, **kwargs)
-                if is_test and not test_mode: return all(return_value)
+                if is_yield and not _yield: return_value = all(return_value)
             except:
                 # "rollsback" the transaction, something wrong
                 # has happened and the transaction actions must
