@@ -1840,7 +1840,7 @@ def redirect_action(self, rest_request, entity, action = None, level = None, sta
     # and the entity id attribute value string and redirects the
     # request to the target (path)
     target = entity_class_pluralized + "/" + entity_id_attribute_value_string +\
-        ("/" if action else "")
+        ("/" + action if action else "")
     self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
 
 def redirect_create(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
