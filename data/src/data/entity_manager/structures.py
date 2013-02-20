@@ -1957,13 +1957,34 @@ class EntityClass(object):
 
         # returns if the name exists in the current
         # entity class
-        return  has_name
+        return has_name
 
     @classmethod
     def get_cls(cls, name):
+        """
+        Retrieves the class associated with the name, a class is
+        defined as being associated with a name when the name
+        is defined at such class level.
+
+        The associated class may be also called owner class.
+
+        @type name: String
+        @param name: The name of the attribute to retrieve the
+        associated class (owner class).
+        @rtype: EntityClass
+        @return: The class that is considered to be associated with
+        the attribute with the provided name.
+        """
+
+        # retrieves the map containing the various
+        # names of the current class associated with
+        # their proper parent classes and retrieve the
+        # class associated with the name
         names_map = cls.get_names_map()
         name_cls = names_map.get(name, None)
 
+        # returns the (proper) class associated with the
+        # provided name to the caller method
         return  name_cls
 
     @classmethod
