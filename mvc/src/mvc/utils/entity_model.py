@@ -2152,9 +2152,9 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     """
     Validates that there is no entity with the same class as the
     one specified in the validation properties target class attribute
-    (defaults to the instance's class in case no target class is specified
-    in the properties), that has the specified attribute value for the
-    specified attribute name.
+    (defaults to the class associated with the unique attribute in case
+    no target class is specified in the properties), that has the specified 
+    attribute value for the specified attribute name.
 
     The global property flag may be set to indicate that the attribute
     should be unique across all instances (defaults to false, meaning
@@ -2176,9 +2176,10 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     rest_request = self.get_request()
 
     # retrieves the specified target class where to search
-    # for duplicates (uses the instance's class in case no
-    # target class is specified)
-    target_class = properties.get("target_class", self.__class__)
+    # for duplicates (uses the class associated with the
+    # unique attribute in case no target class is specified)
+    attribute_class = self.__class__.get_cls(attribute_name)
+    target_class = properties.get("target_class", attribute_class)
 
     # sets the context for retrieval as none in case
     # it is global, otherwise sets it as the rest request
