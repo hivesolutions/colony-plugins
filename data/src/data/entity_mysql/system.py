@@ -667,7 +667,12 @@ class MysqlConnection:
         if not connection:
             # creates a new connection and sets it in the
             # connections map for the current thread
-            connection = MySQLdb.connect(self.host, user = self.user, passwd = self.password, db = self.database)
+            connection = MySQLdb.connect(
+                self.host,
+                user = self.user,
+                passwd = self.password,
+                db = self.database
+            )
             self.connections_map[thread_id] = connection
 
             # creates a new transaction level for the connection

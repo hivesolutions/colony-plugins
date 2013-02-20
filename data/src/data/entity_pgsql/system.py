@@ -121,7 +121,12 @@ class PgsqlEngine:
         user = parameters.get("user", "postgres")
         password = parameters.get("password", "postgres")
         database = parameters.get("database", "default")
-        connection._connection = pgdb.connect(host = host, user = user, password = password, database = database);
+        connection._connection = pgdb.connect(
+            host = host,
+            user = user,
+            password = password,
+            database = database
+        )
         connection._transaction_level = 0
         connection._user = user
         connection._host = host

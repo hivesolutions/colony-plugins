@@ -109,7 +109,11 @@ class SqliteEngine:
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
         file_path = file_path or self._get_temporary()
-        connection._connection = SqliteConnection(file_path, cache_size, synchronous)
+        connection._connection = SqliteConnection(
+            file_path,
+            cache_size = cache_size,
+            synchronous = synchronous
+        )
         connection.open()
 
     def disconnect(self, connection):
@@ -503,7 +507,11 @@ class SqliteConnection:
         if not connection:
             # creates a new connection and sets it in the
             # connections map for the current thread
-            connection = sqlite3.connect(self.file_path, timeout = 30, isolation_level = "DEFERRED");
+            connection = sqlite3.connect(
+                self.file_path,
+                timeout = 30,
+                isolation_level = "DEFERRED"
+            )
             self.connections_map[thread_id] = connection
 
             # creates a new transaction level for the connection
