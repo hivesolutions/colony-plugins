@@ -255,6 +255,16 @@ def transaction_method(entity_manager_reference, raise_exception = True):
 
             # retrieves the self reference
             self = args[0]
+            
+            #######################################
+            import inspect
+            keyword = inspect.getargspec(function).defaults
+            if "test_mode" in keyword:
+                test_mode = kwargs.get("test_mode", False)
+                is_test = True 
+            else:
+                is_test = False
+            #######################################
 
             # in case the current object contains the entity
             # manager reference, no need to try to find it
@@ -299,6 +309,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
                 # all the operation will be pending until commit or "rollback"
                 # is performed in the current transaction context
                 return_value = function(*args, **kwargs)
+                if is_test and not test_mode: return all(return_value)
             except:
                 # "rollsback" the transaction, something wrong
                 # has happened and the transaction actions must
