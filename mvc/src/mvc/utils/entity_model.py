@@ -2153,7 +2153,7 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     Validates that there is no entity with the same class as the
     one specified in the validation properties target class attribute
     (defaults to the class associated with the unique attribute in case
-    no target class is specified in the properties), that has the specified 
+    no target class is specified in the properties), that has the specified
     attribute value for the specified attribute name.
 
     The global property flag may be set to indicate that the attribute
