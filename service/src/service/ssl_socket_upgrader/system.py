@@ -130,7 +130,7 @@ class SslSocketUpgrader(colony.base.system.System):
         # retrieves the plugin base path and uses it to retrieve the plugin
         # resources path (relative to the plugin path)
         plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
-        plugin_resources_path = plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
+        plugin_resources_path = plugin_path + "/service/ssl_socket_upgrader/resources"
 
         # retrieves the dummy ssl key and certificate paths
         # so that they can be used as the default values
