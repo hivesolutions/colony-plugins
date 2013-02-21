@@ -242,9 +242,13 @@ class AtClient:
         submit_invoice_url = base_url + "/faturas"
 
         # retrieves the proper username and password values
-        # according to the current test mode flag value
-        username = self.test_mode and "599999993/0037" or self.at_structure.username
-        password = self.test_mode and "testes1234" or self.at_structure.password
+        # according to the current test mode flag value then
+        # convert both values into string to make sure that
+        # no unicode buffers are present (avoids conversion)
+        username = self.test_mode and "599999993/0037" or str(self.at_structure.username)
+        password = self.test_mode and "testes1234" or str(self.at_structure.password)
+        username = str(username)
+        password = str(password)
 
         # creates a new aes cipher structure to be
         # able to encrypt the target fields and gets
