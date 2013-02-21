@@ -188,7 +188,47 @@ class ModelValidationError(ValidationError):
         @return: The string representation of the class.
         """
 
-        return "Model validation error - %s" % self.message
+        validation_s = self.get_validation_s()
+        return "Model validation error - %s (%s)" % (self.message, validation_s)
+
+    def get_validation_s(self):
+        """
+        Retrieves the string that describes the validation
+        error defining all of its errors.
+
+        @rtype: String
+        @return: The string that describes the validation
+        error with all of its components.
+        """
+
+        # in case no model is not possible to retrieve the
+        # validations map for it returns a default string
+        if not self.model: return "no model defined"
+
+        # creates the buffer that will hold the validation
+        # string components (to be joined)
+        validation_b = []
+
+        # retrieves the validation errors map as the map to
+        # be used for the iteration for creation of the string
+        # with error description
+        map = self.model.validation_errors_map
+
+        # sets the flag that controls if this is the first
+        # iteration then starts the iteration to create the
+        # validation string from the various components of it
+        is_first = True
+        for key, errors in map.items():
+            for error in errors:
+                if is_first: is_first = False
+                else: validation_b.append(",")
+                validation_b.append("%s - %s" % (key, error))
+
+        # creates the validation string from the various components
+        # then define it (joining its parts) then returns it to the
+        # caller method
+        validation_s = "".join(validation_b)
+        return validation_s
 
 class ControllerValidationError(ValidationError):
     """
