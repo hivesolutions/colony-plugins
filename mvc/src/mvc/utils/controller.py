@@ -4613,3 +4613,12 @@ def get_process_method(controller, rest_request, process_method_name):
 
     # returns the process method
     return process_method
+
+# creates the various methods that are going to be used for
+# the logging capabilities, this methods are "just" pipelined
+# calls the to the plugin instance associated with the controller
+def debug(self, message): self.plugin.debug(message)
+def info(self, message): self.plugin.info(message)
+def warning(self, message): self.plugin.warning(message)
+def error(self, message): self.plugin.error(message)
+def critical(self, message): self.plugin.critical(message)

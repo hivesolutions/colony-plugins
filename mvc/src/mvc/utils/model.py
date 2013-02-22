@@ -1910,6 +1910,20 @@ def _get_complete_name(name, namespace_name = None):
     complete_name = namespace_name + "." + name
     return complete_name
 
+# creates the various methods that are going to be used for
+# the logging capabilities, this methods are "just" pipelined
+# calls the to the plugin instance associated with the model
+def debug(self, message): self._system_instance.plugin.debug(message)
+def info(self, message): self._system_instance.plugin.info(message)
+def warning(self, message): self._system_instance.plugin.warning(message)
+def error(self, message): self._system_instance.plugin.error(message)
+def critical(self, message): self._system_instance.plugin.critical(message)
+def _class_debug(cls, message): cls._system_instance.plugin.debug(message)
+def _class_info(cls, message): cls._system_instance.plugin.info(message)
+def _class_warning(cls, message): cls._system_instance.plugin.warning(message)
+def _class_error(cls, message): cls._system_instance.plugin.error(message)
+def _class_critical(cls, message): cls._system_instance.plugin.critical(message)
+
 class ModelProxy(list):
     """
     Proxy model class uses to handle operation
