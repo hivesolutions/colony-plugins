@@ -414,16 +414,22 @@ def serialize_exceptions(serialization_parameters = None):
                 # retrieving the return value
                 return_value = function(*args, **kwargs)
             except BaseException, exception:
+                # logs a warning message because if an exception reached
+                # this area it must be considered not handled gracefully
+                # and must be considered an anomaly
+                self.warning(
+                    "There was an exception in controller: " + unicode(exception)
+                )
+
                 # retrieves the serializer and the exception
                 # values from the parameters
                 serializer = parameters.get(SERIALIZER_VALUE, None)
                 exception_handler = parameters.get(EXCEPTION_HANDLER_VALUE, None)
 
                 # in case the serializer and the exception
-                # handler are not set
-                if not serializer and not exception_handler:
-                    # re-raises the exception
-                    raise
+                # handler are not set must raise the exception
+                # to the top levels
+                if not serializer and not exception_handler: raise
 
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception, rest_request)
