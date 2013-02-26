@@ -6944,6 +6944,23 @@ class EntityManager:
         return result_set
 
     def _apply_unicode_set(self, result_set):
+        """
+        Converts the various string values existing in the result
+        set an unicode representation of them using the encoding
+        value currently set in the database.
+
+        This is a very expensive operation as the result set tuple
+        must be converted into a list and then the various lines are
+        also re-constructed with the new values.
+
+        @type result_set: Tuple
+        @param result_set: The result set to have the various line
+        string values converted into unicode values.
+        @rtype: List
+        @return: The result set with the various line values that
+        are strings converted into unicode values.
+        """
+
         # creates the "new" result set list that will hold
         # the various line that will be re-created using the
         # newly converted values
@@ -6953,7 +6970,7 @@ class EntityManager:
         # be used in the conversion of the result set string
         # values into unicode strings
         database_encoding = self.engine.get_database_encoding()
-        
+
         # iterates over all the lines in the result set to
         # convert each of the item in it to the proper encoding
         for line in result_set:
@@ -6961,14 +6978,22 @@ class EntityManager:
             # the converted values
             _line = []
 
+            # iterates over all the line's items to convert them
+            # (or set directly) in their respective positions
             for item in line:
+                # retrieves the type of the current item and in case
+                # it's a string decodes it using the currently defined
+                # encoding for the database then inserts the item into
+                # the current line in construction
                 _type = type(item)
                 if _type == types.StringType:
                     item = item.decode(database_encoding)
                 _line.append(item)
- 
+
+            # adds the current line in construction to the result
+            # set with the new values
             _result_set.append(_line)
-                
+
+        # returns the constructed result set with the new lines
+        # containing unicode values instead of strings
         return _result_set
-    
-    
