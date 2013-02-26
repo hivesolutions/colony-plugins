@@ -5043,6 +5043,15 @@ class EntityManager:
         # processed the processing time is greatly reduced
         set = options.get("set", False)
 
+        # retrieves the unicode option from the options map
+        # this options enables or disables the mode where all
+        # the string value retrieved from the set are converted
+        # into unicode strings, this value is only valid for the
+        # set mode as the conversion is applied to the result set
+        # the operation itself is extremely slow and should be used
+        # carefully to avoid performance problems
+        unicode = options.get("unicode", False)
+
         # retrieves the count option, in case this option
         # is set the return values must be a single integer
         # value indicating the number of results (rows) for
@@ -5066,7 +5075,13 @@ class EntityManager:
         # in case the set flag is set no need to unpack the
         # results and the proper result set is returned,
         # together with the names of the various fields
-        if set: return self._apply_names_set(result_set, field_names)
+        if set:
+            # applies the naming values to the result set and then
+            # in case the unicode flag is set applies the unicode
+            # to the complete result set (slow operation)
+            result_set = self._apply_names_set(result_set, field_names)
+            if unicode: result_set = self._apply_unicode_set(result_set)
+            return result_set
 
         # unpacks the result set using the appropriate method
         # in case the map option is set the map method must be
@@ -6927,3 +6942,33 @@ class EntityManager:
         # returns the "transformed" result set, this values is now a list
         # instead of a tuple
         return result_set
+
+    def _apply_unicode_set(self, result_set):
+        # creates the "new" result set list that will hold
+        # the various line that will be re-created using the
+        # newly converted values
+        _result_set = []
+
+        # retrieves the database encoding, this is going to
+        # be used in the conversion of the result set string
+        # values into unicode strings
+        database_encoding = self.engine.get_database_encoding()
+        
+        # iterates over all the lines in the result set to
+        # convert each of the item in it to the proper encoding
+        for line in result_set:
+            # creates the list for the new line that will contain
+            # the converted values
+            _line = []
+
+            for item in line:
+                _type = type(item)
+                if _type == types.StringType:
+                    item = item.decode(database_encoding)
+                _line.append(item)
+ 
+            _result_set.append(_line)
+                
+        return _result_set
+    
+    
