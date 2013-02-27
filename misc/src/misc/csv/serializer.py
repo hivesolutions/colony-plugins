@@ -76,14 +76,15 @@ def _chunk(object, string_buffer):
     object_type = type(object)
 
     # in case the object type is an instance
-    # or a map (dictionary)
+    # or a map (dictionary) must convert the
+    # object into a list for processing
     if object_type in (types.InstanceType, types.DictionaryType):
-        # converts the object into a list
         object = [object]
+
     # in case the object type is neither an
-    # instance nor a list
-    elif not object_type in LIST_TYPES:
-        # raises the csv encoder exception
+    # instance nor a list it's considered not
+    # valid and an exception should be raised
+    if not object_type in LIST_TYPES and not isinstance(object, list):
         raise exceptions.CsvEncodeException("invalid object type")
 
     # in case the object is not set, is invalid
