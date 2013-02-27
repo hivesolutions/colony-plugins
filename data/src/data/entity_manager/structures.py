@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
 import types
 import calendar
 import datetime
@@ -4485,6 +4486,426 @@ class EntityClass(object):
         # the serializer object and the name
         serializer_tuple = (serializer, name)
         return serializer_tuple
+
+class rset(list):
+    """
+    Specialized list that provides a series of utilities
+    to handle a result set oriented chunk of data.
+    """
+
+    header_set = False
+    """ Flag controlling if an header has already been
+    set for the current result set structure """
+
+    header_h = {}
+    """ The hash map that associates each of the
+    header names with the index position in the header """
+
+    def __init__(self, base = []):
+        """
+        Constructor of the class.
+
+        @type base: List
+        @param base: The base list to be used as the base
+        model for the construction of the new one.
+        """
+
+        list.__init__(self, base)
+
+        if hasattr(base, "header_set"): self.header_set = base.header_set
+        if hasattr(base, "header_h"): self.header_h = copy.copy(base.header_h)
+
+    def join(self, set):
+        """
+        Joins the current set with another one provided as
+        an argument, both sets must match the same information.
+
+        The order of the header and lines may not be the same
+        as a reorder operation will be performed.
+
+        @type set: rset
+        @param set: The set to be joined with the current instance
+        may not have the header sorted in the same way.
+        """
+
+        # retrieves the current intance's header and uses it to
+        # reorder the set to be joined so that it matched the target
+        # structures (required to avoid data corruption)
+        header = self.header()
+        set.reorder(header)
+
+        # retrieves the data from the set and extends the current list
+        # with such data (join operation itself)
+        data = set.data()
+        self.extend(data)
+
+    def sort_set(self, name, ascending = True):
+        """
+        Sorts the result set according to the attribute
+        with the given name.
+
+        The default order is ascending and may be changed
+        using the appropriate flag.
+
+        @type name: String
+        @param name: The name of the attribute to be used
+        for the sort operation.
+        @type ascending: bool
+        @param ascending: If the sort operation should be
+        done in an ascending order or descending.
+        """
+
+        # tries to retrieve the index value for the requested
+        # name in case it does not exists raises an error
+        index = self.header_h.get(name, -1)
+        if index == -1:
+            raise RuntimeError("Attribute '%s' not found for result set header" % name)
+
+        # creates the sort operation lambda function creating
+        # a clojure on the index of the attribute
+        sorter = lambda x, y: int(x[index] - y[index])
+
+        # retrieves the complete set of data and sorts it using
+        # the just created sorter operation then sets the data
+        # for the current instance with the result of it
+        data = self.data()
+        data.sort(sorter, reverse = not ascending)
+        self.data_s(data)
+
+    def data(self):
+        """
+        Retrieves a list containing the "raw" data for the
+        current result set, this avoid the "unsafe" iteration
+        over the header values.
+
+        @rtype: List
+        @return: The list containing the "raw" data for the
+        current result set.
+        """
+
+        if self.header_set: return self[1:]
+        else: return self
+
+    def data_s(self, data):
+        """
+        Sets the "raw" data for the current result set avoiding
+        the overlap of the header.
+
+        In case the header is set this may be a quite expensive
+        operation as the values of all the list will be replaced.
+
+        @type data: List
+        @param data: The "raw" data to replace the currently existing
+        data in the result set.
+        """
+
+        if self.header_set: self[1:] = data
+        else: self[:] = data
+
+    def header(self):
+        """
+        Retrieves the header list for the current result set in case
+        no header exists an exception will be raised.
+
+        @rtype: List
+        @return: The list containing the header information (names)
+        for the current result set instance.
+        """
+
+        if not self.header_set:
+            raise RuntimeError("No header set in result set structure")
+        return self[0]
+
+    def header_t(self, replace = ":"):
+        """
+        Retrieves the header list (transformed) values that consist
+        of the original values replaces with a special character.
+
+        This method provides a way to retrieve header safe values,
+        useful for map creation.
+
+        @type replace: String
+        @param replace: The character value to be used to replace the
+        "normal" name inheritance separator.
+        @rtype: List
+        @return: The list containing the header information (names)
+        for the current result set instance (transformed mode).
+        """
+
+        header = self.header()
+        header_t = [name.replace(".", replace) for name in header]
+        return header_t
+
+    def reorder(self, header):
+        """
+        Reorders the current result set so that the "raw" data
+        elements match the provided header.
+
+        This is a very expensive operation as all the data will
+        be re-written into new lists.
+
+        No operation occurs in case the header provided already
+        matched the one set in the result set (safe mode).
+
+        @type header: List
+        @param header: The list containing the various names that
+        will be part of the new header.
+        """
+
+        # retrieves the currently set header in order to be
+        # able to compare it with the provided one and in case
+        # the value is the same returns immediately no reorder
+        # is required (performance improvement)
+        _header = self.header()
+        if _header == header: return
+
+        # creates the list that will hold the various lines
+        # that constitute the re-ordered "raw" data
+        lines = []
+
+        # retrieves the current "raw" data and iterate over the complete
+        # set of lines to reorder their values according to the new header
+        data = self.data()
+        for line in data:
+            # creates the list that will represent the re-ordered
+            # list, to be populated
+            line_r = []
+
+            # iterates over all the names on the "new" header and
+            # retrieves the values for each of them inserting them
+            # into the new (re-ordered) list
+            for name in header:
+                value = self.get(line, name)
+                line_r.append(value)
+
+            # adds the re-ordered list to the list of lines for the
+            # new result set
+            lines.append(line_r)
+
+        # copies the header list provided as it will be the new header
+        # of the result set (avoids collision) then removes the complete
+        # set of elements (header and data) from the current result set
+        _header = copy.copy(header)
+        del self[:]
+
+        # adds the header to the current result set list and extends the
+        # the list with the computed (re-ordered) lines then recomputes
+        # the hash map for the header (for fast access)
+        self.append(_header)
+        self.extend(lines)
+        self._hash_h()
+
+    def get(self, line, name):
+        """
+        Retrieves the value for the line that is "located"
+        at the index associated with the requested name.
+
+        This method can only be used in case the header for
+        the result set is set.
+
+        @type line: List
+        @param line: The line (part of the result set) for
+        which the value at the given name should be returned.
+        @type name: String
+        @param name: The name of the header for which the value
+        will be retrieved.
+        @rtype: Object
+        @return: The value for the provided line with the
+        index defined by the requested name.
+        """
+
+        # tries to retrieve the index value for the requested
+        # name in case it does not exists raises an error
+        index = self.header_h.get(name, -1)
+        if index == -1:
+            raise RuntimeError("Attribute '%s' not found for result set header" % name)
+
+        # retrieves the value for the retrieved index and returns
+        # it to the caller method
+        value = line[index]
+        return value
+
+    def set(self, line, name, value):
+        """
+        Sets the value in the line for the index associated
+        with the provided name.
+
+        This method can only be used in case the header for
+        the result set is set.
+
+        @type line: List
+        @param line: The line (part of the result set) for
+        which the value at the given name should be set.
+        @type name: String
+        @param name: The name of the attribute that is going
+        to be set, an index will be resolved using it.
+        @type value: Object
+        @param value: The value that is going to be set in
+        the line field.
+        """
+
+        # tries to retrieve the index value for the requested
+        # name in case it does not exists raises an error
+        index = self.header_h.get(name, -1)
+        if index == -1:
+            raise RuntimeError("Attribute '%s' not found for result set header" % name)
+
+        # sets the value in the provided line for the retrieved
+        # index (set operation)
+        line[index] = value
+
+    def map(self):
+        """
+        Converts the current result set structure into a list
+        o maps with key values represented by the header names.
+
+        This is an expensive operation as all the lines composing
+        the result set data will be replicated as maps.
+
+        @rtype: List
+        @return: The list of maps representing the current result
+        set data, this is replicated information.
+        """
+
+        # retrieve the transformed version of the header names
+        # (for safety reasons) and then retrieves the "raw" data
+        # that is going to be used in the conversion
+        header_t = self.header_t()
+        data = self.data()
+
+        # creates the list that will hold the various maps that
+        # will represent the result set data
+        map_set = []
+
+        # iterates over all the lines in the "raw" data list to
+        # convert them into map structures
+        for line in data:
+            # creates the structure that will hold the line
+            # information (normal map) and starts the index
+            # to be used in the percolation of the header
+            map = {}
+            index = 0
+
+            # iterates over all the values in the lines to set
+            # them into the newly created map
+            for value in line:
+                # retrieves the name of the header associated with
+                # the current index and sets the name and values
+                # in the map structure
+                name = header_t[index]
+                map[name] = value
+                index += 1
+
+            # adds the constructed map to the list of maps
+            # representing the result set
+            map_set.append(map)
+
+        # returns the list of map that represent the
+        # result set structure to the caller method
+        return map_set
+
+    def rename_h(self, old, new):
+        """
+        Renames the provided header name to a new one.
+        After this operation the index should be usable.
+
+        @type old: String
+        @param old: The current (old) name of the header
+        to be re-named.
+        @type new: String
+        @param old: The target (new) name for which the
+        header should be re-named.
+        """
+
+        # tries to retrieve the index value for the requested
+        # name in case it does not exists raises an error
+        index = self.header_h.get(old, -1)
+        if index == -1:
+            raise RuntimeError("Attribute '%s' not found for result set header" % old)
+
+        # retrieves the header list to be used in the
+        # renaming operation
+        header = self.header()
+
+        # deletes the old header from the hash map and sets
+        # the new name on the hash index (update hash) and
+        # then updates the linear header list with the new
+        # name for the header
+        del self.header_h[old]
+        self.header_h[new] = index
+        header[index] = new
+
+    def rename_hw(self, old, new):
+        """
+        Runs the rename operation of the header using a wildcard
+        approach on the beginning of the name (prefix).
+
+        @type old: String
+        @param old: The prefix of the various header name to be
+        re-named with the new prefix.
+        @type new: String
+        @param new: The prefix to be used on the re-name operation.
+        """
+
+        # retrieves the list containing the various header name and
+        # iterates over them to try to match each name against the prefix
+        # in case they match a replace header operation will be "issued"
+        header = self.header()
+        for name in header:
+            if not name.startswith(old): continue
+            name_new = name.replace(old, new)
+            self.rename_h(name, name_new)
+
+    def set_h(self, names):
+        """
+        Inserts or updates the provided list of names as the
+        the list of headers for the result set.
+
+        This operation is safe as a second or further operation
+        will replace the header contents maintain a consistent
+        state.
+
+        @type names: List
+        @param names: The list of names to be used for header
+        information on the result set.
+        """
+
+        if self.header_set: del self[0]
+        self.header_set = True
+        self.insert(0, names)
+        self._hash_h()
+
+    def extend_h(self, names):
+        """
+        Extends the list of names that compose the headers for
+        the result set.
+
+        This operation does not affect the internal data and if
+        no change in the lines occurs inconsistent state may occur.
+
+        @type names: List
+        @param names: The list of names to extend the current header
+        for the result set.
+        """
+
+        header = self.header()
+        header.extend(names)
+        self._hash_h()
+
+    def _hash_h(self):
+        """
+        Computes an hash map associating the index position
+        of the header with it's own name, this allows a rapid
+        access to each of the header values.
+        """
+
+        self.header_h = {}
+        header = self.header()
+        index = 0
+
+        for name in header:
+            self.header_h[name] = index
+            index += 1
 
 def load_serializers():
     """
