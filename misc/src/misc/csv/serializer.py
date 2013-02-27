@@ -84,7 +84,7 @@ def _chunk(object, string_buffer):
     # in case the object type is neither an
     # instance nor a list it's considered not
     # valid and an exception should be raised
-    if not object_type in LIST_TYPES and not isinstance(object, list):
+    elif not object_type in LIST_TYPES and not isinstance(object, list):
         raise exceptions.CsvEncodeException("invalid object type")
 
     # in case the object is not set, is invalid
