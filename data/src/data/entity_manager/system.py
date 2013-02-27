@@ -6936,8 +6936,8 @@ class EntityManager:
         # and then inserts the names list in it as the first element
         # this should be enough for one to associate the values with
         # the representing names
-        result_set = list(result_set)
-        result_set.insert(0, names)
+        result_set = structures.rset(result_set)
+        result_set.set_h(names)
 
         # returns the "transformed" result set, this values is now a list
         # instead of a tuple
@@ -6964,7 +6964,7 @@ class EntityManager:
         # creates the "new" result set list that will hold
         # the various line that will be re-created using the
         # newly converted values
-        _result_set = []
+        _result_set = structures.rset()
 
         # retrieves the database encoding, this is going to
         # be used in the conversion of the result set string
@@ -6993,6 +6993,11 @@ class EntityManager:
             # adds the current line in construction to the result
             # set with the new values
             _result_set.append(_line)
+
+        # sets the header line as set (inner working) and then
+        # runs the computation on the headers for the result set
+        _result_set.header_set = result_set.header_set
+        _result_set._hash_h()
 
         # returns the constructed result set with the new lines
         # containing unicode values instead of strings
