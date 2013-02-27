@@ -81,6 +81,14 @@ DEFAULT_MAXIMUM_ACL_VALUE = 10000
 BASE_PATH_DELTA_VALUE = 2
 """ The delta value to be applied to retrieve the base path """
 
+MIN_TIMESTAMP = 0 if os.name == "nt" else -10000000000
+""" The minimum timestamp value used by the range
+system to return pseudo open ranges """
+
+MAX_TIMESTAMP = 10000000000
+""" The maximum timestamp value used by the range
+system to return pseudo open ranges """
+
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
 
@@ -3629,6 +3637,12 @@ def _range_d(self, rest_request, default):
     if not valid and default == "month": month = current.month
     if not valid and default == "day": day = current.day
     if not valid and default == "hour": hour = current.hour
+
+    # in case the provided date is not complete and the currently
+    # selected default mode is all (complete range) the minimum
+    # maximum timestamp values are returned
+    if not valid and default == "all":
+        return MIN_TIMESTAMP, MAX_TIMESTAMP
 
     # tries to verify (again) if the current sent argument define
     # a proper date in case they still don't raises an error
