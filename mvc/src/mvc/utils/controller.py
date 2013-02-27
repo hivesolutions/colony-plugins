@@ -43,6 +43,7 @@ import sys
 import time
 import types
 import datetime
+import calendar
 import platform
 import traceback
 
@@ -2960,6 +2961,52 @@ def set_locale_session(self, rest_request, locale):
     # sets the locale session attribute
     self.set_session_attribute(rest_request, LOCALE_SESSION_ATTRIBUTE, locale)
 
+def range_d(self, rest_request, default = "day", _datetime = False):
+    """
+    Calculates the timestamp based date range for the provided
+    rest request according to the specification.
+
+    The calculation of the range taking into account that if
+    only a "lower" value is filled the "upper" values are set
+    with the current date related values (eg: if day one is
+    specified the range is day one of the current month and year).
+
+    The default argument may be used to control the default behavior
+    in case no value is passed.
+
+    The datetime argument controls if the returned tuple value
+    should be converted into a date time object.
+
+    This is the internal method and should not be used from
+    an interface level.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used for the
+    computation of the date range.
+    @type default: String
+    @param default: The default mode to be used in case no value
+    is retrieved from the rest request.
+    @type _datetime: bool
+    @param _datetime: Flag that controls if the returned value
+    should be converted to datetime or left as timestamp.
+    @rtype: Tuple
+    @return: Tuple containing either a tuple of timestamps defining
+    the date range or a tuple of date time objects.
+    """
+
+    # calculates the start and end range from the rest request
+    # and returns immediately the received tuple in case the
+    # date time mode is not set (no conversion required)
+    start, end = self._range_d(rest_request, default)
+    if not _datetime: return start, end
+
+    # converts both the start timestamp and the end timestamp
+    # into corresponding date time representation and returns
+    # a tuple containing them to the caller method
+    start_date = datetime.datetime.utcfromtimestamp(start)
+    end_date = datetime.datetime.utcfromtimestamp(end)
+    return start_date, end_date
+
 def update_resources_path(self, parameters = {}):
     """
     Updates the resources path, changing the paths
@@ -3529,6 +3576,117 @@ def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREF
 
     # returns the host path
     return host_path
+
+def _range_d(self, rest_request, default):
+    """
+    Calculates the timestamp based date range for the provided
+    rest request according to the specification.
+
+    The calculation of the range taking into account that if
+    only a "lower" value is filled the "upper" values are set
+    with the current date related values (eg: if day one is
+    specified the range is day one of the current month and year).
+
+    The default argument may be used to control the default behavior
+    in case no value is passed.
+
+    This is the internal method and should not be used from
+    an interface level.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used for the
+    computation of the date range.
+    @type default: String
+    @param default: The default mode to be used in case no value
+    is retrieved from the rest request.
+    @rtype: Tuple
+    @return: Tuple containing the timestamps defining the date
+    range defined in the rest request.
+    """
+
+    # retrieves the current date structure to be used as reference
+    # for limit values that do not exist
+    current = datetime.datetime.utcnow()
+
+    # retrieves the various temporal values that are going to be
+    # uses int the calculus of the time ranges
+    year = self.get_field(rest_request, "year", None, types.IntType)
+    month = self.get_field(rest_request, "month", None, types.IntType)
+    day = self.get_field(rest_request, "day", None, types.IntType)
+    hour = self.get_field(rest_request, "hour", None, types.IntType)
+    start = self.get_field(rest_request, "start", None, types.IntType)
+    end = self.get_field(rest_request, "end", None, types.IntType)
+
+    # in case the start and end (timestamp values) are specified
+    # the method should return immediately with their values
+    if start and end: return start, end
+
+    # verifies if the provided date is complete and in case it's
+    # not populates the default values
+    valid = not year == None or not month == None or\
+        not day == None or not hour == None
+    if not valid and default == "year": year = current.year
+    if not valid and default == "month": month = current.month
+    if not valid and default == "day": day = current.day
+    if not valid and default == "hour": hour = current.hour
+
+    # tries to verify (again) if the current sent argument define
+    # a proper date in case they still don't raises an error
+    valid = not year == None or not month == None or\
+        not day == None or not hour == None
+    if not valid: raise RuntimeError("No valid date range specified")
+
+    # propagates the population of the default values in case the
+    # upper values are not (with the current date values)
+    if not hour == None: day = day or current.day
+    if not day == None: month = month or current.month
+    if not month == None: year = year or current.year
+
+    # resets the various start values to their appropriate values
+    # (note that the hour to be set is the first)
+    hour_s = hour or 0
+    day_s = day or 1
+    month_s = month or 1
+    year_s = year or 1
+
+    # creates the start time value from the computed values and the
+    # converts it into a valid timestamp value
+    start = datetime.datetime(year_s, month_s, day_s, hour_s)
+    start_tuple = start.utctimetuple()
+    start_time = calendar.timegm(start_tuple)
+
+    # in case the hour is defined the time is considered to be
+    # hour based and is computed as such
+    if not hour == None:
+        end_time = start_time + 3600
+
+    # in case the day is defined the time is considered to be
+    # day based and is computed as such
+    elif not day == None:
+        end_time = start_time + 86400
+
+    # in case the month is not defined the range is considered
+    # to be the complete month and the last day of the month
+    # should be used as reference for computation
+    elif not month == None:
+        month_range = calendar.monthrange(year_s, month_s)
+        last_day = month_range[1]
+        last = datetime.datetime(year, month, last_day)
+        last_tuple = last.utctimetuple()
+        last_time = calendar.timegm(last_tuple)
+        end_time = last_time + 86400
+
+    # in case the year is not defined the range is considered
+    # to be the complete year and the first day of the next
+    # year is considered the limit of the range
+    elif not year == None:
+        end = datetime.datetime(year_s + 1, month_s, day_s)
+        end_tuple = end.utctimetuple()
+        end_time = calendar.timegm(end_tuple)
+
+    # returns a tuple containing both the start and end
+    # time values to the calling method
+    return start_time, end_time
 
 def _parse_date(self, date_string_value):
     """
