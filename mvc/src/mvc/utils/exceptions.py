@@ -221,7 +221,7 @@ class ModelValidationError(ValidationError):
         for key, errors in map.items():
             for error in errors:
                 if is_first: is_first = False
-                else: validation_b.append(",")
+                else: validation_b.append(", ")
                 validation_b.append("%s - %s" % (key, error))
 
         # creates the validation string from the various components
