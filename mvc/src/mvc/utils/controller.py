@@ -81,11 +81,11 @@ DEFAULT_MAXIMUM_ACL_VALUE = 10000
 BASE_PATH_DELTA_VALUE = 2
 """ The delta value to be applied to retrieve the base path """
 
-MIN_TIMESTAMP = 0 if os.name == "nt" else -10000000000
+MIN_TIMESTAMP = 0 if os.name == "nt" else -2147483648
 """ The minimum timestamp value used by the range
 system to return pseudo open ranges """
 
-MAX_TIMESTAMP = 10000000000
+MAX_TIMESTAMP = 10000000000 if os.name == "nt" else 2147483647
 """ The maximum timestamp value used by the range
 system to return pseudo open ranges """
 
