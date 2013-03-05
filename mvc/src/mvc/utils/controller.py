@@ -2968,7 +2968,7 @@ def locale_value(self, value, locale = None):
     if hasattr(value, "__replace__"): value.__replace__(locale_value)
     else: value = locale_value
 
-    # returns the (now) localized value this must probaby
+    # returns the (now) localized value this must probably
     # a localized string value
     return value
 
