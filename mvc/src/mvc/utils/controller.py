@@ -1371,10 +1371,8 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
 
     # in case there is cached data pending in the
     # rest request and the force flag is not set
-    # uses it immediately
-    if not force and base_attributes_map:
-        # returns the base attributes map immediately
-        return base_attributes_map
+    # returns it immediately (fast access)
+    if not force and base_attributes_map: return base_attributes_map
 
     # retrieves the attributes list
     attributes_list = rest_request.get_attributes_list()
@@ -1385,21 +1383,21 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
     # iterates over all the attributes in the
     # attributes list
     for attribute in attributes_list:
-        # in case the attribute is invalid
-        # or empty (skips the loop)
-        if not attribute:
-            # continues the loop
-            continue
+        # in case the attribute is invalid or empty
+        # must skip the current loop
+        if not attribute: continue
 
-        # retrieves the attribute value from the request
+        # retrieves the attribute value from the request,
+        # decoding it according to the provided encoding
+        # and then retrieves the (data) type for it
         attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
-
-        # retrieves the attribute type
         attribute_value_type = type(attribute_value)
 
-        # in case the attribute value type is list
+        # in case the attribute value type is list must iterate over each
+        # of the values and assign the values to the associated index values
         if attribute_value_type == types.ListType:
-            # starts the index
+            # starts the index to be used as counter for the
+            # list structure assignment
             index = 0
 
             # iterates over all the attribute value items
@@ -1411,11 +1409,19 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
                 # starts the processing of the form attribute with the base attributes map
                 # the base attribute name and the attribute value and the index of the current
                 # attribute value item
-                self._process_form_attribute(base_attributes_map, attribute, attribute_value_item, index)
+                self._process_form_attribute(
+                    base_attributes_map,
+                    attribute,
+                    attribute_value_item,
+                    index
+                )
 
-                # increments the index
+                # increments the index, next element in sequence must be
+                # used in the next iteration
                 index += 1
-        # otherwise the attribute type must be a string
+
+        # otherwise the attribute type must be a string and the processing of the
+        # value is simpler as no sequence processing should be done
         else:
             # nullifies the attribute value in case it's empty
             # in case the nullify flag is set)
@@ -1423,7 +1429,11 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
 
             # starts the processing of the form attribute with the base attributes map
             # the base attribute name and the attribute value
-            self._process_form_attribute(base_attributes_map, attribute, attribute_value)
+            self._process_form_attribute(
+                base_attributes_map,
+                attribute,
+                attribute_value
+            )
 
     # sets the "processed" form data in the rest request
     # for latter possible cache match
@@ -2789,6 +2799,11 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     the given attribute name and decoded using the given
     encoding.
 
+    This is an expensive operation in case the requested
+    attribute is a complex sequence, as all the values
+    contained in it will be decoded and the structure will
+    be re-created.
+
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used to retrieve the
     attribute.
@@ -2805,61 +2820,63 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     # using the rest (sub) system
     attribute_value = self._get_attribute(rest_request, attribute_name)
 
-    # in case the attribute value is valid
-    if attribute_value:
-        # retrieves the attribute value type
-        attribute_value_type = type(attribute_value)
+    # in case the attribute value is not valid returns an empty
+    # string as the default fallback value
+    if not attribute_value: return ""
 
-        # in case the attribute value is a list
-        if attribute_value_type == types.ListType:
-            # starts the attribute value decoded as list
-            attribute_value_decoded = []
+    # retrieves the attribute value type
+    attribute_value_type = type(attribute_value)
 
-            # iterates over all the attribute value
-            # items in the attribute value
-            for attribute_value_item in attribute_value:
-                # "casts" the attribute value item and retrieves
-                # the attribute value item type
-                attribute_value_item = self._cast_attribute_value(attribute_value_item)
-                attribute_value_item_type = type(attribute_value_item)
+    # in case the attribute value is a list
+    if attribute_value_type == types.ListType:
+        # starts the attribute value decoded as list
+        attribute_value_decoded = []
 
-                # decodes the attribute value item, only in case
-                # it's a valid string
-                attribute_value_item_decoded = attribute_value_item_type == types.StringType and attribute_value_item.decode(encoding) or attribute_value_item
+        # iterates over all the attribute value
+        # items in the attribute value
+        for attribute_value_item in attribute_value:
+            # "casts" the attribute value item and retrieves
+            # the attribute value item type
+            attribute_value_item = self._cast_attribute_value(attribute_value_item)
+            attribute_value_item_type = type(attribute_value_item)
 
-                # adds the attribute value item to the attribute
-                # value decoded
-                attribute_value_decoded.append(attribute_value_item_decoded)
-        # in case the attribute is a map
-        elif attribute_value_type == types.DictType:
-            # starts the attribute value decoded as map
-            attribute_value_decoded = {}
-
-            # iterates over all the attribute value
-            # items in the attribute value
-            for attribute_value_key, attribute_value_value in attribute_value.items():
-                # "casts" the attribute value value and retrieves
-                # the attribute value value type
-                attribute_value_value = self._cast_attribute_value(attribute_value_value)
-                attribute_value_value_type = type(attribute_value_value)
-
-                # decodes the attribute value value, only in case
-                # it's a valid string
-                attribute_value_value_decoded = attribute_value_value_type == types.StringType and attribute_value_value.decode(encoding) or attribute_value_value
-
-                # sets the attribute value value in the attribute value decoded map
-                attribute_value_decoded[attribute_value_key] = attribute_value_value_decoded
-        # otherwise it must be a string
-        else:
-            # decodes the attribute value, only in case
+            # decodes the attribute value item, only in case
             # it's a valid string
-            attribute_value_decoded = attribute_value_type == types.StringType and attribute_value.decode(encoding) or attribute_value
+            attribute_value_item_decoded = attribute_value_item_type == types.StringType and\
+                attribute_value_item.decode(encoding) or attribute_value_item
 
-        # the attribute value decoded
-        return attribute_value_decoded
+            # adds the attribute value item to the attribute
+            # value decoded
+            attribute_value_decoded.append(attribute_value_item_decoded)
+    # in case the attribute is a map
+    elif attribute_value_type == types.DictType:
+        # starts the attribute value decoded as map
+        attribute_value_decoded = {}
+
+        # iterates over all the attribute value
+        # items in the attribute value
+        for attribute_value_key, attribute_value_value in attribute_value.items():
+            # "casts" the attribute value value and retrieves
+            # the attribute value value type
+            attribute_value_value = self._cast_attribute_value(attribute_value_value)
+            attribute_value_value_type = type(attribute_value_value)
+
+            # decodes the attribute value value, only in case
+            # it's a valid string
+            attribute_value_value_decoded = attribute_value_value_type == types.StringType and\
+                attribute_value_value.decode(encoding) or attribute_value_value
+
+            # sets the attribute value value in the attribute value decoded map
+            attribute_value_decoded[attribute_value_key] = attribute_value_value_decoded
+    # otherwise it must be a string
     else:
-        # returns the empty value
-        return ""
+        # decodes the attribute value, only in case
+        # it's a valid string
+        attribute_value_decoded = attribute_value_type == types.StringType and\
+            attribute_value.decode(encoding) or attribute_value
+
+    # returns the attribute value decoded
+    return attribute_value_decoded
 
 def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_locales = DEFAULT_ALIAS_LOCALES, default_locale = DEFAULT_LOCALE):
     """
@@ -3429,11 +3446,9 @@ def _get_attribute(self, rest_request, attribute_name):
     @return: The retrieved attribute (safely casted).
     """
 
-    # retrieves the attribute value from the
-    # attribute name
+    # retrieves the attribute value from the attribute
+    # name and casts it (avoiding form data problems)
     attribute_value = rest_request.get_attribute(attribute_name)
-
-    # casts the attribute value (avoids form data problems)
     attribute_value = self._cast_attribute_value(attribute_value)
 
     # returns the attribute value
@@ -3789,11 +3804,11 @@ def _dasherize_camel_cased(self, string_value):
 
 def _dasherize_underscored(self, string_value):
     """
-    Converts a string value with multiple words in undescore case to
+    Converts a string value with multiple words in underscore case to
     a dasherized notation, i.e., different words separated by dashes.
 
     @type string_value: String
-    @param string_value: The string value to dasherize, in undescore
+    @param string_value: The string value to dasherize, in underscore
     and without consecutive capitals.
     @rtype: String
     @return: The dasherized string value.
@@ -3954,85 +3969,80 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
     @param index: The index of the current attribute reference.
     """
 
-    # retrieves the current match result
+    # retrieves the current match for the current attribute
+    # and in case no valid match is found raises an exception indicating
+    # the invalid match problem
     match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
-
-    # in case there is no match result
     if not match_result:
-        # raises the invalid attribute name exception
         raise exceptions.InvalidAttributeName("invalid match value: " + current_attribute_name)
 
-    # retrieves the match result end position
-    match_result_end = match_result.end()
+    # retrieves the match end position and verifies if it
+    # matches the length of the current attribute for such
+    # case the attribute is considered to be the last one
+    match_end = match_result.end()
+    is_last_attribute_name = match_end == len(current_attribute_name)
 
-    # checks if it's the last attribute name
-    is_last_attribute_name = match_result_end == len(current_attribute_name)
+    # retrieves the (current) match name and value
+    match_name = match_result.lastgroup
+    match_value = match_result.group()
 
-    # retrieves the match result name
-    match_result_name = match_result.lastgroup
-
-    # retrieves the match result value
-    match_result_value = match_result.group()
-
-    # in case the match result value is of type map
+    # in case the match value is of type map
     # the parentheses need to be removed
-    if match_result_name == MAP_TYPE_VALUE:
-        # retrieves the match result value without the parentheses
-        match_result_value = match_result_value[1:-1]
+    if match_name == MAP_TYPE_VALUE:
+        # retrieves the match value without the parentheses
+        match_value = match_value[1:-1]
 
     # in case it's the only (last) match available
     if is_last_attribute_name:
-        # in case the match result is of type name
-        if match_result_name == NAME_TYPE_VALUE:
-            # sets the attribute value in the parent structure
-            parent_structure[match_result_value] = attribute_value
-        # in case the match result is of type sequence
-        elif match_result_name == SEQUENCE_TYPE_VALUE:
-            # adds the attribute value to the
-            # parent structure
+        # in case the match is of type name, must
+        # set the attribute value in the parent structure
+        if match_name == NAME_TYPE_VALUE:
+            parent_structure[match_value] = attribute_value
+        # in case the match is of type sequence, adds
+        # the attribute value to the parent structure
+        elif match_name == SEQUENCE_TYPE_VALUE:
             parent_structure.append(attribute_value)
-        # in case the match result is of type map
-        elif match_result_name == MAP_TYPE_VALUE:
-            # sets the attribute value in the parent structure
-            parent_structure[match_result_value] = attribute_value
+        # in case the match is of type map, sets the
+        # attribute value in the parent structure
+        elif match_name == MAP_TYPE_VALUE:
+            parent_structure[match_value] = attribute_value
 
     # there is more parsing to be made
     else:
         # retrieves the next match value in order to make
-        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
+        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_end)
 
-        # in case there is no next match result
+        # in case there is no next match
         if not next_match_result:
             # raises the invalid attribute name exception
             raise exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
 
-        # retrieves the next match result name
-        next_match_result_name = next_match_result.lastgroup
+        # retrieves the next match name and value to be used
+        # for conditional execution
+        next_match_name = next_match_result.lastgroup
+        next_match_value = next_match_result.group()
 
-        # retrieves the next match result value
-        next_match_result_value = next_match_result.group()
-
-        # in case the next match result value is of type map
+        # in case the next match value is of type map
         # the parentheses need to be removed
-        if next_match_result_name == MAP_TYPE_VALUE:
-            # retrieves the next match result value without the parentheses
-            next_match_result_value = next_match_result_value[1:-1]
+        if next_match_name == MAP_TYPE_VALUE:
+            # retrieves the next match value without the parentheses
+            next_match_value = next_match_value[1:-1]
 
         # in case the next match is of type name
-        if next_match_result_name == NAME_TYPE_VALUE:
+        if next_match_name == NAME_TYPE_VALUE:
             # raises the invalid attribute name exception
             raise exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
         # in case the next match is of type list, a list needs to
         # be created in order to support the sequence, in case a list
         # already exists it is used instead
-        elif next_match_result_name == SEQUENCE_TYPE_VALUE:
-            # in case the match result value exists in the
+        elif next_match_name == SEQUENCE_TYPE_VALUE:
+            # in case the match value exists in the
             # parent structure there is no need to create a new structure
             # the previous one should be used
-            if match_result_value in parent_structure:
+            if match_value in parent_structure:
                 # sets the current attribute value as the value that
                 # exists in the parent structure
-                current_attribute_value = parent_structure[match_result_value]
+                current_attribute_value = parent_structure[match_value]
             # otherwise no structure exists and must be created
             # to set new values
             else:
@@ -4041,12 +4051,12 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # in case the next match is of type map, a map needs to
         # be created in order to support the mapping structure, in case a map
         # already exists it is used instead
-        elif next_match_result_name == MAP_TYPE_VALUE:
-            # in case the current match result is a sequence
+        elif next_match_name == MAP_TYPE_VALUE:
+            # in case the current match is a sequence
             # it's required to check for the valid structure
             # it may be set or it may be a new structure depending
             # on the current "selected" index
-            if match_result_name == SEQUENCE_TYPE_VALUE:
+            if match_name == SEQUENCE_TYPE_VALUE:
                 # retrieves the parent structure length
                 parent_structure_length = len(parent_structure)
 
@@ -4059,23 +4069,23 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
                     # sets the current attribute value as the structure
                     # in the current "selected" index
                     current_attribute_value = parent_structure[index]
-            # in case the match result value exists in the
+            # in case the match value exists in the
             # parent structure there is no need to create a new structure
             # the previous one should be used
-            elif match_result_value in parent_structure:
+            elif match_value in parent_structure:
                 # sets the current attribute value as the value that
                 # exists in the parent structure
-                current_attribute_value = parent_structure[match_result_value]
+                current_attribute_value = parent_structure[match_value]
             else:
                 # creates a new map structure
                 current_attribute_value = {}
 
-        # in case the match result is of type name (first match)
-        if match_result_name == NAME_TYPE_VALUE:
+        # in case the match is of type name (first match)
+        if match_name == NAME_TYPE_VALUE:
             # sets the current attribute value in the parent structure
-            parent_structure[match_result_value] = current_attribute_value
-        # in case the match result is of type sequence
-        elif match_result_name == SEQUENCE_TYPE_VALUE:
+            parent_structure[match_value] = current_attribute_value
+        # in case the match is of type sequence
+        elif match_name == SEQUENCE_TYPE_VALUE:
             # retrieves the parent structure length
             parent_structure_length = len(parent_structure)
 
@@ -4085,13 +4095,13 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
                 # adds the current attribute value to the
                 # parent structure
                 parent_structure.append(current_attribute_value)
-        # in case the match result is of type map
-        elif match_result_name == MAP_TYPE_VALUE:
+        # in case the match is of type map
+        elif match_name == MAP_TYPE_VALUE:
             # sets the current attribute value in the parent structure
-            parent_structure[match_result_value] = current_attribute_value
+            parent_structure[match_value] = current_attribute_value
 
         # retrieves the remaining attribute name
-        remaining_attribute_name = current_attribute_name[match_result_end:]
+        remaining_attribute_name = current_attribute_name[match_end:]
 
         # processes the next form attribute with the current attribute value as the new parent structure
         # the remaining attribute name as the new current attribute name and the attribute value
