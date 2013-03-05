@@ -1400,7 +1400,9 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
             # list structure assignment
             index = 0
 
-            # iterates over all the attribute value items
+            # iterates over all the attribute value items available for
+            # the attribute name to assign them to the corresponding
+            # data structures (first come first served approach)
             for attribute_value_item in attribute_value:
                 # nullifies the attribute value item in case it's empty
                 # (in case the nullify flag is set)
