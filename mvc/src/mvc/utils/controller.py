@@ -3987,10 +3987,8 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
     match_value = match_result.group()
 
     # in case the match value is of type map
-    # the parentheses need to be removed
-    if match_name == MAP_TYPE_VALUE:
-        # retrieves the match value without the parentheses
-        match_value = match_value[1:-1]
+    # the parentheses need to be removed from it
+    if match_name == MAP_TYPE_VALUE: match_value = match_value[1:-1]
 
     # in case it's the only (last) match available
     if is_last_attribute_name:
