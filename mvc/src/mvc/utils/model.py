@@ -179,7 +179,7 @@ def _start_model(self):
     # sets the model started flag as true
     self.model_started = True
 
-def _class_new(cls, map = None, rest_request = None):
+def _class_new(cls, map = None, rest_request = None, permissive = False):
     """
     Creates a new model instance, applying the given map
     of "form" options to the created model.
@@ -189,12 +189,19 @@ def _class_new(cls, map = None, rest_request = None):
     An optional rest request reference may be used to enable
     the model to access session variables (information).
 
+    An extra permissive flag must be used with care and allows
+    the control of the behavior for the apply operation on
+    the model in response to an undefined value.
+
     @type map: Dictionary
     @param map: The map of "form" options to be used to create
     the new model instance.
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used in the context
     of the current model, it should enable access to session attributes.
+    @type permissive: bool
+    @param permissive: If the apply operation should be done using
+    a permissive approach ignoring the undefined values.
     @rtype: Model
     @return: The newly created model with the attributes
     already "populated" with the map contents.
@@ -217,7 +224,7 @@ def _class_new(cls, map = None, rest_request = None):
 
     # in case a map is provided, must apply
     # the contents of it to the model
-    map and model.apply(map)
+    map and model.apply(map, permissive = permissive)
 
     # returns the created model
     return model
@@ -326,7 +333,7 @@ def _class_get_resource_path(cls, resource_path):
     )
     return resource_path
 
-def apply(self, map):
+def apply(self, map, permissive = False):
     """
     "Applies" the given map of "form" values into the current
     model (setting of attributes).
@@ -338,9 +345,16 @@ def apply(self, map):
     a correct configuration of the security attributes must be followed
     to avoid possible malicious problems.
 
+    An optional permissive flag may be set in order to allow undefined
+    values to be ignored (avoiding exception raising).
+
     @type map: Dictionary
     @param map: The map containing the various "form" values to be used
     to "apply" the values in the model.
+    @type permissive: bool
+    @param permissive: If the apply algorithm operation should be
+    permissive in the sense of ignoring attributes that are not
+    defined in the respective entity models.
     """
 
     # detaches the current model, to avoid any possible
@@ -375,11 +389,20 @@ def apply(self, map):
             # be ignored as it's just a stub value
             if item_name in attr_methods: continue
 
+            # verifies if the current item name in iteration is defined
+            # in the current class (definition present)
+            has_definition = hasattr(cls, item_name)
+
+            # in case there's no definition but the current execution
+            # mode is permissive (allows undefined values) the current
+            # iteration should be skipped
+            if not has_definition and permissive: continue
+
             # in case the item name is not defined in the class
             # reference an exception should be raised, impossible
-            # to retrieve the required information
-            if not hasattr(cls, item_name):
-                # raises a model apply exception
+            # to retrieve the required information, must raise an
+            # exception indicating the problem
+            if not has_definition:
                 raise exceptions.ModelApplyException(
                     "item name '%s' not found in model class '%s'" %
                         (item_name, cls.__name__)
@@ -390,11 +413,10 @@ def apply(self, map):
             class_value = getattr(cls, item_name)
             class_value_type = type(class_value)
 
-            # in case the class value type is not
-            # dictionary (meta information dictionary),
-            # cannot retrieve the required information
+            # in case the class value type is not dictionary (meta
+            # information dictionary), cannot retrieve the required
+            # information, must raise an exception
             if not class_value_type == types.DictType:
-                # raises a model apply exception
                 raise exceptions.ModelApplyException(
                     "item name '%s' not defined in model class '%s'" %
                         (item_name, cls.__name__)
@@ -435,7 +457,11 @@ def apply(self, map):
                         # "resolves" the target to one relation, loading or creating
                         # the required model and sets the retrieved (target) entity
                         # in the current model instance
-                        target_entity = self.resolve_to_one_value(item_value, target_model)
+                        target_entity = self.resolve_to_one(
+                            item_value,
+                            target_model,
+                            permissive
+                        )
                         setattr(self, item_name, target_entity)
 
                     # otherwise the entity already contains the
@@ -444,14 +470,21 @@ def apply(self, map):
                     else:
                         # updates the item in the entity with
                         # the map containing the value
-                        target_entity.apply(item_value)
+                        target_entity.apply(
+                            item_value,
+                            permissive = permissive
+                        )
 
                 # in case the relation is of type "to-many"
                 elif relation_type == TO_MANY_RELATION:
                     # "resolves" the target to many relation, loading or
                     # creating the required models and sets the target entities
                     # list in the current model instance
-                    target_entitites_list = self.resolve_to_many_value(item_value, target_model)
+                    target_entitites_list = self.resolve_to_many(
+                        item_value,
+                        target_model,
+                        permissive
+                    )
                     setattr(self, item_name, target_entitites_list)
 
             # otherwise it's a single attribute relation
@@ -1996,7 +2029,7 @@ class ModelProxy(list):
         if not self.models: return None
         return self.models[0]
 
-    def apply(self, map):
+    def apply(self, map, permissive = False):
         """
         Pipes the apply method of the model into
         each of the models contained in the proxy.
@@ -2004,10 +2037,14 @@ class ModelProxy(list):
         @type map: List
         @param map: The list of map objects to be used
         in the apply method for each of the models.
+        @type permissive: bool
+        @param permissive: If the apply operation should
+        be performed in a permissive way allowing undefined
+        values to be ignored.
         """
 
         for model, _map in zip(self.models, map):
-            model.apply(_map)
+            model.apply(_map, permissive = permissive)
 
     @utils.transaction_method("_entity_manager")
     def store(self, *args, **kwargs):

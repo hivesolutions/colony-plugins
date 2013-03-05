@@ -1671,7 +1671,7 @@ def is_removed(self):
     # returns the removed value
     return removed
 
-def resolve_to_one_value(self, map, model_class):
+def resolve_to_one(self, map, model_class, permissive):
     """
     Resolves a to one relation from the provided (data) map, this
     operation involves the loading or creation of the corresponding
@@ -1683,9 +1683,12 @@ def resolve_to_one_value(self, map, model_class):
     @type map: Dictionary
     @param map: The map that represents the to one relation, this map
     will be used in the creation/loading of the corresponding entity.
-    @type model: ModelClass
-    @param model: The class representing the type of relation to
+    @type model_class: ModelClass
+    @param model_class: The class representing the type of relation to
     be resolved (this should be the target class of the relation).
+    @type permissive: bool
+    @param permissive: If the apply operation should be done using
+    a permissive approach ignoring the undefined values.
     @rtype: Model
     @return: The "resolved" entity model for the given to one
     (map) information.
@@ -1732,7 +1735,7 @@ def resolve_to_one_value(self, map, model_class):
         # the map to it and then sets the rest request on the
         # entity, otherwise raises a runtime error because
         # there was a problem in retrieval (invalid)
-        if entity: entity.apply(map); entity.set_request(rest_request)
+        if entity: entity.apply(map, permissive = permissive); entity.set_request(rest_request)
         else: raise RuntimeError("no such model, invalid identifier value")
 
     # otherwise there is no id value set and a new entity
@@ -1746,13 +1749,13 @@ def resolve_to_one_value(self, map, model_class):
 
         # creates the "new" entity (model)
         # and sets it in the current entity
-        entity = _model_class.new(map, rest_request)
+        entity = _model_class.new(map, rest_request, permissive = permissive)
 
     # retrieves the loaded or created entity, this
     # entity is considered to be resolved
     return entity
 
-def resolve_to_many_value(self, maps_list, model_class):
+def resolve_to_many(self, maps_list, model_class, permissive):
     """
     Resolves a to many relation from the provided list of (data)
     maps, this operation involves the loading or creation of the
@@ -1766,9 +1769,12 @@ def resolve_to_many_value(self, maps_list, model_class):
     @param maps_list: The list of maps that represent the to many
     relation, these maps will be used in the creation/loading of
     the corresponding entities.
-    @type model: ModelClass
-    @param model: The class representing the type of relation to
+    @type model_class: ModelClass
+    @param model_class: The class representing the type of relation to
     be resolved (this should be the target class of the relation).
+    @type permissive: bool
+    @param permissive: If the apply operation should be done using
+    a permissive approach ignoring the undefined values.
     @rtype: List
     @return: The list containing the various resolved entities for
     the given to many information.
@@ -1847,8 +1853,8 @@ def resolve_to_many_value(self, maps_list, model_class):
         # in case the entity is valid applies the current item value (data map) to
         # it otherwise creates a "new" entity with the provided model, in both cases
         # the created entity is added to the list of entities for the relations
-        if entity: entity.apply(map); entity.set_request(rest_request)
-        else: entity = _model_class.new(map, rest_request)
+        if entity: entity.apply(map, permissive = permissive); entity.set_request(rest_request)
+        else: entity = _model_class.new(map, rest_request, permissive = permissive)
         entitites_list.append(entity)
 
     # returns the list of entities that were loaded or created for the
