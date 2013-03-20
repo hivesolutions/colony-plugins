@@ -639,7 +639,7 @@ class WorkerThread(threading.Thread):
         threading.Thread.__init__(self)
 
         self.thread_pool = thread_pool
-        
+
         self.daemon = True
 
     def run(self):
