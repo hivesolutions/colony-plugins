@@ -1,7 +1,7 @@
 <!-- css inclusion -->
 <link rel="stylesheet" href="${out_none value=base_path /}resources/libs/uxf/css/ux-min.css" type="text/css" />
 <link rel="stylesheet" href="${out_none value=base_path /}resources/libs/uxf/styles/omni/css/ux-min.css" type="text/css" />
-<link rel="stylesheet" href="${out_none value=base_path /}resources/libs/layout/css/layout_modern.css" type="text/css" />
+<link rel="stylesheet" href="${out_none value=base_path /}resources/libs/layout/css/layout.modern.css" type="text/css" />
 <link rel="stylesheet" href="${out_none value=base_path /}resources/css/layout.css" type="text/css" />
 
 <!-- favicon inclusion -->
