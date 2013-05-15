@@ -126,12 +126,21 @@ class AbstractService:
     """ The list of pending event to be handled in a time based
     fashion, the process that handles these events is considered a timer """
 
-
-    handers_map = {}
-
-
+    handlers_map = {}
+    """ The map that contains the association between the socket fd and
+    operation type tuple and the list containing the various handler functions
+    to be called upon the kind of event registered is triggered for the
+    socked fd in the tuple """
 
     socket_fd_map = {}
+    """ Contains the association between the various file descriptors
+    defined in the current pool and the appropriate socket objects that
+    represent these connections """
+
+    address_fd_map = {}
+    """ Table of associations between the various file descriptor values
+    and the address tuples of the connections they represent (the tuple
+    contain first the address and then the port """
 
     pending_fd_map = {}
     """ The map containing the associating between the file
@@ -192,9 +201,10 @@ class AbstractService:
 
 
 
-        self.handers_map = {}
+        self.handlers_map = {}
 
         self.socket_fd_map = {}
+        self.address_fd_map = {}
         self.pending_fd_map = {}
 
 
@@ -323,6 +333,7 @@ class AbstractService:
             socket_fd = service_socket.fileno()
 
             self.socket_fd_map[socket_fd] = service_socket
+            self.address_fd_map[socket_fd] = (bind_host, port)
             self.poll_instance.register(socket_fd, READ | ERROR)
 
             self.add_handler(socket_fd, service_connection.read_handler, READ)
@@ -335,6 +346,7 @@ class AbstractService:
         client_socket_fd = client_socket.fileno()
 
         self.socket_fd_map[client_socket_fd] = client_socket
+        self.address_fd_map[client_socket_fd] = (client_address, service_port)
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
         client_connection = ClientConnection(self, client_socket, client_address, service_port)
@@ -349,6 +361,7 @@ class AbstractService:
         client_socket_fd = client_socket.fileno()
 
         del self.socket_fd_map[client_socket_fd]
+        del self.address_fd_map[client_socket_fd]
         self.poll_instance.unregister(client_socket_fd)
 
         client_connection = self.client_connection_map[client_socket]
@@ -369,19 +382,19 @@ class AbstractService:
     def add_handler(self, socket_fd, callback_method, operation):
         tuple = (socket_fd, operation)
 
-        if not tuple in self.handers_map:
-            self.handers_map[tuple] = []
+        if not tuple in self.handlers_map:
+            self.handlers_map[tuple] = []
 
-        lista = self.handers_map[tuple]
+        lista = self.handlers_map[tuple]
         lista.append(callback_method)
 
     def remove_handler(self, socket_fd, callback_method, operation):
         tuple = (socket_fd, operation)
 
-        lista = self.handers_map[tuple]
+        lista = self.handlers_map[tuple]
         lista.remove(callback_method)
 
-        if not lista: del self.handers_map[tuple]
+        if not lista: del self.handlers_map[tuple]
 
     def call_handlers(self, socket_fd, operation):
         tuple = (socket_fd, operation)
@@ -392,7 +405,7 @@ class AbstractService:
         # retrieves the list of handlers for the tuple
         # to be handled, in case there are no handlers
         # registered for the tuple, returns immediately
-        handlers = self.handers_map.get(tuple, [])
+        handlers = self.handlers_map.get(tuple, [])
         if not handlers: return
 
         # retrieves the socket fd and then retrieves
@@ -850,17 +863,17 @@ class ServiceConnection(Connection):
                 else:
                     # disables the pending connection, no more need to listen
                     # to the changes on it for enabling
-                    self._disable_pending(service_connection, socket_fd); return
+                    self._disable_pending(service_connection, service_address, socket_fd); return
             except:
                 # disables the pending connection, no more need to listen
                 # to the changes on it for enabling (meant to be discarded)
-                self._disable_pending(service_connection, socket_fd); return
+                self._disable_pending(service_connection, service_address, socket_fd); return
             else:
                 try:
                     # disables the pending connection, no more need to listen
                     # to the changes on it for enabling (in this case the connection
                     # is not meant to be closed)
-                    self._disable_pending(service_connection, socket_fd, close_connection = False)
+                    self._disable_pending(service_connection, service_address, socket_fd, close_connection = False)
 
                     # sets the service connection to non blocking mode and
                     # adds service connection in the service
@@ -880,8 +893,22 @@ class ServiceConnection(Connection):
     def get_close_handler(self, service_connection, service_address, socket_fd):
 
         def close_handler():
+            # in case the socket fd is no longer present in the pending
+            # fd map there's no need to proceed with the disable of the
+            # pending operations (normal situation)
             if not socket_fd in self.service.pending_fd_map: return
-            self._disable_pending(service_connection, socket_fd)
+
+            # verifies if the socket of the service that is going to be
+            # closed as the same that is currently set for the socket
+            # descriptor, in case it's not returns immediately as the
+            # socket fd must have been re-used
+            _service_connection = self.service.socket_fd_map[socket_fd]
+            if not _service_connection == service_connection: return
+
+            # disables the pending connection, this operation should close
+            # the socket and release all the allocated structures inside the
+            # service structures for the socket/connection
+            self._disable_pending(service_connection, service_address, socket_fd)
 
         # returns the "generated" close handler through
         # context closure
@@ -893,15 +920,17 @@ class ServiceConnection(Connection):
 
         self.handlers_association[socket_fd] = handshake_handler
         self.service.socket_fd_map[socket_fd] = service_connection
+        self.service.address_fd_map[socket_fd] = service_address
         self.service.pending_fd_map[socket_fd] = service_connection
         self.service.poll_instance.register(socket_fd, READ | ERROR)
         self.service.add_handler(socket_fd, handshake_handler, READ)
 
         self.service.add_time_handler(time.time() + PENDING_TIMEOUT, close_handler)
 
-    def _disable_pending(self, service_connection, socket_fd, close_connection = True):
+    def _disable_pending(self, service_connection, service_address, socket_fd, close_connection = True):
         handshake_handler = self.handlers_association[socket_fd]
         del self.service.socket_fd_map[socket_fd]
+        del self.service.address_fd_map[socket_fd]
         del self.service.pending_fd_map[socket_fd]
         self.service.poll_instance.unregister(socket_fd, READ | ERROR)
         self.service.remove_handler(socket_fd, handshake_handler, READ)
