@@ -122,8 +122,9 @@ class AbstractService:
     """ The service connection active flag """
 
     time_events = []
-    """ The list of pending event to be handled in a time based
-    fashion, the process that handles these events is considered a timer """
+    """ The list of pending events to be handled in a time based
+    fashion, the process that handles these events is considered a timer
+    and this time is part of the main event loop """
 
     handlers_map = {}
     """ The map that contains the association between the socket fd and
