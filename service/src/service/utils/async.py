@@ -101,7 +101,6 @@ PENDING_TIMEOUT = 5.0
 """ The timeout to be used to cancel connection in the
 handshake pending state (not possible to accept) """
 
-
 class AbstractService:
 
     service_utils = None
