@@ -2651,8 +2651,8 @@ class HttpRequest:
         path_splitted_length = len(path_splitted)
 
         # in case there are no arguments to be parsed
-        if path_splitted_length < 2:
-            return
+        # must return the control flow immediately
+        if path_splitted_length < 2: return
 
         # retrieves the query string from the path splitted
         self.query_string = path_splitted[1]
