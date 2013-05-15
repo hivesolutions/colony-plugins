@@ -699,11 +699,9 @@ class HttpClientServiceHandler:
         # retrieves the current request (being handled)
         request = service_connection.request_data.get("_request", None)
 
-        # in case the request is not defined
-        # (no request pending)
-        if not request:
-            # returns immediately
-            return
+        # in case the request is not defined (no request
+        # pending), must return the control flow
+        if not request: return
 
         # in case the request is mediated (there
         # must be a mediated handler)
@@ -815,15 +813,14 @@ class HttpClientServiceHandler:
             # value (connection closed value)
             return_value = self.process_exception(request, service_connection, exception)
 
-        # runs the logging steps for the request
+        # runs the logging steps for the request, this call is going to
+        # block for a while for the io operations
         self._log(request)
 
         # in case the return value is invalid the connection
         # is meant to be closed (no need to process any extra
-        # information)
-        if not return_value:
-            # returns false (connection closed)
-            return False
+        # information), must return immediately
+        if not return_value: return False
 
         # checks if the service connection is of type asynchronous
         service_connection_is_async = service_connection.is_async()
@@ -831,7 +828,8 @@ class HttpClientServiceHandler:
         # in case there is pending data and the service connection is of
         # type asynchronous calls the default request handler to handle the
         # remaining data (allows http pipelining)
-        service_connection.pending_data() and not service_connection_is_async and self.default_request_handler(service_connection)
+        service_connection.pending_data() and not service_connection_is_async and\
+            self.default_request_handler(service_connection)
 
         # returns true (connection remains open)
         return True
@@ -1099,16 +1097,11 @@ class HttpClientServiceHandler:
                     raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
 
                 # retrieve the operation type the path and the protocol version
-                # from the start line splitted
+                # from the start line splitted and then sets these various values
+                # into the current request object
                 operation_type, path, protocol_version = start_line_splitted
-
-                # sets the request operation type
                 request.set_operation_type(operation_type)
-
-                # sets the request path
                 request.set_path(path)
-
-                # sets the request protocol version
                 request.set_protocol_version(protocol_version)
 
                 # sets the start line loaded flag
@@ -3502,7 +3495,10 @@ class HttpRequest:
             # invalid state
             else:
                 # raises the http invalid multipart request exception
-                raise exceptions.HttpInvalidMultipartRequestException("invalid content disposition value in multipart value: " + content_disposition_attribute_stripped)
+                raise exceptions.HttpInvalidMultipartRequestException(
+                    "invalid content disposition value in multipart value: " +\
+                    content_disposition_attribute_stripped
+                )
 
         # returns the content disposition map
         return content_disposition_map
