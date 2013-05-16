@@ -54,19 +54,6 @@ import colony.base.exceptions
 import threads
 import exceptions
 
-BIND_HOST = ""
-""" The bind host """
-
-PORT = 0
-""" The bind host """
-
-SERVER_SIDE_VALUE = "server_side"
-""" The server side value """
-
-DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
-""" The do handshake on connect value """
-
-
 _EPOLLIN = 0x001
 _EPOLLPRI = 0x002
 _EPOLLOUT = 0x004
@@ -76,26 +63,46 @@ _EPOLLRDHUP = 0x2000
 _EPOLLONESHOT = (1 << 30)
 _EPOLLET = (1 << 31)
 
-
-
 WSAEWOULDBLOCK = 10035
 
+BIND_HOST = ""
+""" The default bind host to be used when no other
+value is defined (listens on all ports) """
 
+PORT = 0
+""" The bind port to be used in case no port is defined
+from the upper layer (invalid value) """
 
+SERVER_SIDE_VALUE = "server_side"
+""" The server side value that may be used for the definition
+of some connection parameters  """
+
+DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
+""" The do handshake on connect value to be used for parameter
+map definitions """
 
 READ = _EPOLLIN
+""" Condition to be used for the read operation on a
+certain fd, alias to an existing epoll value """
 
 WRITE = _EPOLLPRI
+""" Write condition flag that may be used by one trying
+to register for write operation notifications """
 
 ERROR = _EPOLLERR | _EPOLLHUP | _EPOLLRDHUP
+""" The error condition that gathers all the possible
+errors from the epoll strategy """
 
 ALL = READ | WRITE | ERROR
-
-
-
-
+""" The all operations flag that aggregates all the conditions
+for the registration operation """
 
 POLL_TIMEOUT = 0.2
+""" The maximum amount of time a pool operation will wait
+before unblocking, this value is critical to a quick shutdown
+of depending plugins, if the value is to high a lot of time
+is required for shutdown if the value is too low a lot of
+computer resources may be "consumed" """
 
 PENDING_TIMEOUT = 5.0
 """ The timeout to be used to cancel connection in the
@@ -110,16 +117,24 @@ class AbstractService:
     """ The service utils plugin """
 
     stop_flag = False
-    """ The flag that controls the execution of the main loop """
+    """ The flag that controls the execution of the main loop
+    if unset should stop the main running loop after the connection
+    loop as been released """
 
     service_sockets = []
-    """ The service sockets """
+    """ The list containing the complete set of sockets that
+    are currently being used by the service """
 
     service_socket_end_point_map = {}
-    """ The service socket end point map """
+    """ Map that associates a certain (service) socket with the
+    end point it represents, the endpoint should be a tuple value
+    defined from configurations contain the type of connection (eg:
+    normal or ssl) the bind host, the bind port and an additional
+    configurations map """
 
     service_connection_active = False
-    """ The service connection active flag """
+    """ The flag value that controls if the service is currently
+    running, should be set on start and disabled on stop  """
 
     time_events = []
     """ The list of pending events to be handled in a time based
@@ -502,8 +517,8 @@ class AbstractService:
 
     def _create_base(self):
         """
-        Creates the base infra-structure for the running og the
-        service.
+        Creates the base infra-structure for the running of the
+        service, this includes setting the connection as active.
         """
 
         # sets the initial poll instance
