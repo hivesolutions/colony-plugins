@@ -232,7 +232,13 @@ class AbstractService:
 
         # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
 
-        self.client_service = self.service_handling_task_class(self.service_plugin, None, self.service_configuration, exceptions.ServiceUtilsException, self.extra_parameters)
+        self.client_service = self.service_handling_task_class(
+            self.service_plugin,
+            None,
+            self.service_configuration,
+            exceptions.ServiceUtilsException,
+            self.extra_parameters
+        )
         self.service_execution_thread = threads.ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
@@ -283,10 +289,9 @@ class AbstractService:
                         DO_HANDSHAKE_ON_CONNECT_VALUE : False
                     }
 
-                    # copies the socket parameters to the parameters map
+                    # copies the socket parameters to the parameters map and then
+                    # uses it to create new service socket with the socket provider plugin
                     colony.libs.map_util.map_copy(socket_parameters, parameters)
-
-                    # creates a new service socket with the socket provider plugin
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
                 else:
                     # raises the socket provider not found exception
@@ -1224,11 +1229,10 @@ class ClientConnection(Connection):
         service connection (in case there is one).
         """
 
-        # in case the pending data buffer is
-        # not valid
-        if not self.pending_data_buffer:
-            # returns none (invalid)
-            return None
+        # in case the pending data buffer is not
+        # valid, returns immediately with an invalid
+        # value to the caller method
+        if not self.pending_data_buffer: return None
 
         # returns the result of a "pop" in the
         # pending data buffer
