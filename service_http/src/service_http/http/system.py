@@ -1044,8 +1044,6 @@ class HttpClientServiceHandler:
         received_data_size = service_connection.request_data.get("received_data_size", 0)
         start_line_index = service_connection.request_data.get("start_line_index", 0)
         end_header_index = service_connection.request_data.get("end_header_index", 0)
-        
-        print data
 
         # sets the "initial" return request to invalid
         return_request = None
