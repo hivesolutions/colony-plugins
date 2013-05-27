@@ -996,9 +996,8 @@ class HttpClientServiceHandler:
             request = self.retrieve_request_data(service_connection, data)
 
             # in case the request is not valid (not enough data for parsing)
-            if not request:
-                # continues the loop
-                continue
+            # must continue the loop 
+            if not request: continue
 
             # breaks the loop
             break
@@ -1021,35 +1020,32 @@ class HttpClientServiceHandler:
         """
 
         # creates the string buffer for the message
-        message = service_connection.request_data.get("message", colony.libs.string_buffer_util.StringBuffer())
+        message = service_connection.request_data.get(
+            "message",
+            colony.libs.string_buffer_util.StringBuffer()
+        )
 
         # creates a request object
-        request = service_connection.request_data.get("request", HttpRequest(self, service_connection, self.content_type_charset))
+        request = service_connection.request_data.get(
+            "request",
+            HttpRequest(self, service_connection, self.content_type_charset)
+        )
 
-        # creates the start line loaded flag
+        # retrieves the various values from the request data that are going
+        # to be used for the parsing of the http response starting them  in
+        # case they are not already initialized, special note for the message
+        # offset index that represents the offset byte to the initialization
+        # of the message content
         start_line_loaded = service_connection.request_data.get("start_line_loaded", False)
-
-        # creates the header loaded flag
         header_loaded = service_connection.request_data.get("header_loaded", False)
-
-        # creates the message loaded flag
         message_loaded = service_connection.request_data.get("message_loaded", False)
-
-        # creates the message offset index, representing the
-        # offset byte to the initialization of the message
         message_offset_index = service_connection.request_data.get("message_offset_index", 0)
-
-        # creates the message size value
         message_size = service_connection.request_data.get("message_size", 0)
-
-        # creates the received data size (counter)
         received_data_size = service_connection.request_data.get("received_data_size", 0)
-
-        # initializes the start line index
         start_line_index = service_connection.request_data.get("start_line_index", 0)
-
-        # initializes the end header index
         end_header_index = service_connection.request_data.get("end_header_index", 0)
+        
+        print data
 
         # sets the "initial" return request to invalid
         return_request = None
