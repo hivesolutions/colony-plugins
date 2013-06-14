@@ -1337,10 +1337,14 @@ def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = F
     if not force and data_map: return data_map
 
     # reads the contents from the rest request and then "loads"
-    # the structure json structure from them, stores the result
+    # the json structure from them, in case the value is not a
+    # dictionary converts it into one settings the loaded contents
+    # in a new dictionary "under" the json key value then stores the result
     # in the private json data value and returns the data map
     contents = rest_request.read()
     data_map = self.json_plugin.loads(contents)
+    is_valid = type(data_map) == types.DictType
+    data_map = data_map if is_valid else dict(json = data_map)
     rest_request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
     return data_map
 
