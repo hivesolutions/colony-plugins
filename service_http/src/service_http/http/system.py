@@ -996,7 +996,7 @@ class HttpClientServiceHandler:
             request = self.retrieve_request_data(service_connection, data)
 
             # in case the request is not valid (not enough data for parsing)
-            # must continue the loop 
+            # must continue the loop
             if not request: continue
 
             # breaks the loop
