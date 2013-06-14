@@ -989,7 +989,7 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     method = getattr(self, method_name)
 
     # processes (and retrieves) the data map from the
-    # rest request and then used it to retrieve the field
+    # rest request and then uses it to retrieve the field
     # from it (the retrieval of the form data may be cached)
     form_data_map = method(rest_request)
     field_value = form_data_map.get(field_name, default_field_value)
@@ -1010,6 +1010,27 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
 
     # returns the retrieved field value
     return field_value
+
+def get_json(self, rest_request):
+    """
+    Retrieves the loaded json information from the request this
+    method assumes that the request is properly formed and that
+    the header information is set in accordance with json.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: Object
+    @return: The object that represents the parsed json information
+    that was passed inside the request data.
+    """
+
+    # processes (and retrieves) the data map from the
+    # rest request and then tries to retrieves the json
+    # data from it in case it does not exists the complete
+    # maps is returned as the json value
+    form_data_map = self.process_json_data(rest_request)
+    json_v = form_data_map.get("root", form_data_map)
+    return json_v
 
 def get_pattern(self, parameters, pattern_name, pattern_type = None):
     """
@@ -1339,12 +1360,12 @@ def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = F
     # reads the contents from the rest request and then "loads"
     # the json structure from them, in case the value is not a
     # dictionary converts it into one settings the loaded contents
-    # in a new dictionary "under" the json key value then stores the result
+    # in a new dictionary "under" the root key value then stores the result
     # in the private json data value and returns the data map
     contents = rest_request.read()
     data_map = self.json_plugin.loads(contents)
     is_valid = type(data_map) == types.DictType
-    data_map = data_map if is_valid else dict(json = data_map)
+    data_map = data_map if is_valid else dict(root = data_map)
     rest_request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
     return data_map
 
