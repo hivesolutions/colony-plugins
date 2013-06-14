@@ -367,13 +367,16 @@ def transaction_method(entity_manager_reference, raise_exception = True):
     # returns the created decorator
     return decorator
 
-def serialize_exceptions(serialization_parameters = None):
+def serialize_exceptions(serialization_parameters = None, default_success = True):
     """
     Decorator for the serialize exceptions.
 
     @type serialization_parameters: Object
     @param serialization_parameters: The parameters to be used when serializing
-    the exception.
+    the exception, should condition the serialization process.
+    @type default_success: bool
+    @param default_success: If an empty success operation should be serialized
+    as a simple map containing the result as success (default behavior).
     @rtype: Function
     @return: The created decorator.
     """
@@ -457,9 +460,10 @@ def serialize_exceptions(serialization_parameters = None):
                 # creates the success result map containing a simple message
                 # indicating the success in the processing and then in case the
                 # return value is not set sets the return value as the serialized
-                # version of the success result
+                # version of the success result (default fallback behavior)
                 success_r = dict(result = "success")
-                return_value = return_value or serializer.dumps(success_r)
+                should_default = not return_value and default_success
+                return_value = serializer.dumps(success_r) if should_default else return_value
 
             # returns the return value, resulting from the decorated method
             # this should be an already serialized value
