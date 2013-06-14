@@ -1742,13 +1742,11 @@ def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTE
     # page loading scope
     touch_date and rest_request.touch_date()
 
-    # sets the content type for the rest request
+    # sets the content type, then the result as translated into
+    # the target content type and then flushes the data meaning
+    # that the buffer is written to the request
     rest_request.set_content_type(content_type)
-
-    # sets the result for the rest request
     rest_request.set_result_translated(contents)
-
-    # flushes the rest request
     rest_request.flush()
 
 def set_status_code(self, rest_request, status_code = DEFAULT_STATUS_CODE):
