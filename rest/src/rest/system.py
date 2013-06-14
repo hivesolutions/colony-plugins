@@ -1280,9 +1280,11 @@ class RestRequest:
         with care (and not very often).
         """
 
-        # in case there is a session available
+        # in case there is a session available, must try to update the
+        # cookie associated information in the response
         if self.session:
-            # retrieves the session cookie
+            # retrieves the session cookie, this is a structure
+            # that represents the cookie allowing some manage
             session_cookie = self.session.get_cookie()
 
             # in case there is a session cookie and the
@@ -1335,7 +1337,10 @@ class RestRequest:
         # map in case they are present (by appending them to
         # the target path) otherwise (in case no attributes map
         # is present) the target path is used
-        target_path_quoted = attributes_map and target_path_quoted + "?" + colony.libs.quote_util.url_encode(attributes_map) or target_path_quoted
+        target_path_quoted = attributes_map and\
+            target_path_quoted + "?" +\
+            colony.libs.quote_util.url_encode(attributes_map) or\
+            target_path_quoted
 
         # sets the status code
         self.request.status_code = status_code
