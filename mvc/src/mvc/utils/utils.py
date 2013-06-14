@@ -453,8 +453,16 @@ def serialize_exceptions(serialization_parameters = None):
                 elif exception_handler:
                     # handles the exception map with the exception handler
                     return_value = exception_handler.handle_exception(rest_request, exception_map,)
+            else:
+                # creates the success result map containing a simple message
+                # indicating the success in the processing and then in case the
+                # return value is not set sets the return value as the serialized
+                # version of the success result
+                success_r = dict(result = "success")
+                return_value = return_value or serializer.dumps(success_r)
 
-            # returns the return value
+            # returns the return value, resulting from the decorated method
+            # this should be an already serialized value
             return return_value
 
         # returns the decorator interceptor
