@@ -462,14 +462,21 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                     # handles the exception map with the exception handler
                     return_value = exception_handler.handle_exception(rest_request, exception_map,)
             else:
-                # creates the success result map containing a simple message
-                # indicating the success in the processing and then in case the
-                # return value is not set sets the return value as the serialized
-                # version of the success result (default fallback behavior)
-                success_r = dict(result = "success")
+                # checks if the current message is already flushed (data sent to
+                # the output) and in case it's not and there should be a default
+                # success message sent the default success message is create, then
+                # serialized and written to the output stream in the rest request
+                is_flushed = rest_request.is_flushed()
                 serializer = parameters.get(SERIALIZER_VALUE, None)
-                should_default = not return_value and default_success and serializer
-                return_value = serializer.dumps(success_r) if should_default else return_value
+                should_default = not is_flushed and default_success and serializer
+                if should_default:
+                    success_serialized = serializer.dumps(dict(result = "success"))
+                    mime_type = serializer.get_mime_type()
+                    self.set_contents(
+                        rest_request,
+                        success_serialized,
+                        content_type = mime_type
+                    )
 
             # returns the return value, resulting from the decorated method
             # this should be an already serialized value

@@ -154,10 +154,12 @@ class Rest(colony.base.system.System):
     """
 
     matching_regex_list = []
-    """ The list of matching regex to be used in route matching """
+    """ The list of matching regex to be used in
+    route matching """
 
     matching_regex_base_values_map = {}
-    """ The map containing the base values for the various matching regex """
+    """ The map containing the base values for the
+    various matching regex """
 
     rest_service_routes_map = {}
     """ The rest service routes map """
@@ -175,13 +177,16 @@ class Rest(colony.base.system.System):
     """ The service methods map """
 
     rest_session_list = []
-    """ The list used as priority queue for session cancellation """
+    """ The list used as priority queue for session
+    cancellation """
 
     rest_session_map = {}
-    """ The map associating the session id with the rest session """
+    """ The map associating the session id with the
+    rest session """
 
     rest_session_lock = None
-    """ The lock that controls the access to the critical sections in session information """
+    """ The lock that controls the access to the
+    critical sections in session information """
 
     def __init__(self, plugin):
         colony.base.system.System.__init__(self, plugin)
@@ -940,10 +945,17 @@ class RestRequest:
     """
 
     rest = None
-    """ The rest """
+    """ The reference to the owner rest system object
+    used to access utility functions """
 
     request = None
-    """ The associated request """
+    """ The associated request, may be used for operation
+    propagation to the lower layer (encapsulation) """
+
+    flushed = False
+    """ If the request has already been flushed to the lower
+    layer, meaning that data has already been sent to the
+    underlying stream """
 
     session = None
     """ The associated session """
@@ -1270,6 +1282,21 @@ class RestRequest:
         if debug_level and debug_level.data >= minimum_level: return True
         else: return False
 
+    def is_flushed(self):
+        """
+        Checks if the current rest request has already been flushed
+        meaning that the data has already been sent to the output stream.
+
+        In case the data has been already flushed, care should be taken
+        to avoid any inconsistent state (double data flush).
+
+        @rtype: bool
+        @return: If the current rest request has already been flushed and
+        the data sent to the output stream.
+        """
+
+        return self.flushed
+
     def flush(self):
         """
         Flushes the rest request buffer, this operation should
@@ -1309,6 +1336,10 @@ class RestRequest:
         # request, sending the output to the client
         self.request.write(self.result_translated)
         self.request.flush()
+
+        # updates the flushed flag so that any consumer object
+        # is able to identify if contents have already been flushed
+        self.flushed = True
 
     def redirect(self, target_path, status_code = 302, quote = True, attributes_map = None):
         """
