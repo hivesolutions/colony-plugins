@@ -437,7 +437,8 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception, rest_request)
 
-                # sets the error status code
+                # sets the error status code in the current request indicating
+                # that a problem has occurred (default behavior)
                 self.set_status_code(rest_request, ERROR_STATUS_CODE)
 
                 # in case the serializer is set (uses it as it
@@ -448,7 +449,11 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                     # the appropriate mime type
                     exception_map_serialized = serializer.dumps(exception_map)
                     mime_type = serializer.get_mime_type()
-                    self.set_contents(rest_request, exception_map_serialized, content_type = mime_type)
+                    self.set_contents(
+                        rest_request,
+                        exception_map_serialized,
+                        content_type = mime_type
+                    )
 
                     # sets the return value as invalid (error)
                     return_value = False
