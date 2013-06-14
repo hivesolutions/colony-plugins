@@ -462,7 +462,8 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # return value is not set sets the return value as the serialized
                 # version of the success result (default fallback behavior)
                 success_r = dict(result = "success")
-                should_default = not return_value and default_success
+                serializer = parameters.get(SERIALIZER_VALUE, None)
+                should_default = not return_value and default_success and serializer
                 return_value = serializer.dumps(success_r) if should_default else return_value
 
             # returns the return value, resulting from the decorated method
