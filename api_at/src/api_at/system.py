@@ -64,14 +64,23 @@ CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 SSL_VERSION_VALUE = "ssl_version"
 """ The ssl version value """
 
-BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
-""" The base url to be used, this is a
-secure https based url"""
+INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
+""" The base url to be used for invoice
+submission, this is a secure https based url"""
 
-BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
-""" The base test url to be used, this is a
-secure https based url but still only for
-testing purposes """
+INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
+""" The base test url to be used for invoice
+submission, this is a secure https based url 
+but still only for testing purposes """
+
+TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
+""" The base url to be used for transport document
+submission, this is a secure https based url"""
+
+TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
+""" The base test url to be used for transport document
+submission, this is a secure https based url 
+but still only for testing purposes """
 
 class ApiAt(colony.base.system.System):
     """
@@ -234,13 +243,64 @@ class AtClient:
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         path = os.path.join(plugin_path, path)
         return path
-
+    
     def submit_invoice(self, invoice_payload):
         # retrieves the proper based url according to the current
         # test mode and uses it to create the complete action url
-        base_url = self.test_mode and BASE_TEST_URL or BASE_URL
+        base_url = self.test_mode and INVOICE_BASE_TEST_URL or INVOICE_BASE_URL
         submit_invoice_url = base_url + "/faturas"
+        
+        # submits the invoice document and returns the result
+        result = self._submit_document(submit_invoice_url, invoice_payload)
+        return result
 
+    def submit_transport(self, transport_payload):
+        # retrieves the proper based url according to the current
+        # test mode and uses it to create the complete action url
+        base_url = self.test_mode and TRANSPORT_BASE_TEST_URL or TRANSPORT_BASE_URL
+        submit_transport_url = base_url + "/documentosTransporte"
+        
+        # submits the transport document and returns the result
+        data = self._submit_document(submit_transport_url, transport_payload)
+        return data
+
+    def validate_credentials(self):
+        """
+        Validates that the credentials are valid, returning a flag
+        indicating the result.
+
+        This operation is considered a mock for the at client as
+        it returns valid, provides api compatibility.
+
+        @rtype: bool
+        @return: Flag indicating if the credentials are valid.
+        """
+
+        # returns valid for every request for validation received
+        # as no validation is currently possible
+        return True
+
+    def get_at_structure(self):
+        """
+        Retrieves the at structure.
+
+        @rtype: AtStructure
+        @return: The at structure.
+        """
+
+        return self.at_structure
+
+    def set_at_structure(self, at_structure):
+        """
+        Sets the at structure.
+
+        @type at_structure: AtStructure
+        @param at_structure: The at structure.
+        """
+
+        self.at_structure = at_structure
+
+    def _submit_document(self, submit_url, document_payload):
         # retrieves the proper username and password values
         # according to the current test mode flag value then
         # convert both values into string to make sure that
@@ -288,7 +348,7 @@ class AtClient:
         digest_hash = digest_sha1.digest()
         digest_hash_encrypted = aes.encrypt(digest_hash)
         digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
-
+        
         # defines the format of the soap envelope to be submitted to at
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
@@ -315,51 +375,18 @@ class AtClient:
             password_encrypted_b64,
             nonce,
             current_date_s,
-            invoice_payload
+            document_payload
         )
-
+        
         # "fetches" the submit invoice url with the message contents
         # this should post the invoice and create it in the remote
         # data source
-        data = self._fetch_url(submit_invoice_url, method = "POST", contents = message)
+        data = self._fetch_url(submit_url, method = "POST", contents = message)
         self._check_at_errors(data)
-
-    def validate_credentials(self):
-        """
-        Validates that the credentials are valid, returning a flag
-        indicating the result.
-
-        This operation is considered a mock for the at client as
-        it returns valid, provides api compatibility.
-
-        @rtype: bool
-        @return: Flag indicating if the credentials are valid.
-        """
-
-        # returns valid for every request for validation received
-        # as no validation is currently possible
-        return True
-
-    def get_at_structure(self):
-        """
-        Retrieves the at structure.
-
-        @rtype: AtStructure
-        @return: The at structure.
-        """
-
-        return self.at_structure
-
-    def set_at_structure(self, at_structure):
-        """
-        Sets the at structure.
-
-        @type at_structure: AtStructure
-        @param at_structure: The at structure.
-        """
-
-        self.at_structure = at_structure
-
+        
+        # returns the resulting data
+        return data
+        
     def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
         """
         Fetches the given url for the given parameters and using
