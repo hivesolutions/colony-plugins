@@ -63,7 +63,7 @@ class AtApiError(ApiAtException):
         @type message: String
         @param message: The message to be printed.
         @type error_code: String
-        @param error_code: The code associated with 
+        @param error_code: The code associated with
         the message contained in this api error.
         """
 

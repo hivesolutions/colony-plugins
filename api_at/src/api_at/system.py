@@ -70,7 +70,7 @@ submission, this is a secure https based url"""
 
 INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
 """ The base test url to be used for invoice
-submission, this is a secure https based url 
+submission, this is a secure https based url
 but still only for testing purposes """
 
 TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
@@ -79,7 +79,7 @@ submission, this is a secure https based url"""
 
 TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 """ The base test url to be used for transport document
-submission, this is a secure https based url 
+submission, this is a secure https based url
 but still only for testing purposes """
 
 class ApiAt(colony.base.system.System):
@@ -243,13 +243,13 @@ class AtClient:
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         path = os.path.join(plugin_path, path)
         return path
-    
+
     def submit_invoice(self, invoice_payload):
         # retrieves the proper based url according to the current
         # test mode and uses it to create the complete action url
         base_url = self.test_mode and INVOICE_BASE_TEST_URL or INVOICE_BASE_URL
         submit_invoice_url = base_url + "/faturas"
-        
+
         # submits the invoice document and returns the result
         result = self._submit_document(submit_invoice_url, invoice_payload)
         return result
@@ -259,7 +259,7 @@ class AtClient:
         # test mode and uses it to create the complete action url
         base_url = self.test_mode and TRANSPORT_BASE_TEST_URL or TRANSPORT_BASE_URL
         submit_transport_url = base_url + "/documentosTransporte"
-        
+
         # submits the transport document and returns the result
         data = self._submit_document(submit_transport_url, transport_payload)
         return data
@@ -348,7 +348,7 @@ class AtClient:
         digest_hash = digest_sha1.digest()
         digest_hash_encrypted = aes.encrypt(digest_hash)
         digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
-        
+
         # defines the format of the soap envelope to be submitted to at
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
@@ -377,16 +377,16 @@ class AtClient:
             current_date_s,
             document_payload
         )
-        
+
         # "fetches" the submit invoice url with the message contents
         # this should post the invoice and create it in the remote
         # data source
         data = self._fetch_url(submit_url, method = "POST", contents = message)
         self._check_at_errors(data)
-        
+
         # returns the resulting data
         return data
-        
+
     def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
         """
         Fetches the given url for the given parameters and using
@@ -429,10 +429,10 @@ class AtClient:
         """
         Parses the provided xml data, retrieving the
         document identifier containing it.
-        
+
         The provided xml data should be compliant with
         the pre-defined at soap response.
-        
+
         @type data: String
         @param data: The string containing the xml data
         to be used for parsing and retrieval of the document
@@ -440,11 +440,11 @@ class AtClient:
         @rtype: String
         @return: The at document id.
         """
-        
+
         # parses the xml data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
-    
+
         # retrieves the at document id from the document,
         # and returns it, returning none in case it the
         # document id was not found in the document
