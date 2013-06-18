@@ -56,20 +56,20 @@ class AtApiError(ApiAtException):
     """ The code associated with the message contained
     in this api error """
 
-    def __init__(self, message, long_message):
+    def __init__(self, message, error_code):
         """
         Constructor of the class.
 
         @type message: String
         @param message: The message to be printed.
-        @type long_message: String
-        @param long_message: The longer version of the
-        error message present by the at api.
+        @type error_code: String
+        @param error_code: The code associated with 
+        the message contained in this api error.
         """
 
         ApiAtException.__init__(self)
         self.message = message
-        self.long_message = long_message
+        self.error_code = error_code
 
     def __str__(self):
         """
