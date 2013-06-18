@@ -425,6 +425,33 @@ class AtClient:
         contents = http_response.received_message
         return contents
 
+    def get_at_document_id(self, data):
+        """
+        Parses the provided xml data, retrieving the
+        document identifier containing it.
+        
+        The provided xml data should be compliant with
+        the pre-defined at soap response.
+        
+        @type data: String
+        @param data: The string containing the xml data
+        to be used for parsing and retrieval of the document
+        identifier.
+        @rtype: String
+        @return: The at document id.
+        """
+        
+        # parses the xml data and retrieves the entry document
+        # structure that will be uses in the parsing
+        document = xml.dom.minidom.parseString(data)
+    
+        # retrieves the at document id from the document,
+        # and returns it, returning none in case it the
+        # document id was not found in the document
+        at_doc_code_ids = document.getElementsByTagName("ATDocCodeID")
+        at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
+        return at_doc_code_id
+
     def _check_at_errors(self, data):
         """
         Checks the given data for at errors.
