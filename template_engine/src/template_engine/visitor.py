@@ -231,7 +231,8 @@ COMPARISION_FUNCTIONS = {
     "lengt" : lambda attribute_item, attribute_value: len(attribute_item) > attribute_value,
     "lenlt" : lambda attribute_item, attribute_value: len(attribute_item) < attribute_value
 }
-""" The map containing the comparison functions (lambda) """
+""" The map containing the comparison functions (lambda) these
+are going to be used "inside" the visitor execution logic """
 
 def _visit(ast_node_class):
     """
@@ -396,16 +397,21 @@ class Visitor:
     localization, the order set is going to be the priority for template
     value resolution (from first to last list element) """
 
-    def __init__(self):
+    def __init__(self, string_buffer = None):
         """
         Constructor of the class.
+
+        @type string_buffer: File
+        @param string_buffer: The file like object that is going to be
+        used for the underlying buffering of the template process. In
+        case no value is provided the default string buffer object is used.
         """
 
         self.node_method_map = {}
         self.visit_childs = True
         self.visit_next = True
         self.global_map = {}
-        self.string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        self.string_buffer = string_buffer or colony.libs.string_buffer_util.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
 
