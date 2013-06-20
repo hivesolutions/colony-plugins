@@ -118,7 +118,8 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
     "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE + ")|" + \
     "(?P<none>" + ATTRIBUTE_NONE_REGEX_VALUE + ")"
 )
-""" The literal regular expression that matches all the literals """
+""" The literal regular expression that matches all the literals, there
+are matching groups for each of the data types """
 
 class TemplateEngine(colony.base.system.System):
     """
