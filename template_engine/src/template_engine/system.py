@@ -173,10 +173,9 @@ class TemplateEngine(colony.base.system.System):
         # reads the file contents
         file_contents = file.read()
 
-        # in case an encoding is defined
-        if encoding:
-            # decodes the file contents
-            file_contents = file_contents.decode(encoding)
+        # in case an encoding is defined decodes the provided
+        # file contents using the encoding value (may raise exception)
+        if encoding: file_contents = file_contents.decode(encoding)
 
         # retrieves the start matches iterator
         start_matches_iterator = START_TAG_REGEX.finditer(file_contents)
@@ -507,6 +506,26 @@ class TemplateFile:
         """
 
         self.visitor.set_global_map(global_map)
+
+    def set_string_buffer(self, string_buffer):
+        """
+        Updates the underlying string buffer that is going to be
+        used by the visitor to the provided one.
+
+        The string buffer should be an opened file like object that
+        accepts the typical calls.
+
+        In case a typical file object is used this may reduce the
+        amount of memory used by the visitor by an order of magnitude
+        so this method may be very useful for long output generation
+        in the template engine.
+
+        @type string_buffer: File
+        @param string_buffer: The file like object that is going to
+        be used by the underlying visitor object.
+        """
+
+        self.visitor.string_buffer = string_buffer
 
     def attach_process_methods(self, process_methods_list):
         """
