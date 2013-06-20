@@ -1775,7 +1775,8 @@ class Visitor:
                 if not current_variable == None:
                     # iterates over the sub values of the variable
                     for variable_name_split in variable_name_splitted[1:]:
-                        # in case the variable is of type dictionary
+                        # in case the variable is of type dictionary, the normal recursive
+                        # iteration step will be executed
                         if colony.libs.structures_util.is_dictionary(current_variable):
                             if variable_name_split in current_variable:
                                 # retrieves the current variable (from the dictionary)
@@ -1790,7 +1791,8 @@ class Visitor:
                                 # raises the undefined variable exception
                                 raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
 
-                        # variable is of type object or other it's
+                        # otherwise variable is of type object or other, then the more complex
+                        # recursive read of its attributes is executed
                         else:
                             # filters the variable name (split) so that if it's
                             # a complete method call the arguments part is removed
@@ -1802,12 +1804,10 @@ class Visitor:
                             # or raises an error in case the strict mode is set
                             if hasattr(current_variable, attribute_name):
                                 # retrieves the current variable (from the object) and
-                                # checks the type value for it, then verifies if the class
-                                # identifier is set and in case it's reads it
+                                # checks the type value for it to be used for conditional
+                                # execution of code logic
                                 current_variable = getattr(current_variable, attribute_name)
                                 current_variable_type = type(current_variable)
-                                current_variable_class = current_variable.__class__ if\
-                                    hasattr(current_variable, "__class__") else None
 
                                 # in case its a variable of type function, must proceed
                                 # with the calling of it to retrieve the return value
@@ -1868,12 +1868,6 @@ class Visitor:
                                         arguments_v = [self.get_value(argument_s) for argument_s in arguments_t]
                                         current_variable = current_variable(*arguments_v)
 
-                                    # otherwise in case the current variable is a file refence all
-                                    # of the file contents should be read (then the file closed properly)
-                                    # and set as the current variable
-                                    elif current_variable_class == colony.libs.structures_util.FileReference:
-                                        current_variable = current_variable_class.read_all()
-
                                     # otherwise there is no arguments match and so the function is
                                     # considered simple and a simple call (no arguments) is made
                                     else:
@@ -1897,6 +1891,14 @@ class Visitor:
                 else:
                     # raises the undefined variable exception
                     raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+
+                # retrieves the current variable's class and in case the class is of
+                # type file reference the contents should be read (the file is closed properly)
+                # and set as the current variable
+                current_variable_class = current_variable.__class__ if\
+                    hasattr(current_variable, "__class__") else None
+                if current_variable_class == colony.libs.structures_util.FileReference:
+                    current_variable = current_variable_class.read_all()
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
