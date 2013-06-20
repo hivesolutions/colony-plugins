@@ -1797,11 +1797,17 @@ class Visitor:
                             # this way only the name of the attribute is guaranteed
                             attribute_name = variable_name_split.split("(", 1)[0]
 
+                            # checks if the attribute name exists in the current variable
+                            # in iteration, otherwise default to undefined (avoids error)
+                            # or raises an error in case the strict mode is set
                             if hasattr(current_variable, attribute_name):
                                 # retrieves the current variable (from the object) and
-                                # checks the type value for it
+                                # checks the type value for it, then verifies if the class
+                                # identifier is set and in case it's reads it
                                 current_variable = getattr(current_variable, attribute_name)
                                 current_variable_type = type(current_variable)
+                                current_variable_class = current_variable.__class__ if\
+                                    hasattr(current_variable, "__class__") else None
 
                                 # in case its a variable of type function, must proceed
                                 # with the calling of it to retrieve the return value
@@ -1861,6 +1867,12 @@ class Visitor:
                                         # various argument types and uses these values in the function call
                                         arguments_v = [self.get_value(argument_s) for argument_s in arguments_t]
                                         current_variable = current_variable(*arguments_v)
+
+                                    # otherwise in case the current variable is a file refence all
+                                    # of the file contents should be read (then the file closed properly)
+                                    # and set as the current variable
+                                    elif current_variable_class == colony.libs.structures_util.FileReference:
+                                        current_variable = current_variable_class.read_all()
 
                                     # otherwise there is no arguments match and so the function is
                                     # considered simple and a simple call (no arguments) is made
