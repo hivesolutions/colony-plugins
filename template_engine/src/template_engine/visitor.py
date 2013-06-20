@@ -1894,7 +1894,7 @@ class Visitor:
 
                 # retrieves the current variable's class and in case the class is of
                 # type file reference the contents should be read (the file is closed properly)
-                # and set as the current variable
+                # and set as the current variable (as the new value of it)
                 current_variable_class = current_variable.__class__ if\
                     hasattr(current_variable, "__class__") else None
                 if current_variable_class == colony.libs.structures_util.FileReference:
