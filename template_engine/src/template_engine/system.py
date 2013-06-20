@@ -560,7 +560,7 @@ class TemplateFile:
 
     def load_system_variable(self, variable_name = "_system"):
         """
-        Loads a system infrmation variable to the template
+        Loads a system information variable to the template
         file.
 
         @type variable_name: String
