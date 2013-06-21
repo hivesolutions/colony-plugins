@@ -761,22 +761,6 @@ class MysqlConnection:
         self._encoding = result
         return result
 
-    def _execute_query(self, query, connection = None):
-        # retrieves the current connection and creates
-        # a new cursor object for query execution
-        connection = connection or self.get_connection()
-        cursor = connection.cursor()
-
-        # executes the query using the current cursor
-        # then closes the cursor avoid the leak of
-        # cursor objects (memory reference leaking)
-        try: cursor.execute(query)
-        except: cursor.close()
-
-        # returns the cursor that has just been created for
-        # the execution of the requested query
-        return cursor
-
     def _database_encoding_query(self, database_name):
         query = "select default_character_set_name from information_schema.schemata where schema_name = '%s'" % database_name
         return query
@@ -795,3 +779,19 @@ class MysqlConnection:
         # returns the result of the retrieval of the database
         # encoding from the data source
         return datbase_encoding
+
+    def _execute_query(self, query, connection = None):
+        # retrieves the current connection and creates
+        # a new cursor object for query execution
+        connection = connection or self.get_connection()
+        cursor = connection.cursor()
+
+        # executes the query using the current cursor
+        # then closes the cursor avoid the leak of
+        # cursor objects (memory reference leaking)
+        try: cursor.execute(query)
+        except: cursor.close()
+
+        # returns the cursor that has just been created for
+        # the execution of the requested query
+        return cursor
