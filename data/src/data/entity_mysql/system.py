@@ -112,18 +112,9 @@ class MysqlEngine:
 
     def get_database_encoding(self):
         connection = self.entity_manager.get_connection()
-        if hasattr(connection, "_encoding"): return connection._encoding
-
-        query = self._database_encoding_query(connection._database)
-        cursor = self.execute_query(query)
-        try: result = self._database_encoding_result(cursor)
-        finally: cursor.close()
-
-        # caches the database encoding into the current
-        # connection object (no need to retrieve it again
-        # from the data source) then returns it to the caller
-        connection._encoding = result
-        return result
+        _connection = connection._connection
+        encoding = _connection.get_database_encoding()
+        return encoding
 
     def connect(self, connection, parameters = {}):
         host = parameters.get("host", "localhost")
@@ -436,26 +427,6 @@ class MysqlEngine:
         # size from the data source
         return datbase_size
 
-    def _database_encoding_query(self, database_name):
-        query = "select default_character_set_name from information_schema.schemata where schema_name = '%s'" % database_name
-
-        return query
-
-    def _database_encoding_result(self, cursor):
-        # selects all the elements from the cursor the
-        # database encoding should be the first element
-        # then closes the cursor
-        try: counts = cursor.fetchall()
-        finally: cursor.close()
-
-        # retrieves the database encoding as the first element
-        # of the first retrieved row
-        datbase_encoding = counts[0][0]
-
-        # returns the result of the retrieval of the database
-        # encoding from the data source
-        return datbase_encoding
-
     def _index_query(self, entity_class, attribute_name, index_type = "hash"):
         # retrieves the associated table name
         # as the "name" of the entity class
@@ -679,12 +650,18 @@ class MysqlConnection:
             # in the current thread
             self.transaction_level_map[connection] = 0
 
+            # retrieves the encoding in use by the database and then
+            # uses it as the character set to be used in the communication
+            # with the database server
+            encoding = self.get_database_encoding()
+            connection.set_character_set(encoding)
+
             # sets the isolation level for the connection as the one defined
             # to be the default one by the "driver"
             self._execute_query(
                 "set session transaction isolation level %s" % ISOLATION_LEVEL,
                 connection = connection
-            )
+            ).close()
 
         # returns the correct connection
         # for the current thread
@@ -765,6 +742,25 @@ class MysqlConnection:
 
         return is_valid_transaction
 
+    def get_database_encoding(self):
+        # checks if the current object already contains the encoding
+        # attribute set for such cases the retrieval is immediate
+        if hasattr(self, "_encoding"): return self._encoding
+
+        # retrieves the query to be used in the retrieval of the
+        # database encoding and executes it retrieving the encoding
+        # used in the current database
+        query = self._database_encoding_query(self.database)
+        cursor = self._execute_query(query)
+        try: result = self._database_encoding_result(cursor)
+        finally: cursor.close()
+
+        # caches the database encoding into the current
+        # connection object (no need to retrieve it again
+        # from the data source) then returns it to the caller
+        self._encoding = result
+        return result
+
     def _execute_query(self, query, connection = None):
         # retrieves the current connection and creates
         # a new cursor object for query execution
@@ -776,3 +772,26 @@ class MysqlConnection:
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
         except: cursor.close()
+
+        # returns the cursor that has just been created for
+        # the execution of the requested query
+        return cursor
+
+    def _database_encoding_query(self, database_name):
+        query = "select default_character_set_name from information_schema.schemata where schema_name = '%s'" % database_name
+        return query
+
+    def _database_encoding_result(self, cursor):
+        # selects all the elements from the cursor the
+        # database encoding should be the first element
+        # then closes the cursor
+        try: counts = cursor.fetchall()
+        finally: cursor.close()
+
+        # retrieves the database encoding as the first element
+        # of the first retrieved row
+        datbase_encoding = counts[0][0]
+
+        # returns the result of the retrieval of the database
+        # encoding from the data source
+        return datbase_encoding

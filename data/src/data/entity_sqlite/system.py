@@ -601,7 +601,7 @@ class SqliteConnection:
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
         except: cursor.close()
-        
+
         # returns the cursor that has just been created for
         # the execution of the requested query
         return cursor
