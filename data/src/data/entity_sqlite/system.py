@@ -521,8 +521,8 @@ class SqliteConnection:
             # executes queries for the updating of the cache
             # size for the current session and sets the current
             # query execution to synchronous operating mode
-            self._execute_query("pragma cache_size = %d" % self.cache_size)
-            self._execute_query("pragma synchronous = %d" % self.synchronous)
+            self._execute_query("pragma cache_size = %d" % self.cache_size).close()
+            self._execute_query("pragma synchronous = %d" % self.synchronous).close()
 
         # returns the correct connection
         # for the current thread
@@ -601,3 +601,7 @@ class SqliteConnection:
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
         except: cursor.close()
+        
+        # returns the cursor that has just been created for
+        # the execution of the requested query
+        return cursor
