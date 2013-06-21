@@ -1898,7 +1898,7 @@ class Visitor:
                 current_variable_class = current_variable.__class__ if\
                     hasattr(current_variable, "__class__") else None
                 if current_variable_class == colony.libs.structures_util.FileReference:
-                    current_variable = current_variable_class.read_all()
+                    current_variable = current_variable.read_all()
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
