@@ -580,11 +580,14 @@ class TemplateFile:
         # to the template
         self.assign(variable_name, system_information_map)
 
-    def process(self):
+    def process(self, get_value = True):
         """
         Processes the template file running the visitor
         and returning the result value.
-
+    
+        @type get_value: bool
+        @param get_value: If the final string value of
+        the contents should be retrieved as a result. 
         @rtype: String
         @return: The result value from the visitor.
         """
@@ -609,10 +612,13 @@ class TemplateFile:
 
         # retrieves the visitor string buffer
         visitor_string_buffer = self.visitor.string_buffer
-
-        # retrieves the visitor string buffer value
-        visitor_string_buffer_value = visitor_string_buffer.get_value()
-
+        
+        # retrieves the visitor string buffer value, in case
+        # the value should be retrieved from the underlying string 
+        # buffer, otherwise retrieves the string buffer as the value
+        if get_value: visitor_string_buffer_value = visitor_string_buffer.get_value()
+        else: visitor_string_buffer_value = visitor_string_buffer
+        
         # returns the visitor string buffer value
         return visitor_string_buffer_value
 
