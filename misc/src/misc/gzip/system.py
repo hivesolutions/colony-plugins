@@ -90,8 +90,13 @@ class Gzip(colony.base.system.System):
         # writes the file name
         file_name and string_buffer.write(file_name + "\0")
 
-        # compresses the contents with the zlib
-        contents_string_compressed = zlib.compress(contents_string, DEFAULT_COMPRESSION_LEVEL)
+        # compresses the contents with the zlib, note that the
+        # complete set of contents are compressed at a time, so
+        # this operation may take a while to complete
+        contents_string_compressed = zlib.compress(
+            contents_string,
+            DEFAULT_COMPRESSION_LEVEL
+        )
 
         # writes the the contents string compressed into the string buffer
         string_buffer.write(contents_string_compressed[2:-4])
