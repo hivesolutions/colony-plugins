@@ -356,7 +356,9 @@ class EntityManager:
     def apply_types(self):
         """
         Applies the "custom" engine specific data types to the
-        current data types map.
+        current data types map. This allows the engines to change
+        the pre-defined sql types to better adapt them to their
+        internal specifics.
 
         This method does nothing in case the current engine does
         not define the apply types method in it.
