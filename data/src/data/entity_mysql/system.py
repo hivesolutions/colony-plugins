@@ -84,6 +84,11 @@ class MysqlEngine:
         self.mysql_system = mysql_system
         self.entity_manager = entity_manager
 
+    def apply_types(self, types_map):
+        types_map["text"] = "longtext"
+        types_map["data"] = "longtext"
+        types_map["metadata"] = "longtext"
+
     def get_engine_name(self):
         return ENGINE_NAME
 

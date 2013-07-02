@@ -291,7 +291,8 @@ class EntityManager:
     """ The entity manager plugin """
 
     engine = None
-    """ The engine to be used in the underlying logic """
+    """ The engine to be used in the underlying logic, this
+    is the reference to the instance created for this manager """
 
     id = None
     """ The identifier for the entity manager """
@@ -307,6 +308,11 @@ class EntityManager:
 
     connection = None
     """ The connection with the data source sub-system """
+
+    types_map = {}
+    """ The map containing the associations between the standard
+    entity manager types and the corresponding sql data types that
+    should be resolved under the current entity manager """
 
     connection_parameters = {}
     """ The map containing the set of parameters to be passed
@@ -341,8 +347,23 @@ class EntityManager:
         self.entities_map = entities_map
         self.options = options
 
+        self.types_map = copy.copy(SQL_TYPES_MAP)
         self.connection_parameters = {}
         self._exists = {}
+
+        self.apply_types()
+
+    def apply_types(self):
+        """
+        Applies the "custom" engine specific data types to the
+        current data types map.
+
+        This method does nothing in case the current engine does
+        not define the apply types method in it.
+        """
+
+        if not hasattr(self.engine, "apply_types"): return
+        self.engine.apply_types(self.types_map)
 
     def get_mock_entities(self):
         """
@@ -1254,7 +1275,7 @@ class EntityManager:
 
         # retrieves the current table type (table id type) for the
         # construction of the relation table (for indirect relations)
-        table_type = SQL_TYPES_MAP[table_id_value.get("data_type", "integer")]
+        table_type = self.types_map[table_id_value.get("data_type", "integer")]
 
         # retrieves the complete set of indirect relations for the
         # current entity class, the list is going to be used during
@@ -1304,7 +1325,7 @@ class EntityManager:
 
             # retrieves the associated sql (data) type for the type
             # of the (target) table id attribute (foreign key)
-            target_type = SQL_TYPES_MAP[target_id_value.get("data_type", "integer")]
+            target_type = self.types_map[target_id_value.get("data_type", "integer")]
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base creation of the table)
@@ -2574,7 +2595,7 @@ class EntityManager:
 
                 # retrieves the associated sql (data) type for the type
                 # of the (target) table id attribute (foreign key)
-                sql_type = SQL_TYPES_MAP[table_id_value.get("data_type", "integer")]
+                sql_type = self.types_map[table_id_value.get("data_type", "integer")]
 
                 # creates the index for the foreign key field and adds
                 # it to the list of index queries
@@ -2584,7 +2605,7 @@ class EntityManager:
             else:
                 # retrieves the associated sql (data) type for the type
                 # of the current item value
-                sql_type = SQL_TYPES_MAP[item_value.get("data_type", "integer")]
+                sql_type = self.types_map[item_value.get("data_type", "integer")]
 
             # writes the comma to the query buffer only in case the
             # is first flag is not set
@@ -2637,7 +2658,7 @@ class EntityManager:
 
             # retrieves the associated sql (data) type for the type
             # of the table id (item) value
-            table_id_type = SQL_TYPES_MAP[table_id_value.get("data_type", "integer")]
+            table_id_type = self.types_map[table_id_value.get("data_type", "integer")]
 
             # writes the upper table id information into the current query
             # buffer, this information includes the table id,
