@@ -84,11 +84,6 @@ class MysqlEngine:
         self.mysql_system = mysql_system
         self.entity_manager = entity_manager
 
-    def apply_types(self, types_map):
-        types_map["text"] = "longtext"
-        types_map["data"] = "longtext"
-        types_map["metadata"] = "longtext"
-
     def get_engine_name(self):
         return ENGINE_NAME
 
@@ -120,6 +115,11 @@ class MysqlEngine:
         _connection = connection._connection
         encoding = _connection.get_database_encoding()
         return encoding
+
+    def apply_types(self, types_map):
+        types_map["text"] = "longtext"
+        types_map["data"] = "longtext"
+        types_map["metadata"] = "longtext"
 
     def connect(self, connection, parameters = {}):
         host = parameters.get("host", "localhost")
