@@ -1062,6 +1062,29 @@ def get_pattern(self, parameters, pattern_name, pattern_type = None):
     # returns the pattern value
     return pattern_value
 
+def set_pattern(self, parameters, pattern_name, pattern_value):
+    """
+    Sets the provided pattern value for the pattern name that
+    was set, useful for request simulation.
+
+    This method must be used with care in order to avoid unwanted
+    behavior in the request handling.
+
+    @type parameters: Dictionary
+    @param parameters: The parameters that are going to be changed
+    so that the pattern is set.
+    @type pattern_name: String
+    @param pattern_name: The name of the patter to be set.
+    @type pattern_value: Object
+    @param pattern_value: The value to be set for the parameter, this
+    value may assume any data type.
+    """
+
+    # retrieves the map of patterns from the parameters map and then
+    # uses it to set the pattern value for the provided name
+    pattern_names = parameters[PATTERN_NAMES_VALUE]
+    pattern_names[pattern_name] = pattern_value
+
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
     Retrieves the entity map parameters value.
