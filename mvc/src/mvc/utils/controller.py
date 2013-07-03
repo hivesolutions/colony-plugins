@@ -1390,8 +1390,9 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
     for the "form" contents.
     """
 
-    # tries to retrieves the base attributes map from the
-    # "cached" data in the rest request
+    # tries to retrieve the base attributes map from the
+    # "cached" data in the rest request, this will provide
+    # a faster way to access the form data
     base_attributes_map = rest_request.get_parameter(FORM_DATA_PRIVATE_VALUE)
 
     # in case there is cached data pending in the
@@ -1406,7 +1407,8 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
     base_attributes_map = {}
 
     # iterates over all the attributes in the
-    # attributes list
+    # attributes list to process them creating the
+    # appropriate representation for them
     for attribute in attributes_list:
         # in case the attribute is invalid or empty
         # must skip the current loop
