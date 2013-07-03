@@ -134,25 +134,39 @@ def validated_method(validation_parameters = None, validation_method = None, cal
             # retrieves the parameters reference
             parameters = args_length > 2 and args[2] or {}
 
-            # in case the controller instance
-            # does not have the validate method
+            # in case the controller instance does not have the validate method
+            # an exception should be raised indicating the problem
             if not hasattr(self, VALIDATE_VALUE):
-                # raises the controller validation failed
                 raise exceptions.ControllerValidationError("validation method not found", self)
 
-            # tests if the controller instance contains the validate method
+            # tests if the controller instance contains the validate method and
+            # then tries to retrieve the current state of validation for the request
+            # workflow, if the current request is already validated or if the current
+            # controller does not contain a validate method the validation should
+            # not be ran
             contains_validate = hasattr(self, "validate")
+            validated = parameters.get("validated", False)
+            run_validate = contains_validate and not validated
 
             # calls the validate method with the rest request
             # the parameters and the validation parameters and retrieves
             # the list with the validation failure reasons, in case no validate
             # method is present ignores the call
-            reasons_list = contains_validate and self.validate(rest_request, parameters, validation_parameters) or []
+            reasons_list = run_validate and\
+                self.validate(rest_request, parameters, validation_parameters) or []
 
-            # tries to retrieves the validation failed method
-            validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and self.validation_failed or None
+            # updates the validated flag for the current request workflow so that
+            # no second validation occurs, this is the default (top to down) expected
+            # behavior as only the front-end method gets validated
+            parameters["validated"] = True
 
-            # retrieves validation method enabled value from the parameters
+            # tries to retrieves the validation failed method from the current controller
+            # instance, this is going to be used in case the validation method is enabled
+            validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and\
+                self.validation_failed or None
+
+            # retrieves validation method enabled value from the parameters, if this value
+            # is set the validation method will be run
             validation_method_enabled = parameters.get(VALIDATION_METHOD_ENABLED_VALUE, True)
 
             # retrieves the patterns
@@ -169,30 +183,47 @@ def validated_method(validation_parameters = None, validation_method = None, cal
                     validation_method_result = validation_method(patterns, session_attributes)
 
                     # in case the validation method running failed
-                    not validation_method_result and reasons_list.append(exceptions.ValidationMethodError("validation method failed in running"))
+                    not validation_method_result and reasons_list.append(
+                        exceptions.ValidationMethodError("validation method failed in running")
+                    )
                 except BaseException, exception:
                     # adds the exception to the reasons list
                     reasons_list.append(exception)
 
-            # in case the reasons list is not empty
+            # in case the reasons list is not empty, there was a validation that failed
+            # and so either the validation failed method must be called or an exception
+            # should be immediately raised indicating the problem
             if reasons_list:
+
                 # in case a validation failed method is defined and
                 # the call validation failed flag is set
                 if validation_failed_method and call_validation_failed:
                     # calls the validation failed method with the rest request the parameters the
                     # validation parameters and the reasons list and sets the return value
-                    return_value = validation_failed_method(rest_request, parameters, validation_parameters, reasons_list)
-                # otherwise there is no validation method defined
-                else:
-                    # raises the controller validation failed
-                    raise exceptions.ControllerValidationReasonFailed("validation failed for a series of reasons: " + str(reasons_list), self, reasons_list)
-            # otherwise the reason list is empty (no errors)
-            else:
-                # calls the callback function,
-                # retrieving the return value
-                return_value = function(*args, **kwargs)
+                    return_value = validation_failed_method(
+                        rest_request,
+                        parameters,
+                        validation_parameters,
+                        reasons_list
+                    )
 
-            # returns the return value
+                # otherwise there is no validation method defined and the exception
+                # must be raised (default fallback strategy)
+                else:
+                    # raises the controller validation failed exception to indicate that
+                    # there was a problem validating the controller's action method
+                    raise exceptions.ControllerValidationReasonFailed(
+                        "validation failed for a series of reasons: " + str(reasons_list),
+                        self,
+                        reasons_list
+                    )
+
+            # otherwise the reason list is empty (no errors have occurred) and so the
+            # "normal" function call workflow must be used
+            else: return_value = function(*args, **kwargs)
+
+            # returns the return value, retrieved from either the
+            # validation method or form the decorated function
             return return_value
 
         # returns the decorator interceptor
