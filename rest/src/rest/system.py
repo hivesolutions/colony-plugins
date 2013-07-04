@@ -224,11 +224,11 @@ class Rest(colony.base.system.System):
         # retrieves the request filename
         request_filename = request.uri
 
-        # in case the handler base filename is in the start of the request filename
-        if request_filename.find(HANDLER_BASE_FILENAME) == 0:
-            return True
-        else:
-            return False
+        # in case the handler base filename is in the start of the
+        # request filename this is the correct handler for the request
+        # otherwise it's not and an invalid value is returned
+        if request_filename.find(HANDLER_BASE_FILENAME) == 0: return True
+        else: return False
 
     def handle_request(self, request):
         """
@@ -292,10 +292,13 @@ class Rest(colony.base.system.System):
         # constructs the rest path list
         path_list = middle_path_name + [last_path_initial_name]
 
-        # updates the session list (garbage collection)
+        # updates the session list (garbage collection), this should
+        # remove the session that have expired
         self.update_session_list()
 
-        # creates the rest request
+        # creates the rest request object that is going to be used
+        # for the rest level handling this object encapsulates the
+        # underlying server oriented object
         rest_request = RestRequest(self, request)
 
         try:
@@ -312,16 +315,11 @@ class Rest(colony.base.system.System):
         # internal timing structures
         rest_request.touch()
 
-        # sets the resource name in the rest request
+        # sets a series of attributes in the rest request that may be
+        # used latter for a series of operations
         rest_request.set_resource_name(resource_name)
-
-        # sets the path list in the rest request
         rest_request.set_path_list(path_list)
-
-        # sets the encoder name in the rest request
         rest_request.set_encoder_name(encoder_name)
-
-        # sets the rest encoder plugins in the rest request
         rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
 
         # in case the request is meant to be handled by services
