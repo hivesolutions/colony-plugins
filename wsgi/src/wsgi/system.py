@@ -99,7 +99,7 @@ class Wsgi(colony.base.system.System):
         # the default rest request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WsgiRequest(environ)
+        request = WsgiRequest(self, environ)
         try: rest_plugin.handle_request(request)
         except BaseException, exception:
             code = 500
@@ -150,6 +150,11 @@ class WsgiRequest:
     http request object and as such must comply
     with the same interface (protocol).
     """
+
+    service = None
+    """ The service instance associated with the request
+    this should be the owner of this request and any
+    external object access should be done through this """
 
     environ = {}
     """ The map containing the various environment
@@ -242,7 +247,12 @@ class WsgiRequest:
     associated with this request, this value is not
     used in case the response is mediated"""
 
-    def __init__(self, environ, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET):
+        # sets the current "owner" service of the request
+        # in the current request, this is going to be used
+        # to access external resources
+        self.service = service
+
         # retrieves the "base" value from the environment
         # map so that the basic request values may be constructed
         # the value are used with default values
@@ -727,7 +737,7 @@ class WsgiRequest:
                 if modified_date_time <= if_modified_header_data_time: return False
             except:
                 # prints a warning for not being able to check the modification date
-                self.service.service_plugin.warning("Problem while checking modification date")
+                self.service.plugin.warning("Problem while checking modification date")
 
         # retrieves the if none match value and in case it is
         # defined together with the etag value the etag based
