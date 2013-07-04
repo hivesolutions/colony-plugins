@@ -78,7 +78,7 @@ class Wsgi(colony.base.system.System):
     @see: http://www.python.org/dev/peps/pep-0333/
     """
 
-    def handle(self, environ, start_response, prefix = None):
+    def handle(self, environ, start_response, prefix = None, alias = None):
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
         plugin_manager = self.plugin.manager
@@ -103,7 +103,7 @@ class Wsgi(colony.base.system.System):
         # the default rest request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WsgiRequest(self, environ, prefix = prefix)
+        request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
         try: rest_plugin.handle_request(request)
         except BaseException, exception:
             code = 500
@@ -286,7 +286,7 @@ class WsgiRequest:
     associated with this request, this value is not
     used in case the response is mediated"""
 
-    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET, prefix = None):
+    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET, prefix = None, alias = None):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
         # to access external resources
@@ -302,6 +302,11 @@ class WsgiRequest:
         content_type = environ.get("CONTENT_TYPE", "")
         content_length = int(environ.get("CONTENT_LENGTH", "") or 0)
         input = environ.get("wsgi.input", None)
+
+        # resolves the provided path information so that if any alias
+        # value matches the start of the path info it's replaced by
+        # the correct matching value
+        path_info = self._resolve_path(path_info, alias)
 
         # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
@@ -806,6 +811,36 @@ class WsgiRequest:
             mediated_value = self.mediated_handler.get_chunk(CHUNK_SIZE)
             if not mediated_value: return
             else: yield mediated_value
+
+    def _resolve_path(self, path_info, alias):
+        """
+        Resolves the provided path info string using the provided
+        alias map, if there's a match at beginning of the string in
+        the path info the value is replaced.
+
+        @type path_info: String
+        @param path_info: The path information string containing the
+        path to be resolved using the alias map.
+        @type alias: Dictionary
+        @param alias: The map containing prefix to resolution values
+        associations that will be used in the resolution.
+        @rtype: String
+        @return: The resolved path string resulting from the resolution
+        of the path info string according to the provided map.
+        """
+
+        # iterates over all the alias keys present in the map of alias
+        # to try to find one that matches the start of the path info
+        # in case it does happen the value is replaced
+        for key in alias:
+            if not path_info.startswith(key): continue
+            value = alias[key]
+            key_l = len(key)
+            path_info = value + path_info[key_l:]
+
+        # returns the "new" path info string object resulting from the
+        # correct resolution of it's prefix value
+        return path_info
 
     def _parse_multipart_part(self, start_index, end_index):
         """
