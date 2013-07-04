@@ -83,8 +83,8 @@ class WsgiPlugin(colony.base.system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.system.Plugin.dependency_injected(self, plugin)
 
-    def handle(self, environ, start_response):
-        return self.wsgi.handle(environ, start_response)
+    def handle(self, environ, start_response, prefix):
+        return self.wsgi.handle(environ, start_response, prefix)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.rest")
     def set_rest_plugin(self, rest_plugin):

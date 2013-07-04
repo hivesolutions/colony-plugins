@@ -78,7 +78,7 @@ class Wsgi(colony.base.system.System):
     @see: http://www.python.org/dev/peps/pep-0333/
     """
 
-    def handle(self, environ, start_response):
+    def handle(self, environ, start_response, prefix = None):
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
         plugin_manager = self.plugin.manager
@@ -103,7 +103,7 @@ class Wsgi(colony.base.system.System):
         # the default rest request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WsgiRequest(self, environ)
+        request = WsgiRequest(self, environ, prefix = prefix)
         try: rest_plugin.handle_request(request)
         except BaseException, exception:
             code = 500
@@ -286,7 +286,7 @@ class WsgiRequest:
     associated with this request, this value is not
     used in case the response is mediated"""
 
-    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET, prefix = None):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
         # to access external resources
@@ -305,8 +305,10 @@ class WsgiRequest:
 
         # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
-        # uri's may be used in wsgi
-        path_info_r = PATH_INFO_PREFIX + path_info
+        # uri's may be used in wsgi, in case the "extra" prefix variable
+        # is set an "extra" prefix is prepended to the path info
+        if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info
+        else: prefix = PATH_INFO_PREFIX + path_info
 
         # creates the complete "original" path info value by adding
         # the script name (routing base value) to the path info, this
