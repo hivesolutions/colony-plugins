@@ -304,7 +304,8 @@ class Rest(colony.base.system.System):
             # case it exists
             rest_request.update_session()
         except:
-            # logs a debug message
+            # logs a debug message about the fact that
+            # no valid session could be loaded
             self.plugin.debug("Session is invalid no session loaded or updated")
 
         # "touches" the rest request updating it's
