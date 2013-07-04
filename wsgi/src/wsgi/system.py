@@ -829,6 +829,10 @@ class WsgiRequest:
         of the path info string according to the provided map.
         """
 
+        # in case the alias map is not valid or is not set the value
+        # could not be resolved and the original path info is returned
+        if not alias: return path_info
+
         # iterates over all the alias keys present in the map of alias
         # to try to find one that matches the start of the path info
         # in case it does happen the value is replaced
