@@ -50,6 +50,10 @@ POWERED_BY_STRING = "colony/%s (%s)"
 header to be sent to the end used as a sign of
 the underlying infra-structure of wsgi """
 
+IDENTIFIER_STRING = "Colony Framework / %s (%s)"
+""" The template to be used for the string to be
+returned in diagnostic messages like errors """
+
 PATH_INFO_PREFIX = "/dynamic/rest"
 """ The prefix to be used at the start of the
 path info so that every request uri is inserted
@@ -103,7 +107,8 @@ class Wsgi(colony.base.system.System):
         try: rest_plugin.handle_request(request)
         except BaseException, exception:
             code = 500
-            content = [str(exception)]
+            messaage = self.error_message(exception, code = 500)
+            content = [messaage]
             headers_out_l = []
         else:
             code = request.status_code
@@ -141,6 +146,40 @@ class Wsgi(colony.base.system.System):
         # returns the content sequence to the caller method so that is
         # possible to render the appropriate message to the client
         return content
+
+    def error_message(self, error, code = 500):
+        """
+        Formats the error as message and returns it so it can be
+        used to notify the end user.
+
+        The retrieved message is set as an undefined encoding string
+        and may be used with care to avoid encoding problems.
+
+        @type error: Exception
+        @param error: The exception object to be used in the creation
+        of the message string to be returned.
+        @type code: int
+        @param code: The http status code that should be included in
+        the created message default to internal error (500).
+        @rtype: String
+        @return: The constructed error message as a string that represents
+        the error that was passed as an argument
+        """
+
+        # retrieves the plugin manager for the current system instance
+        # and uses it to retrieve the current version and environment
+        # to be used in the construction of the identifier string
+        plugin_manager = self.plugin.manager
+        version = plugin_manager.get_version()
+        manager_environment = plugin_manager.get_environment()
+        identifier_s = IDENTIFIER_STRING % (version, manager_environment)
+
+        # converts the error into a string bases and then creates the
+        # complete error message string from the various components,
+        # returning the resulting value as the result
+        error_s = str(error)
+        message = "[%d] %s\n%s" % (code, error_s, identifier_s)
+        return message
 
 class WsgiRequest:
     """
