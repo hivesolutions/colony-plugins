@@ -313,7 +313,7 @@ class WsgiRequest:
         # uri's may be used in wsgi, in case the "extra" prefix variable
         # is set an "extra" prefix is prepended to the path info
         if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info
-        else: prefix = PATH_INFO_PREFIX + path_info
+        else: path_info_r = PATH_INFO_PREFIX + path_info
 
         # creates the complete "original" path info value by adding
         # the script name (routing base value) to the path info, this
