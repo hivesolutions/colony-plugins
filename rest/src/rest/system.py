@@ -1342,8 +1342,9 @@ class RestRequest:
 
     def redirect(self, target_path, status_code = 302, quote = True, attributes_map = None):
         """
-        Redirects the request logically, so it
-        becomes readable as a new resource.
+        Redirects the request logically, so it becomes readable
+        as a new resource. This redirection process uses the
+        standard http process for redirection.
 
         An optional attributes map may be used to use
         url parameters in the redirect.
@@ -1360,8 +1361,10 @@ class RestRequest:
         redirect url.
         """
 
-        # quotes the target path
-        target_path_quoted = quote and colony.libs.quote_util.quote(target_path, "/") or target_path
+        # quotes the target path according to the url quoting schema
+        # in case the quote flat is set
+        target_path_quoted = quote and\
+            colony.libs.quote_util.quote(target_path, "/") or target_path
 
         # creates the final target path using the attributes
         # map in case they are present (by appending them to
@@ -1372,7 +1375,14 @@ class RestRequest:
             colony.libs.quote_util.url_encode(attributes_map) or\
             target_path_quoted
 
-        # sets the status code
+        # checks if the current request is "marked" as asynchronous, for
+        # such cases a special redirection process is applies to avoid the
+        # typical problems with automated redirection using "ajax"
+        is_async = True if self.get_attribute("async") else False
+        if is_async: status_code = 280
+
+        # sets the status code, that was defined as the argument
+        # this status code should represent a redirect
         self.request.status_code = status_code
 
         # sets the location header (using the quoted target path)
