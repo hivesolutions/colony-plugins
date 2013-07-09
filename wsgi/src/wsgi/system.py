@@ -306,14 +306,14 @@ class WsgiRequest:
         # resolves the provided path information so that if any alias
         # value matches the start of the path info it's replaced by
         # the correct matching value
-        path_info = self._resolve_path(path_info, alias)
+        path_info_r = self._resolve_path(path_info, alias)
 
         # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
         # uri's may be used in wsgi, in case the "extra" prefix variable
         # is set an "extra" prefix is prepended to the path info
-        if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info
-        else: path_info_r = PATH_INFO_PREFIX + path_info
+        if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info_r
+        else: path_info_r = PATH_INFO_PREFIX + path_info_r
 
         # creates the complete "original" path info value by adding
         # the script name (routing base value) to the path info, this
