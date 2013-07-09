@@ -815,32 +815,32 @@ class WsgiRequest:
     def _resolve_path(self, path_info, alias):
         """
         Resolves the provided path info string using the provided
-        alias map, if there's a match at beginning of the string in
+        alias list, if there's a match at beginning of the string in
         the path info the value is replaced.
 
         @type path_info: String
         @param path_info: The path information string containing the
-        path to be resolved using the alias map.
-        @type alias: Dictionary
-        @param alias: The map containing prefix to resolution values
+        path to be resolved using the alias list.
+        @type alias: List
+        @param alias: The list containing prefix to resolution values
         associations that will be used in the resolution.
         @rtype: String
         @return: The resolved path string resulting from the resolution
-        of the path info string according to the provided map.
+        of the path info string according to the provided list.
         """
 
-        # in case the alias map is not valid or is not set the value
+        # in case the alias list is not valid or is not set the value
         # could not be resolved and the original path info is returned
         if not alias: return path_info
 
-        # iterates over all the alias keys present in the map of alias
+        # iterates over all the alias keys present in the list of alias
         # to try to find one that matches the start of the path info
         # in case it does happen the value is replaced
-        for key in alias:
+        for key, value in alias:
             if not path_info.startswith(key): continue
-            value = alias[key]
             key_l = len(key)
             path_info = value + path_info[key_l:]
+            break
 
         # returns the "new" path info string object resulting from the
         # correct resolution of it's prefix value
