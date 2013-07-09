@@ -485,6 +485,7 @@ class WsgiRequest:
                 # attribute value from the url encoding
                 attribute_name, attribute_value = attribute_field_splitted
                 attribute_value = colony.libs.quote_util.unquote_plus(attribute_value)
+                attribute_value = attribute_value.decode(DEFAULT_CHARSET)
 
             # in case the attribute field splitted length is one, this refers
             # a valid single key attribute (with an unset value)
@@ -497,6 +498,7 @@ class WsgiRequest:
             # "unquotes" the attribute name from the url encoding and sets
             # the attribute for the current name in the current instance
             attribute_name = colony.libs.quote_util.unquote_plus(attribute_name)
+            attribute_name = attribute_name.decode(DEFAULT_CHARSET)
             self.__setattribute__(attribute_name, attribute_value)
 
     def parse_multipart(self):
