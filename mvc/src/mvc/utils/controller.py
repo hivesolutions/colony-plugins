@@ -2373,7 +2373,7 @@ def retrieve_template_file(self, file_path = None, encoding = DEFAULT_TEMPLATE_F
     # the appropriate page include if the partial page value is set
     template_file = self.template_engine_plugin.parse_file_path_encoding(template_file_path, encoding)
     partial_page and self.assign_include_template_file(template_file, PAGE_INCLUDE_VALUE, partial_page, locale)
-    
+
     # assigns the proper locale variable to the current template
     # so that it's possible to access it from within it
     template_file.assign("locale", locale)
