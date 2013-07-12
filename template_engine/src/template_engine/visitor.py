@@ -229,7 +229,9 @@ COMPARISION_FUNCTIONS = {
     "lt" : lambda attribute_item, attribute_value: attribute_item < attribute_value,
     "len" : lambda attribute_item, attribute_value: len(attribute_item) == attribute_value,
     "lengt" : lambda attribute_item, attribute_value: len(attribute_item) > attribute_value,
-    "lenlt" : lambda attribute_item, attribute_value: len(attribute_item) < attribute_value
+    "lenlt" : lambda attribute_item, attribute_value: len(attribute_item) < attribute_value,
+    "in" : lambda attribute_item, attribute_value: attribute_item and attribute_value in attribute_item or False,
+    "nin" : lambda attribute_item, attribute_value: attribute_item and not attribute_value in attribute_item or False
 }
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic """
