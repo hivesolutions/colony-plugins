@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 import datetime
+import threading
 
 import colony.base.system
 import colony.libs.structures_util
@@ -671,6 +672,33 @@ class WsgiRequest:
             message = message.encode(self.content_type_charset)
         self.message_buffer.append(message)
 
+    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+        """
+        Executes the given callable object in a background
+        thread, avoiding the blocking of the current thread.
+        This method is useful for avoid blocking the request
+        handling method in non critic tasks.
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        @type retries: int
+        @param retries: The number of times to retry executing the
+        callable in case exception is raised.
+        @type timeout: float
+        @param timeout: The time to be set in between calls of the
+        callable, used together with the retry value.
+        @type timestamp: float
+        @param timestamp: The unix second based timestamp for the
+        first execution of the callable.
+        """
+
+        self.service_execution_thread.add_callable(
+            callable,
+            retries = retries,
+            timeout = timeout,
+            timestamp = timestamp
+        )
+
     def flush(self):
         pass
 
@@ -956,3 +984,28 @@ class WsgiRequest:
         # returns the content disposition map, containing the
         # complete set of headers for the content disposition
         return content_disposition_map
+
+    def _execute_background_thread(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+        """
+        Simple implementation of the background execution of
+        a callable for the wsgi request using a thread.
+
+        This method should be used as a fallback strategy as
+        it represents a huge overhead in creation (thread
+        creation is slow).
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        @type retries: int
+        @param retries: The number of times to retry executing the
+        callable in case exception is raised.
+        @type timeout: float
+        @param timeout: The time to be set in between calls of the
+        callable, used together with the retry value.
+        @type timestamp: float
+        @param timestamp: The unix second based timestamp for the
+        first execution of the callable.
+        """
+
+        thread = threading.Thread(target = callable)
+        thread.start()
