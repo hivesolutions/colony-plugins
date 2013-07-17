@@ -692,7 +692,7 @@ class WsgiRequest:
         first execution of the callable.
         """
 
-        self.service_execution_thread.add_callable(
+        self._execute_background_thread(
             callable,
             retries = retries,
             timeout = timeout,
