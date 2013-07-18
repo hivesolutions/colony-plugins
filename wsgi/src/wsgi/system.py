@@ -105,7 +105,7 @@ class Wsgi(colony.base.system.System):
         # with the request for handling, handling the resulting
         # data or setting the exception values
         request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
-        try: rest_plugin.handle_request(request)
+        try: rest_plugin.handle_request(request); request.finish()
         except BaseException, exception:
             code = 500
             messaage = self.error_message(exception, code = 500)
@@ -268,7 +268,7 @@ class WsgiRequest:
     must contain a charset that is able to encode all
     the provided data otherwise exception will be raised
     by the writing methods """
-    
+
     max_age = None
     """ The maximum age value in seconds to be used to
     control the client side cache of the returned resource,
@@ -435,6 +435,20 @@ class WsgiRequest:
         self.query_string = path_splitted[1]
         self.arguments = self.query_string
         self.parse_arguments()
+
+    def finish(self):
+        """
+        Finishes the current request running the final set
+        of validations in the request so that it remains
+        valid for the current set of standards.
+
+        This is also the method that sets the default values
+        in the request in case they were not set during the
+        normal handling workflow.
+        """
+
+        if not "Cache-Control" in self.headers_out:
+            self.headers_out["Cache-Control"] = "no-cache, must-revalidate"
 
     def parse_post_attributes(self):
         """
