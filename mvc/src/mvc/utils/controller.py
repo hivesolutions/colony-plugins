@@ -1757,7 +1757,7 @@ def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTE
     @type touch_date: bool
     @param touch_date: If the (modified) data value should be touched
     setting it to a time around the current local time, this is useful
-    for situation where client cache should be used in a page loading
+    for situations where client cache should be used in a page loading
     scope (for performance issues).
     """
 
