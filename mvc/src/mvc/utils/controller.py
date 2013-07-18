@@ -1744,7 +1744,7 @@ def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = H
     # returns the base path complete
     return base_path_complete
 
-def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTENT_TYPE, touch_date = False):
+def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTENT_TYPE, touch_date = False, max_age = None):
     """
     Sets the given contents in the given rest request.
 
@@ -1759,6 +1759,11 @@ def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTE
     setting it to a time around the current local time, this is useful
     for situations where client cache should be used in a page loading
     scope (for performance issues).
+    @type max_age: int
+    @param max_age: The maximum age field to be used to control the cache
+    for the current set of contents, this value provides the resources
+    to set cache in the client side for the defined amount of seconds. It
+    should be used carefully to avoid unwanted behavior.
     """
 
     # in case the touch date flag is set touches the date
@@ -1766,6 +1771,11 @@ def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTE
     # for situation where cache is meant to be used inside the
     # page loading scope
     touch_date and rest_request.touch_date()
+
+    # if the max age field is requested for the current set of
+    # contents its set so that the client side creates cache
+    # for the current set of content to be "sent"
+    max_age and rest_request.set_max_age(max_age)
 
     # sets the content type, then the result as translated into
     # the target content type and then flushes the data meaning
