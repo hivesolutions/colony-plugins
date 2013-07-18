@@ -268,6 +268,11 @@ class WsgiRequest:
     must contain a charset that is able to encode all
     the provided data otherwise exception will be raised
     by the writing methods """
+    
+    max_age = None
+    """ The maximum age value in seconds to be used to
+    control the client side cache of the returned resource,
+    use this value carefully to avoid mismatches in cache """
 
     etag = None
     """ The etag representing the file in an unique
@@ -767,6 +772,13 @@ class WsgiRequest:
         """
 
         return self.get_operation_type()
+
+    def get_max_age(self):
+        return self.max_age
+
+    def set_max_age(self, max_age):
+        self.max_age = max_age
+        self.headers_out["Cache-Control"] = "max-age=%d" % max_age
 
     def get_etag(self):
         return self.etag

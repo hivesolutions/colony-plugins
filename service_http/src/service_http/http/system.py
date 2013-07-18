@@ -3289,6 +3289,12 @@ class HttpRequest:
     def set_content_type_charset(self, content_type_charset):
         self.content_type_charset = content_type_charset
 
+    def get_max_age(self):
+        return self.max_age
+
+    def set_max_age(self, max_age):
+        self.max_age = max_age
+
     def get_etag(self):
         return self.etag
 

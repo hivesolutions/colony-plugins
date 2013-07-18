@@ -1464,6 +1464,18 @@ class RestRequest:
 
         self.request.set_header(header_name, header_value)
 
+    def set_max_age(self, max_age):
+        """
+        Sets the max age attribute to be used by the cache
+        infra-structure on the client side.
+
+        @type max_age: int
+        @param max_age: The maximum age in seconds for the
+        returned value to be cached in the client side.
+        """
+
+        self.request.set_max_age(max_age)
+
     def get_attributes_list(self):
         """
         Retrieves the list of available attribute names.
