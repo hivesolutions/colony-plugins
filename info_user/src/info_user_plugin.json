@@ -1,0 +1,18 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.info.user",
+    "name" : "User Info",
+    "description" : "The plugin that offers the user information support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["info.user"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "info_user_plugin.py",
+    "resources" : ["info_user_plugin.py", "infor_user/__init__.py",
+            "infor_user/system.py"],
+    "extra_resources" : ["info_user_plugin.pyc", "infor_user/__init__.pyc",
+            "infor_user/system.pyc"]
+}
