@@ -2207,7 +2207,7 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     # duplicate was found and a validation error must be added
     if duplicate_entity and not duplicate_entity.object_id == self.object_id:
         # adds an error to the attribute
-        self.add_error(attribute_name, "duplicate attribute '%s'" % attribute_value)
+        self.add_error(attribute_name, "duplicate attribute (%s)" % attribute_value)
 
 def _validate(self, persist_type):
     # in case the current instance is already in the validating
