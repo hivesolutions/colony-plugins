@@ -48,7 +48,7 @@ import colony.libs.structures_util
 
 import parser
 
-BASE_RESOURCES_PATH = "resources/resources_manager/resources"
+BASE_RESOURCES_PATH = "resources/manager/resources"
 """ The base resources path """
 
 CONFIGURATION_PATH = "configuration"
@@ -1002,7 +1002,7 @@ class ResourcesManager(colony.base.system.System):
         @param resource_data: The resource one wants to store.
         """
 
-        # acquires the resources lcok
+        # acquires the resources lock
         self.resources_lock.acquire()
 
         try:
