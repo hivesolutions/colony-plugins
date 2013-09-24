@@ -363,12 +363,14 @@ def apply(self, map, permissive = False):
     self.detach(force = False)
 
     try:
-        # retrieves the class of the model
-        # as the reference class and then uses
-        # it to retrieve the complete set of
-        # attr method for it (to be ignored)
+        # retrieves the class of the model as the reference
+        # class and then uses it to retrieve the complete set of
+        # attr method for it (to be ignored), note that the complete
+        # set of attr methods are defaulted to empty in case the 
+        # method is not defined for the current class
         cls = self.__class__
-        attr_methods = cls.get_all_attr_methods()
+        has_attr_method = hasattr(cls, "get_all_attr_methods")
+        attr_methods = cls.get_all_attr_methods() if has_attr_method else ()
 
         # iterates over all the items in the map to
         # apply the to the current model
