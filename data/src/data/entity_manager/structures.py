@@ -630,7 +630,11 @@ class EntityClass(object):
             # retrieves the (all) attr methods from the parents
             # and extends the all attr methods map with them
             _attr_methods = parent.get_all_attr_methods()
-            colony.libs.map_util.map_extend(all_attr_methods, _attr_methods, copy_base_map = False)
+            colony.libs.map_util.map_extend(
+                all_attr_methods,
+                _attr_methods,
+                copy_base_map = False
+            )
 
         # extends the all attr methods map with the attr methods
         # from the current entity class
