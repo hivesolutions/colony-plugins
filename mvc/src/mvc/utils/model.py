@@ -366,7 +366,7 @@ def apply(self, map, permissive = False):
         # retrieves the class of the model as the reference
         # class and then uses it to retrieve the complete set of
         # attr method for it (to be ignored), note that the complete
-        # set of attr methods are defaulted to empty in case the 
+        # set of attr methods are defaulted to empty in case the
         # method is not defined for the current class
         cls = self.__class__
         has_attr_method = hasattr(cls, "get_all_attr_methods")
