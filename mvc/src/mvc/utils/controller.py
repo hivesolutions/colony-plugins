@@ -2702,7 +2702,7 @@ def set_session_attribute(self, rest_request, session_attribute_name, session_at
     rest_request_session = rest_request.get_session()
 
     # in case the rest request session
-    # is invalid
+    # is invalid, currently not available
     if not rest_request_session:
         # start a session if none is started and then
         # retrieves it from the rest request
