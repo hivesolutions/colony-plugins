@@ -136,8 +136,8 @@ DEFAULT_PATH = "/"
 DEFAULT_STATUS_CODE = 200
 """ The default status code """
 
-DEFAULT_TIMEOUT = 10800
-""" The default timeout (three hours of life) """
+DEFAULT_TIMEOUT = 86400
+""" The default timeout (twenty four hours of life) """
 
 DEFAULT_MAXIMUM_TIMEOUT = DEFAULT_TIMEOUT * 64
 """ The default maximum timeout (sixty four
