@@ -194,9 +194,10 @@ class MysqlEngine:
         _connection = connection._connection
 
         # checks if the current connection has been closed in the middle
-        # for such situation a different error must be raised
+        # for such situation the current method should return, it's not
+        # possible to perform the rollback operation
         is_close = _connection.is_close()
-        if is_close: raise RuntimeError("connection has been closed")
+        if is_close: return
 
         # in case the current transaction level is zero it's
         # not a valid situation as not transaction is open, must
