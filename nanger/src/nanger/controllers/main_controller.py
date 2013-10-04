@@ -121,6 +121,37 @@ class MainController(controllers.Controller):
         template_file.assign("information", system_information_map)
         self.process_set_contents(rest_request, template_file)
 
+    def handle_log(self, rest_request, parameters = {}):
+        """
+        Handles the given log rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the reference to the plugin manager running
+        # in the current context
+        plugin_manager = self.plugin.manager
+
+        # retrieves the memory handler installed in the current
+        # plugin manager and then uses it to retrieve the sequence
+        # containing the latest messages stored in it
+        memory_handler = plugin_manager.get_log_handler("memory")
+        latest = memory_handler.get_latest()
+
+        # processes the contents of the template file assigning the
+        # appropriate values to it
+        template_file = self.retrieve_template_file(
+            "general_w.html.tpl",
+            partial_page = "general/log.html.tpl"
+        )
+        template_file.assign("title", "Log")
+        template_file.assign("area", "log")
+        template_file.assign("latest", latest)
+        self.process_set_contents(rest_request, template_file)
+
     def handle_about(self, rest_request, parameters = {}):
         """
         Handles the given about rest request.
