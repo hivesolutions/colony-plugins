@@ -165,6 +165,9 @@ class MysqlEngine:
         _connection.push_transaction()
 
     def commit(self):
+        # retrieves the current connection from the associated
+        # entity manager and then retrieves the internal database
+        # connection for data access (logic retrieval)
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
 
@@ -184,8 +187,16 @@ class MysqlEngine:
         self._commit()
 
     def rollback(self):
+        # retrieves the current connection from the associated
+        # entity manager and then retrieves the internal database
+        # connection for data access (logic retrieval)
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
+
+        # checks if the current connection has been closed in the middle
+        # for such situation a different error must be raised
+        is_close = _connection.is_close()
+        if is_close: raise RuntimeError("connection has been closed")
 
         # in case the current transaction level is zero it's
         # not a valid situation as not transaction is open, must
@@ -296,7 +307,7 @@ class MysqlEngine:
 
         # retrieves the current connection from the associated
         # entity manager and then retrieves the internal database
-        # connection for data access
+        # connection for data access (logic retrieval)
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
 
@@ -631,7 +642,7 @@ class MysqlConnection:
         self.transaction_level_map = {}
         self.connections_map = {}
 
-    def get_connection(self):
+    def get_connection(self, create = True):
         # retrieves the thread identifier for the
         # current executing thread, then uses it
         # to retrieve the corresponding connection
@@ -639,8 +650,9 @@ class MysqlConnection:
         connection = self.connections_map.get(thread_id, None)
 
         # in case a connection is not available for the
-        # current thread, one must be create it
-        if not connection:
+        # current thread, and the create flag is set
+        # a new one must be created (singleton pattern)
+        if not connection and create:
             # creates a new connection and sets it in the
             # connections map for the current thread
             connection = MySQLdb.connect(
@@ -651,8 +663,9 @@ class MysqlConnection:
             )
             self.connections_map[thread_id] = connection
 
-            # creates a new transaction level for the connection
-            # in the current thread
+            # creates a new transaction context for the connection
+            # in the current thread, setting the transaction level
+            # to the pre-defined zero value
             self.transaction_level_map[connection] = 0
 
             # retrieves the encoding in use by the database and then
@@ -677,12 +690,13 @@ class MysqlConnection:
         # map to closes them (will close all the connections)
         for _thread_id, connection in self.connections_map.items():
             # closes the current connection, disables
-            # all the pending connections
+            # all the pending operations in the connection
+            # with the remote database
             connection.close()
 
             # deletes the transaction level reference
             # for the connection in the transaction
-            # level map
+            # level map (not going to be used anymore)
             del self.transaction_level_map[connection]
 
         # clears the connections map, eliminating
@@ -690,6 +704,18 @@ class MysqlConnection:
         self.connections_map.clear()
 
     def reopen(self):
+        """
+        Triggers the "forced" re-opening of the remote database connection
+        for that it invalidates the connection closing it an dereferencing
+        it in the internal structures.
+
+        This method only invalidates the proper connection for the current
+        thread all the other connection in the other threads remain open.
+
+        Note that if there's a pending transaction in course this method
+        raises an exception indicating that.
+        """
+
         # retrieves the thread identifier for the
         # current executing thread, then uses it
         # to retrieve the corresponding connection
@@ -699,6 +725,11 @@ class MysqlConnection:
         # in case there is no connection defined for
         # the current context (thread) returns immediately
         if not connection: return
+
+        # uses the connection to retrieve the current transaction
+        # level, it's going to be used to ensure that there's
+        # no open transaction pending (that would create a problem)
+        level = self.transaction_level_map.get(connection, 0)
 
         # closes the connection, so that there is no more
         # communication with the connection
@@ -710,6 +741,14 @@ class MysqlConnection:
         # thread from the connections map
         del self.transaction_level_map[connection]
         del self.connections_map[thread_id]
+
+        # in case the current transaction level for the
+        # connection is greater than zero there's a pending
+        # connection that must be aborted so an exception
+        # is raised to prevent it from advancing
+        if level > 0: raise RuntimeError(
+            "unable to reopen connection transaction pending"
+        )
 
     def cursor(self):
         connection = self.get_connection()
@@ -734,6 +773,12 @@ class MysqlConnection:
     def reset_transaction(self):
         connection = self.get_connection()
         self.transaction_level_map[connection] = 0
+
+    def is_close(self):
+        connection = self.get_connection(create = False)
+        is_close = connection == None
+
+        return is_close
 
     def is_empty_transaction(self):
         connection = self.get_connection()
