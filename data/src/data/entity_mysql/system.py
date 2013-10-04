@@ -331,17 +331,20 @@ class MysqlEngine:
 
             if final - initial > 0.025: print "[WARNING] <mysql - %f> %s" % (final - initial, query) # ! REMOVE THIS !
         except MySQLdb.OperationalError, exception:
-            # unpacks the exception arguments into code
-            # and message and then checks if the code
-            # refers a problem in the connection (connection
-            # dropped or equivalent) a reconnection is attempted
-            # and the query is re-executed
+            # unpacks the exception arguments into code and
+            # message and then checks if the code refers a
+            # problem in the connection (connection dropped
+            # or equivalent) a reconnection is attempted, then
+            # the cursor is closed and the exception raised to
+            # the top layers (to be correctly handled)
             code, _message = exception.args
-            if code == 2006: cursor.close(); self.reconnect(); cursor = self.execute_query(query)
-            else: cursor.close(); raise
+            if code == 2006: self.reconnect()
+            cursor.close()
+            raise
         except:
-            # closes the cursor (safe closing)
-            # and re-raises the exception
+            # closes the cursor (safe closing) and re-raises
+            # the exception, to the top layers so that the
+            # proper handling of the error is done
             cursor.close()
             raise
 
@@ -711,9 +714,6 @@ class MysqlConnection:
 
         This method only invalidates the proper connection for the current
         thread all the other connection in the other threads remain open.
-
-        Note that if there's a pending transaction in course this method
-        raises an exception indicating that.
         """
 
         # retrieves the thread identifier for the
@@ -726,11 +726,6 @@ class MysqlConnection:
         # the current context (thread) returns immediately
         if not connection: return
 
-        # uses the connection to retrieve the current transaction
-        # level, it's going to be used to ensure that there's
-        # no open transaction pending (that would create a problem)
-        level = self.transaction_level_map.get(connection, 0)
-
         # closes the connection, so that there is no more
         # communication with the connection
         connection.close()
@@ -741,14 +736,6 @@ class MysqlConnection:
         # thread from the connections map
         del self.transaction_level_map[connection]
         del self.connections_map[thread_id]
-
-        # in case the current transaction level for the
-        # connection is greater than zero there's a pending
-        # connection that must be aborted so an exception
-        # is raised to prevent it from advancing
-        if level > 0: raise RuntimeError(
-            "unable to reopen connection transaction pending"
-        )
 
     def cursor(self):
         connection = self.get_connection()
