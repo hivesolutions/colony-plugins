@@ -898,10 +898,6 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
     if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE_TYPE: self.pre_save(persist_type)
     if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE_TYPE: self.pre_update(persist_type)
 
-    # detaches the current entity model in order
-    # to avoid any possible loading of relations
-    self.detach_l(force = False)
-
     # sets the current entity in the storing operation, this flag
     # should be able to avoid unnecessary recursion
     self._storing = True
@@ -921,17 +917,27 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
         if hasattr(self, "on_save") and not is_persisted and persist_type & PERSIST_SAVE_TYPE: self.on_save(persist_type)
         if hasattr(self, "on_update") and is_persisted and persist_type & PERSIST_UPDATE_TYPE: self.on_update(persist_type)
 
-        # stores the various relations of the entity model persisting
-        # them into the data source and then persists the entity model
-        # itself, names persistence
-        self.store_relations(
-            persist_type,
-            validate = validate,
-            force_persist = force_persist,
-            raise_exception = raise_exception,
-            entity_manager = entity_manager
-        )
-        self.persist(persist_type, entity_manager = entity_manager)
+        # detaches the current entity model in order
+        # to avoid any possible loading of relations
+        self.detach_l(force = False)
+        
+        try:
+            # stores the various relations of the entity model persisting
+            # them into the data source and then persists the entity model
+            # itself, names persistence
+            self.store_relations(
+                persist_type,
+                validate = validate,
+                force_persist = force_persist,
+                raise_exception = raise_exception,
+                entity_manager = entity_manager
+            )
+            self.persist(persist_type, entity_manager = entity_manager)
+        finally:
+            # attaches the current entity model back
+            # enabling it to communicate with the data
+            # source for loading of relations
+            self.attach_l(force = False)
     except BaseException, exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
@@ -946,11 +952,6 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
         # restores the storing variable to the original invalid
         # state (avoids possible misbehavior)
         self._storing = False
-
-        # attaches the current entity model back
-        # enabling it to communicate with the data
-        # source for loading of relations
-        self.attach_l(force = False)
 
     # tries to call the post store method, in order to notify the
     # current instance about the finishing of the store procedure
