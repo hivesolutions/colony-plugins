@@ -920,7 +920,7 @@ def store(self, persist_type, validate = True, force_persist = False, raise_exce
         # detaches the current entity model in order
         # to avoid any possible loading of relations
         self.detach_l(force = False)
-        
+
         try:
             # stores the various relations of the entity model persisting
             # them into the data source and then persists the entity model
