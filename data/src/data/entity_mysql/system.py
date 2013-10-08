@@ -53,6 +53,11 @@ ISOLATION_LEVEL = "read committed"
 created by the driver, this isolation level should ensure
 compatibility with the expected behavior """
 
+CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
+""" The sequence containing the list of error that are
+considered to be connection related and for which the
+connection should be reset and a reconnection attempted """
+
 class EntityMysql(colony.base.system.System):
     """
     The entity mysql class.
@@ -339,7 +344,7 @@ class MysqlEngine:
             # the cursor is closed and the exception raised to
             # the top layers (to be correctly handled)
             code, _message = exception.args
-            if code == 2006: self.reconnect()
+            if code in CONNECTION_ERRORS: self.reconnect()
             cursor.close()
             raise
         except:
