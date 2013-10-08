@@ -148,6 +148,11 @@ class MysqlEngine:
         _connection = connection._connection
         _connection.reopen()
 
+    def is_empty_transaction(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        return _connection.is_empty_transaction()
+
     def destroy(self):
         connection = self.entity_manager.get_connection()
         self._execute_query_t("drop database %s" % connection._database).close()
@@ -345,10 +350,6 @@ class MysqlEngine:
 
             if final - initial > 0.025: print "[WARNING] <mysql - %f> %s" % (final - initial, query) # ! REMOVE THIS !
         except MySQLdb.OperationalError, exception:
-            # closes the cursor so that no memory is left
-            # hanging around (memory leak)
-            cursor.close()
-
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification
             # and then checks if the transaction empty (no pending
@@ -367,7 +368,7 @@ class MysqlEngine:
                 cursor = cursor,
                 retries = retries - 1
             )
-            else: raise
+            else: cursor.close(); raise
         except:
             # closes the cursor (safe closing) and re-raises
             # the exception, to the top layers so that the
