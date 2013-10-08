@@ -577,7 +577,8 @@ class SqliteConnection:
 
     def is_empty_transaction(self):
         connection = self.get_connection()
-        is_empty_transaction = self.transaction_level_map[connection] == 0
+        level = self.transaction_level_map[connection]
+        is_empty_transaction = level == 0
 
         return is_empty_transaction
 

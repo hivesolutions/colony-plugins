@@ -293,11 +293,15 @@ class MysqlEngine:
         finally: cursor.close()
         return result
 
-    def execute_query(self, query, cursor = None):
+    def execute_query(self, query, cursor = None, retries = 3):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
         provided.
+
+        An additional parameter (retries) is used to control
+        if the connection should be retries if there's a
+        connection related issue.
 
         @type query: String
         @param query: The query that is going to be executed
@@ -306,6 +310,10 @@ class MysqlEngine:
         @param cursor: The cursor that is going to be execute
         the query in the engine, this cursor must have been
         created for this engine.
+        @type retries: int
+        @param retries: The current number of retries pending
+        for the execution of the query. This is used to solve
+        the reconnection related issues.
         @rtype: Cursor
         @return: The cursor that was used for the query execution
         it must be closed in the outside context.
@@ -337,16 +345,29 @@ class MysqlEngine:
 
             if final - initial > 0.025: print "[WARNING] <mysql - %f> %s" % (final - initial, query) # ! REMOVE THIS !
         except MySQLdb.OperationalError, exception:
-            # unpacks the exception arguments into code and
-            # message and then checks if the code refers a
-            # problem in the connection (connection dropped
-            # or equivalent) a reconnection is attempted, then
-            # the cursor is closed and the exception raised to
-            # the top layers (to be correctly handled)
-            code, _message = exception.args
-            if code in CONNECTION_ERRORS: self.reconnect()
+            # closes the cursor so that no memory is left
+            # hanging around (memory leak)
             cursor.close()
-            raise
+
+            # unpacks the exception arguments into code and
+            # message so that it may be used for code verification
+            # and then checks if the transaction empty (no pending
+            # transaction is currently open)
+            code, _message = exception.args
+            is_empty = self.is_empty_transaction()
+
+            # verifies if the code is defined as a connection
+            # related value and in case it's tries to reconnect
+            # then in case there's no transaction pending (in the
+            # middle of execution) tries to re-execute the query
+            # otherwise raises an error
+            if code in CONNECTION_ERRORS: self.reconnect()
+            if is_empty and retries: return self.execute_query(
+                query,
+                cursor = cursor,
+                retries = retries - 1
+            )
+            else: raise
         except:
             # closes the cursor (safe closing) and re-raises
             # the exception, to the top layers so that the
@@ -776,7 +797,8 @@ class MysqlConnection:
 
     def is_empty_transaction(self):
         connection = self.get_connection()
-        is_empty_transaction = self.transaction_level_map[connection] == 0
+        level = self.transaction_level_map[connection]
+        is_empty_transaction = level == 0
 
         return is_empty_transaction
 
