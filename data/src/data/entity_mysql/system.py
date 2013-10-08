@@ -735,16 +735,14 @@ class MysqlConnection:
         # closes the connection, so that there is no more
         # communication with the connection, no reconnection
         # should be attempted on this "old" connection
-        #connection.close()
-
-        connection.ping(True)
+        connection.close()
 
         # deletes the transaction level reference for the
         # connection in the transaction level map and then
         # removes the connection reference for the current
         # thread from the connections map
-        #del self.transaction_level_map[connection]
-        #del self.connections_map[thread_id]
+        del self.transaction_level_map[connection]
+        del self.connections_map[thread_id]
 
     def cursor(self):
         connection = self.get_connection()
