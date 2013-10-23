@@ -1017,7 +1017,7 @@ class EntityManager:
         # iterates over all the entity classes to be registered to add
         # them to the current internal structures (taking into account
         # a possible garbage collection)
-        for entity_name, entity_class in entities_map.items():
+        for entity_name, entity_class in entities_map.iteritems():
             # checks if the entity class already exists (registered) in the
             # entity manager (garbage collection required)
             entity_exists = entity_name in self.entities_map
@@ -1210,7 +1210,7 @@ class EntityManager:
         # iterates over all the entities contained in the
         # entities map to create the references in the data
         # source (required for entity manager usage)
-        for _entity_name, entity_class in self.entities_map.items():
+        for _entity_name, entity_class in self.entities_map.iteritems():
             # creates the definition of the entity class
             # in the currently associated data source
             self.create(entity_class)
@@ -2556,7 +2556,7 @@ class EntityManager:
 
         # iterates over all the table items to be used
         # to create the table
-        for item_name, item_value in table_items.items():
+        for item_name, item_value in table_items.iteritems():
             # checks if the item name in the entity class
             # "refers" a relation value
             if entity_class.is_relation(item_name):
@@ -2761,7 +2761,7 @@ class EntityManager:
         # in the items map to create the associated insert queries
         # (one query is created for each of the classes associated
         # with the entity)
-        for _entity_class, table_fields in items_map.items():
+        for _entity_class, table_fields in items_map.iteritems():
             # retrieves the associated table name
             # as the "name" of the table
             table_name = _entity_class.get_name()
@@ -2769,7 +2769,8 @@ class EntityManager:
             # "filters" the entity fields that are associated with the current "class level"
             # in iteration, those attributes that are "contained" in other levels are not
             # going to be inserted in the query now
-            _entity_fields = dict([(key, value) for key, value in entity_fields.items() if key in table_fields])
+            _entity_fields = dict([(key, value) for key, value in entity_fields.iteritems()\
+                if key in table_fields])
 
             # in case the entity class contains parents, no base id is set
             # and must be retrieved from the upper parents, in this case
@@ -2836,7 +2837,7 @@ class EntityManager:
 
             # iterates over all the field values in the "filtered"
             # entity fields to populate the insert query
-            for field_name, field_value in _entity_fields.items():
+            for field_name, field_value in _entity_fields.iteritems():
                 # checks if the current field is a relation
                 # (in that it is additional processing is required)
                 if entity_class.is_relation(field_name):
@@ -2962,7 +2963,7 @@ class EntityManager:
         # in the items map to create the associated update queries
         # (one query is created for each of the classes associated
         # with the entity)
-        for _entity_class, table_fields in items_map.items():
+        for _entity_class, table_fields in items_map.iteritems():
             # retrieves the associated table name
             # as the "name" of the table
             table_name = _entity_class.get_name()
@@ -2974,7 +2975,7 @@ class EntityManager:
             # so there is no need to be include in the valid table field for update
             # note also that the complete set of keys included in the immutable map
             # are also excluded (not going to be "touched")
-            _entity_fields = dict([(key, value) for key, value in entity_fields.items()\
+            _entity_fields = dict([(key, value) for key, value in entity_fields.iteritems()\
                 if key in table_fields and not key == table_id and not key in immutable_map])
 
             # checks if the entity contains unmapped relations for the current
@@ -3157,7 +3158,7 @@ class EntityManager:
         # iterates over all the entity classes and indirect relations
         # in the indirect relations map to create the map queries for all
         # of the present indirect relation in all parenting levels
-        for entity_class, indirect_relations in indirect_relations_map.items():
+        for entity_class, indirect_relations in indirect_relations_map.iteritems():
             # retrieves both the entity class name as the
             # table name and the id name of the entity
             # to have the relations mapped
@@ -3251,7 +3252,7 @@ class EntityManager:
         # iterates over all the entity classes and direct relations
         # in the direct relations map to create the map queries for all
         # of the present indirect relation in all parenting levels
-        for entity_class, direct_relations in direct_relations_map.items():
+        for entity_class, direct_relations in direct_relations_map.iteritems():
             # retrieves both the entity class name as the
             # table name and the id name of the entity
             # to have the relations mapped
@@ -3593,7 +3594,7 @@ class EntityManager:
         # retrieves the items map items and then in case the
         # the order names flag is set sorts them according to
         # the default sorting order
-        items_items = items_map.items()
+        items_items = items_map.iteritems()
         if items_items: items_items.sort()
 
         # iterates over all the entity classes and table fields
@@ -3664,7 +3665,7 @@ class EntityManager:
             # retrieves the relations map items and then in case the
             # the order names flag is set sorts them according to
             # the default sorting order
-            relations_items = relations_map.items()
+            relations_items = relations_map.iteritems()
             if relations_items: relations_items.sort()
 
             # iterates over each of the various parent classes relations
@@ -3735,7 +3736,7 @@ class EntityManager:
 
                     # iterates over all the table fields of the current
                     # entity to put them into the select query
-                    for __entity_class, table_fields in target_items_map.items():
+                    for __entity_class, table_fields in target_items_map.iteritems():
                         # retrieves the current associated table name
                         # as the "name" of the current entity class
                         __table_name = __entity_class.get_name()
@@ -3969,7 +3970,7 @@ class EntityManager:
             # iterates over all the relations in the relations map
             # to join their tables (ant their parent tables) into
             # the current query
-            for _entity_class, table_relations in relations_map.items():
+            for _entity_class, table_relations in relations_map.iteritems():
                 # retrieves the current associated table name
                 # as the "name" of the current entity class
                 _table_name = _entity_class.get_name()
@@ -4130,7 +4131,7 @@ class EntityManager:
             # iterates over all the eager items to run their
             # filters and call the recursion step on their
             # options (possible sub-eager values)
-            for relation, _eager in eager.items():
+            for relation, _eager in eager.iteritems():
                 # normalizes the eager loading options, to
                 # be able to process them correctly
                 _eager = self.normalize_options(_eager)
@@ -5117,7 +5118,7 @@ class EntityManager:
         # to calculate the generated attributes for the various
         # retrieved entities, the calculus is differentiated for
         # both the entity and map structures
-        for _id, entity_tuple in _visited_m.items():
+        for _id, entity_tuple in _visited_m.iteritems():
             entity, entity_class = entity_tuple
             if map: self.calc_attr_m(entity_class, entity)
             else: self.calc_attr_e(entity_class, entity)
@@ -5226,7 +5227,7 @@ class EntityManager:
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
-            for item_name, item_value in result_map.items():
+            for item_name, item_value in result_map.iteritems():
 
                 #@TODO: this kind of parsing must be removed because
                 # it is too expensive
@@ -5525,7 +5526,7 @@ class EntityManager:
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
-            for item_name, item_value in result_map.items():
+            for item_name, item_value in result_map.iteritems():
 
                 #@TODO: this kind of parsing must be removed because
                 # it is too expensive
@@ -5761,7 +5762,7 @@ class EntityManager:
 
         # iterates over all the levels in the to many relations map
         # (all the class levels and relations)
-        for _class, relations in to_many_map.items():
+        for _class, relations in to_many_map.iteritems():
             # iterates over all the relations in the current to many
             # relations class to sort the relation values
             for relation in relations:
@@ -5833,7 +5834,7 @@ class EntityManager:
 
         # iterates over all the levels in the to many relations map
         # (all the class levels and relations)
-        for _class, relations in to_many_map.items():
+        for _class, relations in to_many_map.iteritems():
             # iterates over all the relations in the current to many
             # relations class to sort the relation values
             for relation in relations:
@@ -5952,7 +5953,7 @@ class EntityManager:
         # iterates over all the names that are meant to be calculated
         # and retrieves the associated method for calculus then updates
         # the value in the structure
-        for name, _class in attr_methods.items():
+        for name, _class in attr_methods.iteritems():
             method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(map)
             except: pass
@@ -5967,7 +5968,7 @@ class EntityManager:
         # iterates over all the names that are meant to be calculated
         # and retrieves the associated method for calculus then updates
         # the value in the structure
-        for name, _class in attr_methods.items():
+        for name, _class in attr_methods.iteritems():
             method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(entity)
             except: pass
@@ -6194,7 +6195,7 @@ class EntityManager:
 
         # iterates over the (retrieved) entities items to set their
         # to many relation values in the original entities
-        for _id_value, _entity in _entities_map.items():
+        for _id_value, _entity in _entities_map.iteritems():
             # retrieves the entity associated with the currently
             # retrieved entity map to set the various retrieved relations
             entity = entities_map[_id_value]
@@ -6554,7 +6555,8 @@ class EntityManager:
                     if filter_fields_type == types.DictionaryType:
                         # converts the map of name value association to a list of
                         # maps for each attribute (normalized value)
-                        filter["fields"] = [{"name" : key, "value" : value} for key, value in filter_fields.items()]
+                        filter["fields"] = [{"name" : key, "value" : value} for key, value\
+                            in filter_fields.iteritems()]
                     # otherwise in case the filter fields is of type sequence
                     # it still needs to be constructed respecting the simple
                     # form of declaration

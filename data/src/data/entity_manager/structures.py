@@ -580,7 +580,7 @@ class EntityClass(object):
         # to filter the ones that do not correspond to a valid
         # attr method attribute, sets the appropriate ones in
         # the attr methods map (meta information)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the current key does not start with the
             # attr method prefix
             if not key.startswith("_attr_"): continue
@@ -1195,7 +1195,7 @@ class EntityClass(object):
 
         # iterate over all the relation items (name and value)
         # trying to find the relations that are mapped
-        for relation_name, relation in relations.items():
+        for relation_name, relation in relations.iteritems():
             # checks if the relation is mapped in the current
             # entity model class
             is_mapped = cls.is_mapped(relation_name)
@@ -1250,7 +1250,7 @@ class EntityClass(object):
 
         # iterate over all the relation items (name and value)
         # trying to find the relations that are unmapped
-        for relation_name, relation in relations.items():
+        for relation_name, relation in relations.iteritems():
             # checks if the relation is mapped in the current
             # entity model class
             is_mapped = cls.is_mapped(relation_name)
@@ -1294,7 +1294,7 @@ class EntityClass(object):
 
         # iterate over all the relation items (name and value)
         # trying to find the relations that are direct
-        for relation_name, relation in relations.items():
+        for relation_name, relation in relations.iteritems():
             # checks if the relation is mapped in the current
             # entity model class
             is_mapped = cls.is_mapped(relation_name)
@@ -1341,7 +1341,7 @@ class EntityClass(object):
 
         # iterate over all the relation items (name and value)
         # trying to find the relations that are indirect
-        for relation_name, relation in relations.items():
+        for relation_name, relation in relations.iteritems():
             # retrieves the "mapper" (class) for the current relation
             mapper = cls.get_mapper(relation_name)
 
@@ -1414,7 +1414,7 @@ class EntityClass(object):
         # to filter the ones that do not correspond to a valid
         # field attribute, sets the appropriate ones in the relations
         # map (meta information)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
             if key in INVALID_NAMES: continue
@@ -1509,7 +1509,7 @@ class EntityClass(object):
         # to filter the ones that do not correspond to a valid
         # to one relation, sets the appropriate ones in the
         # to one relations map (meta information)
-        for key, relation in relations.items():
+        for key, relation in relations.iteritems():
             # in case the relation is of type to many
             # no need to continue it's not a proper relation
             # (considers that any relations that is not of type
@@ -1550,7 +1550,7 @@ class EntityClass(object):
         # to filter the ones that do not correspond to a valid
         # to many relation, sets the appropriate ones in the
         # to many relations map (meta information)
-        for key, relation in relations.items():
+        for key, relation in relations.iteritems():
             # in case the relation is not of type to many
             # no need to continue it's not a proper relation
             if not cls.is_to_many(key): continue
@@ -1647,7 +1647,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # field attribute
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
             if key in INVALID_NAMES: continue
@@ -1711,7 +1711,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # field attribute (only the name is going to be used)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
@@ -1756,7 +1756,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # generated attribute (only the name is going to be used)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
@@ -1806,7 +1806,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # indexed attribute (only the name is going to be used)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
@@ -1856,7 +1856,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # mandatory attribute (only the name is going to be used)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
@@ -1906,7 +1906,7 @@ class EntityClass(object):
         # iterate over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # immutable attribute (only the name is going to be used)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
             if key in INVALID_NAMES: continue
@@ -2026,7 +2026,7 @@ class EntityClass(object):
         # iterates over all the entity class items
         # to find the "correct" id attribute name
         # (if one is available)
-        for key, value in items.items():
+        for key, value in items.iteritems():
             # "checks" if the current value is of
             # type id (identifier)
             is_id = value.get("id", False)
@@ -3187,7 +3187,7 @@ class EntityClass(object):
         # iterates over all the fields present in
         # the "original" fields dictionary to filter
         # them and set them in the fields map
-        for key, value in fields.items():
+        for key, value in fields.iteritems():
             # in case the key is not valid according
             # to the invalid names list, continues
             # the loop the current item is not valid
