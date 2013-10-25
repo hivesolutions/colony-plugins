@@ -3594,7 +3594,7 @@ class EntityManager:
         # retrieves the items map items and then in case the
         # the order names flag is set sorts them according to
         # the default sorting order
-        items_items = items_map.iteritems()
+        items_items = items_map.items()
         if items_items: items_items.sort()
 
         # iterates over all the entity classes and table fields
@@ -3665,7 +3665,7 @@ class EntityManager:
             # retrieves the relations map items and then in case the
             # the order names flag is set sorts them according to
             # the default sorting order
-            relations_items = relations_map.iteritems()
+            relations_items = relations_map.items()
             if relations_items: relations_items.sort()
 
             # iterates over each of the various parent classes relations
