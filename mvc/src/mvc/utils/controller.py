@@ -943,7 +943,7 @@ def get_field_models(self, rest_request, field_name, model, data_type = int):
     )
     return entities
 
-def get_field(self, rest_request, field_name, default_field_value = None, cast_type = None, split = False, token = ","):
+def get_field(self, rest_request, field_name, default = None, cast_type = None, split = False, token = ","):
     """
     Retrieves a field value from the processed form data
     of the rest request.
@@ -961,9 +961,9 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     @type field_name: String
     @param field_name: The name of the field to be retrieved
     from the form data.
-    @type default_field_value: Object
-    @param default_field_value: The value to be returned when
-    there is a field miss match.
+    @type default: Object
+    @param default: The value to be returned when there is a
+    field miss match (fallback value).
     @type cast_type: Type
     @param cast_type: The type to be used in the optional casting
     of the field value.
@@ -992,7 +992,7 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     # rest request and then uses it to retrieve the field
     # from it (the retrieval of the form data may be cached)
     form_data_map = method(rest_request)
-    field_value = form_data_map.get(field_name, default_field_value)
+    field_value = form_data_map.get(field_name, default)
 
     # in case the split flag is set the field value is divided
     # into multiple values "around" the token value
@@ -1001,12 +1001,12 @@ def get_field(self, rest_request, field_name, default_field_value = None, cast_t
     # in case the cast type is set runs the casting in a safe
     # manner to avoid raising exceptions, this is the execution
     # for the split values (sequences)
-    if cast_type and split: field_value = [self._cast_safe(value, cast_type, default_field_value) for value in field_value]
+    if cast_type and split: field_value = [self._cast_safe(value, cast_type, default) for value in field_value]
 
     # in case the cast type is set runs the casting in a safe
     # manner to avoid raising exceptions, this is the execution
     # for the not split values (not sequences)
-    if cast_type and not split: field_value = self._cast_safe(field_value, cast_type, default_field_value)
+    if cast_type and not split: field_value = self._cast_safe(field_value, cast_type, default)
 
     # returns the retrieved field value
     return field_value
