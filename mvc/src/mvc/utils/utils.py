@@ -462,15 +462,22 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
 
                 # in case the serializer and the exception
                 # handler are not set must raise the exception
-                # to the top levels
+                # to the top levels, nothing to be done here
                 if not serializer and not exception_handler: raise
+
+                # verifies if the current exception contains a status
+                # code attribute and in case it does uses it instead
+                # of the default (fallback) error status code
+                has_status_code = hasattr(exception, "status_code")
+                status_code = exception.status_code if\
+                    has_status_code else ERROR_STATUS_CODE
 
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception, rest_request)
 
                 # sets the error status code in the current request indicating
                 # that a problem has occurred (default behavior)
-                self.set_status_code(rest_request, ERROR_STATUS_CODE)
+                self.set_status_code(rest_request, status_code)
 
                 # in case the serializer is set (uses it as it
                 # is has priority)
@@ -491,7 +498,10 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # in case the exception handler is set
                 elif exception_handler:
                     # handles the exception map with the exception handler
-                    return_value = exception_handler.handle_exception(rest_request, exception_map,)
+                    return_value = exception_handler.handle_exception(
+                        rest_request,
+                        exception_map
+                    )
             else:
                 # checks if the current message is already flushed (data sent to
                 # the output) and in case it's not and there should be a default

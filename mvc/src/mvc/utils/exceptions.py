@@ -238,6 +238,10 @@ class ControllerValidationError(ValidationError):
     controller = None
     """ The controller that failed the validation """
 
+    status_code = 403
+    """ The http based status code to be used when
+    raising this exception through the pipeline """
+
     def __init__(self, message, controller = None):
         """
         Constructor of the class.
