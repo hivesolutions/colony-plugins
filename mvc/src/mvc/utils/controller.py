@@ -137,6 +137,9 @@ PAGE_INCLUDE_VALUE = "page_include"
 METHOD_VALUE = "method"
 """ The method value """
 
+STATUS_VALUE = "status"
+""" The status value """
+
 COLONY_VERSION_VALUE = "colony_version"
 """ The colony version value """
 
@@ -437,6 +440,7 @@ def get_exception_map(self, exception, rest_request = None):
     exception_map = {
         ENVIRONMENT_VALUE : {
             METHOD_VALUE : rest_request and rest_request.get_request().get_method(),
+            STATUS_VALUE : rest_request and rest_request.get_request().status_code,
             COLONY_VERSION_VALUE : rest_request and rest_request.get_plugin_manager().get_version(),
             PYTHON_VERSION_VALUE : platform.python_version(),
             PYTHON_EXECUTABLE_PATH_VALUE : sys.executable,

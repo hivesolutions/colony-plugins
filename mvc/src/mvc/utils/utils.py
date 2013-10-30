@@ -472,12 +472,14 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 status_code = exception.status_code if\
                     has_status_code else ERROR_STATUS_CODE
 
-                # retrieves the exception map for the exception
-                exception_map = self.get_exception_map(exception, rest_request)
-
                 # sets the error status code in the current request indicating
                 # that a problem has occurred (default behavior)
                 self.set_status_code(rest_request, status_code)
+
+                # retrieves the exception map for the exception, this map should
+                # include extra information on the request together with the "base"
+                # information about the exception to be handled
+                exception_map = self.get_exception_map(exception, rest_request)
 
                 # in case the serializer is set (uses it as it
                 # is has priority)
