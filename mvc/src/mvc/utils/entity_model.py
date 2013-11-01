@@ -121,6 +121,10 @@ DATA_TYPE_CAST_TYPES_MAP = {
 }
 """ The map associating the data types with the cast types """
 
+def _class_get_entity(cls, entity_name, entity_manager = None):
+    entity_manager = entity_manager or cls._entity_manager
+    return entity_manager.get_entity(entity_name)
+
 def _class_reload_many(cls, models, options = {}, entity_manager = None):
     """
     Class method that reloads a sequence of entity models
