@@ -122,6 +122,28 @@ DATA_TYPE_CAST_TYPES_MAP = {
 """ The map associating the data types with the cast types """
 
 def _class_get_entity(cls, entity_name, entity_manager = None):
+    """
+    Class method that retrieves the reference to an entity
+    class that is registered in the entity manager from the
+    provided name.
+
+    This provides a dynamic (reflective) mechanism for the
+    retrieval of entity class references.
+
+    This method should be used with care to avoid performance
+    issues and even bad coding practices.
+
+    @type entity_name: String
+    @param entity_name: The name of the entity class that is
+    going to be retrieved from the entity manager.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    @rtype: Class
+    @return: The entity class registered in the entity manager
+    for the provided name.
+    """
+
     entity_manager = entity_manager or cls._entity_manager
     return entity_manager.get_entity(entity_name)
 
