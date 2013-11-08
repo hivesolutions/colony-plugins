@@ -1845,7 +1845,15 @@ def redirect(self, rest_request, target, status_code = 302, quote = True, attrib
     # sets the contents (null)
     self.set_contents(rest_request)
 
-def redirect_list(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_list(
+    self,
+    rest_request,
+    entity,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the list action
     of the given entity (instance).
@@ -1880,10 +1888,23 @@ def redirect_list(self, rest_request, entity, level = None, status_code = 302, q
     target = entity_class_pluralized
     self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
 
-def redirect_action(self, rest_request, entity, action = None, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_action(
+    self,
+    rest_request,
+    entity = None,
+    action = None,
+    id_string = None,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request a custom entity action
     of the given entity (instance).
+
+    An optional id string value may be provided to override
+    the normal behavior of id value retrieval.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
@@ -1893,6 +1914,10 @@ def redirect_action(self, rest_request, entity, action = None, level = None, sta
     @param action: The name of the action to be used for the
     redirection process, this value may contain an extension
     (eg: sales.json).
+    @type id_string: String
+    @param id_string: The value to be used in the identifier
+    part of the url to be generated, in case this value is not
+    provided the id value is inferred from the provided entity.
     @type level: Class
     @param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
@@ -1915,16 +1940,26 @@ def redirect_action(self, rest_request, entity, action = None, level = None, sta
     # converts the entity class name to pluralized version using
     # the defined inheritance level and then retrieves the identifier
     # value for the current entity and converts it into a string
+    # note that the identifier is only generated in case no identifier
+    # had been provided to the method, otherwise uses the one provided
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
-    entity_id_attribute_value = entity.get_id_attribute_value()
-    entity_id_attribute_value_string = str(entity_id_attribute_value)
+    if not id_string:
+        entity_id_attribute_value = entity.get_id_attribute_value()
+        entity_id_attribute_value_string = str(entity_id_attribute_value)
+        id_string = entity_id_attribute_value_string
 
     # creates the target (edit url) from the pluralized entity name
     # and the entity id attribute value string and redirects the
     # request to the target (path)
-    target = entity_class_pluralized + "/" + entity_id_attribute_value_string +\
+    target = entity_class_pluralized + "/" + id_string +\
         ("/" + action if action else "")
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
+    self.redirect_base_path(
+        rest_request,
+        target,
+        status_code,
+        quote,
+        attributes_map
+    )
 
 def redirect_create(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
     """
