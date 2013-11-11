@@ -2388,3 +2388,7 @@ def _get_complete_name(name, namespace_name = None):
     # name to the (session attribute) name and returns it
     complete_name = namespace_name + "." + name
     return complete_name
+
+# saves an additional reference to the retrieval of the entity
+# class in a pluralized version to be used as fallback
+_get_entity_class_pluralized_e = _get_entity_class_pluralized
