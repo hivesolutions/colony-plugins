@@ -174,7 +174,7 @@ class BusinessHelper(colony.base.system.System):
         return bundle_module
 
     def get_entity_class(self):
-        # retrieves the entity manager plugin to use to
+        # retrieves the entity manager plugin to use it to
         # retrieve the (base) entity class
         entity_manager_plugin = self.plugin.entity_manager_plugin
         entity_class = entity_manager_plugin.get_entity_class()
