@@ -1875,10 +1875,10 @@ def redirect_list(
     redirect url.
     """
 
-    # in case the entity level value is set the entity is re-created
-    # with the proper inheritance level defined, useful for the
-    # retrieval of the proper name
-    if level: entity = super(level, entity)
+    # retrieves the appropriate level value, defaulting to the class
+    # of the current entity in case none is provided, this value is
+    # going to be used to retrieve the correct label according to the
+    # inheritance level that was requested
     level = level or entity.__class__
 
     # converts the entity class name to pluralized version, then
@@ -1931,10 +1931,10 @@ def redirect_action(
     redirect url.
     """
 
-    # in case the entity level value is set the entity is re-created
-    # with the proper inheritance level defined, useful for the
-    # retrieval of the proper name
-    if level: entity = super(level, entity)
+    # retrieves the appropriate level value, defaulting to the class
+    # of the current entity in case none is provided, this value is
+    # going to be used to retrieve the correct label according to the
+    # inheritance level that was requested
     level = level or entity.__class__
 
     # converts the entity class name to pluralized version using
@@ -1983,10 +1983,10 @@ def redirect_create(self, rest_request, entity, level = None, status_code = 302,
     redirect url.
     """
 
-    # in case the entity level value is set the entity is re-created
-    # with the proper inheritance level defined, useful for the
-    # retrieval of the proper name
-    if level: entity = super(level, entity)
+    # retrieves the appropriate level value, defaulting to the class
+    # of the current entity in case none is provided, this value is
+    # going to be used to retrieve the correct label according to the
+    # inheritance level that was requested
     level = level or entity.__class__
 
     # converts the entity class name to pluralized version then

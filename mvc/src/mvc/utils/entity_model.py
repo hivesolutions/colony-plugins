@@ -208,7 +208,12 @@ def _class_get(cls, id_value, options = {}, context = None, namespace = None, en
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(
+        options,
+        context,
+        namespace_name = namespace,
+        entity_manager = entity_manager
+    )
 
     # retrieves the entity model for the given class, id value
     # and using the given options, then in case the retrieval was
@@ -253,7 +258,12 @@ def _class_count(cls, options = {}, context = None, namespace = None, entity_man
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(
+        options,
+        context,
+        namespace_name = namespace,
+        entity_manager = entity_manager
+    )
 
     # retrieves the count (number of entities) for the given
     # entity class and options
@@ -295,7 +305,12 @@ def _class_find(cls, options = {}, context = None, namespace = None, entity_mana
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(
+        options,
+        context,
+        namespace_name = namespace,
+        entity_manager = entity_manager
+    )
 
     # checks if the class reference is valid for the current
     # context in case it's not a default value is returned
@@ -343,7 +358,12 @@ def _class_find_one(cls, options = {}, context = None, namespace = None, entity_
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
-    options = cls.apply_context(options, context, namespace_name = namespace, entity_manager = entity_manager)
+    options = cls.apply_context(
+        options,
+        context,
+        namespace_name = namespace,
+        entity_manager = entity_manager
+    )
 
     # finds the entity models for the given class and using
     # the given options, limits the number of results to
@@ -1009,7 +1029,13 @@ def store_f(self, validate = True, raise_exception = False, entity_manager = Non
     # stores the current entity forcing the persistence of it
     # for this case the persistence type mask is ignored and
     # the storage procedure is forced into the data source
-    self.store(None, validate = validate, force_persist = True, raise_exception = raise_exception, entity_manager = entity_manager)
+    self.store(
+        None,
+        validate = validate,
+        force_persist = True,
+        raise_exception = raise_exception,
+        entity_manager = entity_manager
+    )
 
 def preemptive_validate(self, persist_type):
     """
