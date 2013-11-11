@@ -1236,8 +1236,9 @@ class MvcUtils(colony.base.system.System):
             item_value_type = type(item_value)
 
             # in case the item value type is not function
+            # the item is not valid for setting and so the
+            # current iteration loop is skipped
             if not item_value_type == types.FunctionType:
-                # continues the loop
                 continue
 
             # in case the items starts with class reference
@@ -1250,10 +1251,9 @@ class MvcUtils(colony.base.system.System):
                 item_value = classmethod(item_value)
 
             # in case the target class already contains a reference
-            # to the given item, no overlap should occur
+            # to the given item, no overlap should occur as so the
+            # current loop is skipped
             if hasattr(target_class, item):
-                # continues the loop, avoiding
-                # the possible override of methods
                 continue
 
             # sets the item in the target class
