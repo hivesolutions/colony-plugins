@@ -166,15 +166,14 @@ def _start_model(self):
     # part of the core model definition
     self._parameters = {}
 
-    # in case the model has the start method
-    if hasattr(self, "start"):
-        # calls the start method (to be implemented)
-        self.start()
+    # in case the model has the start method, must call
+    # it as this provides a start endpoint for extension
+    if hasattr(self, "start"): self.start()
 
     # in case the model has the set validation method
-    if hasattr(self, "set_validation"):
-        # calls the set validation method (to be implemented)
-        self.set_validation()
+    # the control flow must call it so that extra validation
+    # methods may be included in the model
+    if hasattr(self, "set_validation"): self.set_validation()
 
     # sets the model started flag as true
     self.model_started = True
