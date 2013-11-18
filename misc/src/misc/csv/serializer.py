@@ -121,7 +121,10 @@ def _chunk(object, string_buffer):
         # (from the previously calculated attribute names) in
         # case the simple mode is used there is no need to retrieve
         # them using the header name
-        attribute_values = map_mode and colony.libs.object_util.object_attribute_values(object_item, attribute_names) or object_item
+        attribute_values = map_mode and colony.libs.object_util.object_attribute_values(
+            object_item,
+            attribute_names
+        ) or object_item
 
         # retrieves the attribute values length
         attribute_values_length = len(attribute_values)
@@ -138,24 +141,23 @@ def _chunk(object, string_buffer):
             # in case the attribute value is not of string types uses the default
             # system conversion to convert then if the attribute value is of type
             # unicode encodes the attribute value using the default encoding
-            if not attribute_value_type in (types.StringType, types.UnicodeType): attribute_value = str(attribute_value)
-            attribute_value_encoded = attribute_value_type == types.UnicodeType and attribute_value.encode(DEFAULT_ENCODING) or (attribute_value and str(attribute_value))
+            if not attribute_value_type in types.StringTypes: attribute_value = str(attribute_value)
+            attribute_value_encoded = attribute_value_type == types.UnicodeType and\
+                attribute_value.encode(DEFAULT_ENCODING) or\
+                (attribute_value and str(attribute_value))
 
             # writes the encoded attribute value (in case
             # the value is valid)
             attribute_value_encoded and string_buffer.write(attribute_value_encoded)
 
-            # in case the current index represents
-            # the last attribute
-            if index == attribute_values_length - 1:
-                # continue the loop skipping the separator
-                # character writing
-                continue
+            # in case the current index represents the last
+            # attribute must continue the loop as the the
+            # separator character is not required in this case
+            if index == attribute_values_length - 1: continue
 
-            # writes the separator character
+            # writes the separator character and then increments
+            # the current index so that it's possible to count values
             string_buffer.write(SEPARATOR_CHARACTER)
-
-            # increments the index
             index += 1
 
         # writes the new line in the string buffer
