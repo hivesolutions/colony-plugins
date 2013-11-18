@@ -3595,7 +3595,7 @@ class EntityManager:
         # the order names flag is set sorts them according to
         # the default sorting order
         items_items = items_map.items()
-        if items_items: items_items.sort()
+        if order_names: items_items.sort(cmp = self.cmp_items)
 
         # iterates over all the entity classes and table fields
         # in the items map to create the associated update queries
@@ -3666,7 +3666,7 @@ class EntityManager:
             # the order names flag is set sorts them according to
             # the default sorting order
             relations_items = relations_map.items()
-            if relations_items: relations_items.sort()
+            if order_names: relations_items.sort(cmp = self.cmp_items)
 
             # iterates over each of the various parent classes relations
             # to create the names for the various relation fields in
@@ -3734,9 +3734,15 @@ class EntityManager:
                     # value and the current table relation name
                     fqn = prefix + "__" + table_relation
 
+                    # retrieves the items from the target items as the target
+                    # items list of tuples and then in case the order names
+                    # flag is set sorts the target items accordingly
+                    target_items = target_items_map.items()
+                    if order_names: target_items.sort()
+
                     # iterates over all the table fields of the current
                     # entity to put them into the select query
-                    for __entity_class, table_fields in target_items_map.iteritems():
+                    for __entity_class, table_fields in target_items:
                         # retrieves the current associated table name
                         # as the "name" of the current entity class
                         __table_name = __entity_class.get_name()
@@ -3832,7 +3838,13 @@ class EntityManager:
 
                     # joins the various names for the relation table, this is the recursion
                     # step, returns the value of the is first control flag
-                    is_first = join_names(target_class, _options, order_names, is_first, prefix + "__" + table_relation)
+                    is_first = join_names(
+                        target_class,
+                        _options,
+                        order_names,
+                        is_first,
+                        prefix + "__" + table_relation
+                    )
 
             # returns the value of the is first control flag it's
             # used to control the comma access in the string value
@@ -7027,3 +7039,29 @@ class EntityManager:
         # returns the constructed result set with the new lines
         # containing unicode values instead of strings
         return _result_set
+
+    def cmp_items(self, first, second):
+        """
+        Comparator method that compares a sequence of class to
+        list descriptor items.
+
+        For each of the items it unpacks the tuple into a class
+        and a fields map and then compares the table name for
+        the class against each other.
+
+        @type first: Tuple
+        @param first: The tuple containing the class and the fields
+        map to be compared against the second value.
+        @type second: Tuple
+        @param second: The second tuple to be used in the compare
+        operation, should have the same structure as the first.
+        @rtype: int
+        @return: The diferente (as in distance) between both values
+        to be used as a result of comparision.
+        """
+
+        first_class, _first_fields = first
+        second_class, _second_fields = second
+        first_name = first_class.get_name()
+        second_name = second_class.get_name()
+        return cmp(first_name, second_name)
