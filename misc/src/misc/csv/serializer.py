@@ -161,7 +161,7 @@ def _chunk(object, string_buffer):
         # writes the new line in the string buffer
         string_buffer.write(NEWLINE_CHARACTER)
 
-def _attribute_names(object):
+def _attribute_names(object, sort = True):
     # retrieves the first element (for initial
     # set reference)
     object_item = object[0]
@@ -172,17 +172,20 @@ def _attribute_names(object):
 
     # iterates over all the other object items in the set
     # in order to intersect the attributes name list with the
-    # previous
+    # previous, this would create the complete names set
     for object_item in object:
         # retrieves the object attribute names for the current
-        # object item value
+        # object item value and then intersects the current
+        # names list with the new one (avoiding duplicates)
         object_attribute_names = colony.libs.object_util.object_attribute_names(object_item)
+        attribute_names = colony.libs.list_util.list_intersect(
+            attribute_names,
+            object_attribute_names
+        )
 
-        # intersects the attribute names list with the object attribute names
-        # list to calculate the current attribute names
-        attribute_names = colony.libs.list_util.list_intersect(attribute_names, object_attribute_names)
-
-    # returns the attribute names
+    # in case the sort flag is set sorts the gathered attribute
+    # names and then returns them to the caller method
+    if sort: attribute_names.sort()
     return attribute_names
 
 def loads(data, header = True):
