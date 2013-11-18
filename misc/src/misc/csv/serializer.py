@@ -161,7 +161,7 @@ def _chunk(object, string_buffer):
         # writes the new line in the string buffer
         string_buffer.write(NEWLINE_CHARACTER)
 
-def _attribute_names(object, sort = False):
+def _attribute_names(object, sort = True):
     # retrieves the first element (for initial
     # set reference)
     object_item = object[0]
