@@ -7056,12 +7056,19 @@ class EntityManager:
         @param second: The second tuple to be used in the compare
         operation, should have the same structure as the first.
         @rtype: int
-        @return: The diferente (as in distance) between both values
-        to be used as a result of comparision.
+        @return: The deference (as in distance) between both values
+        to be used as a result of comparison.
         """
 
+        # unpacks both the first and second element provided
+        # for comparison into class and fields to be used in
+        # the process of comparing both of them
         first_class, _first_fields = first
         second_class, _second_fields = second
+
+        # retrieves the appropriate naming for both classes and
+        # then uses these value to returns the comparison (as
+        # in difference) for both of them
         first_name = first_class.get_name()
         second_name = second_class.get_name()
         return cmp(first_name, second_name)
