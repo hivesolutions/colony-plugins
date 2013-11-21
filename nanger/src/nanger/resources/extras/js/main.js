@@ -1885,8 +1885,8 @@
             log.css("position", "absolute");
             log.css("top", "0px");
             log.css("left", "0px");
-            log.height(windowHeight - 4);
-            log.width(windowWidth - 8);
+            log.height(windowHeight - 8);
+            log.width(windowWidth - 16);
 
             // retrieves the scroll height from the log
             // and updates the log scroll position to
