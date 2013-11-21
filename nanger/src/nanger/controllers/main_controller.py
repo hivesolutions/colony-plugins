@@ -135,11 +135,22 @@ class MainController(controllers.Controller):
         # in the current context
         plugin_manager = self.plugin.manager
 
+        # tries to retrieve the provided count parameter that will
+        # condition the amount of lines retrieved, defaulting to
+        # the default value in case none is provided
+        count = self.get_field(
+            rest_request,
+            "count",
+            default = 3000,
+            cast_type = int
+        )
+
         # retrieves the memory handler installed in the current
         # plugin manager and then uses it to retrieve the sequence
         # containing the latest messages stored in it
         memory_handler = plugin_manager.get_log_handler("memory")
-        latest = memory_handler.get_latest()
+        latest = memory_handler.get_latest(count = count)
+        latest.reverse()
 
         # processes the contents of the template file assigning the
         # appropriate values to it
