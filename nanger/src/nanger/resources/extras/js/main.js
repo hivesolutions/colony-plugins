@@ -24,7 +24,7 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 (function(jQuery) {
-    jQuery.fn.uxconsole = function(query, callback, options) {
+    jQuery.fn.uxconsole = function(options) {
         // the offset in pixels of the autocomplete
         // window relative to the console line
         var AUTOCOMPLETE_OFFSET = 2;
@@ -1743,11 +1743,248 @@
     };
 })(jQuery);
 
+(function(jQuery) {
+    jQuery.fn.uxlog = function(options) {
+        // the default values for the data query
+        var defaults = {};
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = jQuery.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+            // retrieves the reference to the current global body
+            // element and then verifies if the current matching
+            // is valid, contains elements in it
+            var _body = jQuery("body");
+            var isValid = matchedObject.length > 0;
+
+            // registers for the key down event in the current body
+            // element so that global keyboard events are captured
+            isValid && _body.keydown(function(event) {
+                        // retrieves the currently matched object as the log
+                        // element that is going to be used in the operations
+                        var console = matchedObject;
+
+                        // retrieves the key value that is going to be used
+                        // in the resolution of the proper method
+                        var keyValue = event.keyCode
+                                ? event.keyCode
+                                : event.charCode ? event.charCode : event.which;
+
+                        // in case the shift key is pressed some special
+                        // operations may be performed
+                        if (event.shiftKey) {
+                            switch (keyValue) {
+                                case 70 :
+                                    // checks if the current console is currently displayed
+                                    // in fullscreen and then checks if the autocomplete box
+                                    // is visible
+                                    var isFullscreen = console.hasClass("fullscreen");
+
+                                    // in case the current mode is fullscreen, changes to the
+                                    // window model otherwise changes to fullscreen, then in
+                                    // case the autocomplete window is shows runs the layout
+                                    // update in it using the autocomplete function
+                                    isFullscreen
+                                            ? _window(console)
+                                            : fullscreen(console);
+
+                                    // prevents the default event to avoid unwanted behavior
+                                    event.preventDefault();
+
+                                    // breaks the swith
+                                    break;
+                            }
+                        }
+
+                        // stops the event propagation this should be able
+                        // to avoid possible problems with double handling
+                        event.stopPropagation();
+                        event.stopImmediatePropagation();
+                    });
+        };
+
+        var fullscreen = function(log) {
+            // adds the fullscreen class to the log element
+            // so that the specific style are applied to it
+            log.addClass("fullscreen");
+
+            // creates the function that will be used to update the
+            // size of the log on a resize of the parent
+            var resize = function(event) {
+                // refreshes the current log window to fill the
+                // newly available space
+                maximize(log);
+            };
+
+            // retrieves the window and registers the resize in
+            // the window to update the log size
+            var _window = jQuery(window);
+            _window.resize(resize);
+
+            // saves the resize function in the log to be latter
+            // used in the unbind process of the window resize event
+            log.data("resize", resize);
+
+            // maximizes the current window to fill the currently
+            // available space (in body)
+            maximize(log);
+        };
+
+        var maximize = function(log) {
+            // retrieves the window element to retrieve some
+            // of its dimensions
+            var _window = jQuery(window);
+
+            // retrieves the html and body global elements
+            // to be able to operate over them
+            var _html = jQuery("html");
+            var _body = jQuery("body");
+
+            // removes the current overflow y scroll bar (avoids
+            // duplicate scroll bar)
+            _html.css("overflow-y", "hidden");
+
+            // removes the complete set of margin and padding values
+            // for the body element
+            _body.css("margin", "0px 0px 0px 0px");
+            _body.css("padding", "0px 0px 0px 0px");
+
+            // retrieves both the window heigh and width dimensions
+            // to be used in the log
+            var windowHeight = _window.height();
+            var windowWidth = _window.width();
+
+            // updates the various log attributes to set it as
+            // full occupying area of the window
+            log.css("margin", "0px 0px 0px 0px");
+            log.css("position", "absolute");
+            log.css("top", "0px");
+            log.css("left", "0px");
+            log.height(windowHeight - 4);
+            log.width(windowWidth - 8);
+
+            // retrieves the scroll height from the log
+            // and updates the log scroll position to
+            // position it at the bottom
+            var scrollHeight = log[0].scrollHeight;
+            log.scrollTop(scrollHeight);
+        };
+
+        var minimize = function(log) {
+            // retrieves the html and body global elements
+            // to be able to operate over them
+            var _html = jQuery("html");
+            var _body = jQuery("body");
+
+            // removes the overflow attribute from the html
+            // element to restore it (show scroll)
+            _html.css("overflow-y", null);
+
+            // removes the margin and padding attributes from
+            // the body element
+            _body.css("margin", null);
+            _body.css("padding", null);
+
+            // removes the complete set of css attributes
+            // from the log to restore the original size
+            log.css("margin", null);
+            log.css("position", null);
+            log.css("top", null);
+            log.css("left", null);
+            log.css("height", null);
+            log.css("width", null);
+
+            // retrieves the scroll height from the log
+            // and updates the log scroll position to
+            // position it at the bottom
+            var scrollHeight = log[0].scrollHeight;
+            log.scrollTop(scrollHeight);
+        };
+
+        var _window = function(log) {
+            // removes the fullscreen class from the log element
+            // to avoid unexpected visuals in the log
+            log.removeClass("fullscreen");
+
+            // retrieves the currently used resize function from the
+            // log to be used in the unset of the event handler
+            var resize = log.data("resize", resize);
+
+            // retrieves the window and uses it to unbind the resize
+            // event (currently set) from it
+            var _window = jQuery(window);
+            _window.unbind("resize", resize)
+
+            // minimizes the log removing all the custom style
+            // applied to the current environment
+            minimize(log);
+        };
+
+        // initializes the plugin
+        initialize();
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.uapply = function(options) {
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        // starts the ux console plugin for the selected console
+        // component (normal starting) then clicks in it to trigger
+        // the immediate selection of the console
+        var console = jQuery(".console", matchedObject);
+        console.uxconsole();
+        console.click();
+
+        // starts the ux log plugin for the selected log panel
+        // this should provide some extra features
+        var log = jQuery(".log", matchedObject);
+        log.uxlog();
+    };
+})(jQuery);
+
 jQuery(document).ready(function() {
-            // starts the ux console plugin for the selected console
-            // component (normal starting) then clicks in it to trigger
-            // the immediate selection of the console
-            var console = jQuery(".console");
-            console.uxconsole();
-            console.click();
+            // retrieves the reference to the top level
+            // body element to apply the components in it
+            var _body = jQuery("body");
+
+            // runs the initial apply operation for the current
+            // body context to fill the various elements
+            _body.uapply();
+
+            // registers for the applied event on the body to be
+            // notified of new apply operations and react to them
+            // in the sense of applying the specifics
+            _body.bind("applied", function(event, base) {
+                        base.uapply();
+                    });
         });
