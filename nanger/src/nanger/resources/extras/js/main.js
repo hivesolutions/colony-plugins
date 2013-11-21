@@ -1770,6 +1770,21 @@
          * Creates the necessary html for the component.
          */
         var _appendHtml = function() {
+            // in case no valid elements are matched must
+            // return immediately to avoid problems
+            if (matchedObject.length == 0) {
+                return;
+            }
+
+            // retrieves the currently matched object as
+            // the log object that is going to be used
+            var log = matchedObject;
+
+            // retrieves the scroll height from the log
+            // and updates the log scroll position to
+            // position it at the bottom
+            var scrollHeight = log[0].scrollHeight;
+            log.scrollTop(scrollHeight);
         };
 
         /**
