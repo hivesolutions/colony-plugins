@@ -47,12 +47,18 @@ import colony.libs.string_buffer_util
 import colony.base.system
 
 ENGINE_NAME = "mysql"
-""" The name of the engine currently in execution """
+""" The name of the engine currently in execution
+it's going to be used to identify the system """
 
 ISOLATION_LEVEL = "read committed"
 """ The isolation level to be used in the connections
 created by the driver, this isolation level should ensure
 compatibility with the expected behavior """
+
+SLOW_QUERY_TIME = 25
+""" The minimum time in milliseconds before a query is
+considered to be slow and a warning message should be logger
+into the currently attached logger (for debugging) """
 
 IGNORE_ERRORS = (1112,)
 """ The list of errors that are considered warning only
@@ -348,7 +354,7 @@ class MysqlEngine:
         try:
             # prints a debug message about the query that is going to be
             # executed under the mysql engine (for debugging purposes)
-            self.mysql_system.debug("[mysql] %s" %  query)
+            self.mysql_system.debug("[%s] %s" %  (ENGINE_NAME, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -364,9 +370,8 @@ class MysqlEngine:
             # is too high (slow query) and if it's prints a warning
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
-            is_slow = delta > 25
-            if is_slow: self.mysql_system.warning("[mysql] [%d ms] %s" % (delta, query))
-
+            is_slow = delta > SLOW_QUERY_TIME
+            if is_slow: self.mysql_system.warning("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
         except MySQLdb.OperationalError, exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification

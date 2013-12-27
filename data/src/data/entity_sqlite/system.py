@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import time
 import thread
 import sqlite3
 import tempfile
@@ -47,11 +48,17 @@ import colony.libs.string_buffer_util
 import colony.base.system
 
 ENGINE_NAME = "sqlite"
-""" The name of the engine currently in execution """
+""" The name of the engine currently in execution
+it's going to be used to identify the system """
 
 INTERNAL_VERSION = "1.0.1"
 """ The version number that represents the internal
 implementation details """
+
+SLOW_QUERY_TIME = 25
+""" The minimum time in milliseconds before a query is
+considered to be slow and a warning message should be logger
+into the currently attached logger (for debugging) """
 
 class EntitySqlite(colony.base.system.System):
     """
@@ -240,16 +247,26 @@ class SqliteEngine:
         cursor = cursor or _connection.cursor()
 
         try:
-            #print "<sqlite> %s" % query # ! REMOVE THIS !
+            # prints a debug message about the query that is going to be
+            # executed under the pgsql engine (for debugging purposes)
+            self.sqlite_system.debug("[%s] %s" %  (ENGINE_NAME, query))
 
-            import time
+            # takes a snapshot of the initial time for the
+            # the query, this is going to be used to detect
+            # the queries that are considered slow
             initial = time.time()
+
             # executes the query in the current cursor
             # context for the engine
             cursor.execute(query)
             final = time.time()
 
-            if final - initial > 0.025: print "[WARNING] <sqlite - %f> %s" % (final - initial, query) # ! REMOVE THIS !
+            # verifies if the timing for the current executing query
+            # is too high (slow query) and if it's prints a warning
+            # message as this may condition the way the system behaves
+            delta = int((final - initial) * 1000)
+            is_slow = delta > SLOW_QUERY_TIME
+            if is_slow: self.sqlite_system.warning("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
         except:
             # closes the cursor (safe closing)
             # and re-raises the exception
