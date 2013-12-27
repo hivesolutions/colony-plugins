@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import types
 import thread
 import MySQLdb
@@ -52,6 +53,12 @@ ISOLATION_LEVEL = "read committed"
 """ The isolation level to be used in the connections
 created by the driver, this isolation level should ensure
 compatibility with the expected behavior """
+
+IGNORE_ERRORS = (1112,)
+""" The list of errors that are considered warning only
+and that should be ignores, but a warning log message
+should be display in the log as they may creates some
+problems in the normal execution of the system """
 
 CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
 """ The sequence containing the list of error that are
@@ -339,16 +346,27 @@ class MysqlEngine:
         cursor = cursor or _connection.cursor()
 
         try:
-            #print "<mysql> %s" % query # ! REMOVE THIS !
+            # prints a debug message about the query that is going to be
+            # executed under the mysql engine (for debugging purposes)
+            self.mysql_system.debug("[mysql] %s" %  query)
 
-            import time
+            # takes a snapshot of the initial time for the
+            # the query, this is going to be used to detect
+            # the queries that are considered slow
             initial = time.time()
+
             # executes the query in the current cursor
             # context for the engine
             cursor.execute(query)
             final = time.time()
 
-            if final - initial > 0.025: print "[WARNING] <mysql - %f> %s" % (final - initial, query) # ! REMOVE THIS !
+            # verifies if the timing for the current executing query
+            # is too high (slow query) and if it's prints a warning
+            # message as this may condition the way the system behaves
+            delta = int((final - initial) * 1000)
+            is_slow = delta > 25
+            if is_slow: self.mysql_system.warning("[mysql] [%d ms] %s" % (delta, query))
+
         except MySQLdb.OperationalError, exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification
@@ -369,6 +387,14 @@ class MysqlEngine:
                 retries = retries - 1
             )
             else: cursor.close(); raise
+        except MySQLdb.ProgrammingError, exception:
+            # unpacks the message and the code from the exception and
+            # then verifies if this error is meant to be ignored and in
+            # case it's prints a warning message but does not fails, otherwise
+            # raises the exception as this should break the current code
+            code, _message = exception.args
+            if code in IGNORE_ERRORS: self.mysql_system.warning(_message);
+            else: raise
         except:
             # closes the cursor (safe closing) and re-raises
             # the exception, to the top layers so that the
