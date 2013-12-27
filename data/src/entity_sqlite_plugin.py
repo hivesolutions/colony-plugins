@@ -44,8 +44,8 @@ class EntitySqlitePlugin(colony.base.system.Plugin):
     The main class for the Entity Sqlite plugin.
     """
 
-    id = "pt.hive.colony.plugins.data.entity.mysql"
-    name = "Entity Mysql"
+    id = "pt.hive.colony.plugins.data.entity.sqlite"
+    name = "Entity Sqlite"
     description = "The plugin that manages the sqlite adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
