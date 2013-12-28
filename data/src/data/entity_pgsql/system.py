@@ -296,7 +296,7 @@ class PgsqlEngine:
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.pgsql_system.warning("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.pgsql_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
         except BaseException, exception:
             # closes the cursor (safe closing)
             # and re-raises the exception

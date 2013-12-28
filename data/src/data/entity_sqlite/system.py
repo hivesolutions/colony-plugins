@@ -266,7 +266,7 @@ class SqliteEngine:
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.sqlite_system.warning("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.sqlite_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
         except:
             # closes the cursor (safe closing)
             # and re-raises the exception

@@ -371,7 +371,7 @@ class MysqlEngine:
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.mysql_system.warning("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.mysql_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
         except MySQLdb.OperationalError, exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification
