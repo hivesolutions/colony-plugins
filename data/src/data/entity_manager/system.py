@@ -5508,9 +5508,9 @@ class EntityManager:
             if not id in entities[current_class]:
                 # creates a new entity instance and associates it
                 # with the entities "cache" map, note that the class
-                # attribute is set in the new map
+                # attribute is set in the new map (properly decoded)
                 entities[current_class][id] = {
-                    "_class" : current_class_name,
+                    "_class" : current_class_name.decode("utf-8"),
                     "_mtime" : current_modified_time
                 }
 
@@ -5637,9 +5637,10 @@ class EntityManager:
                         if not target_id_value in entities[target_class]:
                             # creates a new entity class and associates it
                             # with the entities "cache" map, note that the
-                            # class attribute is set in the new map
+                            # class attribute is set in the new map, with
+                            # the proper decoding action performed
                             entities[target_class][target_id_value] = {
-                                "_class" : target_class_name,
+                                "_class" : target_class_name.decode("utf-8"),
                                 "_mtime" : target_modified_time
                             }
 

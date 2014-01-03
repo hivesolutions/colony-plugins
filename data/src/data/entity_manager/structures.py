@@ -3079,8 +3079,9 @@ class EntityClass(object):
             map[name] = value
 
         # sets the entity class name as the class attribute for
-        # the current map structure level
-        map["_class"] = entity_class.__name__
+        # the current map structure level, note that conversion
+        # is made into unicode for compatibility reasons
+        map["_class"] = entity_class.__name__.decode("utf-8")
 
         # iterates over all the set of reserved names to update
         # the map value with their values
