@@ -113,7 +113,7 @@ class Wsgi(colony.base.system.System):
             code = exception.status_code if has_code else 500
             try: code = int(code)
             except: code = 500
-            status = "Error"
+            status = "Not OK"
             message = self.error_message(exception, code = code)
             content = [message]
             headers_out_l = []
