@@ -96,8 +96,10 @@ class Wsgi(colony.base.system.System):
 
         # sets the default status code value as success,
         # all the request are considered to be successful
-        # unless otherwise is state (exception raised)
+        # unless otherwise is state (exception raised) note
+        # that the status string is also defined as valid
         code = 200
+        status = "OK"
 
         # creates a new wsgi request object with the provided
         # environment map (this object should be able to "emulate"
@@ -111,6 +113,7 @@ class Wsgi(colony.base.system.System):
             code = exception.status_code if has_code else 500
             try: code = int(code)
             except: code = 500
+            status = "Error"
             message = self.error_message(exception, code = code)
             content = [message]
             headers_out_l = []
@@ -138,7 +141,7 @@ class Wsgi(colony.base.system.System):
         # update the status line with the provided code value and then
         # creates the response headers list with the created values and
         # sends these values as the start response
-        status = "%d OK" % code
+        status = "%d %s" % (code, status)
         response_headers = [
             ("Content-Type", content_type),
             ("Content-Length", str(content_length)),
