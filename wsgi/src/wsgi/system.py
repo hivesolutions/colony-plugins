@@ -107,8 +107,11 @@ class Wsgi(colony.base.system.System):
         request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
         try: rest_plugin.handle_request(request); request.finish()
         except BaseException, exception:
-            code = 500
-            message = self.error_message(exception, code = 500)
+            has_code = hasattr(exception, "status_code")
+            code = exception.status_code if has_code else 500
+            try: code = int(code)
+            except: code = 500
+            message = self.error_message(exception, code = code)
             content = [message]
             headers_out_l = []
         else:
