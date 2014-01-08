@@ -42,6 +42,7 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 
 import re
 import types
+import decimal
 import datetime
 import calendar
 
@@ -80,7 +81,8 @@ EXCLUSION_TYPES = {
 NUMBER_TYPES = {
     types.IntType : True,
     types.LongType: True,
-    types.FloatType : True
+    types.FloatType : True,
+    decimal.Decimal : True,
 }
 """ The map used to check number types """
 
@@ -222,6 +224,12 @@ def dump_parts(object, objects = None, cycles = False):
     @rtype: String
     @return: The dumped json string.
     """
+
+    # in case the current object contains the json value
+    # method the object to be serialized should be the
+    # one retrieved by this method
+    has_json_v = hasattr(object, "json_v")
+    if has_json_v: object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
@@ -412,6 +420,12 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     @rtype: String
     @return: The dumped json string.
     """
+
+    # in case the current object contains the json value
+    # method the object to be serialized should be the
+    # one retrieved by this method
+    has_json_v = hasattr(object, "json_v")
+    if has_json_v: object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
@@ -635,6 +649,12 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     @rtype: String
     @return: The dumped json string.
     """
+
+    # in case the current object contains the json value
+    # method the object to be serialized should be the
+    # one retrieved by this method
+    has_json_v = hasattr(object, "json_v")
+    if has_json_v: object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
