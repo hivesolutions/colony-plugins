@@ -414,25 +414,21 @@ def get_exception_map(self, exception, rest_request = None):
     # starts the formatted traceback (with the default value)
     formatted_traceback = None
 
-    # in case the traceback list is valid
+    # in case the traceback list is valid, was retrieved as expected
+    # and contains at least one value it must be re-encoded using the
+    # currently defined system encoding (in order to avoid problems)
     if traceback_list:
-        # creates the (initial) formated traceback
-        formatted_traceback = traceback.format_tb(traceback_list)
-
-        # retrieves the file system encoding, for decoding the
-        # various traceback values with it
+        # retrieves the encoding currently associated with the system,
+        # then formats the traceback list and iterates over each of the
+        # lines to re-encode it using the system encoding
         file_system_encoding = sys.getfilesystemencoding()
-
-        # decodes the traceback values using the file system encoding
+        formatted_traceback = traceback.format_tb(traceback_list)
         formatted_traceback = [value.decode(file_system_encoding) for value in formatted_traceback]
 
-    # retrieves the exception class
+    # retrieves the exception class and the name of it and then retrieves
+    # the message currently set in the exception as the exception message
     exception_class = exception.__class__
-
-    # retrieves the exception class name
     exception_class_name = exception_class.__name__
-
-    # retrieves the exception message
     exception_message = exception.message
 
     # creates the exception map, with information on
@@ -453,23 +449,22 @@ def get_exception_map(self, exception, rest_request = None):
         }
     }
 
-    # converts the exception class name to underscore notation
+    # converts the exception class name to underscore notation and uses it
+    # to create the name of the method that will process the exception
     exception_class_name_underscore = colony.libs.string_util.to_underscore(exception_class_name)
-
-    # creates the exception class process method name
     exception_class_process_method_name = "process_map_" + exception_class_name_underscore
 
     # in case the instance contains the process handler
-    # for the exception class
+    # for the exception class must call it to process
+    # and alter the current exception map
     if hasattr(self, exception_class_process_method_name):
-        # retrieves the exception class process method
+        # retrieves the exception class process method and calls
+        # it in order to change the current exception map
         exception_class_process_method = getattr(self, exception_class_process_method_name)
-
-        # calls the exception class process method with
-        # the exception map and the exception
         exception_class_process_method(exception_map, exception)
 
-    # returns the exception map
+    # returns the final exception map that should follow to the serializer
+    # in the next step (must be used like that)
     return exception_map
 
 def process_map_model_validation_error(self, exception_map, exception):
@@ -485,18 +480,17 @@ def process_map_model_validation_error(self, exception_map, exception):
     @param exception: The exception to be processed.
     """
 
-    # retrieves the model in the exception
+    # retrieves the model in the exception and then uses it to retrieve
+    # both the validation map and the validation errors map, these values
+    # are going to be used to returns dome debugging information
     exception_model = exception.model
+    validation_map = exception_model.validation_map
+    validation_errors_map = exception_model.validation_errors_map
 
-    # retrieves the exception validation map
-    exception_validation_map = exception_model.validation_map
-
-    # retrieves the exception validation errors map
-    exception_validation_errors_map = exception_model.validation_errors_map
-
-    # sets the exception map values
-    exception_map[VALIDATION_MAP_VALUE] = exception_validation_map
-    exception_map[VALIDATION_ERRORS_MAP_VALUE] = exception_validation_errors_map
+    # sets both the validation and the validation errors map in the map
+    # so that the exception may contain some debugging information
+    exception_map[VALIDATION_MAP_VALUE] = validation_map
+    exception_map[VALIDATION_ERRORS_MAP_VALUE] = validation_errors_map
 
 def get_entity_id_attribute(self, entity, id_attribute_name = OBJECT_ID_VALUE):
     """
