@@ -4607,8 +4607,11 @@ class EntityManager:
             entity_class._validate_name(filter_field_name)
             entity_class._validate_value(filter_field_name, filter_field_value)
 
+            # validates the filter field value defaulting to an empty
+            # string in case an invalid value is found and then
             # escapes the filter field value, to remove any
             # possible problem (or injection) in the value field
+            filter_field_value = filter_field_value or ""
             filter_field_value = self._escape_text(filter_field_value)
 
             # process the "complete" table name (includes back relation references)
