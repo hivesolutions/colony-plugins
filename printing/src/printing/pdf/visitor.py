@@ -122,7 +122,7 @@ PAPER_SIZE = A4_PAPER
 """ The default paper size to be used when no paper
 size value is defined for the print operation """
 
-FONT_PATHS = ("", "~/.fonts/")
+FONT_PATHS = ("", "~/.fonts/", "/usr/share/fonts/truetype/")
 """ The set of base paths to be used for searching
 for fonts on the current system """
 
