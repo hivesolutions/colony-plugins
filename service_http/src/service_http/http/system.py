@@ -3037,9 +3037,15 @@ class HttpRequest:
         # extends the headers ordered map with the response headers map
         headers_ordered_map.extend(self.response_headers_map)
 
-        # iterates over all the header values to be sent
+        # iterates over all the header values to be sent so that they are
+        # written to the target output buffer as string equivalence values
         for header_name, header_value in headers_ordered_map.items():
-            # writes the header value in the result
+            # verifies if the current type of the header value is unicode
+            # and if that the case encodes the value using the default
+            # encoding so that the value that is written to the result
+            # is always a normalized string value
+            is_unicode = type(header_value) == types.UnicodeType
+            if is_unicode: header_value = header_value.encode(DEFAULT_CHARSET)
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
