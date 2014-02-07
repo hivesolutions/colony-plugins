@@ -759,7 +759,14 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     }
     return filter
 
-def _class_apply_context(cls, options = {}, context_request = None, context = None, namespace_name = None, entity_manager = None):
+def _class_apply_context(
+    cls,
+    options = {},
+    context_request = None,
+    context = None,
+    namespace_name = None,
+    entity_manager = None
+):
     """
     Applies the context information to the retrieval operation,
     this will change the given options map to handle the filtering
@@ -899,7 +906,14 @@ def delete(self, persist_type, entity_manager = None):
     if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE_TYPE: self.post_remove(persist_type)
 
 @utils.transaction_method("_entity_manager")
-def store(self, persist_type, validate = True, force_persist = False, raise_exception = False, entity_manager = None):
+def store(
+    self,
+    persist_type = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE,
+    validate = True,
+    force_persist = False,
+    raise_exception = False,
+    entity_manager = None
+):
     """
     "Transactional" method to be used as the main entry
     point of persistence in the model structure.
@@ -1070,7 +1084,14 @@ def preemptive_validate(self, persist_type):
     # validation process failed for the current model
     raise exceptions.ModelValidationError("preemptive validation of entity model failed", self)
 
-def store_relations(self, persist_type, validate = False, force_persist = False, raise_exception = False, entity_manager = None):
+def store_relations(
+    self,
+    persist_type,
+    validate = False,
+    force_persist = False,
+    raise_exception = False,
+    entity_manager = None
+):
     """
     Stores all the relations of the current entity according to the
     security information provided by the persist type mask.
@@ -1130,7 +1151,16 @@ def store_relations(self, persist_type, validate = False, force_persist = False,
         # model persist type in the meta information
         self.store_relation(relation_name, _persist_type, relation_persist_type, validate, force_persist, raise_exception, entity_manager = entity_manager)
 
-def store_relation(self, relation_name, persist_type, relation_persist_type, validate = False, force_persist = False, raise_exception = False, entity_manager = None):
+def store_relation(
+    self,
+    relation_name,
+    persist_type,
+    relation_persist_type,
+    validate = False,
+    force_persist = False,
+    raise_exception = False,
+    entity_manager = None
+):
     """
     Stores a relation with the given name in the entity
     using the permissions granted by the persist type.
@@ -1237,12 +1267,18 @@ def store_relation(self, relation_name, persist_type, relation_persist_type, val
             # case the associate "permission" is set in the persist type or in
             # case the relation was previously (other transaction) set in the
             # entity (relation validation)
-            is_associable = relation_valid or id_attribute_value == None or _relation_value.is_saved() or relation_persist_type & PERSIST_ASSOCIATE_TYPE
+            is_associable = relation_valid or id_attribute_value == None or\
+                _relation_value.is_saved() or relation_persist_type & PERSIST_ASSOCIATE_TYPE
 
             # stores the relation value in the data source
             # using the "propagated" persist type (only in
             # case the relation is "storable")
-            is_storable and _relation_value.store(persist_type, validate, force_persist = force_persist, entity_manager = entity_manager)
+            is_storable and _relation_value.store(
+                persist_type,
+                validate,
+                force_persist = force_persist,
+                entity_manager = entity_manager
+            )
 
             # in case the relation is not valid it must be removed
             # from the entity to avoid "malicious" association to be set
@@ -1595,7 +1631,10 @@ def get_attribute_data_type(self, attribute_name, resolve_relations = False):
     # name retrieves the real data type of the attribute, note that
     # an optional argument is sent to set if the relation should be
     # resolved (type of the id attribute is resolved or not)
-    attribute_data_type = entity_class._get_data_type(attribute_name, resolve_relations = resolve_relations)
+    attribute_data_type = entity_class._get_data_type(
+        attribute_name,
+        resolve_relations = resolve_relations
+    )
 
     # returns the (real) data type of the attribute
     return attribute_data_type
