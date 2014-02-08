@@ -767,7 +767,15 @@ class EntityManager:
                 # to the next entity file
                 file_index += 1
 
-    def export_data(self, serializer, entity_classes = None, directory_path = None, date_range = None, entity_count = FILE_ENTITY_COUNT, include_parents = False):
+    def export_data(
+        self,
+        serializer,
+        entity_classes = None,
+        directory_path = None,
+        date_range = None,
+        entity_count = FILE_ENTITY_COUNT,
+        include_parents = False
+    ):
         """
         Exports entities from the current entity manager into
         a data file structure defined by the provided serializer
