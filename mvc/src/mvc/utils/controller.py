@@ -4445,8 +4445,10 @@ def _convert_entity_map(self, entity):
 def _process_file_path_locale(self, file_path, locale = None):
     """
     Processes the given file path according to the given locale.
-    In case no locale is given the original file path
-    is returned.
+    This will change the provided file path into a locale version
+    of it taking into account the provided parameter value.
+
+    In case no locale is given the original file path is returned.
 
     @type file_path: String
     @param file_path: The file path to be processed.
