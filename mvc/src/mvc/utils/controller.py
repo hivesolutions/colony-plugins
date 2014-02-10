@@ -2284,7 +2284,16 @@ def redirect_to_base_path(self, rest_request, quote = False):
     # redirects (with base) the request to the "redirect to" target
     self.redirect_base_path(rest_request, redirect_to_target, quote = quote)
 
-def process_set_contents(self, rest_request, template_file, apply_base_path = True, assign_session = False, assign_flash = True, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
+def process_set_contents(
+    self,
+    rest_request,
+    template_file,
+    apply_base_path = True,
+    assign_session = False,
+    assign_flash = True,
+    variable_encoding = None,
+    content_type = DEFAULT_CONTENT_TYPE
+):
     """
     Processes the template file and set the result of it
     as the contents of the given rest request.
@@ -2369,7 +2378,14 @@ def process_template_file(self, rest_request, template_file, variable_encoding =
     # returns the processed template file
     return processed_template_file
 
-def retrieve_template_file(self, file_path = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING, partial_page = None, locale = None, locale_request = None):
+def retrieve_template_file(
+    self,
+    file_path = None,
+    encoding = DEFAULT_TEMPLATE_FILE_ENCODING,
+    partial_page = None,
+    locale = None,
+    locale_request = None
+):
     """
     Retrieves a template file object for the given
     (relative) file path and locale and uses the
@@ -2975,7 +2991,13 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     # returns the attribute value decoded
     return attribute_value_decoded
 
-def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_locales = DEFAULT_ALIAS_LOCALES, default_locale = DEFAULT_LOCALE):
+def get_locale(
+    self,
+    rest_request,
+    available_locales = (DEFAULT_LOCALE,),
+    alias_locales = DEFAULT_ALIAS_LOCALES,
+    default_locale = DEFAULT_LOCALE
+):
     """
     Retrieves the current "best" locale for the given rest
     request and for the available locales.
@@ -3004,7 +3026,8 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
         self._get_locales_default
     )
 
-    # sets the initial locale
+    # sets the initial locale value this is going to be the
+    # fallback value in case no valid locale is found
     locale = None
 
     # iterates over all the get locales methods, to call
@@ -4434,36 +4457,35 @@ def _process_file_path_locale(self, file_path, locale = None):
     @return: The processed file path.
     """
 
-    # in case no locale is defined
-    if not locale:
-        # returns the file path
-        return file_path
+    # in case no locale is defined, there's no need for any extra
+    # processing of the file path and so the proper file path is
+    # returns to the caller method as the template file path
+    if not locale: return file_path
 
-    # splits the file path to retrieve the
-    # base file path and the file name
-    base_file_path, file_name = os.path.split(file_path)
-
-    # splits the file name around the first dot
-    file_name_splitted = file_name.split(".", 1)
-
-    # converts the locale to lower
+    # converts the locale value into a lower cased value that is going
+    # to be appended to the file name for locale retrieval
     locale_lower = self._lower_locale(locale)
 
-    # creates the locale string value from the locale lower
-    locale_string_value = "_" + locale_lower + "."
+    # splits the file path to retrieve the base file path (directory)
+    # and the (proper) file name to split it around the first dot and
+    # for one time only, this is the base value of the name
+    base_file_path, file_name = os.path.split(file_path)
+    file_name_splitted = file_name.split(".", 1)
 
-    # inserts the locale string value in the file name splitted list
+    # creates the locale string value from the locale lower value by
+    # appending the locale lower value to the current string and adding
+    # it to the splitted string list (to be latter joined)
+    locale_string_value = "." + locale_lower + "."
     file_name_splitted.insert(1, locale_string_value)
 
-    # re-joins the file name back to create
-    # the new file name
+    # re-joins the file name back to create the new file name that should
+    # represent the localized version of the file name
     file_name = "".join(file_name_splitted)
 
     # joins the file path and the file name, to retrieve
-    # the final file path
+    # the final (and complete) file path, returning then
+    # this value to the caller method
     file_path = os.path.join(base_file_path, file_name)
-
-    # returns the file path
     return file_path
 
 def _lower_locale(self, locale):
