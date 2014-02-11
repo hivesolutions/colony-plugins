@@ -309,11 +309,18 @@ class Mvc(colony.base.system.System):
         @param mvc_service_plugin: The mvc service plugin to be loaded.
         """
 
+        # verifies the existence of all the method in the facade of the plugin
+        # that are going to be used fore retrieval of patterns so that only the
+        # ones that exist are called and for the others fallback values are used
+        has_patterns = hasattr(mvc_service_plugin, "get_patterns")
+        has_communication_patterns = hasattr(mvc_service_plugin, "get_communication_patterns")
+        has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
+
         # retrieves the complete set of patterns from the
         # mvc service plugin to load them into the internal structures
-        patterns = mvc_service_plugin.get_patterns()
-        communication_patterns = mvc_service_plugin.get_communication_patterns()
-        resource_patterns = mvc_service_plugin.get_resource_patterns()
+        patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
+        communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
+        resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
 
         # iterates over all the patterns to update the internal structures
         # to reflect their changes
@@ -399,11 +406,18 @@ class Mvc(colony.base.system.System):
         # are cleared for the next handling tick
         self.clear_pending = True
 
+        # verifies the existence of all the method in the facade of the plugin
+        # that are going to be used fore retrieval of patterns so that only the
+        # ones that exist are called and for the others fallback values are used
+        has_patterns = hasattr(mvc_service_plugin, "get_patterns")
+        has_communication_patterns = hasattr(mvc_service_plugin, "get_communication_patterns")
+        has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
+
         # retrieves the complete set of patterns from the
         # mvc service plugin to unload them from the internal structures
-        patterns = mvc_service_plugin.get_patterns()
-        communication_patterns = mvc_service_plugin.get_communication_patterns()
-        resource_patterns = mvc_service_plugin.get_resource_patterns()
+        patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
+        communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
+        resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
 
         # iterates over all the patterns to update the internal structures
         # to reflect their changes (removes references)
