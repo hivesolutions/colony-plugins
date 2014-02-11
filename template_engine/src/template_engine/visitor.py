@@ -1430,19 +1430,23 @@ class Visitor:
             # sets the file path as relative to the file directory
             file_path = file_directory + "/" + attribute_file_literal_value
 
-        # parses the file retrieving the template file
-        template_file = self.template_engine.parse_file_path(file_path, self.encoding, self.process_methods_list, self.locale_bundles)
+        # parses the file retrieving the template file structure, note
+        # that any path existence validation will be done at this stage
+        template_file = self.template_engine.parse_file_path(
+            file_path,
+            self.encoding,
+            self.process_methods_list,
+            self.locale_bundles
+        )
 
-        # sets the global map in template file
+        # sets the global map and the variable(s) encoding in the loaded
+        # template file structure to be used in the process stage
         template_file.set_global_map(self.global_map)
-
-        # sets the variable encoding in the template file
         template_file.set_variable_encoding(self.variable_encoding)
 
-        # processes the template file
+        # processes the template file and writes the processed template
+        # file (resulting template data) to the string buffer
         processed_template_file = template_file.process()
-
-        # writes the processed template file to the string buffer
         self.string_buffer.write(processed_template_file)
 
     def process_uuid(self, node):
