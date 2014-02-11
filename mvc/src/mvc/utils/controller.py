@@ -2421,8 +2421,14 @@ def retrieve_template_file(
     # values, this value will replaces the provided locale
     locale = locale_request and self.get_locale(locale_request) or locale
 
-    # processes the file path according to the locale
-    file_path = self._process_file_path_locale(file_path, locale)
+    # processes the file path according to the locale, the resulting file path
+    # will be localized taking into account the exists (or not) of the file
+    # according to the default file construction rules
+    file_path = self._process_file_path_locale(
+        file_path,
+        locale = locale,
+        base_path = self.templates_path
+    )
 
     # creates the template file path, joining the templates path
     # and the (template file path)
@@ -2431,7 +2437,13 @@ def retrieve_template_file(
     # parses the template file in the template file path assigning
     # the appropriate page include if the partial page value is set
     template_file = self.template_engine_plugin.parse_file_path_encoding(template_file_path, encoding)
-    partial_page and self.assign_include_template_file(template_file, PAGE_INCLUDE_VALUE, partial_page, locale)
+    if partial_page: self.assign_include_template_file(
+        template_file,
+        PAGE_INCLUDE_VALUE,
+        partial_page,
+        locale = locale,
+        base_path = self.templates_path
+    )
 
     # assigns the proper locale variable to the current template
     # so that it's possible to access it from within it
@@ -2442,7 +2454,8 @@ def retrieve_template_file(
     global_bundle = self._get_bundle(locale)
     global_bundle and template_file.add_bundle(global_bundle)
 
-    # returns the template file
+    # returns the "generated" template file structure to the calling
+    # method as requested by the method call
     return template_file
 
 def apply_base_path_template_file(self, rest_request, template_file):
@@ -2556,12 +2569,23 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
         # assigns the session attribute to the template file
         template_file.assign(variable_prefix + session_attribute_name_replaced, session_attribute)
 
-def assign_include_template_file(self, template_file, variable_name, variable_value, locale = None):
-    # processes the variable value (file path) to retrieve
-    # the localized variable value
-    variable_value = locale and self._process_file_path_locale(variable_value, locale) or variable_value
-
-    # assigns the variable to the template file
+def assign_include_template_file(
+    self,
+    template_file,
+    variable_name,
+    variable_value,
+    locale = None,
+    base_path = None
+):
+    # in case the locale attribute is defined, must process the variable
+    # value first so that the variable value is processed and the proper
+    # localized version is used instead of the "raw" value, then assigns
+    # the resulting value (or the original) to the template file
+    if locale: variable_value = self._process_file_path_locale(
+        variable_value,
+        locale = locale,
+        base_path = base_path
+    )
     template_file.assign(variable_name, variable_value)
 
 def lock_session(self, rest_request):
@@ -4442,27 +4466,55 @@ def _convert_entity_map(self, entity):
     # returns the values map
     return values_map
 
-def _process_file_path_locale(self, file_path, locale = None):
+def _process_file_path_locale(
+    self,
+    file_path,
+    locale = None,
+    base_path = None,
+    separator = ".",
+    fallback = "_"
+):
     """
     Processes the given file path according to the given locale.
     This will change the provided file path into a locale version
     of it taking into account the provided parameter value.
+
+    The optional separator value controls the separator character
+    that will be used to separate the base file name from the locale
+    version string.
+
+    A possible fallback value may be provided so that if the file
+    name with the requested separator does not exists a new try
+    is done with the fallback value as the separator.
 
     In case no locale is given the original file path is returned.
 
     @type file_path: String
     @param file_path: The file path to be processed.
     @type locale: String
-    @param locale: The locale to be used for file
-    path processing.
+    @param locale: The locale to be used for file path processing,
+    this value should conform with the current locale standards.
+    @type separator: String
+    @param separator: The  string containing the characters that will
+    be used to separate the base name of the file from the locale part.
+    @type fallback: String
+    @param fallback: Text value containing the value that will be used
+    as the separator in case it's not possible to find the file path
+    resulting from the first try.
     @rtype: String
-    @return: The processed file path.
+    @return: The processed file path, conforming with the proper
+    localized version of the file path.
     """
 
     # in case no locale is defined, there's no need for any extra
     # processing of the file path and so the proper file path is
     # returns to the caller method as the template file path
     if not locale: return file_path
+
+    # verifies if the current execution is from the fallback operation
+    # this occurs when the separator value is the same as the fallback
+    # value and should represent the second execution of this method
+    is_fallback = separator == fallback
 
     # converts the locale value into a lower cased value that is going
     # to be appended to the file name for locale retrieval
@@ -4477,18 +4529,40 @@ def _process_file_path_locale(self, file_path, locale = None):
     # creates the locale string value from the locale lower value by
     # appending the locale lower value to the current string and adding
     # it to the splitted string list (to be latter joined)
-    locale_string_value = "." + locale_lower + "."
+    locale_string_value = separator + locale_lower + "."
     file_name_splitted.insert(1, locale_string_value)
 
     # re-joins the file name back to create the new file name that should
     # represent the localized version of the file name
     file_name = "".join(file_name_splitted)
 
-    # joins the file path and the file name, to retrieve
-    # the final (and complete) file path, returning then
-    # this value to the caller method
-    file_path = os.path.join(base_file_path, file_name)
-    return file_path
+    # joins the base file path with the (new) file (localized) name creating
+    # the fully localized path and normalizes it, then in case the base path
+    # is defined joins the base path with the locale path to create the full
+    # path to the localized path that may be used for existence verification
+    locale_path = os.path.join(base_file_path, file_name)
+    locale_path = os.path.normpath(locale_path)
+    full_path = os.path.join(base_path, locale_path) if base_path else locale_path
+
+    # verifies if the localized file exists in the file system and in case it
+    # does not and this is not (already) the fallback call tries to run the
+    # fallback call, meaning that the separator value is changed with the fallback
+    # value so that it may try to find the file using a different localization
+    # of naming strategy (auto fail over)
+    exists = os.path.exists(full_path)
+    should_fall = not exists and not is_fallback
+    if should_fall:
+        locale_path = self._process_file_path_locale(
+            file_path,
+            locale = locale,
+            base_path = base_path,
+            separator = fallback,
+            fallback = fallback
+        )
+
+    # returns the resulting locale path to the caller method so that it may be
+    # used inside localization contexts (templates localization support)
+    return locale_path
 
 def _lower_locale(self, locale):
     """
