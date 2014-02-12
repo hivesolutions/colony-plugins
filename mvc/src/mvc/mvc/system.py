@@ -298,6 +298,38 @@ class Mvc(colony.base.system.System):
         # service was found for the current request constraints
         raise exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
 
+    def _normalize_patterns(self, patterns):
+        _patterns = []
+        
+        for pattern in patterns:
+            pattern = list(pattern)
+            pattern_key = pattern[0]
+            pattern[0] = self._normalize_pattern(pattern_key)
+
+    def _normalize_pattern(self, pattern):
+        if not pattern.startswith("^"): pattern = "^" + pattern
+        if not pattern.endswith("$"): pattern = pattern + "$"
+        
+        
+        REPLACE_REGEX = re.compile("\<((\w+):)?(\w+)\>")
+        """ The regular expression to be used in the replacement
+        of the capture groups for the urls """
+        
+        INT_REGEX = re.compile("\<int:(\w+)\>")
+        """ The regular expression to be used in the replacement
+        of the integer type based groups for the urls """
+        
+        
+        pattern = INT_REGEX.sub(r"(?P[\1>[0-9]+)", pattern)
+        pattern = REPLACE_REGEX.sub(r"(?P[\3>[\sa-zA-Z0-9_-]+)", pattern)
+        pattern = pattern.replace("?P[", "?P<")
+        
+        #route = [method, re.compile(expression), function, context, opts]
+        #App._BASE_ROUTES.append(route)
+        
+        print pattern
+        return pattern
+
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """
         Loads the given mvc service plugin, this process is focused
@@ -321,6 +353,15 @@ class Mvc(colony.base.system.System):
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
         communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
         resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
+        
+        
+        self._normalize_patterns(patterns)
+        self._normalize_patterns(communication_patterns)
+        self._normalize_patterns(resource_patterns)
+        
+        
+        
+        
 
         # iterates over all the patterns to update the internal structures
         # to reflect their changes
@@ -345,7 +386,8 @@ class Mvc(colony.base.system.System):
             )
 
             # escapes the pattern key replacing the named
-            # group selectors
+            # group selectors, this is required so that the
+            # proper key matching is possible
             pattern_key_escaped = NAMED_GROUPS_REGEX.sub("\g<1>", pattern_key)
 
             # in case the pattern key escaped does not exists
