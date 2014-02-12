@@ -2291,6 +2291,82 @@ def redirect_to_base_path(self, rest_request, quote = False):
     # redirects (with base) the request to the "redirect to" target
     self.redirect_base_path(rest_request, redirect_to_target, quote = quote)
 
+def template(
+    self,
+    rest_request = None,
+    apply_base_path = True,
+    assign_session = False,
+    assign_flash = True,
+    variable_encoding = None,
+    content_type = None,
+    *args,
+    **kwargs
+):
+    """
+    Main entry method that generated and renders a template setting
+    the resulting values as the contents for the provided rest request.
+
+    This is an aggregation method that basically calls for the generation
+    of the template file with the dynamic keyword arguments and then sets
+    the contents resulting for the template rendering as contents.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request that is going to be used as the
+    target for the setting of the contents.
+    @type apply_base_path: bool
+    @param apply_base_path: If the base path should be applied on the template
+    file (for relative path resolution).
+    @type assign_session: bool
+    @param assign_session: If the session variables should be assigned on the
+    template file to be processed.
+    @type assign_flash: bool
+    @param assign_flash: If the flash information should be automatically
+    assigned to the current template variables.
+    @type variable_encoding: String
+    @param variable_encoding: The encoding to be used to encode the variables
+    in the template file processing.
+    @type content_type: String
+    @param content_type: The content type to be set.
+    @rtype: TemplateFile
+    @return: The template file that has been used for the setting of the contents,
+    note that this value may be used again but carefully to avoid problems.
+    """
+
+    template_file = self.template_file(rest_request = rest_request, *args, **kwargs)
+    self.process_set_contents(
+        rest_request,
+        template_file,
+        apply_base_path = apply_base_path,
+        assign_session = assign_session,
+        assign_flash = assign_flash,
+        variable_encoding = variable_encoding,
+        content_type = content_type
+    )
+    return template_file
+
+def template_file(self, template = None, *args, **kwargs):
+    """
+    Method that should provided the template file for a series
+    of options that are considered to be dynamic.
+
+    This method provided an entry point for the redefinition of
+    template file provided (using inheritance).
+
+    @type template: String
+    @param template: The path to the template file that is going
+    to be used as based for the template retrieval. This value
+    is set as invalid by default.
+    @rtype: TemplateFile
+    @return: The final template file instance that may then be
+    used for the proper rendering.
+    """
+
+    return self.retrieve_template_file(
+        file_path = template,
+        *args,
+        **kwargs
+    )
+
 def process_set_contents(
     self,
     rest_request,
