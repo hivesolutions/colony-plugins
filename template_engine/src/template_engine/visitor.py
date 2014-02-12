@@ -1424,11 +1424,13 @@ class Visitor:
             file_path = attribute_file_literal_value
         # in case the path is relative to the current file
         else:
-            # retrieves the file directory from the file path
+            # retrieves the file directory from the file path and then
+            # sets the file path as relative to the file directory, after
+            # the join operations normalizes the path so that it represents
+            # the proper path with the proper operative system representation
             file_directory = os.path.dirname(self.file_path)
-
-            # sets the file path as relative to the file directory
-            file_path = file_directory + "/" + attribute_file_literal_value
+            file_path = os.path.join(file_directory, attribute_file_literal_value)
+            file_path = os.path.normpath(file_path)
 
         # parses the file retrieving the template file structure, note
         # that any path existence validation will be done at this stage
