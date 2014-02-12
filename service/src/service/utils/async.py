@@ -230,18 +230,15 @@ class AbstractService:
         self.service_execution_thread = threads.ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
-        # a default end point is created with those values
+        # a default end point is created with those values as they are considered
+        # to be the fallback value to the no end points definition situation
         if not self.end_points and self.socket_provider:
-            # defines the end point tuple
-            end_point_tuple = (
+            self.end_points.append((
                 self.socket_provider,
                 self.bind_host,
                 self.port,
                 self.socket_parameters
-            )
-
-            # adds the end point
-            self.end_points.append(end_point_tuple)
+            ))
 
     def add_socket(self, client_socket, client_address, service_port):
         client_socket_fd = client_socket.fileno()
@@ -337,19 +334,19 @@ class AbstractService:
         """
 
         try:
-            # starts the background threads
+            # starts the background threads and then creates the
+            # base infra-structure for the service so that the
+            # internal service structures are properly created
             self._start_threads()
-
-            # creates the base infra-structure for the service
             self._create_base()
 
-            # creates and sets the service sockets
+            # creates and activates the service sockets so that
+            # new incoming connection may be accepted
             self._create_service_sockets()
-
-            # activates and listens the service sockets
             self._activate_service_sockets()
 
-            # runs the main loop
+            # runs the main loop, this is the blocking call
+            # and will last until the stop flag is set
             self._loop()
         except BaseException, exception:
             print "Critical exception in user code:"
@@ -509,12 +506,12 @@ class AbstractService:
         request and connection handling.
         """
 
-        # iterates continuously
+        # iterates continuously while the stop flag
+        # has not been set as there's data to be processed
         while True:
-            # in case the stop flag is set
-            if self.stop_flag:
-                # breaks the loop
-                break
+            # in case the stop flag is set must break the
+            # loop as no more operations are allowed
+            if self.stop_flag: break
 
             # pools the poll instance to retrieve the
             # current loop events
@@ -710,14 +707,19 @@ class KqueuePolling:
 
 class Connection:
 
-
     service = None
     """ The reference to the service implementation
     this will be used to reference top level methods """
 
     socket = None
+    """ Reference to the socket object that is associated
+    with the connection, this value is unset until the
+    connection has a proper socket associated with it """
 
     socket_fd = None
+    """ The fd value for the socket associated with the
+    current connection, again this value is only set at
+    the moment of socket association with the connection """
 
     connection_address = None
     """ The address for the connection """
@@ -726,8 +728,15 @@ class Connection:
     """ The port for the connection """
 
     connection_status = True
+    """ The status of of the connection, this is a boolean value
+    and is considered to be open on valid and closed on invalid """
 
     request_data = {}
+    """ The data map to be used to persist the processing
+    request data, this value is meant to be used by the concrete
+    service implementation to store any kind of domain specific
+    metadata that should be associated with the connection (eg:
+    session identifier, username, etc) """
 
     delegates = []
     """ The list of delegate object that are notified
@@ -821,14 +830,12 @@ class ServiceConnection(Connection):
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
-                # sending "event"
+                # sending "event" (returns immediately)
                 if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
-                    # returns immediately (no error)
                     return
-                # otherwise the exception is more severe
-                else:
-                    # re-raises the exception
-                    raise
+                # otherwise the exception is more severe and must re-raise it
+                # to the top level layers for proper handling
+                else: raise
 
             # sets the service connection to non blocking mode
             # and then adds the service connection in the service
@@ -1183,9 +1190,8 @@ class ClientConnection(Connection):
         """
 
         # in case the pending data is not valid
-        if not pending_data:
-            # returns immediately
-            return
+        # returns immediately as it can't be added
+        if not pending_data: return
 
         # adds the pending data to the pending data
         # buffer (list)
