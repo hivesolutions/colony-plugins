@@ -1982,7 +1982,9 @@ class RestRequest:
         # current cookie, must return immediately
         if not session_id: return
 
-        # retrieves the session from the session id
+        # tries to retrieve the session from the session id
+        # this value may be invalid (not set) in case no
+        # session could be retrieved from session id
         self.session = self.rest.get_session(session_id)
 
         # if no session is selected, raises an invalid session
