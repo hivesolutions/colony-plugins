@@ -73,26 +73,6 @@
     background: #ccc9ad;
 }
 
-.console::-webkit-scrollbar {
-    width: 10px;
-}
-
-.console::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
-}
-
-.console::-webkit-scrollbar-thumb {
-    background-color: #aaaaaa;
-}
-
-.console::-webkit-scrollbar-thumb:hover {
-    background-color: #999999;
-}
-
-.console::-webkit-scrollbar-thumb:window-inactive {
-    background-color: #bbbbbb;
-}
-
 .console .text {
     font-family: monospace;
     font-size: 8px;
@@ -136,6 +116,10 @@
 
 .console .autocomplete::-webkit-scrollbar-thumb {
     background-color: #888888;
+}
+
+.console .autocomplete::-webkit-scrollbar-thumb:hover {
+    background-color: #999999;
 }
 
 .console .autocomplete::-webkit-scrollbar-thumb:window-inactive {
@@ -211,6 +195,10 @@
 
 .console .autocomplete .tooltip::-webkit-scrollbar-thumb {
     background-color: #dddddd;
+}
+
+.console .autocomplete .tooltip::-webkit-scrollbar-thumb:hover {
+    background-color: #999999;
 }
 
 .console .autocomplete .tooltip::-webkit-scrollbar-thumb:window-inactive {
