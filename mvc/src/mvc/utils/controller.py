@@ -1742,7 +1742,14 @@ def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = H
     # returns the base path complete
     return base_path_complete
 
-def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTENT_TYPE, touch_date = False, max_age = None):
+def set_contents(
+    self,
+    rest_request,
+    contents = "",
+    content_type = DEFAULT_CONTENT_TYPE,
+    touch_date = False,
+    max_age = None
+):
     """
     Sets the given contents in the given rest request.
 
@@ -2292,7 +2299,7 @@ def process_set_contents(
     assign_session = False,
     assign_flash = True,
     variable_encoding = None,
-    content_type = DEFAULT_CONTENT_TYPE
+    content_type = None
 ):
     """
     Processes the template file and set the result of it
@@ -2319,6 +2326,11 @@ def process_set_contents(
     @type content_type: String
     @param content_type: The content type to be set.
     """
+
+    # default the content type value taking into account if the content
+    # type value is defined, this way it's possible to avoid the definition
+    # of the content type parameter (best practice)
+    content_type = content_type or DEFAULT_CONTENT_TYPE
 
     # applies the base path and assigns the session to the template file in
     # case the apply base path and the assign the session flags are set in
@@ -2384,7 +2396,8 @@ def retrieve_template_file(
     encoding = DEFAULT_TEMPLATE_FILE_ENCODING,
     partial_page = None,
     locale = None,
-    locale_request = None
+    locale_request = None,
+    **kwargs
 ):
     """
     Retrieves a template file object for the given
@@ -2431,8 +2444,10 @@ def retrieve_template_file(
     )
 
     # creates the template file path, joining the templates path
-    # and the (template file path)
+    # and the (template file path) and then normalizes the path
+    # so that no erroneous path is created (standard structure)
     template_file_path = os.path.join(self.templates_path, file_path)
+    template_file_path = os.path.normpath(template_file_path)
 
     # parses the template file in the template file path assigning
     # the appropriate page include if the partial page value is set
@@ -2453,6 +2468,11 @@ def retrieve_template_file(
     # template file in case it's a valid bundle (successful retrieval)
     global_bundle = self._get_bundle(locale)
     global_bundle and template_file.add_bundle(global_bundle)
+
+    # iterates over all the named arguments provided as these are considered
+    # to be values to be assigned to the template file, then assigns each of
+    # these values to the template file (variable export)
+    for key, value in kwargs.iteritems(): template_file.assign(key, value)
 
     # returns the "generated" template file structure to the calling
     # method as requested by the method call
