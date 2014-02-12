@@ -173,12 +173,23 @@ def _class_reload_many(cls, models, options = {}, entity_manager = None):
     # provided (entity) models with the provided options
     entity_manager.reload_many(models, options)
 
-def _class_get(cls, id_value, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_get(
+    cls,
+    id_value,
+    options = {},
+    context = None,
+    namespace = None,
+    entity_manager = None,
+    raise_e = True
+):
     """
     Class method that retrieves an entity model for
     the given id value and using the given options.
     This method allows the indirect access to the entity
     manager for the usage of the get method.
+
+    An extra attribute may be used to avoid raising an
+    exception in case no model is found for the parameters.
 
     @type id_value: Object
     @param id_value: The value for the identifier attribute
@@ -195,6 +206,9 @@ def _class_get(cls, id_value, options = {}, context = None, namespace = None, en
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
+    @type raise_e: boolean
+    @param raise_e: If an exception must be raised in case no
+    model instance is found for the requested parameters.
     @rtype: Entity
     @return: The retrieved retrieved entity model.
     """
@@ -221,7 +235,13 @@ def _class_get(cls, id_value, options = {}, context = None, namespace = None, en
     entity_model = entity_manager.get(cls, id_value, options)
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
-    # returns the retrieved entity model
+    # in case no entity model was found for the requested parameters
+    # an error must be raised indicating such problems as the retrieval
+    # of a related entity is considered to be of mandatory value
+    if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
+
+    # returns the retrieved entity model, this is only achieved in
+    # case a valid values was retrieved from the data source
     return entity_model
 
 def _class_count(cls, options = {}, context = None, namespace = None, entity_manager = None):
