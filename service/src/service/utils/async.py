@@ -309,13 +309,16 @@ class AbstractService:
         # tuple (to call them)
         for handler in handlers:
             try:
-                # calls the handler with the socket
+                # calls the handler with the socket, this will handle
+                # the new data that has been received
                 handler(socket)
-            except BaseException:
-                print "Exception in user code:"
-                print "-" * 60
-                traceback.print_exc(file = sys.stdout)
-                print "-" * 60
+            except BaseException, exception:
+                # prints a warning message message using the service
+                # plugin (this message is considered important)
+                self.service_plugin.warning(
+                    "Runtime problem: %s, while handling data" %\
+                    unicode(exception)
+                )
 
                 # retrieves the client connection from the client
                 # connection map using the socket and closes it, at
@@ -349,27 +352,29 @@ class AbstractService:
             # and will last until the stop flag is set
             self._loop()
         except BaseException, exception:
-            print "Critical exception in user code:"
-            print "-" * 60
-            traceback.print_exc(file = sys.stdout)
-            print "-" * 60
-
-            # prints a warning message message
-            self.service_plugin.warning("Runtime problem: %s, while starting the service" % unicode(exception))
+            # prints a warning message message using the service
+            # plugin (this message is considered important)
+            self.service_plugin.warning(
+                "Runtime problem: %s, while starting the service" %\
+                unicode(exception)
+            )
 
             # sets the service connection active flag as false
             self.service_connection_active = False
         finally:
-            # disables the service sockets
+            # disables the service sockets and then removed
+            # the complete set of client sockets as they can
+            # no longer be handled (loop closed)
             self._disable_service_sockets()
-
-            # removes the client sockets
             self._remove_client_sockets()
 
             # sets the service connection close end event
+            # meaning that the unload call may unblock
             self.service_connection_close_end_event.set()
 
-            # unsets the stop flag
+            # unsets the stop flag as this value as already
+            # been used to stop the loop and is no longer
+            # useful (provided support for next loop)
             self.stop_flag = False
 
     def stop_service(self):
@@ -657,7 +662,11 @@ class SelectPolling:
 
     def poll(self, timeout):
         # selects the values
-        readable, writeable, errors = select.select(self.readable_socket_list, self.writeable_socket_list, self.errors_socket_list, timeout)
+        readable, writeable, errors = select.select(
+            self.readable_socket_list,
+            self.writeable_socket_list,
+            self.errors_socket_list, timeout
+        )
 
         # creates the events map to hold the socket fd's
         events_map = {}
@@ -722,10 +731,12 @@ class Connection:
     the moment of socket association with the connection """
 
     connection_address = None
-    """ The address for the connection """
+    """ The address for the connection, this may be either
+    a string based hostname or the ip address """
 
     connection_port = None
-    """ The port for the connection """
+    """ The port for the connection, this value should
+    conform with tcp specification and it's an integer """
 
     connection_status = True
     """ The status of of the connection, this is a boolean value
