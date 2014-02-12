@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import inspect
 
+import colony
+
 import exceptions
 
 ERROR_STATUS_CODE = 500
@@ -86,7 +88,11 @@ PERSIST_NONE_TYPE = 0x00
 PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
 """ The persist all persist type """
 
-def validated_method(validation_parameters = None, validation_method = None, call_validation_failed = False):
+def validated_method(
+    validation_parameters = None,
+    validation_method = None,
+    call_validation_failed = None
+):
     """
     Decorator for the validated method.
 
@@ -98,7 +104,8 @@ def validated_method(validation_parameters = None, validation_method = None, cal
     validation (in case it's necessary).
     @type call_validation_failed: bool
     @param call_validation_failed: If the validation failed method should be
-    called in case the validation fails.
+    called in case the validation fails. This value is not defined by default
+    and for such situations it will be inferred from the current parameters.
     @rtype: Function
     @return: The created decorator.
     """
@@ -133,6 +140,22 @@ def validated_method(validation_parameters = None, validation_method = None, cal
 
             # retrieves the parameters reference
             parameters = args_length > 2 and args[2] or {}
+
+            # retrieves the value for the serializer attribute, if this
+            # value is defined it must contain a callable object that is
+            # able to serialize any dictionary oriented value
+            seralizer = parameters.get("serializer", None)
+
+            # in case the call validation flag is not defined the value
+            # of the should call (validation) flag must be inferred from
+            # the existence or not of the serializer, because serialized
+            # methods are not considered to be validated
+            if call_validation_failed == None:
+                should_call = False if seralizer else True
+
+            # otherwise simply use the call validation failed value as the
+            # value for the should call boolean flag (transition of value)
+            else: should_call = call_validation_failed
 
             # in case the controller instance does not have the validate method
             # an exception should be raised indicating the problem
@@ -196,8 +219,8 @@ def validated_method(validation_parameters = None, validation_method = None, cal
             if reasons_list:
 
                 # in case a validation failed method is defined and
-                # the call validation failed flag is set
-                if validation_failed_method and call_validation_failed:
+                # the validation method should be called (by flag)
+                if validation_failed_method and should_call:
                     # calls the validation failed method with the rest request the parameters the
                     # validation parameters and the reasons list and sets the return value
                     return_value = validation_failed_method(
@@ -220,7 +243,7 @@ def validated_method(validation_parameters = None, validation_method = None, cal
 
             # otherwise the reason list is empty (no errors have occurred) and so the
             # "normal" function call workflow must be used
-            else: return_value = function(*args, **kwargs)
+            else: return_value = colony.call_safe(function, *args, **kwargs)
 
             # returns the return value, retrieved from either the
             # validation method or form the decorated function
@@ -446,7 +469,7 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
             try:
                 # calls the callback function,
                 # retrieving the return value
-                return_value = function(*args, **kwargs)
+                return_value = colony.call_safe(function, *args, **kwargs)
             except BaseException, exception:
                 # logs a warning message because if an exception reached
                 # this area it must be considered not handled gracefully
