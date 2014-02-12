@@ -54,6 +54,16 @@ NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
 """ The named groups regex """
 
+REPLACE_REGEX = re.compile("(?<!\(\?P)\<((\w+):)?(\w+)\>")
+""" The regular expression to be used in the replacement
+of the capture groups for the urls, this regex will capture
+any named group not change until this stage (eg: int,
+string, regex, etc.) """
+
+INT_REGEX = re.compile("\<int:(\w+)\>")
+""" The regular expression to be used in the replacement
+of the integer type based groups for the urls """
+
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
 
@@ -63,6 +73,13 @@ GET_DEFAULT_PARAMETERS_VALUE = "get_default_parameters"
 DEFAULT_STATUS_CODE = 200
 """ The default status code, by default every request
 is considered to be successful """
+
+TYPES_R = dict(
+    int = int,
+    str = str
+)
+""" Map that resolves a data type from the string representation
+to the proper type value to be used in casting """
 
 class Mvc(colony.base.system.System):
     """
@@ -298,38 +315,6 @@ class Mvc(colony.base.system.System):
         # service was found for the current request constraints
         raise exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
 
-    def _normalize_patterns(self, patterns):
-        _patterns = []
-        
-        for pattern in patterns:
-            pattern = list(pattern)
-            pattern_key = pattern[0]
-            pattern[0] = self._normalize_pattern(pattern_key)
-
-    def _normalize_pattern(self, pattern):
-        if not pattern.startswith("^"): pattern = "^" + pattern
-        if not pattern.endswith("$"): pattern = pattern + "$"
-        
-        
-        REPLACE_REGEX = re.compile("\<((\w+):)?(\w+)\>")
-        """ The regular expression to be used in the replacement
-        of the capture groups for the urls """
-        
-        INT_REGEX = re.compile("\<int:(\w+)\>")
-        """ The regular expression to be used in the replacement
-        of the integer type based groups for the urls """
-        
-        
-        pattern = INT_REGEX.sub(r"(?P[\1>[0-9]+)", pattern)
-        pattern = REPLACE_REGEX.sub(r"(?P[\3>[\sa-zA-Z0-9_-]+)", pattern)
-        pattern = pattern.replace("?P[", "?P<")
-        
-        #route = [method, re.compile(expression), function, context, opts]
-        #App._BASE_ROUTES.append(route)
-        
-        print pattern
-        return pattern
-
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """
         Loads the given mvc service plugin, this process is focused
@@ -353,15 +338,16 @@ class Mvc(colony.base.system.System):
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
         communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
         resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
-        
-        
-        self._normalize_patterns(patterns)
-        self._normalize_patterns(communication_patterns)
-        self._normalize_patterns(resource_patterns)
-        
-        
-        
-        
+
+        # runs the normalization process for the various patterns
+        # that have been retrieved so that the patterns are correctly
+        # processed and converted from their canonical form, note that
+        # the first set of patters are normalized with some extra operations
+        # applied to them meaning that some meta information is also added
+        # to each of the pattern tuples (as defined in specification)
+        patterns = self._normalize_patterns(patterns, extra = True)
+        communication_patterns = self._normalize_patterns(communication_patterns)
+        resource_patterns = self._normalize_patterns(resource_patterns)
 
         # iterates over all the patterns to update the internal structures
         # to reflect their changes
@@ -669,6 +655,22 @@ class Mvc(colony.base.system.System):
         # method and the parameters
         handler_method, parameters = handler_tuple
 
+        # retrieves some of the parameters as they are going to
+        # be used to infer the real (type converted) value for
+        # each of the patterns to be sent to the method
+        pattern_names = parameters.get("pattern_names", {})
+        meta = parameters.get("meta", {})
+        names = meta.get("names", {})
+
+        # iterates over the complete set of values in the names
+        # map to converts the various patterns into the defined
+        # target type as defined in pattern expression
+        for name, type_r in names.iteritems():
+            value = pattern_names.get(name, None)
+            try: value = type_r(value)
+            except: value = value
+            pattern_names[name] = value
+
         # retrieves the controller for the handlers method
         # and then uses it to retrieve its default parameters
         # after that uses the default parameters to extend the
@@ -679,9 +681,11 @@ class Mvc(colony.base.system.System):
             controller.get_default_parameters() or {}
         colony.libs.map_util.map_extend(parameters, default_parameters, copy_base_map = False)
 
-        # handles the mvc request to the handler method
-        # (rest request flow)
-        handler_method(rest_request, parameters)
+        # handles the mvc request to the handler method (rest
+        # request flow) note that the call is done using the safe
+        # call method so that only the valid arguments are passed
+        # to the handler method (pattern names validation)
+        colony.call_safe(handler_method, rest_request, parameters, **pattern_names)
 
     def _process_request(self, rest_request):
         """
@@ -912,6 +916,87 @@ class Mvc(colony.base.system.System):
         self.resource_matching_regex_list.append(resource_matching_regex)
         self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
 
+    def _normalize_patterns(self, patterns, extra = False):
+        # creates the list that will hold the final version
+        # of the patterns (after normalization process), this
+        # value will contain various list defining the patterns
+        _patterns = []
+
+        # iterates over the complete set of provided patterns to
+        # normalize each of them and then add the resulting value
+        # to the list of "new" patterns
+        for pattern in patterns:
+            pattern = self._normalize_pattern(pattern, extra = extra)
+            _patterns.append(pattern)
+
+        # returns the final (normalized) list of patterns to the
+        # caller method, this new patterns have been converted and
+        # may contain some extra (meta) information
+        return _patterns
+
+    def _normalize_pattern(self, pattern, extra = False):
+        # converts the provided pattern (expected to be a tuple) into
+        # a list type so that it becomes mutable as required, then gets
+        # the length of the pattern to be used ahead and extracts the
+        # first element from it as the expression of the pattern, then
+        # saves the "original" expression value in a private variable
+        # as it's going to be used latter for naming to type resolution
+        pattern = list(pattern)
+        pattern_l = len(pattern)
+        expression = pattern[0]
+        _expression = expression
+
+        # verifies if the start line and end line tokens are defined
+        # in the expression and in case they're not adds then to the
+        # current expression string as they are mandatory
+        if not expression.startswith("^"): expression = "^" + expression
+        if not expression.endswith("$"): expression = expression + "$"
+
+        # runs the regex based replacement chain that should translate
+        # the expression from a simplified domain into a regex based domain
+        # that may be correctly compiled into the rest environment, then sets
+        # the new expression value as the first element of the pattern
+        expression = INT_REGEX.sub(r"(?P[\1>[0-9]+)", expression)
+        expression = REPLACE_REGEX.sub(r"(?P[\3>[\sa-zA-Z0-9_-]+)", expression)
+        expression = expression.replace("?P[", "?P<")
+        pattern[0] = expression
+
+        # in case no extra normalization operations are requested the method
+        # should returns the "new" pattern list immediately to the caller method
+        # as this is the specific behavior for such situations
+        if not extra: return pattern
+
+        # creates the names dictionary that will hold the association between
+        # the name and the data type associated with that name for runtime
+        # resolution of the argument values
+        names = dict()
+
+        # iterates over the complete set of matches for the replacer values
+        # to be able to find the various names and then associate native
+        # data types that will then be used for conversion at runtime for
+        # the parameters of the handler function
+        iterator = REPLACE_REGEX.finditer(_expression)
+        for match in iterator:
+            _type_s, type_t, name = match.groups()
+            type_r = TYPES_R.get(type_t, str)
+            names[name] = type_r
+
+        # in case any of the pattern components is missing defaults to the
+        # default value for each of them so that the meta field (last one)
+        # may be added as it is required by the specification
+        if pattern_l < 3: pattern.append("get")
+        if pattern_l < 4: pattern.append(None)
+        if pattern_l < 5: pattern.append({})
+
+        # creates the meta dictionary containing the values that will be used
+        # for runtime based processing and then adds the value to the pattern
+        meta = dict(names = names)
+        pattern.append(meta)
+
+        # returns the final list based pattern containing the complete set
+        # of fields (including the meta one) to the caller method
+        return pattern
+
     def __validate_match(self, rest_request, handler_attributes, resource_path):
         # unpacks the handler attributes, retrieving the handler
         # validation regex and the handler arguments
@@ -934,6 +1019,7 @@ class Mvc(colony.base.system.System):
         operation_types = arguments_length > 1 and arguments[1] or ("get", "put", "post", "delete")
         encoders = arguments_length > 2 and arguments[2] or None
         contraints = arguments_length > 3 and arguments[3] or {}
+        meta = arguments_length > 4 and arguments[4] or {}
 
         # casts both the operation types and the encoders as tuples
         # so that they remain compatible with the execution code
@@ -961,7 +1047,9 @@ class Mvc(colony.base.system.System):
         # state (validation of encoder failed)
         if encoders and not encoder_name_r in encoders: return None
 
-        # iterates over the complete set of constraints to
+        # iterates over the complete set of constraints to be able to
+        # ensure that they are valid for the current execution and if
+        # the're not the return value is invalid (validation failed)
         for contraint_name, contraint_value in contraints.items():
             # retrieves the handler constraint value type
             contraint_value_t = type(contraint_value)
@@ -984,13 +1072,14 @@ class Mvc(colony.base.system.System):
 
         # creates the map containing the various parameters to be
         # "pushed" to the lower layer of the mvc stack
-        parameters = {
-            "file_handler" : self.mvc_file_handler,
-            "communication_handler" : self.mvc_communication_handler,
-            "method" : operation_type_r,
-            "encoder_name" : encoder_name_r,
-            "pattern_names" : validation_match_groups_map
-        }
+        parameters = dict(
+            file_handler = self.mvc_file_handler,
+            communication_handler = self.mvc_communication_handler,
+            method = operation_type_r,
+            encoder_name = encoder_name_r,
+            pattern_names = validation_match_groups_map,
+            meta = meta
+        )
 
         # creates the handler tuple, containing both the method to
         # be used for handling and the parameters to be passed and
