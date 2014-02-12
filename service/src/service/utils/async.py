@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import time
 import errno
 import types
@@ -45,7 +44,6 @@ import heapq
 import select
 import socket
 import threading
-import traceback
 
 import colony.libs.map_util
 
@@ -310,13 +308,13 @@ class AbstractService:
         for handler in handlers:
             try:
                 # calls the handler with the socket, this will handle
-                # the new data that has been received
+                # the new event that has been received
                 handler(socket)
             except BaseException, exception:
                 # prints a warning message message using the service
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
-                    "Runtime problem: %s, while handling data" %\
+                    "Runtime problem: %s, while handling event" %\
                     unicode(exception)
                 )
 
