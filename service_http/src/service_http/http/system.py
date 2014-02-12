@@ -663,7 +663,14 @@ class HttpClientServiceHandler:
     service_connection_request_handler_map = {}
     """ The map associating the service connection with the request handler (method) """
 
-    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+    def __init__(
+        self,
+        service_plugin,
+        service_connection_handler,
+        service_configuration,
+        service_utils_exception_class,
+        extra_parameters
+    ):
         """
         Constructor of the class.
 
