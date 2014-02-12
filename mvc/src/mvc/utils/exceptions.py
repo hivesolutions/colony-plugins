@@ -125,6 +125,36 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
 
         return "Insufficient http information - %s" % self.message
 
+class NotFoundError(MvcUtilsExceptionException):
+    """
+    The not found error class.
+    """
+
+    status_code = 404
+    """ The http based status code to be used when
+    raising this exception through the pipeline """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MvcUtilsExceptionException.__init__(self, message)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Not found error - %s" % self.message
+
 class ValidationError(MvcUtilsExceptionException):
     """
     The validation error class.
