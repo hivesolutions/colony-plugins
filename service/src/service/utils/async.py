@@ -109,6 +109,13 @@ PENDING_TIMEOUT = 5.0
 handshake pending state (not possible to accept) """
 
 class AbstractService:
+    """
+    Top level abstract class for a service that is considered
+    to be asynchronous in terms of usage.
+
+    Note that inheritance from this method should not be done
+    directly and instead done with the proper utilities.
+    """
 
     service_utils = None
     """ The service utils """
@@ -161,19 +168,19 @@ class AbstractService:
     """ The map containing the associating between the file
     descriptors and the sockets for the sockets pending handshake """
 
-
-
-
-
     client_connection_map = {}
+    """ Map that associates a socket instance with the proper abstract
+    connection instance for which it is currently associated """
 
     service_execution_thread = None
-
-
+    """ The reference to the thread that is used for the main loop
+    cycle that must be ran outside the current plugin manager execution
+    thread to avoid blocking of it """
 
     service_connection_close_end_event = None
-
-
+    """ Event that is used to wait for the finishing of the service
+    closing operation before continue with the unloading of the plugin
+    (providing a blocking call on the unload plugin) """
 
     def __init__(self, service_utils, service_utils_plugin, parameters = {}):
         """
@@ -197,41 +204,22 @@ class AbstractService:
         self.bind_host = parameters.get("bind_host", BIND_HOST)
         self.port = parameters.get("port", PORT)
         self.socket_parameters = parameters.get("socket_parameters", {})
-
-        self.time_events = []
-
-
-        #self.chunk_size = parameters.get("chunk_size", CHUNK_SIZE)
-
         self.service_configuration = parameters.get("service_configuration", {})
         self.extra_parameters = parameters.get("extra_parameters", {})
 
-        #self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
-        #self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
-        #self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
-        #self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
-
+        self.time_events = []
         self.service_sockets = []
         self.service_socket_end_point_map = {}
-
-
-
         self.handlers_map = {}
-
         self.socket_fd_map = {}
         self.address_fd_map = {}
         self.pending_fd_map = {}
-
-
         self.client_connection_map = {}
-
-
-
         self.service_connection_close_end_event = threading.Event()
 
-
-        # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
-
+        # creates the client handling instance from the provided class by
+        # providing all the elements for its initialization, and then crates
+        # the service execution thread with the current service
         self.client_service = self.service_handling_task_class(
             self.service_plugin,
             None,
@@ -254,113 +242,6 @@ class AbstractService:
 
             # adds the end point
             self.end_points.append(end_point_tuple)
-
-
-
-
-
-
-
-    def _create_service_sockets(self):
-        """
-        Creates the service sockets according to the
-        service configuration.
-        """
-
-        # iterates over all the end points
-        for end_point in self.end_points:
-            # unpacks the end point
-            socket_provider, _bind_host, _port, socket_parameters = end_point
-
-            # in case the socket provider is defined
-            if socket_provider:
-                # retrieves the socket provider plugins map
-                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
-
-                # in case the socket provider is available in the socket
-                # provider plugins map
-                if socket_provider in socket_provider_plugins_map:
-                    # retrieves the socket provider plugin from the socket provider plugins map
-                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
-
-                    # the parameters for the socket provider
-                    parameters = {
-                        SERVER_SIDE_VALUE : True,
-                        DO_HANDSHAKE_ON_CONNECT_VALUE : False
-                    }
-
-                    # copies the socket parameters to the parameters map and then
-                    # uses it to create new service socket with the socket provider plugin
-                    colony.libs.map_util.map_copy(socket_parameters, parameters)
-                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-                else:
-                    # raises the socket provider not found exception
-                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-            else:
-                # creates the service socket
-                service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # sets the service socket to non blocking and sets the blocking
-            # options in the socket to false so that new sockets are are
-            # created automatically in non blocking mode
-            service_socket.setblocking(0)
-            hasattr(service_socket, "set_option") and service_socket.set_option("blocking", False)
-
-            # adds the service socket to the service sockets
-            self.service_sockets.append(service_socket)
-
-            # sets the end point in the service socket end point map
-            self.service_socket_end_point_map[service_socket] = end_point
-
-
-
-
-
-
-    def _activate_service_sockets(self):
-        """
-        Activates the service socket.
-        """
-
-        # iterates over the service sockets and the end points
-        for service_socket, end_point in zip(self.service_sockets, self.end_points):
-            # unpacks the end point
-            _socket_provider, bind_host, port, _socket_parameters = end_point
-
-            # sets the socket to be able to reuse the socket
-            service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-            # defines the bind parameters
-            bind_parameters = (
-                bind_host,
-                port
-            )
-
-            # binds the service socket
-            service_socket.bind(bind_parameters)
-
-            # in case the service type is connection
-
-            #TENHO DE PENSAR MUITO BEM SOBRE ESTE ASSUNTO
-
-            #if self.service_type == CONNECTION_TYPE_VALUE:
-
-            # start listening in the service socket
-            service_socket.listen(30)
-
-            service_connection = ServiceConnection(self, service_socket, bind_host, port)
-
-            socket_fd = service_socket.fileno()
-
-            self.socket_fd_map[socket_fd] = service_socket
-            self.address_fd_map[socket_fd] = (bind_host, port)
-            self.poll_instance.register(socket_fd, READ | ERROR)
-
-            self.add_handler(socket_fd, service_connection.read_handler, READ)
-
-
-    # ---- ESTES SAO METODOS DA ABSTRACAO SERVICE------
-
 
     def add_socket(self, client_socket, client_address, service_port):
         client_socket_fd = client_socket.fileno()
@@ -391,13 +272,7 @@ class AbstractService:
         self.remove_handler(client_socket_fd, client_connection.write_handler, WRITE)
         self.remove_handler(client_socket_fd, client_connection.error_handler, ERROR)
 
-        # closes the client socket
         client_socket.close()
-
-    # ---- AKI ACABAM OS METODOS DA ABSTRACAO SERVICE------
-
-
-
 
     def add_handler(self, socket_fd, callback_method, operation):
         tuple = (socket_fd, operation)
@@ -519,6 +394,102 @@ class AbstractService:
 
         # stops the background threads
         self._stop_threads()
+
+    def _create_service_sockets(self):
+        """
+        Creates the service sockets according to the
+        service configuration.
+        """
+
+        # iterates over all the end points
+        for end_point in self.end_points:
+            # unpacks the end point
+            socket_provider, _bind_host, _port, socket_parameters = end_point
+
+            # in case the socket provider is defined
+            if socket_provider:
+                # retrieves the socket provider plugins map
+                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
+
+                # in case the socket provider is available in the socket
+                # provider plugins map
+                if socket_provider in socket_provider_plugins_map:
+                    # retrieves the socket provider plugin from the socket provider plugins map
+                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
+
+                    # the parameters for the socket provider
+                    parameters = {
+                        SERVER_SIDE_VALUE : True,
+                        DO_HANDSHAKE_ON_CONNECT_VALUE : False
+                    }
+
+                    # copies the socket parameters to the parameters map and then
+                    # uses it to create new service socket with the socket provider plugin
+                    colony.libs.map_util.map_copy(socket_parameters, parameters)
+                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                else:
+                    # raises the socket provider not found exception
+                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+            else:
+                # creates the service socket
+                service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # sets the service socket to non blocking and sets the blocking
+            # options in the socket to false so that new sockets are are
+            # created automatically in non blocking mode
+            service_socket.setblocking(0)
+            hasattr(service_socket, "set_option") and service_socket.set_option("blocking", False)
+
+            # adds the service socket to the service sockets
+            self.service_sockets.append(service_socket)
+
+            # sets the end point in the service socket end point map
+            self.service_socket_end_point_map[service_socket] = end_point
+
+    def _activate_service_sockets(self):
+        """
+        Activates the service socket, registering it for the basic
+        read and error event in the poll instance.
+
+        This method must be controller by the current abstract service
+        handler and no other object.
+        """
+
+        # iterates over the complete set of service sockets and the end points
+        # to active the sockets and then registers them for polling
+        for service_socket, end_point in zip(self.service_sockets, self.end_points):
+            # unpacks the end point, these values will be used for the
+            # proper activation of the service socket
+            _socket_provider, bind_host, port, _socket_parameters = end_point
+
+            # sets the socket to be able to reuse the socket, this is
+            # important to make it possible to open new service sockets
+            service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            # binds the service socket to the bind host and port
+            # defined by the end point tuple and then starts the
+            # listening operation waiting for new connections
+            service_socket.bind((bind_host, port))
+            service_socket.listen(30)
+
+            # creates the service connection instance that will be
+            # responsible for the handling of new client connections
+            service_connection = ServiceConnection(self, service_socket, bind_host, port)
+
+            # retrieves the service socket file descriptor and then
+            # updates the file descriptor maps with the proper socket
+            # and socket information and then registers the socket in
+            # the associated poll instance for read and error
+            socket_fd = service_socket.fileno()
+            self.socket_fd_map[socket_fd] = service_socket
+            self.address_fd_map[socket_fd] = (bind_host, port)
+            self.poll_instance.register(socket_fd, READ | ERROR)
+
+            # adds the read handler for the service connection as the
+            # proper handler for the read operation on the service socket
+            # this is the expected behavior as this method will be the
+            # responsible for the acceptance of new incoming connections
+            self.add_handler(socket_fd, service_connection.read_handler, READ)
 
     def _create_base(self):
         """
@@ -737,11 +708,12 @@ class KqueuePolling:
     def poll(self):
         pass
 
-
 class Connection:
 
+
     service = None
-    """ The reference to the service implementation """
+    """ The reference to the service implementation
+    this will be used to reference top level methods """
 
     socket = None
 
@@ -973,7 +945,7 @@ class ClientConnection(Connection):
         self.pending_data_buffer = []
         self.write_data_buffer = []
 
-        # TODO IMPLMENTAR DE MODO REAL
+        self.chunk_size = 4096
         self.connection_request_timeout = 10
 
     def open(self):
@@ -1011,7 +983,7 @@ class ClientConnection(Connection):
         while True:
             try:
                 # receives the data from the socket
-                data = _socket.recv(1024)
+                data = _socket.recv(self.chunk_size)
             except socket.error, exception:
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
