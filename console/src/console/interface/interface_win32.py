@@ -248,9 +248,10 @@ class ConsoleInterfaceWin32:
         mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT) #@UndefinedVariable
 
         # in case the current standard input is not tty
-        # or the mode value is not valid
+        # or the mode value is not valid, must raise an
+        # incompatible console interface error indicating
+        # that experience will be compromised
         if not is_tty or not mode_value == ASYNCHRONOUS_MODE_VALUE:
-            # raises the incompatible console interface
             raise exceptions.IncompatibleConsoleInterface("invalid terminal mode")
 
     def _print(self, string_value):

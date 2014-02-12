@@ -351,8 +351,10 @@ class ConsoleInterfaceUnix:
         is_tty = sys.stdin.isatty()
 
         # in case the current standard input is not tty
+        # must raise the incompatible console interface
+        # to be able to indicate that the performance of
+        # the current system will be compromised (not tty)
         if not is_tty:
-            # raises the incompatible console interface
             raise exceptions.IncompatibleConsoleInterface("invalid terminal mode")
 
     def _print(self, string_value):
