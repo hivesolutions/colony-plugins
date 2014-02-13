@@ -671,6 +671,17 @@ class Mvc(colony.base.system.System):
             except: value = value
             pattern_names[name] = value
 
+        # verifies if the handler method is either a method (received
+        # the self context as first argument) or a plain function so
+        # that if it is a method the context will be considered the
+        # controller and so it must be set in the rest request for
+        # context based diffusion (may be used to retrieve controller
+        # inside a model context) as defined in specification, this
+        # operation is considered to be the controller injection
+        has_self = hasattr(handler_method, "im_self")
+        controller = handler_method.im_self if has_self else None
+        rest_request.controller = controller
+
         # retrieves the controller for the handlers method
         # and then uses it to retrieve its default parameters
         # after that uses the default parameters to extend the
@@ -956,8 +967,8 @@ class Mvc(colony.base.system.System):
         # the expression from a simplified domain into a regex based domain
         # that may be correctly compiled into the rest environment, then sets
         # the new expression value as the first element of the pattern
-        expression = INT_REGEX.sub(r"(?P[\1>[0-9]+)", expression)
-        expression = REPLACE_REGEX.sub(r"(?P[\3>[\sa-zA-Z0-9_-]+)", expression)
+        expression = INT_REGEX.sub(r"(?P[\1>[\d]+)", expression)
+        expression = REPLACE_REGEX.sub(r"(?P[\3>[\s\w-]+)", expression)
         expression = expression.replace("?P[", "?P<")
         pattern[0] = expression
 
