@@ -696,7 +696,12 @@ class Mvc(colony.base.system.System):
         # request flow) note that the call is done using the safe
         # call method so that only the valid arguments are passed
         # to the handler method (pattern names validation)
-        colony.call_safe(handler_method, rest_request, parameters, **pattern_names)
+        colony.call_safe(
+            handler_method,
+            rest_request,
+            parameters = parameters,
+            **pattern_names
+        )
 
     def _process_request(self, rest_request):
         """
