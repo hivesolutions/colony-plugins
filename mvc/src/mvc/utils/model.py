@@ -178,7 +178,7 @@ def _start_model(self):
     # sets the model started flag as true
     self.model_started = True
 
-def _class_new(cls, map = None, rest_request = None, permissive = False):
+def _class_new(cls, rest_request = None, map = None, permissive = False, apply = True):
     """
     Creates a new model instance, applying the given map
     of "form" options to the created model.
@@ -192,12 +192,12 @@ def _class_new(cls, map = None, rest_request = None, permissive = False):
     the control of the behavior for the apply operation on
     the model in response to an undefined value.
 
-    @type map: Dictionary
-    @param map: The map of "form" options to be used to create
-    the new model instance.
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used in the context
     of the current model, it should enable access to session attributes.
+    @type map: Dictionary
+    @param map: The map of "form" options to be used to create
+    the new model instance.
     @type permissive: bool
     @param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
@@ -225,7 +225,26 @@ def _class_new(cls, map = None, rest_request = None, permissive = False):
     # the contents of it to the model
     map and model.apply(map, permissive = permissive)
 
-    # returns the created model
+    # in case the apply flag is currently not set, nothing
+    # else should be done in the new model and it should be
+    # returned immediately to the caller method
+    if not apply: return model
+
+    # tries to retrieve the controller using the current rest request
+    # as reference and in case the returned model is not valid returns
+    # the model immediately to the caller method (silent failure)
+    controller = cls.get_controller_g(rest_request)
+    if not controller: return model
+
+    # retrieves the name of the model's class (underscore notation) and
+    # then uses it to retrieve the context field of the same name and
+    # applies the data from the field to the model (apply operation)
+    name = model._get_entity_class_name()
+    data = controller.get_field(rest_request, name, {})
+    model.apply(data, permissive = permissive)
+
+    # returns the newly created model with the data from the associated
+    # field from the request applied to it
     return model
 
 def _class_get_system(cls):
@@ -257,6 +276,28 @@ def _class_get_plugin(cls):
     """
 
     return cls._system_instance.plugin
+
+def _class_get_controller_g(cls, rest_request):
+    """
+    Retrieves the controller instance that is currently set
+    in the current environment (rest request) falling back
+    to an invalid (unset)  value in case no controller was
+    found for the current environment.
+
+    This is the global method equivalent to the instance
+    method of the same name.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request that is going to be
+    used to try to retrieve the controller.
+    @rtype: Controller
+    @return: The controller retrieved from the provided context,
+    this value may be unset in case it was not possible to retrieve
+    the controller from the current environment/context.
+    """
+
+    if not hasattr(rest_request, "controller"): return None
+    return getattr(rest_request, "controller")
 
 def _class_get_context_attribute_g(cls, name, context_request, namespace_name = None):
     """
@@ -778,6 +819,25 @@ def unset_session_attribute(self, session_attribute_name, namespace_name = None)
 
     # unsets the attribute from the session
     rest_request_session.unset_attribute(session_attribute_name)
+
+def get_controller(self, rest_request):
+    """
+    Retrieves the controller instance that is currently set
+    in the current environment (rest request) falling back
+    to an invalid (unset)  value in case no controller was
+    found for the current environment.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request that is going to be
+    used to try to retrieve the controller.
+    @rtype: Controller
+    @return: The controller retrieved from the provided context,
+    this value may be unset in case it was not possible to retrieve
+    the controller from the current environment/context.
+    """
+
+    if not hasattr(rest_request, "controller"): return None
+    return getattr(rest_request, "controller")
 
 def get_context_attribute(self, context_name, namespace_name = None):
     """

@@ -177,6 +177,7 @@ def _class_get(
     cls,
     id_value,
     options = {},
+    apply = True,
     context = None,
     namespace = None,
     entity_manager = None,
@@ -188,12 +189,21 @@ def _class_get(
     This method allows the indirect access to the entity
     manager for the usage of the get method.
 
+    In case the apply flag is set a model definition is
+    extracted from the current context according to the
+    class naming and the applied to the retrieved model.
+
     An extra attribute may be used to avoid raising an
     exception in case no model is found for the parameters.
 
     @type id_value: Object
     @param id_value: The value for the identifier attribute
     of the entity model to be retrieved.
+    @type apply: boolean
+    @param apply: If the model definition should be retrieved
+    from the provided context and the applied in the current
+    model. Note that this is a fallback operation meaning that
+    if it fails nothing will happen (no exception raised).
     @type options: Dictionary
     @param options: The map of options for the retrieval
     of the entity model.
@@ -239,6 +249,24 @@ def _class_get(
     # an error must be raised indicating such problems as the retrieval
     # of a related entity is considered to be of mandatory value
     if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
+
+    # verifies if the the model is meant to have the map attribute of
+    # the same name (from the context) applied to it if that's not the
+    # case returns the (entity) model immediately to the caller method
+    if not apply: return entity_model
+
+    # tries to retrieve the controller using the current context as reference
+    # and in case the returned model is not valid returns the model
+    # immediately to the caller method (silent failure)
+    controller = cls.get_controller_g(context)
+    if not controller: return entity_model
+
+    # retrieves the name of the model entitie's class (underscore notation) and
+    # then uses it to retrieve the context field of the same name and applies the
+    # data from the field to the model (apply operation)
+    name = entity_model._get_entity_class_name()
+    data = controller.get_field(context, name, {})
+    entity_model.apply(data)
 
     # returns the retrieved entity model, this is only achieved in
     # case a valid values was retrieved from the data source
@@ -1216,10 +1244,9 @@ def store_relation(
     """
 
     # in case the relation is lazy loaded in the
-    # current entity no need to store it
-    if self.is_lazy_loaded(relation_name):
-        # returns immediately
-        return
+    # current entity no need to store it and so the
+    # control flow should be returned immediately
+    if self.is_lazy_loaded(relation_name): return
 
     # starts the flag that controls in case
     # an error is set
@@ -1323,6 +1350,40 @@ def store_relation(
     # adds an error to the entity on the relation
     # for latter usage
     error_set and self.add_error(relation_name, "relation validation failed")
+
+def create(self, *args, **kwargs):
+    """
+    Override method that stores the current model using a
+    create strategy meaning that the identifier attribute
+    is validate for existence and in case it does exits an
+    exception is raised as that's an assertion that should
+    be done for security reasons.
+
+    Most of the times this method should be used instead of
+    a direct call to the more technical store method.
+    """
+
+    is_persisted = self.is_persisted()
+    if is_persisted: raise RuntimeError("instance is already persisted")
+    self.store(*args, **kwargs)
+
+def change(self, *args, **kwargs):
+    """
+    Underlying method that assumes that the store operation
+    to be performed is related with an existing model and
+    that its values are meant to be update in the data source.
+
+    For this operation a security assertion verifies that the
+    model to be persisted is currently persisted in data source,
+    meaning that an id is currently set in the entity.
+
+    Most of the times this method should be used instead of
+    a direct call to the more technical store method.
+    """
+
+    is_persisted = self.is_persisted()
+    if not is_persisted: raise RuntimeError("instance is not persisted")
+    self.store(*args, **kwargs)
 
 def save(self, entity_manager = None):
     """
@@ -1687,7 +1748,7 @@ def get_resource_path(self):
 def is_persisted(self):
     """
     Checks the internal structure of the entity
-    to guess if the entity  model is persisted.
+    to guess if the entity model is persisted.
 
     The heuristic involves checking the id attribute
     of the entity is already defined.
@@ -1861,7 +1922,7 @@ def resolve_to_one(self, map, model_class, permissive):
 
         # creates the "new" entity (model)
         # and sets it in the current entity
-        entity = _model_class.new(map, rest_request, permissive = permissive)
+        entity = _model_class.new(rest_request, map, permissive = permissive)
 
     # retrieves the loaded or created entity, this
     # entity is considered to be resolved
@@ -1966,7 +2027,7 @@ def resolve_to_many(self, maps_list, model_class, permissive):
         # it otherwise creates a "new" entity with the provided model, in both cases
         # the created entity is added to the list of entities for the relations
         if entity: entity.apply(map, permissive = permissive); entity.set_request(rest_request)
-        else: entity = _model_class.new(map, rest_request, permissive = permissive)
+        else: entity = _model_class.new(rest_request, map, permissive = permissive)
         entitites_list.append(entity)
 
     # returns the list of entities that were loaded or created for the
