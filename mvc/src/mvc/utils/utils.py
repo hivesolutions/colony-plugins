@@ -520,13 +520,18 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
 
                     # sets the return value as invalid (error)
                     return_value = False
-                # in case the exception handler is set
+
+                # in case the exception handler is set, must call the proper action
+                # method so that the visual exception handler is called
                 elif exception_handler:
-                    # handles the exception map with the exception handler
-                    return_value = exception_handler.handle_exception(
-                        rest_request,
-                        exception_map
-                    )
+                    # retrieves the proper name for the exception handler action method
+                    # taking into account the "complex" naming scheme and the simplified
+                    # one os that it maintain compatibility with both schemes, then calls
+                    # the action method (handler) with the exception map as argument
+                    has_simple = hasattr(exception_handler, "exception")
+                    method_name = "exception" if has_simple else "handle_exception"
+                    method = getattr(exception_handler, method_name)
+                    return_value = method(rest_request, exception_map)
             else:
                 # checks if the current message is already flushed (data sent to
                 # the output) and in case it's not and there should be a default
