@@ -668,6 +668,7 @@ class Mvc(colony.base.system.System):
         # retrieves some of the parameters as they are going to
         # be used to infer the real (type converted) value for
         # each of the patterns to be sent to the method
+        encoder = parameters.get("encoder_name", None)
         pattern_names = parameters.get("pattern_names", {})
         meta = parameters.get("meta", {})
         names = meta.get("names", {})
@@ -691,6 +692,20 @@ class Mvc(colony.base.system.System):
         has_self = hasattr(handler_method, "im_self")
         controller = handler_method.im_self if has_self else None
         rest_request.controller = controller
+
+        # injects the parameters in the rest request so that any
+        # underlying method is able to recover the parameters without
+        # the proper parameters passing (useful for simplifications)
+        rest_request.parameters = parameters
+
+        # in case there's an encoder name defined and the controller
+        # plugin references an encoding plugin that candidates for that
+        # type of encoding the same plugin is set as the serializer for
+        # the current rest request being handled
+        if encoder and hasattr(controller.plugin, encoder + "_plugin"):
+            encoder_plugin = getattr(controller.plugin, encoder + "_plugin")
+            parameters["serializer"] = encoder_plugin
+            rest_request.serializer = encoder_plugin
 
         # retrieves the controller for the handlers method
         # and then uses it to retrieve its default parameters
