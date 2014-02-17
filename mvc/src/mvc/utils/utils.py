@@ -70,9 +70,6 @@ TO_ONE_RELATION_VALUE = 1
 TO_MANY_RELATION_VALUE = 2
 """ The to many relation value """
 
-VALIDATION_METHOD_ENABLED_VALUE = "validation_method_enabled"
-""" The validation method enabled value """
-
 PERSIST_UPDATE_TYPE = 0x01
 """ The persist only on update (or save) persist type """
 
@@ -129,9 +126,6 @@ def validated_method(
             @param kwargs: The function arguments map.
             """
 
-            # retrieves the arguments length
-            args_length = len(args)
-
             # retrieves the self reference
             self = args[0]
 
@@ -139,7 +133,7 @@ def validated_method(
             rest_request = args[1]
 
             # retrieves the parameters reference
-            parameters = args_length > 2 and args[2] or {}
+            parameters = rest_request.parameters
 
             # retrieves the value for the serializer attribute, if this
             # value is defined it must contain a callable object that is
@@ -187,31 +181,6 @@ def validated_method(
             # instance, this is going to be used in case the validation method is enabled
             validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and\
                 self.validation_failed or None
-
-            # retrieves validation method enabled value from the parameters, if this value
-            # is set the validation method will be run
-            validation_method_enabled = parameters.get(VALIDATION_METHOD_ENABLED_VALUE, True)
-
-            # retrieves the patterns
-            patterns = parameters.get(PATTERN_NAMES_VALUE, {})
-
-            # retrieves the session attributes map
-            session_attributes = rest_request.get_session_attributes_map()
-
-            # in case the validation method is set and the validation method
-            # enabled flag is set in the parameters
-            if validation_method and validation_method_enabled:
-                try:
-                    # calls the validation method with the patterns and the session attributes
-                    validation_method_result = validation_method(patterns, session_attributes)
-
-                    # in case the validation method running failed
-                    not validation_method_result and reasons_list.append(
-                        exceptions.ValidationMethodError("validation method failed in running")
-                    )
-                except BaseException, exception:
-                    # adds the exception to the reasons list
-                    reasons_list.append(exception)
 
             # in case the reasons list is not empty, there was a validation that failed
             # and so either the validation failed method must be called or an exception
@@ -454,17 +423,15 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
             @param kwargs: The function arguments map.
             """
 
-            # retrieves the arguments length
-            args_length = len(args)
-
             # retrieves the self reference
             self = args[0]
 
             # retrieves the rest request reference
             rest_request = args[1]
 
-            # retrieves the parameters reference
-            parameters = args_length > 2 and args[2] or {}
+            # retrieves the parameters reference, this value is going
+            # to be used for the retrieval of extra parameters
+            parameters = rest_request.parameters
 
             try:
                 # calls the callback function,
@@ -504,6 +471,12 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # information about the exception to be handled
                 exception_map = self.get_exception_map(exception, rest_request)
 
+                # retrieves the exception value from the exception map and then
+                # unpacks it into its components of message or traceback
+                exception = exception_map.get("exception")
+                message = exception.get("message")
+                traceback = exception.get("traceback")
+
                 # in case the serializer is set (uses it as it
                 # is has priority)
                 if serializer:
@@ -531,7 +504,13 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                     has_simple = hasattr(exception_handler, "exception")
                     method_name = "exception" if has_simple else "handle_exception"
                     method = getattr(exception_handler, method_name)
-                    return_value = method(rest_request, exception_map)
+                    return_value = colony.call_safe(
+                        method,
+                        rest_request,
+                        parameters = exception_map,
+                        message = message,
+                        traceback = traceback
+                    )
             else:
                 # checks if the current message is already flushed (data sent to
                 # the output) and in case it's not and there should be a default
