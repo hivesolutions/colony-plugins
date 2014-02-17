@@ -992,6 +992,11 @@ def get_field(self, rest_request, field_name, default = None, cast_type = None, 
     form_data_map = method(rest_request)
     field_value = form_data_map.get(field_name, default)
 
+    # in case the current field value is invalid, should return
+    # the value immediately to avoid any casting problems, note
+    # that the returned value is an empty list
+    if field_value == None and split: return []
+
     # in case the split flag is set the field value is divided
     # into multiple values "around" the token value
     if split: field_value = field_value.split(token)
