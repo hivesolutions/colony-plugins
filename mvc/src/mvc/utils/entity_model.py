@@ -615,6 +615,27 @@ def _class_is_reference(cls):
     # a data reference)
     return False
 
+def _class_filter(cls, context, *args, **kwargs):
+    """
+    Simplified filter method that creates an initial filter object
+    from the provided for data using the controller associated with
+    the provided context.
+
+    This filter may be safely used to query the current entity model.
+
+    @type context: RestRequest
+    @param context: The rest request to be used for the context
+    creation of the filter, required for both the retrieving of
+    the associated controller and the processing of the form data.
+    @rtype: Dictionary
+    @return: The initial filter object created according to the
+    predefined syntax rules for the sort and for the filter fields.
+    """
+
+    controller = cls.get_controller_g(context)
+    form_data_map = controller.process_form_data(context)
+    return cls.create_filter(form_data_map, *args, **kwargs)
+
 def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     """
     Class method that creates a filter map from the provided
