@@ -239,6 +239,11 @@ def _class_get(
         entity_manager = entity_manager
     )
 
+    # verifies if the model that is going to be retrieved should be
+    # retrieved using a map based strategy or an instance one, this
+    # is going to influence the way the apply operation is performed
+    is_map = options.get("map", False)
+
     # retrieves the entity model for the given class, id value
     # and using the given options, then in case the retrieval was
     # successful applies the context as the entity model request
@@ -249,6 +254,11 @@ def _class_get(
     # an error must be raised indicating such problems as the retrieval
     # of a related entity is considered to be of mandatory value
     if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
+
+    # in case the requested model is supposed to be retrieved using a map
+    # based strategy no apply operation should be performed (as it is not
+    # possible) and so the entity model should be returned immediately
+    if is_map: return entity_model
 
     # verifies if the the model is meant to have the map attribute of
     # the same name (from the context) applied to it if that's not the
