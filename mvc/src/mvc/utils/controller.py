@@ -3672,6 +3672,15 @@ def set_json_plugin(self, json_plugin):
 
     self.json_plugin = json_plugin
 
+def _template(self, *args, **kwargs):
+    """
+    Override function that should be used to changed the default behavior
+    of the method that retrieves (and sets) the template for each action
+    operation with the provided values.
+    """
+
+    return self.template(*args, **kwargs)
+
 def _get_attribute(self, rest_request, attribute_name):
     """
     Retrieves an attribute from the rest request in a safe
