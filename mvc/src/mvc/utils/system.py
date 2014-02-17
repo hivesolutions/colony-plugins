@@ -93,7 +93,9 @@ CONTROLLER_CAMEL_VALUE = "Controller"
 """ The controller camel value """
 
 EXCEPTION_CONTROLLER_VALUE = "ExceptionController"
-""" The exception controller value """
+""" The exception controller value, this value is going
+to be used to retrieve the exception controller
+reference from the associated controller """
 
 EXCEPTION_HANDLER_VALUE = "exception_handler"
 """ The exception handler value """
@@ -768,9 +770,13 @@ class MvcUtils(colony.base.system.System):
         # during the iteration process
         exception_controller = None
 
-        # retrieves the controller base name and converts it
-        # to underscore notation
-        exception_reference_name, _exception_base_name = self._convert_controller_name(EXCEPTION_CONTROLLER_VALUE, prefix_name)
+        # retrieves the controller base name and converts it to the
+        # underscore notation so that it may be used to discover if
+        # the proper exception handler exists for the current context
+        exception_reference_name, _exception_base_name = self._convert_controller_name(
+            EXCEPTION_CONTROLLER_VALUE,
+            prefix_name = prefix_name
+        )
 
         # in case the exception controller is already present in the system
         # instance it has already been created, must set it as the exception
@@ -800,7 +806,10 @@ class MvcUtils(colony.base.system.System):
 
             # converts the controller class name into the normalized
             # controller base name according to the prefix value
-            controller_reference_name, controller_base_name = self._convert_controller_name(controller_class_name, prefix_name)
+            controller_reference_name, controller_base_name = self._convert_controller_name(
+                controller_class_name,
+                prefix_name = prefix_name
+            )
 
             # creates the controller instance from the controller
             # class and uses the plugin instance and system instance
@@ -811,7 +820,6 @@ class MvcUtils(colony.base.system.System):
             # in case the current controller class is the exception
             # controller must signal it (and save it)
             if controller_class_name == EXCEPTION_CONTROLLER_VALUE:
-                # saves the current controller as the exception controller
                 exception_controller = controller
 
             # adds the controller to the list of controllers
@@ -981,7 +989,10 @@ class MvcUtils(colony.base.system.System):
 
             # converts the controller class name into the normalized
             # controller base name according to the prefix value
-            controller_reference_name, controller_base_name = self._convert_controller_name(controller_class_name, prefix_name)
+            controller_reference_name, controller_base_name = self._convert_controller_name(
+                controller_class_name,
+                prefix_name = prefix_name
+            )
 
             # removes the controller references in the system instance
             # and in the controllers map
