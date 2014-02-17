@@ -447,6 +447,16 @@ class Mvc(colony.base.system.System):
         communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
         resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
 
+        # runs the normalization process for the various patterns
+        # that have been retrieved so that the patterns are correctly
+        # processed and converted from their canonical form, note that
+        # the first set of patters are normalized with some extra operations
+        # applied to them meaning that some meta information is also added
+        # to each of the pattern tuples (as defined in specification)
+        patterns = self._normalize_patterns(patterns, extra = True)
+        communication_patterns = self._normalize_patterns(communication_patterns)
+        resource_patterns = self._normalize_patterns(resource_patterns)
+
         # iterates over all the patterns to update the internal structures
         # to reflect their changes (removes references)
         for pattern in patterns:
