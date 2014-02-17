@@ -809,7 +809,7 @@ def unset_session_attribute(self, session_attribute_name, namespace_name = None)
     rest_request_session = rest_request.get_session()
 
     # in case the rest request session is invalid,
-    # must return and invalid to the caller method 
+    # must return and invalid to the caller method
     if not rest_request_session: return None
 
     # resolves the complete session attribute name
