@@ -2372,6 +2372,33 @@ def template_file(self, template = None, *args, **kwargs):
         **kwargs
     )
 
+def serialize(self, rest_request, contents):
+    """
+    Serializes the provided contents (wither map or list) using the
+    infra-structure (serializer) that is currently defined for the
+    rest request.
+
+    The definition of the serializer is not part of the method and
+    such behavior should be defined by the upper layers.
+
+    The resulting data from the serialization is set as the contents
+    for the current rest request and the proper mime type defined.
+
+    @type rest_request: RestRequest
+    @param rest_request: The request object that is going to be used
+    as reference for the retrieval of the serializer object and for
+    the setting of the serialization result contents.
+    @type contents: List/Dictionary
+    @param contents: The contents that are going to be serialized using
+    the context defined in the rest request.
+    """
+
+    if not hasattr(rest_request, "serializer"): return
+    serializer = rest_request.serializer
+    data = serializer.dumps(contents)
+    mime_type = serializer.get_mime_type()
+    self.set_contents(rest_request, data, content_type = mime_type)
+
 def process_set_contents(
     self,
     rest_request,
