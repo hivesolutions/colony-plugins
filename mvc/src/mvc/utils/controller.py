@@ -941,7 +941,15 @@ def get_field_models(self, rest_request, field_name, model, data_type = int):
     )
     return entities
 
-def get_field(self, rest_request, field_name, default = None, cast_type = None, split = False, token = ","):
+def get_field(
+    self,
+    rest_request,
+    field_name,
+    default = None,
+    cast_type = None,
+    split = False,
+    token = ","
+):
     """
     Retrieves a field value from the processed form data
     of the rest request.
@@ -1546,7 +1554,12 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     # returns the base attributes map
     return base_attributes_map
 
-def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_ACL_VALUE, maximum_value = DEFAULT_MAXIMUM_ACL_VALUE):
+def process_acl_values(
+    self,
+    acl_list, key,
+    wildcard_value = DEFAULT_WILDCARD_ACL_VALUE,
+    maximum_value = DEFAULT_MAXIMUM_ACL_VALUE
+):
     """
     Processes the various acl values in the given list.
     Retrieves the lowest value for the given key and takes into account
@@ -1589,7 +1602,13 @@ def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_AC
     # returns the permission
     return permission
 
-def validate_acl_session(self, rest_request, key, value = DEFAULT_VALUE_ATTRIBUTE, session_attribute = DEFAULT_SESSION_ATTRIBUTE):
+def validate_acl_session(
+    self,
+    rest_request,
+    key,
+    value = DEFAULT_VALUE_ATTRIBUTE,
+    session_attribute = DEFAULT_SESSION_ATTRIBUTE
+):
     """
     Validates the current session defined acl against the
     defined key and value.
