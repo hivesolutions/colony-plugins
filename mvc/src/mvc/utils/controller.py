@@ -3656,12 +3656,16 @@ def extend_default_parameters(self, extension_parameters):
     map of parameters.
 
     @type extension_parameters: Dictionary
-    @param extension_parameters: The map of paramters to extends the default
-    parameters map.
+    @param extension_parameters: The map of parameters to
+    extend the default parameters map.
     """
 
     # extends the default parameters with the extension parameters
-    colony.libs.map_util.map_extend(self.default_parameters, extension_parameters, copy_base_map = False)
+    colony.libs.map_util.map_extend(
+        self.default_parameters,
+        extension_parameters,
+        copy_base_map = False
+    )
 
 def set_default_parameter(self, parameter_name, parameter_value):
     """
