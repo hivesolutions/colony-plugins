@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class TemplateEnginePlugin(colony.base.system.Plugin):
+class TemplateEnginePlugin(colony.Plugin):
     """
     The main class for the Template Engine plugin.
     """
@@ -50,9 +50,9 @@ class TemplateEnginePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "template_engine"
@@ -68,18 +68,27 @@ class TemplateEnginePlugin(colony.base.system.Plugin):
     """ The template engine """
 
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
+        colony.Plugin.load_plugin(self)
         import template_engine.system
         self.template_engine = template_engine.system.TemplateEngine(self)
 
     def parse_file_path(self, file_path):
         return self.template_engine.parse_file_path(file_path)
 
-    def parse_file_path_encoding(self, file_path, encoding):
-        return self.template_engine.parse_file_path(file_path, encoding)
+    def parse_file_path_encoding(self, file_path, encoding = "utf-8"):
+        return self.template_engine.parse_file_path(file_path, encoding = "utf-8")
 
-    def parse_file_path_variable_encoding(self, file_path, encoding, variable_encoding):
-        return self.template_engine.parse_file_path_variable_encoding(file_path, encoding, variable_encoding)
+    def parse_file_path_variable_encoding(
+        self,
+        file_path,
+        encoding = "utf-8",
+        variable_encoding = "utf-8"
+    ):
+        return self.template_engine.parse_file_path_variable_encoding(
+            file_path,
+            encoding = encoding,
+            variable_encoding =  variable_encoding
+        )
 
     def parse_file(self, file):
         return self.template_engine.parse_file(file)
