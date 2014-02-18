@@ -66,7 +66,7 @@ class JinjaPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import jinja
-        self.jinja = jinja.Jinja()
+        self.jinja = jinja.Jinja(self)
 
     def parse_file_path(self, file_path):
         return self.jinja.parse_file_path(file_path)
