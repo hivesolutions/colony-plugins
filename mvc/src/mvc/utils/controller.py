@@ -4948,7 +4948,7 @@ def get_process_method(controller, rest_request, process_method_name):
                 # continues the loop
                 continue
 
-            # adds the javscript reference to the string buffer
+            # adds the javascript reference to the string buffer
             self.string_buffer.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
 
     def __process_ifacl(self, node):
@@ -4959,19 +4959,26 @@ def get_process_method(controller, rest_request, process_method_name):
         attribute_permission = attributes_map[PERMISSION_VALUE]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
-        # retrieves the attribute value value
-        attribute_value = attributes_map[VALUE_VALUE]
-        attribute_value_value = self.get_value(attribute_value)
+        # verifies if the value attribute exists in the attributes map
+        # if that's the case retrieves its value (should be an integer)
+        # as the value that is going to be used for comparison
+        if VALUE_VALUE in attributes_map:
+            attribute_value = attributes_map[VALUE_VALUE]
+            attribute_value_value = self.get_value(attribute_value)
+
+        # otherwise the default value is set this is considered to be the
+        # most common usage of the ifacl predicate
+        else: attribute_value_value = 10
 
         # in case the session attribute exists in the attributes map
+        # must retrieve it and parse it as a literal value
         if SESSION_ATTRIBUTE_VALUE in attributes_map:
-            # retrieves the attribute session attribute value
             attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
-        # otherwise
-        else:
-            # sets the default attribute session attribute value
-            attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
+
+        # otherwise the default value should be used as no explicit
+        # session attribute value was defined (fallback operation)
+        else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
         # retrieves the user acl value
         user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
@@ -5008,19 +5015,26 @@ def get_process_method(controller, rest_request, process_method_name):
         attribute_permission = attributes_map[PERMISSION_VALUE]
         attribute_permission_value = self.get_value(attribute_permission)
 
-        # retrieves the attribute value value
-        attribute_value = attributes_map[VALUE_VALUE]
-        attribute_value_value = self.get_value(attribute_value)
+        # verifies if the value attribute exists in the attributes map
+        # if that's the case retrieves its value (should be an integer)
+        # as the value that is going to be used for comparison
+        if VALUE_VALUE in attributes_map:
+            attribute_value = attributes_map[VALUE_VALUE]
+            attribute_value_value = self.get_value(attribute_value)
+
+        # otherwise the default value is set this is considered to be the
+        # most common usage of the ifacl predicate
+        else: attribute_value_value = 10
 
         # in case the session attribute exists in the attributes map
+        # must retrieve it and parse it as a literal value
         if SESSION_ATTRIBUTE_VALUE in attributes_map:
-            # retrieves the attribute session attribute value
             attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
-        # otherwise
-        else:
-            # sets the default attribute session attribute value
-            attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
+
+        # otherwise the default value should be used as no explicit
+        # session attribute value was defined (fallback operation)
+        else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
         # retrieves the user acl value
         user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
