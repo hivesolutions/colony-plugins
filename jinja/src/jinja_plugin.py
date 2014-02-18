@@ -68,16 +68,9 @@ class JinjaPlugin(colony.Plugin):
         import jinja
         self.jinja = jinja.Jinja(self)
 
-    def parse_file_path(self, file_path):
-        return self.jinja.parse_file_path(file_path)
-
-    def parse_file_path_encoding(self, file_path, encoding = "utf-8"):
-        return self.jinja.parse_file_path(file_path, encoding = "utf-8")
-
-    def parse_file_path_variable_encoding(
-        self,
-        file_path,
-        encoding = "utf-8",
-        variable_encoding = "utf-8"
-    ):
-        return self.template_engine.parse_file_path(file_path, encoding = encoding)
+    def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
+        return self.jinja.parse_file_path(
+            file_path,
+            base_path = base_path,
+            encoding = encoding
+        )
