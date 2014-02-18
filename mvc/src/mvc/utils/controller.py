@@ -3682,7 +3682,7 @@ def unset_default_parameter(self, parameter_name):
     parameters to be used in the request handling.
 
     @type parameter_name: String
-    @param parameter_name: The name of the parameter to be unsed
+    @param parameter_name: The name of the parameter to be unset
     from the default parameter map.
     """
 
@@ -3690,20 +3690,28 @@ def unset_default_parameter(self, parameter_name):
 
 def get_template_engine_plugin(self):
     """
-    Retrieves the template engine plugin.
+    Retrieves the template engine plugin that is currently
+    under usage for the current controller. This is the
+    template engine used for the default rendering of files
+    corresponding to templates in the controller.
 
     @rtype: Plugin
-    @return: The template engine plugin.
+    @return: The template engine plugin that is currently
+    in used for rendering of templates in the controller.
     """
 
     return self.template_engine_plugin
 
 def set_template_engine_plugin(self, template_engine_plugin):
     """
-    Sets the template engine plugin.
+    Sets the template engine plugin, this setting operation
+    will define the kind of template engine that is going
+    to be used for template rendering in this controller.
 
     @type template_engine_plugin: Plugin
-    @param template_engine_plugin: The templates engine manager plguin
+    @param template_engine_plugin: The template engine
+    manager plugin that is going to be used for the rendering
+    of templates for the current controller.
     """
 
     self.template_engine_plugin = template_engine_plugin
