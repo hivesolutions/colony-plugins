@@ -45,3 +45,6 @@ class BaseController(controllers.Controller):
 
     def __init__(self, plugin, system):
         controllers.Controller.__init__(self, plugin, system)
+
+    def get_template_engine_plugin(self):
+        return self.get_engine("jinja")
