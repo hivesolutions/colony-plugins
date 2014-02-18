@@ -50,30 +50,30 @@ class NangerPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "mvc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
         "nanger.system"
     ]
 
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
+        colony.Plugin.load_plugin(self)
         import nanger
         self.nanger = nanger.Nanger(self)
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
+        colony.Plugin.end_load_plugin(self)
         self.nanger.load_components()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
+        colony.Plugin.unload_plugin(self)
         self.nanger.unload_components()
 
     def get_patterns(self):

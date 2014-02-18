@@ -135,7 +135,7 @@ class ConsoleController(base.BaseController):
         configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + self.plugin.id + "%/initrc", True)
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         init_file_path = plugin_path + "/nanger/resources/default/initrc"
-        colony.libs.path_util.ensure_file_path(configuration_file_path, init_file_path)
+        colony.ensure_file_path(configuration_file_path, init_file_path)
 
         # opens the configuration (init) file and reads the complete set of
         # contents in it (to be executed in the current instance)
