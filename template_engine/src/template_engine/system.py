@@ -123,10 +123,19 @@ are matching groups for each of the data types """
 
 class TemplateEngine(colony.base.system.System):
     """
-    The template engine class.
+    The template engine class, responsible for the processing
+    of template files according to the current template engine
+    based file specification. Its internal working should be
+    based on a visitor strategy.
     """
 
-    def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
+    def parse_file_path(
+        self,
+        file_path,
+        encoding = DEFAULT_ENCODING_VALUE,
+        process_methods_list = [],
+        locale_bundles = None
+    ):
         # verifies that the template file requested exists in the
         # file system in case it does not raises an exception
         if not os.path.exists(file_path):
@@ -148,24 +157,37 @@ class TemplateEngine(colony.base.system.System):
             )
         finally:
             # closes the file no further reading operations
-            # will be done for the file
+            # will be done for the file (avoids leaks)
             file.close()
 
         # returns the template file
         return template_file
 
-    def parse_file_path_variable_encoding(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
+    def parse_file_path_variable_encoding(
+        self,
+        file_path,
+        encoding = DEFAULT_ENCODING_VALUE,
+        variable_encoding = DEFAULT_ENCODING_VALUE,
+        process_methods_list = [],
+        locale_bundles = None
+    ):
         # parses the file for the given file path with the
-        # given encoding retrieving the template_file
+        # given encoding retrieving the template_file and
+        # then sets the variable encoding in it returning
+        # then the resulting template fle object to the
+        # caller method (as expected by definition)
         template_file = self.parse_file_path(file_path, encoding, process_methods_list, locale_bundles)
-
-        # sets the variable encoding in the template file
         template_file.set_variable_encoding(variable_encoding)
-
-        # returns the template file
         return template_file
 
-    def parse_file(self, file, file_path = None, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = [], locale_bundles = None):
+    def parse_file(
+        self,
+        file,
+        file_path = None,
+        encoding = DEFAULT_ENCODING_VALUE,
+        process_methods_list = [],
+        locale_bundles = None
+    ):
         # in case the locale bundles list is not defined must
         # create a new list reference to handle it correctly
         if locale_bundles == None: locale_bundles = []
