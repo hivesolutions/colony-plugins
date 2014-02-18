@@ -69,22 +69,10 @@ class TemplateEnginePlugin(colony.Plugin):
         import template_engine.system
         self.template_engine = template_engine.system.TemplateEngine(self)
 
-    def parse_file_path(self, file_path):
-        return self.template_engine.parse_file_path(file_path)
-
-    def parse_file_path_encoding(self, file_path, encoding = "utf-8"):
-        return self.template_engine.parse_file_path(file_path, encoding = "utf-8")
-
-    def parse_file_path_variable_encoding(
-        self,
-        file_path,
-        encoding = "utf-8",
-        variable_encoding = "utf-8"
-    ):
-        return self.template_engine.parse_file_path_variable_encoding(
+    def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
+        return self.template_engine.parse_file_path(
             file_path,
-            encoding = encoding,
-            variable_encoding =  variable_encoding
+            encoding = encoding
         )
 
     def parse_file(self, file):
