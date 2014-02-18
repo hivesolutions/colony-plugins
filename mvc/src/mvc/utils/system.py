@@ -334,7 +334,15 @@ class MvcUtils(colony.base.system.System):
         # returns the (created) controller
         return _controller
 
-    def create_base_models(self, system_instance, package_path, entity_manager_arguments, directory_path, extra_entity_models = [], load_entity_manager = True):
+    def create_base_models(
+        self,
+        system_instance,
+        package_path,
+        entity_manager_arguments,
+        directory_path,
+        extra_entity_models = [],
+        load_entity_manager = True
+    ):
         # retrieves the entity related plugins
         entity_manager_plugin = self.plugin.entity_manager_plugin
         business_helper_plugin = self.plugin.business_helper_plugin
@@ -507,7 +515,14 @@ class MvcUtils(colony.base.system.System):
             models_module
         )
 
-    def create_models(self, system_instance, plugin_instance, package_path = None, entity_manager_arguments = {}, extra_models = []):
+    def create_models(
+        self,
+        system_instance,
+        plugin_instance,
+        package_path = None,
+        entity_manager_arguments = {},
+        extra_models = []
+    ):
         # retrieves the directory path from the system instance
         directory_path = colony.libs.stack_util.get_instance_module_directory(system_instance)
 
@@ -627,7 +642,15 @@ class MvcUtils(colony.base.system.System):
         # returns the list of (created) entity models
         return entity_models
 
-    def create_controllers(self, system_instance, plugin_instance, package_path = None, prefix_name = None, directory_path = None, is_first = True):
+    def create_controllers(
+        self,
+        system_instance,
+        plugin_instance,
+        package_path = None,
+        prefix_name = None,
+        directory_path = None,
+        is_first = True
+    ):
         """
         Creates the various controllers for the given package path (dot notation based path
         relative to the caller (system) instance).
