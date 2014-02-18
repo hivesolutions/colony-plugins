@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class MvcUtilsPlugin(colony.base.system.Plugin):
+class MvcUtilsPlugin(colony.Plugin):
     """
     The main class for the Mvc Utils plugin.
     """
@@ -51,18 +50,21 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "mvc.utils"
     ]
+    capabilities_allowed = [
+        "template_engine"
+    ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity.manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.file.manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.data.file.manager", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
     ]
     main_modules = [
         "mvc.utils.controller",
@@ -73,35 +75,10 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
         "mvc.utils.utils"
     ]
 
-    mvc_utils = None
-    """ The mvc utils """
-
-    template_engine_plugin = None
-    """ The template engine plugin """
-
-    entity_manager_plugin = None
-    """ The entity manager plugin """
-
-    file_manager_plugin = None
-    """ The file manager plugin """
-
-    business_helper_plugin = None
-    """ The business helper plugin """
-
-    resources_manager_plugin = None
-    """ The resources manager plugin """
-
-    json_plugin = None
-    """ The json plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
+        colony.Plugin.load_plugin(self)
         import mvc.utils.system
         self.mvc_utils = mvc.utils.system.MvcUtils(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def import_module_mvc_utils(self, module_name, package_name, directory_path):
         return self.mvc_utils.import_module_mvc_utils(module_name, package_name, directory_path)
@@ -173,27 +150,3 @@ class MvcUtilsPlugin(colony.base.system.Plugin):
 
     def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
         return self.mvc_utils.generate_entity_manager_arguments(plugin, base_entity_manager_arguments, parameters)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
-    def set_template_engine_plugin(self, template_engine_plugin):
-        self.template_engine_plugin = template_engine_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity.manager")
-    def set_entity_manager_plugin(self, entity_manager_plugin):
-        self.entity_manager_plugin = entity_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.file.manager")
-    def set_file_manager_plugin(self, file_manager_plugin):
-        self.file_manager_plugin = file_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
-    def set_business_helper_plugin(self, business_helper_plugin):
-        self.business_helper_plugin = business_helper_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
-    def set_resources_manager_plugin(self, resources_manager_plugin):
-        self.resources_manager_plugin = resources_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin
