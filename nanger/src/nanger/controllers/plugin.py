@@ -113,8 +113,7 @@ class PluginController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general.html.tpl",
-            partial_page = "plugin/show.html.tpl",
+            template = "plugin/show.html.tpl",
             title = plugin.name,
             area = "plugins",
             section = "plugins.html.tpl",
