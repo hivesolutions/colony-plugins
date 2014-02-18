@@ -531,7 +531,16 @@ def get_entity_id_attribute(self, entity, id_attribute_name = OBJECT_ID_VALUE):
     # returns the retrieved id attribute value
     return id_attribute_value
 
-def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None, create = True, nullify = True):
+def get_entity_model(
+    self,
+    entity_manager,
+    entity_model,
+    update_values_map = {},
+    create_values_map = {},
+    secure_value_keys_list = None,
+    create = True,
+    nullify = True
+):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class).
@@ -686,28 +695,34 @@ def set_entity_relation(self, entity, relation_name, relation_value):
     # retrieves the relation value type
     relation_value_type = type(relation_value)
 
-    # in case the type if the relation value is list
+    # in case the type if the relation value is list must
+    # iterate and validate and the values in it
     if relation_value_type == types.ListType:
         # iterates over all the values
         # of the list (relation value)
         for value in relation_value:
             # in case the validation of the relation value
-            # fails
-            if not self._validate_relation_value(value):
-                # returns immediately
-                return
-    # otherwise it must be a "simple" value
+            # fails, must return immediately
+            if not self._validate_relation_value(value): return
+    
+    # otherwise it must be a "simple" value and no it
+    # iteration is required simple value
     else:
         # in case the validation of the relation value
-        # fails
-        if not self._validate_relation_value(relation_value):
-            # returns immediately
-            return
+        # fails must return immediately (no value setting)
+        if not self._validate_relation_value(relation_value): return
 
     # sets the relation value in entity
     setattr(entity, relation_name, relation_value)
 
-def save_entity_relations(self, rest_request, entity_map, entity, relations_map, persist_type = PERSIST_ALL_TYPE):
+def save_entity_relations(
+    self,
+    rest_request,
+    entity_map,
+    entity,
+    relations_map,
+    persist_type = PERSIST_ALL_TYPE
+):
     """
     Saves the entity relations in the in the entity with the given map and values.
     The relations map describes the various entity relation with a tuple
@@ -740,9 +755,7 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map,
     for relation_name, relation_item in relations_map.items():
         # skips the relation in case it's
         # not defined in the relation map
-        if not relation_name in entity_map:
-            # continues the loop
-            continue
+        if not relation_name in entity_map: continue
 
         # retrieves the relation item length
         relation_item_length = len(relation_item)
