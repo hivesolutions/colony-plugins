@@ -224,8 +224,9 @@ class ServiceHttpTemplateError(colony.base.system.System):
             "/" + TEMPLATE_ERROR_RESOURCES_PATH + "/" + ERROR_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_plugin.parse_file_path_encoding(
-            template_file_path, DEFAULT_TEMPLATE_ENCODING
+        template_file = template_engine_plugin.parse_template(
+            template_file_path,
+            encoding = DEFAULT_TEMPLATE_ENCODING
         )
 
         # assigns the template variables

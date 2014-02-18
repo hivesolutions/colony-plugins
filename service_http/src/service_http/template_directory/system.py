@@ -94,7 +94,10 @@ class ServiceHttpTemplateDirectory(colony.base.system.System):
             "/" + TEMPLATE_DIRECTORY_RESOURCES_PATH + "/" + DIRECTORY_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
+        template_file = template_engine_plugin.parse_template(
+            template_file_path,
+            encoding = DEFAULT_TEMPLATE_ENCODING
+        )
 
         # retrieves the directory entries
         directory_entries = directory_list["entries"]
