@@ -53,8 +53,7 @@ class MainController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general.html.tpl",
-            partial_page = "general/index.html.tpl",
+            template = "general/index.html.tpl",
             title = "Colony Framework",
             area = "home"
         )
@@ -65,8 +64,7 @@ class MainController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general.html.tpl",
-            partial_page = "general/plugins.html.tpl",
+            template = "general/plugins.html.tpl",
             title = "Plugins",
             area = "plugins"
         )
@@ -87,8 +85,7 @@ class MainController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general_w.html.tpl",
-            partial_page = "general/console.html.tpl",
+            template = "general/console.html.tpl",
             title = "Console",
             area = "console",
             version = version,
@@ -122,8 +119,7 @@ class MainController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general_w.html.tpl",
-            partial_page = "general/log.html.tpl",
+            template = "general/log.html.tpl",
             title = "Log",
             area = "log",
             latest = latest
@@ -145,8 +141,7 @@ class MainController(base.BaseController):
         # a defined partial page and a base template value defined
         self._template(
             rest_request = rest_request,
-            template = "general.html.tpl",
-            partial_page = "general/about.html.tpl",
+            template = "general/about.html.tpl",
             title = "About",
             area = "about",
             manager = plugin_manager,
