@@ -2590,9 +2590,19 @@ def retrieve_template_file(
     template_file_path = os.path.join(self.templates_path, file_path)
     template_file_path = os.path.normpath(template_file_path)
 
+    # retrieves the reference to the engine object/plugin that is
+    # going to be used for the parsing and rendering of the target
+    # template file to be used (this call may be overriden to be
+    # able to select the best template engine)
+    engine = self.get_template_engine_plugin()
+
     # parses the template file in the template file path assigning
     # the appropriate page include if the partial page value is set
-    template_file = self.template_engine_plugin.parse_file_path_encoding(template_file_path, encoding)
+    template_file = engine.parse_template(
+        template_file_path,
+        base_path = self.templates_path,
+        encoding = encoding
+    )
     if partial_page: self.assign_include_template_file(
         template_file,
         PAGE_INCLUDE_VALUE,
@@ -3738,6 +3748,37 @@ def set_template_engine_plugin(self, template_engine_plugin):
     """
 
     self.template_engine_plugin = template_engine_plugin
+
+def get_engine(self, name):
+    """
+    Retrieves the (template) engine for the requested name,
+    this value is going to be retrieved from the currently
+    set map of engines in from the controller.
+
+    @type name: String
+    @param name: The name of the engine that is meant to
+    be retrieved, this name should be compliant with the
+    short name of the associated plugin.
+    @rtype: Plugin
+    @return: The template engine plugin for the requested
+    short name, may be latter used for the rendering of
+    template based files (as defined by each specification).
+    """
+
+    return self.engines.get(name, None)
+
+def set_engines(self, engines):
+    """
+    Sets the map of engines that is going to be used as reference
+    for the retrieval of template engines for the controller.
+
+    @type engines: Dictionary
+    @param engines: The map that contains a key value association
+    between the short name of the engine plugin and the proper
+    engine plugin object reference.
+    """
+
+    self.engines = engines
 
 def set_json_plugin(self, json_plugin):
     """
