@@ -64,9 +64,6 @@ class TemplateEnginePlugin(colony.Plugin):
         "template_engine.visitor"
     ]
 
-    template_engine = None
-    """ The template engine """
-
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import template_engine.system
