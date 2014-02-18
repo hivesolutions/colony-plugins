@@ -287,6 +287,11 @@ class MvcUtils(colony.base.system.System):
         template_engine_plugin = self.plugin.template_engine_plugin
         json_plugin = self.plugin.json_plugin
 
+        # retrieves the complete set of template engine plugins loaded
+        # in the current plugin so that they are going to be set in
+        # the controller for reference (dynamic engine rendering)
+        engines = self.plugin.template_engine
+
         # retrieves the first and second arguments from the base arguments
         # as the plugin and the system instance
         plugin = base_arguments_list[0]
@@ -309,8 +314,12 @@ class MvcUtils(colony.base.system.System):
         # the start structures flag is set
         start_structures and _controller._start_controller()
 
-        # sets the template engine plugin in the controller
+        # sets the template engine plugin in the controller, the template
+        # engine set is the default to be used in order to override this
+        # behavior the proper inheritance from the get template method
+        # must be done (expected behavior)
         _controller.set_template_engine_plugin(template_engine_plugin)
+        _controller.set_engines(engines)
 
         # sets the template engine plugin and the json plugins
         # in the controller, this are required for proper usage
