@@ -172,9 +172,9 @@ class TemplateEngine(colony.base.system.System):
         locale_bundles = None
     ):
         # parses the file for the given file path with the
-        # given encoding retrieving the template_file and
+        # given encoding retrieving the template file and
         # then sets the variable encoding in it returning
-        # then the resulting template fle object to the
+        # then the resulting template file object to the
         # caller method (as expected by definition)
         template_file = self.parse_file_path(file_path, encoding, process_methods_list, locale_bundles)
         template_file.set_variable_encoding(variable_encoding)
