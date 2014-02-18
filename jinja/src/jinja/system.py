@@ -43,16 +43,14 @@ import colony
 
 class Jinja(colony.System):
 
-    def __init__(self, plugin):
-        colony.System.__init__(self, plugin)
-        self.loader = jinja2.FileSystemLoader(self.templates_path)
-        self.jinja = jinja2.Environment(loader = self.loader)
+    def parse_file_path(self, file_path, base_path = ".", encoding = "utf-8"):
+        loader = jinja2.FileSystemLoader(base_path)
+        jinja = jinja2.Environment(loader = loader)
 
-    def parse_file_path(self, file_path, encoding = "utf-8"):
-        template = colony.relative_path(file_path, self.templates_path)
+        template = colony.relative_path(file_path, base_path)
         template = template.replace("\\", "/")
 
-        template = self.jinja.get_template(template)
+        template = jinja.get_template(template)
         template = JinjaTemplate(template)
         return template
 
