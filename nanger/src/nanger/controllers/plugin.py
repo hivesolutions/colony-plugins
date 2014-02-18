@@ -37,26 +37,15 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.import_util
+import colony
 
-mvc_utils = colony.libs.import_util.__import__("mvc_utils")
-controllers = colony.libs.import_util.__import__("controllers")
+import base
 
-class PluginController(controllers.Controller):
-    """
-    The nanger plugin controller.
-    """
+mvc_utils = colony.__import__("mvc_utils")
 
-    def handle_list(self, rest_request, parameters = {}):
-        """
-        Handles the given list rest request.
+class PluginController(base.BaseController):
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
+    def list(self, rest_request):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manager = self.plugin.manager
@@ -103,29 +92,12 @@ class PluginController(controllers.Controller):
             plugins.append(plugin)
 
         # sorts the plugins list using the default alphabetic order and
-        # then retrieves the request chunk of data
+        # then serializes the same plugin list using the defined plugin
         plugins.sort()
         plugins = plugins[start_record:start_record + number_records]
+        self.serialize(rest_request, plugins, serializer = json_plugin)
 
-        # serializes the list of plugin map with json to create the
-        # final result contents, should retrieve the appropriate mime type
-        result = json_plugin.dumps(plugins)
-        mime_type = json_plugin.get_mime_type()
-
-        # sets the (resulting) contents in the rest request and sets the
-        # appropriate mime type according to the serialization
-        self.set_contents(rest_request, result, content_type = mime_type)
-
-    def handle_show(self, rest_request, parameters = {}):
-        """
-        Handles the given show rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
+    def show(self, rest_request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -133,35 +105,24 @@ class PluginController(controllers.Controller):
         # retrieves the identifier of the plugin to be used for the
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
-        plugin_id = self.get_pattern(parameters, "plugin_id")
         plugin = plugin_manger._get_plugin(plugin_id)
         if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
-        # processes the contents of the template file assigning the
-        # appropriate values to it
-        template_file = self.retrieve_template_file(
-            "general.html.tpl",
-            partial_page = "plugin/show.html.tpl"
+        # generates and processes the template with the provided values
+        # changing the current rest request accordingly, note that there's
+        # a defined partial page and a base template value defined
+        self._template(
+            rest_request = rest_request,
+            template = "general.html.tpl",
+            partial_page = "plugin/show.html.tpl",
+            title = plugin.name,
+            area = "plugins",
+            section = "plugins.html.tpl",
+            sub_area = "info",
+            plugin = plugin
         )
-        template_file.assign("title", plugin.name)
-        template_file.assign("area", "plugins")
-        template_file.assign("section", "plugins.html.tpl")
-        template_file.assign("sub_area", "info")
-        template_file.assign("plugin", plugin)
-        self.process_set_contents(rest_request, template_file)
 
-    def handle_load(self, rest_request, parameters = {}):
-        """
-        Handles the given load rest request.
-        This request should load the associated plugin into
-        the currently loaded plugin manager.
-
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
+    def load(self, rest_request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -169,7 +130,6 @@ class PluginController(controllers.Controller):
         # retrieves the identifier of the plugin to be used for the
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
-        plugin_id = self.get_pattern(parameters, "plugin_id")
         plugin = plugin_manger._get_plugin(plugin_id)
         if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
@@ -181,7 +141,7 @@ class PluginController(controllers.Controller):
         # instance (default behavior)
         self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
 
-    def handle_unload(self, rest_request, parameters = {}):
+    def unload(self, rest_request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -189,7 +149,6 @@ class PluginController(controllers.Controller):
         # retrieves the identifier of the plugin to be used for the
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
-        plugin_id = self.get_pattern(parameters, "plugin_id")
         plugin = plugin_manger._get_plugin(plugin_id)
         if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
@@ -201,7 +160,7 @@ class PluginController(controllers.Controller):
         # instance (default behavior)
         self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
 
-    def handle_reload(self, rest_request, parameters = {}):
+    def reload(self, rest_request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -209,7 +168,6 @@ class PluginController(controllers.Controller):
         # retrieves the identifier of the plugin to be used for the
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
-        plugin_id = self.get_pattern(parameters, "plugin_id")
         plugin = plugin_manger._get_plugin(plugin_id)
         if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
 

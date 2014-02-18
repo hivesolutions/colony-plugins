@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class Nanger(colony.base.system.System):
+class Nanger(colony.System):
     """
     The nanger class.
     """
@@ -78,35 +78,21 @@ class Nanger(colony.base.system.System):
         """
 
         return (
-            (r"^nanger/?$", self.main_controller.handle_index, "get"),
-            (r"^nanger/index$", self.main_controller.handle_index, "get"),
-            (r"^nanger/plugins$", self.main_controller.handle_plugins, "get"),
-            (r"^nanger/console$", self.main_controller.handle_console, "get"),
-            (r"^nanger/log$", self.main_controller.handle_log, "get"),
-            (r"^nanger/about$", self.main_controller.handle_about, "get"),
-            (r"^nanger/plugins/list$", self.plugin_controller.handle_list, "get"),
-            (r"^nanger/plugins/(?P<plugin_id>[\w]+)$", self.plugin_controller.handle_show, "get"),
-            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/load$", self.plugin_controller.handle_load, "get"),
-            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/unload$", self.plugin_controller.handle_unload, "get"),
-            (r"^nanger/plugins/(?P<plugin_id>[\w]+)/reload$", self.plugin_controller.handle_reload, "get"),
-            (r"^nanger/console/init$", self.console_controller.handle_init, ("get", "post")),
-            (r"^nanger/console/execute$", self.console_controller.handle_execute, ("get", "post")),
-            (r"^nanger/console/autocomplete$", self.console_controller.handle_autocomplete, ("get", "post"))
+            (r"nanger/?", self.main_controller.index, "get"),
+            (r"nanger/index", self.main_controller.index, "get"),
+            (r"nanger/plugins", self.main_controller.plugins, "get"),
+            (r"nanger/console", self.main_controller.console, "get"),
+            (r"nanger/log", self.main_controller.log, "get"),
+            (r"nanger/about", self.main_controller.about, "get"),
+            (r"nanger/plugins/list", self.plugin_controller.list, "get"),
+            (r"nanger/plugins/<plugin_id>", self.plugin_controller.show, "get"),
+            (r"nanger/plugins/<plugin_id>/load", self.plugin_controller.load, "get"),
+            (r"nanger/plugins/<plugin_id>/unload", self.plugin_controller.unload, "get"),
+            (r"nanger/plugins/<plugin_id>/reload", self.plugin_controller.reload, "get"),
+            (r"nanger/console/init", self.console_controller.init, ("get", "post")),
+            (r"nanger/console/execute", self.console_controller.execute, ("get", "post")),
+            (r"nanger/console/autocomplete", self.console_controller.autocomplete, ("get", "post"))
         )
-
-    def get_communication_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as communication patterns,
-        to the mvc service. The tuple should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as communication patterns,
-        to the mvc service.
-        """
-
-        return ()
 
     def get_resource_patterns(self):
         """
@@ -125,5 +111,5 @@ class Nanger(colony.base.system.System):
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         return (
-            (r"^nanger/resources/.+$", (plugin_path + "/nanger/resources/extras", "nanger/resources")),
+            (r"nanger/resources/.+", (plugin_path + "/nanger/resources/extras", "nanger/resources")),
         )

@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class NangerPlugin(colony.base.system.Plugin):
+class NangerPlugin(colony.Plugin):
     """
     The main class for the Nanger plugin.
     """
@@ -64,20 +63,10 @@ class NangerPlugin(colony.base.system.Plugin):
         "nanger.system"
     ]
 
-    nanger = None
-    """ The nanger back end reference to the object
-    that will handle the api requests """
-
-    mvc_utils_plugin = None
-    """ The mvc utils plugin """
-
-    json_plugin = None
-    """ The json plugin """
-
     def load_plugin(self):
         colony.base.system.Plugin.load_plugin(self)
-        import nanger.system
-        self.nanger = nanger.system.Nanger(self)
+        import nanger
+        self.nanger = nanger.Nanger(self)
 
     def end_load_plugin(self):
         colony.base.system.Plugin.end_load_plugin(self)
@@ -86,10 +75,6 @@ class NangerPlugin(colony.base.system.Plugin):
     def unload_plugin(self):
         colony.base.system.Plugin.unload_plugin(self)
         self.nanger.unload_components()
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
 
     def get_patterns(self):
         """
@@ -104,20 +89,6 @@ class NangerPlugin(colony.base.system.Plugin):
 
         return self.nanger.get_patterns()
 
-    def get_communication_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as communication patterns,
-        to the mvc service. The tuple should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as communication patterns,
-        to the mvc service.
-        """
-
-        return self.nanger.get_communication_patterns()
-
     def get_resource_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as resource patterns,
@@ -130,11 +101,3 @@ class NangerPlugin(colony.base.system.Plugin):
         """
 
         return self.nanger.get_resource_patterns()
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.mvc.utils")
-    def set_mvc_utils_plugin(self, mvc_utils_plugin):
-        self.mvc_utils_plugin = mvc_utils_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin

@@ -43,11 +43,11 @@ import uuid
 import types
 import cStringIO
 
-import colony.libs.map_util
-import colony.libs.import_util
+import colony
 
-mvc_utils = colony.libs.import_util.__import__("mvc_utils")
-controllers = colony.libs.import_util.__import__("controllers")
+import base
+
+mvc_utils = colony.__import__("mvc_utils")
 
 BASE_KEYWORDS = ("break", "continue", "pass")
 """ The set of python keywords that are considered
@@ -70,7 +70,7 @@ DOT_KEYWORDS = ("else", "finally", "try")
 """ The set of python keywords that are meant to
 be suffixed with a dot character """
 
-class ConsoleController(controllers.Controller):
+class ConsoleController(base.BaseController):
     """
     The nanger console controller.
     """
@@ -80,10 +80,10 @@ class ConsoleController(controllers.Controller):
     with the concrete instance containing the interpreter """
 
     def __init__(self, plugin, system):
-        controllers.Controller.__init__(self, plugin, system)
+        base.BaseController.__init__(self, plugin, system)
         self.interpreters = {}
 
-    def handle_init(self, rest_request, parameters = {}):
+    def init(self, rest_request):
         """
         Handles the given initialization rest request.
         This request should start an execution instance and
@@ -91,8 +91,6 @@ class ConsoleController(controllers.Controller):
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
         """
 
         # retrieves the reference to the plugin manager running
@@ -174,18 +172,13 @@ class ConsoleController(controllers.Controller):
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
-        response = {
-            "result" : result,
-            "instance" : instance
-        }
-        result = json_plugin.dumps(response)
-        mime_type = json_plugin.get_mime_type()
+        response = dict(
+            result = result,
+            instance = instance
+        )
+        self.serialize(rest_request, response, serializer = json_plugin)
 
-        # sets the (resulting) contents in the rest request and sets the
-        # appropriate mime type according to the serialization
-        self.set_contents(rest_request, result, content_type = mime_type)
-
-    def handle_execute(self, rest_request, parameters = {}):
+    def execute(self, rest_request):
         """
         Handles the given execute rest request.
         This request should execute a python command at the
@@ -193,8 +186,6 @@ class ConsoleController(controllers.Controller):
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
         """
 
         # retrieves the reference to the plugin manager running
@@ -296,19 +287,14 @@ class ConsoleController(controllers.Controller):
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
-        response = {
-            "result" : result,
-            "pending" : pending,
-            "instance" : instance
-        }
-        result = json_plugin.dumps(response)
-        mime_type = json_plugin.get_mime_type()
+        response = dict(
+            result = result,
+            pending = pending,
+            instance = instance
+        )
+        self.serialize(rest_request, response, serializer = json_plugin)
 
-        # sets the (resulting) contents in the rest request and sets the
-        # appropriate mime type according to the serialization
-        self.set_contents(rest_request, result, content_type = mime_type)
-
-    def handle_autocomplete(self, rest_request, parameters = {}):
+    def autocomplete(self, rest_request):
         """
         Handles the given autocomplete rest request.
         This request should try to find a series of results
@@ -316,8 +302,6 @@ class ConsoleController(controllers.Controller):
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
         """
 
         # retrieves the reference to the plugin manager running
@@ -357,7 +341,7 @@ class ConsoleController(controllers.Controller):
 
         # copies the built in symbols (globally present) into the locals map
         # this allows the autocomplete to couple with these symbols
-        colony.libs.map_util.map_copy(__builtins__, locals)
+        colony.map_copy(__builtins__, locals)
 
         # creates a new list to hold the various commands to be sent as valid
         # autocomplete values for the client side
@@ -443,17 +427,12 @@ class ConsoleController(controllers.Controller):
 
         # creates the response map and serializes it with json to create the
         # final result contents, should retrieve the appropriate mime type
-        response = {
-            "result" : commands,
-            "offset" : offset,
-            "instance" : instance
-        }
-        result = json_plugin.dumps(response)
-        mime_type = json_plugin.get_mime_type()
-
-        # sets the (resulting) contents in the rest request and sets the
-        # appropriate mime type according to the serialization
-        self.set_contents(rest_request, result, content_type = mime_type)
+        response = dict(
+            result = commands,
+            offset = offset,
+            instance = instance
+        )
+        self.serialize(rest_request, response, serializer = json_plugin)
 
     def _resolve_value(self, partials, names):
         """
