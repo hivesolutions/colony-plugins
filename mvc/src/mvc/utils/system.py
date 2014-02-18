@@ -254,7 +254,13 @@ class MvcUtils(colony.base.system.System):
         # returns the target (imported) module
         return target_module
 
-    def create_model(self, base_model, base_arguments_list, base_arguments_map, start_structures = False):
+    def create_model(
+        self,
+        base_model,
+        base_arguments_list,
+        base_arguments_map,
+        start_structures = False
+    ):
         # sets the module functions in the base model class
         self._set_module_functions(model, base_model)
 
@@ -268,8 +274,16 @@ class MvcUtils(colony.base.system.System):
         # returns the model
         return model
 
-    def create_controller(self, base_controller, base_arguments_list, base_arguments_map, start_structures = False, default_parameters = {}):
-        # retrieves the required plugins
+    def create_controller(
+        self,
+        base_controller,
+        base_arguments_list,
+        base_arguments_map,
+        start_structures = False,
+        default_parameters = {}
+    ):
+        # retrieves the required plugins, that are going to be set
+        # under the current controller
         template_engine_plugin = self.plugin.template_engine_plugin
         json_plugin = self.plugin.json_plugin
 
@@ -299,7 +313,8 @@ class MvcUtils(colony.base.system.System):
         _controller.set_template_engine_plugin(template_engine_plugin)
 
         # sets the template engine plugin and the json plugins
-        # in the controller
+        # in the controller, this are required for proper usage
+        # of the controller according to specification
         _controller.set_template_engine_plugin(template_engine_plugin)
         _controller.set_json_plugin(json_plugin)
 
