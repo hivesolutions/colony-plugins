@@ -1,5 +1,8 @@
-<div class="log">
-    ${foreach item=line from=latest}
-        <div class="line">${out_none value=line xml_escape=True /}</div>
-    ${/foreach}
-</div>
+{% extends "general_w.html.tpl" %}
+{% block content %}
+    <div class="log">
+        {% for line in latest %}
+            <div class="line">{{ line }}</div>
+        {% endfor %}
+    </div>
+{% endblock %}

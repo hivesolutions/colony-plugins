@@ -1,37 +1,36 @@
 <div id="header">
-    <h1>${out_none value=title xml_escape=True /}</h1>
-    <div class="links">
-        ${if item=area value="home" operator=eq}
-            <a href="${out_none value=base_path /}index" class="active">home</a>
-        ${else /}
-            <a href="${out_none value=base_path /}index">home</a>
-        ${/if}
-        //
-        ${if item=area value="plugins" operator=eq}
-            <a href="${out_none value=base_path /}plugins" class="active">plugins</a>
-        ${else /}
-            <a href="${out_none value=base_path /}plugins">plugins</a>
-        ${/if}
-        //
-        ${if item=area value="console" operator=eq}
-            <a href="${out_none value=base_path /}console" class="active">console</a>
-        ${else /}
-            <a href="${out_none value=base_path /}console">console</a>
-        ${/if}
-        //
-        ${if item=area value="log" operator=eq}
-            <a href="${out_none value=base_path /}log" class="active">log</a>
-        ${else /}
-            <a href="${out_none value=base_path /}log">log</a>
-        ${/if}
-        //
-        ${if item=area value="about" operator=eq}
-            <a href="${out_none value=base_path /}about" class="active">about</a>
-        ${else /}
-            <a href="${out_none value=base_path /}about">about</a>
-        ${/if}
-    </div>
-    ${if item=section value=None operator=neq}
-        ${include file_value=section /}
-    ${/if}
+    <h1>{{ title }}</h1>
+    {% block links %}
+        <div class="links">
+            {% if area == "home" %}
+                <a href="{{ base_path }}index" class="active">home</a>
+            {% else %}
+                <a href="{{ base_path }}index">home</a>
+            {% endif %}
+            //
+            {% if area == "plugins" %}
+                <a href="{{ base_path }}plugins" class="active">plugins</a>
+            {% else %}
+                <a href="{{ base_path }}plugins">plugins</a>
+            {% endif %}
+            //
+            {% if area == "console" %}
+                <a href="{{ base_path }}console" class="active">console</a>
+            {% else %}
+                <a href="{{ base_path }}console">console</a>
+            {% endif %}
+            //
+            {% if area == "log" %}
+                <a href="{{ base_path }}log" class="active">log</a>
+            {% else %}
+                <a href="{{ base_path }}log">log</a>
+            {% endif %}
+            //
+            {% if area == "about" %}
+                <a href="{{ base_path }}about" class="active">about</a>
+            {% else %}
+                <a href="{{ base_path }}about">about</a>
+            {% endif %}
+        </div>
+    {% endblock %}
 </div>

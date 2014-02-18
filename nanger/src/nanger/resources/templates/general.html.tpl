@@ -1,14 +1,14 @@
-${include file="partials/doctype.html.tpl" /}
+{% include "partials/doctype.html.tpl" %}
 <head>
-    <title>${out_none value=title xml_escape=True /}</title>
-    ${include file="partials/content_type.html.tpl" /}
-    ${include file="partials/includes.html.tpl" /}
+    <title>{{ title }}</title>
+    {% include "partials/content_type.html.tpl" %}
+    {% include "partials/includes.html.tpl" %}
 </head>
-<body class="ux">
-    ${include file="partials/header.html.tpl" /}
+<body class="{% block classes %}ux{% endblock %}">
+    {% include "partials/header.html.tpl" %}
     <div id="content">
-        ${include file_value=page_include /}
+        {% block content %}{% endblock %}
     </div>
-    ${include file="partials/footer.html.tpl" /}
+    {% include "partials/footer.html.tpl" %}
 </body>
-${include file="partials/end_doctype.html.tpl" /}
+{% include "partials/end_doctype.html.tpl" %}
