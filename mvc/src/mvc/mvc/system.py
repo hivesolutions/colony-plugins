@@ -998,7 +998,7 @@ class Mvc(colony.base.system.System):
         # that may be correctly compiled into the rest environment, then sets
         # the new expression value as the first element of the pattern
         expression = INT_REGEX.sub(r"(?P[\1>[\d]+)", expression)
-        expression = REPLACE_REGEX.sub(r"(?P[\3>[\s\w-]+)", expression)
+        expression = REPLACE_REGEX.sub(r"(?P[\3>[\:\s\w-]+)", expression)
         expression = expression.replace("?P[", "?P<")
         pattern[0] = expression
 
