@@ -37,17 +37,30 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import jinja2
 
 import colony
 
+VALID_EXTENSIONS = (
+    ".xml",
+    ".html",
+    ".xml.tpl",
+    ".html.tpl"
+)
+""" The sequence containing the various extensions
+for which the autoescape mode will be enabled  by
+default as expected by the end developer """
+
 class Jinja(colony.System):
 
     def parse_file_path(self, file_path, base_path = ".", encoding = "utf-8"):
+        extension = self._extension(file_path)
+
         loader = jinja2.FileSystemLoader(base_path)
         jinja = jinja2.Environment(
             loader = loader,
-            autoescape = True
+            autoescape = extension in VALID_EXTENSIONS
         )
 
         template = colony.relative_path(file_path, base_path)
@@ -56,6 +69,12 @@ class Jinja(colony.System):
         template = jinja.get_template(template)
         template = JinjaTemplate(template)
         return template
+
+    def _extension(self, file_path):
+        _head, tail = os.path.split(file_path)
+        tail_s = tail.split(".", 1)
+        if len(tail_s) > 1: return "." + tail_s[1]
+        return None
 
 class JinjaTemplate(object):
 
