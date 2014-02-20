@@ -45,7 +45,10 @@ class Jinja(colony.System):
 
     def parse_file_path(self, file_path, base_path = ".", encoding = "utf-8"):
         loader = jinja2.FileSystemLoader(base_path)
-        jinja = jinja2.Environment(loader = loader)
+        jinja = jinja2.Environment(
+            loader = loader,
+            autoescaping = True
+        )
 
         template = colony.relative_path(file_path, base_path)
         template = template.replace("\\", "/")
