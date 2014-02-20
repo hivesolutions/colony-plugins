@@ -47,7 +47,7 @@ class Jinja(colony.System):
         loader = jinja2.FileSystemLoader(base_path)
         jinja = jinja2.Environment(
             loader = loader,
-            autoescaping = True
+            autoescape = True
         )
 
         template = colony.relative_path(file_path, base_path)
