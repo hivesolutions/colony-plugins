@@ -90,13 +90,10 @@ class JinjaTemplate(object):
         self.values[key] = value
 
     def add_bundle(self, bundle):
-        #@todo: to be implemented
         pass
 
     def set_variable_encoding(self, encoding):
-        #@todo: to be implemented
         pass
 
     def attach_process_methods(self, methods):
-        #@todo: to be implemented
         pass
