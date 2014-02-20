@@ -42,11 +42,13 @@ import jinja2
 
 import colony
 
-VALID_EXTENSIONS = (
+ESCAPE_EXTENSIONS = (
     ".xml",
     ".html",
+    ".xhtml",
     ".xml.tpl",
-    ".html.tpl"
+    ".html.tpl",
+    ".xhtml.tpl"
 )
 """ The sequence containing the various extensions
 for which the autoescape mode will be enabled  by
@@ -60,7 +62,7 @@ class Jinja(colony.System):
         loader = jinja2.FileSystemLoader(base_path)
         jinja = jinja2.Environment(
             loader = loader,
-            autoescape = extension in VALID_EXTENSIONS
+            autoescape = extension in ESCAPE_EXTENSIONS
         )
 
         template = colony.relative_path(file_path, base_path)
