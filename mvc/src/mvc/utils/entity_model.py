@@ -207,8 +207,8 @@ def _class_get(
     @type options: Dictionary
     @param options: The map of options for the retrieval
     of the entity model.
-    @type context: RestRequest
-    @param context: The rest request to be used for the context
+    @type context: Request
+    @param context: The request to be used for the context
     retrieval process, will affect filtering.
     @type namespace: String
     @param namespace: The namespace prefix to be used in the
@@ -293,8 +293,8 @@ def _class_count(cls, options = {}, context = None, namespace = None, entity_man
     @type options: Dictionary
     @param options: The map of options for the counting
     of the entity models.
-    @type context: RestRequest
-    @param context: The rest request to be used for the context
+    @type context: Request
+    @param context: The request to be used for the context
     retrieval process, will affect filtering.
     @type namespace: String
     @param namespace: The namespace prefix to be used in the
@@ -341,8 +341,8 @@ def _class_find(cls, options = {}, context = None, namespace = None, entity_mana
     @type options: Dictionary
     @param options: The map of options for the retrieval
     of the set of entity models.
-    @type context: RestRequest
-    @param context: The rest request to be used for the context
+    @type context: Request
+    @param context: The request to be used for the context
     retrieval process, will affect filtering.
     @type namespace: String
     @param namespace: The namespace prefix to be used in the
@@ -394,8 +394,8 @@ def _class_find_one(cls, options = {}, context = None, namespace = None, entity_
     @type options: Dictionary
     @param options: The map of options for the retrieval
     of the entity model.
-    @type context: RestRequest
-    @param context: The rest request to be used for the context
+    @type context: Request
+    @param context: The request to be used for the context
     retrieval process, will affect filtering.
     @type namespace: String
     @param namespace: The namespace prefix to be used in the
@@ -623,8 +623,8 @@ def _class_filter(cls, context, *args, **kwargs):
 
     This filter may be safely used to query the current entity model.
 
-    @type context: RestRequest
-    @param context: The rest request to be used for the context
+    @type context: Request
+    @param context: The request to be used for the context
     creation of the filter, required for both the retrieving of
     the associated controller and the processing of the form data.
     @rtype: Dictionary
@@ -856,12 +856,12 @@ def _class_apply_context(
 
     @type options: Dictionary
     @param options: The map of options for the retrieval operation.
-    @type context_request: RestRequest
-    @param context_request: The rest request to be used for the
+    @type context_request: Request
+    @param context_request: The request to be used for the
     retrieval of the context, in case no context is specified.
     @type context: Dictionary
     @param context: The context information map that overrides the one
-    present in the current rest request session.
+    present in the current request session.
     @type namespace_name: String
     @param namespace_name: The name of the namespace to be used in the
     context session attribute retrieval, avoids domain name collision.
@@ -878,8 +878,8 @@ def _class_apply_context(
 
     # tries to retrieve the context request session if
     # it fails control is returned immediately
-    rest_request_session = context_request.get_session()
-    if not rest_request_session: return options
+    request_session = context_request.get_session()
+    if not request_session: return options
 
     # retrieves the complete (attribute name) for the context
     # taking into account the namespace name (prefix)
@@ -889,7 +889,7 @@ def _class_apply_context(
     # none is provided tries to retrieve it from session
     # after that in case no valid context is found returns
     # the control immediately
-    context = context or rest_request_session.get_attribute(attribute_name)
+    context = context or request_session.get_attribute(attribute_name)
     if not context: return options
 
     # retrieves the entity manager to be used or the
@@ -1898,10 +1898,10 @@ def resolve_to_one(self, map, model_class, permissive):
     (map) information.
     """
 
-    # retrieves the (rest) request associated with the current model, this
+    # retrieves the request associated with the current model, this
     # is going to be use to propagate its setting to the created or loaded
     # entity models
-    rest_request = self.get_request()
+    request = self.get_request()
 
     # retrieves the name of the identifier attribute/field
     # and it's data type, then converts the data type into the
@@ -1933,13 +1933,13 @@ def resolve_to_one(self, map, model_class, permissive):
         # and uses it to retrieve the appropriate entity value
         # from the data source (load operation)
         id_value = self._cast_safe(id_value, id_cast_type)
-        entity = model_class.get(id_value, options, context = rest_request)
+        entity = model_class.get(id_value, options, context = request)
 
         # in case the entity was successfully retrieve applies
-        # the map to it and then sets the rest request on the
+        # the map to it and then sets the request on the
         # entity, otherwise raises a runtime error because
         # there was a problem in retrieval (invalid)
-        if entity: entity.apply(map, permissive = permissive); entity.set_request(rest_request)
+        if entity: entity.apply(map, permissive = permissive); entity.set_request(request)
         else: raise RuntimeError("no such model, invalid identifier value")
 
     # otherwise there is no id value set and a new entity
@@ -1953,7 +1953,7 @@ def resolve_to_one(self, map, model_class, permissive):
 
         # creates the "new" entity (model)
         # and sets it in the current entity
-        entity = _model_class.new(rest_request, map, permissive = permissive)
+        entity = _model_class.new(request, map, permissive = permissive)
 
     # retrieves the loaded or created entity, this
     # entity is considered to be resolved
@@ -1993,10 +1993,10 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     # as empty) returns immediately (empty entities list)
     if maps_list == [""]: return entitites_list
 
-    # retrieves the (rest) request associated with the current model, this
+    # retrieves the request associated with the current model, this
     # is going to be use to propagate its setting to the created or loaded
     # entity models
-    rest_request = self.get_request()
+    request = self.get_request()
 
     # retrieves the name of the identifier attribute/field
     # and it's data type, then converts the data type into the
@@ -2028,7 +2028,7 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     # retrieves all the entity models from the data source that are contained
     # in the range of defined identifiers, avoids retrieving the entity models
     # in case the id values list is empty (performance oriented)
-    _entities = id_values_list and model_class.find(options, context = rest_request) or []
+    _entities = id_values_list and model_class.find(options, context = request) or []
 
     # creates a list containing a series of tuples associating the entity
     # ids with their respective entity and the uses the list of tuples to create
@@ -2057,8 +2057,8 @@ def resolve_to_many(self, maps_list, model_class, permissive):
         # in case the entity is valid applies the current item value (data map) to
         # it otherwise creates a "new" entity with the provided model, in both cases
         # the created entity is added to the list of entities for the relations
-        if entity: entity.apply(map, permissive = permissive); entity.set_request(rest_request)
-        else: entity = _model_class.new(rest_request, map, permissive = permissive)
+        if entity: entity.apply(map, permissive = permissive); entity.set_request(request)
+        else: entity = _model_class.new(request, map, permissive = permissive)
         entitites_list.append(entity)
 
     # returns the list of entities that were loaded or created for the
@@ -2082,18 +2082,18 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     be used.
     """
 
-    # retrieves the currently available rest request to try
+    # retrieves the currently available request to try
     # to access the session variables
-    rest_request = self.get_request()
+    request = self.get_request()
 
-    # in case the rest request is not currently set in the
+    # in case the request is not currently set in the
     # model the control should be returned immediately
-    if not rest_request: return
+    if not request: return
 
-    # tries to retrieve the rest request session if
+    # tries to retrieve the request session if
     # it fails control is returned immediately
-    rest_request_session = rest_request.get_session()
-    if not rest_request_session: return
+    request_session = request.get_session()
+    if not request_session: return
 
     # retrieves the complete (attribute name) for the context
     # taking into account the namespace name (prefix)
@@ -2103,7 +2103,7 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     # none is provided tries to retrieve it from session
     # after that in case no valid context is found returns
     # the control immediately
-    context = context or rest_request_session.get_attribute(attribute_name)
+    context = context or request_session.get_attribute(attribute_name)
     if not context: return
 
     # retrieves the entity manager to be used or the
@@ -2383,7 +2383,7 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the model request
-    rest_request = self.get_request()
+    request = self.get_request()
 
     # retrieves the specified target class where to search
     # for duplicates (uses the class associated with the
@@ -2392,9 +2392,9 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     target_class = properties.get("target_class", attribute_class)
 
     # sets the context for retrieval as none in case
-    # it is global, otherwise sets it as the rest request
+    # it is global, otherwise sets it as the request
     global_find = properties.get("global", False)
-    context = not global_find and rest_request or None
+    context = not global_find and request or None
 
     # creates the filter that will be used
     # to attempt retrieving a duplicate entity

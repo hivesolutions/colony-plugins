@@ -390,7 +390,7 @@ def _stop_controller(self):
         # in the controller
         self.stop()
 
-def get_exception_map(self, exception, rest_request = None):
+def get_exception_map(self, exception, request = None):
     """
     Retrieves the exception map (describing the exception)
     for the given exception.
@@ -400,8 +400,8 @@ def get_exception_map(self, exception, rest_request = None):
     @type exception: Exception
     @param exception: The exception to retrieve the
     exception map.
-    @type rest_request: RestRequest
-    @param rest_request: The (optional) rest request object
+    @type request: Request
+    @param request: The (optional) request object
     to be used to retrieve additional information for the
     exception (this should be related with the current runtime).
     @rtype: Dictionary
@@ -435,9 +435,9 @@ def get_exception_map(self, exception, rest_request = None):
     # the exception and on the (global) environment
     exception_map = {
         ENVIRONMENT_VALUE : {
-            METHOD_VALUE : rest_request and rest_request.get_request().get_method(),
-            STATUS_VALUE : rest_request and rest_request.get_request().status_code,
-            COLONY_VERSION_VALUE : rest_request and rest_request.get_plugin_manager().get_version(),
+            METHOD_VALUE : request and request.get_request().get_method(),
+            STATUS_VALUE : request and request.get_request().status_code,
+            COLONY_VERSION_VALUE : request and request.get_plugin_manager().get_version(),
             PYTHON_VERSION_VALUE : platform.python_version(),
             PYTHON_EXECUTABLE_PATH_VALUE : sys.executable,
             SERVER_TIME_VALUE : datetime.datetime.now().strftime("%a, %d %b %Y %H:%M%S %z")
@@ -704,7 +704,7 @@ def set_entity_relation(self, entity, relation_name, relation_value):
             # in case the validation of the relation value
             # fails, must return immediately
             if not self._validate_relation_value(value): return
-    
+
     # otherwise it must be a "simple" value and no it
     # iteration is required simple value
     else:
@@ -717,7 +717,7 @@ def set_entity_relation(self, entity, relation_name, relation_value):
 
 def save_entity_relations(
     self,
-    rest_request,
+    request,
     entity_map,
     entity,
     relations_map,
@@ -730,8 +730,8 @@ def save_entity_relations(
     The persist type mask is going to be used to filter some of the attributes
     sent to the underlying layer of relations saving.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity_map: Dictionary
     @param entity_map: The entity values map.
     @type entity: Object
@@ -832,7 +832,7 @@ def save_entity_relations(
 
             try:
                 # calls the relation method for the entity (saving or updating it)
-                relation_entity = relation_value and relation_method(rest_request, relation_value, persist_type = _relation_persist_type) or None
+                relation_entity = relation_value and relation_method(request, relation_value, persist_type = _relation_persist_type) or None
             except exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
                 # in the model validation error
@@ -919,15 +919,15 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     # returns if the relation is valid
     return valid_relation
 
-def get_field_models(self, rest_request, field_name, model, data_type = int):
+def get_field_models(self, request, field_name, model, data_type = int):
     """
     Retrieves the complete set of models for the various identifiers
     defined in the field with the provided name.
 
     In case at least one model fails to be retrieved, an error is raised.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type field_name: String
     @param field_name: The name of the field to be used for the retrieval
     of the models, should contain the identifiers separated by commas.
@@ -941,14 +941,14 @@ def get_field_models(self, rest_request, field_name, model, data_type = int):
     # retrieves the series of identifiers for the requested
     # field name then splits it around the separator, casting
     # them to the proper data type
-    model_id = self.get_field(rest_request, field_name, None)
+    model_id = self.get_field(request, field_name, None)
     model_ids = model_id and model_id.split(",") or []
     model_ids = [data_type(model_id) for model_id in model_ids]
 
     # retrieves the various entities for the requested identifiers,
     # according to the provided model, in case at least one model
     # is not retrieved, an error is raised
-    entities = [model.get(model_id, context = rest_request) for model_id in model_ids]
+    entities = [model.get(model_id, context = request) for model_id in model_ids]
     if None in entities: raise RuntimeError(
         "One ore more specified %s entities were not found" % model.__name__
     )
@@ -956,7 +956,7 @@ def get_field_models(self, rest_request, field_name, model, data_type = int):
 
 def get_field(
     self,
-    rest_request,
+    request,
     field_name,
     default = None,
     cast_type = None,
@@ -965,7 +965,7 @@ def get_field(
 ):
     """
     Retrieves a field value from the processed form data
-    of the rest request.
+    of the request.
     Optionally an used can provide the default value to be
     used when there is a miss match.
 
@@ -975,8 +975,8 @@ def get_field(
     In case the split flag is set the values are separated
     using the provided token as the separator character.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type field_name: String
     @param field_name: The name of the field to be retrieved
     from the form data.
@@ -997,9 +997,9 @@ def get_field(
     the form data.
     """
 
-    # retrieves the content type from the rest request and
+    # retrieves the content type from the request and
     # then uses it to normalize the type for parsing
-    content_type = rest_request.get_type()
+    content_type = request.get_type()
     type = CONTENT_TYPE_MAP.get(content_type, "form")
 
     # creates the method name using the "just" retrieved type
@@ -1008,9 +1008,9 @@ def get_field(
     method = getattr(self, method_name)
 
     # processes (and retrieves) the data map from the
-    # rest request and then uses it to retrieve the field
+    # request and then uses it to retrieve the field
     # from it (the retrieval of the form data may be cached)
-    form_data_map = method(rest_request)
+    form_data_map = method(request)
     field_value = form_data_map.get(field_name, default)
 
     # in case the current field value is invalid, should return
@@ -1035,24 +1035,24 @@ def get_field(
     # returns the retrieved field value
     return field_value
 
-def get_json(self, rest_request):
+def get_json(self, request):
     """
     Retrieves the loaded json information from the request this
     method assumes that the request is properly formed and that
     the header information is set in accordance with json.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: Object
     @return: The object that represents the parsed json information
     that was passed inside the request data.
     """
 
     # processes (and retrieves) the data map from the
-    # rest request and then tries to retrieves the json
+    # request and then tries to retrieves the json
     # data from it in case it does not exists the complete
     # maps is returned as the json value
-    form_data_map = self.process_json_data(rest_request)
+    form_data_map = self.process_json_data(request)
     json_v = form_data_map.get("root", form_data_map)
     return json_v
 
@@ -1275,13 +1275,13 @@ def send_broadcast(self, parameters, connection_name = "default", message = ""):
     # (security measures will not apply, public message)
     communication_handler.send_broadcast(connection_name, message)
 
-def create_form_data_string(self, rest_request, data_map):
+def create_form_data_string(self, request, data_map):
     """
     Converts the data map to a string representation
     in the form data format.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type data_map: Dictionary
     @param data_map: The map containing the hierarchy of
     defined structure for the "form" contents.
@@ -1294,7 +1294,7 @@ def create_form_data_string(self, rest_request, data_map):
     form_data_map_items = []
 
     # creates the form data map
-    form_data_map = self.create_form_data(rest_request, data_map)
+    form_data_map = self.create_form_data(request, data_map)
 
     # while the form data map is not empty
     while form_data_map:
@@ -1341,13 +1341,13 @@ def create_form_data_string(self, rest_request, data_map):
     # returns the form data map string
     return form_data_map_string
 
-def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
+def create_form_data(self, request, data_map, encoding = DEFAULT_ENCODING):
     """
     Processes the data map, creating a single map with all the
     attributes described in the form data format.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type data_map: Dictionary
     @param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
@@ -1372,57 +1372,57 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
     data_map = data_map[form_data_map_key]
 
     # creates the form data map
-    self._create_form_data(rest_request, data_map, form_data_map_key, form_data_map, encoding)
+    self._create_form_data(request, data_map, form_data_map_key, form_data_map, encoding)
 
     # returns the form data map
     return form_data_map
 
-def process_json_data(self, rest_request, encoding = DEFAULT_ENCODING, force = False):
+def process_json_data(self, request, encoding = DEFAULT_ENCODING, force = False):
     """
     Processes the json data (attributes), creating a map containing
     the hierarchy of defined structure for the "json" contents.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.
     @type force: bool
     @param force: If any cached data should be discarded and the
-    the rest request information re-parsed if necessary.
+    the request information re-parsed if necessary.
     @rtype: Dictionary
     @return: The map containing the hierarchy of defined structure
     for the "json" contents.
     """
 
     # tries to retrieves the base attributes map from the
-    # "cached" data in the rest request
-    data_map = rest_request.get_parameter(JSON_DATA_PRIVATE_VALUE)
+    # "cached" data in the request
+    data_map = request.get_parameter(JSON_DATA_PRIVATE_VALUE)
 
     # in case there is cached data pending in the
-    # rest request and the force flag is not set
+    # request and the force flag is not set
     # uses it immediately
     if not force and data_map: return data_map
 
-    # reads the contents from the rest request and then "loads"
+    # reads the contents from the request and then "loads"
     # the json structure from them, in case the value is not a
     # dictionary converts it into one settings the loaded contents
     # in a new dictionary "under" the root key value then stores the result
     # in the private json data value and returns the data map
-    contents = rest_request.read()
+    contents = request.read()
     data_map = self.json_plugin.loads(contents)
     is_valid = type(data_map) == types.DictType
     data_map = data_map if is_valid else dict(root = data_map)
-    rest_request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
+    request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
     return data_map
 
-def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify = False, force = False):
+def process_form_data(self, request, encoding = DEFAULT_ENCODING, nullify = False, force = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.
@@ -1431,24 +1431,24 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
     in case empty string values are found.
     @type force: bool
     @param force: If any cached data should be discarded and the
-    the rest request information re-parsed if necessary.
+    the request information re-parsed if necessary.
     @rtype: Dictionary
     @return: The map containing the hierarchy of defined structure
     for the "form" contents.
     """
 
     # tries to retrieve the base attributes map from the
-    # "cached" data in the rest request, this will provide
+    # "cached" data in the request, this will provide
     # a faster way to access the form data
-    base_attributes_map = rest_request.get_parameter(FORM_DATA_PRIVATE_VALUE)
+    base_attributes_map = request.get_parameter(FORM_DATA_PRIVATE_VALUE)
 
     # in case there is cached data pending in the
-    # rest request and the force flag is not set
+    # request and the force flag is not set
     # returns it immediately (fast access)
     if not force and base_attributes_map: return base_attributes_map
 
     # retrieves the attributes list
-    attributes_list = rest_request.get_attributes_list()
+    attributes_list = request.get_attributes_list()
 
     # creates the base attributes map
     base_attributes_map = {}
@@ -1464,7 +1464,7 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
         # retrieves the attribute value from the request,
         # decoding it according to the provided encoding
         # and then retrieves the (data) type for it
-        attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
+        attribute_value = self.get_attribute_decoded(request, attribute, encoding)
         attribute_value_type = type(attribute_value)
 
         # in case the attribute value type is list must iterate over each
@@ -1511,21 +1511,21 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
                 attribute_value
             )
 
-    # sets the "processed" form data in the rest request
+    # sets the "processed" form data in the request
     # for latter possible cache match
-    rest_request.set_parameter(FORM_DATA_PRIVATE_VALUE, base_attributes_map)
+    request.set_parameter(FORM_DATA_PRIVATE_VALUE, base_attributes_map)
 
     # returns the base attributes map
     return base_attributes_map
 
-def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, nullify = False):
+def process_form_data_flat(self, request, encoding = DEFAULT_ENCODING, nullify = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
     This method runs in flat mode for hierarchies defined with "dot notation".
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.
@@ -1538,7 +1538,7 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     """
 
     # retrieves the attributes list
-    attributes_list = rest_request.get_attributes_list()
+    attributes_list = request.get_attributes_list()
 
     # creates the base attributes map
     base_attributes_map = {}
@@ -1547,7 +1547,7 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     # attributes list
     for attribute in attributes_list:
         # retrieves the attribute value from the request
-        attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
+        attribute_value = self.get_attribute_decoded(request, attribute, encoding)
 
         # nullifies the attribute value in case it's empty
         # in case the nullify flag is set)
@@ -1617,7 +1617,7 @@ def process_acl_values(
 
 def validate_acl_session(
     self,
-    rest_request,
+    request,
     key,
     value = DEFAULT_VALUE_ATTRIBUTE,
     session_attribute = DEFAULT_SESSION_ATTRIBUTE
@@ -1626,8 +1626,8 @@ def validate_acl_session(
     Validates the current session defined acl against the
     defined key and value.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type key: String
     @param key: The key to be used for retrieval of acl permissions
     value (this key is joined with the current wildcard).
@@ -1642,7 +1642,7 @@ def validate_acl_session(
     """
 
     # retrieves the user acl value
-    user_acl = self.get_session_attribute(rest_request, session_attribute) or {}
+    user_acl = self.get_session_attribute(request, session_attribute) or {}
 
     # process the acl values, retrieving the permissions value
     permissions = self.process_acl_values((user_acl, ), key)
@@ -1654,13 +1654,13 @@ def validate_acl_session(
     # returns the result of the valid acl test
     return valid_acl
 
-def get_mvc_path(self, rest_request, delta_value = 1):
+def get_mvc_path(self, request, delta_value = 1):
     """
     Retrieves the mvc path according to
-    the current rest request path.
+    the current request path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve
+    @type request: Request
+    @param request: The request to be used to retrieve
     the mvc path.
     @type delta_value: int
     @param delta_value: The integer value that represents
@@ -1671,7 +1671,7 @@ def get_mvc_path(self, rest_request, delta_value = 1):
     """
 
     # retrieves the path list length
-    path_list_length = len(rest_request.path_list)
+    path_list_length = len(request.path_list)
 
     # creates the base path
     base_path = str()
@@ -1685,34 +1685,34 @@ def get_mvc_path(self, rest_request, delta_value = 1):
     # returns the base path
     return base_path
 
-def get_base_path(self, rest_request):
+def get_base_path(self, request):
     """
     Retrieves the base path according to
-    the current rest request path.
+    the current request path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve
+    @type request: Request
+    @param request: The request to be used to retrieve
     the base path.
     @rtype: String
     @return: The base path.
     """
 
-    return self.get_mvc_path(rest_request, BASE_PATH_DELTA_VALUE)
+    return self.get_mvc_path(request, BASE_PATH_DELTA_VALUE)
 
-def get_base_path_absolute(self, rest_request):
+def get_base_path_absolute(self, request):
     """
     Retrieves the base path absolute according to
-    the current rest request path.
+    the current request path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve
+    @type request: Request
+    @param request: The request to be used to retrieve
     the base path absolute.
     @rtype: String
     @return: The base path absolute.
     """
 
     # retrieves the base path list
-    base_path_list = rest_request.path_list[:1]
+    base_path_list = request.path_list[:1]
 
     # joins the base path list to retrieve the base
     # path absolute value
@@ -1721,15 +1721,15 @@ def get_base_path_absolute(self, rest_request):
     # returns the base path absolute
     return base_path_absolute
 
-def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
+def get_base_path_complete(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
     """
     Retrieves the base path complete according to
-    the current rest request path.
+    the current request path.
     The complete base path includes the hostname
     and the full path to the resource.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve
+    @type request: Request
+    @param request: The request to be used to retrieve
     the base path complete.
     @rtype: String
     @return: The base path absolute.
@@ -1737,7 +1737,7 @@ def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = H
 
     # tries retrieves the host value for the base
     # value of the url construction
-    host = self._get_host(rest_request)
+    host = self._get_host(request)
 
     # in case no host is defined
     if not host:
@@ -1746,23 +1746,23 @@ def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = H
 
     # retrieves the path, removes the arguments part
     # of it and the splits it in the separator value
-    path = self._get_path(rest_request)
+    path = self._get_path(request)
     path = path.split("?")[0]
     path_list = path.split("/")
 
-    # retrieves the path list of the rest request
-    # as the rest path list
-    rest_path_list = rest_request.path_list
+    # retrieves the path list of the request
+    # as the request path list
+    request_path_list = request.path_list
 
     # calculates both the path list length and
-    # the rest path list length
+    # the request path list length
     path_list_length = len(path_list)
-    rest_path_list_length = len(rest_path_list)
+    request_path_list_length = len(request_path_list)
 
     # calculates the base path list length as the difference
-    # between the path list length and the rest path list length
-    # (the remaining part of the url excluding the rest part)
-    base_path_list_length = path_list_length - rest_path_list_length
+    # between the path list length and the request path list length
+    # (the remaining part of the url excluding the request part)
+    base_path_list_length = path_list_length - request_path_list_length
 
     # calculates the complete length for the path list and then
     # use it to retrieve the complete path list
@@ -1781,19 +1781,19 @@ def get_base_path_complete(self, rest_request, suffix_path = "", prefix_path = H
 
 def set_contents(
     self,
-    rest_request,
+    request,
     contents = "",
     content_type = DEFAULT_CONTENT_TYPE,
     touch_date = False,
     max_age = None
 ):
     """
-    Sets the given contents in the given rest request.
+    Sets the given contents in the given request.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be set with the contents.
+    @type request: Request
+    @param request: The request to be set with the contents.
     @type contents: String
-    @param contents: The contents to set in the rest request.
+    @param contents: The contents to set in the request.
     @type content_type: String
     @param content_type: The content type to be set.
     @type touch_date: bool
@@ -1812,59 +1812,59 @@ def set_contents(
     # updating the internal last modified date value, useful
     # for situation where cache is meant to be used inside the
     # page loading scope
-    touch_date and rest_request.touch_date()
+    touch_date and request.touch_date()
 
     # if the max age field is requested for the current set of
     # contents its set so that the client side creates cache
     # for the current set of content to be "sent"
-    max_age and rest_request.set_max_age(max_age)
+    max_age and request.set_max_age(max_age)
 
     # sets the content type, then the result as translated into
     # the target content type and then flushes the data meaning
     # that the buffer is written to the request
-    rest_request.set_content_type(content_type)
-    rest_request.set_result_translated(contents)
-    rest_request.flush()
+    request.set_content_type(content_type)
+    request.set_result_translated(contents)
+    request.flush()
 
-def set_status_code(self, rest_request, status_code = DEFAULT_STATUS_CODE):
+def set_status_code(self, request, status_code = DEFAULT_STATUS_CODE):
     """
-    Sets the given status code in the given rest request.
+    Sets the given status code in the given request.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be set with the status code.
+    @type request: Request
+    @param request: The request to be set with the status code.
     @type contents: String
-    @param contents: The status code to set in the rest request.
+    @param contents: The status code to set in the request.
     """
 
-    # sets the status code for the rest request
-    rest_request.set_status_code(status_code)
+    # sets the status code for the request
+    request.set_status_code(status_code)
 
-def get_referer(self, rest_request):
+def get_referer(self, request):
     """
-    Retrieves the referer value for the current rest
-    request being used.
+    Retrieves the referer value for the current request
+    being used fot the handling.
     The referer value shall not be trusted as it may not
     be defined in the request.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: String
     @return: The retrieved referer value (url).
     """
 
     # retrieves the "referer" header
-    referer_header = rest_request.get_header(REFERER_VALUE)
+    referer_header = request.get_header(REFERER_VALUE)
 
     # returns the "referer" header (url)
     return referer_header
 
-def redirect(self, rest_request, target, status_code = 302, quote = True, attributes_map = None):
+def redirect(self, request, target, status_code = 302, quote = True, attributes_map = None):
     """
     Redirects the current request to the given
     target (page).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type target: String
     @param target: The target (page) of the redirect.
     @type status_code: int
@@ -1877,15 +1877,15 @@ def redirect(self, rest_request, target, status_code = 302, quote = True, attrib
     redirect url.
     """
 
-    # redirects the rest request to the target
-    rest_request.redirect(target, status_code, quote, attributes_map)
+    # redirects the request to the target
+    request.redirect(target, status_code, quote, attributes_map)
 
     # sets the contents (null)
-    self.set_contents(rest_request)
+    self.set_contents(request)
 
 def redirect_list(
     self,
-    rest_request,
+    request,
     entity,
     level = None,
     status_code = 302,
@@ -1896,8 +1896,8 @@ def redirect_list(
     Redirects the current request to the list action
     of the given entity (instance).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type level: Class
@@ -1924,11 +1924,11 @@ def redirect_list(
     # and redirects the request to the defined target
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
+    self.redirect_base_path(request, target, status_code, quote, attributes_map)
 
 def redirect_action(
     self,
-    rest_request,
+    request,
     entity = None,
     action = None,
     id_string = None,
@@ -1944,8 +1944,8 @@ def redirect_action(
     An optional id string value may be provided to override
     the normal behavior of id value retrieval.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type action: String
@@ -1992,20 +1992,28 @@ def redirect_action(
     target = entity_class_pluralized + "/" + id_string +\
         ("/" + action if action else "")
     self.redirect_base_path(
-        rest_request,
+        request,
         target,
         status_code,
         quote,
         attributes_map
     )
 
-def redirect_create(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_create(
+    self,
+    request,
+    entity,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the create action
     of the given entity (instance).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type level: Class
@@ -2032,15 +2040,23 @@ def redirect_create(self, rest_request, entity, level = None, status_code = 302,
     # and redirects the request to the target (path)
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized + "/new"
-    self.redirect_base_path(rest_request, target, status_code, quote, attributes_map)
+    self.redirect_base_path(request, target, status_code, quote, attributes_map)
 
-def redirect_show(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_show(
+    self,
+    request,
+    entity,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the show action
     of the given entity (instance).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type level: Class
@@ -2057,7 +2073,7 @@ def redirect_show(self, rest_request, entity, level = None, status_code = 302, q
     """
 
     self.redirect_action(
-        rest_request,
+        request,
         entity,
         level = level,
         status_code = status_code,
@@ -2065,13 +2081,21 @@ def redirect_show(self, rest_request, entity, level = None, status_code = 302, q
         attributes_map = attributes_map
     )
 
-def redirect_edit(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_edit(
+    self,
+    request,
+    entity,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the edit action
     of the given entity (instance).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type level: Class
@@ -2088,7 +2112,7 @@ def redirect_edit(self, rest_request, entity, level = None, status_code = 302, q
     """
 
     self.redirect_action(
-        rest_request,
+        request,
         entity,
         action = "edit",
         level = level,
@@ -2097,13 +2121,21 @@ def redirect_edit(self, rest_request, entity, level = None, status_code = 302, q
         attributes_map = attributes_map
     )
 
-def redirect_delete(self, rest_request, entity, level = None, status_code = 302, quote = True, attributes_map = None):
+def redirect_delete(
+    self,
+    request,
+    entity,
+    level = None,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the delete action
     of the given entity (instance).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type entity: Entity
     @param entity: The entity to be used for the redirection.
     @type level: Class
@@ -2120,7 +2152,7 @@ def redirect_delete(self, rest_request, entity, level = None, status_code = 302,
     """
 
     self.redirect_action(
-        rest_request,
+        request,
         entity,
         action = "delete",
         level = level,
@@ -2129,15 +2161,22 @@ def redirect_delete(self, rest_request, entity, level = None, status_code = 302,
         attributes_map = attributes_map
     )
 
-def redirect_base_path(self, rest_request, target, status_code = 302, quote = True, attributes_map = None):
+def redirect_base_path(
+    self,
+    request,
+    target,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the given
     target (page).
     This method updates the target to conform with the
     current base path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type target: String
     @param target: The target (page) of the redirect.
     @type status_code: int
@@ -2153,19 +2192,26 @@ def redirect_base_path(self, rest_request, target, status_code = 302, quote = Tr
     # retrieves the base path and uses it to crate
     # the target base path using the provided target
     # then redirects the agent to it
-    base_path = self.get_base_path(rest_request)
+    base_path = self.get_base_path(request)
     target_base_path = base_path + target
-    self.redirect(rest_request, target_base_path, status_code, quote, attributes_map)
+    self.redirect(request, target_base_path, status_code, quote, attributes_map)
 
-def redirect_mvc_path(self, rest_request, target, status_code = 302, quote = True, attributes_map = None):
+def redirect_mvc_path(
+    self,
+    request,
+    target,
+    status_code = 302,
+    quote = True,
+    attributes_map = None
+):
     """
     Redirects the current request to the given
     target (page).
     This method updates the target to conform with the
     current mvc path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type target: String
     @param target: The target (page) of the redirect.
     @type status_code: int
@@ -2181,18 +2227,25 @@ def redirect_mvc_path(self, rest_request, target, status_code = 302, quote = Tru
     # retrieves the mvc path and uses it to crate
     # the target mvc path using the provided target
     # then redirects the agent to it
-    mvc_path = self.get_mvc_path(rest_request)
+    mvc_path = self.get_mvc_path(request)
     target_mvc_path = mvc_path + target
-    self.redirect(rest_request, target_mvc_path, status_code, quote, attributes_map)
+    self.redirect(request, target_mvc_path, status_code, quote, attributes_map)
 
-def redirect_back(self, rest_request, default_target = "/", status_code = 302, quote = False, attributes_map = None):
+def redirect_back(
+    self,
+    request,
+    default_target = "/",
+    status_code = 302,
+    quote = False,
+    attributes_map = None
+):
     """
     Redirects the current request to the previous header
     referred page or to the default target in case the no
     referer page is defined.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type default_target: String
     @param default_target: The default target (page) of the redirect.
     @type status_code: int
@@ -2206,16 +2259,16 @@ def redirect_back(self, rest_request, default_target = "/", status_code = 302, q
     """
 
     # retrieves the "referer" header
-    referer_header = rest_request.get_header(REFERER_VALUE)
+    referer_header = request.get_header(REFERER_VALUE)
 
     # sets the target to the "referer" header or the
     # default target in case the "referer" is invalid
     target = referer_header or default_target
 
-    # redirects the rest request to the target
-    self.redirect(rest_request, target, status_code, quote, attributes_map)
+    # redirects the request to the target
+    self.redirect(request, target, status_code, quote, attributes_map)
 
-def set_redirect_to(self, rest_request, target, reason = None):
+def set_redirect_to(self, request, target, reason = None):
     """
     Sets the "redirect to" operation information (target
     and optionally reason), for latter usage.
@@ -2224,8 +2277,8 @@ def set_redirect_to(self, rest_request, target, reason = None):
     so if any quoting must be done it must be done outside
     of the function calling scope.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type target: String
     @param target: The target (page) of the redirect to operation.
     @type reason: String
@@ -2234,13 +2287,13 @@ def set_redirect_to(self, rest_request, target, reason = None):
     """
 
     # sets both the target and the reason for the redirect to operation
-    self.set_session_attribute(rest_request, "redirect_to_target", target)
-    self.set_session_attribute(rest_request, "redirect_to_reason", reason)
+    self.set_session_attribute(request, "redirect_to_target", target)
+    self.set_session_attribute(request, "redirect_to_reason", reason)
 
     # sets the redirect to mark as false to provide support for a first mark
-    self.set_session_attribute(rest_request, "redirect_to_mark", False)
+    self.set_session_attribute(request, "redirect_to_mark", False)
 
-def mark_redirect_to(self, rest_request):
+def mark_redirect_to(self, request):
     """
     "Marks" the "redirect to" operation, so that only one
     try for redirection is accepted.
@@ -2248,33 +2301,33 @@ def mark_redirect_to(self, rest_request):
     redirection process.
     This should be called in the redirection manager method.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     """
 
     # retrieves both the target and the mark session attributes
     # for processing of the mark
-    redirect_target = self.get_session_attribute(rest_request, "redirect_to_target")
-    redirect_mark = self.get_session_attribute(rest_request, "redirect_to_mark", unset_session_attribute = True)
+    redirect_target = self.get_session_attribute(request, "redirect_to_target")
+    redirect_mark = self.get_session_attribute(request, "redirect_to_mark", unset_session_attribute = True)
 
     # in case the "redirect to" is already "marked" the redirection has
     # been done and now the normal behavior should prevail (removes the
     # "redirect to" session attribute)
-    redirect_mark and self.unset_session_attribute(rest_request, "redirect_to_target")
+    redirect_mark and self.unset_session_attribute(request, "redirect_to_target")
 
     # in case the redirect target is set and no marking
     # is do, need to mark it
-    redirect_target and not redirect_mark and self.set_session_attribute(rest_request, "redirect_to_mark", True)
+    redirect_target and not redirect_mark and self.set_session_attribute(request, "redirect_to_mark", True)
 
-def redirect_to(self, rest_request, quote = False):
+def redirect_to(self, request, quote = False):
     """
     Redirects the current request to the current
     "redirect to" target.
     This method should be used after the setting of
     a redirect to attributes.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type quote: bool
     @param quote: If the redirect to target path should
     be quoted, the quoting of this values is dangerous.
@@ -2283,7 +2336,7 @@ def redirect_to(self, rest_request, quote = False):
     # retrieves the redirect to target value from session, the unsets
     # it after the retrieval (avoid duplicate redirections)
     redirect_to_target = self.get_session_attribute(
-        rest_request,
+        request,
         "redirect_to_target",
         unset_session_attribute = True
     )
@@ -2295,9 +2348,9 @@ def redirect_to(self, rest_request, quote = False):
 
     # redirects the request to the "redirect to" target
     # the quote flag attribute is propagated
-    self.redirect(rest_request, redirect_to_target, quote = quote)
+    self.redirect(request, redirect_to_target, quote = quote)
 
-def redirect_to_base_path(self, rest_request, quote = False):
+def redirect_to_base_path(self, request, quote = False):
     """
     Redirects the current request to the current
     "redirect to" target.
@@ -2306,8 +2359,8 @@ def redirect_to_base_path(self, rest_request, quote = False):
     This method also updates the target to conform
     with the current base path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @param quote: If the redirect to target path should
     be quoted, the quoting of this values is dangerous.
     """
@@ -2315,7 +2368,7 @@ def redirect_to_base_path(self, rest_request, quote = False):
     # retrieves the redirect to target value from session, the unsets
     # it after the retrieval (avoid duplicate redirections)
     redirect_to_target = self.get_session_attribute(
-        rest_request,
+        request,
         "redirect_to_target",
         unset_session_attribute = True
     )
@@ -2326,11 +2379,11 @@ def redirect_to_base_path(self, rest_request, quote = False):
     if not redirect_to_target: return
 
     # redirects (with base) the request to the "redirect to" target
-    self.redirect_base_path(rest_request, redirect_to_target, quote = quote)
+    self.redirect_base_path(request, redirect_to_target, quote = quote)
 
 def template(
     self,
-    rest_request = None,
+    request = None,
     apply_base_path = True,
     assign_session = False,
     assign_flash = True,
@@ -2341,15 +2394,15 @@ def template(
 ):
     """
     Main entry method that generated and renders a template setting
-    the resulting values as the contents for the provided rest request.
+    the resulting values as the contents for the provided request.
 
     This is an aggregation method that basically calls for the generation
     of the template file with the dynamic keyword arguments and then sets
     the contents resulting for the template rendering as contents.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request that is going to be used as the
-    target for the setting of the contents.
+    @type request: Request
+    @param request: The request that is going to be used as the target for
+    the setting of the contents (may be any kind of valid request object).
     @type apply_base_path: bool
     @param apply_base_path: If the base path should be applied on the template
     file (for relative path resolution).
@@ -2369,9 +2422,9 @@ def template(
     note that this value may be used again but carefully to avoid problems.
     """
 
-    template_file = self.template_file(rest_request = rest_request, *args, **kwargs)
+    template_file = self.template_file(request = request, *args, **kwargs)
     self.process_set_contents(
-        rest_request,
+        request,
         template_file,
         apply_base_path = apply_base_path,
         assign_session = assign_session,
@@ -2404,11 +2457,11 @@ def template_file(self, template = None, *args, **kwargs):
         **kwargs
     )
 
-def serialize(self, rest_request, contents, serializer = None):
+def serialize(self, request, contents, serializer = None):
     """
     Serializes the provided contents (wither map or list) using the
     infra-structure (serializer) that is currently defined for the
-    rest request.
+    request.
 
     An optional serializer attribute may be used to "force" the serializer
     that is going to be used in the contents serialization.
@@ -2417,37 +2470,37 @@ def serialize(self, rest_request, contents, serializer = None):
     such behavior should be defined by the upper layers.
 
     The resulting data from the serialization is set as the contents
-    for the current rest request and the proper mime type defined.
+    for the current request and the proper mime type defined.
 
-    @type rest_request: RestRequest
-    @param rest_request: The request object that is going to be used
+    @type request: Request
+    @param request: The request object that is going to be used
     as reference for the retrieval of the serializer object and for
     the setting of the serialization result contents.
     @type contents: List/Dictionary
     @param contents: The contents that are going to be serialized using
-    the context defined in the rest request.
+    the context defined in the request.
     @type serializer: Object
     @param serializer: The serializer (protocol) compliant object that
     is going to be used for the "forced" serialization process.
     """
 
     # verifies if the serializer attribute is defined in the provided
-    # rest request if that's the case and there's no provided serializer
+    # request if that's the case and there's no provided serializer
     # such value is going to be used as the serializer for the contents
-    is_defined = hasattr(rest_request, "serializer")
-    if is_defined: serializer = serializer or rest_request.serializer
+    is_defined = hasattr(request, "serializer")
+    if is_defined: serializer = serializer or request.serializer
     if not serializer: return
 
     # runs the serialization process on the contents (dumps call) and
     # then retrieves the mime type for together with the data string
-    # value set the contents in the current rest request
+    # value set the contents in the current request
     data = serializer.dumps(contents)
     mime_type = serializer.get_mime_type()
-    self.set_contents(rest_request, data, content_type = mime_type)
+    self.set_contents(request, data, content_type = mime_type)
 
 def process_set_contents(
     self,
-    rest_request,
+    request,
     template_file,
     apply_base_path = True,
     assign_session = False,
@@ -2457,12 +2510,12 @@ def process_set_contents(
 ):
     """
     Processes the template file and set the result of it
-    as the contents of the given rest request.
+    as the contents of the given request.
     Optional flags may be set to apply the base path and assign the
     session to the template file.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be set with the contents.
+    @type request: Request
+    @param request: The request to be set with the contents.
     @type template_file: TemplateFile
     @param template_file: The template file to be processed.
     @type apply_base_path: bool
@@ -2490,28 +2543,28 @@ def process_set_contents(
     # case the apply base path and the assign the session flags are set in
     # current environment (fast assign) then in case the assign flash flag
     # is set assigns the flash information to the template
-    apply_base_path and self.apply_base_path_template_file(rest_request, template_file)
-    assign_session and self.assign_session_template_file(rest_request, template_file)
-    assign_flash and self.assign_flash_template_file(rest_request, template_file)
+    apply_base_path and self.apply_base_path_template_file(request, template_file)
+    assign_session and self.assign_session_template_file(request, template_file)
+    assign_flash and self.assign_flash_template_file(request, template_file)
 
     # assigns the basic instance attributes to the template file so that
     # it can access the controller instance and the system and plugin instances
     self.assign_instance_template_file(template_file)
 
-    # processes the template file with the given rest request and variable encoding
+    # processes the template file with the given request and variable encoding
     # retrieving the processed template file
-    processed_template_file = self.process_template_file(rest_request, template_file, variable_encoding)
+    processed_template_file = self.process_template_file(request, template_file, variable_encoding)
 
     # sets the request contents, using the given content type
-    self.set_contents(rest_request, processed_template_file, content_type)
+    self.set_contents(request, processed_template_file, content_type)
 
-def process_template_file(self, rest_request, template_file, variable_encoding = None):
+def process_template_file(self, request, template_file, variable_encoding = None):
     """
     Processes the given template file, using the given
     variable encoding.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used in the template
+    @type request: Request
+    @param request: The request to be used in the template
     file processing.
     @type template_file: Template
     @param template_file: The template file to be processed.
@@ -2527,12 +2580,12 @@ def process_template_file(self, rest_request, template_file, variable_encoding =
 
     # creates the process methods list
     process_methods_list = [
-        ("process_stylesheet_link", self.get_process_method(rest_request, "process_stylesheet_link")),
-        ("process_javascript_include", self.get_process_method(rest_request, "process_javascript_include")),
-        ("process_ifacl", self.get_process_method(rest_request, "process_ifacl")),
-        ("process_ifaclp", self.get_process_method(rest_request, "process_ifaclp")),
-        ("process_ifnotacl", self.get_process_method(rest_request, "process_ifnotacl")),
-        ("process_request_time", self.get_process_method(rest_request, "process_request_time"))
+        ("process_stylesheet_link", self.get_process_method(request, "process_stylesheet_link")),
+        ("process_javascript_include", self.get_process_method(request, "process_javascript_include")),
+        ("process_ifacl", self.get_process_method(request, "process_ifacl")),
+        ("process_ifaclp", self.get_process_method(request, "process_ifaclp")),
+        ("process_ifnotacl", self.get_process_method(request, "process_ifnotacl")),
+        ("process_request_time", self.get_process_method(request, "process_request_time"))
     ]
 
     # attaches the process methods to the template file
@@ -2575,8 +2628,8 @@ def retrieve_template_file(
     @type locale: String
     @param locale: The locate string that is going to be
     used to retrieve the appropriate template file.
-    @type locale_request: RestRequest
-    @param locale_request: The rest request to be used for
+    @type locale_request: Request
+    @param locale_request: The request to be used for
     correct locale resolution.
     @rtype: TemplateFile
     @return: The "parsed" template file object ready
@@ -2642,27 +2695,23 @@ def retrieve_template_file(
     # method as requested by the method call
     return template_file
 
-def apply_base_path_template_file(self, rest_request, template_file):
+def apply_base_path_template_file(self, request, template_file):
     """
     Applies the base path to the template file according to
-    the current rest request path.
+    the current request path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to set the base path.
+    @type request: Request
+    @param request: The request to be used to set the base path.
     @type template_file: TemplateFile
     @param template_file: The template to be "applied" with the base path.
     """
 
-    # retrieves the mvc path
-    mvc_path = self.get_mvc_path(rest_request)
-
-    # retrieves the base path
-    base_path = self.get_base_path(rest_request)
-
-    # assigns the mvc path value
+    # retrieves both the mvc and the base path and uses these
+    # values to assign them to the provided template file as
+    # expected by the call to this method
+    mvc_path = self.get_mvc_path(request)
+    base_path = self.get_base_path(request)
     template_file.assign(MVC_PATH_VALUE, mvc_path)
-
-    # assigns the base path value
     template_file.assign(BASE_PATH_VALUE, base_path)
 
 def assign_instance_template_file(self, template_file):
@@ -2684,53 +2733,53 @@ def assign_instance_template_file(self, template_file):
     template_file.assign("system_s", self.system)
     template_file.assign("plugin_s", self.plugin)
 
-def assign_flash_template_file(self, rest_request, template_file):
+def assign_flash_template_file(self, request, template_file):
     """
     Assigns the flash attribute to the given template file.
     The flash map is set in the template and unset from session
     (to avoid duplicate display).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type template_file: TemplateFile
     @param template_file: The template to be "applied" with the flash map.
     """
 
     # retrieves the flash map from the session and unsets it
     # from session (avoids duplicate display)
-    flash = self.get_session_attribute(rest_request, "_flash", unset_session_attribute = True)
+    flash = self.get_session_attribute(request, "_flash", unset_session_attribute = True)
 
     # assigns the flash map to the template file
     template_file.assign("_flash", flash)
 
-def assign_session_template_file(self, rest_request, template_file, variable_prefix = "session_"):
+def assign_session_template_file(self, request, template_file, variable_prefix = "session_"):
     """
     Assigns the session attributes to the given template file.
     The properties of the session are also set for base accessing.
     The name of the session attributes is modified replacing
     the dots with underscores.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type template_file: TemplateFile
     @param template_file: The template to be "applied" with the session attributes.
     @type variable_prefix: String
     @param variable_prefix: The variable prefix to be prepended to the variable names.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid, returns immediately not
     # possible to retrieve the values
-    if not rest_request_session: return
+    if not request_session: return
 
     # retrieves the various session properties
-    session_id = rest_request_session.get_session_id()
-    session_timeout = rest_request_session.get_timeout()
-    session_maximum_timeout = rest_request_session.get_maximum_timeout()
-    session_expire_time = rest_request_session.get_expire_time()
+    session_id = request_session.get_session_id()
+    session_timeout = request_session.get_timeout()
+    session_maximum_timeout = request_session.get_maximum_timeout()
+    session_expire_time = request_session.get_expire_time()
 
     # assigns the various session properties to the template file
     template_file.assign(variable_prefix + "id", session_id)
@@ -2739,7 +2788,7 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
     template_file.assign(variable_prefix + "expire_time", session_expire_time)
 
     # retrieves the session attributes map
-    session_attributes_map = rest_request_session.get_attributes_map()
+    session_attributes_map = request_session.get_attributes_map()
 
     # iterates over all the session attributes in the session
     # attributes map
@@ -2772,102 +2821,102 @@ def assign_include_template_file(
     )
     template_file.assign(variable_name, variable_value)
 
-def lock_session(self, rest_request):
+def lock_session(self, request):
     """
-    Locks the session associated with the provided rest request,
+    Locks the session associated with the provided request,
     subsequent accesses to the session will be blocked until the
     session is released.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid
-    if not rest_request_session:
+    if not request_session:
         # start a session if none is started and then
-        # retrieves it from the rest request
-        rest_request.start_session()
-        rest_request_session = rest_request.get_session()
+        # retrieves it from the request
+        request.start_session()
+        request_session = request.get_session()
 
-    # locks the "just" retrieved (or created) rest request
+    # locks the "just" retrieved (or created) request
     # session (blocks it)
-    rest_request_session.lock()
+    request_session.lock()
 
-def release_session(self, rest_request):
+def release_session(self, request):
     """
-    Releases the session associated with the provided rest request,
+    Releases the session associated with the provided request,
     allowing further requests to access the session to be passed.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session is invalid
+    # in case the request session is invalid
     # an exception should be raised (invalid situation)
-    if not rest_request_session: raise RuntimeError("problem releasing session, no session available")
+    if not request_session: raise RuntimeError("problem releasing session, no session available")
 
-    # releases the "just" retrieved rest request
+    # releases the "just" retrieved request
     # session (unblocks it)
-    rest_request_session.release()
+    request_session.release()
 
-def start_session(self, rest_request, force = False, set_cookie = True):
+def start_session(self, request, force = False, set_cookie = True):
     """
-    Starts a new session for the provided rest request, by
+    Starts a new session for the provided request, by
     default the session is created even if a previous one
     already exists in the request.
 
     An optional set cookie flag may control if the cookie
     value should be returned to the client side.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type force: bool
     @param force: If a session must be created even if a previous
     one is already created and set in the request.
     @type set_cookie: bool
     @param set_cookie: If the set cookie header must be set
     in the request indicating the new session to the client.
-    @rtype: RestSession
-    @return: The rest session that has just been created.
+    @rtype: Session
+    @return: The session that has just been created.
     """
 
     # start a session if none is started and then
-    # retrieves it from the rest request
-    rest_request.start_session(force = force)
-    rest_request_session = rest_request.get_session()
+    # retrieves it from the request
+    request.start_session(force = force)
+    request_session = request.get_session()
 
     # in case the set cookie flag is not set the
-    # cookie must be removed from the rest request
+    # cookie must be removed from the request
     # session (this way the client is not updated)
-    not set_cookie and rest_request_session.set_cookie(None)
+    not set_cookie and request_session.set_cookie(None)
 
-    # returns the "just" created rest request session
-    return rest_request_session
+    # returns the "just" created request session
+    return request_session
 
-def reset_session(self, rest_request):
+def reset_session(self, request):
     """
-    Resets the session present in the current rest request,
-    to reset the session is to unset it from the rest request.
+    Resets the session present in the current request,
+    to reset the session is to unset it from the request.
 
     This method is useful for situation where a new session
     context is required or one is meant to be created always.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     """
 
-    # resets the session removing it from the rest request
+    # resets the session removing it from the request
     # this allows subsequent calls to create a new session
-    rest_request.reset_session()
+    request.reset_session()
 
-def set_session_short(self, rest_request):
+def set_session_short(self, request):
     """
     Sets the current session as short so that the
     expire value is much shorter than the default
@@ -2876,33 +2925,39 @@ def set_session_short(self, rest_request):
     This method may be used to provide additional
     security.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     """
 
-    # tries to retrieve the rest request session in case
+    # tries to retrieve the request session in case
     # it's not found starts a new session and then retrieves
     # it so that it can have its timeout value changed
-    rest_request_session = rest_request.get_session()
-    if not rest_request_session:
-        rest_request.start_session()
-        rest_request_session = rest_request.get_session()
+    request_session = request.get_session()
+    if not request_session:
+        request.start_session()
+        request_session = request.get_session()
 
-    # updates the rest request session timeout to a much shorter
+    # updates the request session timeout to a much shorter
     # value defined (as constant)
-    rest_request.update_timeout(
+    request.update_timeout(
         timeout = SHORT_TIMEOUT,
         maximum_timeout = SHORT_MAXIMUM_TIMEOUT
     )
 
-def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None, unset_session_attribute = False):
+def get_session_attribute(
+    self,
+    request,
+    session_attribute_name,
+    namespace_name = None,
+    unset_session_attribute = False
+):
     """
-    Retrieves the session attribute from the given rest request
+    Retrieves the session attribute from the given request
     with the given name and for the given namespace.
     Optionally it may be unset from session after retrieval.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type session_attribute_name: String
     @param session_attribute_name: The name of the session
     attribute to be retrieved.
@@ -2916,34 +2971,40 @@ def get_session_attribute(self, rest_request, session_attribute_name, namespace_
     @return The retrieved session attribute.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid, must return invalid
-    if not rest_request_session: return None
+    if not request_session: return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
 
     # retrieves the attribute from the session
-    session_attribute = rest_request_session.get_attribute(session_attribute_name)
+    session_attribute = request_session.get_attribute(session_attribute_name)
 
     # in case the unset the session attribute flag is set
     # the session attribute is unset
-    unset_session_attribute and rest_request_session.unset_attribute(session_attribute_name)
+    unset_session_attribute and request_session.unset_attribute(session_attribute_name)
 
     # returns the session attribute
     return session_attribute
 
-def set_session_attribute(self, rest_request, session_attribute_name, session_attribute_value, namespace_name = None):
+def set_session_attribute(
+    self,
+    request,
+    session_attribute_name,
+    session_attribute_value,
+    namespace_name = None
+):
     """
-    Sets the session attribute in the given rest request
+    Sets the session attribute in the given request
     with the given name and for the given namespace.
     The session attribute value may be of any type.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type session_attribute_name: String
     @param session_attribute_name: The name of the session
     attribute to be set.
@@ -2955,30 +3016,30 @@ def set_session_attribute(self, rest_request, session_attribute_name, session_at
     attribute to be set.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid, currently not available
-    if not rest_request_session:
+    if not request_session:
         # start a session if none is started and then
-        # retrieves it from the rest request
-        rest_request.start_session()
-        rest_request_session = rest_request.get_session()
+        # retrieves it from the request
+        request.start_session()
+        request_session = request.get_session()
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
 
     # sets the attribute in the session
-    rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
+    request_session.set_attribute(session_attribute_name, session_attribute_value)
 
-def unset_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
+def unset_session_attribute(self, request, session_attribute_name, namespace_name = None):
     """
-    Unsets the session attribute from the given rest request
+    Unsets the session attribute from the given request
     with the given name and for the given namespace.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type session_attribute_name: String
     @param session_attribute_name: The name of the session
     attribute to be unset.
@@ -2987,28 +3048,28 @@ def unset_session_attribute(self, rest_request, session_attribute_name, namespac
     attribute to be unset.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid, returns immediately
-    if not rest_request_session: return None
+    if not request_session: return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
 
     # unsets the attribute from the session
-    rest_request_session.unset_attribute(session_attribute_name)
+    request_session.unset_attribute(session_attribute_name)
 
-def get_context_attribute(self, rest_request, context_name, namespace_name = None):
+def get_context_attribute(self, request, context_name, namespace_name = None):
     """
     Retrieves the value of the context attribute with the
     provided name.
 
     In case no attribute is found a none value is returned.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type context_name: String
     @param context_name: The name of the of the context attribute
     to retrieve the value.
@@ -3021,14 +3082,21 @@ def get_context_attribute(self, rest_request, context_name, namespace_name = Non
 
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
-    context = self.get_session_attribute(rest_request, "_context", namespace_name)
+    context = self.get_session_attribute(request, "_context", namespace_name)
     if context == None: context = {}
 
     # returns the retrieves attribute value, defaulting to none
     # in case it's not present in the context map
     return context.get(context_name, None)
 
-def set_context_attribute(self, rest_request, context_name, context_value, override = True, namespace_name = None):
+def set_context_attribute(
+    self,
+    request,
+    context_name,
+    context_value,
+    override = True,
+    namespace_name = None
+):
     """
     Sets the context attribute with the provided name with
     the provided value.
@@ -3037,13 +3105,13 @@ def set_context_attribute(self, rest_request, context_name, context_value, overr
     possible to override an already present context value
     with the same name (conflict resolution).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type context_name: String
     @param context_name: The name of the of the context attribute
     to set the value.
-    @type context_value: Obejct
-    @param context_value: The value to be set fot the attribute.
+    @type context_value: Object
+    @param context_value: The value to be set for the attribute.
     @type namespace_name: String
     @param namespace_name: The name of the namespace to be used
     for the context (session) variable to be updated.
@@ -3051,24 +3119,24 @@ def set_context_attribute(self, rest_request, context_name, context_value, overr
 
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
-    context = self.get_session_attribute(rest_request, "_context", namespace_name)
+    context = self.get_session_attribute(request, "_context", namespace_name)
     if context == None: context = {}
 
     # updates the context with the provided attribute, overriding
     # the already present value in case the flag is set and then
     # sets the context map "back" in the session
     if override or not context_name in context: context[context_name] = context_value
-    self.set_session_attribute(rest_request, "_context", context, namespace_name)
+    self.set_session_attribute(request, "_context", context, namespace_name)
 
-def unset_context_attribute(self, rest_request, context_name, namespace_name = None):
+def unset_context_attribute(self, request, context_name, namespace_name = None):
     """
     Unsets the context attribute with the provided name.
 
     This operation should remove any reference to the context
     attribute in the current session
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type context_name: String
     @param context_name: The name of the of the context attribute
     to be unset.
@@ -3079,44 +3147,41 @@ def unset_context_attribute(self, rest_request, context_name, namespace_name = N
 
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
-    context = self.get_session_attribute(rest_request, "_context", namespace_name)
+    context = self.get_session_attribute(request, "_context", namespace_name)
     if context == None: context = {}
 
     # updates the context with the provided attribute, removing
     # the already present value and then sets the context map
     # "back" in the session
     if context_name in context: del context[context_name]
-    self.set_session_attribute(rest_request, "_context", context, namespace_name)
+    self.set_session_attribute(request, "_context", context, namespace_name)
 
-def get_session_id(self, rest_request):
+def get_session_id(self, request):
     """
     Retrieves the session id for the session that exists
-    in the given rest request.
+    in the given request.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: String
-    @return: The session id that exists in the given rest request.
+    @return: The session id that exists in the given request.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
-    # is invalid
-    if not rest_request_session:
-        # returns none (invalid)
-        return None
+    # in case the request session
+    # is invalid returns an invalid value
+    if not request_session: return None
 
-    # retrieves the session id
-    session_id = rest_request_session.get_session_id()
-
-    # returns the session id
+    # retrieves the session id and returns
+    # it to the caller method (as defined in spec)
+    session_id = request_session.get_session_id()
     return session_id
 
-def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
+def get_attribute_decoded(self, request, attribute_name, encoding = DEFAULT_ENCODING):
     """
-    Retrieves the attribute from the rest request with
+    Retrieves the attribute from the request with
     the given attribute name and decoded using the given
     encoding.
 
@@ -3125,8 +3190,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     contained in it will be decoded and the structure will
     be re-created.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve the
+    @type request: Request
+    @param request: The request to be used to retrieve the
     attribute.
     @type attribute_name: String
     @param attribute_name: The name of the attribute to retrieve.
@@ -3138,8 +3203,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     """
 
     # retrieves the attribute value from the attribute name
-    # using the rest (sub) system
-    attribute_value = self._get_attribute(rest_request, attribute_name)
+    # using the mvc (sub) system
+    attribute_value = self._get_attribute(request, attribute_name)
 
     # in case the attribute value is not valid returns an empty
     # string as the default fallback value
@@ -3201,21 +3266,21 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
 
 def get_locale(
     self,
-    rest_request,
+    request,
     available_locales = (DEFAULT_LOCALE,),
     alias_locales = DEFAULT_ALIAS_LOCALES,
     default_locale = DEFAULT_LOCALE
 ):
     """
-    Retrieves the current "best" locale for the given rest
-    request and for the available locales.
+    Retrieves the current "best" locale for the given request and
+    for the available locales.
     In case no available locales are used the default locale is used.
 
     The set of locales to be set available may be constrained using
     the available locales list.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type available_locales: Tuple
     @param available_locales: A tuple containing the available
     and "valid" locales, used to constrain the retrieval.
@@ -3245,7 +3310,7 @@ def get_locale(
         # calls the get locales method to retrieve the list of
         # "resolved" locales, and sets the complete list as the
         # default list of available locales
-        locales_list = get_locales_method(rest_request)
+        locales_list = get_locales_method(request)
         available_locales_list = locales_list
 
         # in case the available locales map is not set (invalid value)
@@ -3300,24 +3365,24 @@ def locale_value(self, value, locale = None):
     # a localized string value
     return value
 
-def set_locale_session(self, rest_request, locale):
+def set_locale_session(self, request, locale):
     """
     Sets the locale session attribute for later locale
     retrieval.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type locale: String
     @param locale: The locale to be set in session.
     """
 
     # sets the locale session attribute
-    self.set_session_attribute(rest_request, LOCALE_SESSION_ATTRIBUTE, locale)
+    self.set_session_attribute(request, LOCALE_SESSION_ATTRIBUTE, locale)
 
-def range_d(self, rest_request, default = "day", _datetime = False):
+def range_d(self, request, default = "day", _datetime = False):
     """
     Calculates the timestamp based date range for the provided
-    rest request according to the specification.
+    request according to the specification.
 
     The calculation of the range taking into account that if
     only a "lower" value is filled the "upper" values are set
@@ -3333,12 +3398,12 @@ def range_d(self, rest_request, default = "day", _datetime = False):
     This is the internal method and should not be used from
     an interface level.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used for the
+    @type request: Request
+    @param request: The request to be used for the
     computation of the date range.
     @type default: String
     @param default: The default mode to be used in case no value
-    is retrieved from the rest request.
+    is retrieved from the request.
     @type _datetime: bool
     @param _datetime: Flag that controls if the returned value
     should be converted to datetime or left as timestamp.
@@ -3347,10 +3412,10 @@ def range_d(self, rest_request, default = "day", _datetime = False):
     the date range or a tuple of date time objects.
     """
 
-    # calculates the start and end range from the rest request
+    # calculates the start and end range from the request
     # and returns immediately the received tuple in case the
     # date time mode is not set (no conversion required)
-    start, end = self._range_d(rest_request, default)
+    start, end = self._range_d(request, default)
     if not _datetime: return start, end
 
     # converts both the start timestamp and the end timestamp
@@ -3393,7 +3458,13 @@ def update_resources_path(self, parameters = {}):
     # sets the locales path
     self.set_locales_path(locales_path)
 
-def set_relative_resources_path(self, relative_resources_path, extra_extras_path = "", extra_templates_path = "", update_resources = True):
+def set_relative_resources_path(
+    self,
+    relative_resources_path,
+    extra_extras_path = "",
+    extra_templates_path = "",
+    update_resources = True
+):
     """
     Sets the relative resources path for template resolution
     and optionally updates the resources.
@@ -3488,55 +3559,55 @@ def resolve_resource_path(self, resource_path):
     # returns the resource absolute path
     return resource_absolute_path
 
-def set_flash_error(self, rest_request, message):
+def set_flash_error(self, request, message):
     """
     Sets a flash error message to be displayed in the
     next template file parsing.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type message: String
     @param message: The message to be displayed as an
     error in the next template parsing.
     """
 
-    self.set_flash(rest_request, message, "error")
+    self.set_flash(request, message, "error")
 
-def set_flash_warning(self, rest_request, message):
+def set_flash_warning(self, request, message):
     """
     Sets a flash warning message to be displayed in the
     next template file parsing.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type message: String
     @param message: The message to be displayed as a
     warning in the next template parsing.
     """
 
-    self.set_flash(rest_request, message, "warning")
+    self.set_flash(request, message, "warning")
 
-def set_flash_success(self, rest_request, message):
+def set_flash_success(self, request, message):
     """
     Sets a flash success message to be displayed in the
     next template file parsing.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type message: String
     @param message: The message to be displayed as a
     success in the next template parsing.
     """
 
-    self.set_flash(rest_request, message, "success")
+    self.set_flash(request, message, "success")
 
-def set_flash(self, rest_request, message, message_type):
+def set_flash(self, request, message, message_type):
     """
     Sets the the flash message to be display in the
     appropriate session attribute.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to set the
+    @type request: Request
+    @param request: The request to be used to set the
     flash in session.
     @type message: String
     @param message: The message to be displayed as flash.
@@ -3553,7 +3624,7 @@ def set_flash(self, rest_request, message, message_type):
     }
 
     # sets the flash map in the session
-    self.set_session_attribute(rest_request, "_flash", flash)
+    self.set_session_attribute(request, "_flash", flash)
 
 def get_plugin(self):
     """
@@ -3671,11 +3742,11 @@ def set_locales_path(self, locales_path):
 def get_default_parameters(self):
     """
     Retrieves the default parameters map to be used in the
-    rest request "workflow".
+    request "workflow".
 
     @rtype: Dictionary
     @return: The default parameters map to be used in the
-    rest request "workflow".
+    request "workflow".
     """
 
     return self.default_parameters
@@ -3683,11 +3754,11 @@ def get_default_parameters(self):
 def set_default_parameters(self, default_parameters):
     """
     Retrieves the default parameters map to be used in the
-    rest request "workflow".
+    request "workflow".
 
     @type default_parameters: Dictionary
     @param default_parameters: The default parameters map
-    o be used in the rest request "workflow".
+    o be used in the request "workflow".
     """
 
     self.default_parameters = default_parameters
@@ -3812,13 +3883,13 @@ def _template(self, *args, **kwargs):
 
     return self.template(*args, **kwargs)
 
-def _get_attribute(self, rest_request, attribute_name):
+def _get_attribute(self, request, attribute_name):
     """
-    Retrieves an attribute from the rest request in a safe
+    Retrieves an attribute from the request in a safe
     manner (casting it according to form data).
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to retrieve the
+    @type request: Request
+    @param request: The request to be used to retrieve the
     attribute.
     @type attribute_name: String
     @param attribute_name: The name of the attribute to be retrieved.
@@ -3828,7 +3899,7 @@ def _get_attribute(self, rest_request, attribute_name):
 
     # retrieves the attribute value from the attribute
     # name and casts it (avoiding form data problems)
-    attribute_value = rest_request.get_attribute(attribute_name)
+    attribute_value = request.get_attribute(attribute_name)
     attribute_value = self._cast_attribute_value(attribute_value)
 
     # returns the attribute value
@@ -3839,7 +3910,7 @@ def _cast_attribute_value(self, attribute_value):
     "Casts" the attribute value in case the type
     of the attribute value is form data.
     This method provides a safe way to use the attribute
-    value from the rest request.
+    value from the request.
 
     @type attribute_value: Object
     @param attribute_value: The value of the attribute
@@ -3888,9 +3959,9 @@ def _cast_attribute_value(self, attribute_value):
     # returns the file attribute tuple
     return file_attribute_tuple
 
-def _get_path(self, rest_request):
+def _get_path(self, request):
     """
-    Retrieves the "real" path from the rest request
+    Retrieves the "real" path from the request
     this method takes into account the base path.
     In case a redirection is made by rules in the http
     server the "original" path is not the one present
@@ -3898,8 +3969,8 @@ def _get_path(self, rest_request):
     path attribute must be used to retrieve the "real"
     path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used to
+    @type request: Request
+    @param request: The request to be used to
     retrieve the "real" url path.
     @rtype: String
     @return: The "original" base path from the http
@@ -3908,25 +3979,25 @@ def _get_path(self, rest_request):
     """
 
     # retrieves the original path as the path from the request
-    path = rest_request.request.original_path
+    path = request.request.original_path
 
     # in case the (original) path is not valid (problem
     # in the request retrieval) the "processed" path
     # must be used as a fall-back
     if not path:
         # sets the request path as the path
-        path = rest_request.request.path
+        path = request.request.path
 
     # returns the path
     return path
 
-def _get_host(self, rest_request, prefix_path = None):
+def _get_host(self, request, prefix_path = None):
     """
     Retrieves the host for the current request prepended
     with the given prefix path.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type prefix_path: String
     @param prefix_path: The prefix path to be prepended to the
     host value.
@@ -3935,7 +4006,7 @@ def _get_host(self, rest_request, prefix_path = None):
     """
 
     # retrieves the host value from the request headers
-    host = rest_request.request.get_header(HOST_VALUE)
+    host = request.request.get_header(HOST_VALUE)
 
     # in case there is a prefix path defined
     if prefix_path:
@@ -3945,22 +4016,22 @@ def _get_host(self, rest_request, prefix_path = None):
     # returns the host
     return host
 
-def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
+def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
     """
-    Retrieves the complete host path to the current rest request.
+    Retrieves the complete host path to the current request.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type suffix_path: String
     @param suffix_path: The suffix path to be appended.
     @type prefix_path: String
     @param prefix_path: The prefix path to be prepended.
     @rtype: String
-    @return: The complete host path to the current rest request.
+    @return: The complete host path to the current request.
     """
 
     # tries retrieves the host value
-    host = self._get_host(rest_request)
+    host = self._get_host(request)
 
     # in case no host is defined
     if not host:
@@ -3968,7 +4039,7 @@ def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREF
         raise exceptions.InsufficientHttpInformation("no host value defined")
 
     # retrieves the path
-    path = self._get_path(rest_request)
+    path = self._get_path(request)
 
     # removes the arguments part of the path
     path = path.split("?")[0]
@@ -3980,10 +4051,10 @@ def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREF
     # returns the host path
     return host_path
 
-def _range_d(self, rest_request, default):
+def _range_d(self, request, default):
     """
     Calculates the timestamp based date range for the provided
-    rest request according to the specification.
+    request according to the specification.
 
     The calculation of the range taking into account that if
     only a "lower" value is filled the "upper" values are set
@@ -3996,15 +4067,15 @@ def _range_d(self, rest_request, default):
     This is the internal method and should not be used from
     an interface level.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used for the
+    @type request: Request
+    @param request: The request to be used for the
     computation of the date range.
     @type default: String
     @param default: The default mode to be used in case no value
-    is retrieved from the rest request.
+    is retrieved from the request.
     @rtype: Tuple
     @return: Tuple containing the timestamps defining the date
-    range defined in the rest request.
+    range defined in the request.
     """
 
     # retrieves the current date structure to be used as reference
@@ -4013,12 +4084,12 @@ def _range_d(self, rest_request, default):
 
     # retrieves the various temporal values that are going to be
     # uses int the calculus of the time ranges
-    year = self.get_field(rest_request, "year", None, types.IntType)
-    month = self.get_field(rest_request, "month", None, types.IntType)
-    day = self.get_field(rest_request, "day", None, types.IntType)
-    hour = self.get_field(rest_request, "hour", None, types.IntType)
-    start = self.get_field(rest_request, "start", None, types.IntType)
-    end = self.get_field(rest_request, "end", None, types.IntType)
+    year = self.get_field(request, "year", None, types.IntType)
+    month = self.get_field(request, "month", None, types.IntType)
+    day = self.get_field(request, "day", None, types.IntType)
+    hour = self.get_field(request, "hour", None, types.IntType)
+    start = self.get_field(request, "start", None, types.IntType)
+    end = self.get_field(request, "end", None, types.IntType)
 
     # in case the start and end (timestamp values) are specified
     # the method should return immediately with their values
@@ -4200,13 +4271,13 @@ def _dasherize_underscored(self, string_value):
     # returns the dasherized value
     return dasherized_string_value
 
-def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data_map, encoding):
+def _create_form_data(self, request, data_map, form_data_map_key, form_data_map, encoding):
     """
     Processes the data map, populating the form data map with all the
     attributes described in the form data format.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @type data_map: Dictionary
     @param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
@@ -4241,12 +4312,12 @@ def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data
         # invokes this same function recursively
         # in case the attribute value is a map
         if attribute_value_type == types.DictType:
-            self._create_form_data(rest_request, attribute_value, attribute_form_data_map_key, form_data_map, encoding)
+            self._create_form_data(request, attribute_value, attribute_form_data_map_key, form_data_map, encoding)
         # invokes this same function recursively for each
         # item in case the attribute value is a list
         elif attribute_value_type in (types.ListType, types.TupleType):
             for attribute_value_item in attribute_value:
-                self._create_form_data(rest_request, attribute_value_item, attribute_form_data_map_key, form_data_map, encoding)
+                self._create_form_data(request, attribute_value_item, attribute_form_data_map_key, form_data_map, encoding)
         # decodes the attribute value and sets it
         # in the form data map in case it is a unicode string
         elif attribute_value_type == types.UnicodeType:
@@ -4821,19 +4892,19 @@ def _lower_locale(self, locale):
     # returns the locale lower (value)
     return locale_lower
 
-def _get_locales_session(self, rest_request):
+def _get_locales_session(self, request):
     """
     Retrieves the locales list value using a
     request session strategy.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: List
     @return: The retrieved locales list.
     """
 
     # retrieves the accepted language
-    locale = self.get_session_attribute(rest_request, LOCALE_SESSION_ATTRIBUTE)
+    locale = self.get_session_attribute(request, LOCALE_SESSION_ATTRIBUTE)
 
     # creates the locales list
     locales_list = locale and [locale] or []
@@ -4841,19 +4912,19 @@ def _get_locales_session(self, rest_request):
     # returns the locales list
     return locales_list
 
-def _get_locales_header(self, rest_request):
+def _get_locales_header(self, request):
     """
     Retrieves the locales list value using an
     (http) header strategy.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: List
     @return: The retrieved locales list.
     """
 
     # retrieves the accepted language
-    accept_language = rest_request.get_header(ACCEPT_LANGUAGE_VALUE)
+    accept_language = request.get_header(ACCEPT_LANGUAGE_VALUE)
 
     # retrieves the locales map for the accept language
     locales_map = self._get_locales_map(accept_language)
@@ -4864,13 +4935,13 @@ def _get_locales_header(self, rest_request):
     # returns the locales list
     return locales_list
 
-def _get_locales_default(self, rest_request):
+def _get_locales_default(self, request):
     """
     Retrieves the locales list value using a
     default strategy.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used.
+    @type request: Request
+    @param request: The request to be used.
     @rtype: List
     @return: The retrieved locales list.
     """
@@ -4986,7 +5057,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
     # this should be a "simple" key value map
     return bundle
 
-def get_process_method(controller, rest_request, process_method_name):
+def get_process_method(controller, request, process_method_name):
     """
     Retrieves the "real" process method from the given
     process method name.
@@ -4994,8 +5065,8 @@ def get_process_method(controller, rest_request, process_method_name):
     @type controller: Controller
     @param controller: The controller associated with the
     current context.
-    @type rest_request: RestRequest
-    @param rest_request: The current rest request.
+    @type request: Request
+    @param request: The current request.
     @type process_method_name: String
     @param process_method_name: The name of the process
     method to be retrieved.
@@ -5019,10 +5090,10 @@ def get_process_method(controller, rest_request, process_method_name):
             # splits the item into base and extension
             _item_base, item_extension = os.path.splitext(css_path_item)
 
-            # in case the item extension is not
-            if not item_extension == ".css":
-                # continues the loop
-                continue
+            # in case the item extension is not a valid
+            # one (representing a stylesheet) must continue
+            # with the current loop to find the next valid item
+            if not item_extension == ".css": continue
 
             # adds the stylesheet reference to the string buffer
             self.string_buffer.write("<link rel=\"stylesheet\" href=\"resources/css/%s\" type=\"text/css\" />\n" % css_path_item)
@@ -5080,7 +5151,7 @@ def get_process_method(controller, rest_request, process_method_name):
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
         # retrieves the user acl value
-        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
+        user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
         # process the acl values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
@@ -5136,7 +5207,7 @@ def get_process_method(controller, rest_request, process_method_name):
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
         # retrieves the user acl value
-        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
+        user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
         # process the acl values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
@@ -5196,7 +5267,7 @@ def get_process_method(controller, rest_request, process_method_name):
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
         # retrieves the user acl value
-        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
+        user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
         # process the acl values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
@@ -5225,10 +5296,10 @@ def get_process_method(controller, rest_request, process_method_name):
     def __process_request_time(self, node):
         # retrieves the current time to be able to calculate
         # the delta, then calculates the delta by subtracting
-        # the generation time of the rest request from the
+        # the generation time of the request from the
         # current time (delta calculation)
         current_time = time.time()
-        delta_time = current_time - rest_request._generation_time
+        delta_time = current_time - request._generation_time
 
         # converts the delta time (currently in seconds) to
         # milliseconds (by multiplying by a thousand)

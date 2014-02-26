@@ -223,9 +223,9 @@ class Mvc(colony.base.system.System):
         and at last normal (dynamic) handling.
 
         @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
+        @param rest_request: The rest request to be handled, this
+        value is going to be encapsulated into an abstract request
+        interface to be handled by the underlying mvc services.
         """
 
         # in case the clear pending flag is set must remove

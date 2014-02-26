@@ -143,10 +143,10 @@ def _start_model(self):
         # started)
         return
 
-    # starts the underlying rest request reference
-    # as unset, should be set after the start operation
-    # if access to session is required
-    self.rest_request = None
+    # starts the underlying request reference as unset,
+    # should be set after the start operation if access
+    # to the current session is required
+    self.request = None
 
     # starts the validation map associating
     # an attribute name with the validation methods
@@ -178,22 +178,22 @@ def _start_model(self):
     # sets the model started flag as true
     self.model_started = True
 
-def _class_new(cls, rest_request = None, map = None, permissive = False, apply = True):
+def _class_new(cls, request = None, map = None, permissive = False, apply = True):
     """
     Creates a new model instance, applying the given map
     of "form" options to the created model.
     This method should be used as a "handy" constructor of
     new entities from a previously received used form information.
 
-    An optional rest request reference may be used to enable
+    An optional request reference may be used to enable
     the model to access session variables (information).
 
     An extra permissive flag must be used with care and allows
     the control of the behavior for the apply operation on
     the model in response to an undefined value.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be used in the context
+    @type request: Request
+    @param request: The request to be used in the context
     of the current model, it should enable access to session attributes.
     @type map: Dictionary
     @param map: The map of "form" options to be used to create
@@ -215,11 +215,11 @@ def _class_new(cls, rest_request = None, map = None, permissive = False, apply =
     # the default values should be applied
     model = ModelProxy(cls, len(map)) if is_sequence else cls()
 
-    # sets the rest request in the model according
+    # sets the request in the model according
     # to the provided reference value, this is used
     # in a set of operation that require for instance
     # session variables information
-    model.set_request(rest_request)
+    model.set_request(request)
 
     # in case a map is provided, must apply
     # the contents of it to the model
@@ -230,17 +230,17 @@ def _class_new(cls, rest_request = None, map = None, permissive = False, apply =
     # returned immediately to the caller method
     if not apply: return model
 
-    # tries to retrieve the controller using the current rest request
+    # tries to retrieve the controller using the current request
     # as reference and in case the returned model is not valid returns
     # the model immediately to the caller method (silent failure)
-    controller = cls.get_controller_g(rest_request)
+    controller = cls.get_controller_g(request)
     if not controller: return model
 
     # retrieves the name of the model's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and
     # applies the data from the field to the model (apply operation)
     name = model._get_entity_class_name()
-    data = controller.get_field(rest_request, name, {})
+    data = controller.get_field(request, name, {})
     model.apply(data, permissive = permissive)
 
     # returns the newly created model with the data from the associated
@@ -277,18 +277,18 @@ def _class_get_plugin(cls):
 
     return cls._system_instance.plugin
 
-def _class_get_controller_g(cls, rest_request):
+def _class_get_controller_g(cls, request):
     """
     Retrieves the controller instance that is currently set
-    in the current environment (rest request) falling back
+    in the current environment (request) falling back
     to an invalid (unset)  value in case no controller was
     found for the current environment.
 
     This is the global method equivalent to the instance
     method of the same name.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request that is going to be
+    @type request: Request
+    @param request: The request that is going to be
     used to try to retrieve the controller.
     @rtype: Controller
     @return: The controller retrieved from the provided context,
@@ -296,8 +296,8 @@ def _class_get_controller_g(cls, rest_request):
     the controller from the current environment/context.
     """
 
-    if not hasattr(rest_request, "controller"): return None
-    return getattr(rest_request, "controller")
+    if not hasattr(request, "controller"): return None
+    return getattr(request, "controller")
 
 def _class_get_context_attribute_g(cls, name, context_request, namespace_name = None):
     """
@@ -309,8 +309,8 @@ def _class_get_context_attribute_g(cls, name, context_request, namespace_name = 
 
     @type name: String
     @param name: The name of the context attribute to be retrieved.
-    @type context_request: RestRequest
-    @param context_request: The rest request to be used for the
+    @type context_request: Request
+    @param context_request: The request to be used for the
     retrieval of the context to be used in attribute retrieval.
     @type namespace_name: String
     @param namespace_name: The name of the namespace to be used in the
@@ -673,46 +673,46 @@ def is_lazy_loaded(self, attribute_name):
 
 def lock_session(self):
     """
-    Locks the session associated with the current rest request,
+    Locks the session associated with the current request,
     subsequent accesses to the session will be blocked until the
     session is released.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = self.rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = self.request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid
-    if not rest_request_session:
+    if not request_session:
         # start a session if none is started and then
-        # retrieves it from the rest request
-        self.rest_request.start_session()
-        rest_request_session = self.rest_request.get_session()
+        # retrieves it from the request
+        self.request.start_session()
+        request_session = self.request.get_session()
 
-    # locks the "just" retrieved (or created) rest request
+    # locks the "just" retrieved (or created) request
     # session (blocks it)
-    rest_request_session.lock()
+    request_session.lock()
 
 def release_session(self):
     """
-    Releases the session associated with the current rest request,
+    Releases the session associated with the current request,
     allowing further requests to access the session to be passed.
     """
 
-    # tries to retrieve the rest request session
-    rest_request_session = self.rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = self.request.get_session()
 
-    # in case the rest request session is invalid
+    # in case the request session is invalid
     # an exception should be raised (invalid situation)
-    if not rest_request_session: raise RuntimeError("problem releasing session, no session available")
+    if not request_session: raise RuntimeError("problem releasing session, no session available")
 
-    # releases the "just" retrieved rest request
+    # releases the "just" retrieved request
     # session (unblocks it)
-    rest_request_session.release()
+    request_session.release()
 
 def get_session_attribute(self, session_attribute_name, namespace_name = None, unset_session_attribute = False):
     """
-    Retrieves the session attribute from the current rest request
+    Retrieves the session attribute from the current request
     with the given name and for the given namespace.
     Optionally it may be unset from session after retrieval.
 
@@ -726,33 +726,33 @@ def get_session_attribute(self, session_attribute_name, namespace_name = None, u
     @return The retrieved session attribute.
     """
 
-    # retrieves the currently available rest request to try
+    # retrieves the currently available request to try
     # to access the session variables
-    rest_request = self.get_request()
+    request = self.get_request()
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid, must return invalid
-    if not rest_request_session: return None
+    if not request_session: return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_name(session_attribute_name, namespace_name)
 
     # retrieves the attribute from the session
-    session_attribute = rest_request_session.get_attribute(session_attribute_name)
+    session_attribute = request_session.get_attribute(session_attribute_name)
 
     # in case the unset the session attribute flag is set
     # the session attribute is unset
-    unset_session_attribute and rest_request_session.unset_attribute(session_attribute_name)
+    unset_session_attribute and request_session.unset_attribute(session_attribute_name)
 
     # returns the session attribute
     return session_attribute
 
 def set_session_attribute(self, session_attribute_name, session_attribute_value, namespace_name = None):
     """
-    Sets the session attribute in the current rest request
+    Sets the session attribute in the current request
     with the given name and for the given namespace.
     The session attribute value may be of any type.
 
@@ -767,30 +767,30 @@ def set_session_attribute(self, session_attribute_name, session_attribute_value,
     attribute to be set.
     """
 
-    # retrieves the currently available rest request to try
+    # retrieves the currently available request to try
     # to access the session variables
-    rest_request = self.get_request()
+    request = self.get_request()
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session
+    # in case the request session
     # is invalid
-    if not rest_request_session:
+    if not request_session:
         # start a session if none is started and then
-        # retrieves it from the rest request
-        rest_request.start_session()
-        rest_request_session = rest_request.get_session()
+        # retrieves it from the request
+        request.start_session()
+        request_session = request.get_session()
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_name(session_attribute_name, namespace_name)
 
     # sets the attribute in the session
-    rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
+    request_session.set_attribute(session_attribute_name, session_attribute_value)
 
 def unset_session_attribute(self, session_attribute_name, namespace_name = None):
     """
-    Unsets the session attribute from the current rest request
+    Unsets the session attribute from the current request
     with the given name and for the given namespace.
 
     @type session_attribute_name: String
@@ -801,32 +801,32 @@ def unset_session_attribute(self, session_attribute_name, namespace_name = None)
     attribute to be unset.
     """
 
-    # retrieves the currently available rest request to try
+    # retrieves the currently available request to try
     # to access the session variables
-    rest_request = self.get_request()
+    request = self.get_request()
 
-    # tries to retrieve the rest request session
-    rest_request_session = rest_request.get_session()
+    # tries to retrieve the request session
+    request_session = request.get_session()
 
-    # in case the rest request session is invalid,
+    # in case the request session is invalid,
     # must return and invalid to the caller method
-    if not rest_request_session: return None
+    if not request_session: return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_name(session_attribute_name, namespace_name)
 
     # unsets the attribute from the session
-    rest_request_session.unset_attribute(session_attribute_name)
+    request_session.unset_attribute(session_attribute_name)
 
-def get_controller(self, rest_request):
+def get_controller(self, request):
     """
     Retrieves the controller instance that is currently set
-    in the current environment (rest request) falling back
+    in the current environment (request) falling back
     to an invalid (unset)  value in case no controller was
     found for the current environment.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request that is going to be
+    @type request: Request
+    @param request: The request that is going to be
     used to try to retrieve the controller.
     @rtype: Controller
     @return: The controller retrieved from the provided context,
@@ -834,8 +834,8 @@ def get_controller(self, rest_request):
     the controller from the current environment/context.
     """
 
-    if not hasattr(rest_request, "controller"): return None
-    return getattr(rest_request, "controller")
+    if not hasattr(request, "controller"): return None
+    return getattr(request, "controller")
 
 def get_context_attribute(self, context_name, namespace_name = None):
     """
@@ -1181,38 +1181,38 @@ def is_stored(self):
     if hasattr(self, "is_persisted"): return self.is_persisted()
     return False
 
-def set_request(self, rest_request):
+def set_request(self, request):
     """
-    Sets the (rest) request into the current model instance.
+    Sets the request into the current model instance.
     This value is going to be used to access session information
     from the model.
 
-    @type rest_request: RestRequest
-    @param rest_request: The rest request to be set into the
+    @type request: Request
+    @param request: The request to be set into the
     current model instance.
     """
 
     # in case the current model contains the scope map defined
     # the request is sent there for scope wide usage, otherwise the
-    # "normal" rest request variable is used
-    if hasattr(self, "_scope"): self._scope["request"] = rest_request
-    else: self.rest_request = rest_request
+    # "normal" request variable is used
+    if hasattr(self, "_scope"): self._scope["request"] = request
+    else: self.request = request
 
 def get_request(self):
     """
-    Retrieves the (rest) request from the current model instance.
+    Retrieves the request from the current model instance.
     This value is used to access session information from the model.
 
-    @rtype: RestRequest
-    @return: The retrieve rest request from the current model instance.
+    @rtype: Request
+    @return: The retrieve request from the current model instance.
     """
 
     # in case the current model contains the scope map defined the request
-    # is retrieved from there, otherwise the "normal" rest request variable
+    # is retrieved from there, otherwise the "normal" request variable
     # is used for the retrieval
-    if hasattr(self, "_scope"): rest_request = self._scope.get("request", self.rest_request)
-    else: rest_request = self.rest_request
-    return rest_request
+    if hasattr(self, "_scope"): request = self._scope.get("request", self.request)
+    else: request = self.request
+    return request
 
 def get_validation_context(self):
     """

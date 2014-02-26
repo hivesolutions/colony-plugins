@@ -129,11 +129,11 @@ def validated_method(
             # retrieves the self reference
             self = args[0]
 
-            # retrieves the rest request reference
-            rest_request = args[1]
-
-            # retrieves the parameters reference
-            parameters = rest_request.parameters
+            # retrieves the request reference and uses it to retrieve
+            # the associated parameters instance to be used in the
+            # operations to be done in the decorator
+            request = args[1]
+            parameters = request.parameters
 
             # retrieves the value for the serializer attribute, if this
             # value is defined it must contain a callable object that is
@@ -165,12 +165,12 @@ def validated_method(
             validated = parameters.get("validated", False)
             run_validate = contains_validate and not validated
 
-            # calls the validate method with the rest request
+            # calls the validate method with the request
             # the parameters and the validation parameters and retrieves
             # the list with the validation failure reasons, in case no validate
             # method is present ignores the call
             reasons_list = run_validate and\
-                self.validate(rest_request, parameters, validation_parameters) or []
+                self.validate(request, parameters, validation_parameters) or []
 
             # updates the validated flag for the current request workflow so that
             # no second validation occurs, this is the default (top to down) expected
@@ -190,10 +190,10 @@ def validated_method(
                 # in case a validation failed method is defined and
                 # the validation method should be called (by flag)
                 if validation_failed_method and should_call:
-                    # calls the validation failed method with the rest request the parameters the
+                    # calls the validation failed method with the request the parameters the
                     # validation parameters and the reasons list and sets the return value
                     return_value = validation_failed_method(
-                        rest_request,
+                        request,
                         parameters,
                         validation_parameters,
                         reasons_list
@@ -426,12 +426,11 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
             # retrieves the self reference
             self = args[0]
 
-            # retrieves the rest request reference
-            rest_request = args[1]
-
-            # retrieves the parameters reference, this value is going
-            # to be used for the retrieval of extra parameters
-            parameters = rest_request.parameters
+            # retrieves the request reference and uses it to retrieve
+            # the associated parameters instance to be used in the
+            # operations to be done in the decorator
+            request = args[1]
+            parameters = request.parameters
 
             try:
                 # calls the callback function,
@@ -464,12 +463,12 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
 
                 # sets the error status code in the current request indicating
                 # that a problem has occurred (default behavior)
-                self.set_status_code(rest_request, status_code)
+                self.set_status_code(request, status_code)
 
                 # retrieves the exception map for the exception, this map should
                 # include extra information on the request together with the "base"
                 # information about the exception to be handled
-                exception_map = self.get_exception_map(exception, rest_request)
+                exception_map = self.get_exception_map(exception, request)
 
                 # retrieves the exception value from the exception map and then
                 # unpacks it into its components of message or traceback
@@ -481,12 +480,12 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # is has priority)
                 if serializer:
                     # dumps the exception map to the serialized form ant then
-                    # sets the serialized map as the rest request contents with
+                    # sets the serialized map as the request contents with
                     # the appropriate mime type
                     exception_map_serialized = serializer.dumps(exception_map)
                     mime_type = serializer.get_mime_type()
                     self.set_contents(
-                        rest_request,
+                        request,
                         exception_map_serialized,
                         content_type = mime_type
                     )
@@ -506,7 +505,7 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                     method = getattr(exception_handler, method_name)
                     return_value = colony.call_safe(
                         method,
-                        rest_request,
+                        request,
                         parameters = exception_map,
                         message = message,
                         traceback = traceback
@@ -515,15 +514,15 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
                 # checks if the current message is already flushed (data sent to
                 # the output) and in case it's not and there should be a default
                 # success message sent the default success message is create, then
-                # serialized and written to the output stream in the rest request
-                is_flushed = rest_request.is_flushed()
+                # serialized and written to the output stream in the request
+                is_flushed = request.is_flushed()
                 serializer = parameters.get(SERIALIZER_VALUE, None)
                 should_default = not is_flushed and default_success and serializer
                 if should_default:
                     success_serialized = serializer.dumps(dict(result = "success"))
                     mime_type = serializer.get_mime_type()
                     self.set_contents(
-                        rest_request,
+                        request,
                         success_serialized,
                         content_type = mime_type
                     )

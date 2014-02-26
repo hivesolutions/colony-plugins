@@ -78,7 +78,7 @@ class MvcCommunicationHandler:
     A communication element is a three element tuple for connection,
     request and (target) timestamp for timeout (maximum wait time).
     This communication element represents a request from the client
-    and the (rest request) associated must be flushed or the else the
+    and the (request) associated must be flushed or the else the
     client will remain waiting indefinitely.
 
     There are two types of queues in the communication sub-system, the
@@ -89,7 +89,8 @@ class MvcCommunicationHandler:
     """
 
     mvc_plugin = None
-    """ The mvc plugin """
+    """ The reference to the mvc plugin that own the
+    current communication handler """
 
     connections_map = {}
     """ The map associating the connection name with
@@ -275,9 +276,9 @@ class MvcCommunicationHandler:
 
     def handle_request(self, request, delegate, connection_name):
         """
-        Handles the given rest request.
+        Handles the given request.
 
-        @type request: RestRequest
+        @type request: Request
         @param request: The http request to be handled.
         @type delegate: Object
         @param delegate: The object to be used to delegate
@@ -522,7 +523,7 @@ class MvcCommunicationHandler:
         This method should be used to avoid inappropriate
         serialization of messages.
 
-        @type request: RestRequest
+        @type request: Request
         @param request: The http request to be used in the
         writing operation to be performed.
         @type connection: CommunicationConnection
