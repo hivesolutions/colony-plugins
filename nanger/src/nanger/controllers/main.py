@@ -47,29 +47,29 @@ mvc_utils = colony.__import__("mvc_utils")
 
 class MainController(base.BaseController):
 
-    def index(self, rest_request):
+    def index(self, request):
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "general/index.html.tpl",
             title = "Colony Framework",
             area = "home"
         )
 
-    def plugins(self, rest_request):
+    def plugins(self, request):
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "general/plugins.html.tpl",
             title = "Plugins",
             area = "plugins"
         )
 
-    def console(self, rest_request):
+    def console(self, request):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manager = self.plugin.manager
@@ -81,10 +81,10 @@ class MainController(base.BaseController):
         version = sys.version
 
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "general/console.html.tpl",
             title = "Console",
             area = "console",
@@ -92,7 +92,7 @@ class MainController(base.BaseController):
             information = system_information_map
         )
 
-    def log(self, rest_request):
+    def log(self, request):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manager = self.plugin.manager
@@ -101,7 +101,7 @@ class MainController(base.BaseController):
         # condition the amount of lines retrieved, defaulting to
         # the default value in case none is provided
         count = self.get_field(
-            rest_request,
+            request,
             "count",
             default = 3000,
             cast_type = int
@@ -115,17 +115,17 @@ class MainController(base.BaseController):
         latest.reverse()
 
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "general/log.html.tpl",
             title = "Log",
             area = "log",
             latest = latest
         )
 
-    def about(self, rest_request):
+    def about(self, request):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manager = self.plugin.manager
@@ -137,10 +137,10 @@ class MainController(base.BaseController):
         version = sys.version
 
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "general/about.html.tpl",
             title = "About",
             area = "about",

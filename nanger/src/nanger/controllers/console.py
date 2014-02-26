@@ -83,14 +83,14 @@ class ConsoleController(base.BaseController):
         base.BaseController.__init__(self, plugin, system)
         self.interpreters = {}
 
-    def init(self, rest_request):
+    def init(self, request):
         """
-        Handles the given initialization rest request.
+        Handles the given initialization request.
         This request should start an execution instance and
         return the identifier to the caller.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
+        @type request: Request
+        @param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -103,7 +103,7 @@ class ConsoleController(base.BaseController):
 
         # retrieves the id of the interpreter instance to be used
         # in case the instance id exists none is created
-        instance = self.get_field(rest_request, "instance", None)
+        instance = self.get_field(request, "instance", None)
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -176,16 +176,16 @@ class ConsoleController(base.BaseController):
             result = result,
             instance = instance
         )
-        self.serialize(rest_request, response, serializer = json_plugin)
+        self.serialize(request, response, serializer = json_plugin)
 
-    def execute(self, rest_request):
+    def execute(self, request):
         """
-        Handles the given execute rest request.
+        Handles the given execute request.
         This request should execute a python command at the
         server side and then return the result of execution.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
+        @type request: Request
+        @param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -201,10 +201,10 @@ class ConsoleController(base.BaseController):
         # id of the interpreter instance to be used and the final
         # field attribute is the (is) file flag indicating if the
         # command should be compiled in multiple or single line mode
-        command = self.get_field(rest_request, "command", "")
-        instance = self.get_field(rest_request, "instance", None)
-        file = self.get_field(rest_request, "file", 0, int)
-        name = self.get_field(rest_request, "name", "<input>")
+        command = self.get_field(request, "command", "")
+        instance = self.get_field(request, "instance", None)
+        file = self.get_field(request, "file", 0, int)
+        name = self.get_field(request, "name", "<input>")
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -292,16 +292,16 @@ class ConsoleController(base.BaseController):
             pending = pending,
             instance = instance
         )
-        self.serialize(rest_request, response, serializer = json_plugin)
+        self.serialize(request, response, serializer = json_plugin)
 
-    def autocomplete(self, rest_request):
+    def autocomplete(self, request):
         """
-        Handles the given autocomplete rest request.
+        Handles the given autocomplete request.
         This request should try to find a series of results
         that may be used as "tips" for the correct command.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
+        @type request: Request
+        @param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -315,8 +315,8 @@ class ConsoleController(base.BaseController):
         # retrieves the command that it's meant to be executed by
         # the current python virtual machine, then retrieves the
         # id of the interpreter instance to be used
-        command = self.get_field(rest_request, "command", "")
-        instance = self.get_field(rest_request, "instance", None)
+        command = self.get_field(request, "command", "")
+        instance = self.get_field(request, "instance", None)
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -432,7 +432,7 @@ class ConsoleController(base.BaseController):
             offset = offset,
             instance = instance
         )
-        self.serialize(rest_request, response, serializer = json_plugin)
+        self.serialize(request, response, serializer = json_plugin)
 
     def _resolve_value(self, partials, names):
         """

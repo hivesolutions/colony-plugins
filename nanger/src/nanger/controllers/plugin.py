@@ -45,7 +45,7 @@ mvc_utils = colony.__import__("mvc_utils")
 
 class PluginController(base.BaseController):
 
-    def list(self, rest_request):
+    def list(self, request):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manager = self.plugin.manager
@@ -56,9 +56,9 @@ class PluginController(base.BaseController):
 
         # retrieves the various fields that are going to be used to
         # perform the query over the plugins
-        filter = self.get_field(rest_request, "filter_string", "")
-        start_record = self.get_field(rest_request, "start_record", 0, int)
-        number_records = self.get_field(rest_request, "number_records", 9, int)
+        filter = self.get_field(request, "filter_string", "")
+        start_record = self.get_field(request, "start_record", 0, int)
+        number_records = self.get_field(request, "number_records", 9, int)
 
         # uses the plugin manager to retrieve the list of all plugin instances
         # (this is a list of object and as such is not serializable)
@@ -95,9 +95,9 @@ class PluginController(base.BaseController):
         # then serializes the same plugin list using the defined plugin
         plugins.sort()
         plugins = plugins[start_record:start_record + number_records]
-        self.serialize(rest_request, plugins, serializer = json_plugin)
+        self.serialize(request, plugins, serializer = json_plugin)
 
-    def show(self, rest_request, plugin_id = None):
+    def show(self, request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -109,10 +109,10 @@ class PluginController(base.BaseController):
         if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
         # generates and processes the template with the provided values
-        # changing the current rest request accordingly, note that there's
+        # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            rest_request = rest_request,
+            request = request,
             template = "plugin/show.html.tpl",
             title = plugin.name,
             area = "plugins",
@@ -121,7 +121,7 @@ class PluginController(base.BaseController):
             plugin = plugin
         )
 
-    def load(self, rest_request, plugin_id = None):
+    def load(self, request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -138,9 +138,9 @@ class PluginController(base.BaseController):
 
         # redirects the user agent to the show page for the plugin
         # instance (default behavior)
-        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
+        self.redirect_base_path(request, "plugins/%s" % plugin.short_name)
 
-    def unload(self, rest_request, plugin_id = None):
+    def unload(self, request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -157,9 +157,9 @@ class PluginController(base.BaseController):
 
         # redirects the user agent to the show page for the plugin
         # instance (default behavior)
-        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
+        self.redirect_base_path(request, "plugins/%s" % plugin.short_name)
 
-    def reload(self, rest_request, plugin_id = None):
+    def reload(self, request, plugin_id = None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -177,4 +177,4 @@ class PluginController(base.BaseController):
 
         # redirects the user agent to the show page for the plugin
         # instance (default behavior)
-        self.redirect_base_path(rest_request, "plugins/%s" % plugin.short_name)
+        self.redirect_base_path(request, "plugins/%s" % plugin.short_name)
