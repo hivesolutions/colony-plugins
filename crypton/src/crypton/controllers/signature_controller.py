@@ -59,7 +59,7 @@ class SignatureController(controllers.Controller):
     The crypton signature controller.
     """
 
-    def encrypt(self, rest_request, api_key, key_name, message):
+    def encrypt(self, request, api_key, key_name, message):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
@@ -67,7 +67,7 @@ class SignatureController(controllers.Controller):
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        self._validate_api_key(rest_request, api_key)
+        self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
         public_key_path = self._get_key_path(key_name, "public_key")
@@ -81,7 +81,7 @@ class SignatureController(controllers.Controller):
         # returns the encrypted message
         return message_e
 
-    def decrypt(self, rest_request, api_key, key_name, message_e):
+    def decrypt(self, request, api_key, key_name, message_e):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
@@ -89,7 +89,7 @@ class SignatureController(controllers.Controller):
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        self._validate_api_key(rest_request, api_key)
+        self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
         private_key_path = self._get_key_path(key_name, "private_key")
@@ -103,7 +103,7 @@ class SignatureController(controllers.Controller):
         # returns the original message
         return message
 
-    def sign(self, rest_request, api_key, key_name, message, algorithm_name):
+    def sign(self, request, api_key, key_name, message, algorithm_name):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
@@ -111,7 +111,7 @@ class SignatureController(controllers.Controller):
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        self._validate_api_key(rest_request, api_key)
+        self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
         private_key_path = self._get_key_path(key_name, "private_key")
@@ -125,7 +125,7 @@ class SignatureController(controllers.Controller):
         # returns the signature
         return signature
 
-    def verify(self, rest_request, api_key, key_name, signature, message):
+    def verify(self, request, api_key, key_name, signature, message):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
 
@@ -133,7 +133,7 @@ class SignatureController(controllers.Controller):
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        self._validate_api_key(rest_request, api_key)
+        self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
         public_key_path = self._get_key_path(key_name, "public_key")
@@ -150,7 +150,7 @@ class SignatureController(controllers.Controller):
         # returns the return value string
         return return_value_string
 
-    def _validate_api_key(self, rest_request, api_key):
+    def _validate_api_key(self, request, api_key):
         # retrieves the security map
         security_map = self.system.security_map
 

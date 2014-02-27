@@ -51,12 +51,12 @@ class MainController(controllers.Controller):
     The crypton main controller.
     """
 
-    def handle_encrypt(self, rest_request, parameters = {}):
+    def handle_encrypt(self, request, parameters = {}):
         """
-        Handles the given crypton encrypt rest request.
+        Handles the given crypton encrypt request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The crypton encrypt rest request
+        @type request: Request
+        @param request: The crypton encrypt request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -66,23 +66,23 @@ class MainController(controllers.Controller):
         signature_controller = self.system.signature_controller
 
         # processes the form data and retrieves its attributes
-        form_data_map = self.process_form_data(rest_request)
+        form_data_map = self.process_form_data(request)
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         message = form_data_map["message"]
 
         # encrypts the message and retrieves the encrypted message
-        message_e = signature_controller.encrypt(rest_request, api_key, key_name, message)
+        message_e = signature_controller.encrypt(request, api_key, key_name, message)
 
         # sets the encrypted message as the contents
-        self.set_contents(rest_request, message_e, "text/plain")
+        self.set_contents(request, message_e, "text/plain")
 
-    def handle_decrypt(self, rest_request, parameters = {}):
+    def handle_decrypt(self, request, parameters = {}):
         """
-        Handles the given crypton decrypt rest request.
+        Handles the given crypton decrypt request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The crypton decrypt rest request
+        @type request: Request
+        @param request: The crypton decrypt request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -92,23 +92,23 @@ class MainController(controllers.Controller):
         signature_controller = self.system.signature_controller
 
         # processes the form data and retrieves its attributes
-        form_data_map = self.process_form_data(rest_request)
+        form_data_map = self.process_form_data(request)
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         message_e = form_data_map["message_e"]
 
         # decrypts the encrypted message, retrieving the original message
-        message = signature_controller.decrypt(rest_request, api_key, key_name, message_e)
+        message = signature_controller.decrypt(request, api_key, key_name, message_e)
 
         # sets the message as the contents
-        self.set_contents(rest_request, message, "text/plain")
+        self.set_contents(request, message, "text/plain")
 
-    def handle_sign(self, rest_request, parameters = {}):
+    def handle_sign(self, request, parameters = {}):
         """
-        Handles the given crypton sign rest request.
+        Handles the given crypton sign request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The crypton sign rest request
+        @type request: Request
+        @param request: The crypton sign request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -118,24 +118,24 @@ class MainController(controllers.Controller):
         signature_controller = self.system.signature_controller
 
         # processes the form data and retrieves its attributes
-        form_data_map = self.process_form_data(rest_request)
+        form_data_map = self.process_form_data(request)
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         message = form_data_map["message"]
         algorithm_name = form_data_map.get("algorithm_name", DEFAULT_ALGORITHM_NAME)
 
         # signs the message and retrieves the signature
-        signature = signature_controller.sign(rest_request, api_key, key_name, message, algorithm_name)
+        signature = signature_controller.sign(request, api_key, key_name, message, algorithm_name)
 
         # sets the signature as the contents
-        self.set_contents(rest_request, signature, "text/plain")
+        self.set_contents(request, signature, "text/plain")
 
-    def handle_verify(self, rest_request, parameters = {}):
+    def handle_verify(self, request, parameters = {}):
         """
-        Handles the given crypton verify rest request.
+        Handles the given crypton verify request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The crypton verify rest request
+        @type request: Request
+        @param request: The crypton verify request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -145,14 +145,14 @@ class MainController(controllers.Controller):
         signature_controller = self.system.signature_controller
 
         # processes the form data and retrieves its attributes
-        form_data_map = self.process_form_data(rest_request)
+        form_data_map = self.process_form_data(request)
         api_key = form_data_map.get("api_key", None)
         key_name = form_data_map["key_name"]
         signature = form_data_map["signature"]
         message = form_data_map["message"]
 
         # verifies the signature and retrieves the return value string
-        return_value_string = signature_controller.verify(rest_request, api_key, key_name, signature, message)
+        return_value_string = signature_controller.verify(request, api_key, key_name, signature, message)
 
         # sets the return value string as the contents
-        self.set_contents(rest_request, return_value_string, "text/plain")
+        self.set_contents(request, return_value_string, "text/plain")

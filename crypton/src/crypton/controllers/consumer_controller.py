@@ -48,19 +48,19 @@ class ConsumerController(controllers.Controller):
     The crypton consumer controller.
     """
 
-    def handle_create(self, rest_request, parameters = {}):
+    def handle_create(self, request, parameters = {}):
         """
-        Handles the new consumer rest request.
+        Handles the new consumer request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The crypton new rest request to be handled.
+        @type request: Request
+        @param request: The crypton new request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         """
 
-        # retrieves the consumer from the rest request
+        # retrieves the consumer from the request
         # and applies it to the consumer entity
-        consumer = self.get_field(rest_request, "consumer", {})
+        consumer = self.get_field(request, "consumer", {})
         consumer_entity = models.Consumer.new(consumer)
 
         # generates the consumer api key
