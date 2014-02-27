@@ -407,7 +407,7 @@ def transaction(
     # returns the created decorator
     return decorator
 
-def serialize(serialization_parameters = None, default_success = True):
+def serialized(serialization_parameters = None, default_success = True):
     """
     Decorator for the serialization of any exception raised
     by the decorator method or a method called indirectly
@@ -612,3 +612,7 @@ class Controller(object):
 
         self.plugin = plugin
         self.system = system
+
+serialize = serialized("all")
+transaction_m = transaction(controller = False)
+transaction_c = transaction(controller = True)
