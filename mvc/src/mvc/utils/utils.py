@@ -613,6 +613,7 @@ class Controller(object):
         self.plugin = plugin
         self.system = system
 
+ensure = validated
 serialize = serialized("all")
 transaction_m = transaction(controller = False)
 transaction_c = transaction(controller = True)
