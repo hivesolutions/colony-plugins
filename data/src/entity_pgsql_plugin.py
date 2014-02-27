@@ -56,7 +56,7 @@ class EntityPgsqlPlugin(colony.base.system.Plugin):
         "entity_engine"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb", "4.x", "http://www.pygresql.org")
+        colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb")
     ]
     main_modules = [
         "data.entity_pgsql.system"

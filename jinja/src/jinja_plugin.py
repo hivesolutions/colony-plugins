@@ -60,7 +60,7 @@ class JinjaPlugin(colony.Plugin):
         "template_engine"
     ]
     dependencies = [
-        colony.PackageDependency("Jinja", "jinja2")
+        colony.PackageDependency("Jinja template engine", "jinja2")
     ]
     main_modules = [
         "jinja.system"

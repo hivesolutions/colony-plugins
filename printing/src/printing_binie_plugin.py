@@ -56,7 +56,7 @@ class PrintingBiniePlugin(colony.base.system.Plugin):
         "printing"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
         "printing.binie.exceptions",

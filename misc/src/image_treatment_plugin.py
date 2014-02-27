@@ -56,7 +56,7 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
         "image_treatment"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
         "misc.image_treatment.system"

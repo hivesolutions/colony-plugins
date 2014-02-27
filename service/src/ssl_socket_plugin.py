@@ -56,7 +56,7 @@ class SslSocketPlugin(colony.base.system.Plugin):
         "socket_provider"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("Python 2.6", "ssl", "2.6.x", "http://python.org")
+        colony.PackageDependency("Python 2.6", "ssl")
     ]
     main_modules = [
         "service.ssl_socket.system"

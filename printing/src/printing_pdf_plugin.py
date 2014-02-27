@@ -56,8 +56,8 @@ class PrintingPdfPlugin(colony.base.system.Plugin):
         "printing"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("ReportLab PDF library", "reportlab", "2.6.x", "http://www.reportlab.com"),
-        colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+        colony.PackageDependency("ReportLab PDF library", "reportlab"),
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
         "printing.pdf.exceptions",

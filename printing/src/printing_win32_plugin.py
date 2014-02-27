@@ -56,8 +56,8 @@ class PrintingWin32Plugin(colony.base.system.Plugin):
         "printing"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("Win32 Extensions for Python", "win32print", "b202", "http://starship.python.net/crew/mhammond/win32"),
-        colony.base.system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+        colony.PackageDependency("Win32 Extensions for Python", "win32print"),
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
         "printing.win32.constants",

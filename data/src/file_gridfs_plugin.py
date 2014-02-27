@@ -57,8 +57,8 @@ class FileGridfsPlugin(colony.base.system.Plugin):
         "file_engine"
     ]
     dependencies = [
-        colony.base.system.PackageDependency("MongoDB python bindings", "pymongo", "1.6.x", "http://mongodb.org"),
-        colony.base.system.PackageDependency("MongoDB GridFS python bindings", "gridfs", "1.6.x", "http://mongodb.org")
+        colony.PackageDependency("MongoDB python bindings", "pymongo"),
+        colony.PackageDependency("MongoDB GridFS python bindings", "gridfs")
     ]
     main_modules = [
         "data.file_gridfs.system"
