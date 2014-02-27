@@ -571,9 +571,11 @@ class Mvc(colony.base.system.System):
 
         # retrieves the resources initial token length and uses it
         # to create the file path from the base path and file path
+        # note that the encoder name is only added in case it's
+        # currently defined (as defined in the specification)
         initial_token_l = len(initial_token)
-        file_path = base_path + "/" + resource_path[initial_token_l + 1:] +\
-            "." + rest_request.encoder_name
+        file_path = base_path + "/" + resource_path[initial_token_l + 1:]
+        if rest_request.encoder_name: file_path += "." + rest_request.encoder_name
 
         # handles the given request by the mvc file handler
         self.mvc_file_handler.handle_request(

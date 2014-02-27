@@ -92,82 +92,75 @@ class MvcFileHandler:
         @return: The result of the handling.
         """
 
-        # retrieves the mime plugin
+        # retrieves the mime plugin, that is going to be used to
+        # determine the proper mime type for the requested file
         mime_plugin = self.mvc_plugin.mime_plugin
 
-        # retrieves the associated mime type
+        # normalizes the provided file path so that a normalized value
+        # is used for both the retrieval and the printing (better results)
+        file_path = os.path.normpath(file_path)
         mime_type = mime_plugin.get_mime_type_file_name(file_path)
 
-        # in case the file path does not exist
+        # in case the file path does not exist, raises file not
+        # found exception with 404 http error code indicating that
+        # there was a problem in the retrieval of the file
         if not os.path.exists(file_path):
-            # raises file not found exception with 404 http error code
             raise exceptions.FileNotFoundException(file_path, 404)
 
-        # retrieves the file stat
+        # retrieves the file stat and uses the value to retrieve the
+        # last modified timestamp to be used in the computation of the
+        # etag value of the file (to be used in the verification)
         file_stat = os.stat(file_path)
-
-        # retrieves the modified timestamp
         modified_timestamp = file_stat[stat.ST_MTIME]
-
-        # computes the etag value base in the file stat and
-        # modified timestamp
         etag_value = self._compute_etag(file_stat, modified_timestamp)
 
-        # verifies the resource to validate any modification
-        if not request.verify_resource_modification(modified_timestamp, etag_value):
-            # sets the request mime type
+        # verifies that the resource has been modified and in case it's
+        # not returns immediately changing the request to not modified
+        is_modified = request.verify_resource_modification(modified_timestamp, etag_value)
+        if not is_modified:
+            # sets the request mime type and the not modified status
+            # code indicating that the resource is the same and there's
+            # no need to re-retrieve it from the server
             request.content_type = mime_type
-
-            # sets the request status code
             request.status_code = 304
-
-            # returns immediately
             return True
 
         # calculates the expiration timestamp from the modified timestamp
         # incrementing the delta timestamp for expiration
         expiration_timestamp = modified_timestamp + EXPIRATION_DELTA_TIMESTAMP
 
-        # sets the request mime type
+        # sets the various attributes for the request that is going to be
+        # used to returns the file contents for the request file
         request.content_type = mime_type
-
-        # sets the request status code
         request.status_code = 200
-
-        # sets the last modified timestamp
         request.set_last_modified_timestamp(modified_timestamp)
-
-        # sets the expiration timestamp in the request
         request.set_expiration_timestamp(expiration_timestamp)
-
-        # sets the etag in the request
         request.set_etag(etag_value)
 
-        # opens the requested file
+        # opens the requested file object and computes it's size as it's going
+        # to be part of the resulting message
         file = open(file_path, "rb")
-
-        # retrieves the file size
         file_size = os.path.getsize(file_path)
 
-        # in case the file size is bigger than
-        # the chunk file size limit
+        # in case the file size is bigger than the chunk file size limit
+        # it must be sent using a chunked handler strategy
         if file_size > CHUNK_FILE_SIZE_LIMIT:
-            # creates the chunk handler instance
+            # creates the chunk handler instance with the provided
+            # file and file size and then updates the mediated handled
+            # to the current chunk handled that is going to be sending
+            # the file as chunk based structure
             chunk_handler = ChunkHandler(file, file_size)
-
-            # sets the request as mediated
             request.mediated = True
-
-            # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
+
+        # otherwise sends the file all at the same time as it is small
+        # enough that may be send all in one piece
         else:
-            # reads the file contents
-            file_contents = file.read()
-
-            # closes the file
-            file.close()
-
-            # writes the file contents
+            # reads the complete set of file contents closing
+            # the file afterwards to avoid any problem, then
+            # writes those same contents to the request
+            try: file_contents = file.read()
+            finally: file.close()
             request.write(file_contents, 1, False)
 
         return True
@@ -232,7 +225,7 @@ class ChunkHandler:
     """ The file size """
 
     _closed = False
-    """ The falg that controls the close state of the chunk handler """
+    """ The flag that controls the close state of the chunk handler """
 
     def __init__(self, file, file_size):
         """
