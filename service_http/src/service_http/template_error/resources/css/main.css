@@ -56,7 +56,7 @@ body {
 
 p {
     font-size: 9pt;
-    line-height: 1.6em;
+    line-height: 1.8em;
     margin: 1.0em 0.0em 1.0em 0.0em;
 }
 
@@ -301,7 +301,7 @@ h5:hover > a.headerlink {
 
 .error {
     background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
-    line-height: 1.6em;
+    line-height: 1.8em;
     padding: 18px 32px 18px 52px;
 }
 
