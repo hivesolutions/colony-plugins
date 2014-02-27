@@ -938,7 +938,7 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
-@utils.transaction()
+@utils.transaction("_entity_manager")
 def delete(self, persist_type, entity_manager = None):
     """
     "Transactional" method to be used as the main entry
