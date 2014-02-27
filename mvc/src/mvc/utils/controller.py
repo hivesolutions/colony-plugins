@@ -2821,6 +2821,58 @@ def assign_include_template_file(
     )
     template_file.assign(variable_name, variable_value)
 
+def get_session(self, request, name, unset = False):
+    """
+    Retrieves the value of the request session attribute name.
+
+    This method works as an short name alias for the more
+    complex and powerful method.
+
+    @type request: Request
+    @param request: The request that is going to be used for
+    the retrieval of session to be used in the attribute get.
+    @type name: String
+    @param name: The name of the attribute for which the value
+    currently set in session is meant to be retrieved.
+    @type unset: bool
+    @param unset: If the session attribute should be unset after
+    the retrieval of the value.
+    @rtype: Object
+    @return: The value of the session attribute with the provided
+    name, returned from the session associated with the request.
+    """
+
+    return self.get_session_attribute(
+        request,
+        session_attribute_name = name,
+        unset_session_attribute = unset
+    )
+
+def set_session(self, request, name, value):
+    """
+    Sets a session attribute with the provided name and value in
+    the session associated with the provided request.
+
+    This method works as an short name alias for the more
+    complex and powerful method.
+
+    @type request: Request
+    @param request: The request that is going to be used for
+    the setting of the session attribute.
+    @type name: String
+    @param name: The name to be given to the attribute that is
+    going to be set in session.
+    @type value: Object
+    @param value: The value that is going to be set in the session
+    attribute with the provided name.
+    """
+
+    return self.set_session_attribute(
+        request,
+        session_attribute_name = name,
+        session_attribute_value = value
+    )
+
 def lock_session(self, request):
     """
     Locks the session associated with the provided request,
@@ -2966,7 +3018,7 @@ def get_session_attribute(
     attribute to be retrieved.
     @type unset_session_attribute: bool
     @param unset_session_attribute: If the session attribute should
-    be unset after retrieval.
+    be unset after retrieval (read once).
     @rtype: Object
     @return The retrieved session attribute.
     """
@@ -2978,17 +3030,23 @@ def get_session_attribute(
     # is invalid, must return invalid
     if not request_session: return None
 
-    # resolves the complete session attribute name
-    session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
+    # resolves the complete session attribute name, taking into
+    # account that a namespace name may exist
+    session_attribute_name = _get_complete_session_attribute_name(
+        session_attribute_name,
+        namespace_name = namespace_name
+    )
 
-    # retrieves the attribute from the session
+    # retrieves the attribute from the session, this attribute
+    # may assume any data type (not only string based)
     session_attribute = request_session.get_attribute(session_attribute_name)
 
     # in case the unset the session attribute flag is set
     # the session attribute is unset
     unset_session_attribute and request_session.unset_attribute(session_attribute_name)
 
-    # returns the session attribute
+    # returns the session attribute to the caller method as expected
+    # by the current infra-structure
     return session_attribute
 
 def set_session_attribute(
@@ -4557,7 +4615,7 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # continues with the same value
         self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
 
-def _get_complete_session_attribute_name(session_attribute_name, namespace_name):
+def _get_complete_session_attribute_name(session_attribute_name, namespace_name = None):
     """
     Retrieves the complete session attribute name from the session
     attribute name and the namespace name.
