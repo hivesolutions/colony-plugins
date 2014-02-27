@@ -938,7 +938,7 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
-@utils.transaction_method("_entity_manager")
+@utils.transaction()
 def delete(self, persist_type, entity_manager = None):
     """
     "Transactional" method to be used as the main entry
@@ -984,7 +984,7 @@ def delete(self, persist_type, entity_manager = None):
     if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE_TYPE: self.post_delete(persist_type)
     if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE_TYPE: self.post_remove(persist_type)
 
-@utils.transaction_method("_entity_manager")
+@utils.transaction("_entity_manager")
 def store(
     self,
     persist_type = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE,

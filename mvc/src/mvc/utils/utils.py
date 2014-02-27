@@ -85,7 +85,7 @@ PERSIST_NONE_TYPE = 0x00
 PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
 """ The persist all persist type """
 
-def validated_method(
+def validated(
     validation_parameters = None,
     validation_method = None,
     call_validation_failed = None
@@ -118,7 +118,7 @@ def validated_method(
 
         def decorator_interceptor(*args, **kwargs):
             """
-            The interceptor function for the transaction_method decorator.
+            The interceptor function for the transaction decorator.
 
             @type args: pointer
             @param args: The function arguments list.
@@ -244,20 +244,37 @@ def validated_method(
     # returns the created decorator
     return decorator
 
-def transaction_method(entity_manager_reference, raise_exception = True):
+def transaction(
+    manager_ref = None,
+    controller = False,
+    raise_exception = True,
+):
     """
     Decorator for the "transactional" data logic.
     This decorator should provide the "best" way to create
     a new transaction environment in a target function.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The entity manager to be used for transaction
+    A default entity manager reference is used to avoid the
+    developer of defining one, this is defined by convention.
+
+    @type manager_ref: String
+    @param manager_ref: The entity manager to be used for transaction
     management, this entity manager should be started and running.
+    @type controller: bool
+    @param controller: If the method that is being decorator is defined
+    inside a controller as opposed to a model (default behavior). For this
+    situation a different default entity manager reference will be used.
     @type raise_exception: bool
     @param raise_exception: If an exception should be raised in case it occurs.
     @rtype: Function
     @return: The created decorator.
     """
+
+    # defaults the (entity manager) manager reference to the proper default
+    # value taking into account if the current method is running inside a
+    # controller or inside the default model
+    if not manager_ref: manager_ref = "system.models.entity_manager"\
+        if controller else "_entity_manager"
 
     def create_decorator_interceptor(function):
         """
@@ -279,7 +296,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
 
         def decorator_interceptor(*args, **kwargs):
             """
-            The interceptor function for the transaction_method decorator.
+            The interceptor function for the transaction decorator.
 
             @type args: pointer
             @param args: The function arguments list.
@@ -299,16 +316,16 @@ def transaction_method(entity_manager_reference, raise_exception = True):
             # in case the current object contains the entity
             # manager reference, no need to try to find it
             # with the entity manager string reference strategy
-            if hasattr(self, entity_manager_reference):
+            if hasattr(self, manager_ref):
                 # sets the entity manager as the current reference
-                entity_manager = getattr(self, entity_manager_reference)
+                entity_manager = getattr(self, manager_ref)
 
             # otherwise a new entity manager object must be
             # "retrieved" and set in the environment, this strategy
             # implies the string resolution of the entity manger
             else:
                 # splits the entity manager reference
-                entity_manager_reference_splitted = entity_manager_reference.split(".")
+                entity_manager_reference_splitted = manager_ref.split(".")
 
                 # sets the object reference as the current value
                 # this is the initial value for the percolation
@@ -326,7 +343,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
                 # sets the entity manager as the current value (final
                 # iteration) and then sets it in the current entity
                 entity_manager = current
-                setattr(self, entity_manager_reference, entity_manager)
+                setattr(self, manager_ref, entity_manager)
 
             # initializes the transaction, calling the begin operation
             # in the entity manager, this should create a new transaction
@@ -390,9 +407,12 @@ def transaction_method(entity_manager_reference, raise_exception = True):
     # returns the created decorator
     return decorator
 
-def serialize_exceptions(serialization_parameters = None, default_success = True):
+def serialize(serialization_parameters = None, default_success = True):
     """
-    Decorator for the serialize exceptions.
+    Decorator for the serialization of any exception raised
+    by the decorator method or a method called indirectly
+    or directly by it. The serializer that is used is the
+    one passed in the provided parameters value.
 
     @type serialization_parameters: Object
     @param serialization_parameters: The parameters to be used when serializing
@@ -415,7 +435,7 @@ def serialize_exceptions(serialization_parameters = None, default_success = True
 
         def decorator_interceptor(*args, **kwargs):
             """
-            The interceptor function for the transaction_method decorator.
+            The interceptor function for the transaction decorator.
 
             @type args: pointer
             @param args: The function arguments list.
