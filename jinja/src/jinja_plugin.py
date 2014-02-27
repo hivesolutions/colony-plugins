@@ -59,6 +59,9 @@ class JinjaPlugin(colony.Plugin):
     capabilities = [
         "template_engine"
     ]
+    dependencies = [
+        colony.PackageDependency("Jinja", "jinja2")
+    ]
     main_modules = [
         "jinja.system"
     ]
