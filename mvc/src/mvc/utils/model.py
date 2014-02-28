@@ -2105,7 +2105,7 @@ class ModelProxy(list):
         for model, _map in zip(self.models, map):
             model.apply(_map, permissive = permissive)
 
-    @utils.transaction("_entity_manager")
+    @utils.transaction_m
     def store(self, *args, **kwargs):
         """
         Proxy method used to create a transaction context

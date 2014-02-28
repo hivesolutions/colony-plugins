@@ -304,7 +304,8 @@ def transaction(
             @param kwargs: The function arguments map.
             """
 
-            # retrieves the self reference
+            # retrieves the reference to the self instance so that
+            # it may be used to retrieve the entity manager
             self = args[0]
 
             # in case the yield mode is set tries to retrieve
