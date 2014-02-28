@@ -150,7 +150,8 @@ factor in the timestamp used in the touching of the
 
 class Rest(colony.base.system.System):
     """
-    The rest (manager) class.
+    The rest (manager) class, the top level system class
+    that handles the incoming rest requests.
     """
 
     matching_regex_list = []
@@ -961,7 +962,8 @@ class RestRequest:
     underlying stream """
 
     session = None
-    """ The associated session """
+    """ The associated session object, should allays be access
+    indirectly through the proper accessor method """
 
     resource_name = None
     """ The resource name """
@@ -1601,7 +1603,7 @@ class RestRequest:
 
         self.request = request
 
-    def get_s(self, name, unset = False):
+    def get_s(self, name, default = None, unset = False):
         """
         Retrieves the value of the session attribute with the
         provided name. The session that is going to be used is
@@ -1613,6 +1615,10 @@ class RestRequest:
         @type name: String
         @param name: The name of the session attribute that is
         going to be retrieved.
+        @type default: Object
+        @param default: The default value to be returned in case no
+        session is found or no value is retrieved from the currently
+        set session (fallback value).
         @type unset: bool
         @param unset: If the session attribute should be unset
         or removed from the session after the retrieval.
@@ -1622,8 +1628,8 @@ class RestRequest:
         """
 
         session = self.get_session()
-        if not session: return None
-        value = session.get_attribute(name)
+        if not session: return default
+        value = session.get_attribute(name, default = default)
         if unset: session.unset_attribute(name)
         return value
 
@@ -1646,6 +1652,20 @@ class RestRequest:
         session = self.get_session()
         if not session: return None
         session.set_attribute(name, value)
+
+    def unset_s(self, name):
+        """
+        Unsets the session attribute so that it becomes no longer
+        accessible from a session point of view.
+
+        @type name: String
+        @param name: The name of the session attribute that is going
+        to be unset from session and become unavailable.
+        """
+
+        session = self.get_session()
+        if not session: return
+        session.unset_attribute(name)
 
     def get_session(self, block = True):
         """
@@ -2002,6 +2022,26 @@ class RestRequest:
         port = service_connection.connection_address[1]
         return port
 
+    def field(self, name, default = None, cast = None, split = False, token = ","):
+        controller = self._get_controller()
+        if not controller: return default
+        return controller.get_field(
+            self,
+            name,
+            default = default,
+            cast_type = cast,
+            split = split,
+            token = token
+        )
+
+    def form(self, name, default = None, cast = None):
+        controller = self._get_controller()
+        if not controller: return default
+        form_data = controller.process_form_data(self)
+        value = form_data.get(name, default)
+        if cast and not value in (None, ""): value = cast(value)
+        return value
+
     def _update_session_cookie(self):
         """
         Updates the current session.
@@ -2065,6 +2105,24 @@ class RestRequest:
         # if no session is selected, raises an invalid session
         # exception to indicate the error
         if not self.session: raise exceptions.InvalidSession("no session started or session timed out")
+
+    def _get_controller(self):
+        """
+        Tries to retrieve an underlying controller object
+        for the current request.
+
+        The controller value may or may not be defined and
+        so a calling to this method is required to avoid
+        any exception raising.
+
+        @rtype: Controller
+        @return: The controller retrieved from the current
+        request instance, or an invalid value in case it was
+        not possible to find it.
+        """
+
+        if not hasattr(self, "controller"): return None
+        return self.controller
 
     def _get_domain(self):
         """
@@ -2327,18 +2385,24 @@ class RestSession:
 
         self.cookie = cookie
 
-    def get_attribute(self, attribute_name):
+    def get_attribute(self, attribute_name, default = None):
         """
         Retrieves the attribute value for the given
-        attribute name.
+        attribute name. Note that it's possible to provide
+        a default value so that such value is returned when
+        no value is found in the current session.
 
         @type attribute_name: String
         @param attribute_name: The name of the attribute to retrieve.
-        @rtype: String
-        @return: The retrieved attribute value.
+        @type default: Object
+        @param default: The fallback value to be returned when no
+        value is found for the provided name.
+        @rtype: Object
+        @return: The retrieved attribute value according to the
+        provided name (as defined in specification).
         """
 
-        return self.attributes_map.get(attribute_name, None)
+        return self.attributes_map.get(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
         """
