@@ -940,7 +940,11 @@ class Rest(colony.base.system.System):
 
 class RestRequest:
     """
-    The rest request class.
+    The rest request class, responsible for the representation
+    of a request coming through the rest layer system.
+
+    This class should also be able to provide method for the
+    interaction with the output stream to be returned.
     """
 
     rest = None
@@ -1596,6 +1600,52 @@ class RestRequest:
         """
 
         self.request = request
+
+    def get_s(self, name, unset = False):
+        """
+        Retrieves the value of the session attribute with the
+        provided name. The session that is going to be used is
+        the one currently associated/loaded to the request.
+
+        An optional parameter may unset the variable afterwards
+        if that's required.
+
+        @type name: String
+        @param name: The name of the session attribute that is
+        going to be retrieved.
+        @type unset: bool
+        @param unset: If the session attribute should be unset
+        or removed from the session after the retrieval.
+        @rtype: Object
+        @return: The value (as an object) for the requested session
+        attribute according to the provided name.
+        """
+
+        session = self.get_session()
+        if not session: return None
+        value = session.get_attribute(name)
+        if unset: session.unset_attribute(name)
+        return value
+
+    def set_s(self, name, value):
+        """
+        Sets a session attribute with the provided name with
+        the value that is given.
+
+        This method is provided as a shortcut to quickly access
+        the session associated with the request.
+
+        @type name: String
+        @param name: The name that is going to be given to the
+        session parameter to be set.
+        @type value: Object
+        @param value: The value to be set in the target session
+        attribute to be changed/created.
+        """
+
+        session = self.get_session()
+        if not session: return None
+        session.set_attribute(name, value)
 
     def get_session(self, block = True):
         """
