@@ -343,7 +343,9 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "validation_errors_map",
     "validation_map"
 )
-""" The attribute exclusion list (for model reference) """
+""" The attribute exclusion list (for model reference),
+these are the values that are going to be ignored in every
+single model instance/class """
 
 bundle_cache = colony.libs.cache_util.DataCacheMap()
 """ A globally accessible cache map, used to retrieve
