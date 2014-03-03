@@ -2391,6 +2391,7 @@ def template(
     assign_flash = True,
     variable_encoding = None,
     content_type = None,
+    set_contents = True,
     *args,
     **kwargs
 ):
@@ -2419,22 +2420,27 @@ def template(
     in the template file processing.
     @type content_type: String
     @param content_type: The content type to be set.
-    @rtype: TemplateFile
-    @return: The template file that has been used for the setting of the contents,
-    note that this value may be used again but carefully to avoid problems.
+    @type set_contents: bool
+    @param set_contents: If the contents resulting from the processing of the
+    template file should be set in the current request (default behavior).
+    @rtype: String
+    @return: The data resulting from the processing of the template file, this
+    value may be re-used for any other operation, but it is especially relevant
+    for operations that don't set the contents in the request.
     """
 
     template_file = self.template_file(request = request, *args, **kwargs)
-    self.process_set_contents(
+    contents = self.process_set_contents(
         request,
         template_file,
         apply_base_path = apply_base_path,
         assign_session = assign_session,
         assign_flash = assign_flash,
         variable_encoding = variable_encoding,
-        content_type = content_type
+        content_type = content_type,
+        set_contents = set_contents
     )
-    return template_file
+    return contents
 
 def template_file(self, template = None, *args, **kwargs):
     """
@@ -2508,13 +2514,17 @@ def process_set_contents(
     assign_session = False,
     assign_flash = True,
     variable_encoding = None,
-    content_type = None
+    content_type = None,
+    set_contents = True
 ):
     """
     Processes the template file and set the result of it
     as the contents of the given request.
     Optional flags may be set to apply the base path and assign the
     session to the template file.
+    
+    An optional parameter controls if the contents resulting from
+    the processing of the template file should be set in the request. 
 
     @type request: Request
     @param request: The request to be set with the contents.
@@ -2534,6 +2544,12 @@ def process_set_contents(
     in the template file processing.
     @type content_type: String
     @param content_type: The content type to be set.
+    @type set_contents: bool
+    @param set_contents: If the contents resulting from the processing of the
+    template file should be set in the current request (default behavior).
+    @rtype: String
+    @return: The string value resulting from the processing of the template
+    file, this is especially important for no setting of contents operations.
     """
 
     # default the content type value taking into account if the content
@@ -2554,11 +2570,16 @@ def process_set_contents(
     self.assign_instance_template_file(template_file)
 
     # processes the template file with the given request and variable encoding
-    # retrieving the processed template file
-    processed_template_file = self.process_template_file(request, template_file, variable_encoding)
+    # retrieving the processed template file as the contents to be set
+    contents = self.process_template_file(request, template_file, variable_encoding)
 
-    # sets the request contents, using the given content type
-    self.set_contents(request, processed_template_file, content_type)
+    # sets the request contents, using the given content type, only in case the
+    # proper flag is set (allowing control for the operation execution)
+    if set_contents: self.set_contents(request, contents, content_type)
+    
+    # returns the processed contents resulting from the template to the caller
+    # method so that they may be reused for any other operation if required
+    return contents
 
 def process_template_file(self, request, template_file, variable_encoding = None):
     """
