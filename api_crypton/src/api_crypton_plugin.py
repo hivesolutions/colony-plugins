@@ -57,7 +57,7 @@ class ApiCryptonPlugin(colony.base.system.Plugin):
         "api.crypton"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "api_crypton.system"

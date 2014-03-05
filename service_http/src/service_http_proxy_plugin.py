@@ -62,9 +62,9 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
         "directory_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
         "service_http.proxy.exceptions",

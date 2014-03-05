@@ -63,7 +63,7 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
         "business_logic_bundle"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity.manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity.manager")
     ]
     main_modules = [
         "business_helper.system"

@@ -60,7 +60,7 @@ class WorkPoolPlugin(colony.base.system.Plugin):
         "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.threads.pool", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.threads.pool")
     ]
     main_modules = [
         "work.pool.algorithms",

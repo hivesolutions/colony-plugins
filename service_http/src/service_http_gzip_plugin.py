@@ -58,7 +58,7 @@ class ServiceHttpGzipPlugin(colony.base.system.Plugin):
         "http_service_encoding"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.gzip", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.gzip")
     ]
     main_modules = [
         "service_http.gzip.system"

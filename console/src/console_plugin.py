@@ -64,7 +64,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         "console_authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.authentication", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.authentication")
     ]
     main_modules = [
         "console.console.authentication",

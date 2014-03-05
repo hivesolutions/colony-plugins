@@ -59,7 +59,7 @@ class ConsoleInterfacePlugin(colony.base.system.Plugin):
         "main"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
         "console.interface.exceptions",

@@ -58,7 +58,7 @@ class Pkcs1Plugin(colony.base.system.Plugin):
         "encryption.pkcs_1"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.ber", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.ber")
     ]
     main_modules = [
         "encryption.pkcs_1.exceptions",

@@ -59,12 +59,12 @@ class MvcUtilsPlugin(colony.Plugin):
         "template_engine"
     ]
     dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.data.file.manager", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.business.helper", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.PluginDependency("pt.hive.colony.plugins.template_engine"),
+        colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager"),
+        colony.PluginDependency("pt.hive.colony.plugins.data.file.manager"),
+        colony.PluginDependency("pt.hive.colony.plugins.business.helper"),
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
         "mvc.utils.controller",

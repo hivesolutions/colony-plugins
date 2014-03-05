@@ -56,10 +56,10 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
         "api.openid"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.api.yadis", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.api.yadis"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
         "api_openid.exceptions",

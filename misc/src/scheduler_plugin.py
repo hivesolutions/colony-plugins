@@ -59,8 +59,8 @@ class SchedulerPlugin(colony.base.system.Plugin):
         "_console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.console", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.guid"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
         "misc.scheduler.console",

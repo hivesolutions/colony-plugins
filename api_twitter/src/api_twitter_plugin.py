@@ -57,8 +57,8 @@ class ApiTwitterPlugin(colony.base.system.Plugin):
         "api.twitter"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
         "api_twitter.exceptions",

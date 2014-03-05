@@ -60,7 +60,7 @@ class EntityManagerPlugin(colony.base.system.Plugin):
         "entity_engine"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
         "data.entity_manager.decorators",

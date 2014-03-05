@@ -59,7 +59,7 @@ class ServiceHttpTemplateDirectoryPlugin(colony.base.system.Plugin):
         "directory_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
         "service_http.template_directory.system"

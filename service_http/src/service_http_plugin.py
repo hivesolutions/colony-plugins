@@ -65,7 +65,7 @@ class ServiceHttpPlugin(colony.base.system.Plugin):
         "http_service_error_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.utils", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.utils")
     ]
     main_modules = [
         "service_http.http.exceptions",

@@ -58,8 +58,8 @@ class ClientHttpPlugin(colony.base.system.Plugin):
         "client.http"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
         "client_http.exceptions",

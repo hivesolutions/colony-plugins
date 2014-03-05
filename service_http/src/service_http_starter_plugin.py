@@ -59,7 +59,7 @@ class ServiceHttpStarterPlugin(colony.base.system.Plugin):
         "main"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.http")
     ]
     main_modules = [
         "service_http_starter.starter.service_http_starter_system"

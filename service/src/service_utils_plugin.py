@@ -60,7 +60,7 @@ class ServiceUtilsPlugin(colony.base.system.Plugin):
         "socket_upgrader"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool")
     ]
     main_modules = [
         "service.utils.async",

@@ -57,7 +57,7 @@ class ApiEasypayPlugin(colony.base.system.Plugin):
         "api.easypay"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "api_easypay.exceptions",

@@ -56,8 +56,8 @@ class NangerPlugin(colony.Plugin):
         "mvc_service"
     ]
     dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.mvc.utils", "1.x.x"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
         "nanger.system"

@@ -60,7 +60,7 @@ class ResourcesAutoloaderPlugin(colony.base.system.Plugin):
         "resources_autoloader"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
         "resources.autoloader.system"

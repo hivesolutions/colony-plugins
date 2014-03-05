@@ -64,8 +64,8 @@ class RestPlugin(colony.base.system.Plugin):
         "rpc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
         "rest.exceptions",

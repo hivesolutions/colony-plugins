@@ -57,8 +57,8 @@ class ApiAtPlugin(colony.base.system.Plugin):
         "api.at"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.ssl", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
     ]
     main_modules = [
         "api_at.exceptions",

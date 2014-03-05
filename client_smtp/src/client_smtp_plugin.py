@@ -58,7 +58,7 @@ class ClientSmtpPlugin(colony.base.system.Plugin):
         "client.smtp"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils")
     ]
     main_modules = [
         "client_smtp.exceptions",

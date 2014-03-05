@@ -61,9 +61,9 @@ class MvcPlugin(colony.base.system.Plugin):
         "mvc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.x.x"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random"),
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     events_handled = [
         "mvc.patterns_reload",

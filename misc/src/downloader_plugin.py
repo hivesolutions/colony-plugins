@@ -58,7 +58,7 @@ class DownloaderPlugin(colony.base.system.Plugin):
         "_console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "misc.downloader.console",

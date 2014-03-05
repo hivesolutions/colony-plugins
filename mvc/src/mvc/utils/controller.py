@@ -1879,10 +1879,9 @@ def redirect(self, request, target, status_code = 302, quote = True, attributes_
     redirect url.
     """
 
-    # redirects the request to the target
+    # redirects the request to the target and sets the contents in
+    # the current request (empty contents set)
     request.redirect(target, status_code, quote, attributes_map)
-
-    # sets the contents (null)
     self.set_contents(request)
 
 def redirect_list(
@@ -2627,6 +2626,7 @@ def retrieve_template_file(
     partial_page = None,
     locale = None,
     locale_request = None,
+    extra = {},
     **kwargs
 ):
     """
@@ -2654,6 +2654,11 @@ def retrieve_template_file(
     @type locale_request: Request
     @param locale_request: The request to be used for
     correct locale resolution.
+    @type extra: Dictionary
+    @param extra: This value may be used to add some extra
+    values to be assigned to the template file, it's relevant
+    for values that are not eligible for safe parameter and so
+    they may be provided "inside" this dictionary.
     @rtype: TemplateFile
     @return: The "parsed" template file object ready
     to be used for file generation.
@@ -2708,6 +2713,11 @@ def retrieve_template_file(
     # template file in case it's a valid bundle (successful retrieval)
     global_bundle = self._get_bundle(locale)
     global_bundle and template_file.add_bundle(global_bundle)
+
+    # iterates over the complete set of extra arguments provided in the
+    # proper dictionary and assigns each of these values to the proper
+    # template file so that they may be used inside the template context
+    for key, value in extra.iteritems(): template_file.assign(key, value)
 
     # iterates over all the named arguments provided as these are considered
     # to be values to be assigned to the template file, then assigns each of

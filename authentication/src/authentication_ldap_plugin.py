@@ -56,7 +56,7 @@ class AuthenticationLdapPlugin(colony.base.system.Plugin):
         "authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.ldap", "1.x.x")
+        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.ldap")
     ]
     main_modules = [
         "authentication.ldap.exceptions",
