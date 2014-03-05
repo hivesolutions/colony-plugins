@@ -281,12 +281,12 @@ class TemplateEngine(colony.base.system.System):
                 # creates the literal match object with the match start and
                 # and end values and then uses it to create the orderer
                 literal_match = LiteralMatch(match_start, match_end)
-                match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
+                match_orderer_lit = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
 
                 # appends the match orderer object to the list of literal match
                 # orderer list, this list will later be fused with the "normal"
                 # match orderer list (as expected)
-                literal_orderer_l.append(match_orderer)
+                literal_orderer_l.append(match_orderer_lit)
 
             # updates the previous end value with the end of the current
             # literal value, this is considered to be the iteration housekeeping
