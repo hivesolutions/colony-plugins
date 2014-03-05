@@ -183,18 +183,18 @@ class MatchNode(AstNode):
     attributes_map = {}
     """ The attributes map """
 
-    attribute_regex = None
+    regex = None
     """ The attribute regular expression """
 
-    attribute_literal_regex = None
+    literal_regex = None
     """ The attribute literal regular expression """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
+    def __init__(self, value = None, regex = None, literal_regex = None):
         AstNode.__init__(self)
 
         self.value = value
-        self.attribute_regex = attribute_regex
-        self.attribute_literal_regex = attribute_literal_regex
+        self.regex = regex
+        self.literal_regex = literal_regex
 
         self.attributes_map = {}
 
@@ -222,10 +222,10 @@ class MatchNode(AstNode):
         start_match_value_match_value = start_match_value.get_match_value()
 
         # finds all the attributes matches
-        attributes_matches = self.attribute_regex.finditer(start_match_value_match_value)
+        attributes_matches = self.regex.finditer(start_match_value_match_value)
 
         # finds all the attributes literal matches
-        attributes_literal_matches = self.attribute_literal_regex.finditer(start_match_value_match_value)
+        attributes_literal_matches = self.literal_regex.finditer(start_match_value_match_value)
 
         # iterates over all the attributes matches
         for attribute_match in attributes_matches:
@@ -302,17 +302,14 @@ class SingleNode(MatchNode):
     The single node class.
     """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
-        MatchNode.__init__(self, value, attribute_regex, attribute_literal_regex)
+    def __init__(self, value = None, regex = None, literal_regex = None):
+        MatchNode.__init__(self, value, regex, literal_regex)
 
     def get_start_match_value(self):
         return self.value
 
     def accept(self, visitor):
-        # retrieves the value type
         value_type = self.get_value_type()
-
-        # calls the process accept method with the value type
         visitor.process_accept(self, value_type)
 
 class CompositeNode(MatchNode):
@@ -320,15 +317,12 @@ class CompositeNode(MatchNode):
     The composite node class.
     """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
-        MatchNode.__init__(self, value, attribute_regex, attribute_literal_regex)
+    def __init__(self, value = None, regex = None, literal_regex = None):
+        MatchNode.__init__(self, value, regex, literal_regex)
 
     def get_start_match_value(self):
         return self.value[0]
 
     def accept(self, visitor):
-        # retrieves the value type
         value_type = self.get_value_type()
-
-        # calls the process accept method with the value type
         visitor.process_accept(self, value_type)
