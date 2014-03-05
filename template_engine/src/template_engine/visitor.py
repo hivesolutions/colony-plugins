@@ -74,14 +74,24 @@ object to handle it """
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\:'\" ]+\)"
+FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\.\:'\/\" ]+\)"
 """ The function arguments regular expression value """
+
+NAMES_REGEX_VALUE = "([^\.]+\([^\)]+\))|([^\.]+)"
+""" The regular expression that is going to be used for the
+splitting of the various names for a variable based value that
+is going to be evaluated at runtime, this value may contain
+method calls with literal an non literal values """
 
 LITERAL_ESCAPE_REGEX = re.compile(LITERAL_ESCAPE_REGEX_VALUE)
 """ The literal escape regular expression """
 
 FUCNTION_ARGUMENTS_REGEX = re.compile(FUCNTION_ARGUMENTS_REGEX_VALUE)
 """ The function arguments regular expression """
+
+NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
+""" The compiled version of names regular expression used for the
+matching of the various components of a variable template value """
 
 FILE_VALUE = "file"
 """ The file value """
@@ -1575,15 +1585,24 @@ class Visitor:
             # otherwise the value must be processed according to the currently
             # defined template rules (may required method invocation)
             else:
-                # splits the variable name around the dots this should provide the
-                # complete path of the variable from which the iteration will be done
-                variable_name_s = variable_name.split(".")
+                # creates the list that will hold the complete set of names
+                # for the current (full) variable name, this partial names
+                # will be retrieved using regex matching
+                names = []
+
+                # retrieves the various names matched for the current variable
+                # name and then iterates over each of these matches to retrieve
+                # it's literal value and store it under the names list
+                matches = NAMES_REGEX.finditer(variable_name)
+                for match in matches:
+                    name = variable_name[match.start():match.end()]
+                    names.append(name)
 
                 # sets the initial value of the resolution process as the current
                 # global map and then starts the resolution running it for the
                 # complete set of "partial" attribute names (iterative resolution)
                 value = self.global_map
-                for name in variable_name_s: value = self.resolve(value, name)
+                for name in names: value = self.resolve(value, name)
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
@@ -1594,21 +1613,17 @@ class Visitor:
         # be "read" using a literal based approach so that the proper and
         # concrete value is going to be returned as the value
         elif attribute_value["type"] == "literal":
-            # retrieves the literal value
-            literal_value = attribute_value["value"]
+            # retrieves the literal value from the attribute
+            # this is going to be considered the proper value
+            value = attribute_value["value"]
 
             # in case the process literal is sets and
             # the literal value contains commas, it
             # must be a sequence
-            if process_literal and literal_value.find(","):
+            if process_literal and value.find(","):
                 # sets the value as the list resulting
                 # from the split around the separator
-                value = literal_value.split(",")
-            # otherwise it must be a simple literal value
-            # and a direct assign operation must be performed
-            else:
-                # sets the value as the literal value
-                value = literal_value
+                value = value.split(",")
 
         # returns the processed value to the caller method, this is the
         # considered to be the value for the requested attribute
@@ -1637,6 +1652,15 @@ class Visitor:
         return result
 
     def _resolve(self, value, name):
+        # saves the original attribute name under the original variable
+        # as it's going to be used latter for some processing operations
+        name_o = name
+
+        # filters the variable name (split) so that if it's
+        # a complete method call the arguments part is removed
+        # this way only the name of the attribute is guaranteed
+        name = name.split("(", 1)[0]
+
         # verifies if the base value refers a dictionary, if that's the
         # case a normal get operation will be performed
         is_dictionary = colony.is_dictionary(value)
@@ -1650,15 +1674,6 @@ class Visitor:
         # otherwise variable is of type object or other, then the more complex
         # recursive read of its attributes is executed
         else:
-            # saves the original attribute name under the original variable
-            # as it's going to be used latter for some processing operations
-            name_o = name
-
-            # filters the variable name (split) so that if it's
-            # a complete method call the arguments part is removed
-            # this way only the name of the attribute is guaranteed
-            name = name.split("(", 1)[0]
-
             # checks if the attribute name exists in the current variable
             # in iteration, and in case it does not exists raises an exception
             # indicating that the variable was not found in context
