@@ -46,10 +46,7 @@ import datetime
 
 import xml.sax.saxutils
 
-import colony.libs.quote_util
-import colony.libs.barcode_util
-import colony.libs.structures_util
-import colony.libs.string_buffer_util
+import colony
 
 import ast
 import exceptions
@@ -86,32 +83,11 @@ LITERAL_ESCAPE_REGEX = re.compile(LITERAL_ESCAPE_REGEX_VALUE)
 FUCNTION_ARGUMENTS_REGEX = re.compile(FUCNTION_ARGUMENTS_REGEX_VALUE)
 """ The function arguments regular expression """
 
-VALUE_VALUE = "value"
-""" The value value """
-
-VALUES_VALUE = "values"
-""" The values value """
-
-TYPE_VALUE = "type"
-""" The type value """
-
-FORMAT_VALUE = "format"
-""" The format value """
-
-VARIABLE_VALUE = "variable"
-""" The variable value """
-
-LITERAL_VALUE = "literal"
-""" The literal value """
-
 FILE_VALUE = "file"
 """ The file value """
 
 FILE_VALUE_VALUE = "file_value"
 """ The file value value """
-
-ITEM_VALUE = "item"
-""" The item value """
 
 OPERATOR_VALUE = "operator"
 """ The operator value """
@@ -130,9 +106,6 @@ START_INDEX_VALUE = "start_index"
 
 PREFIX_VALUE = "prefix"
 """ The prefix value """
-
-QUOTE_VALUE = "quote"
-""" The quote value """
 
 KEY_MAP_VALUE = "key_map"
 """ The key map value """
@@ -173,17 +146,8 @@ ELSE_VALUE = "else"
 ELIF_VALUE = "elif"
 """ The elif value """
 
-NONE_VALUE = "None"
-""" The none value """
-
 ITER_VALUE = "__iter__"
 """ The iter value """
-
-QUOTE_ENCODING = "utf-8"
-""" The quote encoding """
-
-PROCESS_METHOD_PREFIX = "process_"
-""" The process method prefix """
 
 DEFAULT_YEAR_FORMAT = "%Y"
 """ The default year format """
@@ -210,12 +174,12 @@ SERIALIZABLE_TYPES = (types.ListType, types.TupleType)
 """ The tuple containing the set of types that can be
 "serializable" in a custom manner """
 
-RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.libs.structures_util.FormatTuple)
+RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.FormatTuple)
 """ The tuple containing the set of types that can be
 "resolved" in the localization context """
 
 CONVERSION_MAP = {
-    "2_of_5" : colony.libs.barcode_util.encode_2_of_5
+    "2_of_5" : colony.encode_2_of_5
 }
 """ The map associating the name of the conversion
 function with the conversion function symbol reference """
@@ -413,7 +377,7 @@ class Visitor:
         self.visit_childs = True
         self.visit_next = True
         self.global_map = {}
-        self.string_buffer = string_buffer or colony.libs.string_buffer_util.StringBuffer()
+        self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
 
@@ -609,190 +573,30 @@ class Visitor:
         pass
 
     def process_accept(self, node, name):
-        # retrieves the process method for the name
-        process_method = getattr(self, PROCESS_METHOD_PREFIX + name)
-
-        # calls the process method with the node
+        # retrieves the process method for the name and runs the
+        # same method with the current node as the argument
+        process_method = getattr(self, "process_" + name)
         process_method(node)
 
     def process_out(self, node):
         """
-        Processes the out node.
+        Processes the out none node, that outputs a processed
+        data to the current processing context/buffer.
 
-        @type node: SingleNode
-        @param node: The single node to be processed as out.
-        """
-
-        # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
-
-        # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
-        attribute_value_value = self.get_value(attribute_value, localize = True)
-
-        # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
-            attribute_prefix_value = self.get_value(attribute_prefix, localize = True)
-        # otherwise
-        else:
-            # sets the default prefix value
-            attribute_prefix_value = ""
-
-        # in case the format exists in the attributes map
-        if FORMAT_VALUE in attributes_map:
-            # retrieves attribute value value
-            format_string = attributes_map[FORMAT_VALUE]
-            format_string_value = self.get_value(format_string)
-            is_valid = format_string_value and not attribute_value_value == None
-            attribute_value_value = is_valid and\
-                format_string_value % attribute_value_value or attribute_value_value
-
-        # in case the quote exists in the attributes map
-        if QUOTE_VALUE in attributes_map:
-            # retrieves attribute quote value
-            attribute_quote = attributes_map[QUOTE_VALUE]
-            attribute_quote_value = self.get_boolean_value(attribute_quote)
-        # otherwise
-        else:
-            # unsets the attribute quote value
-            attribute_quote_value = False
-
-        # in case the xml escape exists in the attributes map
-        if XML_ESCAPE_VALUE in attributes_map:
-            # retrieves the attribute xml escape value
-            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
-            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
-        # otherwise
-        else:
-            # unsets the attribute xml escape value
-            attribute_xml_escape_value = False
-
-        # in case the xml quote exists in the attributes map
-        if XML_QUOTE_VALUE in attributes_map:
-            # retrieves attribute xml quote value
-            attribute_xml_quote = attributes_map[XML_QUOTE_VALUE]
-            attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
-        # otherwise
-        else:
-            # unsets the attribute xml quote value
-            attribute_xml_quote_value = False
-
-        # in case the new line convert exists in the attributes map
-        if NEWLINE_CONVERT_VALUE in attributes_map:
-            # retrieves attribute newline convert value
-            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
-            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
-        # otherwise
-        else:
-            # unsets the attribute newline convert value
-            attribute_newline_convert_value = False
-
-        # in case the convert exists in the attributes map
-        if CONVERT_VALUE in attributes_map:
-            # retrieves attribute convert value
-            attribute_convert = attributes_map[CONVERT_VALUE]
-            attribute_convert_value = self.get_value(attribute_convert)
-        # otherwise
-        else:
-            # unsets the attribute convert value
-            attribute_convert_value = None
-
-        # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes_map:
-            # retrieves attribute default value
-            attribute_default = attributes_map[DEFAULT_VALUE]
-            attribute_default_value = self.get_value(attribute_default, localize = True)
-        # otherwise
-        else:
-            # unsets the attribute default value
-            attribute_default_value = None
-
-        # in case the serializer exists in the attributes map
-        if SERIALIZER_VALUE in attributes_map:
-            # retrieves attribute serializer value
-            attribute_serializer = attributes_map[SERIALIZER_VALUE]
-            attribute_serializer_value = self.get_literal_value(attribute_serializer)
-        # otherwise
-        else:
-            # unsets the attribute serializer value
-            attribute_serializer_value = None
-
-        # changes the attribute value value to the default attribute
-        # value in case the value of it is invalid
-        if attribute_value_value == None: attribute_value_value = attribute_default_value
-
-        # in case the serializer value is set must try to gather
-        # the serializer and serialize the attribute value using it
-        if attribute_serializer_value:
-            serializer, _name = self._get_serializer(attribute_serializer_value)
-            attribute_value_value = serializer.dumps(attribute_value_value)
-
-        # serializes the value into the correct visual representation
-        # (in case the attribute type is "serializable", eg: lists, tuples, etc.)
-        attribute_value_value = self._serialize_value(attribute_value_value)
-
-        # checks if the attribute value contains a unicode string
-        # in such case there's no need to re-decode it
-        is_unicode = type(attribute_value_value) == types.UnicodeType
-        attribute_value_value = is_unicode and attribute_value_value or unicode(attribute_value_value)
-
-        # in case the attribute convert value is set
-        if attribute_convert_value:
-            # retrieves the conversion method for the string
-            # value representing it and uses it to convert
-            # the attribute value to the target encoding
-            conversion_method = CONVERSION_MAP.get(attribute_convert_value, None)
-            attribute_value_value = conversion_method and conversion_method(attribute_value_value) or attribute_convert_value
-
-        # in case the variable encoding is defined
-        if self.variable_encoding:
-            # re-encodes the variable value
-            attribute_value_value = attribute_value_value.encode(self.variable_encoding)
-
-        # in case the attribute quote value is set
-        if attribute_quote_value:
-            # re-encodes the value
-            attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
-
-            # quotes the attribute value value
-            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value, "/")
-
-        # in case the attribute xml escape value is set
-        if attribute_xml_escape_value:
-            # escapes the attribute value value using xml escaping
-            attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
-
-        # in case the attribute xml quote value is set
-        if attribute_xml_quote_value:
-            # escapes the (double) quotes using the xml base approach
-            attribute_value_value = attribute_value_value.replace("\"", "&quot;")
-
-        # in case the attribute newline convert value is set
-        if attribute_newline_convert_value:
-            # converts the attribute value value newlines
-            attribute_value_value = attribute_value_value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
-
-        # adds the attribute prefix value to the attribute value value
-        attribute_value_value = attribute_prefix_value + attribute_value_value
-
-        # writes the attribute value value to the string buffer
-        self.string_buffer.write(attribute_value_value)
-
-    def process_out_none(self, node):
-        """
-        Processes the out none node.
+        In case the resolved value is invalid/none the resulting
+        data is printed as an empty string.
 
         @type node: SingleNode
         @param node: The single node to be processed as out none.
         """
 
-        # retrieves the attributes map
+        # retrieves the attributes map for the current node that
+        # is going to be used to process the data that is going
+        # to be printed to the current context
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the prefix exists in the attributes map
@@ -806,18 +610,18 @@ class Visitor:
             attribute_prefix_value = ""
 
         # in case the format exists in the attributes map
-        if FORMAT_VALUE in attributes_map:
+        if "format" in attributes_map:
             # retrieves attribute value value
-            format_string = attributes_map[FORMAT_VALUE]
+            format_string = attributes_map["format"]
             format_string_value = self.get_value(format_string)
             is_valid = format_string_value and not attribute_value_value == None
             attribute_value_value = is_valid and\
                 format_string_value % attribute_value_value or attribute_value_value
 
         # in case the quote exists in the attributes map
-        if QUOTE_VALUE in attributes_map:
+        if "quote" in attributes_map:
             # retrieves attribute quote value
-            attribute_quote = attributes_map[QUOTE_VALUE]
+            attribute_quote = attributes_map["quote"]
             attribute_quote_value = self.get_boolean_value(attribute_quote)
         # otherwise
         else:
@@ -938,10 +742,10 @@ class Visitor:
         # in case the attribute quote value is set
         if attribute_quote_value:
             # re-encodes the value
-            attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
+            attribute_value_value = attribute_value_value.encode("utf-8")
 
             # quotes the attribute value value
-            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value, "/")
+            attribute_value_value = colony.quote(attribute_value_value, "/")
 
         # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
@@ -976,7 +780,7 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the key map exists in the attributes map
@@ -1130,9 +934,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_item = attributes_map[ITEM_VALUE]
+        attribute_item = attributes_map["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
 
         # sets the attribute value value in the global map
@@ -1152,7 +956,7 @@ class Visitor:
         # retrieves the attributes map values
         attribute_from = attributes_map[FROM_VALUE]
         attribute_from_value = self.get_value(attribute_from)
-        attribute_item = attributes_map[ITEM_VALUE]
+        attribute_item = attributes_map["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
         # in case the index exists in the attributes map
@@ -1191,7 +995,7 @@ class Visitor:
             # in case the strict mode is active
             if self.strict_mode:
                 # retrieves the attribute from value
-                attribute_from_value = attribute_from[VALUE_VALUE]
+                attribute_from_value = attribute_from["value"]
 
                 # raises the variable not iterable exception
                 raise exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
@@ -1209,7 +1013,7 @@ class Visitor:
                 attribute_from_value = []
 
         # in case the type of the attribute from value is dictionary
-        if colony.libs.structures_util.is_dictionary(attribute_from_value):
+        if colony.is_dictionary(attribute_from_value):
             # iterates over all the attribute from value items
             for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
                 # sets the attribute from value value in the global map
@@ -1314,7 +1118,7 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_values = attributes_map[VALUES_VALUE]
+        attribute_values = attributes_map["values"]
         attribute_values_value = self.get_value(attribute_values, True)
 
         if not hasattr(node, "current_index"):
@@ -1358,7 +1162,7 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
 
         # in case the attribute value value is not valid the
@@ -1496,9 +1300,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # in case the format exists in the attributes map
-        if FORMAT_VALUE in attributes_map:
+        if "format" in attributes_map:
             # retrieves the attributes map values
-            attribute_format = attributes_map[FORMAT_VALUE]
+            attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1530,9 +1334,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # in case the format exists in the attributes map
-        if FORMAT_VALUE in attributes_map:
+        if "format" in attributes_map:
             # retrieves the attributes map values
-            attribute_format = attributes_map[FORMAT_VALUE]
+            attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1565,9 +1369,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # in case the format exists in the attributes map
-        if FORMAT_VALUE in attributes_map:
+        if "format" in attributes_map:
             # retrieves the attributes map values
-            attribute_format = attributes_map[FORMAT_VALUE]
+            attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1600,9 +1404,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes_map[FORMAT_VALUE]
+        attribute_format = attributes_map["format"]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
@@ -1646,9 +1450,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes_map[FORMAT_VALUE]
+        attribute_format = attributes_map["format"]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
@@ -1699,9 +1503,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # in case the format exists in the attributes map
-        if VALUE_VALUE in attributes_map:
+        if "value" in attributes_map:
             # retrieves the attributes map values
-            attribute_value = attributes_map[VALUE_VALUE]
+            attribute_value = attributes_map["value"]
             attribute_value_value = self.get_value(attribute_value)
         # otherwise
         else:
@@ -1760,163 +1564,38 @@ class Visitor:
         """
 
         # in case the attribute value is of type variable
-        if attribute_value[TYPE_VALUE] == VARIABLE_VALUE:
+        if attribute_value["type"] == "variable":
             # retrieves the variable name
-            variable_name = attribute_value[VALUE_VALUE]
+            variable_name = attribute_value["value"]
 
-            # in case the variable name is none
-            if variable_name == NONE_VALUE:
-                # sets the value as none
-                value = None
-            # otherwise
+            # in case the variable name is none sets the final value
+            # with the invalid value as that's requested by the template
+            if variable_name == "None": value = None
+
+            # otherwise the value must be processed according to the currently
+            # defined template rules (may required method invocation)
             else:
-                # splits the variable name in the dots
-                variable_name_splitted = variable_name.split(".")
+                # splits the variable name around the dots this should provide the
+                # complete path of the variable from which the iteration will be done
+                variable_name_s = variable_name.split(".")
 
-                # retrieves the first variable name split
-                first_variable_name_split = variable_name_splitted[0]
-
-                # sets the current variable as the first split
-                current_variable = self.global_map.get(first_variable_name_split, None)
-
-                # in case the current variable is defined
-                if not current_variable == None:
-                    # iterates over the sub values of the variable
-                    for variable_name_split in variable_name_splitted[1:]:
-                        # in case the variable is of type dictionary, the normal recursive
-                        # iteration step will be executed
-                        if colony.libs.structures_util.is_dictionary(current_variable):
-                            if variable_name_split in current_variable:
-                                # retrieves the current variable (from the dictionary)
-                                current_variable = current_variable[variable_name_split]
-                            elif not self.strict_mode:
-                                # sets the current variable as none
-                                current_variable = None
-
-                                # breaks the cycle
-                                break
-                            else:
-                                # raises the undefined variable exception
-                                raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
-
-                        # otherwise variable is of type object or other, then the more complex
-                        # recursive read of its attributes is executed
-                        else:
-                            # filters the variable name (split) so that if it's
-                            # a complete method call the arguments part is removed
-                            # this way only the name of the attribute is guaranteed
-                            attribute_name = variable_name_split.split("(", 1)[0]
-
-                            # checks if the attribute name exists in the current variable
-                            # in iteration, otherwise default to undefined (avoids error)
-                            # or raises an error in case the strict mode is set
-                            if hasattr(current_variable, attribute_name):
-                                # retrieves the current variable (from the object) and
-                                # checks the type value for it to be used for conditional
-                                # execution of code logic
-                                current_variable = getattr(current_variable, attribute_name)
-                                current_variable_type = type(current_variable)
-
-                                # in case its a variable of type function, must proceed
-                                # with the calling of it to retrieve the return value
-                                if current_variable_type in FUNCTION_TYPES:
-                                    # tries to match the complete variable name split against
-                                    # the arguments regular expression, to find out if the call
-                                    # is of type simple or complex (arguments present)
-                                    arguments_match = FUCNTION_ARGUMENTS_REGEX.search(variable_name_split)
-
-                                    # in case there is a valid arguments match, must process the
-                                    # argument name and retrieve its value to be used in the method
-                                    # call (complex call)
-                                    if arguments_match:
-                                        # retrieves the complete group match from the arguments
-                                        # match and removes the calling parentheses
-                                        arguments_s = arguments_match.group()
-                                        arguments_s = arguments_s[1:-1]
-
-                                        # splits the arguments string into the various arguments
-                                        # names and then treats them, converting them into the
-                                        # normal form
-                                        arguments = arguments_s.split(",")
-                                        arguments = [argument.strip().replace(":", ".") for argument in arguments]
-
-                                        # creates the list that will hold the various argument types
-                                        # (maps) to be used to retrieve their value, then iterates over
-                                        # all the arguments to populate the list
-                                        arguments_t = []
-                                        for argument in arguments:
-                                            # retrieves the first character of the argument to be used
-                                            # to try to guess the argument type
-                                            first_char = argument[0]
-
-                                            # checks the type of the argument, using the first character for
-                                            # so, then sets the literal flag in case the value is a number or
-                                            # a string (literal types)
-                                            is_string = first_char == "'" or first_char == "\""
-                                            is_number = ord(first_char) > 0x2f and ord(first_char) < 0x3a
-                                            is_literal = is_string or is_number
-                                            _type = is_literal and LITERAL_VALUE or VARIABLE_VALUE
-
-                                            # retrieves the correct value taking into account the various
-                                            # type based flags
-                                            if is_string: value = argument[1:-1]
-                                            elif is_number: value = int(argument)
-                                            else: value = argument
-
-                                            # creates the argument type map with both the type and the value
-                                            # for the argument then adds it to the list of argument types
-                                            argument_t = {
-                                                TYPE_VALUE : _type,
-                                                VALUE_VALUE : value
-                                            }
-                                            arguments_t.append(argument_t)
-
-                                        # creates the list of argument values by retrieving the values of the
-                                        # various argument types and uses these values in the function call
-                                        arguments_v = [self.get_value(argument_s) for argument_s in arguments_t]
-                                        current_variable = current_variable(*arguments_v)
-
-                                    # otherwise there is no arguments match and so the function is
-                                    # considered simple and a simple call (no arguments) is made
-                                    else:
-                                        # calls the function (without arguments) to
-                                        # retrieve the variable
-                                        current_variable = current_variable()
-
-                            elif not self.strict_mode:
-                                # sets the current variable as none
-                                current_variable = None
-
-                                # breaks the cycle
-                                break
-                            else:
-                                # raises the undefined variable exception
-                                raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
-
-                elif not self.strict_mode:
-                    # sets the current variable as none
-                    current_variable = None
-                else:
-                    # raises the undefined variable exception
-                    raise exceptions.UndefinedVariable("variable is not defined: " + variable_name)
-
-                # retrieves the current variable's class and in case the class is of
-                # type file reference the contents should be read (the file is closed properly)
-                # and set as the current variable (as the new value of it)
-                current_variable_class = current_variable.__class__ if\
-                    hasattr(current_variable, "__class__") else None
-                if current_variable_class == colony.libs.structures_util.FileReference:
-                    current_variable = current_variable.read_all()
+                # sets the initial value of the resolution process as the current
+                # global map and then starts the resolution running it for the
+                # complete set of "partial" attribute names (iterative resolution)
+                value = self.global_map
+                for name in variable_name_s: value = self.resolve(value, name)
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
                 # do this in case the localize flag is set
-                value = localize and self._resolve_locale(current_variable) or current_variable
+                value = self._resolve_locale(value) if localize else value
 
-        # in case the attribute value is of type literal
-        elif attribute_value[TYPE_VALUE] == LITERAL_VALUE:
+        # in case the attribute value is of type literal the value must
+        # be "read" using a literal based approach so that the proper and
+        # concrete value is going to be returned as the value
+        elif attribute_value["type"] == "literal":
             # retrieves the literal value
-            literal_value = attribute_value[VALUE_VALUE]
+            literal_value = attribute_value["value"]
 
             # in case the process literal is sets and
             # the literal value contains commas, it
@@ -1925,36 +1604,157 @@ class Visitor:
                 # sets the value as the list resulting
                 # from the split around the separator
                 value = literal_value.split(",")
-            # otherwise it must be
-            # a simple literal value
+            # otherwise it must be a simple literal value
+            # and a direct assign operation must be performed
             else:
                 # sets the value as the literal value
                 value = literal_value
 
-        # returns the value
+        # returns the processed value to the caller method, this is the
+        # considered to be the value for the requested attribute
         return value
 
     def get_literal_value(self, attribute_value):
-        # retrieves the literal value
-        literal_value = attribute_value[VALUE_VALUE]
-
-        # returns the literal value
-        return literal_value
+        return attribute_value["value"]
 
     def get_boolean_value(self, attribute_value):
-        # retrieves the literal value
-        literal_value = attribute_value[VALUE_VALUE]
+        # retrieves the literal value of the provided
+        # attribute, retrieving then the data type for it
+        value = attribute_value["value"]
+        value_type = type(value)
 
-        # retrieves the literal value type
-        literal_value_type = type(literal_value)
+        # in case the "literal" value is a boolean returns the same
+        # value as the result, otherwise raises an exception indicating
+        # the problem with the processing of the boolean value
+        if value_type == types.BooleanType: return value
+        raise exceptions.InvalidBooleanValue("invalid boolean " + value)
 
-        # in case the literal value is a boolean
-        if literal_value_type == types.BooleanType:
-            # returns true literal value
-            return literal_value
+    def resolve(self, value, name):
+        try: result = self._resolve(value, name)
+        except exceptions.UndefinedVariable:
+            if self.strict_mode: raise
+            else: result = None
+        return result
 
-        # raises an invalid boolean value exception
-        raise exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
+    def _resolve(self, value, name):
+        # verifies if the base value refers a dictionary, if that's the
+        # case a normal get operation will be performed
+        is_dictionary = colony.is_dictionary(value)
+
+        # in case the variable is of type dictionary, the normal recursive
+        # iteration step will be executed
+        if is_dictionary:
+            if name in value: result = value[name]
+            else: raise exceptions.UndefinedVariable("variable is not defined: " + name)
+
+        # otherwise variable is of type object or other, then the more complex
+        # recursive read of its attributes is executed
+        else:
+            # saves the original attribute name under the original variable
+            # as it's going to be used latter for some processing operations
+            name_o = name
+
+            # filters the variable name (split) so that if it's
+            # a complete method call the arguments part is removed
+            # this way only the name of the attribute is guaranteed
+            name = name.split("(", 1)[0]
+
+            # checks if the attribute name exists in the current variable
+            # in iteration, and in case it does not exists raises an exception
+            # indicating that the variable was not found in context
+            has_attribute = hasattr(value, name)
+            if not has_attribute:
+                raise exceptions.UndefinedVariable("variable is not defined: " + name)
+
+            # retrieves the result value from the current value as the attribute
+            # of the same name in the passed value
+            result = getattr(value, name)
+
+        # retrieves the data type for the current result value as this
+        # may affect some of the post processing operation to be done
+        result_type = type(result)
+
+        # in case its a variable of type function, must proceed
+        # with the calling of it to retrieve the return value
+        if result_type in FUNCTION_TYPES:
+            # resolves the complete set of arguments defined in the original name
+            # that was meant to be resolved for the current value, this should
+            # returns a list of arguments that must be then re-retrieved as values
+            # for the current template engine (recursive resolution)
+            args = self.resolve_args(name_o)
+
+            # creates the list of argument values by retrieving the values of the
+            # various argument types and uses these values in the function call
+            args = [self.get_value(arg) for arg in args]
+            result = result(*args)
+
+        # retrieves the current rsults's class and in case the class is of
+        # type file reference the contents should be read (the file is closed properly)
+        # and set as the current variable (as the new result of it)
+        result_class = result.__class__ if hasattr(result, "__class__") else None
+        if result_class == colony.FileReference: result = result.read_all()
+
+        # returns the final resolved result value to the caller method, no extra
+        # processing should be required for this values is resolved
+        return result
+
+    def resolve_args(self, name):
+        # tries to match the complete variable name split against
+        # the arguments regular expression, to find out if the call
+        # is of type simple or complex (arguments present)
+        arguments_match = FUCNTION_ARGUMENTS_REGEX.search(name)
+
+        # in case there is no valid arguments match, no processing
+        # of arguments will occur and an empty sequence is returned
+        # immediately as there's nothing remaining to be done
+        if not arguments_match: return ()
+
+        # retrieves the complete group match from the arguments
+        # match and removes the calling parentheses
+        arguments_s = arguments_match.group()
+        arguments_s = arguments_s[1:-1]
+
+        # splits the arguments string into the various arguments
+        # names and then treats them, converting them into the
+        # normal form
+        arguments = arguments_s.split(",")
+        arguments = [argument.strip().replace(":", ".") for argument in arguments]
+
+        # creates the list that will hold the various argument types
+        # (maps) to be used to retrieve their value, then iterates over
+        # all the arguments to populate the list
+        arguments_t = []
+        for argument in arguments:
+            # retrieves the first character of the argument to be used
+            # to try to guess the argument type
+            first_char = argument[0]
+
+            # checks the type of the argument, using the first character for
+            # so, then sets the literal flag in case the value is a number or
+            # a string (literal types)
+            is_string = first_char == "'" or first_char == "\""
+            is_number = ord(first_char) > 0x2f and ord(first_char) < 0x3a
+            is_literal = is_string or is_number
+            _type = is_literal and "literal" or "variable"
+
+            # retrieves the correct value taking into account the various
+            # type based flags
+            if is_string: value = argument[1:-1]
+            elif is_number: value = int(argument)
+            else: value = argument
+
+            # creates the argument type map with both the type and the value
+            # for the argument then adds it to the list of argument types
+            argument_t = dict(
+                type = _type,
+                value = value
+            )
+            arguments_t.append(argument_t)
+
+        # returns the complete list of processed arguments, this is a list of
+        # argument dictionary values that are meant to be latter recursively
+        # resolved to obtain the real/final argument values
+        return arguments_t
 
     def _validate_accept_node(self, node, accept_node):
         """
@@ -2020,9 +1820,9 @@ class Visitor:
         attributes_map = node.get_attributes_map()
 
         # retrieves the attributes map values
-        attribute_item = attributes_map[ITEM_VALUE]
+        attribute_item = attributes_map["item"]
         attribute_item_value = self.get_value(attribute_item)
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
         attribute_operator = attributes_map[OPERATOR_VALUE]
         attribute_operator_literal_value = self.get_literal_value(attribute_operator)
@@ -2143,7 +1943,7 @@ class Visitor:
 
         # creates the string buffer to hold the serialization values
         # and writes the initial list open token into it
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.StringBuffer()
         string_buffer.write(u"[")
 
         # unsets the is first flag so that the comma separator
