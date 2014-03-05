@@ -192,72 +192,71 @@ class TemplateEngine(colony.base.system.System):
         # create a new list reference to handle it correctly
         if locale_bundles == None: locale_bundles = []
 
-        # reads the file contents
+        # reads the complete set of file contents and in case an
+        # encoding is defined decodes the provided file contents
+        # using the encoding value (may raise exception)
         file_contents = file.read()
-
-        # in case an encoding is defined decodes the provided
-        # file contents using the encoding value (may raise exception)
         if encoding: file_contents = file_contents.decode(encoding)
+
+        # creates the match orderer list, this list will hold the various
+        # definitions of matched tokens for the current template, and is
+        # meant to be ordered two times for processing
+        match_orderer_list = []
 
         # retrieves the start matches iterator
         start_matches_iterator = START_TAG_REGEX.finditer(file_contents)
 
-        # creates the match orderer list
-        match_orderer_list = []
-
         # iterates over all the start matches
         for start_match in start_matches_iterator:
-            # retrieves the start match start
-            start_match_start = start_match.start()
+            # retrieves the match start and end values and uses them to
+            # construct the match value that is going to be used for the
+            # construction of the match orderer structure to be added
+            match_start = start_match.start()
+            match_end = start_match.end()
+            match_value = file_contents[match_start:match_end]
 
-            # retrieves the start match end
-            start_match_end = start_match.end()
-
-            # retrieves the start match value
-            start_match_value = file_contents[start_match_start:start_match_end]
-
-            start_math_orderer = MatchOrderer(start_match, START_VALUE, start_match_value)
-            match_orderer_list.append(start_math_orderer)
+            # creates the match orderer for the current (start) match
+            # signaling it as a start value (for later reference)
+            math_orderer = MatchOrderer(start_match, START_VALUE, match_value)
+            match_orderer_list.append(math_orderer)
 
         # retrieves the end matches iterator
         end_matches_iterator = END_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the end matches
         for end_match in end_matches_iterator:
-            # retrieves the end match start
-            end_match_start = end_match.start()
+            # retrieves the match start and end values and uses them to
+            # construct the match value that is going to be used for the
+            # construction of the match orderer structure to be added
+            match_start = end_match.start()
+            match_end = end_match.end()
+            match_value = file_contents[match_start:match_end]
 
-            # retrieves the end match end
-            end_match_end = end_match.end()
-
-            # retrieves the end match value
-            end_match_value = file_contents[end_match_start:end_match_end]
-
-            end_match_orderer = MatchOrderer(end_match, END_VALUE, end_match_value)
-            match_orderer_list.append(end_match_orderer)
+            # creates the match orderer for the current (end) match
+            # signaling it as a end value (for later reference)
+            match_orderer = MatchOrderer(end_match, END_VALUE, match_value)
+            match_orderer_list.append(match_orderer)
 
         # retrieves the single matches iterator
         single_matches_iterator = SINGLE_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the single matches
         for single_match in single_matches_iterator:
-            # retrieves the single match start
-            single_match_start = single_match.start()
+            # retrieves the match start and end values and uses them to
+            # construct the match value that is going to be used for the
+            # construction of the match orderer structure to be added
+            match_start = single_match.start()
+            match_end = single_match.end()
+            match_value = file_contents[match_start:match_end]
 
-            # retrieves the single match end
-            single_match_end = single_match.end()
+            # creates the match orderer for the current (single) match
+            # signaling it as a single value (for later reference)
+            match_orderer = MatchOrderer(single_match, SINGLE_VALUE, match_value)
+            match_orderer_list.append(match_orderer)
 
-            # retrieves the single match value
-            single_match_value = file_contents[single_match_start:single_match_end]
-
-            single_match_orderer = MatchOrderer(single_match, SINGLE_VALUE, single_match_value)
-            match_orderer_list.append(single_match_orderer)
-
-        # orders the match orderer list
-        match_orderer_list.sort()
-
-        # reverses the list so that it's ordered in ascending form
-        match_orderer_list.reverse()
+        # orders the match orderer list so that the items are ordered from
+        # the beginning to the latest as their are meant to be sorted
+        match_orderer_list.sort(reverse = True)
 
         # creates the temporary literal match orderer list
         literal_match_orderer_list = []
@@ -265,39 +264,40 @@ class TemplateEngine(colony.base.system.System):
         # creates the initial previous end
         previous_end = 0
 
-        # iterates over all the matches in
-        # the match orderer list
+        # iterates over all the matches in the match orderer list
+        # to be able to create the complete set of literal parts
+        # of the template with pure contents
         for match_orderer in match_orderer_list:
             # retrieves the match orderer match start
-            match_orderer_match_start = match_orderer.match.start()
+            match_start = match_orderer.match.start()
 
             # in case the current match orderer value start is not the same
-            # as the previous end plus one
-            if not match_orderer_match_start == previous_end:
-                # calculates the literal match start
-                literal_match_start = previous_end
+            # as the previous end plus one, this means that there's a literal
+            # value in between both matches and so that literal value must be
+            # added to the current match orderer container
+            if not match_start == previous_end:
+                # calculates the both the start and the end of the literal value
+                # in between and then retrieves the same value from the current
+                # file buffer/contents so that a orderer value may be created
+                match_start = previous_end
+                match_end = match_start
+                match_value = file_contents[match_start:match_end]
 
-                # calculates the literal match end
-                literal_match_end = match_orderer_match_start
+                # creates the literal match object with the match start and
+                # and end values and then uses it to create the orderer
+                literal_match = LiteralMatch(match_start, match_end)
+                match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
 
-                # calculates the literal match value
-                literal_match_value = file_contents[literal_match_start:literal_match_end]
+                # appends the match orderer object to the list of literal match
+                # orderer list, this list will later be fused with the "normal"
+                # match orderer list (as expected)
+                literal_match_orderer_list.append(match_orderer)
 
-                # creates the literal match object with the
-                # literal match start and the literal match end
-                literal_match = LiteralMatch(literal_match_start, literal_match_end)
-
-                # creates a match orderer object for the literal match
-                literal_match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, literal_match_value)
-
-                # appends the literal match orderer object to
-                # the list of literal match orderer list
-                literal_match_orderer_list.append(literal_match_orderer)
-
-            # updates the previous end value
+            # updates the previous end value with the end of the current
+            # literal value, this is considered to be the iteration housekeeping
             previous_end = match_orderer.match.end()
 
-        # in case there is still a final literal to be processed
+        # in case there is still a final literal to be processed, this
         if not previous_end == len(file_contents):
             # calculates the literal match start
             literal_match_start = previous_end
@@ -320,14 +320,10 @@ class TemplateEngine(colony.base.system.System):
             literal_match_orderer_list.append(literal_match_orderer)
 
         # adds the elements of the literal math orderer list
-        # to the match orderer list
+        # to the match orderer list and then re-sorts the
+        # match ordered list one more time in the reverse order
         match_orderer_list += literal_match_orderer_list
-
-        # orders the match orderer list
-        match_orderer_list.sort()
-
-        # reverses the list so that it's ordered in ascending form
-        match_orderer_list.reverse()
+        match_orderer_list.sort(reverse = True)
 
         # creates the root node
         root_node = ast.RootNode()
@@ -401,17 +397,24 @@ class TemplateEngine(colony.base.system.System):
 
 class MatchOrderer:
     """
-    The match orderer class.
+    The match orderer class, that is used to re-sort
+    the various matched of the template engine in
+    the proper order.
     """
 
     match = None
-    """ The match object to be ordered """
+    """ The match object to be ordered, this value
+    should be the internal regex library value for
+    the match operation """
 
-    match_type = "none"
-    """ The type of the match object to be ordered """
+    match_type = None
+    """ The type of the match object to be ordered,
+    this value should reflect the kind of match that
+    has been accomplished for the value """
 
     match_value = None
-    """ The value of the match object to be ordered """
+    """ The value of the match object to be ordered
+    this should be a literal string value of it """
 
     def __init__(self, match, match_type, match_value):
         self.match = match
