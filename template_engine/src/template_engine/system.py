@@ -452,25 +452,34 @@ class TemplateFile:
     """
 
     manager = None
-    """ The manager """
+    """ The manager of the template file, this is considered to
+    be the owner and generator instance """
 
     file_path = None
-    """ The path to the file to be used """
+    """ The path to the file from which the contents of the template
+    are loaded, this is the original reference """
 
     encoding = None
-    """ The encoding used in the file """
+    """ The encoding used in the file, this is the main encoding
+    to be used both in the loading and storage of it """
 
     variable_encoding = None
-    """ The variable encoding """
+    """ The encoding that is going to be used to encode the value
+    of the various variables to be expanded in the template """
 
     strict_mode = False
-    """ The strict mode flag """
+    """ The strict mode flag, that controls if the an error in a
+    variable resolution should raise an exception, usage of this
+    value should be done with care to avoid unwanted behavior """
 
     root_node = None
-    """ The root node """
+    """ The root node from which the visitor will start the visiting
+    using a recursive approach """
 
     visitor = None
-    """ The visitor """
+    """ The visitor object that will be used for the visiting of the
+    various nodes that make part of the abstract syntax tree defined
+    from the provided root node """
 
     locale_bundles = []
     """ The list that contains the various bundles to be searched for
