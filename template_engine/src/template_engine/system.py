@@ -262,19 +262,20 @@ class TemplateEngine(colony.base.system.System):
         # to be able to create the complete set of literal parts
         # of the template with pure contents
         for match_orderer in match_orderer_l:
-            # retrieves the match orderer match start
-            match_start = match_orderer.match.start()
+            # retrieves the match orderer match start position
+            # as the "original" match start value
+            match_start_o = match_orderer.match.start()
 
             # in case the current match orderer value start is not the same
             # as the previous end plus one, this means that there's a literal
             # value in between both matches and so that literal value must be
             # added to the current match orderer container
-            if not match_start == previous_end:
+            if not match_start_o == previous_end:
                 # calculates the both the start and the end of the literal value
                 # in between and then retrieves the same value from the current
                 # file buffer/contents so that a orderer value may be created
                 match_start = previous_end
-                match_end = match_start
+                match_end = match_start_o
                 match_value = file_contents[match_start:match_end]
 
                 # creates the literal match object with the match start and
