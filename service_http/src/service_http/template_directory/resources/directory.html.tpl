@@ -31,9 +31,9 @@
                     <b>Directory listing</b>
                     <p>
                         ${foreach item=directory_item from=directory_list}
-                            <a href="${out_none value=directory_item.link quote=True xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> /
+                            <a href="${out value=directory_item.link quote=True xml_escape=True /}">${out value=directory_item.name xml_escape=True /}</a> /
                         ${/foreach}
-                        ${out_none value=directory_final_item xml_escape=True /}
+                        ${out value=directory_final_item xml_escape=True /}
                     </p>
                 </div>
             </div>
@@ -41,9 +41,9 @@
             <div class="directory-list">
                 ${include file_value=format_file /}
                 <div class="view-modes">
-                    <a href="?format=table" class="${out_none value=formats_map.table xml_escape=True /}">Table</a>
-                    <a href="?format=mosaic" class="${out_none value=formats_map.mosaic xml_escape=True /}">Mosaic</a>
-                    <a href="?format=thumbnail" class="${out_none value=formats_map.thumbnail xml_escape=True /}">Thumbnail</a>
+                    <a href="?format=table" class="${out value=formats_map.table xml_escape=True /}">Table</a>
+                    <a href="?format=mosaic" class="${out value=formats_map.mosaic xml_escape=True /}">Mosaic</a>
+                    <a href="?format=thumbnail" class="${out value=formats_map.thumbnail xml_escape=True /}">Thumbnail</a>
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
                 <div class="separator">
                     <img src="/template_directory_handler/images/separator.png"/>
                 </div>
-                <div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
+                <div class="text-contents">Document provided by colony framework in ${out value=delta_time xml_escape=True /} seconds
                     <br />Copyright
                     <a href="http://hive.pt">Hive Solutions Lda.</a> distributed under
                     <a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>

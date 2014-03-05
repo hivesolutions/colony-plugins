@@ -26,10 +26,10 @@
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-                <img class="error-image" src="/template_error_handler/images/${out_none value=error_image xml_escape=True /}.png"/>
+                <img class="error-image" src="/template_error_handler/images/${out value=error_image xml_escape=True /}.png"/>
                 <div class="error-text">
                     <b>There was a problem in colony web server...</b>
-                    <p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p>
+                    <p>Error ${out value=error_code xml_escape=True /} - ${out value=error_description xml_escape=True /}</p>
                 </div>
             </div>
             <p></p>
@@ -38,13 +38,13 @@
                     <b>Description</b>
                 </p>
                 <p class="description">
-                    ${out_none value=error xml_escape=True /}
+                    ${out value=error xml_escape=True /}
                 </p>
                 <p class="traceback-header">
                     <b>Traceback</b>
                 </p>
                 ${foreach item=traceback_line from=traceback}
-                    <p class="traceback">${out_none value=traceback_line xml_escape=True /}</p>
+                    <p class="traceback">${out value=traceback_line xml_escape=True /}</p>
                 ${/foreach}
             </div>
         </div>
@@ -58,7 +58,7 @@
                 <div class="separator">
                     <img src="/template_error_handler/images/separator.png"/>
                 </div>
-                <div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
+                <div class="text-contents">Document provided by colony framework in ${out value=delta_time xml_escape=True /} seconds
                     <br />Copyright
                     <a href="http://hive.pt">Hive Solutions Lda.</a> distributed under
                     <a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>

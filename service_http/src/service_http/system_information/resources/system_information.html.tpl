@@ -29,14 +29,14 @@
                 <img class="system-information-list-image" src="/system_information_handler/images/logo_datacenter.png"/>
                 <div class="system-information-list-text">
                     <b>System Information</b>
-                    <p>Colony Framework ${out_none value=plugin_manager_version xml_escape=True /} r${out_none value=plugin_manager_release xml_escape=True /}</p>
+                    <p>Colony Framework ${out value=plugin_manager_version xml_escape=True /} r${out value=plugin_manager_release xml_escape=True /}</p>
                 </div>
             </div>
             <p></p>
             <div class="system-information-list">
                 ${foreach item=system_information_item from=system_information}
                     <div class="table-view">
-                        <span class="title">${out_none value=system_information_item.name xml_escape=True /}</span>
+                        <span class="title">${out value=system_information_item.name xml_escape=True /}</span>
                         ${foreach item=system_information_item_item from=system_information_item.items}
                             <div class="table">
                                 ${if item=system_information_item_item.type value="map" operator=eq}
@@ -44,8 +44,8 @@
                                         <thead>
                                             <tr>
                                                 ${foreach item=system_information_item_item_column from=system_information_item_item.columns}
-                                                    <th class="column ${out_none value=system_information_item_item_column.type xml_escape=True /}">
-                                                        <a href="#">${out_none value=system_information_item_item_column.value xml_escape=True /}</a>
+                                                    <th class="column ${out value=system_information_item_item_column.type xml_escape=True /}">
+                                                        <a href="#">${out value=system_information_item_item_column.value xml_escape=True /}</a>
                                                     </th>
                                                 ${/foreach}
                                             </tr>
@@ -53,9 +53,9 @@
                                         <tbody>
                                             ${foreach item=value key=key from=system_information_item_item.values}
                                                 <tr>
-                                                    <td class="name">${out_none value=key xml_escape=True /}</td>
+                                                    <td class="name">${out value=key xml_escape=True /}</td>
                                                     ${foreach item=_value from=value}
-                                                        <td class="value">${out_none value=_value xml_escape=True /}</td>
+                                                        <td class="value">${out value=_value xml_escape=True /}</td>
                                                     ${/foreach}
                                                 </tr>
                                             ${/foreach}
@@ -68,7 +68,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td class="name">${out_none value=system_information_item_item.value xml_escape=True /}</td>
+                                                <td class="name">${out value=system_information_item_item.value xml_escape=True /}</td>
                                             </tr>
                                         </tbody>
                                         <tfoot></tfoot>
@@ -90,7 +90,7 @@
                 <div class="separator">
                     <img src="/system_information_handler/images/separator.png"/>
                 </div>
-                <div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
+                <div class="text-contents">Document provided by colony framework in ${out value=delta_time xml_escape=True /} seconds
                     <br />Copyright
                     <a href="http://hive.pt">Hive Solutions Lda.</a> distributed under
                     <a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>
