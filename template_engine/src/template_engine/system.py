@@ -91,12 +91,6 @@ SINGLE_VALUE = "single"
 LITERAL_VALUE = "literal"
 """ The literal value """
 
-DEFAULT_ENCODING_VALUE = None
-""" The default encoding value """
-
-DEFAULT_VARIABLE_ENCODING = None
-""" The default variable encoding """
-
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
 """ The start tag regular expression """
 
@@ -132,7 +126,7 @@ class TemplateEngine(colony.base.system.System):
     def parse_file_path(
         self,
         file_path,
-        encoding = DEFAULT_ENCODING_VALUE,
+        encoding = None,
         process_methods_list = [],
         locale_bundles = None
     ):
@@ -166,8 +160,8 @@ class TemplateEngine(colony.base.system.System):
     def parse_file_path_variable_encoding(
         self,
         file_path,
-        encoding = DEFAULT_ENCODING_VALUE,
-        variable_encoding = DEFAULT_ENCODING_VALUE,
+        encoding = None,
+        variable_encoding = None,
         process_methods_list = [],
         locale_bundles = None
     ):
@@ -184,7 +178,7 @@ class TemplateEngine(colony.base.system.System):
         self,
         file,
         file_path = None,
-        encoding = DEFAULT_ENCODING_VALUE,
+        encoding = None,
         process_methods_list = [],
         locale_bundles = None
     ):
@@ -201,7 +195,7 @@ class TemplateEngine(colony.base.system.System):
         # creates the match orderer list, this list will hold the various
         # definitions of matched tokens for the current template, and is
         # meant to be ordered two times for processing
-        match_orderer_list = []
+        match_orderer_l = []
 
         # retrieves the start matches iterator
         start_matches_iterator = START_TAG_REGEX.finditer(file_contents)
@@ -218,7 +212,7 @@ class TemplateEngine(colony.base.system.System):
             # creates the match orderer for the current (start) match
             # signaling it as a start value (for later reference)
             math_orderer = MatchOrderer(start_match, START_VALUE, match_value)
-            match_orderer_list.append(math_orderer)
+            match_orderer_l.append(math_orderer)
 
         # retrieves the end matches iterator
         end_matches_iterator = END_TAG_REGEX.finditer(file_contents)
@@ -235,7 +229,7 @@ class TemplateEngine(colony.base.system.System):
             # creates the match orderer for the current (end) match
             # signaling it as a end value (for later reference)
             match_orderer = MatchOrderer(end_match, END_VALUE, match_value)
-            match_orderer_list.append(match_orderer)
+            match_orderer_l.append(match_orderer)
 
         # retrieves the single matches iterator
         single_matches_iterator = SINGLE_TAG_REGEX.finditer(file_contents)
@@ -252,14 +246,14 @@ class TemplateEngine(colony.base.system.System):
             # creates the match orderer for the current (single) match
             # signaling it as a single value (for later reference)
             match_orderer = MatchOrderer(single_match, SINGLE_VALUE, match_value)
-            match_orderer_list.append(match_orderer)
+            match_orderer_l.append(match_orderer)
 
         # orders the match orderer list so that the items are ordered from
         # the beginning to the latest as their are meant to be sorted
-        match_orderer_list.sort(reverse = True)
+        match_orderer_l.sort(reverse = True)
 
         # creates the temporary literal match orderer list
-        literal_match_orderer_list = []
+        literal_orderer_l = []
 
         # creates the initial previous end
         previous_end = 0
@@ -267,7 +261,7 @@ class TemplateEngine(colony.base.system.System):
         # iterates over all the matches in the match orderer list
         # to be able to create the complete set of literal parts
         # of the template with pure contents
-        for match_orderer in match_orderer_list:
+        for match_orderer in match_orderer_l:
             # retrieves the match orderer match start
             match_start = match_orderer.match.start()
 
@@ -291,98 +285,92 @@ class TemplateEngine(colony.base.system.System):
                 # appends the match orderer object to the list of literal match
                 # orderer list, this list will later be fused with the "normal"
                 # match orderer list (as expected)
-                literal_match_orderer_list.append(match_orderer)
+                literal_orderer_l.append(match_orderer)
 
             # updates the previous end value with the end of the current
             # literal value, this is considered to be the iteration housekeeping
             previous_end = match_orderer.match.end()
 
-        # in case there is still a final literal to be processed, this
+        # in case there is still a final literal to be processed, it
+        # must be processed as a special case with special requirements
         if not previous_end == len(file_contents):
-            # calculates the literal match start
-            literal_match_start = previous_end
+            # calculates the literal match start as the previous end
+            # value and the end as the final index of the file contents
+            # data and then retrieves the value as that chunk
+            match_start = previous_end
+            match_end = len(file_contents)
+            match_value = file_contents[match_start:match_end]
 
-            # calculates the literal match end
-            literal_match_end = len(file_contents)
+            # creates the literal match object with the match start and
+            # and end values and then uses it to create the orderer
+            literal_match = LiteralMatch(match_start, match_end)
+            match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
 
-            # calculates the literal match value
-            literal_match_value = file_contents[literal_match_start:literal_match_end]
-
-            # creates the literal match object with the
-            # literal match start and the literal match end
-            literal_match = LiteralMatch(literal_match_start, literal_match_end)
-
-            # creates a match orderer object for the literal match
-            literal_match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, literal_match_value)
-
-            # appends the literal match orderer object to
-            # the list of literal match orderer list
-            literal_match_orderer_list.append(literal_match_orderer)
+            # appends the match orderer object to the list of literal match
+            # orderer list, this list will later be fused with the "normal"
+            # match orderer list (as expected)
+            literal_orderer_l.append(match_orderer)
 
         # adds the elements of the literal math orderer list
         # to the match orderer list and then re-sorts the
         # match ordered list one more time in the reverse order
-        match_orderer_list += literal_match_orderer_list
-        match_orderer_list.sort(reverse = True)
+        match_orderer_l += literal_orderer_l
+        match_orderer_l.sort(reverse = True)
 
-        # creates the root node
+        # creates the root node and starts the stack of tree nodes
+        # with the root node inserted in it, the stack will be used
+        # for the proper handling of start and end values
         root_node = ast.RootNode()
+        stack = [root_node]
 
-        # creates the tree node stack with the root node inserted
-        tree_node_stack = [root_node]
+        # iterates over all the matches in the match orderer list
+        # to create the complete abstract syntax tree representing
+        # the template that has just been parsed, this same tree
+        # may be latter percolated for the generation process
+        for match_orderer in match_orderer_l:
 
-        # iterates over all the matches in
-        # the match orderer list
-        for match_orderer in match_orderer_list:
-            # retrieves the match orderer type
-            match_orderer_type = match_orderer.get_match_type()
+            # retrieves the match orderer type for the
+            # current iteration, this value will condition
+            # the way the nodes are going to be created
+            type = match_orderer.get_match_type()
 
-            # in case the match order is of type start
-            if match_orderer_type == START_VALUE:
-                # retrieves the parent node
-                parent_node = tree_node_stack[-1]
+            if type == START_VALUE:
+                node = ast.CompositeNode(
+                    [match_orderer],
+                    regex = ATTRIBUTE_REGEX,
+                    literal_regex = ATTRIBUTE_LITERAL_REGEX
+                )
+                parent_node = stack[-1]
+                parent_node.add_child_node(node)
+                stack.append(node)
 
-                # creates the composite node from the match orderer
-                composite_node = ast.CompositeNode([match_orderer], ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
+            elif type == END_VALUE:
+                node = stack.pop()
+                node.value.append(match_orderer)
 
-                # adds the composite node as a child to the parent node
-                parent_node.add_child_node(composite_node)
+            elif type == SINGLE_VALUE:
+                node = ast.SingleNode(
+                    match_orderer,
+                    regex = ATTRIBUTE_REGEX,
+                    literal_regex = ATTRIBUTE_LITERAL_REGEX
+                )
+                parent_node = stack[-1]
+                parent_node.add_child_node(node)
 
-                # adds the composite node to the tree node stack
-                tree_node_stack.append(composite_node)
-            # in case the match order is of type end
-            elif match_orderer_type == END_VALUE:
-                # retrieves the composite node
-                composite_node = tree_node_stack.pop()
+            elif type == LITERAL_VALUE:
+                node = ast.LiteralNode(match_orderer)
+                parent_node = stack[-1]
+                parent_node.add_child_node(node)
 
-                # adds the match orderer to the value of the composite node
-                composite_node.value.append(match_orderer)
-
-                # converts the composite node value to a tuple
-                tuple(composite_node.value)
-            # in case the match order is of type single
-            elif match_orderer_type == SINGLE_VALUE:
-                # retrieves the parent node
-                parent_node = tree_node_stack[-1]
-
-                # creates the single node from the match orderer
-                single_node = ast.SingleNode(match_orderer, ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
-
-                # adds the single node as a child to the parent node
-                parent_node.add_child_node(single_node)
-            # in case the match order is of type literal
-            elif match_orderer_type == LITERAL_VALUE:
-                # retrieves the parent node
-                parent_node = tree_node_stack[-1]
-
-                # creates the literal node from the match orderer
-                literal_node = ast.LiteralNode(match_orderer)
-
-                # adds the literal node as a child to the parent node
-                parent_node.add_child_node(literal_node)
-
-        # creates the template file from the file path, encoding and root node
-        template_file = TemplateFile(self, file_path, encoding, root_node)
+        # creates the template file structure that is going to be
+        # used to represent the template in a abstract way this is
+        # going to be the interface structure with the end user
+        template_file = TemplateFile(
+            manager = self,
+            file_path = file_path,
+            encoding = encoding,
+            root_node = root_node
+        )
 
         # attaches the currently given process methods and locale
         # bundles to the template file
@@ -392,7 +380,8 @@ class TemplateEngine(colony.base.system.System):
         # loads the system variable in the template file
         template_file.load_system_variable()
 
-        # returns the template file
+        # returns the final template file template file to the caller
+        # method so that it may be used for rendering
         return template_file
 
 class MatchOrderer:
@@ -456,7 +445,9 @@ class LiteralMatch:
 
 class TemplateFile:
     """
-    The template file class.
+    The template file class, this is the most abstract
+    representation of the template and also the entry
+    level for the user level operations.
     """
 
     manager = None
@@ -468,7 +459,7 @@ class TemplateFile:
     encoding = None
     """ The encoding used in the file """
 
-    variable_encoding = DEFAULT_VARIABLE_ENCODING
+    variable_encoding = None
     """ The variable encoding """
 
     strict_mode = False
