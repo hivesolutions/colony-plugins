@@ -87,6 +87,10 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return bool(ref)
 
+    def __eq__(self, other):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref == other
+
     def __call__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "ref")
         return ref.__call__(*args, **kwargs)
