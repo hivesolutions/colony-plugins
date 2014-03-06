@@ -46,8 +46,14 @@ import ast
 import visitor
 import exceptions
 
+OUTPUT_REGEX_VALUE = "\{\{.*\}\}"
+""" The regular expression value for the matching of the
+output (print) operations, these are specialized nodes
+that are only meant to print variable/literal values """
+
 START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
-""" The start tag regular expression value """
+""" The start tag regular expression value that should
+match the starting tag of an expression """
 
 END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
 """ The end tag regular expression value """
@@ -55,41 +61,51 @@ END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
 SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
 """ The single tag regular expression value """
 
-ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/\(\)\:,'\"]*"
-""" The attribute regular expression value """
+ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/\(\)\:,'\"\|]*"
+""" The attribute regular expression value, this
+regular expression value should be able to match
+the complete set of attribute matches """
 
-ATTRIBUTE_QUOTED_SINGLE_REGEX_VALUE = "[a-zA-Z_]+=['][^']+[']"
+QUOTED_SINGLE_REGEX_VALUE = "[a-zA-Z_]+=['][^']+[']"
 """ The attribute quoted single regular expression value """
 
-ATTRIBUTE_QUOTED_DOUBLE_REGEX_VALUE = "[a-zA-Z_]+=[\"][^\"]+[\"]"
+QUOTED_DOUBLE_REGEX_VALUE = "[a-zA-Z_]+=[\"][^\"]+[\"]"
 """ The attribute quoted double regular expression value """
 
-ATTRIBUTE_FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
+FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
 """ The attribute float regular expression value """
 
-ATTRIBUTE_INTEGER_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+"
+INTEGER_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+"
 """ The attribute integer regular expression value """
 
-ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=True"
+BOOL_TRUE_REGEX_VALUE = "[a-zA-Z_]+=True"
 """ The attribute true boolean regular expression value """
 
-ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=False"
+BOOL_FALSE_REGEX_VALUE = "[a-zA-Z_]+=False"
 """ The attribute false boolean regular expression value """
 
-ATTRIBUTE_NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
+NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
 """ The attribute none regular expression value """
 
-START_VALUE = "start"
+OUTPUT_VALUE = 1
+""" The output value """
+
+START_VALUE = 2
 """ The start value """
 
-END_VALUE = "end"
+END_VALUE = 3
 """ The end value """
 
-SINGLE_VALUE = "single"
+SINGLE_VALUE = 4
 """ The single value """
 
-LITERAL_VALUE = "literal"
+LITERAL_VALUE = 5
 """ The literal value """
+
+OUTPUT_REGEX = re.compile(OUTPUT_REGEX_VALUE)
+""" REgualr expression used to match the simple output
+nodes it should be wide enough to handle all kinds of
+variable values """
 
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
 """ The start tag regular expression, used to
@@ -105,13 +121,13 @@ ATTRIBUTE_REGEX = re.compile(ATTRIBUTE_REGEX_VALUE)
 """ The attribute regular expression """
 
 ATTRIBUTE_LITERAL_REGEX = re.compile(
-    "(?P<quoted_single>" + ATTRIBUTE_QUOTED_SINGLE_REGEX_VALUE + ")|" + \
-    "(?P<quoted_double>" + ATTRIBUTE_QUOTED_DOUBLE_REGEX_VALUE + ")|" + \
-    "(?P<float>" + ATTRIBUTE_FLOAT_REGEX_VALUE + ")|" + \
-    "(?P<integer>" + ATTRIBUTE_INTEGER_REGEX_VALUE + ")|" + \
-    "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE + ")|" + \
-    "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE + ")|" + \
-    "(?P<none>" + ATTRIBUTE_NONE_REGEX_VALUE + ")"
+    "(?P<quoted_single>" + QUOTED_SINGLE_REGEX_VALUE + ")|" + \
+    "(?P<quoted_double>" + QUOTED_DOUBLE_REGEX_VALUE + ")|" + \
+    "(?P<float>" + FLOAT_REGEX_VALUE + ")|" + \
+    "(?P<integer>" + INTEGER_REGEX_VALUE + ")|" + \
+    "(?P<true_boolean>" + BOOL_TRUE_REGEX_VALUE + ")|" + \
+    "(?P<false_boolean>" + BOOL_FALSE_REGEX_VALUE + ")|" + \
+    "(?P<none>" + NONE_REGEX_VALUE + ")"
 )
 """ The literal regular expression that matches all the literals, there
 are matching groups for each of the data types """
@@ -198,11 +214,28 @@ class TemplateEngine(colony.System):
         # meant to be ordered two times for processing
         match_orderer_l = []
 
+        # retrieves the output matches iterator
+        output_matches = OUTPUT_REGEX.finditer(file_contents)
+
+        # iterates over all the output matches
+        for output_match in output_matches:
+            # retrieves the reference to the start and end matching indexed
+            # to the output match and uses it to retrieve the literal value
+            # for the match (going to be used in the match orderer)
+            match_start = output_match.start()
+            match_end = output_match.end()
+            match_value = file_contents[match_start:match_end]
+
+            # creates the match orderer for the current (output) match
+            # signaling it as a output value (for later reference)
+            match_orderer = MatchOrderer(output_match, OUTPUT_VALUE, match_value)
+            match_orderer_l.append(match_orderer)
+
         # retrieves the start matches iterator
-        start_matches_iterator = START_TAG_REGEX.finditer(file_contents)
+        start_matches = START_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the start matches
-        for start_match in start_matches_iterator:
+        for start_match in start_matches:
             # retrieves the match start and end values and uses them to
             # construct the match value that is going to be used for the
             # construction of the match orderer structure to be added
@@ -216,10 +249,10 @@ class TemplateEngine(colony.System):
             match_orderer_l.append(math_orderer)
 
         # retrieves the end matches iterator
-        end_matches_iterator = END_TAG_REGEX.finditer(file_contents)
+        end_matches = END_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the end matches
-        for end_match in end_matches_iterator:
+        for end_match in end_matches:
             # retrieves the match start and end values and uses them to
             # construct the match value that is going to be used for the
             # construction of the match orderer structure to be added
@@ -233,10 +266,10 @@ class TemplateEngine(colony.System):
             match_orderer_l.append(match_orderer)
 
         # retrieves the single matches iterator
-        single_matches_iterator = SINGLE_TAG_REGEX.finditer(file_contents)
+        single_matches = SINGLE_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the single matches
-        for single_match in single_matches_iterator:
+        for single_match in single_matches:
             # retrieves the match start and end values and uses them to
             # construct the match value that is going to be used for the
             # construction of the match orderer structure to be added
@@ -334,9 +367,15 @@ class TemplateEngine(colony.System):
             # retrieves the match orderer type for the
             # current iteration, this value will condition
             # the way the nodes are going to be created
-            type = match_orderer.get_match_type()
+            type = match_orderer.get_type()
 
-            if type == START_VALUE:
+            if type == OUTPUT_VALUE:
+                value = match_orderer.get_value()
+                node = ast.OutputNode(value)
+                parent_node = stack[-1]
+                parent_node.add_child_node(node)
+
+            elif type == START_VALUE:
                 node = ast.CompositeNode(
                     [match_orderer],
                     regex = ATTRIBUTE_REGEX,
@@ -401,34 +440,34 @@ class MatchOrderer(object):
     should be the internal regex library value for
     the match operation """
 
-    match_type = None
+    type = None
     """ The type of the match object to be ordered,
     this value should reflect the kind of match that
     has been accomplished for the value """
 
-    match_value = None
+    value = None
     """ The value of the match object to be ordered
     this should be a literal string value of it """
 
-    def __init__(self, match, match_type, match_value):
+    def __init__(self, match, type, value):
         self.match = match
-        self.match_type = match_type
-        self.match_value = match_value
+        self.type = type
+        self.value = value
 
     def __cmp__(self, other):
         return other.match.start() - self.match.start()
 
-    def get_match_type(self):
-        return self.match_type
+    def get_type(self):
+        return self.type
 
-    def set_match_type(self, match_type):
-        self.match_type = match_type
+    def set_type(self, type):
+        self.type = type
 
-    def get_match_value(self):
-        return self.match_value
+    def get_value(self):
+        return self.value
 
-    def set_match_value(self, match_value):
-        self.match_value = match_value
+    def set_value(self, value):
+        self.value = value
 
 class LiteralMatch(object):
 
