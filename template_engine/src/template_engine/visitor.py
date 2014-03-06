@@ -566,8 +566,8 @@ class Visitor:
     def visit_literal_node(self, node):
         # retrieves the match value from the current node's
         # value escaping it to avoid any problem and then
-        # writes the value into the current string buffer 
-        match_value = node.value.match_value
+        # writes the value into the current string buffer
+        match_value = node.value.value
         match_value = self._escape_literal(match_value)
         self.string_buffer.write(match_value)
 
@@ -604,16 +604,16 @@ class Visitor:
         # retrieves the attributes map for the current node that
         # is going to be used to process the data that is going
         # to be printed to the current context
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
+        if PREFIX_VALUE in attributes:
             # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix = attributes[PREFIX_VALUE]
             attribute_prefix_value = self.get_value(attribute_prefix, localize = True)
         # otherwise
         else:
@@ -621,18 +621,18 @@ class Visitor:
             attribute_prefix_value = ""
 
         # in case the format exists in the attributes map
-        if "format" in attributes_map:
+        if "format" in attributes:
             # retrieves attribute value value
-            format_string = attributes_map["format"]
+            format_string = attributes["format"]
             format_string_value = self.get_value(format_string)
             is_valid = format_string_value and not attribute_value_value == None
             attribute_value_value = is_valid and\
                 format_string_value % attribute_value_value or attribute_value_value
 
         # in case the quote exists in the attributes map
-        if "quote" in attributes_map:
+        if "quote" in attributes:
             # retrieves attribute quote value
-            attribute_quote = attributes_map["quote"]
+            attribute_quote = attributes["quote"]
             attribute_quote_value = self.get_boolean_value(attribute_quote)
         # otherwise
         else:
@@ -640,9 +640,9 @@ class Visitor:
             attribute_quote_value = False
 
         # in case the xml escape exists in the attributes map
-        if XML_ESCAPE_VALUE in attributes_map:
+        if XML_ESCAPE_VALUE in attributes:
             # retrieves attribute xml escape value
-            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
+            attribute_xml_escape = attributes[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         # otherwise
         else:
@@ -650,9 +650,9 @@ class Visitor:
             attribute_xml_escape_value = False
 
         # in case the xml quote exists in the attributes map
-        if XML_QUOTE_VALUE in attributes_map:
+        if XML_QUOTE_VALUE in attributes:
             # retrieves attribute xml quote value
-            attribute_xml_quote = attributes_map[XML_QUOTE_VALUE]
+            attribute_xml_quote = attributes[XML_QUOTE_VALUE]
             attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
         # otherwise
         else:
@@ -660,9 +660,9 @@ class Visitor:
             attribute_xml_quote_value = False
 
         # in case the new line convert exists in the attributes map
-        if NEWLINE_CONVERT_VALUE in attributes_map:
+        if NEWLINE_CONVERT_VALUE in attributes:
             # retrieves attribute newline convert value
-            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert = attributes[NEWLINE_CONVERT_VALUE]
             attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
         # otherwise
         else:
@@ -670,9 +670,9 @@ class Visitor:
             attribute_newline_convert_value = False
 
         # in case the convert exists in the attributes map
-        if CONVERT_VALUE in attributes_map:
+        if CONVERT_VALUE in attributes:
             # retrieves attribute convert value
-            attribute_convert = attributes_map[CONVERT_VALUE]
+            attribute_convert = attributes[CONVERT_VALUE]
             attribute_convert_value = self.get_value(attribute_convert)
         # otherwise
         else:
@@ -680,9 +680,9 @@ class Visitor:
             attribute_convert_value = None
 
         # in case the allow empty exists in the attributes map
-        if ALLOW_EMPTY_VALUE in attributes_map:
+        if ALLOW_EMPTY_VALUE in attributes:
             # retrieves attribute allow empty value
-            attribute_allow_empty = attributes_map[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty = attributes[ALLOW_EMPTY_VALUE]
             attribute_allow_empty_value = self.get_value(attribute_allow_empty)
         # otherwise
         else:
@@ -690,9 +690,9 @@ class Visitor:
             attribute_allow_empty_value = True
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes_map:
+        if DEFAULT_VALUE in attributes:
             # retrieves attribute default value
-            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default = attributes[DEFAULT_VALUE]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -700,9 +700,9 @@ class Visitor:
             attribute_default_value = None
 
         # in case the serializer exists in the attributes map
-        if SERIALIZER_VALUE in attributes_map:
+        if SERIALIZER_VALUE in attributes:
             # retrieves attribute serializer value
-            attribute_serializer = attributes_map[SERIALIZER_VALUE]
+            attribute_serializer = attributes[SERIALIZER_VALUE]
             attribute_serializer_value = self.get_literal_value(attribute_serializer)
         # otherwise
         else:
@@ -788,16 +788,16 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the key map exists in the attributes map
-        if KEY_MAP_VALUE in attributes_map:
+        if KEY_MAP_VALUE in attributes:
             # retrieves attribute key map value
-            attribute_key_map = attributes_map[KEY_MAP_VALUE]
+            attribute_key_map = attributes[KEY_MAP_VALUE]
             attribute_key_map_value = self.get_value(attribute_key_map)
         # otherwise
         else:
@@ -805,9 +805,9 @@ class Visitor:
             attribute_key_map_value = {}
 
         # in case the key order list exists in the attributes map
-        if KEY_ORDER_LIST_VALUE in attributes_map:
+        if KEY_ORDER_LIST_VALUE in attributes:
             # retrieves attribute key order list value
-            attribute_key_order_list = attributes_map[KEY_ORDER_LIST_VALUE]
+            attribute_key_order_list = attributes[KEY_ORDER_LIST_VALUE]
             attribute_key_order_list_value = self.get_value(attribute_key_order_list)
         # otherwise
         else:
@@ -815,9 +815,9 @@ class Visitor:
             attribute_key_order_list_value = attribute_value_value.keys()
 
         # in case the key separator exists in the attributes map
-        if KEY_SEPARATOR_VALUE in attributes_map:
+        if KEY_SEPARATOR_VALUE in attributes:
             # retrieves attribute key separator value
-            attribute_key_separator = attributes_map[KEY_SEPARATOR_VALUE]
+            attribute_key_separator = attributes[KEY_SEPARATOR_VALUE]
             attribute_key_separator_value = self.get_value(attribute_key_separator)
         # otherwise
         else:
@@ -825,9 +825,9 @@ class Visitor:
             attribute_key_separator_value = ": "
 
         # in case the item separator exists in the attributes map
-        if ITEM_SEPARATOR_VALUE in attributes_map:
+        if ITEM_SEPARATOR_VALUE in attributes:
             # retrieves attribute item separator value
-            attribute_item_separator = attributes_map[ITEM_SEPARATOR_VALUE]
+            attribute_item_separator = attributes[ITEM_SEPARATOR_VALUE]
             attribute_item_separator_value = self.get_value(attribute_item_separator)
         # otherwise
         else:
@@ -835,9 +835,9 @@ class Visitor:
             attribute_item_separator_value = NEWLINE_CHARACTER
 
         # in case the xml escape exists in the attributes map
-        if XML_ESCAPE_VALUE in attributes_map:
+        if XML_ESCAPE_VALUE in attributes:
             # retrieves attribute xml escape value
-            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
+            attribute_xml_escape = attributes[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         # otherwise
         else:
@@ -845,9 +845,9 @@ class Visitor:
             attribute_xml_escape_value = False
 
         # in case the xml quote exists in the attributes map
-        if XML_QUOTE_VALUE in attributes_map:
+        if XML_QUOTE_VALUE in attributes:
             # retrieves attribute xml quote value
-            attribute_xml_quote = attributes_map[XML_QUOTE_VALUE]
+            attribute_xml_quote = attributes[XML_QUOTE_VALUE]
             attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
         # otherwise
         else:
@@ -855,9 +855,9 @@ class Visitor:
             attribute_xml_quote_value = False
 
         # in case the new line convert exists in the attributes map
-        if NEWLINE_CONVERT_VALUE in attributes_map:
+        if NEWLINE_CONVERT_VALUE in attributes:
             # retrieves attribute newline convert value
-            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert = attributes[NEWLINE_CONVERT_VALUE]
             attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
         # otherwise
         else:
@@ -865,9 +865,9 @@ class Visitor:
             attribute_newline_convert_value = False
 
         # in case the allow empty exists in the attributes map
-        if ALLOW_EMPTY_VALUE in attributes_map:
+        if ALLOW_EMPTY_VALUE in attributes:
             # retrieves attribute allow empty value
-            attribute_allow_empty = attributes_map[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty = attributes[ALLOW_EMPTY_VALUE]
             attribute_allow_empty_value = self.get_value(attribute_allow_empty)
         # otherwise
         else:
@@ -942,12 +942,12 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
 
         # sets the attribute value value in the global map
@@ -962,36 +962,36 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_from = attributes_map[FROM_VALUE]
+        attribute_from = attributes[FROM_VALUE]
         attribute_from_value = self.get_value(attribute_from)
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
         # in case the index exists in the attributes map
-        if INDEX_VALUE in attributes_map:
+        if INDEX_VALUE in attributes:
             # retrieves the attribute index literal value
-            attribute_index = attributes_map[INDEX_VALUE]
+            attribute_index = attributes[INDEX_VALUE]
             attribute_index_literal_value = self.get_literal_value(attribute_index)
         else:
             # sets the attribute index literal value as none
             attribute_index_literal_value = None
 
         # in case the key exists in the attributes map
-        if KEY_VALUE in attributes_map:
+        if KEY_VALUE in attributes:
             # retrieves the attribute key literal value
-            attribute_key = attributes_map[KEY_VALUE]
+            attribute_key = attributes[KEY_VALUE]
             attribute_key_literal_value = self.get_literal_value(attribute_key)
         else:
             # sets the attribute key literal value as none
             attribute_key_literal_value = None
 
         # in case the start index exists in the attributes map
-        if START_INDEX_VALUE in attributes_map:
+        if START_INDEX_VALUE in attributes:
             # retrieves the attribute start index literal value
-            attribute_start_index = attributes_map[START_INDEX_VALUE]
+            attribute_start_index = attributes[START_INDEX_VALUE]
             attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
 
             # sets the initial index
@@ -1124,10 +1124,10 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_values = attributes_map["values"]
+        attribute_values = attributes["values"]
         attribute_values_value = self.get_value(attribute_values, True)
 
         if not hasattr(node, "current_index"):
@@ -1168,10 +1168,10 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
 
         # in case the attribute value value is not valid the
@@ -1209,18 +1209,18 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # in case the file exists in the attributes map
-        if FILE_VALUE in attributes_map:
+        if FILE_VALUE in attributes:
             # retrieves the attribute file literal value
-            attribute_file = attributes_map[FILE_VALUE]
+            attribute_file = attributes[FILE_VALUE]
             attribute_file_literal_value = self.get_literal_value(attribute_file)
 
         # in case the file value exists in the attributes map
-        if FILE_VALUE_VALUE in attributes_map:
+        if FILE_VALUE_VALUE in attributes:
             # retrieves the attribute file literal value
-            attribute_file_value = attributes_map[FILE_VALUE_VALUE]
+            attribute_file_value = attributes[FILE_VALUE_VALUE]
             attribute_file_literal_value = self.get_value(attribute_file_value)
 
         # in case the attribute file literal value is not valid
@@ -1306,12 +1306,12 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # in case the format exists in the attributes map
-        if "format" in attributes_map:
+        if "format" in attributes:
             # retrieves the attributes map values
-            attribute_format = attributes_map["format"]
+            attribute_format = attributes["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1340,12 +1340,12 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # in case the format exists in the attributes map
-        if "format" in attributes_map:
+        if "format" in attributes:
             # retrieves the attributes map values
-            attribute_format = attributes_map["format"]
+            attribute_format = attributes["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1375,12 +1375,12 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # in case the format exists in the attributes map
-        if "format" in attributes_map:
+        if "format" in attributes:
             # retrieves the attributes map values
-            attribute_format = attributes_map["format"]
+            attribute_format = attributes["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -1410,18 +1410,18 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes_map["format"]
+        attribute_format = attributes["format"]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes_map:
+        if DEFAULT_VALUE in attributes:
             # retrieves attribute default value
-            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default = attributes[DEFAULT_VALUE]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -1456,18 +1456,18 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes_map["format"]
+        attribute_format = attributes["format"]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes_map:
+        if DEFAULT_VALUE in attributes:
             # retrieves attribute default value
-            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default = attributes[DEFAULT_VALUE]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -1509,12 +1509,12 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # in case the format exists in the attributes map
-        if "value" in attributes_map:
+        if "value" in attributes:
             # retrieves the attributes map values
-            attribute_value = attributes_map["value"]
+            attribute_value = attributes["value"]
             attribute_value_value = self.get_value(attribute_value)
         # otherwise
         else:
@@ -1523,9 +1523,9 @@ class Visitor:
             attribute_value_value = datetime.datetime.now()
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes_map:
+        if DEFAULT_VALUE in attributes:
             # retrieves attribute default value
-            attribute_default = attributes_map[DEFAULT_VALUE]
+            attribute_default = attributes[DEFAULT_VALUE]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -1831,14 +1831,14 @@ class Visitor:
         """
 
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes["item"]
         attribute_item_value = self.get_value(attribute_item)
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_operator = attributes_map[OPERATOR_VALUE]
+        attribute_operator = attributes[OPERATOR_VALUE]
         attribute_operator_literal_value = self.get_literal_value(attribute_operator)
 
         # retrieves the comparison function
