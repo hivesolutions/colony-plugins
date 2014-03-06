@@ -590,7 +590,8 @@ class TemplateFile(object):
     def load_system_variable(self, variable_name = "_system"):
         """
         Loads a system information variable to the template
-        file.
+        file. This variable would allow for access to the
+        status of the current manager/system.
 
         @type variable_name: String
         @param variable_name: The name of the variable used
@@ -605,8 +606,9 @@ class TemplateFile(object):
         # retrieves the map containing the "global" system information
         system_information_map = plugin_manager.get_system_information_map()
 
-        # assigns the system information map variable
-        # to the template
+        # assigns the system information map variable to
+        # the template so that it may be used to retrieve
+        # global information about the system
         self.assign(variable_name, system_information_map)
 
     def process(self, get_value = True):
