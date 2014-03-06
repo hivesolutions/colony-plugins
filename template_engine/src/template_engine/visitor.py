@@ -564,14 +564,12 @@ class Visitor:
 
     @_visit(ast.LiteralNode)
     def visit_literal_node(self, node):
-        # retrieves the match value (literal value)
+        # retrieves the match value from the current node's
+        # value escaping it to avoid any problem and then
+        # writes the value into the current string buffer 
         match_value = node.value.match_value
-
-        # escapes the match value (literal value)
-        escaped_match_value = self._escape_literal(match_value)
-
-        # writes the escaped match value
-        self.string_buffer.write(escaped_match_value)
+        match_value = self._escape_literal(match_value)
+        self.string_buffer.write(match_value)
 
     @_visit(ast.MatchNode)
     def visit_match_node(self, node):
