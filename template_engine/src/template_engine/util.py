@@ -83,6 +83,10 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return repr(ref)
 
+    def __nonzero__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return bool(ref)
+
     def __call__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "ref")
         return ref.__call__(*args, **kwargs)
