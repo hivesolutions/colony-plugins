@@ -386,7 +386,7 @@ class TemplateEngine(colony.System):
         # method so that it may be used for rendering
         return template_file
 
-class MatchOrderer:
+class MatchOrderer(object):
     """
     The match orderer class, that is used to re-sort
     the various matched of the template engine in
@@ -427,13 +427,15 @@ class MatchOrderer:
     def set_match_value(self, match_value):
         self.match_value = match_value
 
-class LiteralMatch:
+class LiteralMatch(object):
 
     start_index = None
-    """ The start index value """
+    """ The start index value, this should be an offset
+    position inside the current document's string data value """
 
     end_index = None
-    """ The end index value """
+    """ The end index value, that should close the
+    current literal value starting in the start index """
 
     def __init__(self, start_index = None, end_index = None):
         self.start_index = start_index
@@ -445,7 +447,7 @@ class LiteralMatch:
     def end(self):
         return self.end_index
 
-class TemplateFile:
+class TemplateFile(object):
     """
     The template file class, this is the most abstract
     representation of the template and also the entry
