@@ -44,8 +44,7 @@ import datetime
 
 import xml.dom.minidom
 
-import colony.base.system
-import colony.libs.aes_util
+import colony
 
 import exceptions
 
@@ -82,7 +81,7 @@ TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 submission, this is a secure https based url
 but still only for testing purposes """
 
-class ApiAt(colony.base.system.System):
+class ApiAt(colony.System):
     """
     The api at class.
     """
@@ -324,7 +323,7 @@ class AtClient:
         # its currently set key as the secret (this
         # key was generated according to the default
         # block size defined in the module)
-        aes = colony.libs.aes_util.AesCipher()
+        aes = colony.AesCipher()
         secret = aes.get_key()
 
         # retrieves the path to the at public key to be used
