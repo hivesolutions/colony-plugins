@@ -37,28 +37,6 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
-BASIC_TYPES = (
-    types.IntType,
-    types.FloatType,
-    types.LongType,
-    types.BooleanType,
-    types.ListType,
-    types.TypeType,
-    types.NoneType
-)
-
-def accessor(value):
-    value_t = type(value)
-    is_class = hasattr(value, "__class__")
-    is_map = hasattr(value, "__getitem__")
-    is_string = value_t in types.StringTypes
-    is_basic = value_t in BASIC_TYPES
-    is_invalid = is_string or is_basic
-    is_valid = (is_class or is_map) and not is_invalid
-    return Accessor(value) if is_valid else value
-
 class Accessor(dict):
 
     def __init__(self, ref):
@@ -87,19 +65,19 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return bool(ref)
 
-    def __eq__(self, other):
-        ref = dict.__getattribute__(self, "__ref__")()
-        return ref == other
-
-    def __call__(self, *args, **kwargs):
-        ref = dict.__getattribute__(self, "ref")
-        return ref.__call__(*args, **kwargs)
-
     def __getattribute__ (self, name):
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
         if hasattr(ref, name): return accessor(getattr(ref, name))
-        if is_map: return accessor(ref[name])
-        raise AttributeError("'%s' not found" % name)
+        if is_map and name in ref: return accessor(ref[name])
+        return dict.__getattribute__(self, name)
 
-    __getitem__ = __getattribute__
+    def __getitem__ (self, name):
+        ref = dict.__getattribute__(self, "ref")
+        is_map = dict.__getattribute__(self, "is_map")
+        if hasattr(ref, name): return accessor(getattr(ref, name))
+        if is_map and name in ref: return accessor(ref[name])
+        raise KeyError("'%s' not found" % name)
+
+def accessor(value):
+    return Accessor(value)

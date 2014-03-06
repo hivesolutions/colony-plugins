@@ -2092,6 +2092,12 @@ class EvalVisitor(Visitor):
         try: value = eval(name, globals, globals)
         except: value = None
 
+        # verifies if the currently returned value is an accessor value and
+        # in case it is retrieves the reference values as the value so that
+        # the inner type of it as respected and the proxy is not used
+        is_accessor = isinstance(value, util.Accessor)
+        if is_accessor: value = value.ref
+
         # in case the returned value is callable it must be called
         # with no arguments to be able to retrieve the final value
         # for the current evaluation (simple callable)
