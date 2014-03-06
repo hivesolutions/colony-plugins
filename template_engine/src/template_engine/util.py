@@ -49,7 +49,7 @@ BASIC_TYPES = (
     types.NoneType
 )
 
-def try_acessor(value):
+def accessor(value):
     value_t = type(value)
     is_class = hasattr(value, "__class__")
     is_map = hasattr(value, "__getitem__")
@@ -57,9 +57,9 @@ def try_acessor(value):
     is_basic = value_t in BASIC_TYPES
     is_invalid = is_string or is_basic
     is_valid = (is_class or is_map) and not is_invalid
-    return Acessor(value) if is_valid else value
+    return Accessor(value) if is_valid else value
 
-class Acessor(dict):
+class Accessor(dict):
 
     def __init__(self, ref):
         self.ref = ref
@@ -90,8 +90,8 @@ class Acessor(dict):
     def __getattribute__ (self, name):
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
-        if hasattr(ref, name): return try_acessor(getattr(ref, name))
-        if is_map: return try_acessor(ref[name])
+        if hasattr(ref, name): return accessor(getattr(ref, name))
+        if is_map: return accessor(ref[name])
         raise AttributeError("'%s' not found" % name)
 
     __getitem__ = __getattribute__
