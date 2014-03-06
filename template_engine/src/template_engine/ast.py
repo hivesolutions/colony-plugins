@@ -152,33 +152,23 @@ class LiteralNode(AstNode):
         AstNode.__init__(self)
         self.value = value
 
-class OutputNode(AstNode):
-    """
-    The output node class that represent a match that
-    is representative of an output request. An example
-    of such request would be {{ 'hello world' }}.
+class SimpleNode(AstNode):
 
-    This is equivalent to the more complex single node
-    configured as an out operation.
-    """
-
-    def __init__(self, value = None):
+    def __init__(self, value = None, type = "out"):
         AstNode.__init__(self)
         self.value = value
+        self.type = type
         self.attributes = dict()
         self.process_value()
 
-    def process_value(self):
-        value = self.value[2:-2]
-        value = value.strip()
+    def get_attributes(self):
+        return self.attributes
 
-        match = NAME_REGEX.match(value)
-        if match:
-            value = match.group()
-            self.attributes["value"] = dict(
-                value = value,
-                type = "variable"
-            )
+    def accept(self, visitor):
+        visitor.process_accept(self, self.type)
+
+    def parse(self, value):
+        original = value
 
         match = LITERAL_REGEX.match(value)
         if match:
@@ -193,16 +183,70 @@ class OutputNode(AstNode):
             elif index == BOOL_FALSE: value = False
             elif index == NONE: value = None
 
-            self.attributes["value"] = dict(
+            return dict(
                 value = value,
+                original = original,
                 type = "literal"
             )
 
-    def get_attributes(self):
-        return self.attributes
+        match = NAME_REGEX.match(value)
+        if match:
+            value = match.group()
+            return dict(
+                value = value,
+                original = original,
+                type = "variable"
+            )
 
-    def accept(self, visitor):
-        visitor.process_accept(self, "out")
+class OutputNode(SimpleNode):
+    """
+    The output node class that represent a match that
+    is representative of an output request. An example
+    of such request would be {{ 'hello world' }}.
+
+    This is equivalent to the more complex single node
+    configured as an out operation.
+    """
+
+    def process_value(self):
+        value = self.value[2:-2]
+        value = value.strip()
+        self.attributes["value"] = self.parse(value)
+
+class EvalNode(SimpleNode):
+
+    def process_value(self):
+        value = self.value[2:-2]
+        value = value.strip()
+        value_s = value.split(" ", 1)
+        self.type = value_s[0]
+
+        if self.type == "if":
+            contents = value_s[1].strip()
+            print contents
+
+            regex = re.compile("(not)?.+ (in|<|>|<=|>=|==) .+")
+            match = regex.match(contents)
+            if match:
+                not_group = match.group(0)
+                operator_group = match.group(1)
+            else:
+                self.attributes["item"] = self.parse(contents)
+                self.attributes["value"] = None
+                self.attributes["operator"] = None
+
+            # 1. tenho de caçar o operador do remanesched
+
+
+        elif self.type == "for":
+            pass
+
+        elif self.type == "tobias":
+            pass
+
+    def is_end(self):
+        if not self.type: return False
+        return self.type.startswith("end")
 
 class MatchNode(AstNode):
     """
@@ -273,6 +317,7 @@ class MatchNode(AstNode):
             name, value = attribute.split("=")
             self.attributes[name] = dict(
                 value = value,
+                original = value,
                 type = "variable"
             )
 
@@ -284,6 +329,7 @@ class MatchNode(AstNode):
             attribute = match.group()
             name, value = attribute.split("=")
             index = match.lastindex
+            original = value
 
             if index == QUOTED_SINGLE: value = value.strip("'")
             elif index == QUOTED_DOUBLE: value = value.strip("\"")
@@ -295,6 +341,7 @@ class MatchNode(AstNode):
 
             self.attributes[name] = dict(
                 value = value,
+                original = original,
                 type = "literal"
             )
 
