@@ -611,42 +611,45 @@ class TemplateFile:
         Processes the template file running the visitor
         and returning the result value.
 
+        This is considered to be the main method for the
+        processing of the template and should only be called
+        when the complete set of attribute are set in the
+        current template structure (to avoid errors).
+
         @type get_value: bool
         @param get_value: If the final string value of
         the contents should be retrieved as a result.
         @rtype: String
-        @return: The result value from the visitor.
+        @return: The result value from the visitor or the
+        string buffer in case the get value flag was set
+        to a false value.
         """
 
-        # sets the encoding in the visitor
+        # sets the complete set of attributes in the visitor
+        # that is currently set in the template and then runs
+        # the accept operation in the root node, this will
+        # trigger the generation of the template contents
         self.visitor.set_encoding(self.encoding)
-
-        # sets the file path in the visitor
         self.visitor.set_file_path(self.file_path)
-
-        # sets the template engine in the visitor
         self.visitor.set_template_engine(self.manager)
-
-        # sets the variable encoding in the visitor
         self.visitor.set_variable_encoding(self.variable_encoding)
-
-        # sets the strict mode in the visitor
         self.visitor.set_strict_mode(self.strict_mode)
-
-        # accepts the visitor in the root node
         self.root_node.accept(self.visitor)
 
-        # retrieves the visitor string buffer
+        # retrieves the visitor string buffer, that should now
+        # contains the final contents from template generation
         visitor_string_buffer = self.visitor.string_buffer
 
         # retrieves the visitor string buffer value, in case
         # the value should be retrieved from the underlying string
         # buffer, otherwise retrieves the string buffer as the value
-        if get_value: visitor_string_buffer_value = visitor_string_buffer.get_value()
-        else: visitor_string_buffer_value = visitor_string_buffer
+        if get_value: value = visitor_string_buffer.get_value()
+        else: value = visitor_string_buffer
 
-        # returns the visitor string buffer value
-        return visitor_string_buffer_value
+        # returns the final value to the caller method, this may
+        # either have the reference to the string buffer of the
+        # generated string value contents
+        return value
 
     def get_variable_encoding(self):
         """
