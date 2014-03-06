@@ -339,13 +339,16 @@ class Visitor:
     """ The node method map """
 
     encoding = None
-    """ The encoding used the file """
+    """ The encoding used the file, this is a meta-information
+    value that is not going to be used for any practical usage """
 
     file_path = None
-    """ The path to the file """
+    """ The path to the file that generated the abstract syntax
+    tree that is going to be visited by this visitor """
 
     template_engine = None
-    """ The template engine """
+    """ The reference template engine system object that handles
+    and manages this visitor (owner object) """
 
     variable_encoding = None
     """ The variable encoding """
@@ -1087,10 +1090,8 @@ class Visitor:
                 accept_node = self._validate_accept_node(node_child_node, accept_node)
 
                 # in case the accept node is set to invalid
-                # the evaluation is over
-                if accept_node == None:
-                    # returns immediately
-                    return
+                # the evaluation is over (nothing to be done)
+                if accept_node == None: return
 
                 # in case the accept node flag is set
                 # accepts the node child node
