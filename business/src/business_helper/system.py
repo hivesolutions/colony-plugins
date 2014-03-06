@@ -66,7 +66,17 @@ class BusinessHelper(colony.base.system.System):
     namespace_business_logic_classes_map = {}
     """ The map associating the namespace with the business logic classes """
 
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = DEFAULT_MODULE_NAME, extra_symbols_map = {}, extra_globals_map = {}):
+    def import_class_module(
+        self,
+        class_module_name,
+        globals,
+        locals,
+        global_values,
+        base_directory_path,
+        target_module_name = DEFAULT_MODULE_NAME,
+        extra_symbols_map = {},
+        extra_globals_map = {}
+    ):
         """
         Imports the class module using the globals and locals from the current target,
         it imports the symbols in the module to the current globals environment.
