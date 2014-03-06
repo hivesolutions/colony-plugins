@@ -51,6 +51,11 @@ OUTPUT_REGEX_VALUE = "\{\{.*\}\}"
 output (print) operations, these are specialized nodes
 that are only meant to print variable/literal values """
 
+EVAL_REGEX_VALUE = "\{\%.*\%\}"
+""" Regular expression that matched the complex evaluation
+expression that allow the control flow of the template this
+is the regular expression to be used under simple mode """
+
 START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
 """ The start tag regular expression value that should
 match the starting tag of an expression """
@@ -90,22 +95,30 @@ NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
 OUTPUT_VALUE = 1
 """ The output value """
 
-START_VALUE = 2
+EVAL_VALUE = 2
+""" The eval value """
+
+START_VALUE = 3
 """ The start value """
 
-END_VALUE = 3
+END_VALUE = 4
 """ The end value """
 
-SINGLE_VALUE = 4
+SINGLE_VALUE = 5
 """ The single value """
 
-LITERAL_VALUE = 5
+LITERAL_VALUE = 6
 """ The literal value """
 
 OUTPUT_REGEX = re.compile(OUTPUT_REGEX_VALUE)
-""" REgualr expression used to match the simple output
+""" Regular expression used to match the simple output
 nodes it should be wide enough to handle all kinds of
 variable values """
+
+EVAL_REGEX = re.compile(EVAL_REGEX_VALUE)
+""" Compiled regular expression used for the matching
+of the evaluation expressions that allow the control of
+flow contents for the template """
 
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
 """ The start tag regular expression, used to
@@ -229,6 +242,23 @@ class TemplateEngine(colony.System):
             # creates the match orderer for the current (output) match
             # signaling it as a output value (for later reference)
             match_orderer = MatchOrderer(output_match, OUTPUT_VALUE, match_value)
+            match_orderer_l.append(match_orderer)
+
+        # retrieves the eval matches iterator
+        eval_matches = EVAL_REGEX.finditer(file_contents)
+
+        # iterates over all the eval matches
+        for eval_match in eval_matches:
+            # retrieves the reference to the start and end matching indexed
+            # to the eval match and uses it to retrieve the literal value
+            # for the match (going to be used in the match orderer)
+            match_start = eval_match.start()
+            match_end = eval_match.end()
+            match_value = file_contents[match_start:match_end]
+
+            # creates the match orderer for the current (eval) match
+            # signaling it as a eval value (for later reference)
+            match_orderer = MatchOrderer(eval_match, EVAL_VALUE, match_value)
             match_orderer_l.append(match_orderer)
 
         # retrieves the start matches iterator
@@ -374,6 +404,16 @@ class TemplateEngine(colony.System):
                 node = ast.OutputNode(value)
                 parent_node = stack[-1]
                 parent_node.add_child_node(node)
+
+            elif type == EVAL_VALUE:
+                value = match_orderer.get_value()
+                node = ast.EvalNode(value)
+                is_end = node.is_end()
+                if is_end: stack.pop()
+                else:
+                    parent_node = stack[-1]
+                    parent_node.add_child_node(node)
+                    stack.append(node)
 
             elif type == START_VALUE:
                 node = ast.CompositeNode(
@@ -550,7 +590,7 @@ class TemplateFile(object):
         self.encoding = encoding
         self.root_node = root_node
 
-        self.visitor = visitor.Visitor()
+        self.visitor = visitor.EvalVisitor()
         self.locale_bundles = []
 
     def assign(self, variable_name, variable_value):
