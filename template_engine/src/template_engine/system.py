@@ -375,11 +375,14 @@ class TemplateEngine(colony.System):
         )
 
         # attaches the currently given process methods and locale
-        # bundles to the template file
+        # bundles to the template file so that they may be used
+        # latter for the processing of the file
         template_file.attach_process_methods(process_methods_list)
         template_file.attach_locale_bundles(locale_bundles)
 
-        # loads the system variable in the template file
+        # loads the system variable in the template file, this
+        # will allow access to the global system status from inside
+        # the template file (for diagnosis and debugging)
         template_file.load_system_variable()
 
         # returns the final template file template file to the caller
