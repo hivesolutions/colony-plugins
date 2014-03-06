@@ -725,13 +725,13 @@ class TemplateFile(object):
 
         # retrieves the visitor string buffer, that should now
         # contains the final contents from template generation
-        visitor_string_buffer = self.visitor.string_buffer
+        string_buffer = self.visitor.string_buffer
 
         # retrieves the visitor string buffer value, in case
         # the value should be retrieved from the underlying string
         # buffer, otherwise retrieves the string buffer as the value
-        if get_value: value = visitor_string_buffer.get_value()
-        else: value = visitor_string_buffer
+        if get_value: value = string_buffer.get_value()
+        else: value = string_buffer
 
         # returns the final value to the caller method, this may
         # either have the reference to the string buffer of the
