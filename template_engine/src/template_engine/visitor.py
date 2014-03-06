@@ -2105,5 +2105,5 @@ class EvalVisitor(Visitor):
         value = self._resolve_locale(value) if localize else value
 
         # returns the final value according to the eval based value
-        # retrival that uses the python interpreter for evaluation
+        # retrieval that uses the python interpreter for evaluation
         return value
