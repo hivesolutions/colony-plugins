@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 
-import colony.base.system
+import colony
 
 import ast
 import visitor
@@ -92,7 +92,8 @@ LITERAL_VALUE = "literal"
 """ The literal value """
 
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
-""" The start tag regular expression """
+""" The start tag regular expression, used to
+match the start tag of a complete expression """
 
 END_TAG_REGEX = re.compile(END_TAG_REGEX_VALUE)
 """ The end tag regular expression """
@@ -115,7 +116,7 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
 """ The literal regular expression that matches all the literals, there
 are matching groups for each of the data types """
 
-class TemplateEngine(colony.base.system.System):
+class TemplateEngine(colony.System):
     """
     The template engine class, responsible for the processing
     of template files according to the current template engine
