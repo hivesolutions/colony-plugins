@@ -48,21 +48,6 @@ import colony
 
 import exceptions
 
-DEFAULT_CHARSET = "utf-8"
-""" The default charset """
-
-CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
-""" The content type charset value """
-
-KEY_FILE_PATH_VALUE = "key_file_path"
-""" The key file path value """
-
-CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
-""" The certificate file path value """
-
-SSL_VERSION_VALUE = "ssl_version"
-""" The ssl version value """
-
 INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base url to be used for invoice
 submission, this is a secure https based url"""
@@ -427,7 +412,7 @@ class AtClient:
             url,
             method,
             parameters,
-            content_type_charset = DEFAULT_CHARSET,
+            content_type_charset = "utf-8",
             contents = contents
         )
         contents = http_response.received_message
@@ -527,12 +512,12 @@ class AtClient:
 
             # defines the client parameters to be used in the
             # creation of the http client
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET,
-                KEY_FILE_PATH_VALUE : key_path,
-                CERTIFICATE_FILE_PATH_VALUE : certificate_path,
-                SSL_VERSION_VALUE : "tls1"
-            }
+            client_parameters = dict(
+                content_type_charset = "utf-8",
+                key_file_path = key_path,
+                certificate_file_path = certificate_path,
+                ssl_version = "tls1"
+            )
 
             # creates the http client to be used for the api
             # operation and opens it with the default configuration
