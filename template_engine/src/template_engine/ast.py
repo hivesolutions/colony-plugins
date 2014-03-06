@@ -110,7 +110,10 @@ class AstNode(object):
 
     def accept_double(self, visitor):
         """
-        Accepts the visitor running the iteration logic, using double visiting.
+        Accepts the visitor running the iteration logic,
+        using double visiting, meaning that the node will
+        be visited two times, one before the children visit
+        and one time after.
 
         @type visitor: Visitor
         @param visitor: The visitor object.
@@ -168,7 +171,8 @@ class AstNode(object):
 
 class RootNode(AstNode):
     """
-    The root node class.
+    The root node class, this should be used only for
+    the root and aggregating node and with no value set.
     """
 
     def __init__(self):
@@ -176,7 +180,10 @@ class RootNode(AstNode):
 
 class LiteralNode(AstNode):
     """
-    The literal node class.
+    The literal node class, used for the representation of
+    literal (textual) parts of the template. This is used
+    for the inter-parts between the "logical" nodes and
+    must be visited with a simple printing operation.
     """
 
     def __init__(self, value = None):
@@ -316,7 +323,8 @@ class MatchNode(AstNode):
 
 class SingleNode(MatchNode):
     """
-    The single node class.
+    The single node class, that contains a single value
+    and that should have a simple visiting operation.
     """
 
     def __init__(self, value = None, regex = None, literal_regex = None):
@@ -331,7 +339,9 @@ class SingleNode(MatchNode):
 
 class CompositeNode(MatchNode):
     """
-    The composite node class.
+    The composite node class, that represents a node that contains
+    multiple children nodes and for which a visit may be a complex
+    task of visiting multiple nodes.
     """
 
     def __init__(self, value = None, regex = None, literal_regex = None):
