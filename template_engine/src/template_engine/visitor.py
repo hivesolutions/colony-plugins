@@ -49,6 +49,7 @@ import xml.sax.saxutils
 import colony
 
 import ast
+import util
 import exceptions
 
 FUNCTION_TYPES = (
@@ -93,29 +94,8 @@ NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
 """ The compiled version of names regular expression used for the
 matching of the various components of a variable template value """
 
-FILE_VALUE = "file"
-""" The file value """
-
-FILE_VALUE_VALUE = "file_value"
-""" The file value value """
-
-OPERATOR_VALUE = "operator"
-""" The operator value """
-
-FROM_VALUE = "from"
-""" The from value """
-
-INDEX_VALUE = "index"
-""" The index value """
-
-KEY_VALUE = "key"
-""" The key value """
-
 START_INDEX_VALUE = "start_index"
 """ The start index value """
-
-PREFIX_VALUE = "prefix"
-""" The prefix value """
 
 KEY_MAP_VALUE = "key_map"
 """ The key map value """
@@ -187,6 +167,15 @@ SERIALIZABLE_TYPES = (types.ListType, types.TupleType)
 RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.FormatTuple)
 """ The tuple containing the set of types that can be
 "resolved" in the localization context """
+
+BUILTINS = {
+    "True" : True,
+    "False" : False
+}
+""" The base builtins structure that is going to be re-used
+for every parsing operation to be done by the visitor, this
+should contain the minimum amount of symbols required for the
+parsing of the template file (to avoid security issues) """
 
 CONVERSION_MAP = {
     "2_of_5" : colony.encode_2_of_5
@@ -389,7 +378,7 @@ class Visitor:
         self.node_method_map = {}
         self.visit_childs = True
         self.visit_next = True
-        self.global_map = {}
+        self.global_map = dict(__builtins__ = BUILTINS)
         self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
@@ -611,9 +600,9 @@ class Visitor:
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes:
+        if "prefix" in attributes:
             # retrieves attribute prefix value
-            attribute_prefix = attributes[PREFIX_VALUE]
+            attribute_prefix = attributes["prefix"]
             attribute_prefix_value = self.get_value(attribute_prefix, localize = True)
         # otherwise
         else:
@@ -965,24 +954,24 @@ class Visitor:
         attributes = node.get_attributes()
 
         # retrieves the attributes map values
-        attribute_from = attributes[FROM_VALUE]
+        attribute_from = attributes["from"]
         attribute_from_value = self.get_value(attribute_from)
         attribute_item = attributes["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
         # in case the index exists in the attributes map
-        if INDEX_VALUE in attributes:
+        if "index" in attributes:
             # retrieves the attribute index literal value
-            attribute_index = attributes[INDEX_VALUE]
+            attribute_index = attributes["index"]
             attribute_index_literal_value = self.get_literal_value(attribute_index)
         else:
             # sets the attribute index literal value as none
             attribute_index_literal_value = None
 
         # in case the key exists in the attributes map
-        if KEY_VALUE in attributes:
+        if "key" in attributes:
             # retrieves the attribute key literal value
-            attribute_key = attributes[KEY_VALUE]
+            attribute_key = attributes["key"]
             attribute_key_literal_value = self.get_literal_value(attribute_key)
         else:
             # sets the attribute key literal value as none
@@ -1212,15 +1201,15 @@ class Visitor:
         attributes = node.get_attributes()
 
         # in case the file exists in the attributes map
-        if FILE_VALUE in attributes:
+        if "file" in attributes:
             # retrieves the attribute file literal value
-            attribute_file = attributes[FILE_VALUE]
+            attribute_file = attributes["file"]
             attribute_file_literal_value = self.get_literal_value(attribute_file)
 
         # in case the file value exists in the attributes map
-        if FILE_VALUE_VALUE in attributes:
+        if "file_value" in attributes:
             # retrieves the attribute file literal value
-            attribute_file_value = attributes[FILE_VALUE_VALUE]
+            attribute_file_value = attributes["file_value"]
             attribute_file_literal_value = self.get_value(attribute_file_value)
 
         # in case the attribute file literal value is not valid
@@ -1584,24 +1573,21 @@ class Visitor:
             # otherwise the value must be processed according to the currently
             # defined template rules (may required method invocation)
             else:
-                # creates the list that will hold the complete set of names
-                # for the current (full) variable name, this partial names
-                # will be retrieved using regex matching
-                names = []
+                # splits the variable name into the various parts of
+                # it, separating the proper variable name from the
+                # various filters as defined in the specification
+                parts = variable_name.split("|")
+                variable_name = parts[0].strip()
+                filters = [filter.strip() for filter in parts[1:]]
 
-                # retrieves the various names matched for the current variable
-                # name and then iterates over each of these matches to retrieve
-                # it's literal value and store it under the names list
-                matches = NAMES_REGEX.finditer(variable_name)
-                for match in matches:
-                    name = variable_name[match.start():match.end()]
-                    names.append(name)
+                # resolves the variable name using the multiple parts
+                # approach so that the final value is retrieved according
+                # to the current state of the template engine
+                value = self.resolve_many(variable_name)
 
-                # sets the initial value of the resolution process as the current
-                # global map and then starts the resolution running it for the
-                # complete set of "partial" attribute names (iterative resolution)
-                value = self.global_map
-                for name in names: value = self.resolve(value, name)
+                # iterates over the complete set of filter definition to
+                # resolve the final value according to the filter
+                for filter in filters: value = self.resolve_many(filter, value)
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
@@ -1643,14 +1629,38 @@ class Visitor:
         if value_type == types.BooleanType: return value
         raise exceptions.InvalidBooleanValue("invalid boolean " + value)
 
-    def resolve(self, value, name):
-        try: result = self._resolve(value, name)
+    def resolve_many(self, name, *args, **kwargs):
+        # creates the list that will hold the complete set of names
+        # for the current (full) variable name, this partial names
+        # will be retrieved using regex matching
+        names = []
+
+        # retrieves the various names matched for the current variable
+        # name and then iterates over each of these matches to retrieve
+        # it's literal value and store it under the names list
+        matches = NAMES_REGEX.finditer(name)
+        for match in matches:
+            part = name[match.start():match.end()]
+            names.append(part)
+
+        # sets the initial value of the resolution process as the current
+        # global map and then starts the resolution running it for the
+        # complete set of "partial" attribute names (iterative resolution)
+        value = self.global_map
+        for name in names: value = self.resolve(value, name, *args, **kwargs)
+
+        # return the final resolved value, this value should be a result
+        # of the iteration around the various partial names
+        return value
+
+    def resolve(self, value, name, *args, **kwargs):
+        try: result = self._resolve(value, name, *args, **kwargs)
         except exceptions.UndefinedVariable:
             if self.strict_mode: raise
             else: result = None
         return result
 
-    def _resolve(self, value, name):
+    def _resolve(self, value, name, *args, **kwargs):
         # saves the original attribute name under the original variable
         # as it's going to be used latter for some processing operations
         name_o = name
@@ -1691,16 +1701,20 @@ class Visitor:
         # in case its a variable of type function, must proceed
         # with the calling of it to retrieve the return value
         if result_type in FUNCTION_TYPES:
+            # converts the provided list of arguments into a list so that it may
+            # be changed to contains the "newly" parsed arguments
+            args = list(args)
+
             # resolves the complete set of arguments defined in the original name
             # that was meant to be resolved for the current value, this should
             # returns a list of arguments that must be then re-retrieved as values
             # for the current template engine (recursive resolution)
-            args = self.resolve_args(name_o)
+            extra = self.resolve_args(name_o)
 
             # creates the list of argument values by retrieving the values of the
             # various argument types and uses these values in the function call
-            args = [self.get_value(arg) for arg in args]
-            result = result(*args)
+            args += [self.get_value(arg) for arg in extra]
+            result = result(*args, **kwargs)
 
         # retrieves the current rsults's class and in case the class is of
         # type file reference the contents should be read (the file is closed properly)
@@ -1739,6 +1753,10 @@ class Visitor:
         # all the arguments to populate the list
         arguments_t = []
         for argument in arguments:
+            # saves the original value under the original value so that
+            # it may be used latter for the creation of the argument
+            original = argument
+
             # retrieves the first character of the argument to be used
             # to try to guess the argument type
             first_char = argument[0]
@@ -1748,20 +1766,23 @@ class Visitor:
             # a string (literal types)
             is_string = first_char == "'" or first_char == "\""
             is_number = ord(first_char) > 0x2f and ord(first_char) < 0x3a
-            is_literal = is_string or is_number
+            is_bool = argument in ("True", "False")
+            is_literal = is_string or is_number or is_bool
             _type = is_literal and "literal" or "variable"
 
             # retrieves the correct value taking into account the various
             # type based flags
             if is_string: value = argument[1:-1]
             elif is_number: value = int(argument)
+            elif is_bool: value = argument == "True"
             else: value = argument
 
             # creates the argument type map with both the type and the value
             # for the argument then adds it to the list of argument types
             argument_t = dict(
                 type = _type,
-                value = value
+                value = value,
+                original = original
             )
             arguments_t.append(argument_t)
 
@@ -1830,26 +1851,24 @@ class Visitor:
         comparison node.
         """
 
-        # retrieves the attributes map
+        # retrieves the attributes map and then uses it to retrieve the
+        # item that is going to be compared the "target" value for the
+        # comparison and the operator to be used for it
         attributes = node.get_attributes()
+        item = attributes["item"]
+        item = self.get_value(item)
+        value = attributes.get("value", None)
+        value = self.get_value(value) if value else value
+        operator = attributes.get("operator", None)
+        operator = self.get_literal_value(operator) if operator else operator
 
-        # retrieves the attributes map values
-        attribute_item = attributes["item"]
-        attribute_item_value = self.get_value(attribute_item)
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value)
-        attribute_operator = attributes[OPERATOR_VALUE]
-        attribute_operator_literal_value = self.get_literal_value(attribute_operator)
-
-        # retrieves the comparison function
-        comparison_function = COMPARISION_FUNCTIONS[attribute_operator_literal_value]
-
-        # compares the values using the comparison function
-        # and retrieves the results
-        comparison_result = comparison_function(attribute_item_value, attribute_value_value)
-
-        # returns the comparison result
-        return comparison_result
+        # retrieves the comparison function from the requested operator
+        # and then evaluates the item against the value, this should produce
+        # a boolean result that is then returned as the result of the evaluation
+        # of the comparison based node, to the caller method
+        comparison = COMPARISION_FUNCTIONS.get(operator, None)
+        result = comparison(item, value) if comparison else item
+        return result
 
     def _escape_literal(self, literal_value):
         """
@@ -2053,3 +2072,38 @@ class Visitor:
         # iterates over all the (serializer) names to be
         # removed and removes them from the serializers list
         for name in removal: SERIALIZERS.remove(name)
+
+class EvalVisitor(Visitor):
+
+    def get_value(self, attribute_value, process_literal = False, localize = False):
+        # retrieves the original value from the attribute and then
+        # splits it around the filter operator, retrieving both the
+        # base name value and the filter literal values
+        original = attribute_value["original"]
+        parts = original.split("|")
+        name = parts[0].strip()
+        filters = [filter.strip() for filter in parts[1:]]
+
+        # creates the globals map accessor value from the current map
+        # of global values and then uses it to evaluate the current
+        # name literal value in the current python context, the resulting
+        # value is nullified in case there's an exception in the evaluation
+        globals = util.accessor(self.global_map)
+        try: value = eval(name, globals, globals)
+        except: value = None
+
+        # in case the returned value is callable it must be called
+        # with no arguments to be able to retrieve the final value
+        # for the current evaluation (simple callable)
+        is_callable = hasattr(value, "__call__")
+        if is_callable: value = value()
+
+        # iterates over the complete set of filter definition to
+        # resolve the final value according to the filter and then
+        # runs the final step of locale value resolution (auto locale)
+        for filter in filters: value = self.resolve_many(filter, value)
+        value = self._resolve_locale(value) if localize else value
+
+        # returns the final value according to the eval based value
+        # retrival that uses the python interpreter for evaluation
+        return value
