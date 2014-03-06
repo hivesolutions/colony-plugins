@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
 QUOTED_SINGLE = 1
 QUOTED_DOUBLE = 2
 FLOAT = 3
@@ -45,6 +47,23 @@ BOOL_TRUE = 5
 BOOL_FALSE = 6
 NONE = 7
 
+NAME_REGEX = re.compile(r"[a-zA-Z_][\sa-zA-Z0-9_\.\/\(\)\:,'\"\|]*")
+""" The regular expression that is going to be used in the matching
+of variable names/parts should comply with both the name of the variable,
+possible filtering pipeline and method calls """
+
+LITERAL_REGEX= re.compile(
+    "(?P<quoted_single>['][^']+['])|" + \
+    "(?P<quoted_double>[\"][^\"]+[\"])|" + \
+    "(?P<float>-?[0-9]+\.[0-9]*)|" + \
+    "(?P<integer>-?[0-9]+)|" + \
+    "(?P<true_boolean>True)|" + \
+    "(?P<false_boolean>False)|" + \
+    "(?P<none>None)"
+)
+""" Regular expression to be used in the parsing of literal values, named
+groups are used for the conditional retrieval of each of the types """
+
 class AstNode(object):
     """
     The ast node class, this is the top level abstract
@@ -52,11 +71,9 @@ class AstNode(object):
     """
 
     value = None
-    """ The value, this should be the literal value
-    that original the node (raw value) """
-
-    indent = False
-    """ The indentation level """
+    """ The value, this should be the match value
+    that original the node (raw value) latter this
+    may be used directly in the visit """
 
     child_nodes = []
     """ The list of nodes that are considered to be
@@ -64,30 +81,12 @@ class AstNode(object):
     of children is not limited """
 
     def __init__(self):
-        """
-        Constructor of the class.
-        """
-
         self.child_nodes = []
 
     def __repr__(self):
-        """
-        Returns the default representation of the class.
-
-        @rtype: String
-        @return: The default representation of the class.
-        """
-
-        return "<ast_node indent:%s child_nodes:%s>" % (self.indent, len(self.child_nodes))
+        return "<ast_node child_nodes:%d>" % len(self.child_nodes)
 
     def accept(self, visitor):
-        """
-        Accepts the visitor running the iteration logic.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
         visitor.visit(self)
 
         if visitor.visit_childs:
@@ -95,13 +94,6 @@ class AstNode(object):
                 child_node.accept(visitor)
 
     def accept_post_order(self, visitor):
-        """
-        Accepts the visitor running the iteration logic, in post order.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
         if visitor.visit_childs:
             for child_node in self.child_nodes:
                 child_node.accept_post_order(visitor)
@@ -116,7 +108,8 @@ class AstNode(object):
         and one time after.
 
         @type visitor: Visitor
-        @param visitor: The visitor object.
+        @param visitor: The visitor object, that is going to
+        be used for the visiting operation.
         """
 
         visitor.visit_index = 0
@@ -130,43 +123,12 @@ class AstNode(object):
         visitor.visit(self)
 
     def set_value(self, value):
-        """
-        Sets the value value.
-
-        @type value: Object
-        @param value: The value value.
-        """
-
         self.value = value
 
-    def set_indent(self, indent):
-        """
-        Sets the indent value.
-
-        @type indent: int
-        @param indent: The indent value.
-        """
-
-        self.indent = indent
-
     def add_child_node(self, child_node):
-        """
-        Adds a child node to the node.
-
-        @type child_node: AstNode
-        @param child_node: The child node to be added.
-        """
-
         self.child_nodes.append(child_node)
 
     def remove_child_node(self, child_node):
-        """
-        Removes a child node from the node.
-
-        @type child_node: AstNode
-        @param child_node: The child node to be removed.
-        """
-
         self.child_nodes.remove(child_node)
 
 class RootNode(AstNode):
@@ -201,16 +163,43 @@ class OutputNode(AstNode):
     """
 
     def __init__(self, value = None):
-        MatchNode.__init__(self)
+        AstNode.__init__(self)
         self.value = value
+        self.attributes = dict()
+        self.process_value()
 
-    def get_attributes_map(self):
-        return dict(
-            value = dict(
-                value = self.value,
+    def process_value(self):
+        value = self.value[2:-2]
+        value = value.strip()
+
+        match = NAME_REGEX.match(value)
+        if match:
+            value = match.group()
+            self.attributes["value"] = dict(
+                value = value,
+                type = "variable"
+            )
+
+        match = LITERAL_REGEX.match(value)
+        if match:
+            value = match.group()
+            index = match.lastindex
+
+            if index == QUOTED_SINGLE: value = value.strip("'")
+            elif index == QUOTED_DOUBLE: value = value.strip("\"")
+            elif index == FLOAT: value = float(value)
+            elif index == INTEGER: value = int(index)
+            elif index == BOOL_TRUE: value = True
+            elif index == BOOL_FALSE: value = False
+            elif index == NONE: value = None
+
+            self.attributes["value"] = dict(
+                value = value,
                 type = "literal"
             )
-        )
+
+    def get_attributes(self):
+        return self.attributes
 
     def accept(self, visitor):
         visitor.process_accept(self, "out")
@@ -228,7 +217,7 @@ class MatchNode(AstNode):
     performed, this value may assume any value
     (eg: out, for, if, else, etc.) """
 
-    attributes_map = {}
+    attributes = {}
     """ Map describing the complete set of attributes
     (configuration) for the current node, this is a
     set of key value mappings """
@@ -248,24 +237,24 @@ class MatchNode(AstNode):
         self.regex = regex
         self.literal_regex = literal_regex
 
-        self.attributes_map = {}
+        self.attributes = {}
 
         self.process_value_type()
-        self.process_attributes_map()
+        self.process_attributes()
 
     def process_value_type(self):
-        match_value = self.get_start_match_value()
-        match_value = match_value.get_match_value()
+        match = self.get_start_match()
+        match_value = match.get_value()
 
         match_value_s = match_value.split()
         self.value_type = match_value_s[0][2:]
 
-    def process_attributes_map(self):
+    def process_attributes(self):
         # retrieve the match value part of the node, this is the string
         # value that is going to be matched against the regular expressions
         # to try to find the various attributes of the node
-        match_value = self.get_start_match_value()
-        match_value = match_value.get_match_value()
+        match = self.get_start_match()
+        match_value = match.get_value()
 
         # uses both the currently set regular expression and literal
         # regular expression to find the matches for both of these
@@ -282,7 +271,7 @@ class MatchNode(AstNode):
             # that represents the attribute setting it on the map
             attribute = match.group()
             name, value = attribute.split("=")
-            self.attributes_map[name] = dict(
+            self.attributes[name] = dict(
                 value = value,
                 type = "variable"
             )
@@ -304,7 +293,7 @@ class MatchNode(AstNode):
             elif index == BOOL_FALSE: value = False
             elif index == NONE: value = None
 
-            self.attributes_map[name] = dict(
+            self.attributes[name] = dict(
                 value = value,
                 type = "literal"
             )
@@ -315,11 +304,11 @@ class MatchNode(AstNode):
     def set_value_type(self, value_type):
         self.value_type = value_type
 
-    def get_attributes_map(self):
-        return self.attributes_map
+    def get_attributes(self):
+        return self.attributes
 
-    def set_attributes_map(self, attributes_map):
-        self.attributes_map = attributes_map
+    def set_attributes(self, attributes):
+        self.attributes = attributes
 
 class SingleNode(MatchNode):
     """
@@ -330,7 +319,7 @@ class SingleNode(MatchNode):
     def __init__(self, value = None, regex = None, literal_regex = None):
         MatchNode.__init__(self, value, regex, literal_regex)
 
-    def get_start_match_value(self):
+    def get_start_match(self):
         return self.value
 
     def accept(self, visitor):
@@ -347,7 +336,7 @@ class CompositeNode(MatchNode):
     def __init__(self, value = None, regex = None, literal_regex = None):
         MatchNode.__init__(self, value, regex, literal_regex)
 
-    def get_start_match_value(self):
+    def get_start_match(self):
         return self.value[0]
 
     def accept(self, visitor):
