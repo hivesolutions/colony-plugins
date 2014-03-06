@@ -66,14 +66,14 @@ class TemplateEnginePlugin(colony.Plugin):
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import template_engine.system
-        self.template_engine = template_engine.system.TemplateEngine(self)
+        import template_engine
+        self.system = template_engine.TemplateEngine(self)
 
     def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
-        return self.template_engine.parse_file_path(
+        return self.system.parse_file_path(
             file_path,
             encoding = encoding
         )
 
     def parse_file(self, file):
-        return self.template_engine.parse_file(file)
+        return self.system.parse_file(file)
