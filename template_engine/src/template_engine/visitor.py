@@ -2074,6 +2074,13 @@ class Visitor:
         for name in removal: SERIALIZERS.remove(name)
 
 class EvalVisitor(Visitor):
+    """
+    Specialized visitor infra-structure that uses the python
+    eval call to evaluate the various attribute values/variables
+    that are passed. Keep in mind that this is not a safe
+    environment (not sandboxed) and should not be used to run
+    arbitrary/unsafe code.
+    """
 
     def get_value(self, attribute_value, process_literal = False, localize = False):
         # retrieves the original value from the attribute and then
