@@ -158,7 +158,8 @@ RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.FormatTuple)
 
 BUILTINS = {
     "True" : True,
-    "False" : False
+    "False" : False,
+    "len" : len
 }
 """ The base builtins structure that is going to be re-used
 for every parsing operation to be done by the visitor, this
@@ -172,17 +173,18 @@ CONVERSION_MAP = {
 function with the conversion function symbol reference """
 
 COMPARISION_FUNCTIONS = {
-    "eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
-    "neq" : lambda attribute_item, attribute_value: not attribute_item == attribute_value,
-    "gte" : lambda attribute_item, attribute_value: attribute_item >= attribute_value,
-    "gt" : lambda attribute_item, attribute_value: attribute_item > attribute_value,
-    "lte" : lambda attribute_item, attribute_value: attribute_item <= attribute_value,
-    "lt" : lambda attribute_item, attribute_value: attribute_item < attribute_value,
-    "len" : lambda attribute_item, attribute_value: len(attribute_item) == attribute_value,
-    "lengt" : lambda attribute_item, attribute_value: len(attribute_item) > attribute_value,
-    "lenlt" : lambda attribute_item, attribute_value: len(attribute_item) < attribute_value,
-    "in" : lambda attribute_item, attribute_value: attribute_item and attribute_value in attribute_item or False,
-    "nin" : lambda attribute_item, attribute_value: attribute_item and not attribute_value in attribute_item or False
+    "not" : lambda  item, value: not item,
+    "eq" : lambda item, value: item == value,
+    "neq" : lambda item, value: not item == value,
+    "gte" : lambda item, value: item >= value,
+    "gt" : lambda item, value: item > value,
+    "lte" : lambda item, value: item <= value,
+    "lt" : lambda item, value: item < value,
+    "len" : lambda item, value: len(item) == value,
+    "lengt" : lambda item, value: len(item) > value,
+    "lenlt" : lambda item, value: len(item) < value,
+    "in" : lambda item, value: item and value in item or False,
+    "nin" : lambda item, value: item and not value in item or False
 }
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic """
@@ -1665,7 +1667,9 @@ class Visitor:
         # in case the variable is of type dictionary, the normal recursive
         # iteration step will be executed
         if is_dictionary:
+            builtins = value.get("__builtins__", dict())
             if name in value: result = value[name]
+            elif name in builtins: result = builtins[name]
             else: raise exceptions.UndefinedVariable("variable is not defined: " + name)
 
         # otherwise variable is of type object or other, then the more complex
@@ -2084,8 +2088,10 @@ class EvalVisitor(Visitor):
         # name literal value in the current python context, the resulting
         # value is nullified in case there's an exception in the evaluation
         globals = util.accessor(self.global_map)
+        globals["__builtins__"] = BUILTINS
         try: value = eval(name, globals, globals)
-        except: value = None
+        except AttributeError: value = None
+        except NameError: value = None
 
         # verifies if the currently returned value is an accessor value and
         # in case it is retrieves the reference values as the value so that
