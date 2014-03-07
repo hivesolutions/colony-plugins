@@ -3174,10 +3174,10 @@ def set_session_attribute(
         request.start_session()
         request_session = request.get_session()
 
-    # resolves the complete session attribute name
+    # resolves the complete session attribute name taking into
+    # account the proper namespace value and then sets the
+    # attribute in the currently retrieved session (as requested)
     session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
-
-    # sets the attribute in the session
     request_session.set_attribute(session_attribute_name, session_attribute_value)
 
 def unset_session_attribute(self, request, session_attribute_name, namespace_name = None):
