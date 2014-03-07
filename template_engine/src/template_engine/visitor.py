@@ -658,40 +658,37 @@ class Visitor:
         self.string_buffer.write(value_length)
 
     def process_include(self, node):
-        # retrieves the attributes map
+        # retrieves the current node's attributes and uses them to unpack
+        # the attributes that are relevant for the include processing
         attributes = node.get_attributes()
+        file = attributes.get("file", None)
+        file = self.get_literal_value(file)
+        file_value = attributes.get("file_value", None)
+        file_value = self.get_value(file_value)
 
-        # in case the file exists in the attributes map
-        if "file" in attributes:
-            # retrieves the attribute file literal value
-            attribute_file = attributes["file"]
-            attribute_file_literal_value = self.get_literal_value(attribute_file)
+        # retrieves the initial file path value from either the file
+        # or the file value attributes (whatever is defined)
+        file_path = file or file_value
 
-        # in case the file value exists in the attributes map
-        if "file_value" in attributes:
-            # retrieves the attribute file literal value
-            attribute_file_value = attributes["file_value"]
-            attribute_file_literal_value = self.get_value(attribute_file_value)
-
-        # in case the attribute file literal value is not valid
-        if not attribute_file_literal_value:
+        # in case the file path was not able to be resolved an
+        # exception must be raised indicating the undefined reference
+        # to the template to be included
+        if not file_path:
             # retrieves the node type and raises an exception with
             # the value that was just retrieved
             node_type = node.get_type()
             raise exceptions.UndefinedReference(node_type)
 
-        # in case the path is absolute
-        if os.path.isabs(attribute_file_literal_value):
-            # sets the file path as absolute
-            file_path = attribute_file_literal_value
-        # in case the path is relative to the current file
-        else:
+        # in case the path provided file path is not absolute an extra
+        # step must be performed to resolve the complete file path to
+        # the template file using the current template's file path
+        if not os.path.isabs(file_path):
             # retrieves the file directory from the file path and then
             # sets the file path as relative to the file directory, after
             # the join operations normalizes the path so that it represents
             # the proper path with the proper operative system representation
             file_directory = os.path.dirname(self.file_path)
-            file_path = os.path.join(file_directory, attribute_file_literal_value)
+            file_path = os.path.join(file_directory, file_path)
             file_path = os.path.normpath(file_path)
 
         # parses the file retrieving the template file structure, note
