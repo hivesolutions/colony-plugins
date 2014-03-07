@@ -49,6 +49,10 @@ class Accessor(dict):
         if is_callable: ref = ref(); self.ref = ref
         return ref
 
+    def __len__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return len(ref)
+
     def __str__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
         return str(ref)
