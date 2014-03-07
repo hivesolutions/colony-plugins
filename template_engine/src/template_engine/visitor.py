@@ -170,7 +170,7 @@ def dispatch_visit():
                 if not hasattr(self, "node_method_map"): continue
 
                 node_method_map = self.node_method_map
-                if mro_item in node_method_map: continue
+                if not mro_item in node_method_map: continue
 
                 visit_method = node_method_map[mro_item]
                 self.before_visit(*args[1:], **kwargs)
@@ -758,129 +758,58 @@ class Visitor:
         self.string_buffer.write(date_time_value)
 
     def process_format_datetime(self, node):
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        value = attributes["value"]
+        value = self.get_value(value)
+        format = attributes["format"]
+        format = self.get_literal_value(format)
+        default = attributes.get("default", None)
+        default = self.get_value(default)
 
-        # retrieves the attributes map values
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes["format"]
-        attribute_format_literal_value = self.get_literal_value(attribute_format)
-
-        # in case the default exists in the attributes map
-        if "default" in attributes:
-            # retrieves attribute default value
-            attribute_default = attributes["default"]
-            attribute_default_value = self.get_value(attribute_default, localize = True)
-        # otherwise
-        else:
-            # unsets the attribute default value
-            attribute_default_value = None
-
-        # in case the value is not defined, the default
-        # value must be used instead
-        if attribute_value_value == None:
-            # writes the default attribute value to
-            # the string buffer and returns immediately
-            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
-            attribute_default_value and self.string_buffer.write(attribute_default_value)
+        if value == None:
+            value = default if default else value
+            if value: self.string_buffer.write(value)
             return
 
-        # converts the attribute format literal value to string, in order
-        # to avoid possible problems with string formatting
-        attribute_format_literal_value = str(attribute_format_literal_value)
-
-        # date formats the attribute value (datetime)
-        attribute_value_formatted = attribute_value_value.strftime(attribute_format_literal_value)
-
-        # writes the attribute value formatted
-        self.string_buffer.write(attribute_value_formatted)
+        format = str(format)
+        value_format = value.strftime(format)
+        self.string_buffer.write(value_format)
 
     def process_format_timestamp(self, node):
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        value = attributes["value"]
+        value = self.get_value(value)
+        format = attributes["format"]
+        format = self.get_literal_value(format)
+        default = attributes.get("default", None)
+        default = self.get_value(default)
 
-        # retrieves the attributes map values
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes["format"]
-        attribute_format_literal_value = self.get_literal_value(attribute_format)
-
-        # in case the default exists in the attributes map
-        if "default" in attributes:
-            # retrieves attribute default value
-            attribute_default = attributes["default"]
-            attribute_default_value = self.get_value(attribute_default, localize = True)
-        # otherwise
-        else:
-            # unsets the attribute default value
-            attribute_default_value = None
-
-        # in case the value is not defined, the default
-        # value must be used instead
-        if attribute_value_value == None:
-            # writes the default attribute value to
-            # the string buffer and returns immediately
-            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
-            attribute_default_value and self.string_buffer.write(attribute_default_value)
+        if value == None:
+            value = default if default else value
+            if value: self.string_buffer.write(value)
             return
 
-        # converts the attribute format literal value to string, in order
-        # to avoid possible problems with string formatting
-        attribute_format_literal_value = str(attribute_format_literal_value)
-
-        # converts the attribute value value to date time
-        attribute_date_time = datetime.datetime.utcfromtimestamp(attribute_value_value)
-
-        # date formats the attribute value (in datetime format)
-        attribute_value_formatted = attribute_date_time.strftime(attribute_format_literal_value)
-
-        # writes the attribute value formatted
-        self.string_buffer.write(attribute_value_formatted)
+        format = str(format)
+        date_time = datetime.datetime.utcfromtimestamp(value)
+        value_format = date_time.strftime(format)
+        self.string_buffer.write(value_format)
 
     def process_timestamp(self, node):
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        value = attributes.get("value", None)
+        value = self.get_value(value, default = datetime.datetime.now())
+        default = attributes.get("default", None)
+        default = self.get_value(default, localize = True)
 
-        # in case the format exists in the attributes map
-        if "value" in attributes:
-            # retrieves the attributes map values
-            attribute_value = attributes["value"]
-            attribute_value_value = self.get_value(attribute_value)
-        # otherwise
-        else:
-            # sets the current data time as the attribute
-            # value value
-            attribute_value_value = datetime.datetime.now()
-
-        # in case the default exists in the attributes map
-        if "default" in attributes:
-            # retrieves attribute default value
-            attribute_default = attributes["default"]
-            attribute_default_value = self.get_value(attribute_default, localize = True)
-        # otherwise
-        else:
-            # unsets the attribute default value
-            attribute_default_value = None
-
-        # in case the value is not defined, the default
-        # value must be used instead
-        if attribute_value_value == None:
-            # writes the default attribute value to
-            # the string buffer and returns immediately
-            attribute_default_value = not attribute_default_value == None and str(attribute_default_value)
-            attribute_default_value and self.string_buffer.write(attribute_default_value)
+        if value == None:
+            value = default if default else value
+            if value: self.string_buffer.write(value)
             return
 
-        # retrieves the time tuple from the date time
-        # attribute and then converts it to timestamp
-        # and then into a string
-        time_tuple_value = attribute_value_value.utctimetuple()
-        timestamp_value = calendar.timegm(time_tuple_value)
-        timestamp_string_value = str(timestamp_value)
-
-        # writes the timestamp string value
-        self.string_buffer.write(timestamp_string_value)
+        time_tuple = value.utctimetuple()
+        timestamp = calendar.timegm(time_tuple)
+        timestamp_s = str(timestamp)
+        self.string_buffer.write(timestamp_s)
 
     def get_value(self, attribute, localize = False, default = None):
         """
