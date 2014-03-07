@@ -213,7 +213,9 @@ class Visitor:
     """ The variable encoding """
 
     strict_mode = False
-    """ The strict mode """
+    """ The strict mode, that controls if the processing should
+    be done in a strict way meaning that exceptions should be
+    raised whenever an unexpected value is received/processed """
 
     visit_childs = True
     """ The visit childs flag """
@@ -256,35 +258,39 @@ class Visitor:
         self.update_node_method_map()
 
     def update_node_method_map(self):
-        # retrieves the class of the current instance
-        self_class = self.__class__
+        # retrieves the current instance class and list the
+        # complete set of element for the current class so that
+        # the proper node method map may be created
+        cls = self.__class__
+        cls_elements = dir(cls)
 
-        # retrieves the names of the elements for the current class
-        self_class_elements = dir(self_class)
+        # iterates over the complete set of elements (attributes)
+        # defined for the current instance's class trying to find
+        # the ones that are annotated with the ast node class value
+        for name  in cls_elements:
+            # retrieves the current element in iteration and verifies
+            # if the current element is annotated with the asr node class
+            # value, if that's not the case continues the loop
+            element = getattr(cls, name)
+            if not hasattr(element, "ast_node_class"): continue
 
-        # iterates over all the name of the elements
-        for self_class_element in self_class_elements:
-            # retrieves the real element value
-            self_class_real_element = getattr(self_class, self_class_element)
+            # retrieves the elements node class and associated the
+            # current element with the node class in the node class
+            # method map (to be used latter in runtime verification)
+            ast_node_class = element.ast_node_class
+            self.node_method_map[ast_node_class] = element
 
-            # in case the current class real element contains an ast node class reference
-            if hasattr(self_class_real_element, "ast_node_class"):
-                # retrieves the ast node class from the current class real element
-                ast_node_class = getattr(self_class_real_element, "ast_node_class")
+    def attach_process_method(self, method_name, method):
+        # creates the process method instance, that is attached to
+        # the general visitor class and sets it the current instance
+        method_instance = types.MethodType(method, self, Visitor)
+        setattr(self, method_name, method_instance)
 
-                self.node_method_map[ast_node_class] = self_class_real_element
-
-    def attach_process_method(self, process_method_name, process_method):
-        # creates the process method instance
-        process_method_instance = types.MethodType(process_method, self, Visitor)
-
-        # sets the process method in the visitor
-        setattr(self, process_method_name, process_method_instance)
-
-        # creates the process method tuple
-        process_method_tuple = (process_method_name, process_method)
-
-        # adds the process method tuple to the list of process methods
+        # creates the process method tuple that contains both the
+        # name of the method and the method reference and adds the
+        # tuple to the list of process method, this is going to be
+        # used in the initial stage of the template creation
+        process_method_tuple = (method_name, method)
         self.process_methods_list.append(process_method_tuple)
 
     def get_global_map(self):
