@@ -956,6 +956,25 @@ def get_field_models(self, request, field_name, model, data_type = int):
     )
     return entities
 
+
+def url_for(self, request, reference, filename = None, *args, **kwargs):
+
+    base_path = self.get_base_path(request)
+
+    location = ""
+
+    if reference == "static":
+        location = "resources/" + filename
+
+    if reference == "resources":
+        location = "resources/" + filename
+
+    elif reference == "common":
+        location = "common/" + filename
+
+    return base_path + location
+
+
 def get_field(
     self,
     request,
@@ -1844,7 +1863,7 @@ def set_status_code(self, request, status_code = DEFAULT_STATUS_CODE):
 def get_referer(self, request):
     """
     Retrieves the referer value for the current request
-    being used fot the handling.
+    being used for the handling.
     The referer value shall not be trusted as it may not
     be defined in the request.
 
@@ -2521,9 +2540,9 @@ def process_set_contents(
     as the contents of the given request.
     Optional flags may be set to apply the base path and assign the
     session to the template file.
-    
+
     An optional parameter controls if the contents resulting from
-    the processing of the template file should be set in the request. 
+    the processing of the template file should be set in the request.
 
     @type request: Request
     @param request: The request to be set with the contents.
@@ -2566,7 +2585,7 @@ def process_set_contents(
 
     # assigns the basic instance attributes to the template file so that
     # it can access the controller instance and the system and plugin instances
-    self.assign_instance_template_file(template_file)
+    self.assign_instance_template_file(request, template_file)
 
     # processes the template file with the given request and variable encoding
     # retrieving the processed template file as the contents to be set
@@ -2575,7 +2594,7 @@ def process_set_contents(
     # sets the request contents, using the given content type, only in case the
     # proper flag is set (allowing control for the operation execution)
     if set_contents: self.set_contents(request, contents, content_type)
-    
+
     # returns the processed contents resulting from the template to the caller
     # method so that they may be reused for any other operation if required
     return contents
@@ -2610,13 +2629,14 @@ def process_template_file(self, request, template_file, variable_encoding = None
         ("process_request_time", self.get_process_method(request, "process_request_time"))
     ]
 
-    # attaches the process methods to the template file
+    # attaches the process methods to the template file so that
+    # they may be used for "extra" composite operations
     template_file.attach_process_methods(process_methods_list)
 
-    # processes the template file
+    # processes the template file, returning the resulting
+    # contents to the caller function, the returning value
+    # should be a string containing the results
     processed_template_file = template_file.process()
-
-    # returns the processed template file
     return processed_template_file
 
 def retrieve_template_file(
@@ -2747,7 +2767,7 @@ def apply_base_path_template_file(self, request, template_file):
     template_file.assign(MVC_PATH_VALUE, mvc_path)
     template_file.assign(BASE_PATH_VALUE, base_path)
 
-def assign_instance_template_file(self, template_file):
+def assign_instance_template_file(self, request, template_file):
     """
     Assigns the various instance related attributes to the
     given template file.
@@ -2755,10 +2775,40 @@ def assign_instance_template_file(self, template_file):
     The instance attributes include the instance itself, the
     associated system, and the associated plugin.
 
+    @type request: Request
+    @param request: The request that is going to be used for the
+    closure with some of the opertations.
     @type template_file: TemplateFile
     @param template_file: The template to be "applied" with the
     various instance attributes.
     """
+
+    def _copy(value):
+        value = "Copy right by: " + value
+        return value
+
+    def _nl_to_br(value, extra = False):
+        tobias = value + "nl_to_br"
+        if extra: tobias += " extra"
+        return tobias
+
+    def _echo(*args, **kwargs):
+        return str(args)
+
+    def _same(value):
+        return value
+
+    def _url_for(*args, **kwargs):
+        return self.url_for(request, *args, **kwargs)
+
+    # assigns the top level clojure based operations that may
+    # be used for the current context, this values are context
+    # aware and may be used for the current request
+    template_file.assign("copy", _copy)
+    template_file.assign("same", _same)
+    template_file.assign("url_for", _url_for)
+    template_file.assign("echo", _echo)
+    template_file.assign("nl_to_br", _nl_to_br)
 
     # assigns the various instance components to the template file:
     # the instance itself, the associated system and the associated plugin
@@ -5214,17 +5264,17 @@ def get_process_method(controller, request, process_method_name):
 
     def __process_ifacl(self, node):
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission = attributes[PERMISSION_VALUE]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes_map:
-            attribute_value = attributes_map[VALUE_VALUE]
+        if VALUE_VALUE in attributes:
+            attribute_value = attributes[VALUE_VALUE]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5233,8 +5283,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes_map:
-            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+        if SESSION_ATTRIBUTE_VALUE in attributes:
+            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
@@ -5270,17 +5320,17 @@ def get_process_method(controller, request, process_method_name):
 
     def __process_ifaclp(self, node):
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission = attributes[PERMISSION_VALUE]
         attribute_permission_value = self.get_value(attribute_permission)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes_map:
-            attribute_value = attributes_map[VALUE_VALUE]
+        if VALUE_VALUE in attributes:
+            attribute_value = attributes[VALUE_VALUE]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5289,8 +5339,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes_map:
-            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+        if SESSION_ATTRIBUTE_VALUE in attributes:
+            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
@@ -5326,21 +5376,21 @@ def get_process_method(controller, request, process_method_name):
 
     def __process_ifnotacl(self, node):
         # retrieves the attributes map
-        attributes_map = node.get_attributes_map()
+        attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission = attributes[PERMISSION_VALUE]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
         # retrieves the attribute value value
-        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value = attributes[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes_map:
-            attribute_value = attributes_map[VALUE_VALUE]
+        if VALUE_VALUE in attributes:
+            attribute_value = attributes[VALUE_VALUE]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5349,8 +5399,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes_map:
-            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+        if SESSION_ATTRIBUTE_VALUE in attributes:
+            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
