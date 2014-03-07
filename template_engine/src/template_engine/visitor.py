@@ -94,30 +94,6 @@ NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
 """ The compiled version of names regular expression used for the
 matching of the various components of a variable template value """
 
-START_INDEX_VALUE = "start_index"
-""" The start index value """
-
-KEY_MAP_VALUE = "key_map"
-""" The key map value """
-
-KEY_ORDER_LIST_VALUE = "key_order_list"
-""" The key order list value """
-
-NEWLINE_CONVERT_VALUE = "newline_convert"
-""" The newline convert value """
-
-CONVERT_VALUE = "convert"
-""" The convert value """
-
-DEFAULT_VALUE = "default"
-""" The default value """
-
-ALLOW_EMPTY_VALUE = "allow_empty"
-""" The allow empty value """
-
-SERIALIZER_VALUE = "serializer"
-""" The serializer value """
-
 ELSE_VALUE = "else"
 """ The else value """
 
@@ -639,9 +615,9 @@ class Visitor:
             attribute_xml_quote_value = False
 
         # in case the new line convert exists in the attributes map
-        if NEWLINE_CONVERT_VALUE in attributes:
+        if "newline_convert" in attributes:
             # retrieves attribute newline convert value
-            attribute_newline_convert = attributes[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert = attributes["newline_convert"]
             attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
         # otherwise
         else:
@@ -649,9 +625,9 @@ class Visitor:
             attribute_newline_convert_value = False
 
         # in case the convert exists in the attributes map
-        if CONVERT_VALUE in attributes:
+        if "convert" in attributes:
             # retrieves attribute convert value
-            attribute_convert = attributes[CONVERT_VALUE]
+            attribute_convert = attributes["convert"]
             attribute_convert_value = self.get_value(attribute_convert)
         # otherwise
         else:
@@ -659,9 +635,9 @@ class Visitor:
             attribute_convert_value = None
 
         # in case the allow empty exists in the attributes map
-        if ALLOW_EMPTY_VALUE in attributes:
+        if "allow_empty" in attributes:
             # retrieves attribute allow empty value
-            attribute_allow_empty = attributes[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty = attributes["allow_empty"]
             attribute_allow_empty_value = self.get_value(attribute_allow_empty)
         # otherwise
         else:
@@ -669,9 +645,9 @@ class Visitor:
             attribute_allow_empty_value = True
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes:
+        if "default" in attributes:
             # retrieves attribute default value
-            attribute_default = attributes[DEFAULT_VALUE]
+            attribute_default = attributes["default"]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -679,9 +655,9 @@ class Visitor:
             attribute_default_value = None
 
         # in case the serializer exists in the attributes map
-        if SERIALIZER_VALUE in attributes:
+        if "serializer" in attributes:
             # retrieves attribute serializer value
-            attribute_serializer = attributes[SERIALIZER_VALUE]
+            attribute_serializer = attributes["serializer"]
             attribute_serializer_value = self.get_literal_value(attribute_serializer)
         # otherwise
         else:
@@ -774,9 +750,9 @@ class Visitor:
         attribute_value_value = self.get_value(attribute_value, localize = True)
 
         # in case the key map exists in the attributes map
-        if KEY_MAP_VALUE in attributes:
+        if "key_map" in attributes:
             # retrieves attribute key map value
-            attribute_key_map = attributes[KEY_MAP_VALUE]
+            attribute_key_map = attributes["key_map"]
             attribute_key_map_value = self.get_value(attribute_key_map)
         # otherwise
         else:
@@ -784,9 +760,9 @@ class Visitor:
             attribute_key_map_value = {}
 
         # in case the key order list exists in the attributes map
-        if KEY_ORDER_LIST_VALUE in attributes:
+        if "key_order_list" in attributes:
             # retrieves attribute key order list value
-            attribute_key_order_list = attributes[KEY_ORDER_LIST_VALUE]
+            attribute_key_order_list = attributes["key_order_list"]
             attribute_key_order_list_value = self.get_value(attribute_key_order_list)
         # otherwise
         else:
@@ -834,9 +810,9 @@ class Visitor:
             attribute_xml_quote_value = False
 
         # in case the new line convert exists in the attributes map
-        if NEWLINE_CONVERT_VALUE in attributes:
+        if "newline_convert" in attributes:
             # retrieves attribute newline convert value
-            attribute_newline_convert = attributes[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert = attributes["newline_convert"]
             attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
         # otherwise
         else:
@@ -844,9 +820,9 @@ class Visitor:
             attribute_newline_convert_value = False
 
         # in case the allow empty exists in the attributes map
-        if ALLOW_EMPTY_VALUE in attributes:
+        if "allow_empty" in attributes:
             # retrieves attribute allow empty value
-            attribute_allow_empty = attributes[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty = attributes["allow_empty"]
             attribute_allow_empty_value = self.get_value(attribute_allow_empty)
         # otherwise
         else:
@@ -968,9 +944,9 @@ class Visitor:
             attribute_key_literal_value = None
 
         # in case the start index exists in the attributes map
-        if START_INDEX_VALUE in attributes:
+        if "start_index" in attributes:
             # retrieves the attribute start index literal value
-            attribute_start_index = attributes[START_INDEX_VALUE]
+            attribute_start_index = attributes["start_index"]
             attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
 
             # sets the initial index
@@ -1398,9 +1374,9 @@ class Visitor:
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes:
+        if "default" in attributes:
             # retrieves attribute default value
-            attribute_default = attributes[DEFAULT_VALUE]
+            attribute_default = attributes["default"]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -1444,9 +1420,9 @@ class Visitor:
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes:
+        if "default" in attributes:
             # retrieves attribute default value
-            attribute_default = attributes[DEFAULT_VALUE]
+            attribute_default = attributes["default"]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
@@ -1502,9 +1478,9 @@ class Visitor:
             attribute_value_value = datetime.datetime.now()
 
         # in case the default exists in the attributes map
-        if DEFAULT_VALUE in attributes:
+        if "default" in attributes:
             # retrieves attribute default value
-            attribute_default = attributes[DEFAULT_VALUE]
+            attribute_default = attributes["default"]
             attribute_default_value = self.get_value(attribute_default, localize = True)
         # otherwise
         else:
