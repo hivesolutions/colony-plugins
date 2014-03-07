@@ -94,9 +94,6 @@ NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
 """ The compiled version of names regular expression used for the
 matching of the various components of a variable template value """
 
-DEFAULT_YEAR_FORMAT = "%Y"
-""" The default year format """
-
 DEFAULT_DATE_FORMAT = "%d/%m/%y"
 """ The default date format """
 
@@ -151,123 +148,45 @@ COMPARISION_FUNCTIONS = {
 are going to be used "inside" the visitor execution logic """
 
 def _visit(ast_node_class):
-    """
-    Decorator for the visit of an ast node.
-
-    @type ast_node_class: String
-    @param ast_node_class: The target class for the visit.
-    @rtype: Function
-    @return: The created decorator.
-    """
 
     def decorator(function, *args, **kwargs):
-        """
-        The decorator function for the visit decorator.
-
-        @type function: Function
-        @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
-        @rtype: Function
-        @return: The decorator interceptor function.
-        """
-
         function.ast_node_class = ast_node_class
-
         return function
 
-    # returns the created decorator
     return decorator
 
 def dispatch_visit():
-    """
-    Decorator for the dispatch visit of an ast node.
 
-    @rtype: Function
-    @return: The created decorator.
-    """
-
-    def create_decorator_interceptor(function):
-        """
-        Creates a decorator interceptor, that intercepts the normal function call.
-
-        @type function: Function
-        @param function: The callback function.
-        """
+    def create_interceptor(function):
 
         def decorator_interceptor(*args, **kwargs):
-            """
-            The interceptor function for the dispatch visit decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
-            """
-
-            # retrieves the self values
-            self_value = args[0]
-
-            # retrieves the node value
+            self = args[0]
             node_value = args[1]
 
-            # retrieves the node value class
             node_value_class = node_value.__class__
+            mro = node_value_class.mro()
 
-            # retrieves the mro list from the node value class
-            node_value_class_mro = node_value_class.mro()
+            for mro_item in mro:
+                if not hasattr(self, "node_method_map"): continue
 
-            # iterates over all the node value class mro elements
-            for node_value_class_mro_element in node_value_class_mro:
-                # in case the node method map exist in the current instance
-                if hasattr(self_value, "node_method_map"):
-                    # retrieves the node method map from the current instance
-                    node_method_map = getattr(self_value, "node_method_map")
+                node_method_map = self.node_method_map
+                if mro_item in node_method_map: continue
 
-                    # in case the node value class exists in the node method map
-                    if node_value_class_mro_element in node_method_map:
-                        # retrieves the visit method for the given node value class
-                        visit_method = node_method_map[node_value_class_mro_element]
+                visit_method = node_method_map[mro_item]
+                self.before_visit(*args[1:], **kwargs)
+                visit_method(*args, **kwargs)
+                self.after_visit(*args[1:], **kwargs)
 
-                        # calls the before visit method
-                        self_value.before_visit(*args[1:], **kwargs)
+                return
 
-                        # calls the visit method
-                        visit_method(*args, **kwargs)
-
-                        # calls the after visit method
-                        self_value.after_visit(*args[1:], **kwargs)
-
-                        return
-
-            # in case of failure to find the proper callback
             function(*args, **kwargs)
 
         return decorator_interceptor
 
     def decorator(function, *args, **kwargs):
-        """
-        The decorator function for the dispatch visit decorator.
+        interceptor = create_interceptor(function)
+        return interceptor
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
-        @rtype: Function
-        @return: The decorator interceptor function.
-        """
-
-        # creates the decorator interceptor with the given function
-        decorator_interceptor_function = create_decorator_interceptor(function)
-
-        # returns the interceptor to be used
-        return decorator_interceptor_function
-
-    # returns the created decorator
     return decorator
 
 class Visitor:
@@ -384,103 +303,33 @@ class Visitor:
         self.locale_bundles.append(bundle)
 
     def get_encoding(self):
-        """
-        Retrieves encoding used in the file.
-
-        @rtype: String
-        @return: The encoding used in the file.
-        """
-
         return self.encoding
 
     def set_encoding(self, encoding):
-        """
-        Sets the encoding used in the file.
-
-        @type encoding: String
-        @param encoding: The encoding used in the file.
-        """
-
         self.encoding = encoding
 
     def get_file_path(self):
-        """
-        Retrieves path to the file.
-
-        @rtype: String
-        @return: The path to the file.
-        """
-
         return self.file_path
 
     def set_file_path(self, file_path):
-        """
-        Sets the path to the file.
-
-        @type file_path: String
-        @param file_path: The path to the file.
-        """
-
         self.file_path = file_path
 
     def get_template_engine(self):
-        """
-        Retrieves the template engine.
-
-        @rtype: TemplateEngine
-        @return: The template engine.
-        """
-
         return self.template_engine
 
     def set_template_engine(self, template_engine):
-        """
-        Sets the template engine.
-
-        @type template_engine: TemplateEngine
-        @param template_engine: The template engine.
-        """
-
         self.template_engine = template_engine
 
     def get_variable_encoding(self):
-        """
-        Retrieves the variable encoding.
-
-        @rtype: String
-        @return: The variable encoding.
-        """
-
         return self.variable_encoding
 
     def set_variable_encoding(self, variable_encoding):
-        """
-        Sets the variable encoding.
-
-        @type variable_encoding: String
-        @param variable_encoding: The variable encoding.
-        """
-
         self.variable_encoding = variable_encoding
 
     def get_strict_mode(self):
-        """
-        Retrieves the strict mode.
-
-        @rtype: bool
-        @return: The strict mode.
-        """
-
         return self.strict_mode
 
     def set_strict_mode(self, strict_mode):
-        """
-        Sets the strict mode.
-
-        @type strict_mode: String
-        @param strict_mode: The strict mode.
-        """
-
         self.strict_mode = strict_mode
 
     @dispatch_visit()
@@ -636,35 +485,32 @@ class Visitor:
 
     def process_var(self, node):
         """
-        Processes the var node.
+        Processes the var node, this is the operation that
+        allow the attribute of a value in the current context
+        the required attributes are the item (literal) and the
+        value.
 
-        @type node: SingleNode
+        @type node: Node
         @param node: The single node to be processed as var.
         """
 
-        # retrieves the attributes map
+        # retrieves the map that contains the attributes for the
+        # current node and then unpacks each of this values
         attributes = node.get_attributes()
+        item = attributes["item"]
+        item = self.get_literal_value(item)
+        value = attributes["value"]
+        value = self.get_value(value)
 
-        # retrieves the attributes map values
-        attribute_item = attributes["item"]
-        attribute_item_literal_value = self.get_literal_value(attribute_item)
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value)
-
-        # sets the attribute value value in the global map
-        self.global_map[attribute_item_literal_value] = attribute_value_value
+        # sets the attribute value value in the global map, this
+        # is considered to represent the assign operation, from
+        # this moment the variable with the same name is available
+        self.global_map[item] = value
 
     def process_for(self, node):
         return self.process_foreach(node)
 
     def process_foreach(self, node):
-        """
-        Processes the foreach node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as foreach.
-        """
-
         attributes = node.get_attributes()
         iterable = attributes["from"]
         iterable = self.get_value(iterable)
@@ -738,13 +584,6 @@ class Visitor:
                 index += 1
 
     def process_if(self, node):
-        """
-        Processes the if node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as if.
-        """
-
         # evaluates the current node comparison, this is the default
         # acceptance behavior for all the nodes that do not require
         # an extra evaluation process (evaluation nodes)
@@ -771,118 +610,54 @@ class Visitor:
             accept_node and child_node.accept(self)
 
     def process_else(self, node):
-        """
-        Processes the else node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as else.
-        """
-
         pass
 
     def process_elif(self, node):
-        """
-        Processes the elif node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as elif.
-        """
-
         pass
 
     def process_cycle(self, node):
-        """
-        Processes the cycle node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as cycle.
-        """
-
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        values = attributes["values"]
+        values = self.get_value(values)
+        values = values.split(",")
 
-        # retrieves the attributes map values
-        attribute_values = attributes["values"]
-        attribute_values_value = self.get_value(attribute_values, True)
-
-        if not hasattr(node, "current_index"):
-            # sets the initial current index
-            current_index = 0
-        else:
-            # retrieves the attribute values value length
-            attribute_values_value_length = len(attribute_values_value)
-
-            # retrieves the current index
+        if hasattr(node, "current_index"):
+            values_length = len(values)
             current_index = node.current_index
+            if current_index == values_length - 1: current_index = 0
+            else: current_index += 1
+        else:
+            current_index = 0
 
-            # in case the current index overflows
-            if current_index == attribute_values_value_length - 1:
-                # resets the current index
-                current_index = 0
-            # otherwise
-            else:
-                # increments the current index
-                current_index += 1
-
-        # sets the current index in the node
         node.current_index = current_index
-
-        # retrieves the current value from the attribute
-        # values values
-        current_value = attribute_values_value[current_index]
-
-        # writes the current value to the string buffer
+        current_value = values[current_index]
         self.string_buffer.write(current_value)
 
     def process_count(self, node):
-        """
-        Processes the count node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as count.
-        """
-
-        # retrieves the attributes map
+        # retrieves the current nodes's attributes and gathers the value
+        # field from the dictionary retrieving then it's value
         attributes = node.get_attributes()
+        value = attributes["value"]
+        value = self.get_value(value)
 
-        # retrieves the attributes map values
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value)
-
-        # in case the attribute value value is not valid the
-        # default empty value should be considered
-        if attribute_value_value == None:
-            # sets the attribute value length as zero because
-            # a non iterable value should be considered empty
-            attribute_value_length = 0
-        # otherwise the attribute value value must be considered
-        # as iterable and so the length must be calculated
-        else:
-            # retrieves the attribute value value length and sets it
-            # as the attribute value length
-            attribute_value_length = len(attribute_value_value)
+        # in case the retrieved value is invalid the length of it is considered
+        # to be zero otherwise measures its size and sets accordingly
+        if value == None: value_length = 0
+        else: value_length = len(value)
 
         # checks if the attribute value length contains a unicode string
         # in such case there's no need to re-decode it
-        is_unicode = type(attribute_value_length) == types.UnicodeType
-        attribute_value_length = is_unicode and attribute_value_length or unicode(attribute_value_length)
+        is_unicode = type(value_length) == types.UnicodeType
+        value_length = is_unicode and value_length or unicode(value_length)
 
-        # in case the variable encoding is defined
+        # in case the variable encoding value is defined encodes the string
+        # value using the currently defined encoding (as expected) and then
+        # writes the resulting string value to the current buffer
         if self.variable_encoding:
-            # re-encodes the variable value
-            attribute_value_length = attribute_value_length.encode(self.variable_encoding)
-
-        # writes the attribute value value to the string buffer
-        self.string_buffer.write(attribute_value_length)
+            value_length = value_length.encode(self.variable_encoding)
+        self.string_buffer.write(value_length)
 
     def process_include(self, node):
-        """
-        Processes the include node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as include.
-        """
-
         # retrieves the attributes map
         attributes = node.get_attributes()
 
@@ -939,150 +714,50 @@ class Visitor:
         self.string_buffer.write(processed_template_file)
 
     def process_uuid(self, node):
-        """
-        Processes the uuid node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as uuid.
-        """
-
         # creates a new uuid value and converts it into a string
         # value to be used in the string buffer
         uuid_value = uuid.uuid4()
         uuid_string_value = str(uuid_value)
-
-        # writes the time value
         self.string_buffer.write(uuid_string_value)
 
     def process_year(self, node):
-        """
-        Processes the year node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as year.
-        """
-
-        # retrieves the current date time
+        # retrieves the current date time formats it according to
+        # the default year format and writes the value to buffer
         current_date_time = datetime.datetime.now()
-
-        # formats the year value
-        year_value = current_date_time.strftime(DEFAULT_YEAR_FORMAT)
-
-        # writes the year value
+        year_value = current_date_time.strftime("%Y")
         self.string_buffer.write(year_value)
 
     def process_date(self, node):
-        """
-        Processes the date node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as date.
-        """
-
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        format = attributes.get("format", None)
+        format = self.get_literal_value(format, default = DEFAULT_DATE_FORMAT)
+        format = str(format)
 
-        # in case the format exists in the attributes map
-        if "format" in attributes:
-            # retrieves the attributes map values
-            attribute_format = attributes["format"]
-            attribute_format_literal_value = self.get_literal_value(attribute_format)
-
-            # converts the attribute format literal value to string, in order
-            # to avoid possible problems with string formatting
-            attribute_format_literal_value = str(attribute_format_literal_value)
-        else:
-            # sets the attribute format literal value
-            # as the default date format
-            attribute_format_literal_value = DEFAULT_DATE_FORMAT
-
-        # retrieves the current date time
         current_date_time = datetime.datetime.now()
-
-        # formats the date value
-        date_value = current_date_time.strftime(attribute_format_literal_value)
-
-        # writes the date value
+        date_value = current_date_time.strftime(format)
         self.string_buffer.write(date_value)
 
     def process_time(self, node):
-        """
-        Processes the time node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as time.
-        """
-
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        format = attributes.get("format", None)
+        format = self.get_literal_value(format, default = DEFAULT_TIME_FORMAT)
+        format = str(format)
 
-        # in case the format exists in the attributes map
-        if "format" in attributes:
-            # retrieves the attributes map values
-            attribute_format = attributes["format"]
-            attribute_format_literal_value = self.get_literal_value(attribute_format)
-
-            # converts the attribute format literal value to string, in order
-            # to avoid possible problems with string formatting
-            attribute_format_literal_value = str(attribute_format_literal_value)
-        # otherwise
-        else:
-            # sets the attribute format literal value
-            # as the default time format
-            attribute_format_literal_value = DEFAULT_TIME_FORMAT
-
-        # retrieves the current date time
         current_date_time = datetime.datetime.now()
-
-        # formats the time value
-        date_value = current_date_time.strftime(attribute_format_literal_value)
-
-        # writes the time value
-        self.string_buffer.write(date_value)
+        time_value = current_date_time.strftime(format)
+        self.string_buffer.write(time_value)
 
     def process_datetime(self, node):
-        """
-        Processes the datetime node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as datetime.
-        """
-
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        format = attributes.get("format", None)
+        format = self.get_literal_value(format, default = DEFAULT_DATE_TIME_FORMAT)
+        format = str(format)
 
-        # in case the format exists in the attributes map
-        if "format" in attributes:
-            # retrieves the attributes map values
-            attribute_format = attributes["format"]
-            attribute_format_literal_value = self.get_literal_value(attribute_format)
-
-            # converts the attribute format literal value to string, in order
-            # to avoid possible problems with string formatting
-            attribute_format_literal_value = str(attribute_format_literal_value)
-        # otherwise
-        else:
-            # sets the attribute format literal value as
-            # the default date time format
-            attribute_format_literal_value = DEFAULT_DATE_TIME_FORMAT
-
-        # retrieves the current date time
         current_date_time = datetime.datetime.now()
-
-        # formats the datetime value
-        datetime_value = current_date_time.strftime(attribute_format_literal_value)
-
-        # writes the datetime value
-        self.string_buffer.write(datetime_value)
+        date_time_value = current_date_time.strftime(format)
+        self.string_buffer.write(date_time_value)
 
     def process_format_datetime(self, node):
-        """
-        Processes the format datetime node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as format datetime.
-        """
-
         # retrieves the attributes map
         attributes = node.get_attributes()
 
@@ -1122,13 +797,6 @@ class Visitor:
         self.string_buffer.write(attribute_value_formatted)
 
     def process_format_timestamp(self, node):
-        """
-        Processes the format datetime node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as format datetime.
-        """
-
         # retrieves the attributes map
         attributes = node.get_attributes()
 
@@ -1171,17 +839,6 @@ class Visitor:
         self.string_buffer.write(attribute_value_formatted)
 
     def process_timestamp(self, node):
-        """
-        Processes the timestamp node.
-        This node provides a way to print the a timestamp
-        representation of a given date time value.
-        In case no date time is provided the current date
-        is used.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as timestamp.
-        """
-
         # retrieves the attributes map
         attributes = node.get_attributes()
 
@@ -1240,7 +897,7 @@ class Visitor:
         @param localize: If the value must be localized using the currently
         available locale bundles.
         @type default: Object
-        @param default: Te default (fallback) value to be returned if
+        @param default: The default (fallback) value to be returned if
         no valid attribute is provided or in case it is invalid.
         @rtype: Object
         @return: The resolved attribute value.
