@@ -596,18 +596,21 @@ class TemplateFile(object):
         self.visitor = visitor.EvalVisitor()
         self.locale_bundles = []
 
-    def assign(self, variable_name, variable_value):
+    def assign(self, name, value):
         """
         Assigns a variable to a value. This assignment
         allows the usage of the value internally in the template.
 
-        @type variable_name: String
-        @param variable_name: The name of the variable to assign a value.
-        @type variable_value: Object
-        @param variable_value: The value to be assigned to the variable
+        The assigned variable value may assume any given data
+        type that is accessible by the template language.
+
+        @type name: String
+        @param name: The name of the variable to assign a value.
+        @type value: Object
+        @param value: The value to be assigned to the variable
         """
 
-        self.visitor.set_global_variable(variable_name, variable_value)
+        self.visitor.set_global_variable(name, value)
 
     def set_global_map(self, global_map):
         """
@@ -672,14 +675,14 @@ class TemplateFile(object):
         self.locale_bundles = locale_bundles
         self.visitor.locale_bundles = locale_bundles
 
-    def load_system_variable(self, variable_name = "_system"):
+    def load_system_variable(self, name = "_system"):
         """
         Loads a system information variable to the template
         file. This variable would allow for access to the
         status of the current manager/system.
 
-        @type variable_name: String
-        @param variable_name: The name of the variable used
+        @type name: String
+        @param name: The name of the variable used
         to retain the system wide information.
         """
 
@@ -694,7 +697,7 @@ class TemplateFile(object):
         # assigns the system information map variable to
         # the template so that it may be used to retrieve
         # global information about the system
-        self.assign(variable_name, system_information_map)
+        self.assign(name, system_information_map)
 
     def process(self, get_value = True):
         """
