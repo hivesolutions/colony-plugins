@@ -44,7 +44,9 @@ import colony
 import exceptions
 
 ERROR_STATUS_CODE = 500
-""" The error status code """
+""" The error status code, this is going to be
+the code raised as a fallback for any unhandled
+exception by default behavior """
 
 VALIDATE_VALUE = "validate"
 """ The validate value """
