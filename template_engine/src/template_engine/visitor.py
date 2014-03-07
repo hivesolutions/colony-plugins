@@ -75,7 +75,7 @@ object to handle it """
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\.\:'\/\" ]+\)"
+FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\.\:\='\/\" ]+\)"
 """ The function arguments regular expression value """
 
 NAMES_REGEX_VALUE = "([^\.]+\([^\)]+\))|([^\.]+)"
@@ -998,8 +998,11 @@ class Visitor:
         # with the calling of it to retrieve the return value
         if result_type in FUNCTION_TYPES:
             # converts the provided list of arguments into a list so that it may
-            # be changed to contains the "newly" parsed arguments
+            # be changed to contains the "newly" parsed arguments, and then creates
+            # a copy of the passed keyword arguments so that a new dictionary may
+            # be populated with the extra values to be added (by parsing)
             args = list(args)
+            kwargs = kwargs.copy()
 
             # resolves the complete set of arguments defined in the original name
             # that was meant to be resolved for the current value, this should
@@ -1007,9 +1010,19 @@ class Visitor:
             # for the current template engine (recursive resolution)
             extra = self.resolve_args(name_o)
 
-            # creates the list of argument values by retrieving the values of the
-            # various argument types and uses these values in the function call
-            args += [self.get_value(arg) for arg in extra]
+            # populates both the list of unnamed arguments and extends the map
+            # containing the named arguments with the processed name arguments,
+            # note that the argument type is defined by the presence of the name
+            # argument in the dictionary that defined the same argument
+            for arg in extra:
+                name = arg["name"]
+                value = self.get_value(arg)
+                if name: kwargs[name] = value
+                else: args.append(value)
+
+            # runs the calling of the method/function/callable with the complete set
+            # of arguments, this should include both the default ones and the ones
+            # parsed from the string (as expected by specification)
             result = result(*args, **kwargs)
 
         # retrieves the current rsults's class and in case the class is of
@@ -1049,6 +1062,13 @@ class Visitor:
         # all the arguments to populate the list
         arguments_t = []
         for argument in arguments:
+            parts = argument.split("=", 1)
+            if len(parts) == 2: name, argument = parts
+            else: argument, = parts; name = None
+
+            if argument: argument = argument.strip()
+            if name: name = name.strip()
+
             # saves the original value under the original value so that
             # it may be used latter for the creation of the argument
             original = argument
@@ -1078,7 +1098,8 @@ class Visitor:
             argument_t = dict(
                 type = _type,
                 value = value,
-                original = original
+                original = original,
+                name = name
             )
             arguments_t.append(argument_t)
 
