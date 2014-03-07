@@ -899,6 +899,9 @@ class Visitor:
         # sets the attribute value value in the global map
         self.global_map[attribute_item_literal_value] = attribute_value_value
 
+    def process_for(self, node):
+        return self.process_foreach(node)
+
     def process_foreach(self, node):
         """
         Processes the foreach node.
@@ -907,108 +910,76 @@ class Visitor:
         @param node: The single node to be processed as foreach.
         """
 
-        # retrieves the attributes map
         attributes = node.get_attributes()
+        iterable = attributes["from"]
+        iterable = self.get_value(iterable)
+        item = attributes.get("item", None)
+        item = self.get_literal_value(item)
+        index_ref = attributes.get("index", None)
+        index_ref = self.get_literal_value(index_ref)
+        key_ref = attributes.get("key", None)
+        key_ref = self.get_literal_value(key_ref)
+        start_index = attributes.get("start_index", None)
+        start_index = self.get_literal_value(start_index)
 
-        # retrieves the attributes map values
-        attribute_from = attributes["from"]
-        attribute_from_value = self.get_value(attribute_from)
-        attribute_item = attributes["item"]
-        attribute_item_literal_value = self.get_literal_value(attribute_item)
-
-        # in case the index exists in the attributes map
-        if "index" in attributes:
-            # retrieves the attribute index literal value
-            attribute_index = attributes["index"]
-            attribute_index_literal_value = self.get_literal_value(attribute_index)
-        else:
-            # sets the attribute index literal value as none
-            attribute_index_literal_value = None
-
-        # in case the key exists in the attributes map
-        if "key" in attributes:
-            # retrieves the attribute key literal value
-            attribute_key = attributes["key"]
-            attribute_key_literal_value = self.get_literal_value(attribute_key)
-        else:
-            # sets the attribute key literal value as none
-            attribute_key_literal_value = None
-
-        # in case the start index exists in the attributes map
-        if "start_index" in attributes:
-            # retrieves the attribute start index literal value
-            attribute_start_index = attributes["start_index"]
-            attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
-
-            # sets the initial index
-            index = int(attribute_start_index_literal_value[1:-1])
-        else:
-            # sets the default initial index
-            index = 1
+        if start_index: index = int(start_index[1:-1])
+        else: index = 1
 
         # in case the attribute does not have the iterator method
-        # it's not iterable
-        if not hasattr(attribute_from_value, "__iter__"):
-            # in case the strict mode is active
-            if self.strict_mode:
-                # retrieves the attribute from value
-                attribute_from_value = attribute_from["value"]
+        # it's not iterable and a fallback strategy must performed
+        if not hasattr(iterable, "__iter__"):
 
-                # raises the variable not iterable exception
-                raise exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
+            # in case the strict mode is active, an exception must be
+            # raised because it's not possible to perform the iteration
+            if self.strict_mode:
+                # retrieves the attribute from name (value) and uses
+                # it to raise the proper exception with the description
+                # for the variable that is not iterable
+                from_value = attributes["from"]["value"]
+                raise exceptions.VariableNotIterable("value not iterable: " + from_value)
+
             # otherwise avoids exception in case the object
-            # is not an invalid one (possible problems)
-            elif not attribute_from_value == None:
-                # "casts" the attribute from value to a list it
-                # will create an iterable object that may be used
-                attribute_from_value = [attribute_from_value]
+            # is not an invalid one (possible problems) by
+            # "casting" the attribute from value to a list it
+            # will create an iterable object that may be used
+            elif not iterable == None: iterable = [iterable]
+
             # otherwise in case the object is considered invalid
             # the best match for the cast is an empty list
-            else:
-                # "casts" the "invalid" attribute to an empty list
-                # considers it the best representation
-                attribute_from_value = []
+            else: iterable = []
 
         # in case the type of the attribute from value is dictionary
-        if colony.is_dictionary(attribute_from_value):
-            # iterates over all the attribute from value items
-            for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
-                # sets the attribute from value value in the global map
-                self.global_map[attribute_item_literal_value] = attribute_from_value_value
-
-                is_last = index == len(attribute_from_value)
+        # and uses the key as the values for the iteration
+        if colony.is_dictionary(iterable):
+            for key, value in iterable.items():
+                is_last = index == len(iterable)
                 self.global_map["is_last"] = is_last
 
-                if attribute_index_literal_value:
-                    self.global_map[attribute_index_literal_value] = index
-
-                if attribute_key_literal_value:
-                    self.global_map[attribute_key_literal_value] = attribute_from_value_key
+                if item: self.global_map[item] = value
+                if index_ref: self.global_map[index_ref] = index
+                if key_ref: self.global_map[key_ref] = key
 
                 if self.visit_childs:
                     for node_child_node in node.child_nodes:
                         node_child_node.accept(self)
 
-                # increments the index
                 index += 1
-        # otherwise it must be a sequence
-        else:
-            # iterates over all the attribute from value values
-            for attribute_from_value_item in attribute_from_value:
-                # sets the attribute from value item in the global map
-                self.global_map[attribute_item_literal_value] = attribute_from_value_item
 
-                is_last = index == len(attribute_from_value)
+        # otherwise it assumes that the value is in fact a sequence
+        # and iterates over it using an index based approach
+        else:
+            for iterable_item in iterable:
+                is_last = index == len(iterable)
                 self.global_map["is_last"] = is_last
 
-                if attribute_index_literal_value:
-                    self.global_map[attribute_index_literal_value] = index
+                if item: self.global_map[item] = iterable_item
+                if index_ref: self.global_map[index_ref] = index
+                if key_ref: self.global_map[key_ref] = index
 
                 if self.visit_childs:
                     for node_child_node in node.child_nodes:
                         node_child_node.accept(self)
 
-                # increments the index
                 index += 1
 
     def process_if(self, node):
@@ -1499,7 +1470,7 @@ class Visitor:
         # writes the timestamp string value
         self.string_buffer.write(timestamp_string_value)
 
-    def get_value(self, attribute_value, process_literal = False, localize = False):
+    def get_value(self, attribute, process_literal = False, localize = False):
         """
         Retrieves the value (variable or literal) of the given
         value.
@@ -1509,8 +1480,8 @@ class Visitor:
         An optional localize flag may be set of the value should
         be localized using the current local bundles.
 
-        @type attribute_value: Dictionary
-        @param attribute_value: A map describing the attribute value.
+        @type attribute: Dictionary
+        @param attribute: A map describing the attribute structure.
         @type process_string: bool
         @param process_string: If the literal value should be processed.
         @type localize: bool
@@ -1520,10 +1491,15 @@ class Visitor:
         @return: The resolved attribute value.
         """
 
+        # in case the passed attribute is not valid the value must
+        # be returned immediately as no resolution is possible, this
+        # is the default and expected behavior (fallback procedure)
+        if not attribute: return attribute
+
         # in case the attribute value is of type variable
-        if attribute_value["type"] == "variable":
+        if attribute["type"] == "variable":
             # retrieves the variable name
-            variable_name = attribute_value["value"]
+            variable_name = attribute["value"]
 
             # in case the variable name is none sets the final value
             # with the invalid value as that's requested by the template
@@ -1556,10 +1532,10 @@ class Visitor:
         # in case the attribute value is of type literal the value must
         # be "read" using a literal based approach so that the proper and
         # concrete value is going to be returned as the value
-        elif attribute_value["type"] == "literal":
+        elif attribute["type"] == "literal":
             # retrieves the literal value from the attribute
             # this is going to be considered the proper value
-            value = attribute_value["value"]
+            value = attribute["value"]
 
             # in case the process literal is sets and
             # the literal value contains commas, it
@@ -1573,13 +1549,20 @@ class Visitor:
         # considered to be the value for the requested attribute
         return value
 
-    def get_literal_value(self, attribute_value):
-        return attribute_value["value"]
+    def get_literal_value(self, attribute):
+        if attribute == None: return attribute
+        return attribute["value"]
 
-    def get_boolean_value(self, attribute_value):
+    def get_boolean_value(self, attribute):
+        # in case the provided attribute structure is not
+        # defined the boolean value is assumed to be false
+        # as this is the default fallabck value for such
+        # "invalid" situations (as defined is specification)
+        if attribute == None: return False
+
         # retrieves the literal value of the provided
         # attribute, retrieving then the data type for it
-        value = attribute_value["value"]
+        value = attribute["value"]
         value_type = type(value)
 
         # in case the "literal" value is a boolean returns the same
@@ -1817,9 +1800,9 @@ class Visitor:
         item = attributes["item"]
         item = self.get_value(item)
         value = attributes.get("value", None)
-        value = self.get_value(value) if value else value
+        value = self.get_value(value)
         operator = attributes.get("operator", None)
-        operator = self.get_literal_value(operator) if operator else operator
+        operator = self.get_literal_value(operator)
 
         # retrieves the comparison function from the requested operator
         # and then evaluates the item against the value, this should produce
@@ -1879,7 +1862,7 @@ class Visitor:
         # in case the type of the value is not a string
         # or a format list type it's not possible to
         # resolve it (no string resolution available)
-        if type(value) not in RESOLVABLE_TYPES: return value
+        if not type(value) in RESOLVABLE_TYPES: return value
 
         # iterates over all the present locale bundles
         # trying to find one that contains the locale
@@ -2041,11 +2024,16 @@ class EvalVisitor(Visitor):
     arbitrary/unsafe code.
     """
 
-    def get_value(self, attribute_value, process_literal = False, localize = False):
+    def get_value(self, attribute, process_literal = False, localize = False):
+        # in case the passed attribute is not valid the value must
+        # be returned immediately as no resolution is possible, this
+        # is the default and expected behavior (fallback procedure)
+        if not attribute: return attribute
+
         # retrieves the original value from the attribute and then
         # splits it around the filter operator, retrieving both the
         # base name value and the filter literal values
-        original = attribute_value["original"]
+        original = attribute["original"]
         parts = original.split("|")
         name = parts[0].strip()
         filters = [filter.strip() for filter in parts[1:]]
