@@ -2783,7 +2783,8 @@ def assign_instance_template_file(self, request, template_file):
     various instance attributes.
     """
 
-    def _copy(value):
+    def _copy(value, all = True):
+        print "_copy -> all = %s" % str(all)
         value = "Copy right by: " + value
         return value
 
