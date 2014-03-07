@@ -52,7 +52,7 @@ NAME_REGEX = re.compile(r"[a-zA-Z_][\sa-zA-Z0-9_\.\/\(\)\:,'\"\|]*")
 of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
 
-LITERAL_REGEX= re.compile(
+LITERAL_REGEX = re.compile(
     "(?P<quoted_single>['][^']+['])|" + \
     "(?P<quoted_double>[\"][^\"]+[\"])|" + \
     "(?P<float>-?[0-9]+\.[0-9]*)|" + \
@@ -63,6 +63,28 @@ LITERAL_REGEX= re.compile(
 )
 """ Regular expression to be used in the parsing of literal values, named
 groups are used for the conditional retrieval of each of the types """
+
+IF_REGEX = re.compile(
+    "(?P<complex>(not)?\s*(.+)\s*(in|<|>|<=|>=|==)\s*(.+))|" + \
+    "(?P<simple>(not)?\s*(.+))"
+)
+""" The regular expression that is going to be used for the extraction of the
+various parts of an if statement note that there are two forms of an if
+statement one complex and one simple, this is required so that all forms
+of partial expression may be matched for variables """
+
+OPERATORS = {
+    "in" : "in",
+    "==" : "eq",
+    ">=" : "gte",
+    ">": "gt",
+    "<=": "lte",
+    "<": "lt",
+}
+""" Mapping between the normal (python) definition of operations and the more
+internal template way of representing them, the internal representation is
+purely textual and a convention defines that if it starts with an 'n' character
+a negation should be done in the final boolean evaluation (not) """
 
 class AstNode(object):
     """
@@ -168,6 +190,8 @@ class SimpleNode(AstNode):
         visitor.process_accept(self, self.type)
 
     def parse(self, value):
+        if not value: return value
+
         original = value
 
         match = LITERAL_REGEX.match(value)
@@ -178,25 +202,33 @@ class SimpleNode(AstNode):
             if index == QUOTED_SINGLE: value = value.strip("'")
             elif index == QUOTED_DOUBLE: value = value.strip("\"")
             elif index == FLOAT: value = float(value)
-            elif index == INTEGER: value = int(index)
+            elif index == INTEGER: value = int(value)
             elif index == BOOL_TRUE: value = True
             elif index == BOOL_FALSE: value = False
             elif index == NONE: value = None
 
-            return dict(
-                value = value,
-                original = original,
-                type = "literal"
-            )
+            return self.literal(value, original)
 
         match = NAME_REGEX.match(value)
         if match:
             value = match.group()
-            return dict(
-                value = value,
-                original = original,
-                type = "variable"
-            )
+            return self.variable(value, original)
+
+    def variable(self, value, original = None):
+        if original == None: original = value
+        return dict(
+            value = value,
+            original = original,
+            type = "variable"
+        )
+
+    def literal(self, value, original = None):
+        if original == None: original = value
+        return dict(
+            value = value,
+            original = original,
+            type = "literal"
+        )
 
 class OutputNode(SimpleNode):
     """
@@ -221,32 +253,50 @@ class EvalNode(SimpleNode):
         value_s = value.split(" ", 1)
         self.type = value_s[0]
 
-        if self.type == "if":
-            contents = value_s[1].strip()
-            print contents
+        if len(value_s) > 1: contents = value_s[1].strip()
+        else: contents = None
 
-            regex = re.compile("(not)?.+ (in|<|>|<=|>=|==) .+")
-            match = regex.match(contents)
-            if match:
-                not_group = match.group(0)
-                operator_group = match.group(1)
-            else:
-                self.attributes["item"] = self.parse(contents)
-                self.attributes["value"] = None
-                self.attributes["operator"] = None
-
-            # 1. tenho de caçar o operador do remanesched
-
-
-        elif self.type == "for":
-            pass
-
-        elif self.type == "tobias":
-            pass
+        if self.type == "if": self._process_if(contents)
+        elif self.type == "elif": self._process_if(contents)
+        elif self.type == "for": pass
 
     def is_end(self):
         if not self.type: return False
         return self.type.startswith("end")
+
+    def assert_end(self, type):
+        if type == self.type[3:]: return
+        raise RuntimeError("Invalid end tag")
+
+    def _process_if(self, contents):
+        match = IF_REGEX.match(contents)
+        if not match: raise RuntimeError("Malformed if expression")
+
+        is_complex = match.group("complex")
+
+        not_oper = False
+        oper = None
+        item = None
+        value = None
+
+        if is_complex:
+            not_oper = match.group(2)
+            item = match.group(3)
+            oper = match.group(4)
+            value = match.group(5)
+        else:
+            not_oper = match.group(7)
+            item = match.group(8)
+
+        if item: item = item.strip()
+        if value: value = value.strip()
+
+        oper = OPERATORS.get(oper, oper)
+        if not_oper: oper = "n" + oper if oper else "not"
+
+        self.attributes["item"] = self.parse(item)
+        self.attributes["value"] = self.parse(value)
+        self.attributes["operator"] = self.literal(oper)
 
 class MatchNode(AstNode):
     """
@@ -334,7 +384,7 @@ class MatchNode(AstNode):
             if index == QUOTED_SINGLE: value = value.strip("'")
             elif index == QUOTED_DOUBLE: value = value.strip("\"")
             elif index == FLOAT: value = float(value)
-            elif index == INTEGER: value = int(index)
+            elif index == INTEGER: value = int(value)
             elif index == BOOL_TRUE: value = True
             elif index == BOOL_FALSE: value = False
             elif index == NONE: value = None
