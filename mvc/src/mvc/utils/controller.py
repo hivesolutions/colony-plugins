@@ -2850,7 +2850,9 @@ def assign_session_template_file(self, request, template_file, variable_prefix =
     @param variable_prefix: The variable prefix to be prepended to the variable names.
     """
 
-    # tries to retrieve the request session
+    # tries to retrieve the session object currently associated
+    # with the provided request should comply with the pre-defined
+    # session rules (dictionary accessible)
     request_session = request.get_session()
 
     # in case the request session
@@ -2870,20 +2872,24 @@ def assign_session_template_file(self, request, template_file, variable_prefix =
     template_file.assign(variable_prefix + "maximum_timeout", session_maximum_timeout)
     template_file.assign(variable_prefix + "expire_time", session_expire_time)
 
-    # retrieves the session attributes map
+    # retrieves the session attributes map, this map should contain
+    # a key value association between the various session attributes
+    # and the various value, note that this object may only be a
+    # proxy to the real data structures behind the session
     session_attributes_map = request_session.get_attributes_map()
+    template_file.assign("session", session_attributes_map)
 
     # iterates over all the session attributes in the session
-    # attributes map
-    for session_attribute_name in session_attributes_map:
-        # retrieves the session attribute from the session attributes map
-        session_attribute = session_attributes_map[session_attribute_name]
-
-        # replaces the dots in the session attribute name
-        session_attribute_name_replaced = session_attribute_name.replace(".", "_")
-
-        # assigns the session attribute to the template file
-        template_file.assign(variable_prefix + session_attribute_name_replaced, session_attribute)
+    # attributes map to assign them to the current template with
+    # the proper prefix value associated (legacy support)
+    for name in session_attributes_map:
+        # retrieves the value from the session attributes map,
+        # then replaces the name with the proper value using the
+        # underscore notation instead of the dot based one and
+        # assigns the proper session value to the template
+        value = session_attributes_map[name]
+        name_replaced = name.replace(".", "_")
+        template_file.assign(variable_prefix + name_replaced, value)
 
 def assign_include_template_file(
     self,
