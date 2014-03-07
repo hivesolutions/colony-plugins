@@ -103,12 +103,6 @@ KEY_MAP_VALUE = "key_map"
 KEY_ORDER_LIST_VALUE = "key_order_list"
 """ The key order list value """
 
-XML_ESCAPE_VALUE = "xml_escape"
-""" The xml escape value """
-
-XML_QUOTE_VALUE = "xml_quote"
-""" The xml quote value """
-
 NEWLINE_CONVERT_VALUE = "newline_convert"
 """ The newline convert value """
 
@@ -123,12 +117,6 @@ ALLOW_EMPTY_VALUE = "allow_empty"
 
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
-
-KEY_SEPARATOR_VALUE = "key_separator"
-""" The key separator value """
-
-ITEM_SEPARATOR_VALUE = "item_separator"
-""" The item separator value """
 
 ELSE_VALUE = "else"
 """ The else value """
@@ -629,9 +617,9 @@ class Visitor:
             attribute_quote_value = False
 
         # in case the xml escape exists in the attributes map
-        if XML_ESCAPE_VALUE in attributes:
+        if "xml_escape" in attributes:
             # retrieves attribute xml escape value
-            attribute_xml_escape = attributes[XML_ESCAPE_VALUE]
+            attribute_xml_escape = attributes["xml_escape"]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         # otherwise
         else:
@@ -639,9 +627,9 @@ class Visitor:
             attribute_xml_escape_value = False
 
         # in case the xml quote exists in the attributes map
-        if XML_QUOTE_VALUE in attributes:
+        if "xml_quote" in attributes:
             # retrieves attribute xml quote value
-            attribute_xml_quote = attributes[XML_QUOTE_VALUE]
+            attribute_xml_quote = attributes["xml_quote"]
             attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
         # otherwise
         else:
@@ -804,9 +792,9 @@ class Visitor:
             attribute_key_order_list_value = attribute_value_value.keys()
 
         # in case the key separator exists in the attributes map
-        if KEY_SEPARATOR_VALUE in attributes:
+        if "key_separator" in attributes:
             # retrieves attribute key separator value
-            attribute_key_separator = attributes[KEY_SEPARATOR_VALUE]
+            attribute_key_separator = attributes["key_separator"]
             attribute_key_separator_value = self.get_value(attribute_key_separator)
         # otherwise
         else:
@@ -814,9 +802,9 @@ class Visitor:
             attribute_key_separator_value = ": "
 
         # in case the item separator exists in the attributes map
-        if ITEM_SEPARATOR_VALUE in attributes:
+        if "item_separator" in attributes:
             # retrieves attribute item separator value
-            attribute_item_separator = attributes[ITEM_SEPARATOR_VALUE]
+            attribute_item_separator = attributes["item_separator"]
             attribute_item_separator_value = self.get_value(attribute_item_separator)
         # otherwise
         else:
@@ -824,9 +812,9 @@ class Visitor:
             attribute_item_separator_value = NEWLINE_CHARACTER
 
         # in case the xml escape exists in the attributes map
-        if XML_ESCAPE_VALUE in attributes:
+        if "xml_escape" in attributes:
             # retrieves attribute xml escape value
-            attribute_xml_escape = attributes[XML_ESCAPE_VALUE]
+            attribute_xml_escape = attributes["xml_escape"]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         # otherwise
         else:
@@ -834,9 +822,9 @@ class Visitor:
             attribute_xml_escape_value = False
 
         # in case the xml quote exists in the attributes map
-        if XML_QUOTE_VALUE in attributes:
+        if "xml_quote" in attributes:
             # retrieves attribute xml quote value
-            attribute_xml_quote = attributes[XML_QUOTE_VALUE]
+            attribute_xml_quote = attributes["xml_quote"]
             attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
         # otherwise
         else:
