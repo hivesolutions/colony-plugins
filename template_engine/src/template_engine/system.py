@@ -607,7 +607,7 @@ class TemplateFile(object):
         @param variable_value: The value to be assigned to the variable
         """
 
-        self.visitor.add_global_variable(variable_name, variable_value)
+        self.visitor.set_global_variable(variable_name, variable_value)
 
     def set_global_map(self, global_map):
         """

@@ -293,11 +293,11 @@ class Visitor:
     def set_global_map(self, global_map):
         self.global_map = global_map
 
-    def add_global_variable(self, variable_name, variable_value):
-        self.global_map[variable_name] = variable_value
+    def set_global_variable(self, name, value):
+        self.global_map[name] = value
 
-    def remove_global_variable(self, variable_name):
-        del self.global_map[variable_name]
+    def del_global_variable(self, name):
+        del self.global_map[name]
 
     def add_bundle(self, bundle):
         self.locale_bundles.append(bundle)
