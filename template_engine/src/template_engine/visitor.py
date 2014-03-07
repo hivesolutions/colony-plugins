@@ -160,18 +160,35 @@ def dispatch_visit():
     def create_interceptor(function):
 
         def decorator_interceptor(*args, **kwargs):
+            # unpacks the first two "unnamed" arguments as the self
+            # instance reference and the node element to be visited
             self = args[0]
-            node_value = args[1]
+            node = args[1]
 
-            node_value_class = node_value.__class__
-            mro = node_value_class.mro()
+            # verifies if the current instance contains the node method
+            # map if that's the case retrieves otherwise falls back to an
+            # empty dictionary (for code compatibility)
+            has_map = hasattr(self, "node_method_map")
+            node_method_map = self.node_method_map if has_map else dict()
 
+            # retrieves the class for the node argument and then
+            # gathers the complete mro class definition to be able
+            # to iterate over the class hierarchy
+            node_class = node.__class__
+            mro = node_class.mro()
+
+            # iterates over the complete class hierarchy for the provided
+            # node (from bottom to up) so that the best match for the
+            # visit operation is found and properly called
             for mro_item in mro:
-                if not hasattr(self, "node_method_map"): continue
-
-                node_method_map = self.node_method_map
+                # in case the current mro item class level is nor found
+                # skips the current iteration (cannot visit at this level)
                 if not mro_item in node_method_map: continue
 
+                # the current class level is valid and so the proper method
+                # is retrieved from the map and then called with the provided
+                # arguments, note that a before visit and an after visit calls
+                # are done so that proper "notification" exists
                 visit_method = node_method_map[mro_item]
                 self.before_visit(*args[1:], **kwargs)
                 visit_method(*args, **kwargs)
