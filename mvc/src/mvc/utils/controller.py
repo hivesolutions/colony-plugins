@@ -956,11 +956,12 @@ def get_field_models(self, request, field_name, model, data_type = int):
     )
     return entities
 
-
 def url_for(self, request, reference, filename = None, *args, **kwargs):
-
+    # retrieves the base path for the current request
+    # so that the complete path may be constructor, keep
+    # in mind that the generated location is always a
+    # relative one a never an absolute url
     base_path = self.get_base_path(request)
-
     location = ""
 
     if reference == "static":
@@ -973,7 +974,6 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
         location = "common/" + filename
 
     return base_path + location
-
 
 def get_field(
     self,
