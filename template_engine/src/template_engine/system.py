@@ -408,10 +408,12 @@ class TemplateEngine(colony.System):
             elif type == EVAL_VALUE:
                 value = match_orderer.get_value()
                 node = ast.EvalNode(value)
+                parent_node = stack[-1]
                 is_end = node.is_end()
-                if is_end: stack.pop()
+                if is_end:
+                    node.assert_end(parent_node.type)
+                    stack.pop()
                 else:
-                    parent_node = stack[-1]
                     parent_node.add_child_node(node)
                     stack.append(node)
 
