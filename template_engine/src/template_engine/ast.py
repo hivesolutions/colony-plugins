@@ -47,7 +47,7 @@ BOOL_TRUE = 5
 BOOL_FALSE = 6
 NONE = 7
 
-NAME_REGEX = re.compile(r"[a-zA-Z_][\sa-zA-Z0-9_\.\/\(\)\:,'\"\|]*")
+NAME_REGEX = re.compile(r"[a-zA-Z_\[\{][\sa-zA-Z0-9_\.\/\(\)\:,'\"\[\]\{\}\|]*")
 """ The regular expression that is going to be used in the matching
 of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
@@ -72,6 +72,14 @@ IF_REGEX = re.compile(
 various parts of an if statement note that there are two forms of an if
 statement one complex and one simple, this is required so that all forms
 of partial expression may be matched for variables """
+
+FOR_REGEX = re.compile(
+    "(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + \
+    "(?P<simple>(.+)\s+in\s+(.+))"
+)
+""" Regular expression used for the mating of the various parts of the for
+expression the expression defines two modes one simple with just the key
+definition and one more complex with both key and value definitions """
 
 OPERATORS = {
     "in" : "in",
@@ -261,7 +269,7 @@ class EvalNode(SimpleNode):
 
         if self.type == "if": self._process_if(contents)
         elif self.type == "elif": self._process_if(contents)
-        elif self.type == "for": pass
+        elif self.type == "for": self._process_for(contents)
 
     def is_end(self):
         if not self.type: return False
@@ -279,13 +287,12 @@ class EvalNode(SimpleNode):
         match = IF_REGEX.match(contents)
         if not match: raise RuntimeError("Malformed if expression")
 
-        is_complex = match.group("complex")
-
         not_oper = False
         oper = None
         item = None
         value = None
 
+        is_complex = match.group("complex")
         if is_complex:
             not_oper = match.group(2)
             item = match.group(3)
@@ -304,6 +311,30 @@ class EvalNode(SimpleNode):
         self.attributes["item"] = self.parse(item)
         self.attributes["value"] = self.parse(value)
         self.attributes["operator"] = self.literal(oper)
+
+    def _process_for(self, contents):
+        match = FOR_REGEX.match(contents)
+        if not match: raise RuntimeError("Malformed for expression")
+
+        item = None
+        _from = False
+        key = None
+
+        is_complex = match.group("complex")
+        if is_complex:
+            key = match.group(2)
+            item = match.group(3)
+            _from = match.group(4)
+        else:
+            item = match.group(6)
+            _from = match.group(7)
+
+        if item: item = item.strip()
+        if key: key = key.strip()
+
+        self.attributes["item"] = self.literal(item)
+        self.attributes["from"] = self.parse(_from)
+        self.attributes["key"] = self.literal(key)
 
 class MatchNode(AstNode):
     """
