@@ -1399,6 +1399,7 @@ class EvalVisitor(Visitor):
         try: value = eval(name, globals, globals)
         except AttributeError: value = None
         except NameError: value = None
+        except SyntaxError: value = None
 
         # verifies if the currently returned value is an accessor value and
         # in case it is retrieves the reference values as the value so that
