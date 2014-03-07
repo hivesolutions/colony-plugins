@@ -94,15 +94,6 @@ NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
 """ The compiled version of names regular expression used for the
 matching of the various components of a variable template value """
 
-ELSE_VALUE = "else"
-""" The else value """
-
-ELIF_VALUE = "elif"
-""" The elif value """
-
-ITER_VALUE = "__iter__"
-""" The iter value """
-
 DEFAULT_YEAR_FORMAT = "%Y"
 """ The default year format """
 
@@ -957,7 +948,7 @@ class Visitor:
 
         # in case the attribute does not have the iterator method
         # it's not iterable
-        if not hasattr(attribute_from_value, ITER_VALUE):
+        if not hasattr(attribute_from_value, "__iter__"):
             # in case the strict mode is active
             if self.strict_mode:
                 # retrieves the attribute from value
@@ -1028,27 +1019,30 @@ class Visitor:
         @param node: The single node to be processed as if.
         """
 
-        # evaluates the node as comparison
-        result = self._evaluate_comparison_node(node)
+        # evaluates the current node comparison, this is the default
+        # acceptance behavior for all the nodes that do not require
+        # an extra evaluation process (evaluation nodes)
+        accept_node = self._evaluate_comparison_node(node)
 
-        # sets the initial accept node value
-        accept_node = result
+        # in case the visit child flag is not set the method must
+        # return immediately as there's nothing remaining to be done
+        if not self.visit_childs: return
 
-        # in case the visit child is set
-        if self.visit_childs:
-            # iterates over all the node child nodes
-            for node_child_node in node.child_nodes:
-                # validates the accept node using the node child node
-                # and the accept node
-                accept_node = self._validate_accept_node(node_child_node, accept_node)
+        # iterates over all the child nodes for the current if node
+        # to evaluate or process them according to their type
+        for child_node in node.child_nodes:
+            # validates the accept node, so that if the node is "eval"
+            # the evaluation is done otherwise the default evaluation
+            # result for the if node is applied
+            accept_node = self._validate_accept_node(child_node, accept_node)
 
-                # in case the accept node is set to invalid
-                # the evaluation is over (nothing to be done)
-                if accept_node == None: return
+            # in case the accept node is set to invalid
+            # the evaluation is over (nothing to be done)
+            if accept_node == None: return
 
-                # in case the accept node flag is set
-                # accepts the node child node
-                accept_node and node_child_node.accept(self)
+            # in case the accept node flag is set accepts the node
+            # child node as it is considered to be valid
+            accept_node and child_node.accept(self)
 
     def process_else(self, node):
         """
@@ -1180,11 +1174,10 @@ class Visitor:
 
         # in case the attribute file literal value is not valid
         if not attribute_file_literal_value:
-            # retrieves the node value type
-            node_value_type = node.get_value_type()
-
-            # raises the undefined reference exception
-            raise exceptions.UndefinedReference(node_value_type)
+            # retrieves the node type and raises an exception with
+            # the value that was just retrieved
+            node_type = node.get_type()
+            raise exceptions.UndefinedReference(node_type)
 
         # in case the path is absolute
         if os.path.isabs(attribute_file_literal_value):
@@ -1765,46 +1758,44 @@ class Visitor:
         specification.
 
         @type node: Node
-        @param node: The child node to be evaluated.
+        @param node: The child node to be evaluated, this may either
+        be a node that is able to be evaluated or not.
         @type accept_node: bool
-        @param accept_node: The accept node flag value.
+        @param accept_node: The accept node flag value, this is
+        the fallback value for nodes that are not able (or required)
+        to be evaluated for acceptance.
         @rtype: bool
         @return: The new value for the accept node flag.
         """
 
-        # in case the current node is not a match node
-        if not isinstance(node, ast.MatchNode):
-            # returns the accept node
-            return accept_node
+        # verifies if the current node is mean to be evaluated and
+        # if that's not the case returns the passed fallback value
+        eval_node = isinstance(node, ast.MatchNode) or\
+            isinstance(node, ast.EvalNode)
+        if not eval_node: return accept_node
 
-        # retrieves the value type
-        value_type = node.get_value_type()
-
-        # in case the value type is else
-        if value_type in (ELSE_VALUE, ELIF_VALUE):
+        # retrieves the value type for the current node and uses
+        # this value to decide to either process it or not
+        type = node.get_type()
+        if type in ("else", "elif", "endif"):
             # in case the accept node
             # flag is already set (the result is
             # already been evaluated positively)
-            if accept_node:
-                # returns invalid (to end evaluation)
-                return None
+            if accept_node: return None
 
-            # in case the type is else, the
-            # node should be accepted
-            if value_type == ELSE_VALUE:
-                # sets the accept node flag
-                accept_node = True
-            # in case the type is elif, the
-            # node should be accepted in case
-            # of positive evaluation
-            elif ELIF_VALUE:
-                # evaluates the node as comparison
+            # in case the type is plain, the node should always
+            # be accepted, and no extra evaluation process is
+            # performed (node is accepted by default)
+            if type in ("else", "endif"): accept_node = True
+
+            # in case the type is elif, the node should be
+            # accepted in case of positive evaluation
+            elif "elif":
                 result = self._evaluate_comparison_node(node)
-
-                # sets the accept node value
                 accept_node = result
 
-        # returns the accept node
+        # returns the accept node final result so that the caller
+        # may decide to either visit the node or not
         return accept_node
 
     def _evaluate_comparison_node(self, node):

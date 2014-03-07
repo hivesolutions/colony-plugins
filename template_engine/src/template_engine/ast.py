@@ -186,6 +186,9 @@ class SimpleNode(AstNode):
     def get_attributes(self):
         return self.attributes
 
+    def get_type(self):
+        return self.type
+
     def accept(self, visitor):
         visitor.process_accept(self, self.type)
 
@@ -264,6 +267,10 @@ class EvalNode(SimpleNode):
         if not self.type: return False
         return self.type.startswith("end")
 
+    def is_open(self):
+        if not self.type: return False
+        return self.type in ("if", "for")
+
     def assert_end(self, type):
         if type == self.type[3:]: return
         raise RuntimeError("Invalid end tag")
@@ -305,8 +312,8 @@ class MatchNode(AstNode):
     and then a series of key to value attributes.
     """
 
-    value_type = None
-    """ The value type for the match node this is
+    type = None
+    """ The (value) type for the match node this is
     the type of node operation that is going to be
     performed, this value may assume any value
     (eg: out, for, if, else, etc.) """
@@ -333,15 +340,15 @@ class MatchNode(AstNode):
 
         self.attributes = {}
 
-        self.process_value_type()
+        self.process_type()
         self.process_attributes()
 
-    def process_value_type(self):
+    def process_type(self):
         match = self.get_start_match()
         match_value = match.get_value()
 
         match_value_s = match_value.split()
-        self.value_type = match_value_s[0][2:]
+        self.type = match_value_s[0][2:]
 
     def process_attributes(self):
         # retrieve the match value part of the node, this is the string
@@ -395,11 +402,11 @@ class MatchNode(AstNode):
                 type = "literal"
             )
 
-    def get_value_type(self):
-        return self.value_type
+    def get_type(self):
+        return self.type
 
-    def set_value_type(self, value_type):
-        self.value_type = value_type
+    def set_type(self, type):
+        self.type = type
 
     def get_attributes(self):
         return self.attributes
@@ -420,8 +427,8 @@ class SingleNode(MatchNode):
         return self.value
 
     def accept(self, visitor):
-        value_type = self.get_value_type()
-        visitor.process_accept(self, value_type)
+        type = self.get_type()
+        visitor.process_accept(self, type)
 
 class CompositeNode(MatchNode):
     """
@@ -437,5 +444,5 @@ class CompositeNode(MatchNode):
         return self.value[0]
 
     def accept(self, visitor):
-        value_type = self.get_value_type()
-        visitor.process_accept(self, value_type)
+        type = self.get_type()
+        visitor.process_accept(self, type)
