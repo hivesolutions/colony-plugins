@@ -65,6 +65,11 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return bool(ref)
 
+    def __call__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "ref")
+        is_callable = hasattr(ref, "__call__")
+        return ref.__call__(*args, **kwargs) if is_callable else ref
+
     def __getattribute__ (self, name):
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
