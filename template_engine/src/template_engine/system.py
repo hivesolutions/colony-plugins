@@ -410,12 +410,13 @@ class TemplateEngine(colony.System):
                 node = ast.EvalNode(value)
                 parent_node = stack[-1]
                 is_end = node.is_end()
+                is_open = node.is_open()
                 if is_end:
                     node.assert_end(parent_node.type)
                     stack.pop()
                 else:
                     parent_node.add_child_node(node)
-                    stack.append(node)
+                    if is_open: stack.append(node)
 
             elif type == START_VALUE:
                 node = ast.CompositeNode(
