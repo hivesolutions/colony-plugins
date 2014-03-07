@@ -316,9 +316,9 @@ class EvalNode(SimpleNode):
         match = FOR_REGEX.match(contents)
         if not match: raise RuntimeError("Malformed for expression")
 
-        item = None
-        _from = False
         key = None
+        _from = False
+        item = None
 
         is_complex = match.group("complex")
         if is_complex:
@@ -326,7 +326,7 @@ class EvalNode(SimpleNode):
             item = match.group(3)
             _from = match.group(4)
         else:
-            item = match.group(6)
+            key = match.group(6)
             _from = match.group(7)
 
         if item: item = item.strip()
