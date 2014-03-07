@@ -270,6 +270,7 @@ class EvalNode(SimpleNode):
         if self.type == "if": self._process_if(contents)
         elif self.type == "elif": self._process_if(contents)
         elif self.type == "for": self._process_for(contents)
+        elif self.type == "include": self._process_include(contents)
 
     def is_end(self):
         if not self.type: return False
@@ -335,6 +336,9 @@ class EvalNode(SimpleNode):
         self.attributes["item"] = self.literal(item)
         self.attributes["from"] = self.parse(_from)
         self.attributes["key"] = self.literal(key)
+
+    def _process_include(self, contents):
+        self.attributes["file_value"] = self.parse(contents)
 
 class MatchNode(AstNode):
     """
