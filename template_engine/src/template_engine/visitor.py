@@ -75,7 +75,7 @@ object to handle it """
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUCNTION_ARGUMENTS_REGEX_VALUE = "\([a-zA-Z0-9_\-,\.\:\='\/\" ]+\)"
+FUCNTION_ARGUMENTS_REGEX_VALUE = "\([\sa-zA-Z0-9_\-,\.\:\='\/\"]+\)"
 """ The function arguments regular expression value """
 
 NAMES_REGEX_VALUE = "([^\.]+\([^\)]+\))|([^\.]+)"
@@ -1062,10 +1062,16 @@ class Visitor:
         # all the arguments to populate the list
         arguments_t = []
         for argument in arguments:
+            # tries to split the provided argument string into the two
+            # possible parts (name and argument value) in case only one
+            # value exists (unnamed argument) used the default invalid
+            # attribute for the name value (expected behavior)
             parts = argument.split("=", 1)
             if len(parts) == 2: name, argument = parts
             else: argument, = parts; name = None
 
+            # in case the argument or the name are defined and valid strips
+            # their values to avoid any extra space character in them
             if argument: argument = argument.strip()
             if name: name = name.strip()
 
