@@ -106,12 +106,6 @@ DEFAULT_TIME_FORMAT = "%H:%M:%S"
 DEFAULT_DATE_TIME_FORMAT = "%d/%m/%y %H:%M:%S"
 """ The default date time format """
 
-NEWLINE_CHARACTER = "\n"
-""" The newline character """
-
-LINE_BREAK_TAG = "<br/>"
-""" The line break tag """
-
 SEQUENCE_TYPES = (types.ListType, types.TupleType)
 """ The tuple containing the types considered to be sequences """
 
@@ -552,332 +546,93 @@ class Visitor:
         # to be printed to the current context
         attributes = node.get_attributes()
 
-        # retrieves the attributes map values
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value, localize = True)
+        # retrieves the complete set of attributes from the attributes
+        # defined for the current node, it's an extensive list and
+        # the range of usage and data types are vast
+        value = attributes["value"]
+        value = self.get_value(value, localize = True)
+        prefix = attributes.get("prefix", None)
+        prefix = self.get_value(prefix, localize = True, default = "")
+        format = attributes.get("format", None)
+        format = self.get_value(format)
+        quote = attributes.get("quote", None)
+        quote = self.get_boolean_value(quote)
+        xml_escape = attributes.get("xml_escape", None)
+        xml_escape = self.get_boolean_value(xml_escape)
+        xml_quote = attributes.get("xml_escape", None)
+        xml_quote = self.get_boolean_value(xml_quote)
+        newline_convert = attributes.get("newline_convert", None)
+        newline_convert = self.get_boolean_value(newline_convert)
+        convert = attributes.get("convert", None)
+        convert = self.get_value(convert)
+        allow_empty = attributes.get("allow_empty", None)
+        allow_empty = self.get_value(allow_empty, default = True)
+        default = attributes.get("default", None)
+        default = self.get_value(default, localize = True)
+        serializer = attributes.get("serializer", None)
+        serializer = self.get_literal_value(serializer)
 
-        # in case the prefix exists in the attributes map
-        if "prefix" in attributes:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes["prefix"]
-            attribute_prefix_value = self.get_value(attribute_prefix, localize = True)
-        # otherwise
-        else:
-            # sets the default prefix value
-            attribute_prefix_value = ""
+        # in case the format value is defined the provided value
+        # must be formated according to the value specified in
+        # that field using the default (python) formatter
+        if format:
+            is_valid = format and not value == None
+            value = format % value if is_valid else value
 
-        # in case the format exists in the attributes map
-        if "format" in attributes:
-            # retrieves attribute value value
-            format_string = attributes["format"]
-            format_string_value = self.get_value(format_string)
-            is_valid = format_string_value and not attribute_value_value == None
-            attribute_value_value = is_valid and\
-                format_string_value % attribute_value_value or attribute_value_value
-
-        # in case the quote exists in the attributes map
-        if "quote" in attributes:
-            # retrieves attribute quote value
-            attribute_quote = attributes["quote"]
-            attribute_quote_value = self.get_boolean_value(attribute_quote)
-        # otherwise
-        else:
-            # unsets the attribute quote value
-            attribute_quote_value = False
-
-        # in case the xml escape exists in the attributes map
-        if "xml_escape" in attributes:
-            # retrieves attribute xml escape value
-            attribute_xml_escape = attributes["xml_escape"]
-            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
-        # otherwise
-        else:
-            # unsets the attribute xml escape value
-            attribute_xml_escape_value = False
-
-        # in case the xml quote exists in the attributes map
-        if "xml_quote" in attributes:
-            # retrieves attribute xml quote value
-            attribute_xml_quote = attributes["xml_quote"]
-            attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
-        # otherwise
-        else:
-            # unsets the attribute xml quote value
-            attribute_xml_quote_value = False
-
-        # in case the new line convert exists in the attributes map
-        if "newline_convert" in attributes:
-            # retrieves attribute newline convert value
-            attribute_newline_convert = attributes["newline_convert"]
-            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
-        # otherwise
-        else:
-            # unsets the attribute newline convert value
-            attribute_newline_convert_value = False
-
-        # in case the convert exists in the attributes map
-        if "convert" in attributes:
-            # retrieves attribute convert value
-            attribute_convert = attributes["convert"]
-            attribute_convert_value = self.get_value(attribute_convert)
-        # otherwise
-        else:
-            # unsets the attribute convert value
-            attribute_convert_value = None
-
-        # in case the allow empty exists in the attributes map
-        if "allow_empty" in attributes:
-            # retrieves attribute allow empty value
-            attribute_allow_empty = attributes["allow_empty"]
-            attribute_allow_empty_value = self.get_value(attribute_allow_empty)
-        # otherwise
-        else:
-            # sets the attribute allow empty value
-            attribute_allow_empty_value = True
-
-        # in case the default exists in the attributes map
-        if "default" in attributes:
-            # retrieves attribute default value
-            attribute_default = attributes["default"]
-            attribute_default_value = self.get_value(attribute_default, localize = True)
-        # otherwise
-        else:
-            # unsets the attribute default value
-            attribute_default_value = None
-
-        # in case the serializer exists in the attributes map
-        if "serializer" in attributes:
-            # retrieves attribute serializer value
-            attribute_serializer = attributes["serializer"]
-            attribute_serializer_value = self.get_literal_value(attribute_serializer)
-        # otherwise
-        else:
-            # unsets the attribute serializer value
-            attribute_serializer_value = None
-
-        # creates the invalid values tuple
-        invalid_values = attribute_allow_empty_value and (None,) or (None, "")
-
-        # changes the attribute value value to the default attribute
-        # value in case the value of it is invalid
-        if attribute_value_value in invalid_values: attribute_value_value = attribute_default_value
+        # creates the invalid values tuple according to the allow
+        # empty flag and the verifies if the value is defined under
+        # such value falling back to the default value for such case
+        invalid_values = (None,) if allow_empty else (None, "")
+        if value in invalid_values: value = default
 
         # in case the attribute value value is invalid and the default
-        # value is not set (no need to show the value) must return immediately
-        # nothing will be printed
-        if attribute_value_value in invalid_values and attribute_default_value == None:
-            return
+        # value is not set (no need to show the value) must return
+        # immediately nothing will be printed
+        if value in invalid_values and default == None: return
 
         # in case the serializer value is set must try to gather
         # the serializer and serialize the attribute value using it
-        if attribute_serializer_value:
-            serializer, _name = self._get_serializer(attribute_serializer_value)
-            attribute_value_value = serializer.dumps(attribute_value_value)
+        if serializer:
+            serializer, _name = self._get_serializer(serializer)
+            value = serializer.dumps(value)
 
         # serializes the value into the correct visual representation
         # (in case the attribute type is "serializable", eg: lists, tuples, etc.)
-        attribute_value_value = self._serialize_value(attribute_value_value)
+        value = self._serialize_value(value)
 
         # checks if the attribute value contains a unicode string
         # in such case there's no need to re-decode it
-        is_unicode = type(attribute_value_value) == types.UnicodeType
-        attribute_value_value = is_unicode and attribute_value_value or unicode(attribute_value_value)
+        is_unicode = type(value) == types.UnicodeType
+        value = is_unicode and value or unicode(value)
 
         # in case the attribute convert value is set
-        if attribute_convert_value:
+        if convert:
             # retrieves the conversion method for the string
             # value representing it and uses it to convert
             # the attribute value to the target encoding
-            conversion_method = CONVERSION_MAP.get(attribute_convert_value, None)
-            attribute_value_value = conversion_method and conversion_method(attribute_value_value) or attribute_convert_value
+            conversion_method = CONVERSION_MAP.get(convert, None)
+            value = conversion_method(value) if conversion_method else value
 
-        # in case the variable encoding is defined
-        if self.variable_encoding:
-            # re-encodes the variable value
-            attribute_value_value = attribute_value_value.encode(self.variable_encoding)
+        # in case the variable encoding is defined must re-encode
+        # the variable according to the current variable encoding
+        if self.variable_encoding: value = value.encode(self.variable_encoding)
 
-        # in case the attribute quote value is set
-        if attribute_quote_value:
-            # re-encodes the value
-            attribute_value_value = attribute_value_value.encode("utf-8")
+        # in case the attribute quote value is set must quote the
+        # value using the provided colony utility
+        if quote:
+            value = value.encode("utf-8")
+            value = colony.quote(value, safe = "/")
 
-            # quotes the attribute value value
-            attribute_value_value = colony.quote(attribute_value_value, "/")
+        # runs the final transformation on the value according to
+        # the provided flags (custom operations)
+        if xml_escape: value = xml.sax.saxutils.escape(value)
+        if xml_quote: value = value.replace("\"", "&quot;")
+        if newline_convert: value = value.replace("\n", "<br/>")
 
-        # in case the attribute xml escape value is set
-        if attribute_xml_escape_value:
-            # escapes the attribute value value using xml escaping
-            attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
-
-        # in case the attribute xml quote value is set
-        if attribute_xml_quote_value:
-            # escapes the (double) quotes using the xml base approach
-            attribute_value_value = attribute_value_value.replace("\"", "&quot;")
-
-        # in case the attribute newline convert value is set
-        if attribute_newline_convert_value:
-            # converts the attribute value value newlines
-            attribute_value_value = attribute_value_value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
-
-        # adds the attribute prefix value to the attribute value value
-        attribute_value_value = attribute_prefix_value + attribute_value_value
-
-        # writes the attribute value value in the string buffer
-        self.string_buffer.write(attribute_value_value)
-
-    def process_out_map(self, node):
-        """
-        Processes the out none node.
-
-        @type node: SingleNode
-        @param node: The single node to be processed as out map.
-        """
-
-        # retrieves the attributes map
-        attributes = node.get_attributes()
-
-        # retrieves the attributes map values
-        attribute_value = attributes["value"]
-        attribute_value_value = self.get_value(attribute_value, localize = True)
-
-        # in case the key map exists in the attributes map
-        if "key_map" in attributes:
-            # retrieves attribute key map value
-            attribute_key_map = attributes["key_map"]
-            attribute_key_map_value = self.get_value(attribute_key_map)
-        # otherwise
-        else:
-            # sets the attribute key map value
-            attribute_key_map_value = {}
-
-        # in case the key order list exists in the attributes map
-        if "key_order_list" in attributes:
-            # retrieves attribute key order list value
-            attribute_key_order_list = attributes["key_order_list"]
-            attribute_key_order_list_value = self.get_value(attribute_key_order_list)
-        # otherwise
-        else:
-            # sets the attribute key order list value
-            attribute_key_order_list_value = attribute_value_value.keys()
-
-        # in case the key separator exists in the attributes map
-        if "key_separator" in attributes:
-            # retrieves attribute key separator value
-            attribute_key_separator = attributes["key_separator"]
-            attribute_key_separator_value = self.get_value(attribute_key_separator)
-        # otherwise
-        else:
-            # sets the attribute key separator value
-            attribute_key_separator_value = ": "
-
-        # in case the item separator exists in the attributes map
-        if "item_separator" in attributes:
-            # retrieves attribute item separator value
-            attribute_item_separator = attributes["item_separator"]
-            attribute_item_separator_value = self.get_value(attribute_item_separator)
-        # otherwise
-        else:
-            # sets the attribute item separator value
-            attribute_item_separator_value = NEWLINE_CHARACTER
-
-        # in case the xml escape exists in the attributes map
-        if "xml_escape" in attributes:
-            # retrieves attribute xml escape value
-            attribute_xml_escape = attributes["xml_escape"]
-            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
-        # otherwise
-        else:
-            # unsets the attribute xml escape value
-            attribute_xml_escape_value = False
-
-        # in case the xml quote exists in the attributes map
-        if "xml_quote" in attributes:
-            # retrieves attribute xml quote value
-            attribute_xml_quote = attributes["xml_quote"]
-            attribute_xml_quote_value = self.get_boolean_value(attribute_xml_quote)
-        # otherwise
-        else:
-            # unsets the attribute xml quote value
-            attribute_xml_quote_value = False
-
-        # in case the new line convert exists in the attributes map
-        if "newline_convert" in attributes:
-            # retrieves attribute newline convert value
-            attribute_newline_convert = attributes["newline_convert"]
-            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
-        # otherwise
-        else:
-            # unsets the attribute newline convert value
-            attribute_newline_convert_value = False
-
-        # in case the allow empty exists in the attributes map
-        if "allow_empty" in attributes:
-            # retrieves attribute allow empty value
-            attribute_allow_empty = attributes["allow_empty"]
-            attribute_allow_empty_value = self.get_value(attribute_allow_empty)
-        # otherwise
-        else:
-            # sets the attribute allow empty value
-            attribute_allow_empty_value = True
-
-        # creates the invalid values tuple
-        invalid_values = attribute_allow_empty_value and (None,) or (None, "")
-
-        # iterates over all the attribute value key items
-        for key in attribute_key_order_list_value:
-            # retrieves the attribute value value for
-            # the current key
-            value = attribute_value_value[key]
-
-            # in case the value is invalid
-            if value in invalid_values:
-                # skips the iteration
-                continue
-
-            # tries to retrieve the key from the attribute
-            # key map value
-            key = attribute_key_map_value.get(key, key)
-
-            # serializes the value into the correct visual representation
-            # (in case the attribute type is "serializable", eg: lists, tuples, etc.)
-            value = self._serialize_value(value)
-
-            # checks if the value contains a unicode string
-            # in such case there's no need to re-decode it
-            is_unicode = type(value) == types.UnicodeType
-            value = is_unicode and value or unicode(value)
-
-            # in case the variable encoding is defined
-            if self.variable_encoding:
-                # re-encodes the variable value
-                value = value.encode(self.variable_encoding)
-
-            # in case the attribute xml escape value is set
-            if attribute_xml_escape_value:
-                # escapes the key using xml escaping
-                key = xml.sax.saxutils.escape(key)
-
-                # escapes the value using xml escaping
-                value = xml.sax.saxutils.escape(value)
-
-            # in case the attribute xml quote value is set
-            if attribute_xml_quote_value:
-                # escapes the key using xml (quote) escaping
-                key = key.replace("\"", "&quot;")
-
-                # escapes the value using xml (quote) escaping
-                value = value.replace("\"", "&quot;")
-
-            # in case the attribute newline convert value is set
-            if attribute_newline_convert_value:
-                # converts the key newlines
-                key = key.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
-
-                # converts the value newlines
-                value = value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
-
-            # writes the attribute value value in the string buffer
-            self.string_buffer.write(key + attribute_key_separator_value + value + attribute_item_separator_value)
+        # runs the final appending of the prefix value to the value
+        # and then writes the final string/unicode value to the buffer
+        value = prefix + value
+        self.string_buffer.write(value)
 
     def process_var(self, node):
         """
@@ -1470,31 +1225,31 @@ class Visitor:
         # writes the timestamp string value
         self.string_buffer.write(timestamp_string_value)
 
-    def get_value(self, attribute, process_literal = False, localize = False):
+    def get_value(self, attribute, localize = False, default = None):
         """
         Retrieves the value (variable or literal) of the given
-        value.
-        The process of retrieving the variable value is iterative
-        and may consume some time in resolution.
+        value. The process of retrieving the variable value is
+        iterative and may consume some time in resolution.
 
         An optional localize flag may be set of the value should
         be localized using the current local bundles.
 
         @type attribute: Dictionary
         @param attribute: A map describing the attribute structure.
-        @type process_string: bool
-        @param process_string: If the literal value should be processed.
         @type localize: bool
         @param localize: If the value must be localized using the currently
         available locale bundles.
+        @type default: Object
+        @param default: Te default (fallback) value to be returned if
+        no valid attribute is provided or in case it is invalid.
         @rtype: Object
         @return: The resolved attribute value.
         """
 
-        # in case the passed attribute is not valid the value must
+        # in case the passed attribute is not valid the default must
         # be returned immediately as no resolution is possible, this
         # is the default and expected behavior (fallback procedure)
-        if not attribute: return attribute
+        if not attribute: return default
 
         # in case the attribute value is of type variable
         if attribute["type"] == "variable":
@@ -1537,28 +1292,19 @@ class Visitor:
             # this is going to be considered the proper value
             value = attribute["value"]
 
-            # in case the process literal is sets and
-            # the literal value contains commas, it
-            # must be a sequence
-            if process_literal and value.find(","):
-                # sets the value as the list resulting
-                # from the split around the separator
-                value = value.split(",")
-
         # returns the processed value to the caller method, this is the
         # considered to be the value for the requested attribute
         return value
 
-    def get_literal_value(self, attribute):
-        if attribute == None: return attribute
+    def get_literal_value(self, attribute, default = None):
+        if attribute == None: return default
         return attribute["value"]
 
-    def get_boolean_value(self, attribute):
+    def get_boolean_value(self, attribute, default = False):
         # in case the provided attribute structure is not
-        # defined the boolean value is assumed to be false
-        # as this is the default fallabck value for such
-        # "invalid" situations (as defined is specification)
-        if attribute == None: return False
+        # defined the boolean value is assumed to be the
+        # provided default value (as defined is specification)
+        if attribute == None: return default
 
         # retrieves the literal value of the provided
         # attribute, retrieving then the data type for it
@@ -2024,11 +1770,11 @@ class EvalVisitor(Visitor):
     arbitrary/unsafe code.
     """
 
-    def get_value(self, attribute, process_literal = False, localize = False):
-        # in case the passed attribute is not valid the value must
+    def get_value(self, attribute, localize = False, default = None):
+        # in case the passed attribute is not valid the default must
         # be returned immediately as no resolution is possible, this
         # is the default and expected behavior (fallback procedure)
-        if not attribute: return attribute
+        if not attribute: return default
 
         # retrieves the original value from the attribute and then
         # splits it around the filter operator, retrieving both the
