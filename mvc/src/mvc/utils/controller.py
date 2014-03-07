@@ -2777,7 +2777,7 @@ def assign_instance_template_file(self, request, template_file):
 
     @type request: Request
     @param request: The request that is going to be used for the
-    closure with some of the opertations.
+    closure with some of the operations.
     @type template_file: TemplateFile
     @param template_file: The template to be "applied" with the
     various instance attributes.
