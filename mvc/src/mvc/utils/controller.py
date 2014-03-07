@@ -5087,7 +5087,6 @@ def _get_locales_default(self, request):
     @return: The retrieved locales list.
     """
 
-    # returns the default locale
     return (
         DEFAULT_LOCALE,
     )
@@ -5121,7 +5120,8 @@ def _get_locales_map(self, accept_language):
         locale = accept_language_match.group(LOCALE_VALUE)
         relative_value = accept_language_match.group(RELATIVE_VALUE_VALUE)
 
-        # converts the locale to lower
+        # converts the locale to its lower case representation
+        # so that it's normalized for a normalized value
         locale_lower = self._lower_locale(locale)
 
         # retrieves the relative value in float mode
