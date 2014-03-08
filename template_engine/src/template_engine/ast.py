@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import exceptions
+
 QUOTED_SINGLE = 1
 QUOTED_DOUBLE = 2
 FLOAT = 3
@@ -271,6 +273,8 @@ class EvalNode(SimpleNode):
         elif self.type == "elif": self._process_if(contents)
         elif self.type == "for": self._process_for(contents)
         elif self.type == "include": self._process_include(contents)
+        elif self.type.startswith("end"): pass
+        else: raise exceptions.RuntimeError("invalid tag '%s'" % self.type)
 
     def is_end(self):
         if not self.type: return False
@@ -286,7 +290,7 @@ class EvalNode(SimpleNode):
 
     def _process_if(self, contents):
         match = IF_REGEX.match(contents)
-        if not match: raise RuntimeError("Malformed if expression")
+        if not match: raise exceptions.RuntimeError("malformed if expression")
 
         not_oper = False
         oper = None
@@ -315,7 +319,7 @@ class EvalNode(SimpleNode):
 
     def _process_for(self, contents):
         match = FOR_REGEX.match(contents)
-        if not match: raise RuntimeError("Malformed for expression")
+        if not match: raise exceptions.RuntimeError("malformed for expression")
 
         key = None
         _from = False
