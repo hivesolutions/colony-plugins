@@ -316,10 +316,10 @@ class Visitor:
     def set_global_map(self, global_map):
         self.global_map = global_map
 
-    def set_global_variable(self, name, value):
+    def set_global(self, name, value):
         self.global_map[name] = value
 
-    def del_global_variable(self, name):
+    def del_global(self, name):
         del self.global_map[name]
 
     def add_bundle(self, bundle):
@@ -528,7 +528,7 @@ class Visitor:
         # sets the attribute value value in the global map, this
         # is considered to represent the assign operation, from
         # this moment the variable with the same name is available
-        self.global_map[item] = value
+        self.set_global(item, value)
 
     def process_for(self, node):
         return self.process_foreach(node)
@@ -546,6 +546,9 @@ class Visitor:
         start_index = attributes.get("start_index", None)
         start_index = self.get_literal_value(start_index)
 
+        # in case the start index literal value is defined
+        # retrieves the index as the integer cast of the
+        # partial name otherwise the index start at one
         if start_index: index = int(start_index[1:-1])
         else: index = 1
 
@@ -572,39 +575,37 @@ class Visitor:
             # the best match for the cast is an empty list
             else: iterable = []
 
-        # in case the type of the attribute from value is dictionary
-        # and uses the key as the values for the iteration
-        if colony.is_dictionary(iterable):
-            for key, value in iterable.items():
-                is_last = index == len(iterable)
-                self.global_map["is_last"] = is_last
+        # verifies if the iterable currently in use is of type
+        # map (dictionary) this will condition the way the loop
+        # part of the operation will be performed
+        is_map = colony.is_dictionary(iterable)
 
-                if item: self.global_map[item] = value
-                if index_ref: self.global_map[index_ref] = index
-                if key_ref: self.global_map[key_ref] = key
+        # iterates over the complete set of elements in the iterable,
+        # note that the value contained in the item will not be the
+        # same if the iterable is a map or if it is a sequence
+        for element in iterable:
+            is_first = index == 1
+            is_last = index == len(iterable)
 
-                if self.visit_childs:
-                    for node_child_node in node.child_nodes:
-                        node_child_node.accept(self)
+            self.set_global("loop.index", index)
+            self.set_global("loop.index0", index - 1)
+            self.set_global("loop.first", is_first)
+            self.set_global("loop.last", is_last)
+            self.set_global("is_first", is_first)
+            self.set_global("is_last", is_last)
 
-                index += 1
+            key = element if is_map else index
+            value = iterable[element] if is_map else element
 
-        # otherwise it assumes that the value is in fact a sequence
-        # and iterates over it using an index based approach
-        else:
-            for iterable_item in iterable:
-                is_last = index == len(iterable)
-                self.global_map["is_last"] = is_last
+            if item: self.set_global(item, value)
+            if index_ref: self.set_global(index_ref, index)
+            if key_ref: self.set_global(key_ref, key)
 
-                if item: self.global_map[item] = iterable_item
-                if index_ref: self.global_map[index_ref] = index
-                if key_ref: self.global_map[key_ref] = index
+            if self.visit_childs:
+                for node_child_node in node.child_nodes:
+                    node_child_node.accept(self)
 
-                if self.visit_childs:
-                    for node_child_node in node.child_nodes:
-                        node_child_node.accept(self)
-
-                index += 1
+            index += 1
 
     def process_if(self, node):
         # evaluates the current node comparison, this is the default
