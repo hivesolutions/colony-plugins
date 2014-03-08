@@ -44,7 +44,7 @@ import win32con
 import PIL.Image
 import PIL.ImageWin
 
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 import printing.manager.ast
@@ -98,124 +98,6 @@ BOLD_TEXT_WEIGHT = 800
 
 DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
 """ The default text weight """
-
-def _visit(ast_node_class):
-    """
-    Decorator for the visit of an ast node.
-
-    @type ast_node_class: String
-    @param ast_node_class: The target class for the visit.
-    @rtype: Function
-    @return: The created decorator.
-    """
-
-    def decorator(function, *args, **kwargs):
-        """
-        The decorator function for the visit decorator.
-
-        @type function: Function
-        @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
-        @rtype: Function
-        @return: The decorator interceptor function.
-        """
-
-        function.ast_node_class = ast_node_class
-
-        return function
-
-    # returns the created decorator
-    return decorator
-
-def dispatch_visit():
-    """
-    Decorator for the dispatch visit of an ast node.
-
-    @rtype: Function
-    @return: The created decorator.
-    """
-
-    def create_decorator_interceptor(function):
-        """
-        Creates a decorator interceptor, that intercepts the normal function call.
-
-        @type function: Function
-        @param function: The callback function.
-        """
-
-        def decorator_interceptor(*args, **kwargs):
-            """
-            The interceptor function for the dispatch visit decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
-            """
-
-            # unpacks the provided arguments to the decorator
-            # to be used in the processing
-            self_value = args[0]
-            node_value = args[1]
-
-            # retrieves the node value class and uses it to
-            # get the associated mro structure to be used in
-            # the values iteration
-            node_value_class = node_value.__class__
-            node_value_class_mro = node_value_class.mro()
-
-            # iterates over all the node value class mro elements
-            for node_value_class_mro_element in node_value_class_mro:
-                # in case the node method map does not exists in
-                # the current instance must continue the loop
-                if not hasattr(self_value, "node_method_map"): continue
-
-                # retrieves the node method map from the current instance
-                # and verifies that the node value class exists in the
-                # node method map, otherwise continues the loop
-                node_method_map = getattr(self_value, "node_method_map")
-                if not node_value_class_mro_element in node_method_map: continue
-
-                # retrieves the correct visit method for the element and
-                # then calls it "enclosed" by calls to the before and after
-                # visit handler methods
-                visit_method = node_method_map[node_value_class_mro_element]
-                self_value.before_visit(*args[1:], **kwargs)
-                visit_method(*args, **kwargs)
-                self_value.after_visit(*args[1:], **kwargs)
-
-                return
-
-            # in case of failure to find the proper callback
-            function(*args, **kwargs)
-
-        return decorator_interceptor
-
-    def decorator(function, *args, **kwargs):
-        """
-        The decorator function for the dispatch visit decorator.
-
-        @type function: Function
-        @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
-        @rtype: Function
-        @return: The decorator interceptor function.
-        """
-
-        # creates the decorator interceptor with the given
-        # function (creating the clojure) and returns the
-        # resulting function to the caller method
-        decorator_interceptor_function = create_decorator_interceptor(function)
-        return decorator_interceptor_function
-
-    # returns the created decorator
-    return decorator
 
 class Visitor:
     """
@@ -319,7 +201,7 @@ class Visitor:
 
         self.printing_options = printing_options
 
-    @dispatch_visit()
+    @colony.dispatch_visit()
     def visit(self, node):
         print "unrecognized element node of type " + node.__class__.__name__
 
@@ -330,15 +212,15 @@ class Visitor:
     def after_visit(self, node):
         pass
 
-    @_visit(printing.manager.ast.AstNode)
+    @colony.visit(printing.manager.ast.AstNode)
     def visit_ast_node(self, node):
         pass
 
-    @_visit(printing.manager.ast.GenericElement)
+    @colony.visit(printing.manager.ast.GenericElement)
     def visit_generic_element(self, node):
         pass
 
-    @_visit(printing.manager.ast.PrintingDocument)
+    @colony.visit(printing.manager.ast.PrintingDocument)
     def visit_printing_document(self, node):
         # unpacks the printer handler information
         handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
@@ -374,7 +256,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @_visit(printing.manager.ast.Block)
+    @colony.visit(printing.manager.ast.Block)
     def visit_block(self, node):
         if self.visit_index == 0:
             # adds the node as the context information, this way
@@ -388,12 +270,12 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @_visit(printing.manager.ast.Paragraph)
+    @colony.visit(printing.manager.ast.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0: self.add_context(node)
         elif self.visit_index == 1: self.remove_context(node)
 
-    @_visit(printing.manager.ast.Line)
+    @colony.visit(printing.manager.ast.Line)
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context(node)
@@ -429,7 +311,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @_visit(printing.manager.ast.Text)
+    @colony.visit(printing.manager.ast.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
             # unpacks the printer handler information
@@ -513,7 +395,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @_visit(printing.manager.ast.Image)
+    @colony.visit(printing.manager.ast.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
             # unpacks the printer handler information
@@ -553,7 +435,7 @@ class Visitor:
                 # creates the image buffer then writes the decoded
                 # image into it and opens the file object with the
                 # created buffer (image loading into structure)
-                image_source_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+                image_source_buffer = colony.StringBuffer(False)
                 image_source_buffer.write(image_source_decoded)
                 image_source_buffer.seek(0)
                 bitmap_image = PIL.Image.open(image_source_buffer)
