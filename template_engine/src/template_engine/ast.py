@@ -284,7 +284,7 @@ class EvalNode(SimpleNode):
 
     def is_open(self):
         if not self.type: return False
-        return self.type in ("if", "for")
+        return self.type in ("if", "for", "block")
 
     def assert_end(self, type):
         if type == self.type[3:]: return
