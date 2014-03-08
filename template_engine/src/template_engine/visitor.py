@@ -316,11 +316,32 @@ class Visitor:
     def set_global_map(self, global_map):
         self.global_map = global_map
 
+    def get_global(self, name):
+        return self.global_map[name]
+
     def set_global(self, name, value):
         self.global_map[name] = value
 
     def del_global(self, name):
         del self.global_map[name]
+
+    def get_global_many(self, name):
+        parts = name.split(".")
+        last = parts[-1]
+        current = self.global_map
+        for part in parts[:-1]:
+            current = current.get(part, {})
+        return current.get(last, None)
+
+    def set_global_many(self, name, value):
+        parts = name.split(".")
+        last = parts[-1]
+        current = self.global_map
+        for part in parts[:-1]:
+            next = current.get(part, {})
+            current[part] = next
+            current = next
+        current[last] = value
 
     def add_bundle(self, bundle):
         self.locale_bundles.append(bundle)
@@ -575,6 +596,12 @@ class Visitor:
             # the best match for the cast is an empty list
             else: iterable = []
 
+        # sets the various global wide values relates with the
+        # current loop operation that is going to be performed
+        # this values are not related with each iteration
+        self.set_global_many("loop.length", len(iterable))
+        self.set_global_many("loop.cycle", self._loop_cycle)
+
         # verifies if the iterable currently in use is of type
         # map (dictionary) this will condition the way the loop
         # part of the operation will be performed
@@ -587,10 +614,10 @@ class Visitor:
             is_first = index == 1
             is_last = index == len(iterable)
 
-            self.set_global("loop.index", index)
-            self.set_global("loop.index0", index - 1)
-            self.set_global("loop.first", is_first)
-            self.set_global("loop.last", is_last)
+            self.set_global_many("loop.index", index)
+            self.set_global_many("loop.index0", index - 1)
+            self.set_global_many("loop.first", is_first)
+            self.set_global_many("loop.last", is_last)
             self.set_global("is_first", is_first)
             self.set_global("is_last", is_last)
 
@@ -1394,6 +1421,11 @@ class Visitor:
         # iterates over all the (serializer) names to be
         # removed and removes them from the serializers list
         for name in removal: SERIALIZERS.remove(name)
+
+    def _loop_cycle(self, odd, even):
+        index = self.get_global_many("loop.index")
+        is_odd = index % 2 == 1
+        return odd if is_odd else even
 
 class EvalVisitor(Visitor):
     """
