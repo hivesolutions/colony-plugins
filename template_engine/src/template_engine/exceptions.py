@@ -41,7 +41,9 @@ import colony.base.exceptions
 
 class TemplateEngineException(colony.base.exceptions.ColonyException):
     """
-    The template engine exception class.
+    The template engine exception class. This is
+    the top level exception class from which all
+    other exceptions/errors must inherit.
     """
 
     message = None
