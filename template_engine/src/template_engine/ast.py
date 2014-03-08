@@ -272,7 +272,9 @@ class EvalNode(SimpleNode):
         if self.type == "if": self._process_if(contents)
         elif self.type == "elif": self._process_if(contents)
         elif self.type == "for": self._process_for(contents)
+        elif self.type == "block": self._process_block(contents)
         elif self.type == "include": self._process_include(contents)
+        elif self.type == "extends": self._process_extends(contents)
         elif self.type.startswith("end"): pass
         else: raise exceptions.RuntimeError("invalid tag '%s'" % self.type)
 
@@ -341,7 +343,13 @@ class EvalNode(SimpleNode):
         self.attributes["from"] = self.parse(_from)
         self.attributes["key"] = self.literal(key)
 
+    def _process_block(self, contents):
+        self.attributes["name"] = self.parse(contents)
+
     def _process_include(self, contents):
+        self.attributes["file_value"] = self.parse(contents)
+
+    def _process_extends(self, contents):
         self.attributes["file_value"] = self.parse(contents)
 
 class MatchNode(AstNode):
