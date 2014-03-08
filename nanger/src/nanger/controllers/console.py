@@ -117,10 +117,10 @@ class ConsoleController(base.BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = {
-            "manager" : plugin_manager,
-            "plugins" : plugin_manager.plugins
-        }
+        locals = dict(
+            manager =  plugin_manager,
+            plugins = plugin_manager.plugins
+        )
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
