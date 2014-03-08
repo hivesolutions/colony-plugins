@@ -235,7 +235,8 @@ class Visitor:
     raised whenever an unexpected value is received/processed """
 
     visit_childs = True
-    """ The visit childs flag """
+    """ The visit childs flag, that controls if the children
+    of a note should also be visited when a node is visited """
 
     visit_next = True
     """ The visit next flag """
