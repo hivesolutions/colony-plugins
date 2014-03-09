@@ -153,7 +153,8 @@ class Visitor:
     """
 
     node_method_map = {}
-    """ The node method map """
+    """ The node method map structure that is going to be used
+    by the visitor decorators for proper polymorphic visit """
 
     encoding = None
     """ The encoding used the file, this is a meta-information
@@ -168,7 +169,9 @@ class Visitor:
     and manages this visitor (owner object) """
 
     variable_encoding = None
-    """ The variable encoding """
+    """ The variable encoding value this is the name of the encoding
+    that is going to be used for the output of their string value
+    to the currently set string buffer """
 
     strict_mode = False
     """ The strict mode, that controls if the processing should
