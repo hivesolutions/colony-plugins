@@ -600,10 +600,10 @@ class Mvc(colony.System):
         # tries the resolution of the patter using both the minimized
         # (no plugin identifier) approach (fallback) and the full
         # base name approach, and in case no pattern is resolved
-        # returns immediately (no resolution was possible)
+        # an exception is raised indicating the problem in resolution
         pattern = self.patterns_index.get(name_s, None)
         pattern = self.patterns_index.get(name, pattern)
-        if not pattern: return None
+        if not pattern: raise exceptions.RuntimeRequestException("unresolved '%s'" % name)
 
         # retrieves the patter meta information map from the pattern
         # tuple and uses it to retrieve the original route name and
