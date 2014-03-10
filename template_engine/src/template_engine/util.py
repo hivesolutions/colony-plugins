@@ -69,29 +69,29 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return bool(ref)
 
-    def __eq__(self, *args, **kwargs):
+    def __eq__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__eq__(*args, **kwargs)
+        return ref == value
 
-    def __lt__(self, *args, **kwargs):
+    def __lt__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__lt__(*args, **kwargs)
+        return ref < value
 
-    def __lte__(self, *args, **kwargs):
+    def __lte__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__lte__(*args, **kwargs)
+        return ref <= value
 
-    def __gt__(self, *args, **kwargs):
+    def __gt__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__gt__(*args, **kwargs)
+        return ref > value
 
-    def __gte__(self, *args, **kwargs):
+    def __gte__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__gte__(*args, **kwargs)
+        return ref >= value
 
-    def __cmp__(self, *args, **kwargs):
+    def __cmp__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return ref.__cmp__(*args, **kwargs)
+        return cmp(ref, value)
 
     def __call__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "ref")
