@@ -220,7 +220,9 @@ def validated(
             # validation method or form the decorated function
             return return_value
 
-        # returns the decorator interceptor
+        # sets the name of the interceptor as the on defined
+        # for the function to be decorator (propagation) 
+        decorator_interceptor.__name__ = function.__name__
         return decorator_interceptor
 
     def decorator(function, *args, **kwargs):
@@ -238,9 +240,8 @@ def validated(
         """
 
         # creates the decorator interceptor with the given function
+        # and returns it to the caller method
         decorator_interceptor_function = create_decorator_interceptor(function)
-
-        # returns the interceptor to be used
         return decorator_interceptor_function
 
     # returns the created decorator
@@ -383,8 +384,10 @@ def transaction(
             # returns the return value, this is the value returned
             # by the called function (can assume any type)
             return return_value
-
-        # returns the decorator interceptor
+        
+        # sets the name of the interceptor as the on defined
+        # for the function to be decorator (propagation) 
+        decorator_interceptor.__name__ = function.__name__
         return decorator_interceptor
 
     def decorator(function, *args, **kwargs):
@@ -402,9 +405,8 @@ def transaction(
         """
 
         # creates the decorator interceptor with the given function
+        # and returns it to the caller method
         decorator_interceptor_function = create_decorator_interceptor(function)
-
-        # returns the interceptor to be used
         return decorator_interceptor_function
 
     # returns the created decorator
@@ -554,7 +556,9 @@ def serialized(serialization_parameters = None, default_success = True):
             # this should be an already serialized value
             return return_value
 
-        # returns the decorator interceptor
+        # sets the name of the interceptor as the on defined
+        # for the function to be decorator (propagation)
+        decorator_interceptor.__name__ = function.__name__
         return decorator_interceptor
 
     def decorator(function, *args, **kwargs):
@@ -572,9 +576,8 @@ def serialized(serialization_parameters = None, default_success = True):
         """
 
         # creates the decorator interceptor with the given function
+        # and returns it to the caller method
         decorator_interceptor_function = create_decorator_interceptor(function)
-
-        # returns the interceptor to be used
         return decorator_interceptor_function
 
     # returns the created decorator
