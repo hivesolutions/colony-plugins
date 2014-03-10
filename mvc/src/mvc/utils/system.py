@@ -777,7 +777,14 @@ class MvcUtils(colony.base.system.System):
             for module_package_path in module_package_paths:
                 # creates the controllers for the module package path
                 # and uses them to extend the "global" controllers list
-                _controllers = self.create_controllers(system_instance, plugin_instance, module_package_path, prefix_name, module_directory_path, False)
+                _controllers = self.create_controllers(
+                    system_instance,
+                    plugin_instance,
+                    package_path = module_package_path,
+                    prefix_name = prefix_name,
+                    directory_path = module_directory_path,
+                    is_first = False
+                )
                 controllers.extend(_controllers)
 
             # starts the controllers (internal structures), this process
