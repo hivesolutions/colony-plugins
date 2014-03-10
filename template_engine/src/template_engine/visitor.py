@@ -192,7 +192,10 @@ class Visitor:
     sub templates in both the extension and inclusion operations """
 
     string_buffer = None
-    """ The string buffer """
+    """ Buffer to where the complete set of output data will be
+    written as part of the processing of the template, this object
+    should comply with the typical file orations interface so that
+    no runtime problems occur during the template processing """
 
     process_methods_list = []
     """ The list of process methods (tuples) """
