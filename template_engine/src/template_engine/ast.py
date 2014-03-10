@@ -123,7 +123,6 @@ class AstNode(object):
     children of the current node, the maximum number
     of children is not limited """
 
-
     def __init__(self):
         self.children = []
         self.supers = []
