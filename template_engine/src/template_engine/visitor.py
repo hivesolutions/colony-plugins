@@ -149,8 +149,15 @@ are going to be used "inside" the visitor execution logic """
 
 class Visitor:
     """
-    The visitor class.
+    The visitor class for the template engine. This is the abstract
+    implementation and more concrete implementations may exists if
+    the default behavior should be replaced.
     """
+
+    owner = None
+    """ The owner object for the visitor, this object may be used
+    for external state changes that are processed upon visit
+    (eg: inheritance processing) """
 
     node_method_map = {}
     """ The node method map structure that is going to be used
@@ -159,6 +166,12 @@ class Visitor:
     encoding = None
     """ The encoding used the file, this is a meta-information
     value that is not going to be used for any practical usage """
+
+    base_path = None
+    """ The base path to be used for the resolution of template
+    files that are going to be either included or extended, this
+    value is not mandatory and in case it's not defined only
+    the relative path resolution strategy is going to be used """
 
     file_path = None
     """ The path to the file that generated the abstract syntax
@@ -182,9 +195,6 @@ class Visitor:
     """ The visit childs flag, that controls if the children
     of a note should also be visited when a node is visited """
 
-    visit_next = True
-    """ The visit next flag """
-
     global_map = {}
     """ The global map, containing the global (interpreter wide)
     names that are going to be used at the time of template
@@ -198,26 +208,32 @@ class Visitor:
     no runtime problems occur during the template processing """
 
     process_methods_list = []
-    """ The list of process methods (tuples) """
+    """ The list of process methods (tuples) that contains the
+    complete set of extra methods that are going to be used in
+    the processing of "complex" nodes """
 
     locale_bundles = []
     """ The list that contains the various bundles to be searched for
     localization, the order set is going to be the priority for template
     value resolution (from first to last list element) """
 
-    def __init__(self, string_buffer = None):
+    def __init__(self, owner = None, string_buffer = None):
         """
         Constructor of the class.
 
+        @type owner: Template
+        @param owner: The owner object of the visitor, this object is
+        expected to comply with the template interface as some of the
+        visitor operations will change the object with that assumption.
         @type string_buffer: File
         @param string_buffer: The file like object that is going to be
         used for the underlying buffering of the template process. In
         case no value is provided the default string buffer object is used.
         """
 
+        self.owner = owner
         self.node_method_map = {}
         self.visit_childs = True
-        self.visit_next = True
         self.global_map = dict(__builtins__ = BUILTINS)
         self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
@@ -264,6 +280,10 @@ class Visitor:
     def get_global_map(self):
         return self.global_map
 
+    def write(self, *args, **kwargs):
+        if not self.string_buffer: return
+        self.string_buffer.write(*args, **kwargs)
+
     def set_global_map(self, global_map):
         self.global_map = global_map
 
@@ -303,6 +323,12 @@ class Visitor:
     def set_encoding(self, encoding):
         self.encoding = encoding
 
+    def get_base_path(self):
+        return self.base_path
+
+    def set_base_path(self, base_path):
+        self.base_path = base_path
+
     def get_file_path(self):
         return self.file_path
 
@@ -333,7 +359,6 @@ class Visitor:
 
     def before_visit(self, node):
         self.visit_childs = True
-        self.visit_next = True
 
     def after_visit(self, node):
         pass
@@ -353,7 +378,7 @@ class Visitor:
         # writes the value into the current string buffer
         match_value = node.value.value
         match_value = self._escape_literal(match_value)
-        self.string_buffer.write(match_value)
+        self.write(match_value)
 
     @colony.visit(ast.MatchNode)
     def visit_match_node(self, node):
@@ -476,7 +501,7 @@ class Visitor:
         # runs the final appending of the prefix value to the value
         # and then writes the final string/unicode value to the buffer
         value = prefix + value
-        self.string_buffer.write(value)
+        self.write(value)
 
     def process_var(self, node):
         """
@@ -558,6 +583,13 @@ class Visitor:
         # part of the operation will be performed
         is_map = colony.is_dictionary(iterable)
 
+        # in case the current structure is not map based and the
+        # item value naming is not defined, sets the key reference
+        # as the item value and unsets both the key and index
+        # reference (non map iteration requires value assign)
+        if not is_map and not item:
+            item = key_ref; key_ref = None; index_ref = None
+
         # iterates over the complete set of elements in the iterable,
         # note that the value contained in the item will not be the
         # same if the iterable is a map or if it is a sequence
@@ -580,8 +612,8 @@ class Visitor:
             if key_ref: self.set_global(key_ref, key)
 
             if self.visit_childs:
-                for node_child_node in node.child_nodes:
-                    node_child_node.accept(self)
+                for child in node.children:
+                    child.accept(self)
 
             index += 1
 
@@ -597,11 +629,11 @@ class Visitor:
 
         # iterates over all the child nodes for the current if node
         # to evaluate or process them according to their type
-        for child_node in node.child_nodes:
+        for child in node.children:
             # validates the accept node, so that if the node is "eval"
             # the evaluation is done otherwise the default evaluation
             # result for the if node is applied
-            accept_node = self._validate_accept_node(child_node, accept_node)
+            accept_node = self._validate_accept_node(child, accept_node)
 
             # in case the accept node is set to invalid
             # the evaluation is over (nothing to be done)
@@ -609,7 +641,7 @@ class Visitor:
 
             # in case the accept node flag is set accepts the node
             # child node as it is considered to be valid
-            accept_node and child_node.accept(self)
+            accept_node and child.accept(self)
 
     def process_else(self, node):
         pass
@@ -633,7 +665,7 @@ class Visitor:
 
         node.current_index = current_index
         current_value = values[current_index]
-        self.string_buffer.write(current_value)
+        self.write(current_value)
 
     def process_count(self, node):
         # retrieves the current nodes's attributes and gathers the value
@@ -657,9 +689,17 @@ class Visitor:
         # writes the resulting string value to the current buffer
         if self.variable_encoding:
             value_length = value_length.encode(self.variable_encoding)
-        self.string_buffer.write(value_length)
+        self.write(value_length)
 
     def process_include(self, node):
+        # in case the current include node already contains children nodes it
+        # is considered to be processed and so there's no need to re-process
+        # again the same structure (time to visit the children nodes instead)
+        if node.children:
+            children = node.children if self.visit_childs else ()
+            for child in children: child.accept(self)
+            return
+
         # retrieves the current node's attributes and uses them to unpack
         # the attributes that are relevant for the include processing
         attributes = node.get_attributes()
@@ -672,59 +712,108 @@ class Visitor:
         # or the file value attributes (whatever is defined)
         file_path = file or file_value
 
-        # in case the file path was not able to be resolved an
-        # exception must be raised indicating the undefined reference
-        # to the template to be included
-        if not file_path:
-            # retrieves the node type and raises an exception with
-            # the value that was just retrieved
-            node_type = node.get_type()
-            raise exceptions.UndefinedReference(node_type)
+        # parses the file retrieving the template file structure, note
+        # that any path existence validation will be done at this stage,
+        # after this loading operation the visitor is loaded into the
+        # template engine and the visitor is accepted, this is going to
+        # create a partial abstract syntax tree that is going to be
+        # appended to the current node as subtree
+        template_file = self._get_template(node, file_path)
+        template_file.set_global_map(self.global_map)
+        template_file.load_visitor()
+        template_file.root_node.accept(template_file.visitor)
 
-        # in case the path provided file path is not absolute an extra
-        # step must be performed to resolve the complete file path to
-        # the template file using the current template's file path
-        if not os.path.isabs(file_path):
-            # retrieves the file directory from the file path and then
-            # sets the file path as relative to the file directory, after
-            # the join operations normalizes the path so that it represents
-            # the proper path with the proper operative system representation
-            file_directory = os.path.dirname(self.file_path)
-            file_path = os.path.join(file_directory, file_path)
-            file_path = os.path.normpath(file_path)
+        # updates the current node's children sequence with the complete
+        # set of root children of the processed file (propagation) and
+        # then sets the parent node of the complete set of children with
+        # the current include node (parent reference update)
+        node.children = template_file.root_node.children
+        for child in node.children: child.parent = node
+
+        # runs the visit operation in the complete set of child nodes
+        # so that they get update with the proper include files if they
+        # have ones (normal recursive step operation)
+        children = node.children if self.visit_childs else ()
+        for child in children: child.accept(self)
+
+    def process_extends(self, node):
+        # retrieves the current node's attributes and uses them to unpack
+        # the information for the template to be extended
+        attributes = node.get_attributes()
+        file = attributes.get("file", None)
+        file = self.get_literal_value(file)
+        file_value = attributes.get("file_value", None)
+        file_value = self.get_value(file_value)
+
+        # retrieves the initial file path value from either the file
+        # or the file value attributes (whatever is defined)
+        file_path = file or file_value
 
         # parses the file retrieving the template file structure, note
-        # that any path existence validation will be done at this stage
-        template_file = self.template_engine.parse_file_path(
-            file_path,
-            self.encoding,
-            self.process_methods_list,
-            self.locale_bundles
-        )
-
-        # sets the global map and the variable(s) encoding in the loaded
-        # template file structure to be used in the process stage
+        # that any path existence validation will be done at this stage,
+        # after this loading operation the visitor is loaded into the
+        # template engine and the visitor is accepted, this should create
+        # a partial abstract syntax tree that must then be processed and
+        # used as the base for the current processing (inheritance)
+        template_file = self._get_template(node, file_path)
         template_file.set_global_map(self.global_map)
-        template_file.set_variable_encoding(self.variable_encoding)
+        template_file.load_visitor()
+        template_file.root_node.accept(template_file.visitor)
+        template_file.index_nodes()
 
-        # processes the template file and writes the processed template
-        # file (resulting template data) to the string buffer
-        processed_template_file = template_file.process()
-        self.string_buffer.write(processed_template_file)
+        # "transfers" the children nodes of the super template file to
+        # the current visitor owner root node (base inheritance)
+        self.owner.root_node.children = template_file.root_node.children
+        for child in self.owner.root_node.children: child.parent = self.owner.root_node
+
+        # retrieves both the current template owner nodes map and the nodes
+        # map of the "super" template file as there structures are going
+        # to be used for the replacing of the various blocks
+        nodes = self.owner.nodes
+        super_nodes = template_file.nodes
+
+        # iterates over the complete set of globally index nodes to try to find
+        # the ones that are defined and switch them so that the most specific
+        # (concrete templates) are defined and reference the most abstract ones
+        for name, node in nodes.items():
+            # tries to retrieve a super node for the current block name in
+            # iteration and in case there's one switches the current node
+            # with the previous one, otherwise adds the current node as a
+            # child to the root node (fallback operation) then updates the
+            # global nodes map with the current node
+            super_node = super_nodes.get(name, None)
+            if super_node: super_node.switch(node)
+            else: self.owner.root_node.add_child(node)
+            super_nodes[name] = node
+
+        # sets the global nodes map of the super node (already updated) as
+        # the nodes map of the visitor's owner
+        self.owner.nodes = super_nodes
+
+    def process_block(self, node):
+        def super():
+            if not node.super: return
+            node.super.accept(self)
+
+        self.set_global("super", super)
+
+        if self.visit_childs:
+            for child in node.children:
+                child.accept(self)
 
     def process_uuid(self, node):
         # creates a new uuid value and converts it into a string
         # value to be used in the string buffer
         uuid_value = uuid.uuid4()
         uuid_string_value = str(uuid_value)
-        self.string_buffer.write(uuid_string_value)
+        self.write(uuid_string_value)
 
     def process_year(self, node):
         # retrieves the current date time formats it according to
         # the default year format and writes the value to buffer
         current_date_time = datetime.datetime.now()
         year_value = current_date_time.strftime("%Y")
-        self.string_buffer.write(year_value)
+        self.write(year_value)
 
     def process_date(self, node):
         attributes = node.get_attributes()
@@ -734,7 +823,7 @@ class Visitor:
 
         current_date_time = datetime.datetime.now()
         date_value = current_date_time.strftime(format)
-        self.string_buffer.write(date_value)
+        self.write(date_value)
 
     def process_time(self, node):
         attributes = node.get_attributes()
@@ -744,7 +833,7 @@ class Visitor:
 
         current_date_time = datetime.datetime.now()
         time_value = current_date_time.strftime(format)
-        self.string_buffer.write(time_value)
+        self.write(time_value)
 
     def process_datetime(self, node):
         attributes = node.get_attributes()
@@ -754,7 +843,7 @@ class Visitor:
 
         current_date_time = datetime.datetime.now()
         date_time_value = current_date_time.strftime(format)
-        self.string_buffer.write(date_time_value)
+        self.write(date_time_value)
 
     def process_format_datetime(self, node):
         attributes = node.get_attributes()
@@ -767,12 +856,12 @@ class Visitor:
 
         if value == None:
             value = default if default else value
-            if value: self.string_buffer.write(value)
+            if value: self.write(value)
             return
 
         format = str(format)
         value_format = value.strftime(format)
-        self.string_buffer.write(value_format)
+        self.write(value_format)
 
     def process_format_timestamp(self, node):
         attributes = node.get_attributes()
@@ -785,13 +874,13 @@ class Visitor:
 
         if value == None:
             value = default if default else value
-            if value: self.string_buffer.write(value)
+            if value: self.write(value)
             return
 
         format = str(format)
         date_time = datetime.datetime.utcfromtimestamp(value)
         value_format = date_time.strftime(format)
-        self.string_buffer.write(value_format)
+        self.write(value_format)
 
     def process_timestamp(self, node):
         attributes = node.get_attributes()
@@ -802,13 +891,13 @@ class Visitor:
 
         if value == None:
             value = default if default else value
-            if value: self.string_buffer.write(value)
+            if value: self.write(value)
             return
 
         time_tuple = value.utctimetuple()
         timestamp = calendar.timegm(time_tuple)
         timestamp_s = str(timestamp)
-        self.string_buffer.write(timestamp_s)
+        self.write(timestamp_s)
 
     def get_value(self, attribute, localize = False, default = None):
         """
@@ -1092,6 +1181,61 @@ class Visitor:
         # argument dictionary values that are meant to be latter recursively
         # resolved to obtain the real/final argument values
         return arguments_t
+
+    def _get_template(self, node, file_path):
+        """
+        Retrieves and loads a (partial) template file under the ownership
+        of the provided node and for the requested file path.
+
+        This operations takes into account the current system state to
+        run the loading process of the template.
+
+        @type node: Node
+        @param node: The node to be used as owner of this operation, it's
+        going to be used in case the operation fails.
+        @type file_path: String
+        @param file_paht: Absolute or relative path to the template file
+        that is going to be loaded/retrieved.
+        @rtype: Template
+        @return: The loaded template file, resulting from the creation
+        of the file path accorsing to the local rules.
+        """
+
+        # in case the file path was not able to be resolved an
+        # exception must be raised indicating the undefined reference
+        # to the template to be included
+        if not file_path:
+            # retrieves the node type and raises an exception with
+            # the value that was just retrieved
+            node_type = node.get_type()
+            raise exceptions.UndefinedReference(node_type)
+
+        # in case the provided file path is not absolute a resolution
+        # process must be started to try to find the final template
+        # path that is going to be retrieved, this is done using both
+        # the current template path (relative inclusion) and the defined
+        # base path (in case it's defined)
+        if not os.path.isabs(file_path):
+            file_base = os.path.dirname(self.file_path)
+            for base_path in (file_base, self.base_path):
+                if base_path == None: continue
+                _file_path = os.path.join(base_path, file_path)
+                if not os.path.exists(_file_path): continue
+                file_path = _file_path
+                break
+
+        # normalizes the resolved template path so that it becomes compliant
+        # with the current operative system "rules" and then runs the parsing
+        # of the template file so that a proper template structure is returned
+        # as the result of this method (as defined in specification)
+        file_path = os.path.normpath(file_path)
+        return self.template_engine.parse_file_path(
+            file_path,
+            base_path = self.base_path,
+            encoding = self.encoding,
+            process_methods_list = self.process_methods_list,
+            locale_bundles = self.locale_bundles
+        )
 
     def _validate_accept_node(self, node, accept_node):
         """
