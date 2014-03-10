@@ -5309,20 +5309,18 @@ def get_process_method(controller, request, process_method_name):
         # in case the visit child is set
         if self.visit_childs:
             # iterates over all the node child nodes
-            for node_child_node in node.child_nodes:
+            for node in node.children:
                 # validates the accept node using the node child node
                 # and the accept node
-                accept_node = self._validate_accept_node(node_child_node, accept_node)
+                accept_node = self._validate_accept_node(node, accept_node)
 
                 # in case the accept node is set to invalid
                 # the evaluation is over
-                if accept_node == None:
-                    # returns immediately
-                    return
+                if accept_node == None: return
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node_child_node.accept(self)
+                accept_node and node.accept(self)
 
     def __process_ifaclp(self, node):
         # retrieves the attributes map
@@ -5365,20 +5363,18 @@ def get_process_method(controller, request, process_method_name):
         # in case the visit child is set
         if self.visit_childs:
             # iterates over all the node child nodes
-            for node_child_node in node.child_nodes:
+            for node in node.children:
                 # validates the accept node using the node child node
                 # and the accept node
-                accept_node = self._validate_accept_node(node_child_node, accept_node)
+                accept_node = self._validate_accept_node(node, accept_node)
 
                 # in case the accept node is set to invalid
                 # the evaluation is over
-                if accept_node == None:
-                    # returns immediately
-                    return
+                if accept_node == None: return
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node_child_node.accept(self)
+                accept_node and node.accept(self)
 
     def __process_ifnotacl(self, node):
         # retrieves the attributes map
@@ -5425,20 +5421,18 @@ def get_process_method(controller, request, process_method_name):
         # in case the visit child is set
         if self.visit_childs:
             # iterates over all the node child nodes
-            for node_child_node in node.child_nodes:
+            for node in node.children:
                 # validates the accept node using the node child node
                 # and the accept node
-                accept_node = self._validate_accept_node(node_child_node, accept_node)
+                accept_node = self._validate_accept_node(node, accept_node)
 
                 # in case the accept node is set to invalid
                 # the evaluation is over
-                if accept_node == None:
-                    # returns immediately
-                    return
+                if accept_node == None: return
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node_child_node.accept(self)
+                accept_node and node.accept(self)
 
     def __process_request_time(self, node):
         # retrieves the current time to be able to calculate
