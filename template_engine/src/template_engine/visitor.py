@@ -1198,7 +1198,7 @@ class Visitor:
         that is going to be loaded/retrieved.
         @rtype: Template
         @return: The loaded template file, resulting from the creation
-        of the file path accorsing to the local rules.
+        of the file path according to the local rules.
         """
 
         # in case the file path was not able to be resolved an
