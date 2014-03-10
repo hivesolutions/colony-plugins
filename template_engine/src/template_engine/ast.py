@@ -67,8 +67,8 @@ LITERAL_REGEX = re.compile(
 groups are used for the conditional retrieval of each of the types """
 
 IF_REGEX = re.compile(
-    "(?P<complex>(not)?\s*(.+)\s*(in|<|>|<=|>=|==)\s*(.+))|" + \
-    "(?P<simple>(not)?\s*(.+))"
+    "(?P<complex>(not\s+)?(.+)\s+(in|<|>|<=|>=|==)\s+(.+))|" + \
+    "(?P<simple>(not\s+)?(.+))"
 )
 """ The regular expression that is going to be used for the extraction of the
 various parts of an if statement note that there are two forms of an if
@@ -107,61 +107,66 @@ class AstNode(object):
     that original the node (raw value) latter this
     may be used directly in the visit """
 
-    child_nodes = []
+    parent = None
+    """ Reference to the parent node of this node this
+    is required so that switch operations on the node
+    are possible by replacing the references to the
+    child and parent nodes """
+
+    super = None
+    """ Reference to the (virtual) super node of the current
+    node, this reference is used to allow a perfect representation
+    of the nodes hierarchy (required for template inheritance) """
+
+    children = []
     """ The list of nodes that are considered to be
     children of the current node, the maximum number
     of children is not limited """
 
+
     def __init__(self):
-        self.child_nodes = []
+        self.children = []
+        self.supers = []
 
     def __repr__(self):
-        return "<ast_node child_nodes:%d>" % len(self.child_nodes)
+        type = self.get_type()
+        id = self.get_id()
+        return "<%s %s>" % (type, id) if id else "<%s>" % type
 
     def accept(self, visitor):
         visitor.visit(self)
 
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept(visitor)
+        if not visitor.visit_childs: return
 
-    def accept_post_order(self, visitor):
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept_post_order(visitor)
-
-        visitor.visit(self)
-
-    def accept_double(self, visitor):
-        """
-        Accepts the visitor running the iteration logic,
-        using double visiting, meaning that the node will
-        be visited two times, one before the children visit
-        and one time after.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object, that is going to
-        be used for the visiting operation.
-        """
-
-        visitor.visit_index = 0
-        visitor.visit(self)
-
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept_double(visitor)
-
-        visitor.visit_index = 1
-        visitor.visit(self)
+        for child in self.children:
+            child.accept(visitor)
 
     def set_value(self, value):
         self.value = value
 
-    def add_child_node(self, child_node):
-        self.child_nodes.append(child_node)
+    def get_type(self):
+        return "ast"
 
-    def remove_child_node(self, child_node):
-        self.child_nodes.remove(child_node)
+    def get_id(self):
+        return None
+
+    def switch(self, node):
+        parent = self.parent
+
+        index = parent.children.index(self)
+        parent.remove_child(self)
+        parent.children.insert(index, node)
+
+        node.parent = parent
+        node.super = self
+
+    def add_child(self, node):
+        node.parent = self
+        self.children.append(node)
+
+    def remove_child(self, node):
+        node.parent = None
+        self.children.remove(node)
 
 class RootNode(AstNode):
     """
@@ -204,6 +209,9 @@ class LiteralNode(AstNode):
         AstNode.__init__(self)
         self.value = value
 
+    def get_type(self):
+        return "literal"
+
 class SimpleNode(AstNode):
 
     def __init__(self, value = None, type = "out"):
@@ -218,6 +226,10 @@ class SimpleNode(AstNode):
 
     def get_type(self):
         return self.type
+
+    def get_id(self):
+        name = self.attributes.get("name", {})
+        return name.get("value", None)
 
     def accept(self, visitor):
         visitor.process_accept(self, self.type)
@@ -244,7 +256,7 @@ class SimpleNode(AstNode):
 
         match = NAME_REGEX.match(value)
         if match:
-            value = match.group()
+            value = match.group().strip()
             return self.variable(value, original)
 
     def variable(self, value, original = None):
@@ -290,6 +302,7 @@ class EvalNode(SimpleNode):
         else: contents = None
 
         if self.type == "if": self._process_if(contents)
+        elif self.type == "else": pass
         elif self.type == "elif": self._process_if(contents)
         elif self.type == "for": self._process_for(contents)
         elif self.type == "block": self._process_block(contents)
@@ -474,6 +487,10 @@ class MatchNode(AstNode):
 
     def set_type(self, type):
         self.type = type
+
+    def get_id(self):
+        name = self.attributes.get("name", {})
+        return name.get("value", None)
 
     def get_attributes(self):
         return self.attributes
