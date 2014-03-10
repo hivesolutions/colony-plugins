@@ -957,11 +957,36 @@ def get_field_models(self, request, field_name, model, data_type = int):
     return entities
 
 def url_for(self, request, reference, filename = None, *args, **kwargs):
+    """
+    Resolves the relative url to a request resource (either static or dynamic)
+    the details of the resolution process should be described in the lower layer
+    of the mvc system.
+
+    The provided values should include the reference to that is meant to be
+    retrieved (static or the resource path) and the various dynamic arguments
+    for the resource retrieval (either arguments or get parameters).
+
+    @type request: Request
+    @param request: The request that is going to be used for the complete set
+    of context aware operations for url resolution.
+    @type reference: String
+    @param reference: A string describing the resource that is meant to be resolved
+    should be static for static resources or a dynamic string describing the
+    resource name for dynamic resources.
+    @type filename: String
+    @param filename: Optional name to be used in the resolution of static resources
+    this value should be called using a non named strategy.
+    @rtype: String
+    @return: The relative url path value to the resource taking into account the
+    base path or the mvc path defined for the current request.
+    """
+
     # retrieves the base path for the current request
     # so that the complete path may be constructor, keep
     # in mind that the generated location is always a
     # relative one a never an absolute url
     base_path = self.get_base_path(request)
+    mvc_path = self.get_mvc_path(request)
     location = ""
 
     if reference == "static":
@@ -972,6 +997,11 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
 
     elif reference == "common":
         location = "common/" + filename
+
+    else:
+        location = request.resolve(request, reference, *args, **kwargs)
+        if location: return mvc_path + location
+        else: return ""
 
     return base_path + location
 
