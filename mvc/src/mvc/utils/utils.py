@@ -221,7 +221,7 @@ def validated(
             return return_value
 
         # sets the name of the interceptor as the on defined
-        # for the function to be decorator (propagation) 
+        # for the function to be decorator (propagation)
         decorator_interceptor.__name__ = function.__name__
         return decorator_interceptor
 
@@ -384,9 +384,9 @@ def transaction(
             # returns the return value, this is the value returned
             # by the called function (can assume any type)
             return return_value
-        
+
         # sets the name of the interceptor as the on defined
-        # for the function to be decorator (propagation) 
+        # for the function to be decorator (propagation)
         decorator_interceptor.__name__ = function.__name__
         return decorator_interceptor
 
