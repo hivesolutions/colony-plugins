@@ -431,7 +431,8 @@ def get_exception_map(self, exception, request = None):
     # the message currently set in the exception as the exception message
     exception_class = exception.__class__
     exception_class_name = exception_class.__name__
-    exception_message = exception.message
+    exception_message = exception.message if hasattr(exception, "message") else None
+    exception_message = exception_message or unicode(exception)
 
     # creates the exception map, with information on
     # the exception and on the (global) environment
