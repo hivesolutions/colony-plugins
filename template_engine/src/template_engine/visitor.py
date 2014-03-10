@@ -186,7 +186,10 @@ class Visitor:
     """ The visit next flag """
 
     global_map = {}
-    """ The global map """
+    """ The global map, containing the global (interpret wide)
+    names that are going to be used at the time of template
+    evaluation note that this map may be shared among the
+    sub templates in both the extension and inclusion operations """
 
     string_buffer = None
     """ The string buffer """
