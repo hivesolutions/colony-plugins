@@ -40,9 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 import file_handler
@@ -81,7 +79,7 @@ TYPES_R = dict(
 """ Map that resolves a data type from the string representation
 to the proper type value to be used in casting """
 
-class Mvc(colony.base.system.System):
+class Mvc(colony.System):
     """
     The mvc class.
     """
@@ -146,8 +144,14 @@ class Mvc(colony.base.system.System):
     resource_patterns_list = []
     """ The resource patterns list for indexing """
 
+    patterns_index = {}
+    """ Dictionary associating the action method name, as a string with
+    the plugin name, controller name and action name with the proper
+    pattern tuple, this is going to be used for runtime based resolution
+    of routes as defined by the specification """
+
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.matching_regex_list = []
         self.matching_regex_base_map = {}
@@ -163,6 +167,7 @@ class Mvc(colony.base.system.System):
         self.communication_patterns_list = []
         self.resource_patterns_map = {}
         self.resource_patterns_list = []
+        self.patterns_index = {}
 
         self.mvc_file_handler = file_handler.MvcFileHandler(plugin)
         self.mvc_communication_handler = communication.MvcCommunicationHandler(plugin)
@@ -349,6 +354,10 @@ class Mvc(colony.base.system.System):
         communication_patterns = self._normalize_patterns(communication_patterns)
         resource_patterns = self._normalize_patterns(resource_patterns)
 
+        # runs the underling registration of the complete set of patterns
+        # so that they may be resolved at runtime from name to route
+        self.register_patterns(patterns)
+
         # iterates over all the patterns to update the internal structures
         # to reflect their changes
         for pattern in patterns:
@@ -457,6 +466,10 @@ class Mvc(colony.base.system.System):
         communication_patterns = self._normalize_patterns(communication_patterns)
         resource_patterns = self._normalize_patterns(resource_patterns)
 
+        # runs the underling unregistration of the complete set of patterns
+        # so that they no longer may be resolved at runtime from name to route
+        self.unregister_patterns(patterns)
+
         # iterates over all the patterns to update the internal structures
         # to reflect their changes (removes references)
         for pattern in patterns:
@@ -544,6 +557,92 @@ class Mvc(colony.base.system.System):
     def process_mvc_communication_event(self, event_name, connection_name, message):
         # sends the broadcast message
         self.mvc_communication_handler.send_broadcast(connection_name, message)
+
+    def register_patterns(self, patterns):
+        for pattern in patterns: self.register_pattern(pattern)
+
+    def unregister_patterns(self, patterns):
+        for pattern in patterns: self.unregister_pattern(pattern)
+
+    def register_pattern(self, pattern):
+        name = self.pattern_name(pattern)
+        self.patterns_index[name] = pattern
+
+    def unregister_pattern(self, pattern):
+        name = self.pattern_name(pattern)
+        del self.patterns_index[name]
+
+    def pattern_name(self, pattern):
+        method = pattern[1]
+        is_method = hasattr(method, "im_class")
+        if is_method:
+            cls = method.im_class
+            self = method.im_self
+            name = method.__name__
+            cls_name = cls.__name__
+            cls_name = colony.to_underscore(cls_name)
+            if cls_name.endswith("_controller"): cls_name = cls_name[:-11]
+            short_name = self.plugin.short_name
+            name = "%s.%s.%s" % (short_name, cls_name, name)
+        else:
+            name = method.__name__
+        return name
+
+    def resolve(self, request, name, *args, **kwargs):
+        # retrieves the controller associated with the request and
+        # uses it to retrieve the associated plugin and short name
+        # of (to be used in default name resolution)
+        controller = request.controller
+        plugin = controller.plugin
+        short_name = plugin.short_name
+        name_s = "%s.%s" % (short_name, name)
+
+        # tries the resolution of the patter using both the minimized
+        # (no plugin identifier) approach (fallback) and the full
+        # base name approach, and in case no pattern is resolved
+        # returns immediately (no resolution was possible)
+        pattern = self.patterns_index.get(name_s, None)
+        pattern = self.patterns_index.get(name, pattern)
+        if not pattern: return None
+
+        # retrieves the patter meta information map from the pattern
+        # tuple and uses it to retrieve the original route name and
+        # the list of name tuples (for replacement in regex)
+        meta = pattern[5]
+        base = meta.get("original", None)
+        names_t = meta.get("names_t", {})
+
+        # strips the base name from the possible trailing values (that
+        # are not part of the url path)
+        base = base.rstrip("$")
+        base = base.lstrip("^/")
+
+        # creates the list that will hold the various key to value strings
+        # that are going to be used as part of the query string
+        query = []
+
+        # iterates over all the keyword based arguments to try to either
+        # populate the various parts of the url with arguments or the
+        # parameters part of the query sequence with key based values
+        for key, value in kwargs.iteritems():
+            value_t = type(value)
+            is_string = value_t in types.StringTypes
+            if not is_string: value = str(value)
+            replacer = names_t.get(key, None)
+            if replacer:
+                base = base.replace(replacer, value)
+            else:
+                key_q = colony.quote(key)
+                value_q = colony.quote(value)
+                param = key_q + "=" + value_q
+                query.append(param)
+
+        # quotes the final base url value (already processed)
+        # and joins the complete set of key values for the query
+        # concatenating then the result from both (final resolution)
+        location = colony.quote(base)
+        query_s = "&".join(query)
+        return location + "?" + query_s if query_s else location
 
     def _handle_resource_match(self, rest_request, resource_path, path_match, matching_regex):
         # retrieves the base index (offset index) for the matching regex
@@ -700,6 +799,12 @@ class Mvc(colony.base.system.System):
         # the proper parameters passing (useful for simplifications)
         rest_request.parameters = parameters
 
+        # sets the reference to the resolve method in the request
+        # this is the method from which it's possible to resolve a
+        # dynamic resource into a proper relative url path, it may
+        # be used during the life time of the request
+        rest_request.resolve = self.resolve
+
         # in case there's an encoder name defined and the controller
         # plugin references an encoding plugin that candidates for that
         # type of encoding the same plugin is set as the serializer for
@@ -717,7 +822,7 @@ class Mvc(colony.base.system.System):
         default_parameters = controller and\
             hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE) and\
             controller.get_default_parameters() or {}
-        colony.libs.map_util.map_extend(parameters, default_parameters, copy_base_map = False)
+        colony.map_extend(parameters, default_parameters, copy_base_map = False)
 
         # handles the mvc request to the handler method (rest
         # request flow) note that the call is done using the safe
@@ -756,7 +861,7 @@ class Mvc(colony.base.system.System):
         """
 
         # starts the matching regex value buffer
-        matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+        matching_regex_buffer = colony.StringBuffer()
 
         # clears both the matching regex list and the associated
         # base indexes map (reset operation)
@@ -827,7 +932,7 @@ class Mvc(colony.base.system.System):
         """
 
         # starts the matching regex value buffer
-        communication_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+        communication_matching_regex_buffer = colony.StringBuffer()
 
         # clears both the matching regex list and the associated
         # base indexes map (reset operation)
@@ -898,7 +1003,7 @@ class Mvc(colony.base.system.System):
         """
 
         # starts the matching regex value buffer
-        resource_matching_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+        resource_matching_regex_buffer = colony.StringBuffer()
 
         # clears both the matching regex list and the associated
         # base indexes map (reset operation)
@@ -1011,8 +1116,10 @@ class Mvc(colony.base.system.System):
 
         # creates the names dictionary that will hold the association between
         # the name and the data type associated with that name for runtime
-        # resolution of the argument values
+        # resolution of the argument values, also generates the structure that
+        # will map the various variable names to the replacer expression
         names = dict()
+        names_t = dict()
 
         # iterates over the complete set of matches for the replacer values
         # to be able to find the various names and then associate native
@@ -1022,7 +1129,10 @@ class Mvc(colony.base.system.System):
         for match in iterator:
             _type_s, type_t, name = match.groups()
             type_r = TYPES_R.get(type_t, str)
+            if type_t: target = "<" + type_t + ":" + name + ">"
+            else: target = "<" + name + ">"
             names[name] = type_r
+            names_t[name] = target
 
         # in case any of the pattern components is missing defaults to the
         # default value for each of them so that the meta field (last one)
@@ -1033,7 +1143,7 @@ class Mvc(colony.base.system.System):
 
         # creates the meta dictionary containing the values that will be used
         # for runtime based processing and then adds the value to the pattern
-        meta = dict(names = names)
+        meta = dict(names = names, names_t = names_t, original = _expression)
         pattern.append(meta)
 
         # returns the final list based pattern containing the complete set
