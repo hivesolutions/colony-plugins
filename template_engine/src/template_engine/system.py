@@ -46,12 +46,12 @@ import ast
 import visitor
 import exceptions
 
-OUTPUT_REGEX_VALUE = "\{\{.*\}\}"
+OUTPUT_REGEX_VALUE = "\{\{[^\}]*\}\}"
 """ The regular expression value for the matching of the
 output (print) operations, these are specialized nodes
 that are only meant to print variable/literal values """
 
-EVAL_REGEX_VALUE = "\{\%.*\%\}"
+EVAL_REGEX_VALUE = "\{\%[^\}]*\%\}"
 """ Regular expression that matched the complex evaluation
 expression that allow the control flow of the template this
 is the regular expression to be used under simple mode """
@@ -156,6 +156,7 @@ class TemplateEngine(colony.System):
     def parse_file_path(
         self,
         file_path,
+        base_path = None,
         encoding = None,
         process_methods_list = [],
         locale_bundles = None
@@ -174,10 +175,11 @@ class TemplateEngine(colony.System):
             # that can be used for the execution of it
             template_file = self.parse_file(
                 file,
-                file_path,
-                encoding,
-                process_methods_list,
-                locale_bundles
+                file_path = file_path,
+                base_path = base_path,
+                encoding = encoding,
+                process_methods_list = process_methods_list,
+                locale_bundles = locale_bundles
             )
         finally:
             # closes the file no further reading operations
@@ -190,6 +192,7 @@ class TemplateEngine(colony.System):
     def parse_file_path_variable_encoding(
         self,
         file_path,
+        base_path = None,
         encoding = None,
         variable_encoding = None,
         process_methods_list = [],
@@ -200,7 +203,13 @@ class TemplateEngine(colony.System):
         # then sets the variable encoding in it returning
         # then the resulting template file object to the
         # caller method (as expected by definition)
-        template_file = self.parse_file_path(file_path, encoding, process_methods_list, locale_bundles)
+        template_file = self.parse_file_path(
+            file_path,
+            base_path = base_path,
+            encoding = encoding,
+            process_methods_list = process_methods_list,
+            locale_bundles = locale_bundles
+        )
         template_file.set_variable_encoding(variable_encoding)
         return template_file
 
@@ -208,6 +217,7 @@ class TemplateEngine(colony.System):
         self,
         file,
         file_path = None,
+        base_path = None,
         encoding = None,
         process_methods_list = [],
         locale_bundles = None
@@ -403,7 +413,7 @@ class TemplateEngine(colony.System):
                 value = match_orderer.get_value()
                 node = ast.OutputNode(value)
                 parent_node = stack[-1]
-                parent_node.add_child_node(node)
+                parent_node.add_child(node)
 
             elif type == EVAL_VALUE:
                 value = match_orderer.get_value()
@@ -415,7 +425,7 @@ class TemplateEngine(colony.System):
                     node.assert_end(parent_node.type)
                     stack.pop()
                 else:
-                    parent_node.add_child_node(node)
+                    parent_node.add_child(node)
                     if is_open: stack.append(node)
 
             elif type == START_VALUE:
@@ -425,7 +435,7 @@ class TemplateEngine(colony.System):
                     literal_regex = ATTRIBUTE_LITERAL_REGEX
                 )
                 parent_node = stack[-1]
-                parent_node.add_child_node(node)
+                parent_node.add_child(node)
                 stack.append(node)
 
             elif type == END_VALUE:
@@ -439,18 +449,19 @@ class TemplateEngine(colony.System):
                     literal_regex = ATTRIBUTE_LITERAL_REGEX
                 )
                 parent_node = stack[-1]
-                parent_node.add_child_node(node)
+                parent_node.add_child(node)
 
             elif type == LITERAL_VALUE:
                 node = ast.LiteralNode(match_orderer)
                 parent_node = stack[-1]
-                parent_node.add_child_node(node)
+                parent_node.add_child(node)
 
         # creates the template file structure that is going to be
         # used to represent the template in a abstract way this is
         # going to be the interface structure with the end user
         template_file = TemplateFile(
             manager = self,
+            base_path = base_path,
             file_path = file_path,
             encoding = encoding,
             root_node = root_node
@@ -543,6 +554,12 @@ class TemplateFile(object):
     """ The manager of the template file, this is considered to
     be the owner and generator instance """
 
+    base_path = None
+    """ The base path to be used in the resolution of template
+    files, this value may or may not be defined and in case it's
+    not defined only the default (relative path) resolution approach
+    is used for the include and extends operations """
+
     file_path = None
     """ The path to the file from which the contents of the template
     are loaded, this is the original reference """
@@ -574,27 +591,62 @@ class TemplateFile(object):
     localization, the order set is going to be the priority for template
     value resolution (from first to last list element) """
 
-    def __init__(self, manager = None, file_path = None, encoding = None, root_node = None):
+    nodes = {}
+    """ The dictionary that associates the identifiable node id with
+    the node reference that it corresponds, this map may be used for
+    abstract syntax tree manipulations (eg: inheritance manipulation) """
+
+    def __init__(
+        self,
+        manager = None,
+        base_path = None,
+        file_path = None,
+        encoding = None,
+        root_node = None,
+        eval = True
+    ):
         """
         Constructor of the class.
 
         @type manager: TemplateEngine
         @param manager: The manager to be used.
+        @type base_path: String
+        @param base_path: The base file system path that is going to be
+        used for processing templates in the include and extends operation.
         @type file_path: String
         @param file_path: The path to the file to be used.
         @type encoding: String
         @param encoding: The encoding used in the file.
         @type root_node: AstNode
         @param root_node: The root node to be used.
+        @type eval: bool
+        @param eval: If the evaluation based visitor should be used instead
+        of the normal (and safe) interpreter based visitor.
         """
 
         self.manager = manager
+        self.base_path = base_path
         self.file_path = file_path
         self.encoding = encoding
         self.root_node = root_node
 
-        self.visitor = visitor.EvalVisitor()
+        self.visitor = visitor.EvalVisitor(self) if eval else visitor.Visitor(self)
         self.locale_bundles = []
+        self.nodes = {}
+
+        self.index_nodes()
+
+    def index_nodes(self):
+        """
+        Runs the indexing stage of the identifiable nodes, this is
+        required for the inheritance of blocks to properly work.
+
+        More that one execution of this method may be required if
+        the abstract syntax tree changed in response to the processing
+        of one or more file inclusion (sub tree inclusion).
+        """
+
+        self._index_node(self.root_node)
 
     def assign(self, name, value):
         """
@@ -649,15 +701,19 @@ class TemplateFile(object):
         Attaches a series of process methods to the visitor
         currently being used.
 
+        This will allow for the usage of many more process
+        methods that the ones available by default (extension).
+
         @type process_methods_list: List
         @param process_methods_list: The list of tuples containing the
         method name and method (function).
         """
 
-        # iterates over all the process methods in the list
-        for process_method_name, process_method in process_methods_list:
-            # attaches the process method to the visitor
-            self.visitor.attach_process_method(process_method_name, process_method)
+        # iterates over all the process methods in the list unpacking
+        # the tuples and then attaching each of these methods to the
+        # currently defined visitor so that they may be used
+        for method_name, method in process_methods_list:
+            self.visitor.attach_process_method(method_name, method)
 
     def attach_locale_bundles(self, locale_bundles):
         """
@@ -699,6 +755,24 @@ class TemplateFile(object):
         # global information about the system
         self.assign(name, system_information_map)
 
+    def load_visitor(self):
+        """
+        Runs the various loading/prepare operations in the currently
+        set visitor so that it becomes reading for the visit of ast
+        based nodes (prepare operation).
+
+        This operation should always be called before any accepting
+        operation of a visitor is performed (processing), otherwise
+        unexpected behavior may occur in the visit.
+        """
+
+        self.visitor.set_encoding(self.encoding)
+        self.visitor.set_base_path(self.base_path)
+        self.visitor.set_file_path(self.file_path)
+        self.visitor.set_template_engine(self.manager)
+        self.visitor.set_variable_encoding(self.variable_encoding)
+        self.visitor.set_strict_mode(self.strict_mode)
+
     def process(self, get_value = True):
         """
         Processes the template file running the visitor
@@ -722,11 +796,7 @@ class TemplateFile(object):
         # that is currently set in the template and then runs
         # the accept operation in the root node, this will
         # trigger the generation of the template contents
-        self.visitor.set_encoding(self.encoding)
-        self.visitor.set_file_path(self.file_path)
-        self.visitor.set_template_engine(self.manager)
-        self.visitor.set_variable_encoding(self.variable_encoding)
-        self.visitor.set_strict_mode(self.strict_mode)
+        self.load_visitor()
         self.root_node.accept(self.visitor)
 
         # retrieves the visitor string buffer, that should now
@@ -801,3 +871,20 @@ class TemplateFile(object):
 
         self.locale_bundles.append(bundle)
         self.visitor.add_bundle(bundle)
+
+    def _index_node(self, node):
+        """
+        Index the provided template node, making sure that
+        its identifier is present in the nodes map and associated
+        with the node, this is a relevant operation for the
+        inheritance infra-structure.
+
+        @type node: Node
+        @param node: The node that should be indexed under the
+        current template infra-structure.
+        """
+
+        type = node.get_type()
+        id = node.get_id()
+        if type == "block": self.nodes[id] = node
+        for node in node.children: self._index_node(node)
