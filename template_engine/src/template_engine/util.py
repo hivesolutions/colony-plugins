@@ -69,6 +69,30 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return bool(ref)
 
+    def __eq__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__eq__(*args, **kwargs)
+
+    def __lt__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__lt__(*args, **kwargs)
+
+    def __lte__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__lte__(*args, **kwargs)
+
+    def __gt__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__gt__(*args, **kwargs)
+
+    def __gte__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__gte__(*args, **kwargs)
+
+    def __cmp__(self, *args, **kwargs):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return ref.__cmp__(*args, **kwargs)
+
     def __call__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "ref")
         is_callable = hasattr(ref, "__call__")
