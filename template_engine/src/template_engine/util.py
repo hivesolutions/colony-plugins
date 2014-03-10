@@ -99,6 +99,7 @@ class Accessor(dict):
         return ref.__call__(*args, **kwargs) if is_callable else ref
 
     def __getattribute__ (self, name):
+        if name == "ref": return dict.__getattribute__(self, "ref")
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
         if hasattr(ref, name): return accessor(getattr(ref, name))
