@@ -172,6 +172,26 @@ class RootNode(AstNode):
     def __init__(self):
         AstNode.__init__(self)
 
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        if not visitor.visit_childs: return
+
+        while True:
+            if not self.children: break
+            child = self.children[0]
+            type = child.get_type()
+            if not type == "extends": break
+            child.accept(visitor)
+
+        for child in self.children:
+            type = child.get_type()
+            if type == "extends": continue
+            child.accept(visitor)
+
+    def get_type(self):
+        return "root"
+
 class LiteralNode(AstNode):
     """
     The literal node class, used for the representation of
