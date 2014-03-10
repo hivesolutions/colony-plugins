@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import colony
 
-class ServiceException(colony.base.exceptions.ColonyException):
+class ServiceException(colony.ColonyException):
     """
     The service exception class.
     """
@@ -89,7 +89,9 @@ class InvalidTokenValue(BadServiceRequest):
 
 class RuntimeRequestException(BadServiceRequest):
     """
-    The runtime request exception class.
+    The runtime request exception class, meant to be
+    used for problems occurring during the runtime of
+    the handling of the request.
     """
 
     def __init__(self, message):
@@ -101,6 +103,7 @@ class RuntimeRequestException(BadServiceRequest):
         """
 
         BadServiceRequest.__init__(self, message)
+        self.message = message
 
     def __str__(self):
         """
