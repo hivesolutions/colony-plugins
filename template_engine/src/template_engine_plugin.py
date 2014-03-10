@@ -72,6 +72,7 @@ class TemplateEnginePlugin(colony.Plugin):
     def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
         return self.system.parse_file_path(
             file_path,
+            base_path = base_path,
             encoding = encoding
         )
 
