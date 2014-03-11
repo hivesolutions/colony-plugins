@@ -730,7 +730,7 @@ def save_entity_relations(
     entity_map,
     entity,
     relations_map,
-    persist_type = PERSIST_ALL_TYPE
+    persist_type = PERSIST_ALL
 ):
     """
     Saves the entity relations in the in the entity with the given map and values.
@@ -778,7 +778,7 @@ def save_entity_relations(
 
             # sets the relation persist type to persist
             # all (default value)
-            relation_persist_type = PERSIST_ALL_TYPE
+            relation_persist_type = PERSIST_ALL
         # in case the relation item length is three
         # (it contains the relation persist flag)
         elif relation_item_length == 3:
@@ -830,14 +830,14 @@ def save_entity_relations(
                 # "calculates" the new relation persist type based on the base relation persist type
                 # plus the filtering based on the top level persist type (only update or save in case the top
                 # level contains it, propagation)
-                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE)
+                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE)
             # otherwise the relation is not valid (update is not safe)
             else:
                 # "calculates" the new relation persist type based on the base relation persist type
                 # plus the filtering based on the top level persist type (only update or save in case the top
                 # level contains it, propagation) and then finally removes the update type from the
                 # persist type (it's not safe)
-                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE) & (PERSIST_ALL_TYPE ^ PERSIST_UPDATE_TYPE)
+                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE) & (PERSIST_ALL ^ PERSIST_UPDATE)
 
             try:
                 # calls the relation method for the entity (saving or updating it)
@@ -858,7 +858,7 @@ def save_entity_relations(
             # the association is only granted if either the
             # relation was saved or the relation is valid
             # or the associate type is set to allow association
-            associate_relation = is_saved or valid_relation or relation_persist_type & PERSIST_ASSOCIATE_TYPE
+            associate_relation = is_saved or valid_relation or relation_persist_type & PERSIST_ASSOCIATE
 
             # adds the relation entity to the list
             # in case the entity was created and the

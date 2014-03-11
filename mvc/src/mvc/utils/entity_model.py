@@ -946,7 +946,7 @@ def _class_apply_context(
 @utils.transaction_m
 def delete(
     self,
-    persist_type = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE,
+    persist_type = PERSIST_UPDATE | PERSIST_SAVE,
     entity_manager = None
 ):
     """
@@ -965,14 +965,14 @@ def delete(
 
     # tries to call the pre delete method, in order to notify the
     # current instance about the starting of the delete procedure
-    if hasattr(self, "pre_delete") and persist_type & PERSIST_UPDATE_TYPE: self.pre_delete(persist_type)
-    if hasattr(self, "pre_remove") and persist_type & PERSIST_UPDATE_TYPE: self.pre_remove(persist_type)
+    if hasattr(self, "pre_delete") and persist_type & PERSIST_UPDATE: self.pre_delete(persist_type)
+    if hasattr(self, "pre_remove") and persist_type & PERSIST_UPDATE: self.pre_remove(persist_type)
 
     try:
         # tries to call the on delete method, in order to notify the
         # current instance about the starting of the delete procedure
-        if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE_TYPE: self.on_store(persist_type)
-        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE_TYPE: self.on_save(persist_type)
+        if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE: self.on_store(persist_type)
+        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE: self.on_save(persist_type)
 
         # removes the current entity from the data source defined in
         # the provided entity manager, this is a non reversible and
@@ -990,13 +990,13 @@ def delete(
 
     # tries to call the post delete method, in order to notify the
     # current instance about the finishing of the delete procedure
-    if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE_TYPE: self.post_delete(persist_type)
-    if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE_TYPE: self.post_remove(persist_type)
+    if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE: self.post_delete(persist_type)
+    if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE: self.post_remove(persist_type)
 
 @utils.transaction_m
 def store(
     self,
-    persist_type = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE,
+    persist_type = PERSIST_UPDATE | PERSIST_SAVE,
     validate = True,
     force_persist = False,
     raise_exception = False,
@@ -1028,7 +1028,7 @@ def store(
 
     # in case the force persist flag is set (persistence is ignored)
     # the persist type is set to the all permission (no control)
-    persist_type = force_persist and PERSIST_ALL_TYPE or persist_type
+    persist_type = force_persist and PERSIST_ALL or persist_type
 
     # in case the current instance is already in the storing
     # procedure (cycle detected) it must return immediately to
@@ -1042,9 +1042,9 @@ def store(
 
     # tries to call the pre store method, in order to notify the
     # current instance about the starting of the store procedure
-    if hasattr(self, "pre_store") and persist_type & (PERSIST_SAVE_TYPE | PERSIST_UPDATE_TYPE): self.pre_store(persist_type)
-    if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE_TYPE: self.pre_save(persist_type)
-    if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE_TYPE: self.pre_update(persist_type)
+    if hasattr(self, "pre_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.pre_store(persist_type)
+    if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE: self.pre_save(persist_type)
+    if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE: self.pre_update(persist_type)
 
     # sets the current entity in the storing operation, this flag
     # should be able to avoid unnecessary recursion
@@ -1061,9 +1061,9 @@ def store(
         # tries to call the on store method, in order to notify the
         # current instance about the starting of the store procedure
         # (this event is called after the preemptive validation process)
-        if hasattr(self, "on_store") and persist_type & (PERSIST_SAVE_TYPE | PERSIST_UPDATE_TYPE): self.on_store(persist_type)
-        if hasattr(self, "on_save") and not is_persisted and persist_type & PERSIST_SAVE_TYPE: self.on_save(persist_type)
-        if hasattr(self, "on_update") and is_persisted and persist_type & PERSIST_UPDATE_TYPE: self.on_update(persist_type)
+        if hasattr(self, "on_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.on_store(persist_type)
+        if hasattr(self, "on_save") and not is_persisted and persist_type & PERSIST_SAVE: self.on_save(persist_type)
+        if hasattr(self, "on_update") and is_persisted and persist_type & PERSIST_UPDATE: self.on_update(persist_type)
 
         # detaches the current entity model in order
         # to avoid any possible loading of relations
@@ -1103,9 +1103,9 @@ def store(
 
     # tries to call the post store method, in order to notify the
     # current instance about the finishing of the store procedure
-    if hasattr(self, "post_store") and persist_type & (PERSIST_SAVE_TYPE | PERSIST_UPDATE_TYPE): self.post_store(persist_type)
-    if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE_TYPE: self.post_save(persist_type)
-    if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE_TYPE: self.post_update(persist_type)
+    if hasattr(self, "post_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.post_store(persist_type)
+    if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE: self.post_save(persist_type)
+    if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE: self.post_update(persist_type)
 
 def store_f(self, validate = True, raise_exception = False, entity_manager = None):
     """
@@ -1228,12 +1228,12 @@ def store_relations(
         # retrieves the attributes of the model for the current relation
         # in order to retrieve the appropriate persist type
         model_attributes = getattr(self.__class__, relation_name)
-        relation_persist_type = force_persist and PERSIST_ALL_TYPE or model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE_TYPE)
+        relation_persist_type = force_persist and PERSIST_ALL or model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE)
 
         # recalculates the new persist type for the relation storing based on the
         # relation persist type and the current model persist type (associate type
         # in considered to be always present in the persist type)
-        _persist_type = force_persist and PERSIST_ALL_TYPE or relation_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE)
+        _persist_type = force_persist and PERSIST_ALL or relation_persist_type & (persist_type | PERSIST_ASSOCIATE)
 
         # stores the relation combining the persist type given and the current
         # model persist type in the meta information
@@ -1322,7 +1322,7 @@ def store_relation(
             # in case the current persist type includes the update permission
             # the relation validation must be run in order to provide extra
             # relation validation permissions
-            if persist_type & (PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE):
+            if persist_type & (PERSIST_UPDATE | PERSIST_SAVE):
                 # in case the relation value is set and it's valid
                 # (not empty) it's ready for validation of relations
                 if _relation_value:
@@ -1341,12 +1341,12 @@ def store_relation(
             if not relation_valid:
                 # "calculates" the new persist type based on the base persist type
                 # removes the update type from the persist type (it's not safe)
-                persist_type &= PERSIST_ALL_TYPE ^ PERSIST_UPDATE_TYPE
+                persist_type &= PERSIST_ALL ^ PERSIST_UPDATE
 
             # checks if the relations is "storable" a relation is considered to be
             # "storable" if the persist type of it contains either the update or the
             # save permission (otherwise it's impossible to store it)
-            is_storable = persist_type & (PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE)
+            is_storable = persist_type & (PERSIST_UPDATE | PERSIST_SAVE)
 
             # checks if the relation value is "associable", the relation value
             # is "associable" in case it's going to be created (no id attribute set),
@@ -1355,7 +1355,7 @@ def store_relation(
             # case the relation was previously (other transaction) set in the
             # entity (relation validation)
             is_associable = relation_valid or id_attribute_value == None or\
-                _relation_value.is_saved() or relation_persist_type & PERSIST_ASSOCIATE_TYPE
+                _relation_value.is_saved() or relation_persist_type & PERSIST_ASSOCIATE
 
             # stores the relation value in the data source
             # using the "propagated" persist type (only in
@@ -1594,7 +1594,7 @@ def persist(self, persist_type, validate = False, entity_manager = None):
 
     # in case the entity is persisted and the persist
     # type allows updating
-    if is_persisted and persist_type & PERSIST_UPDATE_TYPE:
+    if is_persisted and persist_type & PERSIST_UPDATE:
         # updates the entity using the entity manager
         # this operation must change and persist the
         # values of the entity in the data source
@@ -1602,7 +1602,7 @@ def persist(self, persist_type, validate = False, entity_manager = None):
 
     # in case the entity is not persisted and the persist
     # type allows saving
-    elif not is_persisted and persist_type & PERSIST_SAVE_TYPE:
+    elif not is_persisted and persist_type & PERSIST_SAVE:
         # saves the entity using the entity manager
         # this operation must set and persist the
         # values of the entity in the data source
@@ -2475,13 +2475,13 @@ def _validate_relations(self, persist_type):
         # in order to retrieve the appropriate persist type, then re-calculate
         # the relation persist type based on these values
         model_attributes = getattr(self.__class__, relation_name)
-        model_persist_type = model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE_TYPE)
-        relation_persist_type = model_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE)
+        model_persist_type = model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE)
+        relation_persist_type = model_persist_type & (persist_type | PERSIST_ASSOCIATE)
 
         # checks if the relation persist type is enough to allow the current
         # relation to be persisted in the data source, in case it's not the
         # relations is not validated
-        if not relation_persist_type & (PERSIST_SAVE_TYPE | PERSIST_UPDATE_TYPE): continue
+        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE): continue
 
         # starts the flag that controls in case
         # an error is set
