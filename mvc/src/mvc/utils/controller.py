@@ -1012,7 +1012,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
         location = "common/" + filename
 
     else:
-        location = request.resolve(request, reference, *args, **kwargs)
+        location = request.resolve(request, reference, *args, **kwargs)        
         if location: return mvc_path + location
         else: return ""
 
@@ -1922,7 +1922,14 @@ def get_referer(self, request):
     # returns the "referer" header (url)
     return referer_header
 
-def redirect(self, request, target, status_code = 302, quote = True, attributes_map = None):
+def redirect(
+    self,
+    request,
+    target,
+    status_code = 302,
+    quote = False,
+    attributes_map = None
+):
     """
     Redirects the current request to the given
     target (page).
