@@ -67,4 +67,4 @@ class ConsumerController(controllers.Controller):
         consumer_entity.generate_api_key()
 
         # stores the consumer in the data source
-        consumer_entity.store(mvc_utils.PERSIST_SAVE_TYPE)
+        consumer_entity.store(mvc_utils.PERSIST_SAVE)
