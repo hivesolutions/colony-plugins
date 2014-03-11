@@ -5065,6 +5065,13 @@ def _process_file_path_locale(
             fallback = fallback
         )
 
+    # re-creates the full path taking into account the possible new locale path
+    # and re-verifies if the path exists in case it does not falls back to the
+    # original file path as this is the final fallback value
+    full_path = os.path.join(base_path, locale_path) if base_path else locale_path
+    exists = os.path.exists(full_path)
+    if not exists: locale_path = file_path
+
     # returns the resulting locale path to the caller method so that it may be
     # used inside localization contexts (templates localization support)
     return locale_path
