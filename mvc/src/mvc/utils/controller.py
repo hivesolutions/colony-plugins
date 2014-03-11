@@ -4877,23 +4877,25 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     if value == None: return value
 
     try:
-        # retrieves the value type
+        # retrieves the value type, so that an evaluation
+        # of the requirement to proceed with the cast may
+        # be done and decision may be taken
         value_type = type(value)
 
-        # in case the value type is the same
-        # as the cast type
-        if value_type == cast_type:
-            # sets the value as the value casted
-            value_casted = value
-        # otherwise
-        else:
-            # casts the value using the type
-            value_casted = cast_type(value)
+        # in case the value type is the same as the cast
+        # type there's no need to cast the value otherwise
+        # runs the cast operation by calling the type with
+        # the string value to be casted
+        if value_type == cast_type: value_casted = value
+        else: value_casted = cast_type(value)
 
-        # returns the value casted
+        # returns the value casted to the caller method as
+        # expected by the cast safe operation
         return value_casted
     except:
-        # returns the default value
+        # returns the default value, this is the fallback
+        # operation because it was not possible to cast
+        # the value properly (safe operation)
         return default_value
 
 def _convert_entity_map(self, entity):
