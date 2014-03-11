@@ -41,10 +41,7 @@ import os
 import re
 import types
 
-import colony.libs.time_util
-import colony.libs.crypt_util
-import colony.libs.control_util
-import colony.libs.structures_util
+import colony
 
 import utils
 import exceptions
@@ -111,7 +108,7 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "string" : unicode,
     "integer" : int,
     "float" : float,
-    "date" : colony.libs.time_util.timestamp_datetime,
+    "date" : colony.timestamp_datetime,
     "data" : unicode,
     "metadata" : dict,
     "relation" : None
@@ -1323,7 +1320,7 @@ def length_equal_validate(self, attribute_name, attribute_value, properties):
     # in case the attribute value is not equal to the target value
     if not len(attribute_value) == target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("length of value is not equal to %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("length of value is not equal to %s", target_value))
 
 def length_less_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1344,7 +1341,7 @@ def length_less_than_validate(self, attribute_name, attribute_value, properties)
     # the target value
     if not len(attribute_value) < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("length of value is greater than or equal to %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("length of value is greater than or equal to %s", target_value))
 
 def length_less_than_or_equal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1365,7 +1362,7 @@ def length_less_than_or_equal_validate(self, attribute_name, attribute_value, pr
     # or equal to the target value
     if not len(attribute_value) <= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("length of value is greater than %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("length of value is greater than %s", target_value))
 
 def length_greater_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1386,7 +1383,7 @@ def length_greater_than_validate(self, attribute_name, attribute_value, properti
     # the target value
     if not len(attribute_value) > target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("length of value is less than or equal to %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("length of value is less than or equal to %s", target_value))
 
 def length_greater_than_or_equal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1407,7 +1404,7 @@ def length_greater_than_or_equal_validate(self, attribute_name, attribute_value,
     # or equal to the target value
     if not len(attribute_value) >= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("length of value is less than %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("length of value is less than %s", target_value))
 
 def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1512,7 +1509,7 @@ def greater_than_validate(self, attribute_name, attribute_value, properties):
     # greater than the target value
     if not attribute_value > target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("value is less than or equal to %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("value is less than or equal to %s", target_value))
 
 def greater_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1550,7 +1547,7 @@ def greater_than_or_equal_validate(self, attribute_name, attribute_value, proper
     # than or equal to the target value
     if not attribute_value >= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("value is less than %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("value is less than %s", target_value))
 
 def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1588,7 +1585,7 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     # less than the target value
     if not attribute_value < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("value is greater than or equal to %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("value is greater than or equal to %s", target_value))
 
 def less_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1626,7 +1623,7 @@ def less_than_or_equal_validate(self, attribute_name, attribute_value, propertie
     # than or equal to the target value
     if not attribute_value <= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.libs.structures_util.FormatTuple("value is greater than %s", target_value))
+        self.add_error(attribute_name, colony.FormatTuple("value is greater than %s", target_value))
 
 def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1704,7 +1701,7 @@ def is_id_number_validate(self, attribute_name, attribute_value, properties):
     id_number = attribute_value / 10
 
     # calculates the control value
-    calculated_control_value = colony.libs.control_util.calculate_id_number_control_value(id_number)
+    calculated_control_value = colony.calculate_id_number_control_value(id_number)
 
     # in case the control value doesn't match the calculated one
     if not control_value == calculated_control_value:
@@ -1730,7 +1727,7 @@ def is_tax_number_validate(self, attribute_name, attribute_value, properties):
     tax_number = attribute_value / 10
 
     # calculates the control value
-    calculated_control_value = colony.libs.control_util.calculate_tax_number_control_value(tax_number)
+    calculated_control_value = colony.calculate_tax_number_control_value(tax_number)
 
     # in case the control value doesn't match the calculated one
     if not control_value == calculated_control_value:
@@ -1871,7 +1868,7 @@ def password_strength_validate(self, attribute_name, attribute_value, properties
     target_value = properties[TARGET_VALUE]
 
     # calculates the password strength
-    password_strength = colony.libs.crypt_util.password_strength(attribute_value)
+    password_strength = colony.password_strength(attribute_value)
 
     # in case the password strength is less than the target value
     if password_strength < target_value:
