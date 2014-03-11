@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import datetime
 
-import colony.libs.time_util
-import colony.libs.string_util
+import colony
 
 import utils
 import exceptions
@@ -114,7 +113,7 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "string" : unicode,
     "integer" : int,
     "float" : float,
-    "date" : colony.libs.time_util.timestamp_datetime,
+    "date" : colony.timestamp_datetime,
     "data" : unicode,
     "metadata" : dict,
     "relation" : None
@@ -2194,7 +2193,7 @@ def _get_entity_class_name(self):
     # retrieves the entity class name, then converts it
     # into the underscore notation
     entity_class_name = entity_class.__name__
-    entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
+    entity_class_name = colony.to_underscore(entity_class_name)
 
     # returns the "just" created entity class
     # name value to the caller method
@@ -2231,7 +2230,7 @@ def _get_entity_class_pluralized(self, entity_class = None):
     # the pluralized version using the default suffix based
     # strategy (may create syntactic errors)
     entity_class_name = entity_class.__name__
-    lower_cased_entity_class_name = colony.libs.string_util.to_underscore(entity_class_name)
+    lower_cased_entity_class_name = colony.to_underscore(entity_class_name)
     entity_class_pluralized = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
 
     # returns the "just" created entity class
