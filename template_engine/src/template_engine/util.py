@@ -102,15 +102,15 @@ class Accessor(dict):
         if name == "ref": return dict.__getattribute__(self, "ref")
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
-        if hasattr(ref, name): return accessor(getattr(ref, name))
         if is_map and name in ref: return accessor(ref[name])
+        if hasattr(ref, name): return accessor(getattr(ref, name))
         return dict.__getattribute__(self, name)
 
     def __getitem__ (self, name):
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
-        if hasattr(ref, name): return accessor(getattr(ref, name))
         if is_map and name in ref: return accessor(ref[name])
+        if hasattr(ref, name): return accessor(getattr(ref, name))
         raise KeyError("'%s' not found" % name)
 
 def accessor(value):
