@@ -1012,7 +1012,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
         location = "common/" + filename
 
     else:
-        location = request.resolve(request, reference, *args, **kwargs)        
+        location = request.resolve(request, reference, *args, **kwargs)
         if location: return mvc_path + location
         else: return ""
 
