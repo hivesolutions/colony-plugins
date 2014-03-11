@@ -993,7 +993,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     if reference == "static":
         location = "resources/" + filename
 
-    if reference == "resources":
+    elif reference == "resources":
         location = "resources/" + filename
 
     elif reference == "common":
