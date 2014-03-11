@@ -47,10 +47,7 @@ import calendar
 import platform
 import traceback
 
-import colony.libs.map_util
-import colony.libs.time_util
-import colony.libs.cache_util
-import colony.libs.string_util
+import colony
 
 import exceptions
 
@@ -255,17 +252,26 @@ TO_ONE_RELATION_VALUE = 1
 TO_MANY_RELATION_VALUE = 2
 """ The to many relation value """
 
-PERSIST_UPDATE_TYPE = 0x01
-""" The persist only on update (or save) persist type """
+PERSIST_UPDATE = 0x01
+""" The persist only on update (or save) persist type that only
+allows the updating of fields in an (already) associated entity """
 
-PERSIST_SAVE_TYPE = 0x02
-""" The persist only on save persist type """
+PERSIST_SAVE = 0x02
+""" The persist only on save persist type, that allows the
+indirect creation of entities from one entity association """
 
-PERSIST_ASSOCIATE_TYPE = 0x04
-""" The persist associate persist type """
+PERSIST_ASSOCIATE = 0x04
+""" The persist associate persist type that only allows
+the association (setting) of a relation in another no creation
+or update operation will be allowed for this permission """
 
-PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
-""" The persist all persist type """
+PERSIST_NONE = 0x00
+""" The persist none persist type meaning that
+no kind of transaction will be allowed for relation """
+
+PERSIST_ALL = PERSIST_UPDATE | PERSIST_SAVE | PERSIST_ASSOCIATE
+""" The persist all persist type resulting from the association
+of the complete set of persist type values """
 
 ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
@@ -308,7 +314,7 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "string" : unicode,
     "integer" : int,
     "float" : float,
-    "date" : colony.libs.time_util.timestamp_datetime,
+    "date" : colony.timestamp_datetime,
     "relation" : None
 }
 """ The map associating the data types with the cast types """
@@ -347,7 +353,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
 these are the values that are going to be ignored in every
 single model instance/class """
 
-bundle_cache = colony.libs.cache_util.DataCacheMap()
+bundle_cache = colony.DataCacheMap()
 """ A globally accessible cache map, used to retrieve
 the various bundles from an in memory system, the least
 used values are not guaranteed to persist in memory """
@@ -454,7 +460,7 @@ def get_exception_map(self, exception, request = None):
 
     # converts the exception class name to underscore notation and uses it
     # to create the name of the method that will process the exception
-    exception_class_name_underscore = colony.libs.string_util.to_underscore(exception_class_name)
+    exception_class_name_underscore = colony.to_underscore(exception_class_name)
     exception_class_process_method_name = "process_map_" + exception_class_name_underscore
 
     # in case the instance contains the process handler
@@ -3953,7 +3959,7 @@ def extend_default_parameters(self, extension_parameters):
     """
 
     # extends the default parameters with the extension parameters
-    colony.libs.map_util.map_extend(
+    colony.map_extend(
         self.default_parameters,
         extension_parameters,
         copy_base_map = False

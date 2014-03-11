@@ -45,20 +45,26 @@ import colony
 import utils
 import exceptions
 
-PERSIST_UPDATE_TYPE = 0x01
-""" The persist only on update (or save) persist type """
+PERSIST_UPDATE = 0x01
+""" The persist only on update (or save) persist type that only
+allows the updating of fields in an (already) associated entity """
 
-PERSIST_SAVE_TYPE = 0x02
-""" The persist only on save persist type """
+PERSIST_SAVE = 0x02
+""" The persist only on save persist type, that allows the
+indirect creation of entities from one entity association """
 
-PERSIST_ASSOCIATE_TYPE = 0x04
-""" The persist associate persist type """
+PERSIST_ASSOCIATE = 0x04
+""" The persist associate persist type that only allows
+the association (setting) of a relation in another no creation
+or update operation will be allowed for this permission """
 
-PERSIST_NONE_TYPE = 0x00
-""" The persist none persist type """
+PERSIST_NONE = 0x00
+""" The persist none persist type meaning that
+no kind of transaction will be allowed for relation """
 
-PERSIST_ALL_TYPE = PERSIST_UPDATE_TYPE | PERSIST_SAVE_TYPE | PERSIST_ASSOCIATE_TYPE
-""" The persist all persist type """
+PERSIST_ALL = PERSIST_UPDATE | PERSIST_SAVE | PERSIST_ASSOCIATE
+""" The persist all persist type resulting from the association
+of the complete set of persist type values """
 
 SAVED_STATE_VALUE = 1
 """ The saved state value """
