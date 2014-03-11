@@ -928,7 +928,7 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     # returns if the relation is valid
     return valid_relation
 
-def get_field_models(self, request, field_name, model, data_type = int):
+def get_field_models(self, request, field_name = None, model = None, data_type = int):
     """
     Retrieves the complete set of models for the various identifiers
     defined in the field with the provided name.
@@ -946,6 +946,12 @@ def get_field_models(self, request, field_name, model, data_type = int):
     @param data_type: The type to be used in the cast operation for the
     various identifier values.
     """
+
+    # validates that both the field name and the model entity
+    # definition are valid and in case they're not returns an
+    # empty list of models (no loading is possible)
+    if not field_name: return []
+    if not model: return []
 
     # retrieves the series of identifiers for the requested
     # field name then splits it around the separator, casting
