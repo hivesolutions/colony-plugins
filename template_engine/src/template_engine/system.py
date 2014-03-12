@@ -66,7 +66,7 @@ END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
 SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
 """ The single tag regular expression value """
 
-ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/\(\)\:,'\"\|]*"
+ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\-\.\/\(\)\:,'\"\|]*"
 """ The attribute regular expression value, this
 regular expression value should be able to match
 the complete set of attribute matches """

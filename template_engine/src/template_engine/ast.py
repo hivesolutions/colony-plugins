@@ -49,7 +49,7 @@ BOOL_TRUE = 5
 BOOL_FALSE = 6
 NONE = 7
 
-NAME_REGEX = re.compile(r"[a-zA-Z_\[\{][\sa-zA-Z0-9_\.\/\(\)\:\=,'\"\[\]\{\}\|]*")
+NAME_REGEX = re.compile(r"[a-zA-Z_\[\{][\sa-zA-Z0-9_\-\.\/\(\)\:\=,'\"\[\]\{\}\|]*")
 """ The regular expression that is going to be used in the matching
 of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
