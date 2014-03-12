@@ -2725,6 +2725,9 @@ class EntityClass(object):
         In case no value is retrieved from the provided instance
         the default value is retrieved instead.
 
+        Note that in case the instance type is model and the value
+        is a lazy load relation the relation will be loaded.
+
         @type instance: Object/Dictionary
         @param instance: The object or map structure to be used
         to retrieve the attribute value.
@@ -2746,7 +2749,7 @@ class EntityClass(object):
         # is retrieve using the normal map accessor otherwise
         # reflection is used to retrieve the instance attribute
         if instance_type == types.DictType: return instance.get(name, default)
-        else: return instance.get_value(name, default = default)
+        else: return instance.get_value(name, default = default, load_lazy = True)
 
     @classmethod
     def _get_bases(cls):
