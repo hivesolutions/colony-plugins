@@ -49,7 +49,9 @@ MIME_TYPE = "application/x-bencode"
 
 class Bencode(colony.base.system.System):
     """
-    Provides functions to interact with bencode.
+    Provides functions to interact with bencode,
+    this encoding is used under the torrent protocol
+    for the encoding of messages and information.
     """
 
     def dumps(self, object):
