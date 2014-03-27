@@ -544,7 +544,8 @@ class RsaStructure:
     def _generate_prime_number(self, number_bits):
         """
         Generates a prime number with the given number of bits
-        in length.
+        in length. This is a brute force based generation as a
+        random number is generated and then tested for primality.
 
         @type number_bits: int
         @param number_bits: The number of bits to be used in
@@ -553,20 +554,22 @@ class RsaStructure:
         @return: The generated prime number.
         """
 
-        # iterates continuously
+        # iterates continuously, trying to find a large enough
+        # prime number as requested by the call
         while True:
-            # generates a random number
+            # generates a random number and then makes sure that
+            # it's an odd number (last bit to one)
             integer = self._generate_random_integer(number_bits)
-
-            # make sure its odd
             integer |= 1
 
-            # checks if it's prime
-            if self._is_prime(integer):
-                # breaks the loop
-                break
+            # verifies if the generated integer value is a prime
+            # using the primality testing strategy, and in case
+            # it's breaks the current loop as a prime has been
+            # found with the pre-defined number of bits
+            if self._is_prime(integer): break
 
-        # returns the (generated) integer
+        # returns the (generated) and verified prime integer
+        # to the caller method, may be used for exponent
         return integer
 
     def _is_prime(self, number):
