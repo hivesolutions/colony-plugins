@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class RsaPlugin(colony.base.system.Plugin):
+class RsaPlugin(colony.Plugin):
     """
     The main class for the Rsa plugin.
     """
@@ -50,8 +50,8 @@ class RsaPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "encryption.rsa"
@@ -61,13 +61,10 @@ class RsaPlugin(colony.base.system.Plugin):
         "encryption.rsa.system"
     ]
 
-    rsa = None
-    """ The rsa """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import encryption.rsa.system
-        self.rsa = encryption.rsa.system.Rsa(self)
+        colony.Plugin.load_plugin(self)
+        import encryption.rsa
+        self.system = encryption.rsa.Rsa(self)
 
     def create_structure(self, parameters):
-        return self.rsa.create_structure(parameters)
+        return self.system.create_structure(parameters)

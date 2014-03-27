@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import base64
 
-import colony.base.system
+import colony
 
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
@@ -47,7 +47,7 @@ BASE_64_ENCODED_MAXIMUM_SIZE = 64
 DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits """
 
-class Ssl(colony.base.system.System):
+class Ssl(colony.System):
     """
     The ssl class.
     """

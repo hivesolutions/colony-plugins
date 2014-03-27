@@ -42,12 +42,11 @@ import math
 import types
 import random
 
-import colony.base.system
-import colony.libs.math_util
+import colony
 
 import exceptions
 
-class Rsa(colony.base.system.System):
+class Rsa(colony.System):
     """
     The rsa class.
     """
@@ -368,7 +367,7 @@ class RsaStructure:
 
     def _encrypt_string(self, message, key, modulus):
         # retrieves the modulus size in bytes
-        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
+        modulus_size_bytes = colony.ceil_integer(math.log(modulus, 256))
 
         # converts the message to integer, then uses this integer
         # value to encrypt it using the rsa algorithm and converts
@@ -593,7 +592,7 @@ class RsaStructure:
         q_value = 0.5
 
         # calculates t to ha
-        t_value = colony.libs.math_util.ceil_integer(k_value / math.log(1 / q_value, 2))
+        t_value = colony.ceil_integer(k_value / math.log(1 / q_value, 2))
 
         # iterates over the range of t value plus one
         for _index in range(t_value + 1):
@@ -698,7 +697,7 @@ class RsaStructure:
 
         # retrieves the greatest common divisor between the
         # two values
-        divisor = colony.libs.math_util.greatest_common_divisor(first_value, second_value)
+        divisor = colony.greatest_common_divisor(first_value, second_value)
 
         # returns if the divisor is one (relatively prime)
         return divisor == 1
@@ -815,7 +814,7 @@ class RsaStructure:
         range_bits = math.log(range, 2)
 
         # converts the range into bytes
-        range_bytes = colony.libs.math_util.ceil_integer(range_bits / 8.0)
+        range_bytes = colony.ceil_integer(range_bits / 8.0)
 
         # converts the range into bits, but verifies that there
         # is at least a minimum number of bits
@@ -849,7 +848,7 @@ class RsaStructure:
         """
 
         # calculates the number of bytes to represent the number
-        number_bytes = colony.libs.math_util.ceil_integer(number_bits / 8.0)
+        number_bytes = colony.ceil_integer(number_bits / 8.0)
 
         # generates a random data string with the specified
         # number of bytes in length

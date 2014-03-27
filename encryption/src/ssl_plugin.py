@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class SslPlugin(colony.base.system.Plugin):
+class SslPlugin(colony.Plugin):
     """
     The main class for the Ssl plugin.
     """
@@ -50,45 +50,24 @@ class SslPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "encryption.ssl"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.rsa"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.pkcs_1")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.rsa"),
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs_1")
     ]
     main_modules = [
         "encryption.ssl.system"
     ]
 
-    ssl = None
-    """ The ssl """
-
-    rsa_plugin = None
-    """ The rsa plugin """
-
-    pkcs_1_plugin = None
-    """ The pkcs 1 plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import encryption.ssl.system
-        self.ssl = encryption.ssl.system.Ssl(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import encryption.ssl
+        self.system = encryption.ssl.Ssl(self)
 
     def create_structure(self, parameters):
-        return self.ssl.create_structure(parameters)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.rsa")
-    def set_rsa_plugin(self, rsa_plugin):
-        self.rsa_plugin = rsa_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.pkcs_1")
-    def set_pkcs_1_plugin(self, pkcs_1_plugin):
-        self.pkcs_1_plugin = pkcs_1_plugin
+        return self.system.create_structure(parameters)

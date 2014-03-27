@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import colony
 
-class Pkcs1Exception(colony.base.exceptions.ColonyException):
+class Pkcs1Exception(colony.ColonyException):
     """
     The pkcs 1 exception class.
     """

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class DiffieHellman(colony.base.system.System):
+class DiffieHellman(colony.System):
     """
     The diffie hellman class.
     """

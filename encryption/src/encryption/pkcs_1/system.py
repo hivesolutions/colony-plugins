@@ -44,9 +44,7 @@ import string
 import base64
 import hashlib
 
-import colony.base.system
-import colony.libs.math_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -154,7 +152,7 @@ TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
 }
 """ The map associating the tuples with the hash object identifiers """
 
-class Pkcs1(colony.base.system.System):
+class Pkcs1(colony.System):
     """
     The pkcs 1 class.
     """
@@ -790,7 +788,7 @@ class Pkcs1Structure:
         # calculates the size of the modulus in terms of bytes
         # this will be used as the size of the message (including
         # the padding)
-        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
+        modulus_size_bytes = colony.ceil_integer(math.log(modulus, 256))
 
         # calculates the current size of the message and uses this
         # value to calculate the size of the pad
@@ -886,7 +884,7 @@ class Pkcs1Structure:
         signature_value_packed = ber_structure.pack(signature_value)
 
         # creates the signature buffer
-        signature_buffer = colony.libs.string_buffer_util.StringBuffer()
+        signature_buffer = colony.StringBuffer()
 
         # unpacks the keys tuple, retrieving the
         # public key, private key and extras map
@@ -899,7 +897,7 @@ class Pkcs1Structure:
         signature_value_packed_length = len(signature_value_packed)
 
         # retrieves the modulus size in bytes
-        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
+        modulus_size_bytes = colony.ceil_integer(math.log(modulus, 256))
 
         # calculates the padding size (from the modulus size bytes and the signature value packed length)
         padding_size = modulus_size_bytes - (signature_value_packed_length + 3)

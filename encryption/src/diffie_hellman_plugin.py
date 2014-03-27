@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class DiffieHellmanPlugin(colony.base.system.Plugin):
+class DiffieHellmanPlugin(colony.Plugin):
     """
     The main class for the Diffie Hellman plugin.
     """
@@ -50,8 +50,8 @@ class DiffieHellmanPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "encryption.diffie_hellman"
@@ -60,13 +60,10 @@ class DiffieHellmanPlugin(colony.base.system.Plugin):
         "encryption.diffie_hellman.system"
     ]
 
-    diffie_hellman = None
-    """ The diffie helman """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import encryption.diffie_hellman.system
-        self.diffie_hellman = encryption.diffie_hellman.system.DiffieHellman(self)
+        colony.Plugin.load_plugin(self)
+        import encryption.diffie_hellman
+        self.system = encryption.diffie_hellman.DiffieHellman(self)
 
     def create_structure(self, parameters):
-        return self.diffie_hellman.create_structure(parameters)
+        return self.system.create_structure(parameters)

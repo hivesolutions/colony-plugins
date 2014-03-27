@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2012 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class Pkcs1Plugin(colony.base.system.Plugin):
+class Pkcs1Plugin(colony.Plugin):
     """
     The main class for the Pkcs 1 plugin.
     """
@@ -51,38 +50,24 @@ class Pkcs1Plugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "encryption.pkcs_1"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.ber")
+        colony.PluginDependency("pt.hive.colony.plugins.format.ber")
     ]
     main_modules = [
         "encryption.pkcs_1.exceptions",
         "encryption.pkcs_1.system"
     ]
 
-    pkcs_1 = None
-    """ The pkcs 1 """
-
-    ber_plugin = None
-    """ The ber plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import encryption.pkcs_1.system
-        self.pkcs_1 = encryption.pkcs_1.system.Pkcs1(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import encryption.pkcs_1
+        self.system = encryption.pkcs_1.Pkcs1(self)
 
     def create_structure(self, parameters):
-        return self.pkcs_1.create_structure(parameters)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.ber")
-    def set_ber_plugin(self, ber_plugin):
-        self.ber_plugin = ber_plugin
+        return self.system.create_structure(parameters)
