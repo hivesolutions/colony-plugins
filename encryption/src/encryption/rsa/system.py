@@ -228,7 +228,7 @@ class RsaStructure:
         public key decrypts it.
 
         @type message: String
-        @param message: The encrypted message (cyper) to
+        @param message: The encrypted message (cipher) to
         be signed.
         @type private_key: Dictionary
         @param private_key: The map containing the private key.
@@ -764,12 +764,13 @@ class RsaStructure:
         # returns the integer value
         return integer_value
 
-    def _integer_to_string(self, integer_value, string_length = None):
+    def _integer_to_string(self, integer_value, string_length = 0):
         # creates the characters list that will hold
         # the various characters
         characters_list = []
 
-        # iterates over all the character values
+        # iterates over all the character values until the
+        # integer value has reached the zero value
         while integer_value > 0:
             # retrieves the character value for
             # the least significant byte value of
@@ -782,27 +783,23 @@ class RsaStructure:
             # to the right
             integer_value >>= 8
 
-        # retrieves the characters list length
+        # retrieves the characters list length, this value is going to
+        # be used for the calculus of the extra characters to be appended
         characters_list_length = len(characters_list)
 
-        # in case the string length is defined
-        if string_length:
-            # calculates the extra characters length from the string length
-            extra_characters_length = string_length - characters_list_length
+        # calculates the extra characters length from the string length
+        # and then adds extra (padding) characters to the list of values
+        # so that the requested length is fulfilled
+        extra = string_length - characters_list_length
+        extra = 0 if extra < 0 else extra
+        for _index in range(extra): characters_list.append("\x00")
 
-            # iterates over the range of extra characters length
-            for _index in range(extra_characters_length):
-                # adds the extra padding character
-                characters_list.append("\x00")
-
-        # reverses the characters list
+        # reverses the characters list, because the creation of
+        # the string was made in the opposite order (big endian)
+        # and then joins it to create the buffer, returning then
+        # the value to the caller method (as requested)
         characters_list.reverse()
-
-        # retrieves the string value from the list
-        # of characters
         string_value = "".join(characters_list)
-
-        # returns the string value
         return string_value
 
     def _generate_random_integer_interval(self, minimum_value, maximum_value):
