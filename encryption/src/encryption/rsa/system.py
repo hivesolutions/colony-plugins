@@ -176,7 +176,7 @@ class RsaStructure:
         Decrypts the given message using the given private key.
 
         @type encrypted_message: String
-        @param encrypted_message: The encrypted message (cyper) to
+        @param encrypted_message: The encrypted message (cipher) to
         be decrypted.
         @type private_key: Dictionary
         @param private_key: The map containing the private key.
