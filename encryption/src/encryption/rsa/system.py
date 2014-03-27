@@ -386,7 +386,8 @@ class RsaStructure:
     def _encrypt_integer(self, message, e_value, n_value):
         """
         Encrypts a message (integer mode) using the given exponent
-        and modulus values.
+        and modulus values. This is the main encryption step and
+        the basis for the rsa cryptosystem.
 
         @type message: int
         @param message: The message represented as an integer.
