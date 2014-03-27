@@ -427,11 +427,11 @@ class RsaStructure:
         while True:
             # generates the p and q values for the defined
             # number of bits
-            p_value, q_value = self._generate_p_q_values(number_bits)
+            p_value, q_value = self._generate_p_q_values(number_bits // 2)
 
             # calculates the exponents (private and public) for
             # the given prime number and number of bits
-            e_value, d_value = self._generate_exponents(p_value, q_value, number_bits)
+            e_value, d_value = self._generate_exponents(p_value, q_value, number_bits // 2)
 
             # tests if the number is positive
             # for such cases breaks the loop
