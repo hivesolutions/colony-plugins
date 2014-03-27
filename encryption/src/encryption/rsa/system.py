@@ -149,7 +149,7 @@ class RsaStructure:
         @type public_key: Dictionary
         @param public_key: The map containing the public key.
         @rtype: String
-        @return: The encrypted message (cypher).
+        @return: The encrypted message (cipher).
         """
 
         # retrieves the public key to be used
@@ -519,7 +519,7 @@ class RsaStructure:
         prime generation.
         @rtype: Tuple
         @return: A tuple containing the two different prime
-        numbers
+        numbers.
         """
 
         # generates a prime number to serve as p value
