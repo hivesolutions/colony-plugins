@@ -414,7 +414,7 @@ class RsaStructure:
         """
         Generates the rsa keys with the given number
         of bits.
-        This method is very cpu intensive.
+        This method is very processor intensive.
 
         @type number_bits: int
         @param number_bits: The number of bits to be used
