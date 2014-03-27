@@ -632,15 +632,11 @@ class RsaStructure:
         # calculates the f value
         f_value = pow(x_value, (n_value - 1) / 2, n_value)
 
-        # in case the j value and the f value
-        # are the same
-        if j_value == f_value:
-            # returns false (not witness)
-            return False
-        # otherwise
-        else:
-            # returns true (witness)
-            return True
+        # in case the j value and the f value are the same,
+        # returns invalid as it is not considered to be a valid
+        # witness, otherwise returns invalid (is a witness)
+        if j_value == f_value: return False
+        else: return True
 
     def _jacobi(self, a_value, b_value):
         """
