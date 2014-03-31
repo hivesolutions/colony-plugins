@@ -1346,7 +1346,14 @@ class RestRequest:
         # is able to identify if contents have already been flushed
         self.flushed = True
 
-    def redirect(self, target_path, status_code = 302, quote = True, attributes_map = None):
+    def redirect(
+        self,
+        target_path,
+        status_code = 302,
+        quote = True,
+        keep = False,
+        attributes_map = None
+    ):
         """
         Redirects the request logically, so it becomes readable
         as a new resource. This redirection process uses the
@@ -1361,11 +1368,21 @@ class RestRequest:
         @param status_code: The status code to be used.
         @type quote: bool
         @param quote: If the target path should be quoted.
+        @type keep: bool
+        @param keep: If the attributes map from the current request
+        should be propagated (as get parameters) to the redirection
+        action that is going to be triggered.
         @type attributes_map: Dictionary
         @param attributes_map: Map containing the series of
         attributes to be sent over the target path in the
         redirect url.
         """
+
+        # in case no attributes map is passed uses the current request's
+        # attribute map, by default the attributes map is re-used for the
+        # redirect operation (no side effects should occur)
+        base_map = self.request.attributes_map if keep else {}
+        attributes_map = attributes_map or base_map
 
         # quotes the target path according to the url quoting schema
         # in case the quote flat is set
