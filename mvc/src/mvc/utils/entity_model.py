@@ -949,16 +949,16 @@ def _class_apply_context(
         # adds the context value filtering part to the initial
         # options map provided, this is an extension to the
         # existing filters
-        filters.append({
-            "type" : context_value == None and "is_null" or "equals",
-            "fields" : (
-                {
-                    "name" : context_name,
-                    "value" : context_value
-                },
+        filters.append(dict(
+            type = context_value == None and "is_null" or "equals",
+            fields = (
+                dict(
+                    name = context_name,
+                    value = context_value
+                ),
             ),
-            "post" : True
-        })
+            post = True
+        ))
 
     # sets the appropriate set of filters in the options
     # to be able to retrieve the a match on the context
