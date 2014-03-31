@@ -2127,12 +2127,14 @@ class EntityManager:
         finally: cursor.close()
         return result
 
-    def get(self, entity_class, id_value, options = None, lock = False):
+    def get(self, entity_class, id_value, options = None, lock = False, **kwargs):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
-        # are already defined)
+        # are already defined) and the runs the processing of
+        # the provided keyword arguments (options expansion)
         options = options and self.normalize_options(options) or {}
+        self.process_kwargs(options, kwargs)
 
         # retrieves the table id field, to be used
         # to create the appropriate equals filter
@@ -2146,15 +2148,15 @@ class EntityManager:
         # adds the id value filtering part to the initial
         # options map provided, this is an extension to the
         # existing filters
-        filters.append({
-            "type" : "equals",
-            "fields" : (
-                {
-                    "name" : table_id,
-                    "value" : id_value
-                },
+        filters.append(dict(
+            type = "equals",
+            fields = (
+                dict(
+                    name = table_id,
+                    value = id_value
+                ),
             )
-        })
+        ))
 
         # sets the appropriate set of filters in the options
         # to be able to retrieve the exact match on the
@@ -2176,12 +2178,14 @@ class EntityManager:
         # returns the processed result value
         return result
 
-    def count(self, entity_class, options = None, lock = False):
+    def count(self, entity_class, options = None, lock = False, **kwargs):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
-        # are already defined)
+        # are already defined) and the runs the processing of
+        # the provided keyword arguments (options expansion)
         options = options and self.normalize_options(options) or {}
+        self.process_kwargs(options, kwargs)
 
         # sets the count flag in the options as true this
         # will provide access to the counting of the rows in
@@ -2199,11 +2203,19 @@ class EntityManager:
         # in the data source for the query
         return result
 
-    def find(self, entity_class, options = {}, lock = False):
+    def find(self, entity_class, options = {}, lock = False, **kwargs):
         # in case the lock flag is set the entity class with
         # is completely locked (this blocks the data source
         # information on the data for the entity class)
         lock and self.lock(entity_class)
+
+        # normalizes the options, this is going to expand the
+        # options map into a larger and easily accessible
+        # map of values (this only happens in case the options
+        # are already defined) and the runs the processing of
+        # the provided keyword arguments (options expansion)
+        options = options and self.normalize_options(options) or {}
+        self.process_kwargs(options, kwargs)
 
         query, field_names = self._find_query(entity_class, options)
         cursor = self.execute_query(query, False)
@@ -4179,7 +4191,7 @@ class EntityManager:
         is_first = _filter_eager(entity_class, options, "", is_first)
 
         # retrieves the various top level filters in the top level
-        # queries
+        # queries, these are the values that are going to be processed
         filters = options.get("filters", [])
 
         # iterates over all the filters to process
@@ -6633,6 +6645,45 @@ class EntityManager:
 
         # returns the normalized options value
         return options
+
+    def process_kwargs(self, options, kwargs):
+        """
+        Processes the provided keyword arguments (map) creating the
+        appropriate filters that represent the key to value associations
+        that are defined in the map.
+
+        @type options: Dictionary
+        @param options: The map containing the various key to value
+        associations that define the options for a "query". This value
+        may be changed to have the filters key.
+        @type kwargs: Dictionary
+        @param kwargs: The map that contains the keyword based values
+        that are going to be "applied" as filters to the query options.
+        """
+
+        # tries to retrieve the filters list from the provided options
+        # defaulting to an empty list in case no filters already exist
+        filters = options.get("filters", [])
+        is_tuple = type(filters) == types.TupleType
+        if is_tuple: filters = list(filters)
+
+        # iterates over the complete set of keyword based arguments
+        # to add the requested equals filters, taking into account
+        # the argument name and value (as defined in specification)
+        for name, value in kwargs.iteritems():
+            filters.append(dict(
+                type = "equals",
+                fields = (
+                    dict(
+                        name = name,
+                        value = value
+                    ),
+                )
+            ))
+
+        # sets the proper filters list on the options, this may be a
+        # first setting operation in case the filters did not exist
+        options["filters"] = filters
 
     def _is_filter(self, options):
         """
