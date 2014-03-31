@@ -260,6 +260,11 @@ def _class_get(
     # of a related entity is considered to be of mandatory value
     if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
 
+    # in case the currently retrieved entity model is not defined or
+    # is invalid, it must be returned immediately to the caller method
+    # to avoid any problem in the apply operation to it (cannot apply)
+    if not entity_model: return entity_model
+
     # in case the requested model is supposed to be retrieved using a map
     # based strategy no apply operation should be performed (as it is not
     # possible) and so the entity model should be returned immediately
