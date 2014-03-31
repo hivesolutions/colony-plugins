@@ -961,7 +961,14 @@ def add_validation_method(self, attribute_name, validation_method_name, validate
     # adds the "custom" validation method to the current model
     self.add_custom_validation_method(attribute_name, validation_method, validate_null, properties, contexts)
 
-def add_custom_validation_method(self, attribute_name, validation_method, validate_null = False, properties = {}, contexts = (DEFAULT_VALIDATION_CONTEXT,)):
+def add_custom_validation_method(
+    self,
+    attribute_name,
+    validation_method,
+    validate_null = False,
+    properties = {},
+    contexts = (DEFAULT_VALIDATION_CONTEXT,)
+):
     """
     Adds a "custom" validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties
