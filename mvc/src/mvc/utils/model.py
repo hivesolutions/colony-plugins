@@ -752,7 +752,12 @@ def get_session_attribute(
     # returns the session attribute
     return session_attribute
 
-def set_session_attribute(self, session_attribute_name, session_attribute_value, namespace_name = None):
+def set_session_attribute(
+    self,
+    session_attribute_name,
+    session_attribute_value,
+    namespace_name = None
+):
     """
     Sets the session attribute in the current request
     with the given name and for the given namespace.
