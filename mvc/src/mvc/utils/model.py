@@ -707,7 +707,12 @@ def release_session(self):
     # session (unblocks it)
     request_session.release()
 
-def get_session_attribute(self, session_attribute_name, namespace_name = None, unset_session_attribute = False):
+def get_session_attribute(
+    self,
+    session_attribute_name,
+    namespace_name = None,
+    unset_session_attribute = False
+):
     """
     Retrieves the session attribute from the current request
     with the given name and for the given namespace.
