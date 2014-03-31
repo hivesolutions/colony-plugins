@@ -58,7 +58,7 @@ class SslPlugin(colony.Plugin):
     ]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.encryption.rsa"),
-        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs_1")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1")
     ]
     main_modules = [
         "encryption.ssl.system"

@@ -41,7 +41,7 @@ import colony
 
 class Pkcs1Exception(colony.ColonyException):
     """
-    The pkcs 1 exception class.
+    The pkcs1 exception class.
     """
 
     message = None

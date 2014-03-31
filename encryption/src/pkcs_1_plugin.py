@@ -44,9 +44,9 @@ class Pkcs1Plugin(colony.Plugin):
     The main class for the Pkcs 1 plugin.
     """
 
-    id = "pt.hive.colony.plugins.encryption.pkcs_1"
-    name = "Pksc 1 Encryption"
-    description = "The plugin that offers the pkcs 1 support"
+    id = "pt.hive.colony.plugins.encryption.pkcs1"
+    name = "Pkcs1 Encryption"
+    description = "The plugin that offers the pkcs1 support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -54,20 +54,20 @@ class Pkcs1Plugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "encryption.pkcs_1"
+        "encryption.pkcs1"
     ]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.ber")
     ]
     main_modules = [
-        "encryption.pkcs_1.exceptions",
-        "encryption.pkcs_1.system"
+        "encryption.pkcs1.exceptions",
+        "encryption.pkcs1.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import encryption.pkcs_1
-        self.system = encryption.pkcs_1.Pkcs1(self)
+        import encryption.pkcs1
+        self.system = encryption.pkcs1.Pkcs1(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

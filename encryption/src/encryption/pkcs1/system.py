@@ -103,7 +103,7 @@ SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
 OBJECT_IDENTIFIERS_TUPLES_MAP = {
-    "pkcs_1" : (1, 2, 840, 113549, 1, 1),
+    "pkcs1" : (1, 2, 840, 113549, 1, 1),
     "rsa_encryption" : (1, 2, 840, 113549, 1, 1, 1),
     "id_rsaes_oaep" : (1, 2, 840, 113549, 1, 1, 7),
     "id_p_specified" : (1, 2, 840, 113549, 1, 1, 9),
@@ -118,7 +118,7 @@ OBJECT_IDENTIFIERS_TUPLES_MAP = {
 """ The map associating the object identifiers with the tuples """
 
 TUPLES_OBJECT_IDENTIFIERS_MAP = {
-    (1, 2, 840, 113549, 1, 1) : "pkcs_1",
+    (1, 2, 840, 113549, 1, 1) : "pkcs1",
     (1, 2, 840, 113549, 1, 1, 1) : "rsa_encryption",
     (1, 2, 840, 113549, 1, 1, 7) : "id_rsaes_oaep",
     (1, 2, 840, 113549, 1, 1, 9) : "id_p_specified",
@@ -154,22 +154,20 @@ TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
 
 class Pkcs1(colony.System):
     """
-    The pkcs 1 class.
+    The pkcs1 class.
     """
 
     def create_structure(self, parameters):
-        # retrieves the ber plugin
+        # retrieves the ber plugin and uses it to create the requested
+        # pkcs1 structure that may be then be used for cryptographic
+        # based operations on the provided buffers
         ber_plugin = self.plugin.ber_plugin
-
-        # creates the pkcs 1 structure
-        pkcs_1_structure = Pkcs1Structure(ber_plugin)
-
-        # returns the pkcs 1 structure
-        return pkcs_1_structure
+        pkcs1_structure = Pkcs1Structure(ber_plugin)
+        return pkcs1_structure
 
 class Pkcs1Structure:
     """
-    Class representing the pkcs 1,
+    Class representing the pkcs1,
     cryptographic standards structure.
     """
 
