@@ -1928,6 +1928,7 @@ def redirect(
     target,
     status_code = 302,
     quote = False,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -1942,6 +1943,10 @@ def redirect(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -1950,7 +1955,7 @@ def redirect(
 
     # redirects the request to the target and sets the contents in
     # the current request (empty contents set)
-    request.redirect(target, status_code, quote, attributes_map)
+    request.redirect(target, status_code, quote, keep, attributes_map)
     self.set_contents(request)
 
 def redirect_list(
@@ -1960,6 +1965,7 @@ def redirect_list(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -1977,6 +1983,10 @@ def redirect_list(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -1994,7 +2004,14 @@ def redirect_list(
     # and redirects the request to the defined target
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized
-    self.redirect_base_path(request, target, status_code, quote, attributes_map)
+    self.redirect_base_path(
+        request,
+        target,
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
+    )
 
 def redirect_action(
     self,
@@ -2005,6 +2022,7 @@ def redirect_action(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2033,6 +2051,10 @@ def redirect_action(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2064,9 +2086,10 @@ def redirect_action(
     self.redirect_base_path(
         request,
         target,
-        status_code,
-        quote,
-        attributes_map
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
     )
 
 def redirect_create(
@@ -2076,6 +2099,7 @@ def redirect_create(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2093,6 +2117,10 @@ def redirect_create(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2110,7 +2138,14 @@ def redirect_create(
     # and redirects the request to the target (path)
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized + "/new"
-    self.redirect_base_path(request, target, status_code, quote, attributes_map)
+    self.redirect_base_path(
+        request,
+        target,
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
+    )
 
 def redirect_show(
     self,
@@ -2119,6 +2154,7 @@ def redirect_show(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2136,6 +2172,10 @@ def redirect_show(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2148,6 +2188,7 @@ def redirect_show(
         level = level,
         status_code = status_code,
         quote = quote,
+        keep = keep,
         attributes_map = attributes_map
     )
 
@@ -2158,6 +2199,7 @@ def redirect_edit(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2175,6 +2217,10 @@ def redirect_edit(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2188,6 +2234,7 @@ def redirect_edit(
         level = level,
         status_code = status_code,
         quote = quote,
+        keep = keep,
         attributes_map = attributes_map
     )
 
@@ -2198,6 +2245,7 @@ def redirect_delete(
     level = None,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2215,6 +2263,10 @@ def redirect_delete(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2228,6 +2280,7 @@ def redirect_delete(
         level = level,
         status_code = status_code,
         quote = quote,
+        keep = keep,
         attributes_map = attributes_map
     )
 
@@ -2237,6 +2290,7 @@ def redirect_base_path(
     target,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2253,6 +2307,10 @@ def redirect_base_path(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2264,7 +2322,14 @@ def redirect_base_path(
     # then redirects the agent to it
     base_path = self.get_base_path(request)
     target_base_path = base_path + target
-    self.redirect(request, target_base_path, status_code, quote, attributes_map)
+    self.redirect(
+        request,
+        target_base_path,
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
+    )
 
 def redirect_mvc_path(
     self,
@@ -2272,6 +2337,7 @@ def redirect_mvc_path(
     target,
     status_code = 302,
     quote = True,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2288,6 +2354,10 @@ def redirect_mvc_path(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2299,7 +2369,14 @@ def redirect_mvc_path(
     # then redirects the agent to it
     mvc_path = self.get_mvc_path(request)
     target_mvc_path = mvc_path + target
-    self.redirect(request, target_mvc_path, status_code, quote, attributes_map)
+    self.redirect(
+        request,
+        target_mvc_path,
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
+    )
 
 def redirect_back(
     self,
@@ -2307,6 +2384,7 @@ def redirect_back(
     default_target = "/",
     status_code = 302,
     quote = False,
+    keep = False,
     attributes_map = None
 ):
     """
@@ -2322,6 +2400,10 @@ def redirect_back(
     @param status_code: The status code to be used.
     @type quote: bool
     @param quote: If the target path should be quoted.
+    @type keep: bool
+    @param keep: If the attributes map from the current request
+    should be propagated (as get parameters) to the redirection
+    action that is going to be triggered.
     @type attributes_map: Dictionary
     @param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
@@ -2336,7 +2418,14 @@ def redirect_back(
     target = referer_header or default_target
 
     # redirects the request to the target
-    self.redirect(request, target, status_code, quote, attributes_map)
+    self.redirect(
+        request,
+        target,
+        status_code = status_code,
+        quote = quote,
+        keep = keep,
+        attributes_map = attributes_map
+    )
 
 def set_redirect_to(self, request, target, reason = None):
     """
