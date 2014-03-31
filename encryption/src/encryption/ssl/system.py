@@ -56,11 +56,11 @@ class Ssl(colony.System):
         # retrieves the rsa plugin
         rsa_plugin = self.plugin.rsa_plugin
 
-        # retrieves the pkcs 1 plugin
-        pkcs_1_plugin = self.plugin.pkcs_1_plugin
+        # retrieves the pkcs1 plugin
+        pkcs1_plugin = self.plugin.pkcs1_plugin
 
         # creates the ssl structure
-        ssl_structure = SslStructure(rsa_plugin, pkcs_1_plugin)
+        ssl_structure = SslStructure(rsa_plugin, pkcs1_plugin)
 
         # returns the ssl structure
         return ssl_structure
@@ -77,28 +77,28 @@ class SslStructure:
     rsa_plugin = None
     """ The rsa plugin """
 
-    pkcs_1_plugin = None
-    """ The pkcs 1 plugin """
+    pkcs1_plugin = None
+    """ The pkcs1 plugin """
 
-    def __init__(self, rsa_plugin, pkcs_1_plugin):
+    def __init__(self, rsa_plugin, pkcs1_plugin):
         """
         Constructor of the class.
 
         @type rsa_plugin: RsaPlugin
         @param rsa_plugin: The rsa plugin.
-        @type pkcs_1_plugin: Pkcs1Plugin
-        @param pkcs_1_plugin: The pkkc 1 plugin.
+        @type pkcs1_plugin: Pkcs1Plugin
+        @param pkcs1_plugin: The pkcs1 plugin.
         """
 
         self.rsa_plugin = rsa_plugin
-        self.pkcs_1_plugin = pkcs_1_plugin
+        self.pkcs1_plugin = pkcs1_plugin
 
     def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure
-        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
+        # creates the pkcs1 structure
+        pkcs1_structure = self.pkcs1_plugin.create_structure({})
 
         # generates the keys in the rsa structure
         rsa_structure.generate_keys(number_bits)
@@ -107,7 +107,7 @@ class SslStructure:
         keys = rsa_structure.get_keys()
 
         # writes the keys in pem format
-        pkcs_1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
+        pkcs1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
     def encrypt_base_64(self, public_key_path, message):
         # encrypts the message, creating the encrypted version
@@ -166,16 +166,16 @@ class SslStructure:
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure then loads the public key,
+        # creates the pkcs1 structure then loads the public key,
         # retrieving the keys tuple and sets the keys in the rsa structure
-        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-        keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
+        pkcs1_structure = self.pkcs1_plugin.create_structure({})
+        keys = pkcs1_structure.load_read_public_key_pem(public_key_path)
         rsa_structure.set_keys(keys)
 
         # runs the encrypt process for the pkcs that should add the
         # proper padding to the message to be encrypted the uses rsa
         # to encrypt the message with the public key
-        message_pad = pkcs_1_structure.encrypt(keys, message)
+        message_pad = pkcs1_structure.encrypt(keys, message)
         encrypted_message = rsa_structure.encrypt_s(message_pad)
 
         # returns the resulting encrypted message buffer to be used
@@ -186,18 +186,18 @@ class SslStructure:
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure then loads the private key,
+        # creates the pkcs1 structure then loads the private key,
         # retrieving the keys tuple and the version value and sets
         # them in the rsa structure
-        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-        keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
+        pkcs1_structure = self.pkcs1_plugin.create_structure({})
+        keys, _version = pkcs1_structure.load_read_private_key_pem(private_key_path)
         rsa_structure.set_keys(keys)
 
         # runs the decryption process over the message to be able
         # to retrieve the plain text value and then removes the
         # padding from it according to the pkcs specification
         message_pad = rsa_structure.decrypt_s(encrypted_message)
-        message = pkcs_1_structure.decrypt(keys, message_pad)
+        message = pkcs1_structure.decrypt(keys, message_pad)
 
         # returns the original plain message resulting from the
         # standard pkcs decryption process
@@ -207,18 +207,18 @@ class SslStructure:
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure then loads the private key,
+        # creates the pkcs1 structure then loads the private key,
         # retrieving the keys tuple and the version value and sets
         # them in the rsa structure
-        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-        keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
+        pkcs1_structure = self.pkcs1_plugin.create_structure({})
+        keys, _version = pkcs1_structure.load_read_private_key_pem(private_key_path)
         rsa_structure.set_keys(keys)
 
         # signs the base string value using the given hash
         # algorithm name and then used the resulting string
         # value to sign (encrypt) it under rsa using the
         # private key
-        signature_verified = pkcs_1_structure.sign(keys, hash_algorithm_name, base_string_value)
+        signature_verified = pkcs1_structure.sign(keys, hash_algorithm_name, base_string_value)
         signature = rsa_structure.sign(signature_verified)
 
         # returns the resulting signature value as a plain
@@ -229,10 +229,10 @@ class SslStructure:
         # creates the rsa structure
         rsa_structure = self.rsa_plugin.create_structure({})
 
-        # creates the pkcs 1 structure then loads the public key,
+        # creates the pkcs1 structure then loads the public key,
         # retrieving the keys tuple and sets the keys in the rsa structure
-        pkcs_1_structure = self.pkcs_1_plugin.create_structure({})
-        keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
+        pkcs1_structure = self.pkcs1_plugin.create_structure({})
+        keys = pkcs1_structure.load_read_public_key_pem(public_key_path)
         rsa_structure.set_keys(keys)
 
         # verifies the signature (using the public key) and
@@ -241,7 +241,7 @@ class SslStructure:
         # process that will compare the the verified signature
         # value against the hash value of the provided base string
         signature_verified = rsa_structure.verify(signature)
-        return_value = pkcs_1_structure.verify(signature_verified, base_string_value)
+        return_value = pkcs1_structure.verify(signature_verified, base_string_value)
 
         # returns the return value
         return return_value
