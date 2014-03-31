@@ -2965,10 +2965,10 @@ def get_controller(self, name):
     """
     Retrieves a controller instance (inside the current system)
     with the provided name.
-    
+
     The strategy for the retrieval of the controller is based
     upon the current conventions.
-    
+
     @type name: String
     @param name: The name of the controller that should be retrieved,
     defined using underscore notation.
@@ -2976,7 +2976,7 @@ def get_controller(self, name):
     @return: The controller retrieved with the provided name strategy
     from the currently associated system instance.
     """
-    
+
     return getattr(self.system, "%s_controller" % name)
 
 def get_session(self, request, name, unset = False):
