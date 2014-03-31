@@ -186,7 +186,8 @@ def _class_get(
     context = None,
     namespace = None,
     entity_manager = None,
-    raise_e = True
+    raise_e = True,
+    **kwargs
 ):
     """
     Class method that retrieves an entity model for
@@ -252,7 +253,7 @@ def _class_get(
     # retrieves the entity model for the given class, id value
     # and using the given options, then in case the retrieval was
     # successful applies the context as the entity model request
-    entity_model = entity_manager.get(cls, id_value, options)
+    entity_model = entity_manager.get(cls, id_value, options, **kwargs)
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
     # in case no entity model was found for the requested parameters
@@ -292,7 +293,14 @@ def _class_get(
     # case a valid values was retrieved from the data source
     return entity_model
 
-def _class_count(cls, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_count(
+    cls,
+    options = {},
+    context = None,
+    namespace = None,
+    entity_manager = None,
+    **kwargs
+):
     """
     Class method that retrieves the number of entity models
     in the data source using the current entity model class
@@ -335,13 +343,20 @@ def _class_count(cls, options = {}, context = None, namespace = None, entity_man
 
     # retrieves the count (number of entities) for the given
     # entity class and options
-    result = entity_manager.count(cls, options)
+    result = entity_manager.count(cls, options, **kwargs)
 
     # returns the result of the entity model counting operation
     # (number of entity results in the data source)
     return result
 
-def _class_find(cls, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_find(
+    cls,
+    options = {},
+    context = None,
+    namespace = None,
+    entity_manager = None,
+    **kwargs
+):
     """
     Class method that retrieves a set of entity models
     using the given options.
@@ -388,13 +403,20 @@ def _class_find(cls, options = {}, context = None, namespace = None, entity_mana
     # the given options then applies the context to the complete
     # set of retrieved entity models (only applies the request
     # to the first element because their share the diffusion scope)
-    entity_models = entity_manager.find(cls, options)
+    entity_models = entity_manager.find(cls, options, **kwargs)
     entity_models and hasattr(entity_models[0], "set_request") and entity_models[0].set_request(context)
 
     # returns the retrieved entity models
     return entity_models
 
-def _class_find_one(cls, options = {}, context = None, namespace = None, entity_manager = None):
+def _class_find_one(
+    cls,
+    options = {},
+    context = None,
+    namespace = None,
+    entity_manager = None,
+    **kwargs
+):
     """
     Class method that retrieves the first entity model
     using the given options.
@@ -438,7 +460,7 @@ def _class_find_one(cls, options = {}, context = None, namespace = None, entity_
     # the first result in case at least one is given, then in
     # case the retrieval was successful applies the context as
     # the entity model request
-    entity_models = entity_manager.find(cls, options)
+    entity_models = entity_manager.find(cls, options, **kwargs)
     entity_model = entity_models and entity_models[0] or None
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
