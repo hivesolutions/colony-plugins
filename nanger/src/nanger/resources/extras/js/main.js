@@ -1988,17 +1988,7 @@
 })(jQuery);
 
 jQuery(document).ready(function() {
-            // retrieves the reference to the top level
-            // body element to apply the components in it
             var _body = jQuery("body");
-
-            // runs the initial apply operation for the current
-            // body context to fill the various elements
-            _body.uapply();
-
-            // registers for the applied event on the body to be
-            // notified of new apply operations and react to them
-            // in the sense of applying the specifics
             _body.bind("applied", function(event, base) {
                         base.uapply();
                     });
