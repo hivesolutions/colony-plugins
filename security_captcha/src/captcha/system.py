@@ -218,6 +218,12 @@ class Captcha(colony.base.system.System):
         return text_size
 
     def _draw_text_rotate(self, text_image, text_font, string_value):
+        # verifies if the provided text font contains the get offset
+        # method that retrieves the size of the offset position where
+        # the text is going to be written, useful for size calculation
+        # but not always present (depends on implementation)
+        has_offset = hasattr(text_font, "getoffset")
+
         # start the current letter x position
         current_letter_x = 0
 
@@ -228,6 +234,10 @@ class Captcha(colony.base.system.System):
         for letter_value in string_value:
             # retrieves the letter width and height from the text font
             letter_width, letter_height = text_font.getsize(letter_value)
+            if has_offset: offset_width, offset_height = text_font.getoffset(letter_value)
+            else: offset_width, offset_height = (0, 0)
+            letter_width += offset_width
+            letter_height += offset_height
 
             # creates a letter image
             letter_image = PIL.Image.new(RGBA_VALUE, (letter_width, letter_height), (255, 255, 255, 0))
