@@ -550,7 +550,7 @@ class ConsoleController(base.BaseController):
                 # has occurred must skip the in transit situation otherwise must
                 # process the in transit line and add it to the currently processing
                 # parameters observations
-                if line[0] == "@": in_transit = False
+                if line[0] in ("@", ":"): in_transit = False
                 else:
                     # in case the end line dot is the final character in the current
                     # line must unset the in transit situation (end of in transit)
@@ -566,7 +566,7 @@ class ConsoleController(base.BaseController):
 
             # in case the current line refers the parameter special token
             # must process the parameter observations
-            if line.startswith("@param"):
+            if line.startswith(("@param", ":param")):
                 # splits the current line around the separator and then
                 # uses the result to unpack the name and description
                 parts = line[6:].split(":", 1)
@@ -589,7 +589,7 @@ class ConsoleController(base.BaseController):
 
             # in case the current line refers the type special token
             # must process the parameter type
-            elif line.startswith("@type"):
+            elif line.startswith(("@type", ":type")):
                 # splits the current line around the separator and then
                 # uses the result to unpack the name and type
                 parts = line[5:].split(":", 1)
@@ -612,7 +612,7 @@ class ConsoleController(base.BaseController):
 
             # in case the current line refers the return special token
             # must process the return value observations
-            elif line.startswith("@return"):
+            elif line.startswith(("@return", ":return")):
                 # retrieves the second part of the line as the description
                 # of the return value
                 description = line[8:].strip()
@@ -629,7 +629,7 @@ class ConsoleController(base.BaseController):
 
             # in case the current line refers the rtype special token
             # must process the return value type
-            elif line.startswith("@rtype"):
+            elif line.startswith(("@rtype", ":rtype")):
                 # retrieves the second part of the line as the type
                 # of the return value
                 _type = line[7:].strip()
