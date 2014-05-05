@@ -59,25 +59,25 @@ class Consumer(root_entity.RootEntity):
     )
     """ The status enumeration """
 
-    name = {
-        "data_type" : "text",
-        "mandatory" : True,
-        "secure" : True
-    }
+    name = dict(
+        data_type = "text",
+        mandatory = True,
+        secure = True
+    )
     """ The consumers's name """
 
-    api_key = {
-        "data_type" : "text",
-        "mandatory" : True,
-        "secure" : True
-    }
+    api_key = dict(
+        data_type = "text",
+        mandatory = True,
+        secure = True
+    )
     """ The consumers's value """
 
-    status = {
-        "data_type" : "integer",
-        "mandatory" : True,
-        "secure" : True
-    }
+    status = dict(
+        data_type = "integer",
+        mandatory = True,
+        secure = True
+    )
     """ The consumers's status (1 - active, 2 - inactive) """
 
     def __init__(self):
@@ -100,16 +100,20 @@ class Consumer(root_entity.RootEntity):
         root_entity.RootEntity.set_validation(self)
 
         # adds the validation methods to the name attribute
-        self.add_validation_method("name", "not_none", True)
-        self.add_validation_method("name", "not_empty")
+        self.add_validation("name", "not_none", True)
+        self.add_validation("name", "not_empty")
 
         # adds the validation methods to the api key attribute
-        self.add_validation_method("api_key", "not_none", True)
-        self.add_validation_method("api_key", "not_empty")
+        self.add_validation("api_key", "not_none", True)
+        self.add_validation("api_key", "not_empty")
 
         # adds the validation methods to the status attribute
-        self.add_validation_method("status", "not_none", True)
-        self.add_validation_method("status", "in_enumeration", properties = {"values" : Consumer.STATUS_ENUM})
+        self.add_validation("status", "not_none", True)
+        self.add_validation(
+            "status",
+            "in_enumeration",
+            properties = dict(values = Consumer.STATUS_ENUM)
+        )
 
     def _generate_api_key(self):
         # retrieves the random plugin
