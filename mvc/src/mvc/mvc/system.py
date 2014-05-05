@@ -617,6 +617,13 @@ class Mvc(colony.System):
         base = base.rstrip("$")
         base = base.lstrip("^/")
 
+        # verifies if the controller currently associated with the request
+        # contains the pluggable resolution method, that should be able to map
+        # a resolved base route value into a resolved one, provided an extended
+        # support for domain and url resolution during runtime
+        has_resolve = hasattr(controller, "resolve")
+        if has_resolve: base = controller.resolve(request, base)
+
         # creates the list that will hold the various key to value strings
         # that are going to be used as part of the query string
         query = []
