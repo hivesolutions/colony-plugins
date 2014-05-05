@@ -926,7 +926,14 @@ def unset_context_attribute(self, context_name, namespace_name = None):
     if context_name in context: del context[context_name]
     self.set_session_attribute("_context", context, namespace_name)
 
-def add_validation_method(self, attribute_name, validation_method_name, validate_null = False, properties = {}, contexts = (DEFAULT_VALIDATION_CONTEXT,)):
+def add_validation(
+    self,
+    attribute_name,
+    validation_method_name,
+    validate_null = False,
+    properties = {},
+    contexts = (DEFAULT_VALIDATION_CONTEXT,)
+):
     """
     Adds a validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties
@@ -959,9 +966,9 @@ def add_validation_method(self, attribute_name, validation_method_name, validate
     validation_method = getattr(self, validation_method_name)
 
     # adds the "custom" validation method to the current model
-    self.add_custom_validation_method(attribute_name, validation_method, validate_null, properties, contexts)
+    self.add_custom_validation(attribute_name, validation_method, validate_null, properties, contexts)
 
-def add_custom_validation_method(
+def add_custom_validation(
     self,
     attribute_name,
     validation_method,
