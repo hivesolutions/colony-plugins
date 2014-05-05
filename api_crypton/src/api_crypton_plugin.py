@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ApiCryptonPlugin(colony.base.system.Plugin):
+class ApiCryptonPlugin(colony.Plugin):
     """
     The main class for the Crypton Api plugin.
     """
@@ -51,32 +50,22 @@ class ApiCryptonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "api.crypton"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "api_crypton.system"
     ]
 
-    api_crypton = None
-    """ The api crypton """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import api_crypton.system
-        self.api_crypton = api_crypton.system.ApiCrypton(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import api_crypton
+        self.system = api_crypton.ApiCrypton(self)
 
     def create_client(self, api_attributes):
         """
@@ -88,8 +77,4 @@ class ApiCryptonPlugin(colony.base.system.Plugin):
         @return: The created client.
         """
 
-        return self.api_crypton.create_client(api_attributes)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
+        return self.system.create_client(api_attributes)

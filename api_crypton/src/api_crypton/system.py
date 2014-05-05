@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import base64
 
-import colony.base.system
+import colony
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -50,7 +50,7 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
-class ApiCrypton(colony.base.system.System):
+class ApiCrypton(colony.System):
     """
     The api crypton class.
     """
