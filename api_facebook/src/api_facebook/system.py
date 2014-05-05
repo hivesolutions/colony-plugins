@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import hashlib
 
-import colony.base.system
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -105,7 +104,7 @@ FACEBOOK_CLIENT_TYPE_OAUTH = "oauth"
 DEFAULT_FACEBOOK_CLIENT_TYPE = FACEBOOK_CLIENT_TYPE_REST
 """ The default facebook client type is rest """
 
-class ApiFacebook(colony.base.system.System):
+class ApiFacebook(colony.System):
     """
     The api facebook class.
     """
@@ -114,7 +113,7 @@ class ApiFacebook(colony.base.system.System):
     """ The map associating the client type with the client class """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.facebook_client_map = {
             FACEBOOK_CLIENT_TYPE_REST : FacebookClient,
@@ -391,7 +390,7 @@ class FacebookClient:
 
     def _list_to_coma_string(self, list):
         # creates the coma string buffer
-        coma_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        coma_string_buffer = colony.StringBuffer()
 
         # sets the is first flag
         is_first = True
@@ -454,7 +453,7 @@ class FacebookClient:
         """
 
         # creates the message string buffer
-        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        message_string_buffer = colony.StringBuffer()
 
         # retrieves the parameters keys
         parameters_keys = parameters.keys()
