@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ApiEasypayPlugin(colony.base.system.Plugin):
+class ApiEasypayPlugin(colony.Plugin):
     """
     The main class for the Easypay Api plugin.
     """
@@ -51,33 +50,23 @@ class ApiEasypayPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "api.easypay"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "api_easypay.exceptions",
         "api_easypay.system"
     ]
 
-    api_easypay = None
-    """ The api easypay """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import api_easypay.system
-        self.api_easypay = api_easypay.system.ApiEasypay(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import api_easypay
+        self.system = api_easypay.ApiEasypay(self)
 
     def create_client(self, api_attributes):
         """
@@ -89,8 +78,4 @@ class ApiEasypayPlugin(colony.base.system.Plugin):
         @return: The created client.
         """
 
-        return self.api_easypay.create_client(api_attributes)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
+        return self.system.create_client(api_attributes)

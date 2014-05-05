@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import colony
 
-class ApiEasypayException(colony.base.exceptions.ColonyException):
+class ApiEasypayException(colony.ColonyException):
     """
     The api easypay exception class.
     """

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom
 
-import colony.base.system
+import colony
 
 import exceptions
 
@@ -85,7 +85,7 @@ DEFAULT_COUNTRY = "PT"
 DEFAULT_LANGUAGE = "PT"
 """ The default language """
 
-class ApiEasypay(colony.base.system.System):
+class ApiEasypay(colony.System):
     """
     The api easypay class.
     """
