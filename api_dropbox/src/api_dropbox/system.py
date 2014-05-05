@@ -43,8 +43,7 @@ import time
 import random
 import hashlib
 
-import colony.base.system
-import colony.libs.quote_util
+import colony
 
 import exceptions
 
@@ -110,7 +109,7 @@ CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
 CONTENT_REST_SECURE_URL = "https://api-content.dropbox.com/1/"
 """ The content rest secure url to be used """
 
-class ApiDropbox(colony.base.system.System):
+class ApiDropbox(colony.System):
     """
     The api dropbox class.
     """
@@ -651,7 +650,7 @@ class DropboxClient:
         """
 
         # returns the quoted version of the url text
-        return colony.libs.quote_util.quote_plus(str(url_text), "")
+        return colony.quote_plus(str(url_text), "")
 
     def _check_dropbox_errors(self, data):
         """
