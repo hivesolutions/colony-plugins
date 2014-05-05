@@ -566,10 +566,12 @@ class Mvc(colony.System):
 
     def register_pattern(self, pattern):
         name = self.pattern_name(pattern)
+        if name in self.patterns_index: return
         self.patterns_index[name] = pattern
 
     def unregister_pattern(self, pattern):
         name = self.pattern_name(pattern)
+        if not name in self.patterns_index: return
         del self.patterns_index[name]
 
     def pattern_name(self, pattern):
