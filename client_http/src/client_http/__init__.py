@@ -37,5 +37,5 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import exceptions
 import system
 
-from exception import *
+from exceptions import *
 from system import *
