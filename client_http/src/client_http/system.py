@@ -42,11 +42,7 @@ import types
 import base64
 import threading
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.quote_util
-import colony.libs.structures_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -236,7 +232,7 @@ PROTOCOL_DEFAULT_PORT_MAP = {
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
-class ClientHttp(colony.base.system.System):
+class ClientHttp(colony.System):
     """
     The client http class.
     """
@@ -420,7 +416,7 @@ class HttpClient:
         protocol, username, password, host, port, path, base_url, options_map = self._parse_url(url)
 
         # extends the parameters map with the options map
-        parameters = colony.libs.map_util.map_extend(parameters, options_map)
+        parameters = colony.map_extend(parameters, options_map)
 
         # retrieves the persistent (default)
         persistent = DEFAULT_PERSISTENT
@@ -650,7 +646,7 @@ class HttpClient:
         """
 
         # creates the string buffer for the message
-        message = colony.libs.string_buffer_util.StringBuffer()
+        message = colony.StringBuffer()
 
         # creates a response object, that will be populated
         # during the iteration to retrieve the data
@@ -914,10 +910,10 @@ class HttpClient:
 
     def retrieve_response_chunked(self, response, message_value, save_message = True, yield_response = False, handlers_map = {}, response_timeout = None):
         # creates the message string buffer
-        message = colony.libs.string_buffer_util.StringBuffer()
+        message = colony.StringBuffer()
 
         # creates the contents string buffer
-        contents = colony.libs.string_buffer_util.StringBuffer()
+        contents = colony.StringBuffer()
 
         # writes the message value to the message
         message.write(message_value)
@@ -1142,7 +1138,7 @@ class HttpClient:
         # this operation should not override the base parameters
         # but sets the default ones in case their are not already set
         # the resulting map is then returned to the caller method
-        parameters = colony.libs.map_util.map_extend(
+        parameters = colony.map_extend(
             parameters,
             default_parameters,
             override = False
@@ -1481,7 +1477,7 @@ class HttpRequest:
         self.url = url
         self.base_url = base_url
 
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
 
     def write(self, message, flush = 1, encode = True):
         # retrieves the message type
@@ -1512,7 +1508,7 @@ class HttpRequest:
         self.validate()
 
         # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        result = colony.StringBuffer()
 
         # encodes the path if required
         path = self.encode_path and self._encode_path() or self._encode(self.path)
@@ -1553,7 +1549,7 @@ class HttpRequest:
         result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
 
         # creates the ordered map to hold the header values
-        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+        headers_ordered_map = colony.OrderedMap()
 
         # in case there is a content type defined
         if self.content_type:
@@ -1682,7 +1678,7 @@ class HttpRequest:
         path_encoded = self._encode(self.path)
 
         # quotes the path
-        path_quoted = colony.libs.quote_util.quote(path_encoded, "/")
+        path_quoted = colony.quote(path_encoded, "/")
 
         # returns the quoted path
         return path_quoted
@@ -1696,7 +1692,7 @@ class HttpRequest:
         """
 
         # creates a string buffer to hold the encoded attribute values
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.StringBuffer()
 
         # sets the is first flag
         is_first = True
@@ -1708,8 +1704,8 @@ class HttpRequest:
             attribte_value_encoded = self._encode(attribute_value)
 
             # quotes both the attribute key and value
-            attribute_key_quoted = colony.libs.quote_util.quote_plus(attribte_key_encoded)
-            attribute_value_quoted = colony.libs.quote_util.quote_plus(attribte_value_encoded)
+            attribute_key_quoted = colony.quote_plus(attribte_key_encoded)
+            attribute_value_quoted = colony.quote_plus(attribte_value_encoded)
 
             # in case it's is the first iteration
             if is_first:
@@ -1792,7 +1788,7 @@ class HttpResponse:
 
         self.attributes_map = {}
         self.headers_map = {}
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
 
     def set_protocol_version(self, protocol_version):
         """

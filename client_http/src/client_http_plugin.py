@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ClientHttpPlugin(colony.base.system.Plugin):
+class ClientHttpPlugin(colony.Plugin):
     """
     The main class for the Http Client plugin.
     """
@@ -51,49 +50,28 @@ class ClientHttpPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "client.http"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.utils"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
+        colony.PluginDependency("pt.hive.colony.plugins.client.utils"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
         "client_http.exceptions",
         "client_http.system"
     ]
 
-    client_http = None
-    """ The client http """
-
-    client_utils_plugin = None
-    """ The client plugin """
-
-    url_parser_plugin = None
-    """ The url parser plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import client_http.system
-        self.client_http = client_http.system.ClientHttp(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import client_http
+        self.system = client_http.ClientHttp(self)
 
     def create_client(self, parameters):
-        return self.client_http.create_client(parameters)
+        return self.system.create_client(parameters)
 
     def create_request(self, parameters):
-        return self.client_http.create_request(parameters)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.utils")
-    def set_client_utils_plugin(self, client_utils_plugin):
-        self.client_utils_plugin = client_utils_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.url_parser")
-    def set_url_parser_plugin(self, url_parser_plugin):
-        self.url_parser_plugin = url_parser_plugin
+        return self.system.create_request(parameters)
