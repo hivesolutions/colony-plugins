@@ -105,15 +105,6 @@ class CryptonPlugin(colony.Plugin):
         return self.system.get_patterns()
 
     def get_controller(self, controller_name):
-        """
-        Retrieves the specified controller.
-
-        @type controller_name: String
-        @param controller_name: The controller's name.
-        @rtype: Object
-        @return The controller with the specified name.
-        """
-
         return self.system.get_controller(controller_name)
 
     @colony.set_configuration_property_method("configuration")
