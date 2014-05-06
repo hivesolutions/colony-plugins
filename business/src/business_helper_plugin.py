@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class BusinessHelperPlugin(colony.base.system.Plugin):
+class BusinessHelperPlugin(colony.Plugin):
     """
     The main class for the Business Helper plugin.
     """
@@ -51,7 +50,7 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "business_helper"
@@ -63,49 +62,34 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
         "business_logic_bundle"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.data.entity.manager")
+        colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager")
     ]
     main_modules = [
         "business_helper.system"
     ]
 
-    business_helper = None
-    """ The business helper """
-
-    entity_manager_plugin = None
-    """ The entity manager plugin """
-
-    entity_plugins = []
-    """ The entity plugins """
-
-    entity_bundle_plugins = []
-    """ The entity bundle plugins """
-
-    business_logic_plugins = []
-    """ The business logic plugins """
-
-    business_logic_bundle_plugins = []
-    """ The business logic bundle plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import business_helper.system
-        self.business_helper = business_helper.system.BusinessHelper(self)
+        colony.Plugin.load_plugin(self)
+        import business_helper
+        self.system = business_helper.BusinessHelper(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path):
-        return self.business_helper.import_class_module(
+    def import_class_module(
+        self,
+        class_module_name,
+        globals,
+        locals,
+        global_values,
+        base_directory_path
+    ):
+        return self.system.import_class_module(
             class_module_name,
             globals,
             locals,
@@ -113,8 +97,16 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
             base_directory_path
         )
 
-    def import_class_module_target(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name):
-        return self.business_helper.import_class_module(
+    def import_class_module_target(
+        self,
+        class_module_name,
+        globals,
+        locals,
+        global_values,
+        base_directory_path,
+        target_module_name
+    ):
+        return self.system.import_class_module(
             class_module_name,
             globals,
             locals,
@@ -123,8 +115,18 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
             target_module_name
         )
 
-    def import_class_module_extra(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name, extra_symbols_map, extra_globals_map):
-        return self.business_helper.import_class_module(
+    def import_class_module_extra(
+        self,
+        class_module_name,
+        globals,
+        locals,
+        global_values,
+        base_directory_path,
+        target_module_name,
+        extra_symbols_map,
+        extra_globals_map
+    ):
+        return self.system.import_class_module(
             class_module_name,
             globals,
             locals,
@@ -136,60 +138,48 @@ class BusinessHelperPlugin(colony.base.system.Plugin):
         )
 
     def generate_bundle_map(self, bundle_classes):
-        return self.business_helper.generate_bundle_map(bundle_classes)
+        return self.system.generate_bundle_map(bundle_classes)
 
     def generate_module_bundle(self, bundle_module_name, bundle_map):
-        return self.business_helper.generate_module_bundle(bundle_module_name, bundle_map)
+        return self.system.generate_module_bundle(bundle_module_name, bundle_map)
 
     def get_entity_class(self):
-        return self.business_helper.get_entity_class()
+        return self.system.get_entity_class()
 
     def get_entity_classes_namespaces(self, namespaces):
-        return self.business_helper.get_entity_classes_namespaces(namespaces)
+        return self.system.get_entity_classes_namespaces(namespaces)
 
     def get_business_logic_classes_namespaces(self, namespaces):
-        return self.business_helper.get_business_logic_classes_namespaces(namespaces)
+        return self.system.get_business_logic_classes_namespaces(namespaces)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity.manager")
-    def set_entity_manager_plugin(self, entity_manager_plugin):
-        self.entity_manager_plugin = entity_manager_plugin
-
-    @colony.base.decorators.load_allowed_capability("entity")
+    @colony.load_allowed_capability("entity")
     def entity_load_allowed(self, plugin, capability):
-        self.entity_plugins.append(plugin)
-        self.business_helper.entity_load(plugin)
+        self.system.entity_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("entity_bundle")
+    @colony.load_allowed_capability("entity_bundle")
     def entity_bundle_load_allowed(self, plugin, capability):
-        self.entity_bundle_plugins.append(plugin)
-        self.business_helper.entity_bundle_load(plugin)
+        self.system.entity_bundle_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("business_logic")
+    @colony.load_allowed_capability("business_logic")
     def business_logic_load_allowed(self, plugin, capability):
-        self.business_logic_plugins.append(plugin)
-        self.business_helper.business_logic_load(plugin)
+        self.system.business_logic_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("business_logic_bundle")
+    @colony.load_allowed_capability("business_logic_bundle")
     def business_logic_bundle_load_allowed(self, plugin, capability):
-        self.business_logic_bundle_plugins.append(plugin)
-        self.business_helper.business_logic_bundle_load(plugin)
+        self.system.business_logic_bundle_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("entity")
+    @colony.unload_allowed_capability("entity")
     def entity_unload_allowed(self, plugin, capability):
-        self.entity_plugins.remove(plugin)
-        self.business_helper.entity_unload(plugin)
+        self.system.entity_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("entity_bundle")
+    @colony.unload_allowed_capability("entity_bundle")
     def entity_bundle_unload_allowed(self, plugin, capability):
-        self.entity_bundle_plugins.remove(plugin)
-        self.business_helper.entity_bundle_unload(plugin)
+        self.system.entity_bundle_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("business_logic")
+    @colony.unload_allowed_capability("business_logic")
     def business_logic_unload_allowed(self, plugin, capability):
-        self.business_logic_plugins.remove(plugin)
-        self.business_helper.business_logic_unload(plugin)
+        self.system.business_logic_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("business_logic_bundle")
+    @colony.unload_allowed_capability("business_logic_bundle")
     def business_logic_bundle_unload_allowed(self, plugin, capability):
-        self.business_logic_bundle_plugins.remove(plugin)
-        self.business_helper.business_logic_bundle_unload(plugin)
+        self.system.business_logic_bundle_unload(plugin)

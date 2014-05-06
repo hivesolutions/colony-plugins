@@ -41,7 +41,7 @@ import os
 import imp
 import sys
 
-import colony.base.system
+import colony
 
 BASE_ENTITY_MODULE_VALUE = "base_entity"
 """ The base entity module value """
@@ -55,7 +55,7 @@ LOCALS_REFERENCE_VALUE = "_locals"
 DEFAULT_MODULE_NAME = "helper_module"
 """ The default module name """
 
-class BusinessHelper(colony.base.system.System):
+class BusinessHelper(colony.System):
     """
     The business helper class.
     """
