@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class FileGridfsPlugin(colony.base.system.Plugin):
+class FileGridfsPlugin(colony.Plugin):
     """
     The main class for the File Gridfs plugin.
     """
@@ -50,7 +50,7 @@ class FileGridfsPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "threads",
@@ -64,13 +64,10 @@ class FileGridfsPlugin(colony.base.system.Plugin):
         "data.file_gridfs.system"
     ]
 
-    file_gridfs = None
-    """ The file gridfs """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import data.file_gridfs.system
-        self.file_gridfs = data.file_gridfs.system.FileGridfs(self)
+        colony.Plugin.load_plugin(self)
+        import data.file_gridfs
+        self.file_gridfs = data.file_gridfs.FileGridfs(self)
 
     def get_engine_name(self):
         return self.file_gridfs.get_engine_name()

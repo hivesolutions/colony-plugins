@@ -40,12 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import gridfs
 import pymongo
 
-import colony.base.system
+import colony
 
 ENGINE_NAME = "gridfs"
 """ The engine name """
 
-class FileGridfs(colony.base.system.System):
+class FileGridfs(colony.System):
     """
     The file gridfs class.
     """
