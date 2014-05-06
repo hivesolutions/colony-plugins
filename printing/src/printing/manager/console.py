@@ -37,91 +37,88 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony
+
 CONSOLE_EXTENSION_NAME = "printing"
 """ The console extension name """
 
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### PRINTING HELP ###\n\
-print_test                          - prints a test page\n\
-print_test_image                    - prints a test page with an image\n\
-print_printing_language <file-path> - prints the page described in the file of the given file path"
-""" The help text """
-
-class ConsolePrintingManager:
+class ConsolePrintingManager(colony.System):
     """
-    The console printing manager class.
+    The console printing manager class, responsible
+    for the handling of the printing commands.
     """
 
-    printing_manager_plugin = None
-    """ The printing manager plugin """
-
-    commands = [
-        "print_test",
-        "print_test_image",
-        "print_printing_language"
-    ]
-    """ The commands list """
-
-    def __init__(self, printing_manager_plugin):
-        """
-        Constructor of the class.
-
-        @type printing_manager_plugin: PrintingManagerPlugin
-        @param printing_manager_plugin: The printing manager plugin.
-        """
-
-        self.printing_manager_plugin = printing_manager_plugin
+    def __init__(self, plugin):
+        colony.System.__init__(self, plugin)
+        self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
-
-    def get_help(self):
-        return HELP_TEXT
-
-    def process_print_test(self, args, output_method):
-        # retrieves the printing manager instance
-        printing_manager = self.printing_manager_plugin.printing_manager
-
-        # prints the test page
+    def process_print_test(
+        self,
+        arguments,
+        arguments_map,
+        output_method,
+        console_context
+    ):
+        printing_manager = self.plugin.system
         printing_manager.print_test()
 
-    def process_print_test_image(self, args, output_method):
-        # retrieves the printing manager instance
-        printing_manager = self.printing_manager_plugin.printing_manager
-
-        # prints the test page with an image
+    def process_print_test_image(
+        self,
+        arguments,
+        arguments_map,
+        output_method,
+        console_context
+    ):
+        printing_manager = self.plugin.system
         printing_manager.print_test_image()
 
-    def process_print_printing_language(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_print_printing_language(
+        self,
+        arguments,
+        arguments_map,
+        output_method,
+        console_context,
+        file_path
+    ):
+        # retrieves the provided file path value and reads it's contents
+        # then closes the file, these contents are the ones that are going
+        # to be used for the printing process of the file
+        file_path = arguments_map.get("file-path", None)
+        file = open(file_path, "r")
+        try: contents = file.read()
+        finally: file.close()
 
-        # retrieves the printing language file path
-        printing_language_file_path = args[0]
+        # retrieves the reference to the printing manager instance
+        # and runs the printing process for the provided contents
+        printing_manager = self.plugin.system
+        printing_manager.print_printing_language(contents)
 
-        # opens the printing language file
-        printing_language_file = open(printing_language_file_path, "r")
-
-        # reads the printing language file contents
-        printing_language_file_contents = printing_language_file.read()
-
-        # closes the printing language file
-        printing_language_file.close()
-
-        # retrieves the printing manager instance
-        printing_manager = self.printing_manager_plugin.printing_manager
-
-        # prints the printing language file
-        printing_manager.print_printing_language(printing_language_file_contents)
+    def __generate_commands_map(self):
+        return {
+            "print_test" : {
+                "handler" : self.process_print_test,
+                "description" : "prints a test page"
+            },
+            "print_test" : {
+                "handler" : self.process_print_test_image,
+                "description" : "prints a test page with an image"
+            },
+            "print_language" : {
+                "handler" : self.process_print_test_image,
+                "description" : "prints the page described in the file of the given file path",
+                "arguments" : [
+                    {
+                        "name" : "file_path",
+                        "description" : "path to the file name to be printed",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            }
+        }

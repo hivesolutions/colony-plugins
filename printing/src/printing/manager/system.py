@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
 import parser
 import exceptions
@@ -45,7 +45,7 @@ import exceptions
 TEST_IMAGE_PATH = "printing/manager/resources/test_logo.png"
 """ The test image relative path """
 
-class PrintingManager(colony.base.system.System):
+class PrintingManager(colony.System):
     """
     The printing manager class.
     """
@@ -54,7 +54,7 @@ class PrintingManager(colony.base.system.System):
     """ The printing plugins map """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.printing_plugins_map = {}
 
     def print_test(self, printing_options = {}):
