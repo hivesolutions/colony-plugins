@@ -42,9 +42,7 @@ import types
 import thread
 import MySQLdb
 
-import colony.libs.string_buffer_util
-
-import colony.base.system
+import colony
 
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution
@@ -71,7 +69,7 @@ CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
 considered to be connection related and for which the
 connection should be reset and a reconnection attempted """
 
-class EntityMysql(colony.base.system.System):
+class EntityMysql(colony.System):
     """
     The entity mysql class.
     """
@@ -520,7 +518,7 @@ class MysqlEngine:
     def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("create index %s_%s_%s_idx on %s(%s) using %s" % (table_name, attribute_name, index_type, table_name, attribute_name, index_type))
 
         # retrieves the "final" query value from
@@ -549,7 +547,7 @@ class MysqlEngine:
         # creates the buffer to hold the query and populates it with the
         # base values of the query (selecting the table for update in
         # the required field values will lock the appropriate rows)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select %s from %s" % (fields_string, table_name))
         field_name and field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
         query_buffer.write(" for update")
@@ -568,7 +566,7 @@ class MysqlEngine:
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select count(*) from information_schema.tables where table_schema = '%s' and table_name = '%s'" % (database_name, table_name))
 
         # retrieves the "final" query value from
@@ -595,7 +593,7 @@ class MysqlEngine:
     def _has_table_definition_query(self, database_name, table_name):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select count(*) from information_schema.tables where table_schema = '%s' and table_name = '%s'" % (database_name, table_name))
 
         # retrieves the "final" query value from

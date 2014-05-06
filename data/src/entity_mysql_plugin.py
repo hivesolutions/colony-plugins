@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class EntityMysqlPlugin(colony.base.system.Plugin):
+class EntityMysqlPlugin(colony.Plugin):
     """
     The main class for the Entity Mysql plugin.
     """
@@ -50,7 +50,7 @@ class EntityMysqlPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "entity_engine"
@@ -62,19 +62,16 @@ class EntityMysqlPlugin(colony.base.system.Plugin):
         "data.entity_mysql.system"
     ]
 
-    entity_mysql = None
-    """ The entity mysql """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import data.entity_mysql.system
-        self.entity_mysql = data.entity_mysql.system.EntityMysql(self)
+        colony.Plugin.load_plugin(self)
+        import data.entity_mysql
+        self.system = data.entity_mysql.EntityMysql(self)
 
     def get_engine_name(self):
-        return self.entity_mysql.get_engine_name()
+        return self.system.get_engine_name()
 
     def get_internal_version(self):
-        return self.entity_mysql.get_internal_version()
+        return self.system.get_internal_version()
 
     def create_engine(self, entity_manager):
-        return self.entity_mysql.create_engine(entity_manager)
+        return self.system.create_engine(entity_manager)
