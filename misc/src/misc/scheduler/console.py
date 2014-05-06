@@ -63,8 +63,6 @@ class ConsoleScheduler:
         """
 
         self.scheduler_plugin = scheduler_plugin
-
-        # initializes the commands map
         self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):
@@ -102,13 +100,9 @@ class ConsoleScheduler:
             output_method(scheduler_item.item_id, True)
 
     def __generate_commands_map(self):
-        # creates the commands map
-        commands_map = {
+        return {
             "show_all_scheduler" : {
                 "handler" : self.process_show_all_scheduler,
                 "description" : "shows all the scheduled tasks"
             }
         }
-
-        # returns the commands map
-        return commands_map

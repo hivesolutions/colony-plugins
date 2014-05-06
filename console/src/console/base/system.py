@@ -747,8 +747,7 @@ class ConsoleBase(colony.System):
         return plugin_id_list
 
     def __generate_commands_map(self):
-        # creates the commands map
-        commands_map = {
+        return {
             "help" : {
                 "handler" : self.process_help,
                 "description" : "shows this message or the referred console extension help message",
@@ -894,6 +893,3 @@ class ConsoleBase(colony.System):
                 ]
             }
         }
-
-        # returns the commands map
-        return commands_map

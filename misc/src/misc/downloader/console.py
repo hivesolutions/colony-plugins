@@ -60,8 +60,6 @@ class ConsoleDownloader:
         """
 
         self.downloader_plugin = downloader_plugin
-
-        # initializes the commands map
         self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):
@@ -105,8 +103,7 @@ class ConsoleDownloader:
             console_context and console_context.flush_handlers_map(handlers_map)
 
     def __generate_commands_map(self):
-        # creates the commands map
-        commands_map = {
+        return {
             "download" : {
                 "handler" : self.process_download,
                 "description" : "starts the download of the file",
@@ -120,6 +117,3 @@ class ConsoleDownloader:
                 ]
             }
         }
-
-        # returns the commands map
-        return commands_map

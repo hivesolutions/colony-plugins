@@ -278,8 +278,7 @@ class ConsoleFileSystem(colony.System):
         return path_names
 
     def __generate_commands_map(self):
-        # creates the commands map
-        commands_map = {
+        return {
             "cd" : {
                 "handler" : self.process_cd,
                 "description" : "changes the current directory",
@@ -339,6 +338,3 @@ class ConsoleFileSystem(colony.System):
                 ]
             }
         }
-
-        # returns the commands map
-        return commands_map
