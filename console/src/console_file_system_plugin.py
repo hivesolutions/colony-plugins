@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ConsoleFileSystemPlugin(colony.base.system.Plugin):
+class ConsoleFileSystemPlugin(colony.Plugin):
     """
     The main class for the Console File System plugin.
     """
@@ -50,9 +50,9 @@ class ConsoleFileSystemPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "_console_command_extension"
@@ -61,16 +61,13 @@ class ConsoleFileSystemPlugin(colony.base.system.Plugin):
         "console.file_system.system"
     ]
 
-    console_file_system = None
-    """ The console file system """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import console.file_system.system
-        self.console_file_system = console.file_system.system.ConsoleFileSystem(self)
+        colony.Plugin.load_plugin(self)
+        import console.file_system
+        self.system = console.file_system.ConsoleFileSystem(self)
 
     def get_console_extension_name(self):
-        return self.console_file_system.get_console_extension_name()
+        return self.system.get_console_extension_name()
 
     def get_commands_map(self):
-        return self.console_file_system.get_commands_map()
+        return self.system.get_commands_map()

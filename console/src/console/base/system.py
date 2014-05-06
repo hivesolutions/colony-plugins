@@ -41,8 +41,7 @@ import re
 import time
 import code
 
-import colony.base.system
-import colony.libs.time_util
+import colony
 
 CONSOLE_EXTENSION_NAME = "base"
 """ The console extension name """
@@ -59,19 +58,13 @@ ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
 """ The table top text """
 
-EXTENSION_TABLE_TOP_TEXT = "ID      NAME                        PLUGIN ID"
-""" The extension table top text """
-
 COLUMN_SPACING = 8
 """ The column spacing """
-
-NAME_COLUMN_SPACING = 28
-""" The name column spacing """
 
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the plugin """
 
-class ConsoleBase(colony.base.system.System):
+class ConsoleBase(colony.System):
     """
     The console base class.
     """
@@ -80,7 +73,7 @@ class ConsoleBase(colony.base.system.System):
     """ The map containing the commands information """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.commands_map = self.__generate_commands_map()
 
     def get_console_extension_name(self):
@@ -104,18 +97,7 @@ class ConsoleBase(colony.base.system.System):
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the console plugin
-        console_plugin = self.plugin.console_plugin
-
-#        if len(args) < 1:
-#            output_method(HELP_TEXT)
-#        else:
-#            extension_name = args[0]
-#
-#            for console_command_plugin in console_plugin.console_command_plugins:
-#                console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
-#                if console_command_plugin_console_extension_name == extension_name:
-#                    output_method(console_command_plugin.get_help())
+        raise colony.PluginSystemException("not implemented")
 
     def process_helpall(self, arguments, arguments_map, output_method, console_context):
         """
@@ -132,13 +114,7 @@ class ConsoleBase(colony.base.system.System):
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the console plugin
-        console_plugin = self.plugin.console_plugin
-
-#        output_method(HELP_TEXT)
-#
-#        for console_command_plugin in console_plugin.console_command_plugins:
-#            output_method(console_command_plugin.get_help())
+        raise colony.PluginSystemException("not implemented")
 
     def process_extensions(self, arguments, arguments_map, output_method, console_context):
         """
@@ -155,31 +131,7 @@ class ConsoleBase(colony.base.system.System):
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.plugin.manager
-
-        # retrieves the console plugin
-        console_plugin = self.plugin.console_plugin
-
-        output_method(EXTENSION_TABLE_TOP_TEXT)
-
-        for console_command_plugin in console_plugin.console_command_plugins:
-            # retrieves the current id for the console command plugin
-            console_command_plugin_current_id = plugin_manager.loaded_plugins_id_map[console_command_plugin.id]
-            console_command_plugin_current_id_str = str(console_command_plugin_current_id)
-            console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
-
-            output_method(console_command_plugin_current_id_str, False)
-
-            for _index in range(COLUMN_SPACING - len(console_command_plugin_current_id_str)):
-                output_method(" ", False)
-
-            output_method(console_command_plugin_console_extension_name, False)
-
-            for _index in range(NAME_COLUMN_SPACING - len(console_command_plugin_console_extension_name)):
-                output_method(" ", False)
-
-            output_method(console_command_plugin.id + "\n", False)
+        raise colony.PluginSystemException("not implemented")
 
     def process_status(self, arguments, arguments_map, output_method, console_context):
         """
@@ -216,7 +168,7 @@ class ConsoleBase(colony.base.system.System):
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
-        uptime_string = colony.libs.time_util.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
+        uptime_string = colony.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
 
         # retrieves the plugin manager instances
         plugin_manager_instances = plugin_manager.plugin_instances

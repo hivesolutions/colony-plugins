@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ConsoleBasePlugin(colony.base.system.Plugin):
+class ConsoleBasePlugin(colony.Plugin):
     """
     The main class for the Console Base plugin.
     """
@@ -51,41 +50,27 @@ class ConsoleBasePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "_console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.console")
+        colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
         "console.base.system"
     ]
 
-    console_base = None
-    """ The console base """
-
-    console_plugin = None
-    """ The console plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import console.base.system
-        self.console_base = console.base.system.ConsoleBase(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import console.base
+        self.system = console.base.ConsoleBase(self)
 
     def get_console_extension_name(self):
-        return self.console_base.get_console_extension_name()
+        return self.system.get_console_extension_name()
 
     def get_commands_map(self):
-        return self.console_base.get_commands_map()
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
-    def set_console_plugin(self, console_plugin):
-        self.console_plugin = console_plugin
+        return self.system.get_commands_map()

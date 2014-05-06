@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ConsolePlugin(colony.base.system.Plugin):
+class ConsolePlugin(colony.Plugin):
     """
     The main class for the Console plugin.
     """
@@ -51,9 +50,9 @@ class ConsolePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "console",
@@ -64,7 +63,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         "console_authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.authentication")
+        colony.PluginDependency("pt.hive.colony.plugins.authentication")
     ]
     main_modules = [
         "console.console.authentication",
@@ -74,45 +73,28 @@ class ConsolePlugin(colony.base.system.Plugin):
         "console.console.test"
     ]
 
-    console = None
-    """ The console """
-
-    console_test = None
-    """ The console test case class """
-
-    console_command_plugins = []
-    """ The console command plugins """
-
-    authentication_plugin = None
-    """ The authentication plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        self.console_command_plugins = []
-        import console.console.system
-        import console.console.test
-        self.console = console.console.system.Console(self)
-        self.console_test = console.console.test.ConsoleTestCase
+        colony.Plugin.load_plugin(self)
+        self.system_command_plugins = []
+        import console.console
+        self.system = console.console.Console(self)
+        self.test = console.console.ConsoleTestCase
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def create_console_context(self):
         """
@@ -122,7 +104,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: The creates console context.
         """
 
-        return self.console.create_console_context()
+        return self.system.create_console_context()
 
     def create_console_interface_character(self, console_handler, console_context):
         """
@@ -137,7 +119,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: The create console interface character.
         """
 
-        return self.console.create_console_interface_character(console_handler, console_context)
+        return self.system.create_console_interface_character(console_handler, console_context)
 
     def execute_command_line(self, command_line):
         """
@@ -150,7 +132,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: If the execution of the command line was successful.
         """
 
-        return self.console.process_command_line(command_line, None)
+        return self.system.process_command_line(command_line, None)
 
     def process_command_line(self, command_line, output_method):
         """
@@ -164,7 +146,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: If the processing of the command line was successful.
         """
 
-        return self.console.process_command_line(command_line, output_method)
+        return self.system.process_command_line(command_line, output_method)
 
     def get_default_output_method(self):
         """
@@ -174,7 +156,7 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: The default output method for console.
         """
 
-        return self.console.get_default_output_method()
+        return self.system.get_default_output_method()
 
     def get_test_case(self):
         """
@@ -184,26 +166,20 @@ class ConsolePlugin(colony.base.system.Plugin):
         @return: The test case.
         """
 
-        return self.console_test
+        return self.test
 
-    @colony.base.decorators.load_allowed_capability("_console_command_extension")
+    @colony.load_allowed_capability("_console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
-        self.console_command_plugins.append(plugin)
-        self.console.console_command_extension_load(plugin)
+        self.system.console_command_extension_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("_console_command_extension")
+    @colony.unload_allowed_capability("_console_command_extension")
     def console_command_extension_unload_allowed(self, plugin, capability):
-        self.console_command_plugins.remove(plugin)
-        self.console.console_command_extension_unload(plugin)
+        self.system.console_command_extension_unload(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.authentication")
-    def set_authentication_plugin(self, authentication_plugin):
-        self.authentication_plugin = authentication_plugin
-
-    @colony.base.decorators.set_configuration_property_method("configuration")
+    @colony.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
-        self.console.set_configuration_property(property)
+        self.system.set_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("configuration")
+    @colony.unset_configuration_property_method("configuration")
     def configuration_unset_configuration_property(self, property_name):
-        self.console.unset_configuration_property()
+        self.system.unset_configuration_property()

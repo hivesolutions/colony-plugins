@@ -39,8 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
-import colony.base.system
-import colony.libs.map_util
+import colony
 
 import exceptions
 
@@ -84,7 +83,7 @@ TEST_VALUE = "test"
 ANONYMOUS_VALUE = "anonymous"
 """ The anonymous value """
 
-class ConsoleInterface(colony.base.system.System):
+class ConsoleInterface(colony.System):
     """
     The console interface class.
     """
@@ -101,7 +100,7 @@ class ConsoleInterface(colony.base.system.System):
     shutdown of the plugin """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.console_interface_configuration = {}
         self.continue_flag = True
 
@@ -195,14 +194,14 @@ class ConsoleInterface(colony.base.system.System):
         configuration = configuration_property.get_data()
 
         # cleans the console interface configuration
-        colony.libs.map_util.map_clean(self.console_interface_configuration)
+        colony.map_clean(self.console_interface_configuration)
 
         # copies the service configuration to the console interface configuration
-        colony.libs.map_util.map_copy(configuration, self.console_interface_configuration)
+        colony.map_copy(configuration, self.console_interface_configuration)
 
     def unset_configuration_property(self):
         # cleans the console interface configuration
-        colony.libs.map_util.map_clean(self.console_interface_configuration)
+        colony.map_clean(self.console_interface_configuration)
 
     def _prompt_login(self, console_context, console_interface_method):
         # unsets the authentication result

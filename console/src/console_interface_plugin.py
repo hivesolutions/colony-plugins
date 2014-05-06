@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ConsoleInterfacePlugin(colony.base.system.Plugin):
+class ConsoleInterfacePlugin(colony.Plugin):
     """
     The main class for the Console Interface plugin.
     """
@@ -51,15 +50,15 @@ class ConsoleInterfacePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "main"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.console")
+        colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
         "console.interface.exceptions",
@@ -68,51 +67,36 @@ class ConsoleInterfacePlugin(colony.base.system.Plugin):
         "console.interface.interface_win32"
     ]
 
-    console_interface = None
-    """ The console interface """
-
-    console_plugin = None
-    """ The console plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        self.console_command_plugins = []
-        import console.interface.system
-        self.console_interface = console.interface.system.ConsoleInterface(self)
+        colony.Plugin.load_plugin(self)
+        import console.interface
+        self.system = console.interface.ConsoleInterface(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.console_interface.load_console()
+        colony.Plugin.end_load_plugin(self)
+        self.system.load_console()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.console_interface.unload_console()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_console()
 
     def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
-    def set_console_plugin(self, console_plugin):
-        self.console_plugin = console_plugin
-
-    @colony.base.decorators.set_configuration_property_method("configuration")
+    @colony.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
-        self.console_interface.set_configuration_property(property)
+        self.system.set_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("configuration")
+    @colony.unset_configuration_property_method("configuration")
     def configuration_unset_configuration_property(self, property_name):
-        self.console_interface.unset_configuration_property()
+        self.system.unset_configuration_property()

@@ -42,10 +42,7 @@ import re
 import sys
 import types
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.observer_util
-import colony.libs.protection_util
+import colony
 
 import interfaces
 import exceptions
@@ -105,7 +102,7 @@ SEQUENCE_TYPES = (
 )
 """ The sequence types """
 
-class Console(colony.base.system.System):
+class Console(colony.System):
     """
     The console class.
     """
@@ -121,7 +118,7 @@ class Console(colony.base.system.System):
     """ The console configuration """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.commands_map = {}
         self.console_configuration = {}
@@ -318,28 +315,28 @@ class Console(colony.base.system.System):
         commands_map = console_command_extension_plugin.get_commands_map()
 
         # copies the plugin commands map to the commands map
-        colony.libs.map_util.map_copy(commands_map, self.commands_map)
+        colony.map_copy(commands_map, self.commands_map)
 
     def console_command_extension_unload(self, console_command_extension_plugin):
         # retrieves the commands map from the console command extension
         commands_map = console_command_extension_plugin.get_commands_map()
 
         # removes the plugin commands map from the plugins commands map
-        colony.libs.map_util.map_remove(commands_map, self.commands_map)
+        colony.map_remove(commands_map, self.commands_map)
 
     def set_configuration_property(self, configuration_property):
         # retrieves the configuration
         configuration = configuration_property.get_data()
 
         # cleans the console configuration
-        colony.libs.map_util.map_clean(self.console_configuration)
+        colony.map_clean(self.console_configuration)
 
         # copies the service configuration to the console configuration configuration
-        colony.libs.map_util.map_copy(configuration, self.console_configuration)
+        colony.map_copy(configuration, self.console_configuration)
 
     def unset_configuration_property(self):
         # cleans the console configuration
-        colony.libs.map_util.map_clean(self.console_configuration)
+        colony.map_clean(self.console_configuration)
 
     def split_command_line_arguments(self, command_line, include_extra_space = False):
         """
@@ -667,7 +664,7 @@ class Console(colony.base.system.System):
         # returns the command mandatory arguments
         return command_mandatory_arguments
 
-class ConsoleContext(colony.libs.protection_util.Protected):
+class ConsoleContext(colony.Protected):
     """
     The console context class.
     This class defines the context for the current
@@ -707,7 +704,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # sets the current path in the context
         self.path = os.getcwd()
 
-    @colony.libs.protection_util.public
+    @colony.public
     def authenticate_user(self, username, password):
         try:
             # tries to authenticate the user retrieving the result, this call
@@ -747,7 +744,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the user
         return self.user
 
-    @colony.libs.protection_util.public
+    @colony.public
     def create_handlers_map(self, output_method):
         # creates the map that defined the state
         # for the current console context of execution
@@ -828,11 +825,11 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # in a console operation
         return handlers_map
 
-    @colony.libs.protection_util.public
+    @colony.public
     def flush_handlers_map(self, handlers_map):
-        return colony.libs.observer_util.notify("newline", handlers_map)
+        return colony.notify("newline", handlers_map)
 
-    @colony.libs.protection_util.public
+    @colony.public
     def layout_items(self, items, output_method):
         """
         "Layouts" a set of items flushing them to the current
@@ -864,7 +861,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
             # in a vertical fashion
             self._layout_items_flow(items, output_method)
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_line(self):
         """
         Retrieves a (command) line using the current best match
@@ -884,7 +881,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # the system method is used in case none is defined
         return get_line_method()
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_size(self):
         """
         Retrieves the current console size using the current
@@ -903,19 +900,19 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the size tuple
         return size_tuple
 
-    @colony.libs.protection_util.public
+    @colony.public
     def process_command_line(self, command_line, output_method):
         return self.console.process_command_line(command_line, output_method, self._proxy_instance)
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_command_line_alternatives(self, command, arguments):
         return self.console.get_command_line_alternatives(command, arguments, self._proxy_instance)
 
-    @colony.libs.protection_util.public
+    @colony.public
     def create_console_interface_character(self, console_handler):
         return self.console.create_console_interface_character(console_handler)
 
-    @colony.libs.protection_util.public
+    @colony.public
     def set_get_line(self, get_line):
         """
         Sets the get line method (method
@@ -928,7 +925,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
         self._get_line = get_line
 
-    @colony.libs.protection_util.public
+    @colony.public
     def set_get_size(self, get_size):
         """
         Sets the get size method (method
@@ -941,7 +938,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
         self._get_size = get_size
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_base_name(self):
         """
         Returns the base name.
@@ -956,7 +953,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the base name
         return base_name
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_full_path(self, base_path):
         """
         Returns the full path for the given
@@ -987,7 +984,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the path
         return path
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_path(self):
         """
         Returns the path.
@@ -998,7 +995,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
         return self.path
 
-    @colony.libs.protection_util.public
+    @colony.public
     def set_path(self, path):
         """
         Sets the path.
@@ -1009,7 +1006,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
         self.path = path
 
-    @colony.libs.protection_util.public
+    @colony.public
     def get_user(self):
         """
         Returns the user.
