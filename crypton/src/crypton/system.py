@@ -39,23 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-ENTITY_MANAGER_ARGUMENTS = {
-    "id" : "pt.hive.colony.web.mvc.encryption.database",
-    "engine" : "sqlite",
-    "connection_parameters" : {
-        "autocommit" : False
-    }
-}
-""" The entity manager arguments """
-
-ENTITY_MANAGER_PARAMETERS = {
-    "default_database_prefix" : "crypton_"
-}
-""" The entity manager parameters """
-
 class Crypton(colony.System):
     """
-    The crypton class.
+    The crypton class, responsible for the coordination of
+    the main operation under the encryption infra-structure.
     """
 
     keys_map = {}
@@ -75,16 +62,21 @@ class Crypton(colony.System):
         This load should occur only after the dependencies are loaded.
         """
 
-        # retrieves the mvc utils plugin
+        # retrieves the mvc utils plugin and uses it in the generation
+        # of the proper entity manager arguments for the assign operation
         mvc_utils_plugin = self.plugin.mvc_utils_plugin
-
-        # retrieves the entity manager arguments
-        entity_manager_arguments = self.get_entity_manager_arguments()
+        self.arguments = mvc_utils_plugin.manager_arguments(
+            self.plugin,
+            parameters = dict(
+                id = "pt.hive.colony.crypton.database",
+                database_prefix = "crypton_"
+            )
+        )
 
         # creates the entity models classes by creating the entity manager
         # and updating the classes, this trigger the loading of the entity
         # manager (and creation of it if necessary) then creates the controllers
-        mvc_utils_plugin.assign_models_controllers(self, self.plugin, entity_manager_arguments)
+        mvc_utils_plugin.assign_models_controllers(self, self.plugin, self.arguments)
 
     def unload_components(self):
         """
@@ -92,16 +84,12 @@ class Crypton(colony.System):
         This load should occur the earliest possible in the unloading process.
         """
 
-        # retrieves the mvc utils plugin
-        mvc_utils_plugin = self.plugin.mvc_utils_plugin
-
-        # retrieves the entity manager arguments
-        entity_manager_arguments = self.get_entity_manager_arguments()
-
-        # destroys the entity models, unregistering them from the
+        # retrieves the mvc utils plugin and uses the reference to
+        # destroy the entity models, unregistering them from the
         # entity manager instance and then destroy the controllers,
         # unregistering them from the internal structures
-        mvc_utils_plugin.unassign_models_controllers(self, entity_manager_arguments)
+        mvc_utils_plugin = self.plugin.mvc_utils_plugin
+        mvc_utils_plugin.unassign_models_controllers(self, self.arguments)
 
     def get_patterns(self):
         """
@@ -123,15 +111,6 @@ class Crypton(colony.System):
         )
 
     def get_controller(self, controller_name):
-        """
-        Retrieves the specified controller.
-
-        @type controller_name: String
-        @param controller_name: The controller's name.
-        @rtype: Object
-        @return The controller with the specified name.
-        """
-
         controller = self.controllers[controller_name]
         return controller
 
@@ -145,20 +124,3 @@ class Crypton(colony.System):
     def unset_configuration_property(self):
         self.keys_map = {}
         self.security_map = {}
-
-    def get_entity_manager_arguments(self):
-        """
-        Retrieves the entity manager arguments.
-
-        @rtype: Dictionary
-        @return: The entity manager arguments.
-        """
-
-        # retrieves the mvc utils plugin
-        mvc_utils_plugin = self.plugin.mvc_utils_plugin
-
-        # generates the entity manager arguments
-        entity_manager_arguments = mvc_utils_plugin.generate_entity_manager_arguments(self.plugin, ENTITY_MANAGER_ARGUMENTS, ENTITY_MANAGER_PARAMETERS)
-
-        # returns the entity manager arguments
-        return entity_manager_arguments
