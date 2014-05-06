@@ -77,53 +77,61 @@ class MvcUtilsPlugin(colony.Plugin):
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import mvc.utils.system
-        self.mvc_utils = mvc.utils.system.MvcUtils(self)
+        import mvc.utils
+        self.system = mvc.utils.MvcUtils(self)
 
-    def import_module_mvc_utils(self, module_name, package_name, directory_path):
-        return self.mvc_utils.import_module_mvc_utils(module_name, package_name, directory_path)
+    def assign_models(
+        self,
+        system_instance,
+        plugin_instance,
+        entity_manager_arguments
+    ):
+        return self.system.create_models(
+            system_instance,
+            plugin_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
 
-    def create_model(self, base_model, base_arguments_list, base_arguments_map):
-        return self.mvc_utils.create_model(base_model, base_arguments_list, base_arguments_map)
-
-    def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
-        return self.mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
-
-    def create_base_models(self, system_instance, package_path, entity_manager_arguments):
-        return self.mvc_utils.create_base_models(package_path, entity_manager_arguments)
-
-    def create_base_models_path(self, system_instance, package_path, entity_manager_arguments, directory_path):
-        return self.mvc_utils.create_base_models(system_instance, package_path, entity_manager_arguments, directory_path)
-
-    def create_models(self, system_instance, plugin_instance, package_path, entity_manager_arguments):
-        return self.mvc_utils.create_models(system_instance, plugin_instance, package_path, entity_manager_arguments)
-
-    def create_models_extra(self, system_instance, plugin_instance, package_path, entity_manager_arguments, extra_models):
-        return self.mvc_utils.create_models(system_instance, plugin_instance, package_path, entity_manager_arguments, extra_models)
-
-    def assign_models(self, system_instance, plugin_instance, entity_manager_arguments):
-        return self.mvc_utils.create_models(system_instance, plugin_instance, entity_manager_arguments = entity_manager_arguments)
-
-    def unassign_models(self, system_instance, entity_manager_arguments):
-        return self.mvc_utils.destroy_models(system_instance, entity_manager_arguments = entity_manager_arguments)
-
-    def create_controllers(self, system_instance, plugin_instance, package_path, prefix_name):
-        return self.mvc_utils.create_controllers(system_instance, plugin_instance, package_path, prefix_name)
+    def unassign_models(
+        self,
+        system_instance,
+        entity_manager_arguments
+    ):
+        return self.system.destroy_models(
+            system_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
 
     def assign_controllers(self, system_instance, plugin_instance):
-        return self.mvc_utils.create_controllers(system_instance, plugin_instance)
+        return self.system.create_controllers(system_instance, plugin_instance)
 
     def unassign_controllers(self, system_instance):
-        return self.mvc_utils.destroy_controllers(system_instance)
+        return self.system.destroy_controllers(system_instance)
 
-    def assign_models_controllers(self, system_instance, plugin_instance, entity_manager_arguments):
-        self.mvc_utils.create_models(system_instance, plugin_instance, entity_manager_arguments = entity_manager_arguments)
-        self.mvc_utils.create_controllers(system_instance, plugin_instance)
+    def assign_models_controllers(
+        self,
+        system_instance,
+        plugin_instance,
+        entity_manager_arguments = {}
+    ):
+        self.system.create_models(
+            system_instance,
+            plugin_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
+        self.system.create_controllers(system_instance, plugin_instance)
         return True
 
-    def unassign_models_controllers(self, system_instance, entity_manager_arguments):
-        self.mvc_utils.destroy_models(system_instance, entity_manager_arguments = entity_manager_arguments)
-        self.mvc_utils.destroy_controllers(system_instance)
+    def unassign_models_controllers(
+        self,
+        system_instance,
+        entity_manager_arguments = {}
+    ):
+        self.system.destroy_models(
+            system_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
+        self.system.destroy_controllers(system_instance)
         return True
 
     def create_file_manager(self, engine_name, connection_parameters):
@@ -143,10 +151,13 @@ class MvcUtilsPlugin(colony.Plugin):
         @return: The created file manager.
         """
 
-        return self.mvc_utils.create_file_manager(engine_name, connection_parameters)
+        return self.system.create_file_manager(engine_name, connection_parameters)
 
     def generate_patterns(self, patterns, controller, prefix_name):
-        return self.mvc_utils.generate_patterns(patterns, controller, prefix_name)
+        return self.system.generate_patterns(patterns, controller, prefix_name)
 
-    def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
-        return self.mvc_utils.generate_entity_manager_arguments(plugin, base_entity_manager_arguments, parameters)
+    def generate_entity_manager_arguments(self, plugin, base = None, parameters = {}):
+        return self.system.generate_entity_manager_arguments(plugin, base, parameters)
+
+    def manager_arguments(self, *args, **kwargs):
+        return self.generate_entity_manager_arguments(*args, **kwargs)

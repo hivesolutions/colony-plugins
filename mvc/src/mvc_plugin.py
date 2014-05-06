@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class MvcPlugin(colony.base.system.Plugin):
+class MvcPlugin(colony.Plugin):
     """
     The main class for the Mvc plugin.
     """
@@ -50,8 +50,8 @@ class MvcPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "mvc",
@@ -61,9 +61,9 @@ class MvcPlugin(colony.base.system.Plugin):
         "mvc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     events_handled = [
         "mvc.patterns_reload",
@@ -78,50 +78,30 @@ class MvcPlugin(colony.base.system.Plugin):
         "mvc.mvc.system"
     ]
 
-    mvc = None
-    """ The mvc object reference to the entry point
-    of execution for the plugin calls """
-
-    mvc_service_plugins = []
-    """ The mvc service plugins """
-
-    mime_plugin = None
-    """ The mime plugin """
-
-    random_plugin = None
-    """ The random plugin """
-
-    json_plugin = None
-    """ The json plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import mvc.mvc.system
-        self.mvc = mvc.mvc.system.Mvc(self)
+        colony.Plugin.load_plugin(self)
+        import mvc.mvc
+        self.system = mvc.mvc.Mvc(self)
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.mvc.start_system()
+        colony.Plugin.end_load_plugin(self)
+        self.system.start_system()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.mvc.stop_system()
+        colony.Plugin.unload_plugin(self)
+        self.system.stop_system()
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.event_handler
+    @colony.event_handler
     def event_handler(self, event_name, *event_args):
-        colony.base.system.Plugin.event_handler(self, event_name, *event_args)
+        colony.Plugin.event_handler(self, event_name, *event_args)
 
     def get_routes(self):
         """
@@ -133,7 +113,7 @@ class MvcPlugin(colony.base.system.Plugin):
         to the rest service.
         """
 
-        return self.mvc.get_routes()
+        return self.system.get_routes()
 
     def handle_rest_request(self, rest_request):
         """
@@ -145,42 +125,30 @@ class MvcPlugin(colony.base.system.Plugin):
         @return: The result of the handling.
         """
 
-        return self.mvc.handle_rest_request(rest_request)
+        return self.system.handle_rest_request(rest_request)
 
-    @colony.base.decorators.load_allowed_capability("mvc_service")
+    @colony.load_allowed_capability("mvc_service")
     def mvc_service_extension_load_allowed(self, plugin, capability):
-        self.mvc_service_plugins.append(plugin)
-        self.mvc.load_mvc_service_plugin(plugin)
+        self.system_service_plugins.append(plugin)
+        self.system.load_mvc_service_plugin(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("mvc_service")
+    @colony.unload_allowed_capability("mvc_service")
     def mvc_service_extension_unload_allowed(self, plugin, capability):
-        self.mvc_service_plugins.remove(plugin)
-        self.mvc.unload_mvc_service_plugin(plugin)
+        self.system_service_plugins.remove(plugin)
+        self.system.unload_mvc_service_plugin(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
-    def set_mime_plugin(self, mime_plugin):
-        self.mime_plugin = mime_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
-    def set_random_plugin(self, random_plugin):
-        self.random_plugin = random_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin
-
-    @colony.base.decorators.event_handler_method("mvc.patterns_reload")
+    @colony.event_handler_method("mvc.patterns_reload")
     def mvc_patterns_reload_handler(self, event_name, *event_args):
-        self.mvc.process_mvc_patterns_reload_event(event_name, *event_args)
+        self.system.process_mvc_patterns_reload_event(event_name, *event_args)
 
-    @colony.base.decorators.event_handler_method("mvc.patterns_load")
+    @colony.event_handler_method("mvc.patterns_load")
     def mvc_patterns_load_handler(self, event_name, *event_args):
-        self.mvc.process_mvc_patterns_load_event(event_name, *event_args)
+        self.system.process_mvc_patterns_load_event(event_name, *event_args)
 
-    @colony.base.decorators.event_handler_method("mvc.patterns_unload")
+    @colony.event_handler_method("mvc.patterns_unload")
     def mvc_patterns_unload_handler(self, event_name, *event_args):
-        self.mvc.process_mvc_patterns_unload_event(event_name, *event_args)
+        self.system.process_mvc_patterns_unload_event(event_name, *event_args)
 
-    @colony.base.decorators.event_handler_method("mvc.communication")
+    @colony.event_handler_method("mvc.communication")
     def mvc_communication_handler(self, event_name, *event_args):
-        self.mvc.process_mvc_communication_event(event_name, *event_args)
+        self.system.process_mvc_communication_event(event_name, *event_args)

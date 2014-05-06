@@ -42,11 +42,7 @@ import sys
 import imp
 import types
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.stack_util
-import colony.libs.import_util
-import colony.libs.string_util
+import colony
 
 import utils
 import model
@@ -80,9 +76,6 @@ DEFAULT_VALUE = "default"
 CONTROLLER_VALUE = "controller"
 """ The controller value """
 
-CONTROLLERS_VALUE = "controllers"
-""" The controllers value """
-
 MODELS_VALUE = "models"
 """ The models value """
 
@@ -97,21 +90,6 @@ EXCEPTION_CONTROLLER_VALUE = "ExceptionController"
 to be used to retrieve the exception controller
 reference from the associated controller """
 
-EXCEPTION_HANDLER_VALUE = "exception_handler"
-""" The exception handler value """
-
-CONNECTION_PARAMETERS_VALUE = "connection_parameters"
-""" The connection parameters value """
-
-ENTITIES_LIST_VALUE = "entities_list"
-""" The entities list value """
-
-FILE_PATH_VALUE = "file_path"
-""" The file path value """
-
-MVC_UTILS_VALUE = "mvc_utils"
-""" The mvc utils value """
-
 PYTHON_INIT_FILE = "__init__.py"
 """ The python package initializer file """
 
@@ -122,7 +100,8 @@ DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
 DEFAULT_DATABASE_PREFIX = ""
-""" The default database prefix """
+""" The default database prefix, that is going to
+be used in case none os provided through parameters """
 
 DEFAULT_DATABASE_SUFFIX = "database.db"
 """ The default database suffix """
@@ -132,6 +111,17 @@ DEFAULT_CONNECTION_PARAMETERS = {
     "autocommit" : False
 }
 """ The default connection parameters """
+
+DEFAULT_MANAGER_ARGUMENTS = {
+    "id" : "pt.hive.colony.database",
+    "engine" : "sqlite",
+    "connection_parameters" : {
+        "autocommit" : False
+    }
+}
+""" The default entity manager arguments that are going to
+be used in case an invalid value is provided as the base
+entity manager arguments for the construction of the values """
 
 SYMBOLS_LIST = (
     ("handle_list", r"^%s/%s$", "get"),
@@ -144,7 +134,7 @@ SYMBOLS_LIST = (
 )
 """ The list of symbols to be used for pattern generation """
 
-class MvcUtils(colony.base.system.System):
+class MvcUtils(colony.System):
     """
     The mvc utils class.
     """
@@ -162,7 +152,7 @@ class MvcUtils(colony.base.system.System):
     internal controllers """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.models_modules_map = {}
         self.package_path_models_map = {}
@@ -170,7 +160,7 @@ class MvcUtils(colony.base.system.System):
 
     def import_module_mvc_utils(self, module_name, package_name, directory_path = None, system_instance = None):
         # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.libs.stack_util.get_instance_module_directory(system_instance)
+        directory_path = directory_path or colony.get_instance_module_directory(system_instance)
 
         # creates the globals map from
         # the current globals map
@@ -222,8 +212,8 @@ class MvcUtils(colony.base.system.System):
         # sets the mvc utils in the globals map, this is useful
         # allow later reference of the mvc utils in the created
         # module (export of symbols)
-        globals_map[MVC_UTILS_VALUE] = utils
-        globals_map[CONTROLLERS_VALUE] = utils
+        globals_map["mvc_utils"] = utils
+        globals_map["controllers"] = utils
 
         # sets the target map globals and locals
         # reference attributes
@@ -410,7 +400,7 @@ class MvcUtils(colony.base.system.System):
         # updates the map containing the extra global symbols
         # with the models module (to be used by the models to refer
         # to other models)
-        extra_globals_map[MVC_UTILS_VALUE] = utils
+        extra_globals_map["mvc_utils"] = utils
         extra_globals_map[MODELS_VALUE] = models_module
 
         # imports the base entity models module
@@ -440,7 +430,7 @@ class MvcUtils(colony.base.system.System):
             # retrieves the connection parameters from the entity manager arguments or uses
             # the default connection parameters and resolves them into the proper representation
             connection_parameters = entity_manager_arguments.get(
-                CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS
+                "connection_parameters", DEFAULT_CONNECTION_PARAMETERS
             )
             self._resolve_connection_parameters(connection_parameters)
 
@@ -449,7 +439,7 @@ class MvcUtils(colony.base.system.System):
             # the models module
             entity_manager_properties = {
                 ID_VALUE : models_id,
-                ENTITIES_LIST_VALUE : base_entity_models
+                "entities_list" : base_entity_models
             }
 
             # creates a new entity manager for the remote models with the given properties
@@ -533,7 +523,7 @@ class MvcUtils(colony.base.system.System):
         extra_models = []
     ):
         # retrieves the directory path from the system instance
-        directory_path = colony.libs.stack_util.get_instance_module_directory(system_instance)
+        directory_path = colony.get_instance_module_directory(system_instance)
 
         # retrieves the "complete" module name for the system
         # instance to be used as target for the model creation
@@ -589,7 +579,7 @@ class MvcUtils(colony.base.system.System):
                 # reloads the module associated with the given package
                 # path to provide flushing of the contents, also flushes
                 # the module package path from the globals
-                colony.libs.import_util.reload_import(module_package_path)
+                colony.reload_import(module_package_path)
                 self._flush_globals(module_package_path)
 
             # iterates over all the module items to load them as python
@@ -716,13 +706,13 @@ class MvcUtils(colony.base.system.System):
         # base module name parts then uses it to create the default
         # package path in case it's necessary
         package_name, _module_name = module_name.rsplit(".", 1)
-        package_path = package_path or package_name + "." + CONTROLLERS_VALUE
+        package_path = package_path or package_name + ".controllers"
 
         # splits the package path into package name and module name
         package_name, module_name = package_path.rsplit(".", 1)
 
         # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.libs.stack_util.get_instance_module_directory(system_instance)
+        directory_path = directory_path or colony.get_instance_module_directory(system_instance)
 
         # creates the (possible) module directory path taking into
         # account the module name and then normalizes the path
@@ -769,7 +759,7 @@ class MvcUtils(colony.base.system.System):
                 # reloads the module associated with the given package
                 # path to provide flushing of the contents, also flushes
                 # the module package path from the globals
-                colony.libs.import_util.reload_import(module_package_path)
+                colony.reload_import(module_package_path)
                 self._flush_globals(module_package_path)
 
             # iterates over all the module package paths to create
@@ -803,7 +793,7 @@ class MvcUtils(colony.base.system.System):
         # a tentative reload should be applied to the package path,
         # in that case it also flushes the module package path
         # from the globals
-        is_first and colony.libs.import_util.reload_import(package_path)
+        is_first and colony.reload_import(package_path)
         is_first and self._flush_globals(module_package_path)
 
         # imports the controllers module with the mvc utils support
@@ -839,7 +829,7 @@ class MvcUtils(colony.base.system.System):
             # retrieves the exception controller and sets it as the
             # exception handler in the default parameters
             _exception_controller = getattr(system_instance, exception_reference_name)
-            default_parameters[EXCEPTION_HANDLER_VALUE] = _exception_controller
+            default_parameters["exception_handler"] = _exception_controller
 
         # iterates over all the controllers module items
         # to create the appropriate controller instances
@@ -885,7 +875,7 @@ class MvcUtils(colony.base.system.System):
             controllers_map[controller_base_name] = controller
 
         # creates the controllers map name
-        controllers_map_name = prefix_name and prefix_name + "_" + CONTROLLERS_VALUE or CONTROLLERS_VALUE
+        controllers_map_name = prefix_name and prefix_name + "_controllers" or "controllers"
 
         # checks if the system instance already contains the controllers
         # map (in case it's not the first controller import)
@@ -894,7 +884,7 @@ class MvcUtils(colony.base.system.System):
             # in the system instance and extends it with the new items
             # controller map (uses the fast map extension process)
             _controllers_map = getattr(system_instance, controllers_map_name)
-            colony.libs.map_util.map_extend(_controllers_map, controllers_map, copy_base_map = False)
+            colony.map_extend(_controllers_map, controllers_map, copy_base_map = False)
 
             # updates the current reference of the controllers map to
             # "point" to the "master" controllers map contained in the
@@ -921,7 +911,7 @@ class MvcUtils(colony.base.system.System):
             # exception handler default parameter
             for _controller_reference_name, controller in controllers_map.items():
                 # sets the exception handler default parameter as the exception controller
-                controller.set_default_parameter(EXCEPTION_HANDLER_VALUE, exception_controller)
+                controller.set_default_parameter("exception_handler", exception_controller)
 
         # returns the list of (created) controllers
         return controllers
@@ -991,7 +981,7 @@ class MvcUtils(colony.base.system.System):
 
         # reloads the module associated with the given package
         # path to provide flushing of the contents
-        colony.libs.import_util.reload_import(package_path)
+        colony.reload_import(package_path)
 
         # retrieves the entity models and the models from the package
         # path models map (one package path may contain various models)
@@ -1014,11 +1004,11 @@ class MvcUtils(colony.base.system.System):
         # base module name parts then uses it to create the default
         # package path in case it's necessary
         package_name, _module_name = module_name.rsplit(".", 1)
-        package_path = package_path or package_name + "." + CONTROLLERS_VALUE
+        package_path = package_path or package_name + ".controllers"
 
         # reloads the module associated with the given package
         # path to provide flushing of the contents
-        colony.libs.import_util.reload_import(package_path)
+        colony.reload_import(package_path)
 
         # retrieves the controllers from the package path controllers
         # map (one package path may contain various controllers)
@@ -1026,7 +1016,7 @@ class MvcUtils(colony.base.system.System):
 
         # creates the controllers map name and retrieves the controllers
         # map from the system instance
-        controllers_map_name = prefix_name and prefix_name + "_" + CONTROLLERS_VALUE or CONTROLLERS_VALUE
+        controllers_map_name = prefix_name and prefix_name + "_controllers" or "controllers"
         controllers_map = getattr(system_instance, controllers_map_name)
 
         # stops the controllers (internal structures), this process
@@ -1095,10 +1085,10 @@ class MvcUtils(colony.base.system.System):
         # retrieves the base name and converts it into
         # underscore notation
         base_name = controller_class_name[:-10]
-        base_name = colony.libs.string_util.to_underscore(base_name)
+        base_name = colony.to_underscore(base_name)
 
         # converts the base name to plural
-        controller_name_plural = colony.libs.string_util.pluralize(base_name)
+        controller_name_plural = colony.pluralize(base_name)
 
         # iterates over all the symbols in the symbols
         # list
@@ -1130,17 +1120,21 @@ class MvcUtils(colony.base.system.System):
             # adds the pattern (tuple) to the list of patterns
             patterns.append(pattern)
 
-    def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
-        # creates the entity manager arguments map
+    def generate_entity_manager_arguments(self, plugin, base = None, parameters = {}):
+        # default the provided set of base (entity manager arguments) in case there's no
+        # value provided (default situation), this is the expected behavior
+        if base == None: base = DEFAULT_MANAGER_ARGUMENTS
+
+        # creates the entity manager arguments map, then copies the entity manager
+        # arguments constant to the new entity manager arguments
         entity_manager_arguments = {}
+        colony.map_copy_deep(base, entity_manager_arguments)
 
-        # copies the entity manager arguments constant to the new entity manager arguments
-        colony.libs.map_util.map_copy_deep(base_entity_manager_arguments, entity_manager_arguments)
-
-        # generates the entity manager path
+        # runs the initial default operation for the "generation" of the identifier, then
+        # generates the entity manager path, taking into account the provided parameters
+        # and the complete set of context variables for the current environment
+        self._generate_entity_manager_id(plugin, entity_manager_arguments, parameters)
         self._generate_entity_manager_path(plugin, entity_manager_arguments, parameters)
-
-        # returns the entity manager arguments
         return entity_manager_arguments
 
     def _resolve_connection_parameters(self, connection_parameters):
@@ -1156,7 +1150,7 @@ class MvcUtils(colony.base.system.System):
         plugin_manager = self.plugin.manager
 
         # resolves the file path
-        connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
+        connection_parameters["file_path"] = plugin_manager.resolve_file_path(connection_parameters["file_path"], True, True)
 
     def _get_entity_classes(self, module, entity_class):
         """
@@ -1380,19 +1374,23 @@ class MvcUtils(colony.base.system.System):
         # converts the controller name into the underscore notation and then adds
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
-        controller_base_name = colony.libs.string_util.to_underscore(controller_base_name)
+        controller_base_name = colony.to_underscore(controller_base_name)
         controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name + "_" + CONTROLLER_VALUE or controller_base_name + "_" + CONTROLLER_VALUE
 
         # returns the reference (converted) controller name
         return controller_reference_name, controller_base_name
+
+    def _generate_entity_manager_id(self, plugin, entity_manager_arguments, parameters):
+        id = parameters.get("id", None)
+        if id: entity_manager_arguments["id"] = id
 
     def _generate_entity_manager_path(self, plugin, entity_manager_arguments, parameters):
         # retrieves the resources manager plugin
         resources_manager_plugin = self.plugin.resources_manager_plugin
 
         # retrieves the expected parameter values
-        default_database_prefix = parameters.get("default_database_prefix", DEFAULT_DATABASE_PREFIX)
-        default_database_sufix = parameters.get("default_database_sufix", DEFAULT_DATABASE_SUFFIX)
+        database_prefix = parameters.get("database_prefix", DEFAULT_DATABASE_PREFIX)
+        database_sufix = parameters.get("database_sufix", DEFAULT_DATABASE_SUFFIX)
         configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
@@ -1406,10 +1404,10 @@ class MvcUtils(colony.base.system.System):
         # otherwise
         else:
             # sets the system database filename suffix as the default one
-            system_database_filename_suffix = default_database_sufix
+            system_database_filename_suffix = database_sufix
 
         # creates the system database file name value using the prefix and suffix values
-        system_database_filename = default_database_prefix + system_database_filename_suffix
+        system_database_filename = database_prefix + system_database_filename_suffix
 
         # retrieves the configuration plugin id
         configuration_plugin_id = configuration_plugin.id
@@ -1418,7 +1416,7 @@ class MvcUtils(colony.base.system.System):
         database_file_path = "%configuration:" + configuration_plugin_id + "%/" + system_database_filename
 
         # sets the file path in the entity manager arguments
-        entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
+        entity_manager_arguments["connection_parameters"]["file_path"] = database_file_path
 
     def _start_controllers(self, controllers):
         """
