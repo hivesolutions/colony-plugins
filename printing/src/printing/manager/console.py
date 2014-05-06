@@ -89,7 +89,7 @@ class ConsolePrintingManager(colony.System):
         # retrieves the provided file path value and reads it's contents
         # then closes the file, these contents are the ones that are going
         # to be used for the printing process of the file
-        file_path = arguments_map.get("file-path", None)
+        file_path = arguments_map.get("file_path", None)
         file = open(file_path, "r")
         try: contents = file.read()
         finally: file.close()
@@ -105,7 +105,7 @@ class ConsolePrintingManager(colony.System):
                 "handler" : self.process_print_test,
                 "description" : "prints a test page"
             },
-            "print_test" : {
+            "print_image" : {
                 "handler" : self.process_print_test_image,
                 "description" : "prints a test page with an image"
             },
