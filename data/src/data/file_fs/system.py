@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.base.system
+import colony
 
 ENGINE_NAME = "fs"
 """ The engine name """
@@ -47,7 +47,7 @@ ENGINE_NAME = "fs"
 BUFFER_SIZE = 4096
 """ The size of the buffer for writing """
 
-class FileFs(colony.base.system.System):
+class FileFs(colony.System):
     """
     The file fs class.
     """
