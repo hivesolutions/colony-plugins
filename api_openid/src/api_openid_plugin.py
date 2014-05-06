@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ApiOpenidPlugin(colony.base.system.Plugin):
+class ApiOpenidPlugin(colony.Plugin):
     """
     The main class for the Openid Api plugin.
     """
@@ -50,16 +50,16 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "api.openid"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.api.yadis"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.PluginDependency("pt.hive.colony.plugins.api.yadis"),
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
         "api_openid.exceptions",
@@ -67,29 +67,10 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
         "api_openid.system"
     ]
 
-    api_openid = None
-    """ The api openid """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
-    api_yadis_plugin = None
-    """ The api yadis plugin """
-
-    encryption_diffie_hellman_plugin = None
-    """ The encryption diffie helman plugin """
-
-    random_plugin = None
-    """ The random plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import api_openid.system
-        self.api_openid = api_openid.system.ApiOpenid(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import api_openid
+        self.api_openid = api_openid.ApiOpenid(self)
 
     def create_server(self, api_attributes):
         """
@@ -101,7 +82,7 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
         @return: The created remote server.
         """
 
-        return self.api_openid.create_server(api_attributes)
+        return self.system.create_server(api_attributes)
 
     def create_client(self, api_attributes):
         """
@@ -113,20 +94,4 @@ class ApiOpenidPlugin(colony.base.system.Plugin):
         @return: The created client.
         """
 
-        return self.api_openid.create_client(api_attributes)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.api.yadis")
-    def set_api_yadis_plugin(self, api_yadis_plugin):
-        self.api_yadis_plugin = api_yadis_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.diffie_hellman")
-    def set_encryption_diffie_hellman_plugin(self, encryption_diffie_hellman_plugin):
-        self.encryption_diffie_hellman_plugin = encryption_diffie_hellman_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
-    def set_random_plugin(self, random_plugin):
-        self.random_plugin = random_plugin
+        return self.system.create_client(api_attributes)

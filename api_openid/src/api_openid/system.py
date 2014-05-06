@@ -42,11 +42,7 @@ import base64
 import hashlib
 import datetime
 
-import colony.base.system
-import colony.libs.quote_util
-import colony.libs.encode_util
-import colony.libs.string_util
-import colony.libs.string_buffer_util
+import colony
 
 import parser
 import exceptions
@@ -178,7 +174,7 @@ DEFAULT_PRIME_VALUE = 1551728981814736974712322577637155399157248019669154044797
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
 
-class ApiOpenid(colony.base.system.System):
+class ApiOpenid(colony.System):
     """
     The api openid class.
     """
@@ -187,7 +183,7 @@ class ApiOpenid(colony.base.system.System):
     """ The map associating the provider url with the nonce values """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.nonce_values_map = {}
 
     def create_server(self, api_attributes, open_server = True):
@@ -340,7 +336,7 @@ class ApiOpenid(colony.base.system.System):
         """
 
         # encodes the long value into string value
-        long_value_encoded = colony.libs.encode_util.encode_two_complement_string(long_value)
+        long_value_encoded = colony.encode_two_complement_string(long_value)
 
         # converts the long value to a list value
         list_value = list(long_value_encoded)
@@ -375,7 +371,7 @@ class ApiOpenid(colony.base.system.System):
         string_value = "".join(list_value)
 
         # decodes the string value into long
-        result = colony.libs.encode_util.decode_two_complement_string(string_value)
+        result = colony.decode_two_complement_string(string_value)
 
         # returns the result
         return result
@@ -620,7 +616,7 @@ class OpenidServer:
             encoded_key_value = hash_module(self.api_openid._btwoc(key_value)).digest()
 
             # calculates the encoded mac key value and retrieves the digest
-            encoded_mac_key = colony.libs.string_util.xor_string_value(decoded_mac_key, encoded_key_value)
+            encoded_mac_key = colony.xor_string_value(decoded_mac_key, encoded_key_value)
 
             # encodes the encoded mac key into base64
             encoded_mac_key = base64.b64encode(encoded_mac_key)
@@ -769,7 +765,7 @@ class OpenidServer:
         signed_names_list = DEFAULT_SIGNED_NAMES
 
         # creates the string buffer for the message
-        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        message_string_buffer = colony.StringBuffer()
 
         # starts the index counter
         index = 0
@@ -875,7 +871,7 @@ class OpenidServer:
         """
 
         # encodes the parameters with the url encode
-        parameters_encoded = colony.libs.quote_util.url_encode(parameters)
+        parameters_encoded = colony.url_encode(parameters)
 
         # in case the base url does not contain any parameters
         if base_url.find("?") == -1:
@@ -1175,7 +1171,7 @@ class OpenidClient:
         signed_items_list = return_openid_structure.signed.split(",")
 
         # creates the string buffer for the message
-        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        message_string_buffer = colony.StringBuffer()
 
         # iterates over all the signed items
         for signed_item_name in signed_items_list:
