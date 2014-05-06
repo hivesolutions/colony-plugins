@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
 ENTITY_MANAGER_ARGUMENTS = {
     "id" : "pt.hive.colony.web.mvc.encryption.database",
@@ -53,7 +53,7 @@ ENTITY_MANAGER_PARAMETERS = {
 }
 """ The entity manager parameters """
 
-class Crypton(colony.base.system.System):
+class Crypton(colony.System):
     """
     The crypton class.
     """
@@ -65,7 +65,7 @@ class Crypton(colony.base.system.System):
     """ The map of security """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.keys_map = {}
         self.security_map = {}
 
@@ -115,46 +115,11 @@ class Crypton(colony.base.system.System):
         """
 
         return (
-            (r"^crypton/encrypt$", self.main_controller.handle_encrypt, "get"),
-            (r"^crypton/decrypt$", self.main_controller.handle_decrypt, "get"),
-            (r"^crypton/sign$", self.main_controller.handle_sign, "get"),
-            (r"^crypton/verify$", self.main_controller.handle_verify, "get"),
-            (r"^crypton/consumers$", self.consumer_controller.handle_create, "post")
-        )
-
-    def get_communication_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as communication patterns,
-        to the mvc service. The tuple should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as communication patterns,
-        to the mvc service.
-        """
-
-        return ()
-
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the mvc service.
-        """
-
-        # retrieves the plugin manager
-        plugin_manager = self.plugin.manager
-
-        # retrieves the plugin path
-        plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
-
-        return (
-            (r"^crypton/resources/.+$", (plugin_path + "/crypton/resources/extras", "crypton/resources")),
+            (r"crypton/encrypt", self.main_controller.encrypt, "get"),
+            (r"crypton/decrypt", self.main_controller.decrypt, "get"),
+            (r"crypton/sign", self.main_controller.sign, "get"),
+            (r"crypton/verify", self.main_controller.verify, "get"),
+            (r"crypton/consumers", self.consumer_controller.create, "post")
         )
 
     def get_controller(self, controller_name):
@@ -167,33 +132,18 @@ class Crypton(colony.base.system.System):
         @return The controller with the specified name.
         """
 
-        # retrieves the controller
         controller = self.controllers[controller_name]
-
-        # returns the controller
         return controller
 
     def set_configuration_property(self, configuration_property):
-        # retrieves the configuration
         configuration = configuration_property.get_data()
-
-        # retrieves the extension map
         keys_map = configuration["keys"]
-
-        # retrieves the security map
         security_map = configuration["security"]
-
-        # sets the keys map
         self.keys_map = keys_map
-
-        # sets the security map
         self.security_map = security_map
 
     def unset_configuration_property(self):
-        # sets the keys map
         self.keys_map = {}
-
-        # sets the security map
         self.security_map = {}
 
     def get_entity_manager_arguments(self):

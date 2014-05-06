@@ -37,34 +37,19 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.import_util
+import colony
 
-models = colony.libs.import_util.__import__("models")
-controllers = colony.libs.import_util.__import__("controllers")
-mvc_utils = colony.libs.import_util.__import__("mvc_utils")
+models = colony.__import__("models")
+controllers = colony.__import__("controllers")
 
 class ConsumerController(controllers.Controller):
-    """
-    The crypton consumer controller.
-    """
 
-    def handle_create(self, request, parameters = {}):
-        """
-        Handles the new consumer request.
-
-        @type request: Request
-        @param request: The crypton new request to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
+    def create(self, request):
         # retrieves the consumer from the request
         # and applies it to the consumer entity
-        consumer = self.get_field(request, "consumer", {})
-        consumer_entity = models.Consumer.new(consumer)
+        consumer = request.field("consumer", {})
+        consumer = models.Consumer.new(consumer)
 
-        # generates the consumer api key
-        consumer_entity.generate_api_key()
-
-        # stores the consumer in the data source
-        consumer_entity.store(mvc_utils.PERSIST_SAVE)
+        # generates the consumer api key for the
+        consumer.generate_api_key()
+        consumer.create()

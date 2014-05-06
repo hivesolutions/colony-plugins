@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class CryptonPlugin(colony.base.system.Plugin):
+class CryptonPlugin(colony.Plugin):
     """
     The main class for the Crypton plugin.
     """
@@ -51,58 +50,46 @@ class CryptonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "mvc_service",
         "controller_access"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
+        colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
     ]
     main_modules = [
         "crypton.exceptions",
         "crypton.system"
     ]
 
-    crypton = None
-    """ The crypton """
-
-    mvc_utils_plugin = None
-    """ The mvc utils plugin """
-
-    random_plugin = None
-    """ The random plugin """
-
-    encryption_ssl_plugin = None
-    """ The encryption ssl plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import crypton.system
-        self.crypton = crypton.system.Crypton(self)
+        colony.Plugin.load_plugin(self)
+        import crypton
+        self.system = crypton.Crypton(self)
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.crypton.load_components()
+        colony.Plugin.end_load_plugin(self)
+        self.system.load_components()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.crypton.unload_components()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_components()
 
-    @colony.base.decorators.inject_dependencies
+    @colony.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.dependency_injected(self, plugin)
 
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def get_patterns(self):
         """
@@ -115,34 +102,7 @@ class CryptonPlugin(colony.base.system.Plugin):
         to the mvc service.
         """
 
-        return self.crypton.get_patterns()
-
-    def get_communication_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as communication patterns,
-        to the mvc service. The tuple should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as communication patterns,
-        to the mvc service.
-        """
-
-        return self.crypton.get_communication_patterns()
-
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the mvc service.
-        """
-
-        return self.crypton.get_resource_patterns()
+        return self.system.get_patterns()
 
     def get_controller(self, controller_name):
         """
@@ -154,24 +114,12 @@ class CryptonPlugin(colony.base.system.Plugin):
         @return The controller with the specified name.
         """
 
-        return self.crypton.get_controller(controller_name)
+        return self.system.get_controller(controller_name)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.mvc.utils")
-    def set_mvc_utils_plugin(self, mvc_utils_plugin):
-        self.mvc_utils_plugin = mvc_utils_plugin
+    @colony.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.system.set_configuration_property(property)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.ssl")
-    def set_encryption_ssl_plugin(self, encryption_ssl_plugin):
-        self.encryption_ssl_plugin = encryption_ssl_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
-    def set_random_plugin(self, random_plugin):
-        self.random_plugin = random_plugin
-
-    @colony.base.decorators.set_configuration_property_method("configuration")
-    def service_configuration_set_configuration_property(self, property_name, property):
-        self.crypton.set_configuration_property(property)
-
-    @colony.base.decorators.unset_configuration_property_method("configuration")
-    def service_configuration_unset_configuration_property(self, property_name):
-        self.crypton.unset_configuration_property()
+    @colony.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.system.unset_configuration_property()

@@ -40,9 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import base64
 
-import colony.libs.import_util
+import colony
 
-import crypton.exceptions
+import crypton
 
 CONSUMER_STATUS_ACTIVE = 1
 """ The consumer active status """
@@ -50,21 +50,17 @@ CONSUMER_STATUS_ACTIVE = 1
 DEFAULT_NUMBER_BITS = 256
 """ The default number of bits """
 
-models = colony.libs.import_util.__import__("models")
-controllers = colony.libs.import_util.__import__("controllers")
-mvc_utils = colony.libs.import_util.__import__("mvc_utils")
+models = colony.__import__("models")
+controllers = colony.__import__("controllers")
 
 class SignatureController(controllers.Controller):
-    """
-    The crypton signature controller.
-    """
 
     def encrypt(self, request, api_key, key_name, message):
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+        # retrieves the ssl plugin
+        ssl_plugin = self.plugin.ssl_plugin
 
         # creates the ssl structure
-        ssl_structure = encryption_ssl_plugin.create_structure({})
+        ssl_structure = ssl_plugin.create_structure({})
 
         # validates the api key
         self._validate_api_key(request, api_key)
@@ -82,11 +78,11 @@ class SignatureController(controllers.Controller):
         return message_e
 
     def decrypt(self, request, api_key, key_name, message_e):
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+        # retrieves the ssl plugin
+        ssl_plugin = self.plugin.ssl_plugin
 
         # creates the ssl structure
-        ssl_structure = encryption_ssl_plugin.create_structure({})
+        ssl_structure = ssl_plugin.create_structure({})
 
         # validates the api key
         self._validate_api_key(request, api_key)
@@ -104,11 +100,11 @@ class SignatureController(controllers.Controller):
         return message
 
     def sign(self, request, api_key, key_name, message, algorithm_name):
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+        # retrieves the ssl plugin
+        ssl_plugin = self.plugin.ssl_plugin
 
         # creates the ssl structure
-        ssl_structure = encryption_ssl_plugin.create_structure({})
+        ssl_structure = ssl_plugin.create_structure({})
 
         # validates the api key
         self._validate_api_key(request, api_key)
@@ -126,11 +122,11 @@ class SignatureController(controllers.Controller):
         return signature
 
     def verify(self, request, api_key, key_name, signature, message):
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+        # retrieves the ssl plugin
+        ssl_plugin = self.plugin.ssl_plugin
 
         # creates the ssl structure
-        ssl_structure = encryption_ssl_plugin.create_structure({})
+        ssl_structure = ssl_plugin.create_structure({})
 
         # validates the api key
         self._validate_api_key(request, api_key)
@@ -158,31 +154,29 @@ class SignatureController(controllers.Controller):
         validate_api_key = security_map.get("validate_api_key", True)
 
         # returns in case no api key validation is required
-        if not validate_api_key:
-            # returns
-            return
+        if not validate_api_key: return
 
         # creates the filter to retrieve the consumer with
         # the provided api, only existing clients should
         # be considered valid according to specification
-        filter = {
-            "filters" : (
-                {
-                    "api_key" : api_key
-                },
-                {
-                    "status" : CONSUMER_STATUS_ACTIVE
-                }
+        filter = dict(
+            filters = (
+                dict(
+                    api_key = api_key
+                ),
+                dict(
+                    status = CONSUMER_STATUS_ACTIVE
+                )
             )
-        }
+        )
 
         # retrieves the consumer entity with the api key
         consumer_entity = models.Consumer.find_one(filter)
 
         # raises an exception in case no consumer was found
+        # this is the expected behavior for such problem
         if not consumer_entity:
-            # raises the access denied exception
-            raise crypton.exceptions.AccessDeniedException("invalid api key")
+            raise crypton.AccessDeniedException("invalid api key")
 
     def _get_key_path(self, key_name, key_type):
         # retrieves the plugin manager
@@ -204,8 +198,8 @@ class SignatureController(controllers.Controller):
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
 
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.plugin.encryption_ssl_plugin
+        # retrieves the ssl plugin
+        ssl_plugin = self.plugin.ssl_plugin
 
         # retrieves the key paths
         private_key_path = key.get("private_key", None)
@@ -216,7 +210,7 @@ class SignatureController(controllers.Controller):
         public_key_path = plugin_manager.resolve_file_path(public_key_path, True, True)
 
         # creates the ssl structure
-        ssl_structure = encryption_ssl_plugin.create_structure({})
+        ssl_structure = ssl_plugin.create_structure({})
 
         # generates the public and private keys
         ssl_structure.generate_keys(private_key_path, public_key_path, DEFAULT_NUMBER_BITS)

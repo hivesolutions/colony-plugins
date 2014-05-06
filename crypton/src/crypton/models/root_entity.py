@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.import_util
+import colony
 
-models = colony.libs.import_util.__import__("models")
+models = colony.__import__("models")
 
 class RootEntity(models.EntityModel):
     """
@@ -47,12 +47,13 @@ class RootEntity(models.EntityModel):
     in order for them to have a global unique identifier.
     """
 
-    object_id = {
-        "id" : True,
-        "data_type" : "integer",
-        "generated" : True
-    }
-    """ The object id of the root entity """
+    object_id = dict(
+        id = True,
+        data_type = "integer",
+        generated = True
+    )
+    """ The object id of the root entity, this should
+    be the main identifier of an object in the data source """
 
     def __init__(self):
         """
@@ -60,11 +61,3 @@ class RootEntity(models.EntityModel):
         """
 
         self.object_id = None
-
-    def set_validation(self):
-        """
-        Sets the validation structures for the
-        current structure.
-        """
-
-        pass

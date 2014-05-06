@@ -82,7 +82,8 @@ class Consumer(root_entity.RootEntity):
 
     def __init__(self):
         """
-        Constructor of the class.
+        Constructor of the class, should set the initial and
+        default values for a typical consumer.
         """
 
         root_entity.RootEntity.__init__(self)
