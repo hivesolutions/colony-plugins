@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class FileManagerPlugin(colony.base.system.Plugin):
+class FileManagerPlugin(colony.Plugin):
     """
     The main class for the File Manager plugin.
     """
@@ -50,7 +50,7 @@ class FileManagerPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "file_manager"
@@ -62,21 +62,18 @@ class FileManagerPlugin(colony.base.system.Plugin):
         "data.file_manager.system"
     ]
 
-    file_manager = None
-    """ The file manager """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import data.file_manager.system
-        self.file_manager = data.file_manager.system.DataFileManager(self)
+        colony.Plugin.load_plugin(self)
+        import data.file_manager
+        self.system = data.file_manager.DataFileManager(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
     @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def load_file_manager(self, engine_name):
         """
@@ -88,7 +85,7 @@ class FileManagerPlugin(colony.base.system.Plugin):
         @return: The loaded file manager.
         """
 
-        return self.file_manager.load_file_manager(engine_name)
+        return self.system.load_file_manager(engine_name)
 
     def load_file_manager_properties(self, engine_name, properties):
         """
@@ -103,12 +100,12 @@ class FileManagerPlugin(colony.base.system.Plugin):
         @return: The loaded file manager.
         """
 
-        return self.file_manager.load_file_manager(engine_name, properties)
+        return self.system.load_file_manager(engine_name, properties)
 
     @colony.base.decorators.load_allowed_capability("file_engine")
     def file_engine_load_allowed(self, plugin, capability):
-        self.file_manager.register_file_engine_plugin(plugin)
+        self.system.register_file_engine_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("file_engine")
     def file_engine_unload_allowed(self, plugin, capability):
-        self.file_manager.unregister_file_engine_plugin(plugin)
+        self.system.unregister_file_engine_plugin(plugin)

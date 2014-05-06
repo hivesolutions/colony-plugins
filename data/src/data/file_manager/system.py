@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.base.system
+import colony
 
-class DataFileManager(colony.base.system.System):
+class DataFileManager(colony.System):
     """
     The data file manager class.
     """
@@ -53,7 +53,7 @@ class DataFileManager(colony.base.system.System):
     """ The map of file engine plugins """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.file_engine_plugins_map = {}
 
     def load_file_manager(self, engine_name, properties = {}):

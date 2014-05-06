@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import zipfile
 
-import colony.base.system
-import colony.libs.string_buffer_util
+import colony
 
 ENGINE_NAME = "zip"
 """ The engine name """
@@ -49,7 +48,7 @@ ENGINE_NAME = "zip"
 ZIP_FILE_EXTENSION = ".zip"
 """ The zip file extension value """
 
-class FileZip(colony.base.system.System):
+class FileZip(colony.System):
     """
     The file zip class.
     """
@@ -124,7 +123,7 @@ class FileZip(colony.base.system.System):
 
         # creates a new string buffer as the file buffer and
         # writes the target file data into it
-        target_file = colony.libs.string_buffer_util.StringBuffer()
+        target_file = colony.StringBuffer()
         target_file.write(target_file_data)
 
         # returns the target file

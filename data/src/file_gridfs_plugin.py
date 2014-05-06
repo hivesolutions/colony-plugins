@@ -67,34 +67,34 @@ class FileGridfsPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import data.file_gridfs
-        self.file_gridfs = data.file_gridfs.FileGridfs(self)
+        self.system = data.file_gridfs.FileGridfs(self)
 
     def get_engine_name(self):
-        return self.file_gridfs.get_engine_name()
+        return self.system.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_gridfs.get_internal_version()
+        return self.system.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_gridfs.create_connection(connection_parameters)
+        return self.system.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_gridfs.close_connection(connection)
+        return self.system.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_gridfs.get(connection, file_name)
+        return self.system.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_gridfs.put(connection, file_path, file_name)
+        return self.system.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_gridfs.put_file(connection, file, file_name)
+        return self.system.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_gridfs.put_data(connection, data, file_name)
+        return self.system.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_gridfs.delete(connection, file_name)
+        return self.system.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_gridfs.list(connection, directory_name)
+        return self.system.list(connection, directory_name)

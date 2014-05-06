@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class FileZipPlugin(colony.base.system.Plugin):
+class FileZipPlugin(colony.Plugin):
     """
     The main class for the File Zip Engine plugin.
     """
@@ -50,7 +50,7 @@ class FileZipPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "file_engine"
@@ -59,40 +59,37 @@ class FileZipPlugin(colony.base.system.Plugin):
         "data.file_zip.system"
     ]
 
-    file_zip = None
-    """ The file zip """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import data.file_zip.system
-        self.file_zip = data.file_zip.system.FileZip(self)
+        colony.Plugin.load_plugin(self)
+        import data.file_zip
+        self.system = data.file_zip.FileZip(self)
 
     def get_engine_name(self):
-        return self.file_zip.get_engine_name()
+        return self.system.get_engine_name()
 
     def get_internal_version(self):
-        return self.file_zip.get_internal_version()
+        return self.system.get_internal_version()
 
     def create_connection(self, connection_parameters):
-        return self.file_zip.create_connection(connection_parameters)
+        return self.system.create_connection(connection_parameters)
 
     def close_connection(self, connection):
-        return self.file_zip.close_connection(connection)
+        return self.system.close_connection(connection)
 
     def get(self, connection, file_name):
-        return self.file_zip.get(connection, file_name)
+        return self.system.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
-        return self.file_zip.put(connection, file_path, file_name)
+        return self.system.put(connection, file_path, file_name)
 
     def put_file(self, connection, file, file_name):
-        return self.file_zip.put_file(connection, file, file_name)
+        return self.system.put_file(connection, file, file_name)
 
     def put_data(self, connection, data, file_name):
-        return self.file_zip.put_data(connection, data, file_name)
+        return self.system.put_data(connection, data, file_name)
 
     def delete(self, connection, file_name):
-        return self.file_zip.delete(connection, file_name)
+        return self.system.delete(connection, file_name)
 
     def list(self, connection, directory_name):
-        return self.file_zip.list(connection, directory_name)
+        return self.system.list(connection, directory_name)
