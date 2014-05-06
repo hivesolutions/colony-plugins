@@ -40,9 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import pgdb
 
-import colony.libs.string_buffer_util
-
-import colony.base.system
+import colony
 
 ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution
@@ -59,7 +57,7 @@ OPERATORS_MAP = {
 """ The map that resolves the various specific operator
 for the pgsql implementation from the generic ones """
 
-class EntityPgsql(colony.base.system.System):
+class EntityPgsql(colony.System):
     """
     The entity pgsql class.
     """
@@ -448,7 +446,7 @@ class PgsqlEngine:
     def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("create index %s_%s_%s_idx on %s using %s (%s)" % (table_name, attribute_name, index_type, table_name, index_type, attribute_name))
 
         # retrieves the "final" query value from
@@ -477,7 +475,7 @@ class PgsqlEngine:
         # creates the buffer to hold the query and populates it with the
         # base values of the query (selecting the table for update in
         # the required field values will lock the appropriate rows)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select %s from %s" % (fields_string, table_name))
         field_name and field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
         query_buffer.write(" for update")
@@ -496,7 +494,7 @@ class PgsqlEngine:
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select count(*) from pg_tables where tablename = '%s'" % table_name)
 
         # retrieves the "final" query value from
@@ -526,7 +524,7 @@ class PgsqlEngine:
     def _has_table_definition_query(self, table_name):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select count(*) from pg_tables where tablename = '%s'" % table_name)
 
         # retrieves the "final" query value from
