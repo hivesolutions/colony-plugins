@@ -37,8 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.libs.crypt_util
+import colony
 
 import exceptions
 
@@ -60,7 +59,7 @@ LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
 LOGIN_SALT_VALUE = "login_salt"
 """ The login salt value """
 
-class AuthenticationEntityManager(colony.base.system.System):
+class AuthenticationEntityManager(colony.System):
     """
     The authentication entity manager class.
     """
@@ -136,7 +135,7 @@ class AuthenticationEntityManager(colony.base.system.System):
             raise exceptions.AuthenticationError("user not found")
 
         # checks that the password is valid
-        password_valid = colony.libs.crypt_util.password_match(user_entity.password_hash, password, login_salt)
+        password_valid = colony.password_match(user_entity.password_hash, password, login_salt)
 
         # in case the password is valid
         if password_valid:

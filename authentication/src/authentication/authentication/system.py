@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
-import colony.base.system
-import colony.libs.string_util
+import colony
 
 VALID_VALUE = "valid"
 """ The valid value """
@@ -64,7 +63,7 @@ TRACEBACK_VALUE = "traceback"
 NO_AUTHENTICATION_METHOD_MESSAGE = "no authentication method found"
 """ The no authentication method found message """
 
-class Authentication(colony.base.system.System):
+class Authentication(colony.System):
     """
     The authentication class.
     """
@@ -78,7 +77,8 @@ class Authentication(colony.base.system.System):
         @type password: String
         @param password: The password to be used in the authentication.
         @type authentication_handler: String
-        @param authentication_handler: The authentication handler to be used in the authentication.
+        @param authentication_handler: The authentication handler to be used
+        in the authentication.
         @type arguments: Dictionary
         @param arguments: The arguments to be used in the authentication.
         @rtype: Dictionary
@@ -198,7 +198,7 @@ class Authentication(colony.base.system.System):
         }
 
         # converts the exception class name to underscore notation
-        exception_class_name_underscore = colony.libs.string_util.to_underscore(exception_class_name)
+        exception_class_name_underscore = colony.to_underscore(exception_class_name)
 
         # creates the exception class process method name
         exception_class_process_method_name = "process_map_" + exception_class_name_underscore

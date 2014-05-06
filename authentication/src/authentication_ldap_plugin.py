@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class AuthenticationLdapPlugin(colony.base.system.Plugin):
+class AuthenticationLdapPlugin(colony.Plugin):
     """
     The main class for the Authentication Ldap plugin.
     """
@@ -50,40 +50,26 @@ class AuthenticationLdapPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.client.ldap")
+        colony.PluginDependency("pt.hive.colony.plugins.main.client.ldap")
     ]
     main_modules = [
         "authentication.ldap.exceptions",
         "authentication.ldap.system"
     ]
 
-    authentication_ldap = None
-    """ The authentication ldap """
-
-    client_ldap_plugin = None
-    """ The client ldap plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import authentication.ldap.system
-        self.authentication_ldap = authentication.ldap.system.AuthenticationLdap(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import authentication.ldap
+        self.system = authentication.ldap.AuthenticationLdap(self)
 
     def get_handler_name(self):
-        return self.authentication_ldap.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
-        return self.authentication_ldap.handle_request(request)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.ldap")
-    def set_client_ldap_plugin(self, client_ldap_plugin):
-        self.client_ldap_plugin = client_ldap_plugin
+        return self.system.handle_request(request)

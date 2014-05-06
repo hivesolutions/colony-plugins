@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class AuthenticationPythonPlugin(colony.base.system.Plugin):
+class AuthenticationPythonPlugin(colony.Plugin):
     """
     The main class for the Authentication Python plugin.
     """
@@ -50,18 +50,9 @@ class AuthenticationPythonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
-    attributes = {
-        "configuration_models_bundle" : {
-            "authentication.py" : {
-                "path" : "authentication/python/configuration/authentication_configuration.py",
-                "global" : False,
-                "replace" : False
-            }
-        }
-    }
     capabilities = [
         "authentication_handler",
         "configuration_model_provider"
@@ -72,16 +63,13 @@ class AuthenticationPythonPlugin(colony.base.system.Plugin):
         "authentication.python.system"
     ]
 
-    authentication_python = None
-    """ The authentication python """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import authentication.python.system
-        self.authentication_python = authentication.python.system.AuthenticationPython(self)
+        colony.Plugin.load_plugin(self)
+        import authentication.python
+        self.system = authentication.python.AuthenticationPython(self)
 
     def get_handler_name(self):
-        return self.authentication_python.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
-        return self.authentication_python.handle_request(request)
+        return self.system.handle_request(request)

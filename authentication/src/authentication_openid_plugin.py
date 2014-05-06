@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class AuthenticationOpenidPlugin(colony.base.system.Plugin):
+class AuthenticationOpenidPlugin(colony.Plugin):
     """
     The main class for the Authentication Openid plugin.
     """
@@ -50,7 +50,7 @@ class AuthenticationOpenidPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "authentication_handler"
@@ -59,16 +59,13 @@ class AuthenticationOpenidPlugin(colony.base.system.Plugin):
         "authentication.openid.system"
     ]
 
-    authentication_openid = None
-    """ The authentication openid """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import authentication.openid.system
-        self.authentication_openid = authentication.openid.system.AuthenticationOpenid(self)
+        colony.Plugin.load_plugin(self)
+        import authentication.openid
+        self.system = authentication.openid.AuthenticationOpenid(self)
 
     def get_handler_name(self):
-        return self.authentication_openid.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
-        return self.authentication_openid.handle_request(request)
+        return self.system.handle_request(request)

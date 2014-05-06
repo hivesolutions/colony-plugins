@@ -41,8 +41,7 @@ import re
 import base64
 import hashlib
 
-import colony.base.system
-import colony.libs.crypt_util
+import colony
 
 import exceptions
 
@@ -91,7 +90,7 @@ PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
 MD5_CRYPT_SALT_VALUE_REGEX = re.compile(MD5_CRYPT_SALT_VALUE_REGEX_VALUE)
 """ The md5 crypt salt value regex """
 
-class AuthenticationLdap(colony.base.system.System):
+class AuthenticationLdap(colony.System):
     """
     The authentication ldap class.
     """
@@ -211,7 +210,7 @@ class AuthenticationLdap(colony.base.system.System):
 
         # encrypts the password and the salt with the
         # md5 crypt algorithm
-        processed_password_value = colony.libs.crypt_util.md5_crypt(password, salt)
+        processed_password_value = colony.md5_crypt(password, salt)
 
         # returns the processed password value
         return processed_password_value

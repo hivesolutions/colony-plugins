@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class AuthenticationEntityManagerPlugin(colony.base.system.Plugin):
+class AuthenticationEntityManagerPlugin(colony.Plugin):
     """
     The main class for the Authentication Entity Manager plugin.
     """
@@ -50,7 +50,7 @@ class AuthenticationEntityManagerPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "authentication_handler"
@@ -60,16 +60,13 @@ class AuthenticationEntityManagerPlugin(colony.base.system.Plugin):
         "authentication.entity_manager.system"
     ]
 
-    authentication_entity_manager = None
-    """ The authentication entity manager """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import authentication.entity_manager.system
-        self.authentication_entity_manager = authentication.entity_manager.system.AuthenticationEntityManager(self)
+        colony.Plugin.load_plugin(self)
+        import authentication.entity_manager
+        self.system = authentication.entity_manager.AuthenticationEntityManager(self)
 
     def get_handler_name(self):
-        return self.authentication_entity_manager.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
-        return self.authentication_entity_manager.handle_request(request)
+        return self.system.handle_request(request)

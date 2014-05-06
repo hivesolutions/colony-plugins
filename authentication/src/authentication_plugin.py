@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class AuthenticationPlugin(colony.base.system.Plugin):
+class AuthenticationPlugin(colony.Plugin):
     """
     The main class for the Authentication plugin.
     """
@@ -51,8 +50,8 @@ class AuthenticationPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "authentication"
@@ -64,35 +63,13 @@ class AuthenticationPlugin(colony.base.system.Plugin):
         "authentication.authentication.system"
     ]
 
-    authentication = None
-    """ The authentication """
-
-    authentication_handler_plugins = []
-    """ The authentication handler plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import authentication.authentication.system
-        self.authentication = authentication.authentication.system.Authentication(self)
-
-    @colony.base.decorators.load_allowed
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    @colony.base.decorators.unload_allowed
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.load_plugin(self)
+        import authentication.authentication
+        self.system = authentication.authentication.Authentication(self)
 
     def authenticate_user(self, username, password, authentication_handler, arguments):
-        return self.authentication.authenticate_user(username, password, authentication_handler, arguments)
+        return self.system.authenticate_user(username, password, authentication_handler, arguments)
 
     def process_authentication_string(self, authentication_string):
-        return self.authentication.process_authentication_string(authentication_string)
-
-    @colony.base.decorators.load_allowed_capability("authentication_handler")
-    def authentication_handler_load_allowed(self, plugin, capability):
-        self.authentication_handler_plugins.append(plugin)
-
-    @colony.base.decorators.unload_allowed_capability("authentication_handler")
-    def authentication_handler_unload_allowed(self, plugin, capability):
-        self.authentication_handler_plugins.remove(plugin)
+        return self.system.process_authentication_string(authentication_string)

@@ -37,8 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.libs.path_util
+import colony
 
 import exceptions
 
@@ -63,13 +62,13 @@ VALID_VALUE = "valid"
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
 
-class AuthenticationPython(colony.base.system.System):
+class AuthenticationPython(colony.System):
     """
     The authentication python class.
     """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.create_default_file()
 
     def get_handler_name(self):
@@ -177,4 +176,4 @@ class AuthenticationPython(colony.base.system.System):
         authentication_configuration_file_path = plugin_path + "/" + CONFIGURATION_PATH + "/authentication_configuration.py"
 
         # ensures that the configuration file path exists and contains the default contents
-        colony.libs.path_util.ensure_file_path(configuration_file_path, authentication_configuration_file_path)
+        colony.ensure_file_path(configuration_file_path, authentication_configuration_file_path)
