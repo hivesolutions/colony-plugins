@@ -45,11 +45,7 @@ import threading
 
 import exceptions
 
-import colony.libs.map_util
-import colony.libs.lazy_util
-import colony.libs.list_util
-import colony.libs.string_util
-import colony.libs.structures_util
+import colony
 
 SERIALIZERS = (
     "json",
@@ -557,7 +553,7 @@ class EntityClass(object):
         for the current model class.
         """
 
-        return SAFE_CHARACTER + colony.libs.string_util.to_underscore(cls.__name__)
+        return SAFE_CHARACTER + colony.to_underscore(cls.__name__)
 
     @classmethod
     def get_attr_methods(cls):
@@ -630,7 +626,7 @@ class EntityClass(object):
             # retrieves the (all) attr methods from the parents
             # and extends the all attr methods map with them
             _attr_methods = parent.get_all_attr_methods()
-            colony.libs.map_util.map_extend(
+            colony.map_extend(
                 all_attr_methods,
                 _attr_methods,
                 copy_base_map = False
@@ -638,7 +634,7 @@ class EntityClass(object):
 
         # extends the all attr methods map with the attr methods
         # from the current entity class
-        colony.libs.map_util.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
+        colony.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
 
         # caches the all attr methods element in the class
         # to provide fast access in latter access
@@ -664,7 +660,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various items
         # for the map, this maintains order useful for creating
         # queries with organized order
-        items_map = colony.libs.structures_util.OrderedMap()
+        items_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the items, extending the items map with them
@@ -676,7 +672,7 @@ class EntityClass(object):
             # retrieves the parent's items map and uses it
             # to extend the current items map (iteration cycle)
             parent_items_map = parent.get_items_map()
-            colony.libs.map_util.map_extend(items_map, parent_items_map, copy_base_map = False)
+            colony.map_extend(items_map, parent_items_map, copy_base_map = False)
 
         # retrieves the items (without foreign relation)
         # for the class and then sets them in the items
@@ -709,7 +705,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various names
         # for the map, this maintains order useful for creating
         # queries with organized order
-        names_map = colony.libs.structures_util.OrderedMap()
+        names_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the names, extending the names map with them
@@ -722,7 +718,7 @@ class EntityClass(object):
             # to extend the current names map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_names_map = parent.get_names_map()
-            colony.libs.map_util.map_extend(names_map, parent_names_map, override = False, copy_base_map = False)
+            colony.map_extend(names_map, parent_names_map, override = False, copy_base_map = False)
 
         # retrieves all of the names for the
         # class and then sets them in the names
@@ -756,7 +752,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various generated
         # for the map, this maintains order useful for creating
         # queries with organized order
-        generated_map = colony.libs.structures_util.OrderedMap()
+        generated_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the generated (names), extending the
@@ -770,7 +766,7 @@ class EntityClass(object):
             # to extend the current generated map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_generated_map = parent.get_generated_map()
-            colony.libs.map_util.map_extend(generated_map, parent_generated_map, override = False, copy_base_map = False)
+            colony.map_extend(generated_map, parent_generated_map, override = False, copy_base_map = False)
 
         # retrieves all of the generated (names) for the
         # class and then sets them in the generated map
@@ -804,7 +800,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various indexed
         # for the map, this maintains order useful for creating
         # queries with organized order
-        indexed_map = colony.libs.structures_util.OrderedMap()
+        indexed_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the indexed (names), extending the
@@ -818,7 +814,7 @@ class EntityClass(object):
             # to extend the current indexed map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_indexed_map = parent.get_indexed_map()
-            colony.libs.map_util.map_extend(indexed_map, parent_indexed_map, override = False, copy_base_map = False)
+            colony.map_extend(indexed_map, parent_indexed_map, override = False, copy_base_map = False)
 
         # retrieves all of the indexed (names) for the
         # class and then sets them in the indexed map
@@ -852,7 +848,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various mandatory
         # for the map, this maintains order useful for creating
         # queries with organized order
-        mandatory_map = colony.libs.structures_util.OrderedMap()
+        mandatory_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the mandatory (names), extending the
@@ -866,7 +862,7 @@ class EntityClass(object):
             # to extend the current mandatory map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_mandatory_map = parent.get_mandatory_map()
-            colony.libs.map_util.map_extend(mandatory_map, parent_mandatory_map, override = False, copy_base_map = False)
+            colony.map_extend(mandatory_map, parent_mandatory_map, override = False, copy_base_map = False)
 
         # retrieves all of the mandatory (names) for the
         # class and then sets them in the mandatory map
@@ -900,7 +896,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various immutable
         # for the map, this maintains order useful for creating
         # queries with organized order
-        immutable_map = colony.libs.structures_util.OrderedMap()
+        immutable_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the immutable (names), extending the
@@ -914,7 +910,7 @@ class EntityClass(object):
             # to extend the current immutable map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_immutable_map = parent.get_immutable_map()
-            colony.libs.map_util.map_extend(immutable_map, parent_immutable_map, override = False, copy_base_map = False)
+            colony.map_extend(immutable_map, parent_immutable_map, override = False, copy_base_map = False)
 
         # retrieves all of the immutable (names) for the
         # class and then sets them in the immutable map
@@ -962,7 +958,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various relations
         # for the map, this maintains order useful for creating
         # queries with organized order
-        relations_map = colony.libs.structures_util.OrderedMap()
+        relations_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the relations, extending the relations map with them
@@ -974,7 +970,7 @@ class EntityClass(object):
             # retrieves the parent's relations map and uses it
             # to extend the current relations map (iteration cycle)
             parent_relations_map = parent.get_relations_map()
-            colony.libs.map_util.map_extend(relations_map, parent_relations_map, copy_base_map = False)
+            colony.map_extend(relations_map, parent_relations_map, copy_base_map = False)
 
         # retrieves the relations (meta information)
         # for the class and then sets them in the relations
@@ -1008,7 +1004,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various direct
         # relations for the map, this maintains order useful for
         # creating queries with organized order
-        direct_relations_map = colony.libs.structures_util.OrderedMap()
+        direct_relations_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the direct relations, extending the
@@ -1021,7 +1017,7 @@ class EntityClass(object):
             # retrieves the parent's direct relations map and uses it
             # to extend the current direct relations map (iteration cycle)
             parent_direct_relations_map = parent.get_direct_relations_map()
-            colony.libs.map_util.map_extend(direct_relations_map, parent_direct_relations_map, copy_base_map = False)
+            colony.map_extend(direct_relations_map, parent_direct_relations_map, copy_base_map = False)
 
         # retrieves the direct relations (meta information)
         # for the class and then sets them in the direct
@@ -1055,7 +1051,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various indirect
         # relations for the map, this maintains order useful for
         # creating queries with organized order
-        indirect_relations_map = colony.libs.structures_util.OrderedMap()
+        indirect_relations_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively
         # retrieve the indirect relations, extending the
@@ -1068,7 +1064,7 @@ class EntityClass(object):
             # retrieves the parent's indirect relations map and uses it
             # to extend the current indirect relations map (iteration cycle)
             parent_indirect_relations_map = parent.get_indirect_relations_map()
-            colony.libs.map_util.map_extend(indirect_relations_map, parent_indirect_relations_map, copy_base_map = False)
+            colony.map_extend(indirect_relations_map, parent_indirect_relations_map, copy_base_map = False)
 
         # retrieves the indirect relations (meta information)
         # for the class and then sets them in the indirect
@@ -1101,7 +1097,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various to one
         # relations for the map, this maintains order useful
         # for creating queries with organized order
-        to_one_map = colony.libs.structures_util.OrderedMap()
+        to_one_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively retrieve the
         # to one relations, extending the to one relations map with them
@@ -1113,7 +1109,7 @@ class EntityClass(object):
             # retrieves the parent's to one relations map and uses it
             # to extend the current to one relations map (iteration cycle)
             parent_to_one_map = parent.get_to_one_map()
-            colony.libs.map_util.map_extend(to_one_map, parent_to_one_map, copy_base_map = False)
+            colony.map_extend(to_one_map, parent_to_one_map, copy_base_map = False)
 
         # retrieves the to one relations (meta information)
         # for the class and then sets them in the to one
@@ -1146,7 +1142,7 @@ class EntityClass(object):
         # creates a new ordered map to hold the various to many
         # relations for the map, this maintains order useful
         # for creating queries with organized order
-        to_many_map = colony.libs.structures_util.OrderedMap()
+        to_many_map = colony.OrderedMap()
 
         # iterates over all the parents to iteratively retrieve the
         # to many relations, extending the to many relations map with them
@@ -1158,7 +1154,7 @@ class EntityClass(object):
             # retrieves the parent's to many relations map and uses it
             # to extend the current to many relations map (iteration cycle)
             parent_to_many_map = parent.get_to_many_map()
-            colony.libs.map_util.map_extend(to_many_map, parent_to_many_map, copy_base_map = False)
+            colony.map_extend(to_many_map, parent_to_many_map, copy_base_map = False)
 
         # retrieves the to many relations (meta information)
         # for the class and then sets them in the to many
@@ -1473,11 +1469,11 @@ class EntityClass(object):
             # retrieves the (all) relations from the parents
             # and extends the all relations map with them
             _relations = parent.get_all_relations()
-            colony.libs.map_util.map_extend(all_relations, _relations, copy_base_map = False)
+            colony.map_extend(all_relations, _relations, copy_base_map = False)
 
         # extends the all relations map with the relations
         # from the current entity class
-        colony.libs.map_util.map_extend(all_relations, relations, copy_base_map = False)
+        colony.map_extend(all_relations, relations, copy_base_map = False)
 
         # caches the all relations element in the class
         # to provide fast access in latter access
@@ -2141,11 +2137,11 @@ class EntityClass(object):
             # and extends the all parents list with them,
             # this extension method avoids duplicates
             _parents = parent.get_all_parents()
-            colony.libs.list_util.list_extend(all_parents, _parents, False)
+            colony.list_extend(all_parents, _parents, False)
 
         # extends the all parents list with the parents
         # from the current entity class (avoids duplicates)
-        colony.libs.list_util.list_extend(all_parents, parents, False)
+        colony.list_extend(all_parents, parents, False)
 
         # caches the all parents element in the class
         # to provide fast access in latter access
@@ -2180,11 +2176,11 @@ class EntityClass(object):
             # and extends the all abstract parents list with them,
             # this extension method avoids duplicates
             _abstract_parents = abstract_parent.get_all_abstract_parents()
-            colony.libs.list_util.list_extend(all_abstract_parents, _abstract_parents, False)
+            colony.list_extend(all_abstract_parents, _abstract_parents, False)
 
         # extends the all abstract parents list with the parents
         # from the current entity class (avoids duplicates)
-        colony.libs.list_util.list_extend(all_abstract_parents, abstract_parents, False)
+        colony.list_extend(all_abstract_parents, abstract_parents, False)
 
         # caches the all abstract parents element in the class
         # to provide fast access in latter access
@@ -2794,7 +2790,7 @@ class EntityClass(object):
         # iterates over all the relations and sets the entity
         # attributes for them as lazy loaded values
         for relation in all_relations:
-            setattr(self, relation, colony.libs.lazy_util.Lazy)
+            setattr(self, relation, colony.Lazy)
 
     def use_scope(self, scope_entity):
         """"
@@ -3400,7 +3396,7 @@ class EntityClass(object):
             # (not none) or in case the value is lazy loaded
             value = self.get_value(key, default = True)
             if not value == None: continue
-            if value == colony.libs.lazy_util.Lazy: continue
+            if value == colony.Lazy: continue
 
             # raises a validation error for the missing of the
             # mandatory field
@@ -4302,7 +4298,7 @@ class EntityClass(object):
 
         # extends the items map with the items present in
         # the current class (no map copy is made)
-        items = colony.libs.map_util.map_extend(items, cls.__dict__, copy_base_map = False)
+        items = colony.map_extend(items, cls.__dict__, copy_base_map = False)
 
         # retrieves the complete set of abstract parent for
         # the current class, so that is possible to add their
@@ -4312,7 +4308,7 @@ class EntityClass(object):
             # retrieves the abstract parent items and adds them
             # into the current set of items
             abstract_parent_items = abstract_parent.__dict__
-            colony.libs.map_util.map_extend(items, abstract_parent_items, copy_base_map = False)
+            colony.map_extend(items, abstract_parent_items, copy_base_map = False)
 
         # returns the map containing the complete set of items
         # for the current class (includes abstract class items)
@@ -4358,7 +4354,7 @@ class EntityClass(object):
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
         is_attached = self.is_attached()
-        if not is_attached: return colony.libs.lazy_util.Lazy
+        if not is_attached: return colony.Lazy
 
         # retrieves the target class for the (relation name)
         # checks if the target class is a "data reference" and
@@ -4369,14 +4365,14 @@ class EntityClass(object):
         target_class = self.get_target(name)
         target_is_reference = target_class.is_reference()
         if target_is_reference: target_class = self._entity_manager.get_entity(target_class.__name__)
-        if not target_class: return colony.libs.lazy_util.Lazy
+        if not target_class: return colony.Lazy
 
         # retrieves id value from the entity instance and checks
         # if the value is correctly set in case it's not it's not
         # possible to retrieve (load) the relation must set the
         # relation as lazy loaded
         table_id_value = self.get_id_value()
-        if table_id_value == None: return colony.libs.lazy_util.Lazy
+        if table_id_value == None: return colony.Lazy
 
         # creates the map of options to load the various
         # entities that are associated with the current
@@ -4425,14 +4421,14 @@ class EntityClass(object):
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
         is_attached = self.is_attached()
-        if not is_attached: return colony.libs.lazy_util.Lazy
+        if not is_attached: return colony.Lazy
 
         # retrieves id value from the entity instance and checks
         # if the value is correctly set in case it's not it's not
         # possible to retrieve (load) the relation must set the
         # relation as lazy loaded
         table_id_value = self.get_id_value()
-        if table_id_value == None: return colony.libs.lazy_util.Lazy
+        if table_id_value == None: return colony.Lazy
 
         # retrieves the entity class associated with the current entity
         # to be able to access class level attributes
