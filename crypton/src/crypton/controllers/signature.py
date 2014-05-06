@@ -195,22 +195,19 @@ class SignatureController(controllers.Controller):
         return key_path
 
     def _generate_key_files(self, key):
-        # retrieves the plugin manager
+        # retrieves the plugin manager and the required plugins for
+        # the operation that is going to be performed
         plugin_manager = self.plugin.manager
-
-        # retrieves the ssl plugin
         ssl_plugin = self.plugin.ssl_plugin
 
-        # retrieves the key paths
+        # retrieves the key path values and uses then in the resolution
+        # of the complete path to both of the key values
         private_key_path = key.get("private_key", None)
         public_key_path = key.get("public_key", None)
-
-        # resolves the key file paths
         private_key_path = plugin_manager.resolve_file_path(private_key_path, True, True)
         public_key_path = plugin_manager.resolve_file_path(public_key_path, True, True)
 
-        # creates the ssl structure
+        # creates the ssl structure and then generates the public and
+        # private keys (should update the generated structure)
         ssl_structure = ssl_plugin.create_structure({})
-
-        # generates the public and private keys
         ssl_structure.generate_keys(private_key_path, public_key_path, DEFAULT_NUMBER_BITS)
