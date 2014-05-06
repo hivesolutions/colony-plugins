@@ -40,9 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import base64
 import threading
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -79,7 +77,7 @@ END_TOKEN_VALUE = "\r\n"
 AUTHENTICATION_METHOD_VALUE = "authentication_method"
 """ The authentication method value """
 
-class ClientSmtp(colony.base.system.System):
+class ClientSmtp(colony.System):
     """
     The client smtp class.
     """
@@ -319,7 +317,7 @@ class SmtpClient:
         """
 
         # creates the string buffer for the message
-        message = colony.libs.string_buffer_util.StringBuffer()
+        message = colony.StringBuffer()
 
         # creates a response object
         response = SmtpResponse(request)
@@ -678,7 +676,7 @@ class SmtpClient:
         }
 
         # creates the parameters map, from the default parameters
-        parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
+        parameters = colony.map_extend(parameters, default_parameters, False)
 
         # returns the parameters
         return parameters
@@ -709,7 +707,7 @@ class SmtpRequest:
         """
 
         self.messages = []
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -735,7 +733,7 @@ class SmtpRequest:
         self.validate()
 
         # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        result = colony.StringBuffer()
 
         # in case the command is defined
         if self.command:
