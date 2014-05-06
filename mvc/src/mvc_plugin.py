@@ -129,12 +129,10 @@ class MvcPlugin(colony.Plugin):
 
     @colony.load_allowed_capability("mvc_service")
     def mvc_service_extension_load_allowed(self, plugin, capability):
-        self.system_service_plugins.append(plugin)
         self.system.load_mvc_service_plugin(plugin)
 
     @colony.unload_allowed_capability("mvc_service")
     def mvc_service_extension_unload_allowed(self, plugin, capability):
-        self.system_service_plugins.remove(plugin)
         self.system.unload_mvc_service_plugin(plugin)
 
     @colony.event_handler_method("mvc.patterns_reload")
