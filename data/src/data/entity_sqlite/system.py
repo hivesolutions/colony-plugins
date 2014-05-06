@@ -43,9 +43,7 @@ import thread
 import sqlite3
 import tempfile
 
-import colony.libs.string_buffer_util
-
-import colony.base.system
+import colony
 
 ENGINE_NAME = "sqlite"
 """ The name of the engine currently in execution
@@ -60,7 +58,7 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
-class EntitySqlite(colony.base.system.System):
+class EntitySqlite(colony.System):
     """
     The entity sqlite class.
     """
@@ -359,7 +357,7 @@ class SqliteEngine:
     def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("create index %s_%s_%s_idx on %s(%s)" % (table_name, attribute_name, index_type, table_name, attribute_name))
 
         # retrieves the "final" query value from
@@ -378,7 +376,7 @@ class SqliteEngine:
         # creates the buffer to hold the query and populates it with the
         # base values of the query (updating of the table in invalid
         # value should be able to lock the sqlite database)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("update %s set %s = %s where 0 = 1" % (table_name, field_name, field_name))
 
         # retrieves the "final" query value from
@@ -391,7 +389,7 @@ class SqliteEngine:
     def _has_definition_query(self, entity_class):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select name from SQLite_Master")
 
         # retrieves the "final" query value from
@@ -423,7 +421,7 @@ class SqliteEngine:
     def _has_table_definition_query(self, table_name):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select name from SQLite_Master")
 
         # retrieves the "final" query value from
