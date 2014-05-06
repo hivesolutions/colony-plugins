@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ClientUtilsPlugin(colony.base.system.Plugin):
+class ClientUtilsPlugin(colony.Plugin):
     """
     The main class for the Client Utils plugin.
     """
@@ -51,9 +50,9 @@ class ClientUtilsPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities_allowed = [
         "socket_provider",
@@ -64,27 +63,18 @@ class ClientUtilsPlugin(colony.base.system.Plugin):
         "client.utils.system"
     ]
 
-    client_utils = None
-    """ The client utils """
-
-    socket_provider_plugins = []
-    """ The socket provider plugins """
-
-    socket_upgrader_plugins = []
-    """ The socket upgrader plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import client.utils.system
-        self.client_utils = client.utils.system.ClientUtils(self)
+        colony.Plugin.load_plugin(self)
+        import client.utils
+        self.system = client.utils.ClientUtils(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def generate_client(self, parameters):
         """
@@ -96,24 +86,20 @@ class ClientUtilsPlugin(colony.base.system.Plugin):
         @return: The generated client.
         """
 
-        return self.client_utils.generate_client(parameters)
+        return self.system.generate_client(parameters)
 
-    @colony.base.decorators.load_allowed_capability("socket_provider")
+    @colony.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-        self.client_utils.socket_provider_load(plugin)
+        self.system.socket_provider_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("socket_upgrader")
+    @colony.load_allowed_capability("socket_upgrader")
     def socket_upgrader_load_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.append(plugin)
-        self.client_utils.socket_upgrader_load(plugin)
+        self.system.socket_upgrader_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("socket_provider")
+    @colony.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
-        self.client_utils.socket_provider_unload(plugin)
+        self.system.socket_provider_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("socket_upgrader")
+    @colony.unload_allowed_capability("socket_upgrader")
     def socket_upgrader_unload_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.remove(plugin)
-        self.client_utils.socket_upgrader_unload(plugin)
+        self.system.socket_upgrader_unload(plugin)
