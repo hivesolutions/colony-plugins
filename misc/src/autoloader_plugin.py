@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class AutoloaderPlugin(colony.base.system.Plugin):
+class AutoloaderPlugin(colony.Plugin):
     """
     The main class for the Autoloader plugin.
     """
@@ -50,54 +50,33 @@ class AutoloaderPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "main",
-        "autoload",
-        "console_command_extension"
+        "autoload"
     ]
     main_modules = [
         "misc.autoloader.system",
         "misc.autoloader.console"
     ]
 
-    autoloader = None
-    """ The autoloader """
-
-    console_autoloader = None
-    """ The console autoloader """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.autoloader.system
-        import misc.autoloader.console
-        self.autoloader = misc.autoloader.system.Autoloader(self)
-        self.console_autoloader = misc.autoloader.console.ConsoleAutoloader(self)
-        self.autoloader.load_autoloader()
+        colony.Plugin.load_plugin(self)
+        import misc.autoloader
+        self.system = misc.autoloader.system.Autoloader(self)
+        self.system.load_autoloader()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
+        colony.Plugin.end_load_plugin(self)
         self.release_ready_semaphore()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.autoloader.unload_autoloader()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_autoloader()
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
-
-    def get_console_extension_name(self):
-        return self.console_autoloader.get_console_extension_name()
-
-    def get_all_commands(self):
-        return self.console_autoloader.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_autoloader.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_autoloader.get_help()
