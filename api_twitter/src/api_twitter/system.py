@@ -42,8 +42,7 @@ import time
 import random
 import hashlib
 
-import colony.base.system
-import colony.libs.quote_util
+import colony
 
 import exceptions
 
@@ -103,7 +102,7 @@ BASE_REST_URL = "http://twitter.com/"
 BASE_REST_SECURE_URL = "https://twitter.com/"
 """ The base rest secure url to be used """
 
-class ApiTwitter(colony.base.system.System):
+class ApiTwitter(colony.System):
     """
     The api twitter class.
     """
@@ -979,7 +978,7 @@ class TwitterClient:
         """
 
         # returns the quoted version of the url text
-        return colony.libs.quote_util.quote_plus(str(url_text), "")
+        return colony.quote_plus(str(url_text), "")
 
     def _check_twitter_errors(self, data):
         """
