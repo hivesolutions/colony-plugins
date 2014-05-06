@@ -55,7 +55,7 @@ class ConsoleBasePlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "_console_command_extension"
+        "console_command_extension"
     ]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.console")

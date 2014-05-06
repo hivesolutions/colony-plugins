@@ -56,7 +56,7 @@ class SchedulerPlugin(colony.base.system.Plugin):
     capabilities = [
         "main",
         "scheduler",
-        "_console_command_extension"
+        "console_command_extension"
     ]
     dependencies = [
         colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.guid"),

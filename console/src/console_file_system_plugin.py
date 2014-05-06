@@ -55,7 +55,7 @@ class ConsoleFileSystemPlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "_console_command_extension"
+        "console_command_extension"
     ]
     main_modules = [
         "console.file_system.system"

@@ -54,7 +54,7 @@ class PrintingManagerPlugin(colony.Plugin):
     ]
     capabilities = [
         "printing_manager",
-        "_console_command_extension"
+        "console_command_extension"
     ]
     capabilities_allowed = [
         "printing"

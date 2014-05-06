@@ -59,7 +59,7 @@ class ConsolePlugin(colony.Plugin):
         "test_case"
     ]
     capabilities_allowed = [
-        "_console_command_extension",
+        "console_command_extension",
         "console_authentication_handler"
     ]
     dependencies = [
@@ -168,11 +168,11 @@ class ConsolePlugin(colony.Plugin):
 
         return self.test
 
-    @colony.load_allowed_capability("_console_command_extension")
+    @colony.load_allowed_capability("console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
         self.system.console_command_extension_load(plugin)
 
-    @colony.unload_allowed_capability("_console_command_extension")
+    @colony.unload_allowed_capability("console_command_extension")
     def console_command_extension_unload_allowed(self, plugin, capability):
         self.system.console_command_extension_unload(plugin)
 
