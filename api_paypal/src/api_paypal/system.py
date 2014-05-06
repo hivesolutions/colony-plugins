@@ -37,8 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.libs.quote_util
+import colony
 
 import exceptions
 
@@ -87,7 +86,7 @@ BASE_SANDBOX_WEB_SECURE_URL = "https://www.sandbox.paypal.com/webscr"
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
 
-class ApiPaypal(colony.base.system.System):
+class ApiPaypal(colony.System):
     """
     The api paypal class.
     """
@@ -735,7 +734,7 @@ class PaypalClient:
             field, value = field_value_pair.split("=")
 
             # sets the field and value in the map
-            fields_map[field] = colony.libs.quote_util.unquote(value)
+            fields_map[field] = colony.unquote(value)
 
         # returns the fields map
         return fields_map

@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ApiPaypalPlugin(colony.base.system.Plugin):
+class ApiPaypalPlugin(colony.Plugin):
     """
     The main class for the Paypal Api plugin.
     """
@@ -51,37 +50,24 @@ class ApiPaypalPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "api.paypal"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
         "api_paypal.exceptions",
         "api_paypal.system"
     ]
 
-    api_paypal = None
-    """ The api paypal """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
-    json_plugin = None
-    """ The json plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import api_paypal.system
-        self.api_paypal = api_paypal.system.ApiPaypal(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import api_paypal
+        self.system = api_paypal.ApiPaypal(self)
 
     def create_client(self, api_attributes):
         """
@@ -93,12 +79,4 @@ class ApiPaypalPlugin(colony.base.system.Plugin):
         @return: The created client.
         """
 
-        return self.api_paypal.create_client(api_attributes)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin
+        return self.system.create_client(api_attributes)
