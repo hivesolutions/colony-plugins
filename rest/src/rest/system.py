@@ -2051,10 +2051,11 @@ class RestRequest:
             token = token
         )
 
-    def form(self, name, default = None, cast = None):
+    def form(self, name, default = None, cast = None, required = False):
         controller = self._get_controller()
         if not controller: return default
         form_data = controller.process_form_data(self)
+        if required and not name in form_data: raise ValueError("%s not found" % name)
         value = form_data.get(name, default)
         if cast and not value in (None, ""): value = cast(value)
         return value
