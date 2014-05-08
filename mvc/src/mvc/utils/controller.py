@@ -2629,7 +2629,9 @@ def serialize(self, request, contents, serializer = None):
     request.
 
     An optional serializer attribute may be used to "force" the serializer
-    that is going to be used in the contents serialization.
+    that is going to be used in the contents serialization. This value
+    may be either the concrete serializer instance or a string representing
+    the type of serializer to be used (runtime resolution).
 
     The definition of the serializer is not part of the method and
     such behavior should be defined by the upper layers.
@@ -2648,6 +2650,11 @@ def serialize(self, request, contents, serializer = None):
     @param serializer: The serializer (protocol) compliant object that
     is going to be used for the "forced" serialization process.
     """
+
+    # in case the provided serializer value is string based it must
+    # be "resolved" using the default string based plugin resolution
+    # as the serializer value must always be object compliant
+    if type(serializer) == str: serializer = getattr(self.plugin, serializer + "_plugin")
 
     # verifies if the serializer attribute is defined in the provided
     # request if that's the case and there's no provided serializer
