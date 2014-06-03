@@ -49,9 +49,6 @@ import model
 import controller
 import entity_model
 
-ID_VALUE = "id"
-""" The id value """
-
 ENGINE_VALUE = "engine"
 """ The engine value """
 
@@ -72,12 +69,6 @@ DATA_REFERENCE_VALUE = "data_reference"
 
 DEFAULT_VALUE = "default"
 """ The default value """
-
-CONTROLLER_VALUE = "controller"
-""" The controller value """
-
-MODELS_VALUE = "models"
-""" The models value """
 
 RESOURCES_VALUE = "resources"
 """ The resources value """
@@ -203,7 +194,7 @@ class MvcUtils(colony.System):
         for symbol_name, symbol in system_instance_symbols.items():
             # in case the symbol name ends with the models
             # suffix it must be a models reference, continues
-            if not symbol_name.endswith(MODELS_VALUE): continue
+            if not symbol_name.endswith("models"): continue
 
             # sets the symbol in the globals map
             # for latter reference
@@ -373,7 +364,7 @@ class MvcUtils(colony.System):
         # the id as undefined, this id is used to identify the correct
         # models module to be used, in case no id is found the default
         # (global) module will be used
-        id = entity_manager_arguments.get(ID_VALUE, None)
+        id = entity_manager_arguments.get("id", None)
         models_id = id or DEFAULT_VALUE
         models_module = self.models_modules_map.get(models_id, None)
 
@@ -401,7 +392,7 @@ class MvcUtils(colony.System):
         # with the models module (to be used by the models to refer
         # to other models)
         extra_globals_map["mvc_utils"] = utils
-        extra_globals_map[MODELS_VALUE] = models_module
+        extra_globals_map["models"] = models_module
 
         # imports the base entity models module
         base_entity_models_module = business_helper_plugin.import_class_module_extra(
@@ -437,10 +428,10 @@ class MvcUtils(colony.System):
             # creates the entity manager properties, the id to be
             # used in the entity manager is the one constructed for
             # the models module
-            entity_manager_properties = {
-                ID_VALUE : models_id,
-                "entities_list" : base_entity_models
-            }
+            entity_manager_properties = dict(
+                id = models_id,
+                entities_list = base_entity_models
+            )
 
             # creates a new entity manager for the remote models with the given properties
             # then sets the connection parameters in it and triggers the loading (open) process
@@ -533,7 +524,7 @@ class MvcUtils(colony.System):
         # base module name parts then uses it to create the default
         # package path in case it's necessary
         package_name, _module_name = module_name.rsplit(".", 1)
-        package_path = package_path or package_name + "." + MODELS_VALUE
+        package_path = package_path or package_name + "." + "models"
 
         # unpacks the package path (complete module name) into extra module name (ignored)
         # and the base module name for name retrieval and path creation
@@ -925,7 +916,7 @@ class MvcUtils(colony.System):
         # the id as undefined, this id is used to identify the correct
         # models module to be used, in case no id is found the default
         # (global) module will be used
-        id = entity_manager_arguments.get(ID_VALUE, None)
+        id = entity_manager_arguments.get("id", None)
         models_id = id or DEFAULT_VALUE
         models_module = self.models_modules_map.get(models_id, None)
 
@@ -977,7 +968,7 @@ class MvcUtils(colony.System):
         # base module name parts then uses it to create the default
         # package path in case it's necessary
         package_name, _module_name = module_name.rsplit(".", 1)
-        package_path = package_path or package_name + "." + MODELS_VALUE
+        package_path = package_path or package_name + "." + "models"
 
         # reloads the module associated with the given package
         # path to provide flushing of the contents
@@ -1375,7 +1366,7 @@ class MvcUtils(colony.System):
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
         controller_base_name = colony.to_underscore(controller_base_name)
-        controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name + "_" + CONTROLLER_VALUE or controller_base_name + "_" + CONTROLLER_VALUE
+        controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name + "_" + "controller" or controller_base_name + "_" + "controller"
 
         # returns the reference (converted) controller name
         return controller_reference_name, controller_base_name
