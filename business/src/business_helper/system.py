@@ -111,10 +111,8 @@ class BusinessHelper(colony.System):
         target_module = self._get_target_module(target_module_name, globals)
 
         # in case the target module already existed
-        # no need to reload it
-        if exists_target_module:
-            # returns the target module immediately
-            return target_module
+        # no need to reload it, returns the reference immediately
+        if exists_target_module: return target_module
 
         # sets the target module dictionary as the target map
         target_map = target_module.__dict__
@@ -248,10 +246,9 @@ class BusinessHelper(colony.System):
         # tries to retrieve the data namespaces value
         data_namespaces = entity_plugin.get_attribute("data_namespaces")
 
-        # in case no data namespaces are found
-        if not data_namespaces:
-            # returns immediately
-            return
+        # in case no data namespaces are found, must return
+        # immediately as there's nothing to be done
+        if not data_namespaces: return
 
         # retrieves the entity class from the entity plugin
         entity_class = entity_plugin.get_entity_class()
