@@ -58,15 +58,15 @@ class AuthenticationPythonPlugin(colony.Plugin):
         "configuration_model_provider"
     ]
     main_modules = [
-        "authentication.python.configuration.authentication_configuration",
-        "authentication.python.exceptions",
-        "authentication.python.system"
+        "authentication_python.configuration.authentication_configuration",
+        "authentication_python.exceptions",
+        "authentication_python.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import authentication.python
-        self.system = authentication.python.AuthenticationPython(self)
+        import authentication_python
+        self.system = authentication_python.AuthenticationPython(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()

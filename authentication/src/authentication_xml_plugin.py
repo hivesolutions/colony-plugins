@@ -56,16 +56,13 @@ class AuthenticationXmlPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication.xml.system"
+        "authentication_xml.system"
     ]
-
-    authentication_xml = None
-    """ The authentication xml """
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import authentication.xml
-        self.system = authentication.xml.AuthenticationXml(self)
+        import authentication_xml
+        self.system = authentication_xml.AuthenticationXml(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()

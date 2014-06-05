@@ -56,13 +56,13 @@ class AuthenticationOpenidPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication.openid.system"
+        "authentication_openid.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import authentication.openid
-        self.system = authentication.openid.AuthenticationOpenid(self)
+        import authentication_openid
+        self.system = authentication_openid.AuthenticationOpenid(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()

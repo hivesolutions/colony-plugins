@@ -44,7 +44,7 @@ import exceptions
 HANDLER_NAME = "python"
 """ The handler name """
 
-CONFIGURATION_PATH = "authentication/python/configuration"
+CONFIGURATION_PATH = "authentication_python/configuration"
 """ The configuration path """
 
 FILE_PATH_VALUE = "file_path"

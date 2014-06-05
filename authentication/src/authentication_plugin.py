@@ -60,13 +60,13 @@ class AuthenticationPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication.authentication.system"
+        "authentication.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import authentication.authentication
-        self.system = authentication.authentication.Authentication(self)
+        import authentication
+        self.system = authentication.Authentication(self)
 
     def authenticate_user(self, username, password, authentication_handler, arguments):
         return self.system.authenticate_user(username, password, authentication_handler, arguments)

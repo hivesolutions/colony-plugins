@@ -56,14 +56,14 @@ class AuthenticationEntityManagerPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication.entity_manager.exceptions",
-        "authentication.entity_manager.system"
+        "authentication_entity_manager.exceptions",
+        "authentication_entity_manager.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import authentication.entity_manager
-        self.system = authentication.entity_manager.AuthenticationEntityManager(self)
+        import authentication_entity_manager
+        self.system = authentication_entity_manager.AuthenticationEntityManager(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()
