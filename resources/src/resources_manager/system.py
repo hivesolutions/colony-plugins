@@ -42,9 +42,7 @@ import re
 import sys
 import threading
 
-import colony.base.system
-import colony.libs.path_util
-import colony.libs.structures_util
+import colony
 
 import parser
 
@@ -102,7 +100,7 @@ TRUE_VALUE = "true"
 FALSE_VALUE = "false"
 """ The false value """
 
-class ResourcesManager(colony.base.system.System):
+class ResourcesManager(colony.System):
     """
     Stores and indexes miscellaneous resources.
     """
@@ -153,7 +151,7 @@ class ResourcesManager(colony.base.system.System):
     """ The local variable regular expression used for regular expression match """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.resource_namespace_resources_list_map = {}
         self.resource_id_resource_map = {}
         self.resource_name_resources_list_map = {}
@@ -385,7 +383,7 @@ class ResourcesManager(colony.base.system.System):
             # the resources list in the file path resources list map
             # and to set the resource file information tuple in the file
             # path file information map
-            file_path_normalized = colony.libs.path_util.normalize_path(file_path)
+            file_path_normalized = colony.normalize_path(file_path)
             self.file_path_resources_list_map[file_path_normalized] = resources_list
             self.file_path_file_information_map[file_path_normalized] = (file_path, full_resources_path)
 
@@ -492,7 +490,7 @@ class ResourcesManager(colony.base.system.System):
             # the resources list from the file path resources list map and
             # to unset the resource file information from the file path
             # file information map
-            file_path_normalized = colony.libs.path_util.normalize_path(file_path)
+            file_path_normalized = colony.normalize_path(file_path)
             del self.file_path_resources_list_map[file_path_normalized]
             del self.file_path_file_information_map[file_path_normalized]
 
@@ -1240,7 +1238,7 @@ class ResourcesManager(colony.base.system.System):
         """
 
         # creates the map to hold the system base information (ordered  map)
-        resources_manager_base_information = colony.libs.structures_util.OrderedMap()
+        resources_manager_base_information = colony.OrderedMap()
 
         # retrieves the resource namespace resources list map and sorts
         # the items (allows a better view)
@@ -1303,7 +1301,7 @@ class ResourcesManager(colony.base.system.System):
         resources_manager_base_item["values"] = resources_manager_base_information
 
         # creates the map to hold the system plugins information (ordered  map)
-        resources_manager_plugins_information = colony.libs.structures_util.OrderedMap()
+        resources_manager_plugins_information = colony.OrderedMap()
 
         # retrieves the plugin id configuration resources list map and sorts
         # the items (allows a better view)

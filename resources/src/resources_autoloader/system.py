@@ -40,13 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
-import colony.base.system
-import colony.libs.path_util
+import colony
 
 SLEEP_TIME_VALUE = 1.0
 """ The sleep time value """
 
-class ResourcesAutoloader(colony.base.system.System):
+class ResourcesAutoloader(colony.System):
     """
     The resources autoloader
     """
@@ -58,7 +57,7 @@ class ResourcesAutoloader(colony.base.system.System):
     """ The map associating the file path with the modified time """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.file_path_modified_time_map = {}
 
     def load_autoloader(self):
@@ -168,7 +167,7 @@ class ResourcesAutoloader(colony.base.system.System):
             # resource name (resource found in path)
             if resources_manager_plugin.is_resource_name(resources_path_item):
                 # normalizes the resources full path (for file verification)
-                resources_full_path_item_normalized = colony.libs.path_util.normalize_path(resources_full_path_item)
+                resources_full_path_item_normalized = colony.normalize_path(resources_full_path_item)
 
                 # adds the resource path to the verified resource paths list
                 # because the resource has been verified as existent

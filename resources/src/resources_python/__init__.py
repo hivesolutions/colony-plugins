@@ -19,9 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -37,12 +34,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import system
 
-class ResourcesManagerException(colony.base.exceptions.ColonyException):
-    """
-    The resources manager exception class.
-    """
-
-    message = None
-    """ The exception's message """
+from system import *

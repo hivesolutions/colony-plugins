@@ -37,38 +37,50 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import sys
 
-RESOURCES_PARSER_NAME = "json"
+import colony
+
+RESOURCES_PARSER_NAME = "python"
 """ The resources parser name """
 
-JSON_FILE_ENCODING = "utf-8"
-""" The json file encoding """
+CONFIGURATION_VALUE = "configuration"
+""" The configuration value """
 
-class ResourcesJson(colony.base.system.System):
+class ResourcesPython(colony.System):
     """
-    The resources json (parser) class.
+    The resources python (parser) class.
     """
 
     def get_resources_parser_name(self):
         return RESOURCES_PARSER_NAME
 
     def parse_resource(self, resource):
-        # retrieves the json plugin
-        json_plugin = self.plugin.json_plugin
-
-        # retrieves the json file path
-        json_file_path = resource.data
+        # retrieves the python file path
+        python_file_path = resource.data
 
         # retrieves the full resources path
         full_resources_path = resource.full_resources_path
 
-        # constructs the full json file path
-        full_json_file_path = full_resources_path + "/" + json_file_path
+        # creates the full python file path
+        # from the full resources path and the python file path
+        full_python_file_path = full_resources_path + "/" + python_file_path
 
-        # opens the json file in read mode then reads
-        # the complete set of contents from it and
-        # closes the file to avoid any possible leaks
-        json_file = open(full_json_file_path, "rb")
-        try: resource.data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
-        finally: json_file.close()
+        # retrieves the file system encoding
+        file_system_encoding = sys.getfilesystemencoding()
+
+        # encodes the full python file path using the file system encoding
+        full_python_file_path = full_python_file_path.encode(file_system_encoding)
+
+        # creates the symbols map to be used in the interpretation
+        # of the file as the locals and globals map
+        symbols_map = {}
+
+        # interprets the python file path with the symbols map
+        execfile(full_python_file_path, symbols_map, symbols_map)
+
+        # tries to retrieve the configuration
+        configuration = symbols_map.get(CONFIGURATION_VALUE, {})
+
+        # parses the configuration contents from the python module
+        resource.data = configuration
