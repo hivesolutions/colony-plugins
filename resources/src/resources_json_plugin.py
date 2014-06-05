@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.system
 import colony.base.decorators
 
-class ResourcesJsonlugin(colony.base.system.Plugin):
+class ResourcesJsonPlugin(colony.base.system.Plugin):
     """
     The main class for the Resources Json plugin.
     """
