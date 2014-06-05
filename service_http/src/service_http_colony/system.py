@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
 import exceptions
 
@@ -50,7 +50,7 @@ PLUGIN_HANDLER_VALUE = "plugin_handler"
 DEFAULT_ERROR_STATUS_CODE = 500
 """ The default error status code """
 
-class ServiceHttpColony(colony.base.system.System):
+class ServiceHttpColony(colony.System):
     """
     The service http colony (handler) class.
     """
@@ -59,7 +59,7 @@ class ServiceHttpColony(colony.base.system.System):
     """ The http handler plugin map """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.http_handler_plugin_map = {}
 
     def get_handler_name(self):

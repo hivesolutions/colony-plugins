@@ -46,12 +46,7 @@ import base64
 import datetime
 import traceback
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.file_util
-import colony.libs.quote_util
-import colony.libs.structures_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -304,7 +299,7 @@ UPGRADE_MESSAGE_SIZE_MAP = {
 }
 """ The upgrade message size map """
 
-class ServiceHttp(colony.base.system.System):
+class ServiceHttp(colony.System):
     """
     The service http class.
     """
@@ -331,7 +326,7 @@ class ServiceHttp(colony.base.system.System):
     """ The http service configuration """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.http_service_handler_plugin_map = {}
         self.http_service_encoding_plugins_map = {}
         self.http_service_authentication_handler_plugins_map = {}
@@ -439,7 +434,7 @@ class ServiceHttp(colony.base.system.System):
             resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, resolution_order_item_value.keys())
 
             # creates the regex buffer
-            regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+            regex_buffer = colony.StringBuffer()
 
             # sets the is first flag
             is_first = True
@@ -470,14 +465,14 @@ class ServiceHttp(colony.base.system.System):
             resolution_order_item_value[RESOLUTION_ORDER_REGEX_VALUE] = regex
 
         # cleans the http service configuration
-        colony.libs.map_util.map_clean(self.http_service_configuration)
+        colony.map_clean(self.http_service_configuration)
 
         # copies the service configuration to the http service configuration
-        colony.libs.map_util.map_copy(service_configuration, self.http_service_configuration)
+        colony.map_copy(service_configuration, self.http_service_configuration)
 
     def unset_service_configuration_property(self):
         # cleans the http service configuration
-        colony.libs.map_util.map_clean(self.http_service_configuration)
+        colony.map_clean(self.http_service_configuration)
 
     def _get_service_configuration(self):
         """
@@ -566,7 +561,7 @@ class ServiceHttp(colony.base.system.System):
         http_log_file_path = plugin_manager.resolve_file_path(http_log_file_path, True, True)
 
         # creates the http log file (using a file rotator)
-        self.http_log_file = http_log_file_path and colony.libs.file_util.FileRotator(http_log_file_path) or None
+        self.http_log_file = http_log_file_path and colony.FileRotator(http_log_file_path) or None
 
         # opens the http log file
         self.http_log_file and self.http_log_file.open()
@@ -1029,7 +1024,7 @@ class HttpClientServiceHandler:
         # creates the string buffer for the message
         message = service_connection.request_data.get(
             "message",
-            colony.libs.string_buffer_util.StringBuffer()
+            colony.StringBuffer()
         )
 
         # creates a request object
@@ -2579,12 +2574,12 @@ class HttpRequest:
 
         self.request_time = time.time()
 
-        self.attributes_map = colony.libs.structures_util.OrderedMap(True)
+        self.attributes_map = colony.OrderedMap(True)
         self.headers_map = {}
         self.response_headers_map = {}
         self.headers_in = {}
         self.headers_out = {}
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -2719,7 +2714,7 @@ class HttpRequest:
                 attribute_name, attribute_value = attribute_field_splitted
 
                 # "unquotes" the attribute value from the url encoding
-                attribute_value = colony.libs.quote_util.unquote_plus(attribute_value)
+                attribute_value = colony.unquote_plus(attribute_value)
             # in case the attribute field splitted length is one
             elif attribute_field_splitted_length == 1:
                 # retrieves the attribute name, from the attribute field splitted
@@ -2729,7 +2724,7 @@ class HttpRequest:
                 attribute_value = None
 
             # "unquotes" the attribute name from the url encoding
-            attribute_name = colony.libs.quote_util.unquote_plus(attribute_name)
+            attribute_name = colony.unquote_plus(attribute_name)
 
             # sets the attribute value
             self.__setattribute__(attribute_name, attribute_value)
@@ -2965,7 +2960,7 @@ class HttpRequest:
         self.validate()
 
         # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        result = colony.StringBuffer()
 
         # retrieves the result string value
         message = self.message_stream.get_value()
@@ -3002,7 +2997,7 @@ class HttpRequest:
         current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
 
         # creates the ordered map to hold the header values
-        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+        headers_ordered_map = colony.OrderedMap()
 
         if self.content_type:
             headers_ordered_map[CONTENT_TYPE_VALUE] = self.content_type
@@ -3132,7 +3127,7 @@ class HttpRequest:
         return self.message_stream.get_value()
 
     def set_message(self, message):
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
         self.message_stream.write(message)
 
     def set_encoding_handler(self, encoding_handler):
@@ -3189,7 +3184,7 @@ class HttpRequest:
         if set_original_path: self.original_path = path
 
         # "unquotes" the path value
-        path = colony.libs.quote_util.unquote(path)
+        path = colony.unquote(path)
 
         # retrieves the resource path of the path
         resource_path = path.split("?")[0]
@@ -3210,7 +3205,7 @@ class HttpRequest:
         """
 
         # "unquotes" the base path value
-        base_path = colony.libs.quote_util.unquote(base_path)
+        base_path = colony.unquote(base_path)
 
         # retrieves the resource path of the base path
         resource_base_path = base_path.split("?")[0]

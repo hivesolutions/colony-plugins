@@ -41,7 +41,7 @@ import os
 import types
 import subprocess
 
-import colony.base.system
+import colony
 
 import exceptions
 
@@ -132,7 +132,7 @@ WINDOWS_CONTENT_HANDLERS_MAP = {
 }
 """ The windows content handlers map """
 
-class ServiceHttpCgi(colony.base.system.System):
+class ServiceHttpCgi(colony.System):
     """
     The service http cgi (handler) class.
     """

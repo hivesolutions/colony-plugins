@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -33,3 +36,43 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+import colony
+
+class ServiceHttpColonyException(colony.ColonyException):
+    """
+    The service http colony exception class.
+    """
+
+    message = None
+    """ The exception's message """
+
+class RequestNotHandled(ServiceHttpColonyException):
+    """
+    The request not handled class.
+    """
+
+    def __init__(self, message, status_code = 404):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type status_code: int
+        @param status_code: The integer describing the status
+        code that is going to be returned in the request.
+        """
+
+        ServiceHttpColonyException.__init__(self)
+        self.message = message
+        self.status_code = status_code
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Request Not handled - %s" % self.message
