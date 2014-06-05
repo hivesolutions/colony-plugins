@@ -57,14 +57,14 @@ class RsaPlugin(colony.Plugin):
         "encryption.rsa"
     ]
     main_modules = [
-        "encryption.rsa.exceptions",
-        "encryption.rsa.system"
+        "rsa_c.exceptions",
+        "rsa_c.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import encryption.rsa
-        self.system = encryption.rsa.Rsa(self)
+        import rsa_c
+        self.system = rsa_c.Rsa(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

@@ -61,13 +61,13 @@ class SslPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1")
     ]
     main_modules = [
-        "encryption.ssl.system"
+        "ssl_c.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import encryption.ssl
-        self.system = encryption.ssl.Ssl(self)
+        import ssl_c
+        self.system = ssl_c.Ssl(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

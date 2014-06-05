@@ -57,13 +57,13 @@ class DiffieHellmanPlugin(colony.Plugin):
         "encryption.diffie_hellman"
     ]
     main_modules = [
-        "encryption.diffie_hellman.system"
+        "diffie_hellman.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import encryption.diffie_hellman
-        self.system = encryption.diffie_hellman.DiffieHellman(self)
+        import diffie_hellman
+        self.system = diffie_hellman.DiffieHellman(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)
