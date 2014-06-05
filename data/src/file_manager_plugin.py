@@ -59,13 +59,13 @@ class FileManagerPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "data.file_manager.system"
+        "file_manager.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.file_manager
-        self.system = data.file_manager.DataFileManager(self)
+        import file_manager
+        self.system = file_manager.DataFileManager(self)
 
     @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):

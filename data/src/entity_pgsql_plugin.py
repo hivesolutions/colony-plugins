@@ -59,13 +59,13 @@ class EntityPgsqlPlugin(colony.Plugin):
         colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb")
     ]
     main_modules = [
-        "data.entity_pgsql.system"
+        "entity_pgsql.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.entity_pgsql
-        self.system = data.entity_pgsql.EntityPgsql(self)
+        import entity_pgsql
+        self.system = entity_pgsql.EntityPgsql(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

@@ -56,13 +56,13 @@ class FileZipPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "data.file_zip.system"
+        "file_zip.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.file_zip
-        self.system = data.file_zip.FileZip(self)
+        import file_zip
+        self.system = file_zip.FileZip(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

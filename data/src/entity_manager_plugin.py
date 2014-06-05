@@ -62,20 +62,20 @@ class EntityManagerPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "data.entity_manager.decorators",
-        "data.entity_manager.exceptions",
-        "data.entity_manager.structures",
-        "data.entity_manager.system",
-        "data.entity_manager.test_mocks",
-        "data.entity_manager.test"
+        "entity_manager.decorators",
+        "entity_manager.exceptions",
+        "entity_manager.structures",
+        "entity_manager.system",
+        "entity_manager.test_mocks",
+        "entity_manager.test"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.entity_manager
-        self.system = data.entity_manager.DataEntityManager(self)
-        self.test = data.entity_manager.test.EntityManagerTest(self)
-        self.decorators = data.entity_manager.decorators
+        import entity_manager
+        self.system = entity_manager.DataEntityManager(self)
+        self.test = entity_manager.test.EntityManagerTest(self)
+        self.decorators = entity_manager.decorators
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

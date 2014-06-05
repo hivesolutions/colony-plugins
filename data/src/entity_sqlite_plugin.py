@@ -56,13 +56,13 @@ class EntitySqlitePlugin(colony.Plugin):
         "entity_engine"
     ]
     main_modules = [
-        "data.entity_sqlite.system"
+        "entity_sqlite.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.entity_sqlite
-        self.system = data.entity_sqlite.EntitySqlite(self)
+        import entity_sqlite
+        self.system = entity_sqlite.EntitySqlite(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

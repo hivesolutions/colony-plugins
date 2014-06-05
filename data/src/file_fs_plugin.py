@@ -56,13 +56,13 @@ class FileFsPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "data.file_fs.system"
+        "file_fs.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.file_fs
-        self.system = data.file_fs.FileFs(self)
+        import file_fs
+        self.system = file_fs.FileFs(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

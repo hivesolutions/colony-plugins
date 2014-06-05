@@ -59,13 +59,13 @@ class EntityMysqlPlugin(colony.Plugin):
         colony.PackageDependency("MySQL-Python extension module", "MySQLdb")
     ]
     main_modules = [
-        "data.entity_mysql.system"
+        "entity_mysql.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.entity_mysql
-        self.system = data.entity_mysql.EntityMysql(self)
+        import entity_mysql
+        self.system = entity_mysql.EntityMysql(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

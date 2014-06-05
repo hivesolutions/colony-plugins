@@ -61,13 +61,13 @@ class FileGridfsPlugin(colony.Plugin):
         colony.PackageDependency("MongoDB GridFS python bindings", "gridfs")
     ]
     main_modules = [
-        "data.file_gridfs.system"
+        "file_gridfs.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import data.file_gridfs
-        self.system = data.file_gridfs.FileGridfs(self)
+        import file_gridfs
+        self.system = file_gridfs.FileGridfs(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
