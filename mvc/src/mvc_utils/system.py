@@ -58,12 +58,6 @@ NAME_REFERENCE_VALUE = "__name__"
 PACKAGE_REFERENCE_VALUE = "__package__"
 """ The package reference value """
 
-DATA_REFERENCE_VALUE = "data_reference"
-""" The data reference value """
-
-CONTROLLER_CAMEL_VALUE = "Controller"
-""" The controller camel value """
-
 EXCEPTION_CONTROLLER_VALUE = "ExceptionController"
 """ The exception controller value, this value is going
 to be used to retrieve the exception controller
@@ -815,7 +809,7 @@ class MvcUtils(colony.System):
         for controllers_module_item in controllers_module_items:
             # checks if the controller module item name is a valid
             # controller name
-            valid_controller_name = controllers_module_item.endswith(CONTROLLER_CAMEL_VALUE)
+            valid_controller_name = controllers_module_item.endswith("Controller")
 
             # in case the controller module item does
             # not represent a valid controller name
@@ -1163,7 +1157,7 @@ class MvcUtils(colony.System):
             # in case the module item type is type,
             # the module item is subclass of the entity class and
             # the entity class is not a data reference (virtual)
-            if module_item_type == types.TypeType and issubclass(module_item, entity_class) and (not hasattr(module_item, DATA_REFERENCE_VALUE) or module_item.data_reference == False):
+            if module_item_type == types.TypeType and issubclass(module_item, entity_class) and (not hasattr(module_item, "data_reference") or module_item.data_reference == False):
                 # adds the module item to the entity classes
                 entity_classes.append(module_item)
 
