@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpColonyPlugin(colony.base.system.Plugin):
+class ServiceHttpColonyPlugin(colony.Plugin):
     """
     The main class for the Http Service Colony plugin.
     """
@@ -51,9 +50,9 @@ class ServiceHttpColonyPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
@@ -62,28 +61,22 @@ class ServiceHttpColonyPlugin(colony.base.system.Plugin):
         "http_handler"
     ]
     main_modules = [
-        "service_http.colony.exceptions",
-        "service_http.colony.system"
+        "service_http_colony.exceptions",
+        "service_http_colony.system"
     ]
 
-    service_http_colony = None
-    """ The service http colony (handler) """
-
-    http_handler_plugins = []
-    """ The http handler plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.colony.system
-        self.service_http_colony = service_http.colony.system.ServiceHttpColony(self)
+        colony.Plugin.load_plugin(self)
+        import service_http_colony
+        self.system = service_http_colony.ServiceHttpColony(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def get_handler_name(self):
         """
@@ -93,7 +86,7 @@ class ServiceHttpColonyPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_colony.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -103,14 +96,12 @@ class ServiceHttpColonyPlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_colony.handle_request(request)
+        return self.system.handle_request(request)
 
-    @colony.base.decorators.load_allowed_capability("http_handler")
+    @colony.load_allowed_capability("http_handler")
     def http_handler_load_allowed(self, plugin, capability):
-        self.http_handler_plugins.append(plugin)
-        self.service_http_colony.http_handler_load(plugin)
+        self.system.http_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_handler")
+    @colony.unload_allowed_capability("http_handler")
     def http_handler_unload_allowed(self, plugin, capability):
-        self.http_handler_plugins.remove(plugin)
-        self.service_http_colony.http_handler_unload(plugin)
+        self.system.http_handler_unload(plugin)

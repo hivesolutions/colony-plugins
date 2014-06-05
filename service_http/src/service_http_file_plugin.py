@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpFilePlugin(colony.base.system.Plugin):
+class ServiceHttpFilePlugin(colony.Plugin):
     """
     The main class for the Http Service File plugin.
     """
@@ -51,9 +50,9 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
@@ -62,50 +61,34 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
         "directory_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager")
+        colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http.file.exceptions",
-        "service_http.file.system"
+        "service_http_file.exceptions",
+        "service_http_file.system"
     ]
 
-    service_http_file = None
-    """ The service http file (handler) """
-
-    directory_handler_plugins = []
-    """ The directory handler plugins """
-
-    mime_plugin = None
-    """ The mime plugin """
-
-    resources_manager_plugin = None
-    """ The resources manager plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.file.system
-        self.service_http_file = service_http.file.system.ServiceHttpFile(self)
+        colony.Plugin.load_plugin(self)
+        import service_http_file
+        self.system = service_http_file.ServiceHttpFile(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def get_handler_name(self):
         """
@@ -115,7 +98,7 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_file.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -125,30 +108,20 @@ class ServiceHttpFilePlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_file.handle_request(request)
+        return self.system.handle_request(request)
 
-    @colony.base.decorators.load_allowed_capability("directory_handler")
+    @colony.load_allowed_capability("directory_handler")
     def directory_handler_load_allowed(self, plugin, capability):
-        self.directory_handler_plugins.append(plugin)
-        self.service_http_file.directory_handler_load(plugin)
+        self.system.directory_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("directory_handler")
+    @colony.unload_allowed_capability("directory_handler")
     def directory_handler_unload_allowed(self, plugin, capability):
-        self.directory_handler_plugins.remove(plugin)
-        self.service_http_file.directory_handler_unload(plugin)
+        self.system.directory_handler_unload(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
-    def set_mime_plugin(self, mime_plugin):
-        self.mime_plugin = mime_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
-    def set_resources_manager_plugin(self, resources_manager_plugin):
-        self.resources_manager_plugin = resources_manager_plugin
-
-    @colony.base.decorators.set_configuration_property_method("handler_configuration")
+    @colony.set_configuration_property_method("handler_configuration")
     def handler_configuration_set_configuration_property(self, property_name, property):
-        self.service_http_file.set_handler_configuration_property(property)
+        self.system.set_handler_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("handler_configuration")
+    @colony.unset_configuration_property_method("handler_configuration")
     def handler_configuration_unset_configuration_property(self, property_name):
-        self.service_http_file.unset_handler_configuration_property()
+        self.system.unset_handler_configuration_property()

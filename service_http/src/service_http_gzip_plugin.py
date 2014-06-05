@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpGzipPlugin(colony.base.system.Plugin):
+class ServiceHttpGzipPlugin(colony.Plugin):
     """
     The main class for the Http Service Gzip plugin.
     """
@@ -51,40 +50,26 @@ class ServiceHttpGzipPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_encoding"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.gzip")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.gzip")
     ]
     main_modules = [
-        "service_http.gzip.system"
+        "service_http_gzip.system"
     ]
 
-    service_http_gzip = None
-    """ The service http gzip (encoding) """
-
-    gzip_plugin = None
-    """ The gzip plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.gzip.system
-        self.service_http_gzip = service_http.gzip.system.ServiceHttpGzip(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import service_http_gzip
+        self.system = service_http_gzip.ServiceHttpGzip(self)
 
     def get_encoding_name(self):
-        return self.service_http_gzip.get_encoding_name()
+        return self.system.get_encoding_name()
 
     def encode_contents(self, contents_string):
-        return self.service_http_gzip.encode_contents(contents_string)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.gzip")
-    def set_gzip_plugin(self, gzip_plugin):
-        self.gzip_plugin = gzip_plugin
+        return self.system.encode_contents(contents_string)
