@@ -62,38 +62,24 @@ class ResourcesAutoloaderPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "resources.autoloader.system"
+        "resources_autoloader.system"
     ]
-
-    resources_autoloader = None
-    """ The resources autoloader """
-
-    resources_manager_plugin = None
-    """ The resources manager plugin """
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import resources.autoloader.system
-        self.resources_autoloader = resources.autoloader.system.ResourcesAutoloader(self)
+        import resources_autoloader
+        self.system = resources_autoloader.ResourcesAutoloader(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
-        self.resources_autoloader.load_autoloader()
+        self.system.load_autoloader()
 
     def unload_plugin(self):
         colony.Plugin.unload_plugin(self)
-        self.resources_autoloader.unload_autoloader()
+        self.system.unload_autoloader()
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
         colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
-
-    @colony.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.Plugin.dependency_injected(self, plugin)
-
-    @colony.plugin_inject("pt.hive.colony.plugins.resources.manager")
-    def set_resources_manager_plugin(self, resources_manager_plugin):
-        self.resources_manager_plugin = resources_manager_plugin
