@@ -39,8 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
-import colony.base.system
-import colony.libs.map_util
+import colony
 
 import exceptions
 
@@ -129,7 +128,7 @@ REMOVAL_RESPONSE_HEADERS = (
 )
 """ The removal response headers list """
 
-class ServiceHttpProxy(colony.base.system.System):
+class ServiceHttpProxy(colony.System):
     """
     The service http proxy (handler) class.
     """
@@ -147,7 +146,7 @@ class ServiceHttpProxy(colony.base.system.System):
     """ The the pool http clients to be used """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.request_handler_methods_map = {
             FORWARD_VALUE : self.handle_forward_request,
@@ -682,7 +681,7 @@ class ServiceHttpProxy(colony.base.system.System):
         request_headers = {}
 
         # copies the original request headers to the request headers
-        colony.libs.map_util.map_copy(request.headers_map, request_headers)
+        colony.map_copy(request.headers_map, request_headers)
 
         # iterates over all the headers to be removed
         for removal_header in REMOVAL_HEADERS:
@@ -706,7 +705,7 @@ class ServiceHttpProxy(colony.base.system.System):
         headers_map = {}
 
         # copies the original request headers to the request headers
-        colony.libs.map_util.map_copy(http_response.headers_map, headers_map)
+        colony.map_copy(http_response.headers_map, headers_map)
 
         # iterates over all the response headers to be removed
         for removal_response_header in removal_response_headers:

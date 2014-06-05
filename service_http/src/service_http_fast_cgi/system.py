@@ -41,8 +41,7 @@ import struct
 import socket
 import threading
 
-import colony.base.system
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -223,7 +222,7 @@ DEFAULT_CONNECTION_ARGUMENTS = (
 )
 """ The default connection arguments type """
 
-class ServiceHttpFastCgi(colony.base.system.System):
+class ServiceHttpFastCgi(colony.System):
     """
     The service http fast cgi (handler) class.
     """
@@ -232,7 +231,7 @@ class ServiceHttpFastCgi(colony.base.system.System):
     """ The connection map """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.connection_map = {}
 
     def get_handler_name(self):
@@ -289,12 +288,6 @@ class ServiceHttpFastCgi(colony.base.system.System):
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
 
-        # sets the handler type
-        handler_type = request.properties.get(HANDLER_TYPE_VALUE, DEFAULT_HANDLER_TYPE)
-
-        # sets the base path
-        base_path = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
-
         # retrieves the connection type
         connection_type = request.properties.get(CONNECTION_TYPE_VALUE, DEFAULT_CONNECTION_TYPE)
 
@@ -347,7 +340,7 @@ class ServiceHttpFastCgi(colony.base.system.System):
             environment_map[complete_header_name] = header_value
 
         # initializes the params record data buffer
-        params_record_data_buffer = colony.libs.string_buffer_util.StringBuffer()
+        params_record_data_buffer = colony.StringBuffer()
 
         # iterates over the environment map items
         for header, header_value in environment_map.items():
@@ -378,7 +371,7 @@ class ServiceHttpFastCgi(colony.base.system.System):
         connection.add_record(request_id, FCGI_STDIN_VALUE, request_contents)
 
         # initializes the standard output buffer
-        stdout_buffer = colony.libs.string_buffer_util.StringBuffer()
+        stdout_buffer = colony.StringBuffer()
 
         # iterates indefinitely
         while True:

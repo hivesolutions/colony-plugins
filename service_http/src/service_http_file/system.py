@@ -43,11 +43,7 @@ import stat
 import hashlib
 import datetime
 
-import colony.base.system
-import colony.libs.map_util
-import colony.libs.path_util
-import colony.libs.quote_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -109,7 +105,7 @@ ITEM_SORT_MAP = {
 }
 """ Map used for list sorting """
 
-class ServiceHttpFile(colony.base.system.System):
+class ServiceHttpFile(colony.System):
     """
     The service http file (handler) class.
     """
@@ -121,7 +117,7 @@ class ServiceHttpFile(colony.base.system.System):
     """ The handler configuration """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.directory_handler_plugins_map = {}
         self.handler_configuration = {}
 
@@ -291,14 +287,14 @@ class ServiceHttpFile(colony.base.system.System):
         handler_configuration = handler_configuration_property.get_data()
 
         # cleans the handler configuration
-        colony.libs.map_util.map_clean(self.handler_configuration)
+        colony.map_clean(self.handler_configuration)
 
         # copies the handler configuration to the handler configuration
-        colony.libs.map_util.map_copy(handler_configuration, self.handler_configuration)
+        colony.map_copy(handler_configuration, self.handler_configuration)
 
     def unset_handler_configuration_property(self):
         # cleans the handler configuration
-        colony.libs.map_util.map_clean(self.handler_configuration)
+        colony.map_clean(self.handler_configuration)
 
     def default_directory_handler(self, request, directory_list):
         """
@@ -372,7 +368,7 @@ class ServiceHttpFile(colony.base.system.System):
             file_path = complete_path + "/" + directory_name
 
             # normalizes the file path
-            file_path = colony.libs.path_util.normalize_path(file_path)
+            file_path = colony.normalize_path(file_path)
 
             # retrieves the file stat
             file_stat = os.stat(file_path)
@@ -517,7 +513,7 @@ class ServiceHttpFile(colony.base.system.System):
         """
 
         # quotes the target path
-        target_path_quoted = quote and colony.libs.quote_util.quote(target_path, "/") or target_path
+        target_path_quoted = quote and colony.quote(target_path, "/") or target_path
 
         # sets the status code
         request.status_code = status_code
@@ -669,7 +665,7 @@ class ServiceHttpFile(colony.base.system.System):
         """
 
         # creates a string buffer to hold the range
-        range_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        range_string_buffer = colony.StringBuffer()
 
         # retrieves the range initial and end values
         initial_value, end_value = range_value
@@ -822,7 +818,7 @@ class ChunkHandler:
 
         # creates a new string buffer to used as a memory file
         # for the encoded file
-        file_contents_encoded_file_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+        file_contents_encoded_file_buffer = colony.StringBuffer(False)
 
         # writes the file contents encoded into the file contents
         # file buffer

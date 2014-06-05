@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ServiceHttpStarter(colony.base.system.System):
+class ServiceHttpStarter(colony.System):
     """
     The service http starter class.
     """
