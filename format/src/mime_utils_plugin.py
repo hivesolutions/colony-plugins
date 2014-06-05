@@ -61,13 +61,13 @@ class MimeUtilsPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.format.mime")
     ]
     main_modules = [
-        "mime_utils.system"
+        "mime_utils_c.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import mime_utils
-        self.system = mime_utils.MimeUtils(self)
+        import mime_utils_c
+        self.system = mime_utils_c.MimeUtils(self)
 
     def add_attachment_contents(self, mime_message, contents, file_name):
         return self.system.add_attachment_contents(mime_message, contents, file_name)

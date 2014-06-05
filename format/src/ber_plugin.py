@@ -58,14 +58,14 @@ class BerPlugin(colony.Plugin):
         "format.ber"
     ]
     main_modules = [
-        "ber.exceptions",
-        "ber.system"
+        "ber_c.exceptions",
+        "ber_c.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import ber
-        self.system = ber.Ber(self)
+        import ber_c
+        self.system = ber_c.Ber(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)
