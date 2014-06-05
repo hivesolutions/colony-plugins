@@ -44,7 +44,7 @@ import win32con
 import PIL.Image
 import PIL.ImageWin
 
-import colony.base.system
+import colony
 
 import constants
 import visitor
@@ -61,7 +61,7 @@ TEST_TITLE = "colony_test_document"
 TEST_TEXT = "Hello world from Hive Colony"
 """ The test text """
 
-class PrintingWin32(colony.base.system.System):
+class PrintingWin32(colony.System):
     """
     The printing win32 class.
     """

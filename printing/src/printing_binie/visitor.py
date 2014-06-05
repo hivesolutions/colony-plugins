@@ -37,17 +37,15 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import struct
 import base64
-import win32ui
-import win32con
 
 import PIL.Image
-import PIL.ImageWin
 
 import colony
 
 import exceptions
-import printing.manager.ast
+import printing_manager
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """
@@ -87,17 +85,8 @@ EXCLUSION_LIST = [
 ]
 """ The exclusion list """
 
-DEFAULT_ENCODER = "Cp1252"
+DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
-
-NORMAL_TEXT_WEIGHT = 400
-""" The normal text weight """
-
-BOLD_TEXT_WEIGHT = 800
-""" The bold text weight """
-
-DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
-""" The default text weight """
 
 class Visitor:
     """
@@ -116,11 +105,11 @@ class Visitor:
     visit_index = 0
     """ The visit index, for multiple visits """
 
-    printer_handler = None
-    """ The printer handler """
-
     printing_options = {}
     """ The printing options """
+
+    elements_list = []
+    """ The list containing the various elements """
 
     current_position = None
     """ The current position """
@@ -133,8 +122,8 @@ class Visitor:
         self.visit_childs = True
         self.visit_next = True
         self.visit_index = 0
-        self.printer_handler = None
         self.printing_options = {}
+        self.elements_list = []
         self.current_position = None
         self.context_map = {}
 
@@ -160,26 +149,6 @@ class Visitor:
             # and sets it in the node method map
             ast_node_class = getattr(self_class_real_element, "ast_node_class")
             self.node_method_map[ast_node_class] = self_class_real_element
-
-    def get_printer_handler(self):
-        """
-        Retrieves the printer handler.
-
-        @rtype: Tuple
-        @return: The printer handler.
-        """
-
-        return self.printer_handler
-
-    def set_printer_handler(self, printer_handler):
-        """
-        Sets the printer handler.
-
-        @type printer_handler: Tuple
-        @param printer_handler: The printer handler.
-        """
-
-        self.printer_handler = printer_handler
 
     def get_printing_options(self):
         """
@@ -212,19 +181,16 @@ class Visitor:
     def after_visit(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.AstNode)
+    @colony.visit(printing_manager.AstNode)
     def visit_ast_node(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.GenericElement)
+    @colony.visit(printing_manager.GenericElement)
     def visit_generic_element(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.PrintingDocument)
+    @colony.visit(printing_manager.PrintingDocument)
     def visit_printing_document(self, node):
-        # unpacks the printer handler information
-        handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
-
         # in case it's the first visit
         if self.visit_index == 0:
             # adds the node as the context information
@@ -233,14 +199,8 @@ class Visitor:
             # retrieves the printing document name
             printing_document_name = node.name
 
-            # starts the document (and page) and sets the default
-            # mode for the mapping and the initial pen (ink) to
-            # be used in the text "drawing" and selects it
-            handler_device_context.StartDoc(printing_document_name)
-            handler_device_context.StartPage()
-            handler_device_context.SetMapMode(win32con.MM_TWIPS)
-            pen = win32ui.CreatePen(0, FONT_SCALE_FACTOR, 0)
-            handler_device_context.SelectObject(pen)
+            # resets the list of elements in the document
+            self.elements_list = []
 
             # sets the initial position
             self.current_position = (
@@ -248,15 +208,41 @@ class Visitor:
             )
         # in case it's the second visit
         elif self.visit_index == 1:
-            # ends the current page and document (flushes the data
-            # to the printer) processing the print request
-            handler_device_context.EndPage()
-            handler_device_context.EndDoc()
+            # retrieves the printing document name and dimensions
+            # to be able to update the structure
+            printing_document_name = node.name
+            printing_document_width = hasattr(node, "width") and int(node.width) or 0
+            printing_document_height = hasattr(node, "height") and int(node.height) or 0
+
+            # packs the header value as a binary string
+            header = struct.pack(
+                "<256sIII",
+                str(printing_document_name),
+                printing_document_width,
+                printing_document_height,
+                len(self.elements_list)
+            )
+            self.printing_options["file"].write(header)
+
+            # iterates over all the elements list to create their header
+            # and then add the element data
+            for element in self.elements_list:
+                # unpacks the element into the type and its
+                # data (contents)
+                element_type, element_data = element
+                element_length = len(element_data)
+
+                # creates the element header using the type and the length
+                # of the element and then writes it and the data into the
+                # the current file
+                element_header = struct.pack("<II", element_type, element_length)
+                self.printing_options["file"].write(element_header)
+                self.printing_options["file"].write(element_data)
 
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Block)
+    @colony.visit(printing_manager.Block)
     def visit_block(self, node):
         if self.visit_index == 0:
             # adds the node as the context information, this way
@@ -270,12 +256,12 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Paragraph)
+    @colony.visit(printing_manager.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0: self.add_context(node)
         elif self.visit_index == 1: self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Line)
+    @colony.visit(printing_manager.Line)
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context(node)
@@ -311,12 +297,9 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Text)
+    @colony.visit(printing_manager.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
-            # unpacks the printer handler information
-            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
-
             # adds the node as the context information
             self.add_context(node)
 
@@ -332,57 +315,57 @@ class Visitor:
             font_style = self.get_context("font_style", "regular")
             margin_left = int(self.get_context("margin_left", "0"))
             margin_right = int(self.get_context("margin_right", "0"))
+            position_x = int(self.get_context("x", "0"))
+            position_y = int(self.get_context("y", "0"))
+            block_width = int(self.get_context("width", "0"))
+            block_height = int(self.get_context("height", "0"))
 
-            # sets the default values for the text weigh and italic
-            # parameters, their are going to be changed as required
-            text_weight = DEFAULT_TEXT_WEIGH
-            text_italic = False
+            # sets the default values for the text weight and for
+            # the italic enumeration
+            text_weight_int = 0
+            text_italic_int = 0
 
             if font_style == "bold" or font_style == "bold_italic":
-                text_weight = BOLD_TEXT_WEIGHT
+                text_weight_int = 1
 
             if font_style == "italic" or font_style == "bold_italic":
-                text_italic = True
-
-            # defines the font parameters
-            font_parameters = {
-                "name" : font_name,
-                "height" : font_size * FONT_SCALE_FACTOR,
-                "weight" : text_weight,
-                "italic" : text_italic
-            }
-
-            # creates the font
-            font = win32ui.CreateFont(font_parameters)
-
-            # selects the font object
-            handler_device_context.SelectObject(font)
+                text_italic_int = 1
 
             # retrieves the current position in x and y
             _current_position_x, _current_position_y = self.current_position
 
-            # retrieves the text width and height and then calculates
-            # the current clip box values to be used in the calculus of
-            # the appropriate text position
-            text_width, text_height = handler_device_context.GetTextExtent(text_encoded)
-            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
+            # converts the provided text align value into the
+            # appropriate integer value representing it
+            if text_align == "left": text_align_int = 1
+            elif text_align == "right": text_align_int = 2
+            elif text_align == "center": text_align_int = 3
 
-            # initializes the text x coordinate with the margin defined
-            # for the current node (difference of margins)
-            text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
+            # calculates the text height from the font scale factor
+            text_height = font_size * FONT_SCALE_FACTOR;
 
-            # calculates the appropriate text position according to the
-            # "requested" horizontal text alignment
-            if text_align == "left": text_x += 0
-            elif text_align == "right": text_x += box_right - text_width
-            elif text_align == "center":
-                text_x += int(box_right / 2) - int(text_width / 2)
-
-            # sets the text y as the current position context y
-            text_y = _current_position_y
-
-            # outputs the text to the handler device context
-            handler_device_context.TextOut(text_x, text_y, text_encoded)
+            # packs the element text element structure containing all the meta
+            # information that makes part of it then adds the "just" created
+            # element to the elements list
+            element = struct.pack(
+                "<ii256sIIIIIIIIIII",
+                0,
+                _current_position_y,
+                font_name,
+                font_size,
+                text_align_int,
+                text_weight_int,
+                text_italic_int,
+                margin_left,
+                margin_right,
+                position_x,
+                position_y,
+                block_width,
+                block_height,
+                len(text_encoded) + 1
+            )
+            element += text_encoded
+            element += "\0"
+            self.elements_list.append((1, element))
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
@@ -395,12 +378,9 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Image)
+    @colony.visit(printing_manager.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
-            # unpacks the printer handler information
-            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
-
             # adds the node as the context information
             self.add_context(node)
 
@@ -417,6 +397,10 @@ class Visitor:
             # retrieves the complete set of attributes for the current
             # context to be used for the processing of the node
             text_align = self.get_context("text_align")
+            position_x = int(self.get_context("x", "0"))
+            position_y = int(self.get_context("y", "0"))
+            block_width = int(self.get_context("width", "0"))
+            block_height = int(self.get_context("height", "0"))
 
             # in case the image path is defined must load the
             # image data from the file system
@@ -443,47 +427,56 @@ class Visitor:
             # retrieves the bitmap image width and height
             bitmap_image_width, bitmap_image_height = bitmap_image.size
 
-            # creates the dib image from the original
-            # bitmap image, created with with the python
-            # image library (this is device independent image)
-            dib_image = PIL.ImageWin.Dib(bitmap_image)
+            # creates a new image without transparency settings, so that
+            # no extra color is used ands copies the bitmap image into it
+            other_image = PIL.Image.new(
+                "RGB",
+                (bitmap_image_width, bitmap_image_height),
+                color = "white"
+            )
+            other_image.paste(bitmap_image, bitmap_image)
 
             # retrieves the current position in x and y
             _current_position_x, current_position_y = self.current_position
 
-            # retrieves the current clip box values
-            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
+            # converts the provided text align value into the
+            # appropriate integer value representing it
+            if text_align == "left": text_align_int = 1
+            elif text_align == "right": text_align_int = 2
+            elif text_align == "center": text_align_int = 3
 
-            # calculates the appropriate bitmap position according to the
-            # "requested" horizontal text alignment
-            if text_align == "left": real_bitmap_x1 = 0
-            elif text_align == "right":
-                real_bitmap_x1 = box_right - bitmap_image_width * IMAGE_SCALE_FACTOR
-            elif text_align == "center":
-                real_bitmap_x1 = int(box_right / 2) - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+            # sets the real bitmap image height as the bitmap
+            # image height (value copy)
+            real_bitmap_image_height = bitmap_image_height
 
-            real_bitmap_y1 = current_position_y
-            real_bitmap_x2 = real_bitmap_x1 + (bitmap_image_width * IMAGE_SCALE_FACTOR)
-            real_bitmap_y2 = real_bitmap_y1 - (bitmap_image_height * IMAGE_SCALE_FACTOR)
+            # creates a new string buffer for the image
+            string_buffer = colony.StringBuffer(False)
 
-            # retrieves the output for the handler device context
-            handler_device_context_output = handler_device_context.GetHandleOutput()
+            # saves the new image into the string buffer and then
+            # retrieve the buffer data
+            other_image.save(string_buffer, "bmp")
+            buffer = string_buffer.get_value()
 
-            # draws the image in the output for the handler device context
-            dib_image.draw(
-                handler_device_context_output,
-                (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2)
+            # packs the element image element structure containing all the meta
+            # information that makes part of it then adds the "just" created
+            # element to the elements list
+            element = struct.pack(
+                "<iiIIIIII",
+                0,
+                current_position_y,
+                text_align_int,
+                position_x,
+                position_y,
+                block_width,
+                block_height,
+                len(buffer)
             )
-
-            # sets the new current position
-            self.current_position = (
-                real_bitmap_x2,
-                current_position_y
-            )
+            element += buffer
+            self.elements_list.append((2, element))
 
             biggest_height = self.get_context("biggest_height")
-            if biggest_height < bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context("biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR)
+            if biggest_height < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
+                self.put_context("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
 
         elif self.visit_index == 1:
             self.remove_context(node)

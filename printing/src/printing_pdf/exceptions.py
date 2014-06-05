@@ -37,40 +37,64 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-import visitor
-
-PRINTING_NAME = "binie"
-""" The printing name """
-
-class PrintingBinie(colony.base.system.System):
+class PrintingPdfException(colony.ColonyException):
     """
-    The printing binie class.
+    The printing pdf exception class.
     """
 
-    def get_printing_name(self):
+    message = None
+    """ The exception's message """
+
+class InvalidContextInformationName(PrintingPdfException):
+    """
+    The invalid context information name class.
+    """
+
+    def __init__(self, message):
         """
-        Retrieves the printing name.
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        PrintingPdfException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
 
         @rtype: String
-        @return: The printing name.
+        @return: The string representation of the class.
         """
 
-        return PRINTING_NAME
+        return "Invalid context information name - %s" % self.message
 
-    def print_test(self, printing_options = {}):
-        pass
+class InvalidFont(PrintingPdfException):
+    """
+    The invalid font class.
+    """
 
-    def print_test_image(self, image_path, printing_options = {}):
-        pass
+    def __init__(self, message):
+        """
+        Constructor of the class.
 
-    def print_printing_language(self, printing_document, printing_options = {}):
-        # creates the pdf printing visitor then sets the
-        # provided printing options in the visitor
-        _visitor = visitor.Visitor()
-        _visitor.set_printing_options(printing_options)
+        @type message: String
+        @param message: The message to be printed.
+        """
 
-        # accepts the visitor in the printing document,
-        # using double visiting mode
-        printing_document.accept_double(_visitor)
+        PrintingPdfException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid font - %s" % self.message

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class PrintingWin32Plugin(colony.base.system.Plugin):
+class PrintingWin32Plugin(colony.Plugin):
     """
     The main class for the Printing Win32 plugin.
     """
@@ -50,7 +50,7 @@ class PrintingWin32Plugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "printing"
@@ -60,19 +60,16 @@ class PrintingWin32Plugin(colony.base.system.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "printing.win32.constants",
-        "printing.win32.exceptions",
-        "printing.win32.system",
-        "printing.win32.visitor"
+        "printing_win32.constants",
+        "printing_win32.exceptions",
+        "printing_win32.system",
+        "printing_win32.visitor"
     ]
 
-    printing_win32 = None
-    """ The printing win32 """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import printing.win32.system
-        self.printing_win32 = printing.win32.system.PrintingWin32(self)
+        colony.Plugin.load_plugin(self)
+        import printing_win32
+        self.system = printing_win32.PrintingWin32(self)
 
     def get_printing_name(self):
         """
@@ -82,13 +79,13 @@ class PrintingWin32Plugin(colony.base.system.Plugin):
         @return: The printing name.
         """
 
-        return self.printing_win32.get_printing_name()
+        return self.system.get_printing_name()
 
     def print_test(self, printing_options):
-        return self.printing_win32.print_test(printing_options)
+        return self.system.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        return self.printing_win32.print_test_image(image_path, printing_options)
+        return self.system.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        return self.printing_win32.print_printing_language(printing_document, printing_options)
+        return self.system.print_printing_language(printing_document, printing_options)

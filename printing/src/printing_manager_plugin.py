@@ -60,19 +60,19 @@ class PrintingManagerPlugin(colony.Plugin):
         "printing"
     ]
     main_modules = [
-        "printing.manager.console",
-        "printing.manager.ast",
-        "printing.manager.parser",
-        "printing.manager.visitor",
-        "printing.manager.exceptions",
-        "printing.manager.system"
+        "printing_manager.console",
+        "printing_manager.ast",
+        "printing_manager.parser",
+        "printing_manager.visitor",
+        "printing_manager.exceptions",
+        "printing_manager.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import printing.manager
-        self.system = printing.manager.PrintingManager(self)
-        self.console = printing.manager.ConsolePrintingManager(self)
+        import printing_manager
+        self.system = printing_manager.PrintingManager(self)
+        self.console = printing_manager.ConsolePrintingManager(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

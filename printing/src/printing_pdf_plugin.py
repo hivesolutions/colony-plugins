@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class PrintingPdfPlugin(colony.base.system.Plugin):
+class PrintingPdfPlugin(colony.Plugin):
     """
     The main class for the Printing Pdf plugin.
     """
@@ -50,7 +50,7 @@ class PrintingPdfPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "printing"
@@ -60,18 +60,15 @@ class PrintingPdfPlugin(colony.base.system.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "printing.pdf.exceptions",
-        "printing.pdf.system",
-        "printing.pdf.visitor"
+        "printing_pdf.exceptions",
+        "printing_pdf.system",
+        "printing_pdf.visitor"
     ]
 
-    printing_pdf = None
-    """ The printing pdf """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import printing.pdf.system
-        self.printing_pdf = printing.pdf.system.PrintingPdf(self)
+        colony.Plugin.load_plugin(self)
+        import printing_pdf
+        self.system = printing_pdf.PrintingPdf(self)
 
     def get_printing_name(self):
         """
@@ -81,13 +78,13 @@ class PrintingPdfPlugin(colony.base.system.Plugin):
         @return: The printing name.
         """
 
-        return self.printing_pdf.get_printing_name()
+        return self.system.get_printing_name()
 
     def print_test(self, printing_options):
-        return self.printing_pdf.print_test(printing_options)
+        return self.system.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        return self.printing_pdf.print_test_image(image_path, printing_options)
+        return self.system.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        return self.printing_pdf.print_printing_language(printing_document, printing_options)
+        return self.system.print_printing_language(printing_document, printing_options)

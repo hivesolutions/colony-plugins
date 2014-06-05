@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class PrintingBiniePlugin(colony.base.system.Plugin):
+class PrintingBiniePlugin(colony.Plugin):
     """
     The main class for the Printing Binie plugin.
     """
@@ -50,7 +50,7 @@ class PrintingBiniePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "printing"
@@ -59,18 +59,15 @@ class PrintingBiniePlugin(colony.base.system.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "printing.binie.exceptions",
-        "printing.binie.system",
-        "printing.binie.visitor"
+        "printing_binie.exceptions",
+        "printing_binie.system",
+        "printing_binie.visitor"
     ]
 
-    printing_binie = None
-    """ The printing binie """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import printing.binie.system
-        self.printing_binie = printing.binie.system.PrintingBinie(self)
+        colony.Plugin.load_plugin(self)
+        import printing_binie
+        self.system = printing_binie.PrintingBinie(self)
 
     def get_printing_name(self):
         """
@@ -80,13 +77,13 @@ class PrintingBiniePlugin(colony.base.system.Plugin):
         @return: The printing name.
         """
 
-        return self.printing_binie.get_printing_name()
+        return self.system.get_printing_name()
 
     def print_test(self, printing_options):
-        return self.printing_binie.print_test(printing_options)
+        return self.system.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        return self.printing_binie.print_test_image(image_path, printing_options)
+        return self.system.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        return self.printing_binie.print_printing_language(printing_document, printing_options)
+        return self.system.print_printing_language(printing_document, printing_options)

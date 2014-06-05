@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -33,3 +36,41 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+import colony
+
+import visitor
+
+PRINTING_NAME = "pdf"
+""" The printing name """
+
+class PrintingPdf(colony.System):
+    """
+    The printing pdf class.
+    """
+
+    def get_printing_name(self):
+        """
+        Retrieves the printing name.
+
+        @rtype: String
+        @return: The printing name.
+        """
+
+        return PRINTING_NAME
+
+    def print_test(self, printing_options = {}):
+        pass
+
+    def print_test_image(self, image_path, printing_options = {}):
+        pass
+
+    def print_printing_language(self, printing_document, printing_options = {}):
+        # creates the pdf printing visitor then sets the
+        # provided printing options in the visitor
+        _visitor = visitor.Visitor()
+        _visitor.set_printing_options(printing_options)
+
+        # accepts the visitor in the printing document,
+        # using double visiting mode
+        printing_document.accept_double(_visitor)

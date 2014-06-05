@@ -51,7 +51,7 @@ import reportlab.pdfbase.pdfmetrics
 import colony
 
 import exceptions
-import printing.manager.ast
+import printing_manager
 
 FONT_SCALE_FACTOR = 1
 """ The font scale factor """
@@ -241,15 +241,15 @@ class Visitor:
     def after_visit(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.AstNode)
+    @colony.visit(printing_manager.AstNode)
     def visit_ast_node(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.GenericElement)
+    @colony.visit(printing_manager.GenericElement)
     def visit_generic_element(self, node):
         pass
 
-    @colony.visit(printing.manager.ast.PrintingDocument)
+    @colony.visit(printing_manager.PrintingDocument)
     def visit_printing_document(self, node):
         # in case it's the first visit
         if self.visit_index == 0:
@@ -291,7 +291,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Block)
+    @colony.visit(printing_manager.Block)
     def visit_block(self, node):
         if self.visit_index == 0:
             # adds the node as the context information, this way
@@ -305,12 +305,12 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Paragraph)
+    @colony.visit(printing_manager.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0: self.add_context(node)
         elif self.visit_index == 1: self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Line)
+    @colony.visit(printing_manager.Line)
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context(node)
@@ -346,7 +346,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Text)
+    @colony.visit(printing_manager.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
             # adds the node as the context information
@@ -434,7 +434,7 @@ class Visitor:
             # removes the context information
             self.remove_context(node)
 
-    @colony.visit(printing.manager.ast.Image)
+    @colony.visit(printing_manager.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
             # adds the node as the context information
