@@ -727,7 +727,7 @@ class HttpClientServiceHandler:
 
     def default_request_handler(self, service_connection, request = None):
         # retrieves the http service handler plugins map
-        http_service_handler_plugins_map = self.service_plugin.service_http.http_service_handler_plugins_map
+        http_service_handler_plugins_map = self.service_plugin.system.http_service_handler_plugins_map
 
         try:
             # retrieves the request
@@ -1342,7 +1342,7 @@ class HttpClientServiceHandler:
         preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 
         # retrieves the http service error handler plugins map
-        http_service_error_handler_plugins_map = self.service_plugin.service_http.http_service_error_handler_plugins_map
+        http_service_error_handler_plugins_map = self.service_plugin.system.http_service_error_handler_plugins_map
 
         # iterates over all the preferred error handlers
         for preferred_error_handler in preferred_error_handlers_list:
@@ -2177,7 +2177,7 @@ class HttpClientServiceHandler:
         username, password = authorization_value_decoded.split(":", 1)
 
         # retrieves the http service authentication handler plugins map
-        http_service_authentication_handler_plugins_map = self.service_plugin.service_http.http_service_authentication_handler_plugins_map
+        http_service_authentication_handler_plugins_map = self.service_plugin.system.http_service_authentication_handler_plugins_map
 
         # in case the authentication handler is not found in the http service authentication
         # handler plugins map

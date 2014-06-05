@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpTemplateDirectoryPlugin(colony.base.system.Plugin):
+class ServiceHttpTemplateDirectoryPlugin(colony.Plugin):
     """
     The main class for the Http Service Template Directory plugin.
     """
@@ -51,41 +50,27 @@ class ServiceHttpTemplateDirectoryPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "directory_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine")
+        colony.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
-        "service_http.template_directory.system"
+        "service_http_template_directory.system"
     ]
 
-    service_http_template_directory = None
-    """ The service http template directory (handler) """
-
-    template_engine_plugin = None
-    """ The template engine plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.template_directory.system
-        self.service_http_template_directory = service_http.template_directory.system.ServiceHttpTemplateDirectory(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import service_http_template_directory
+        self.system = service_http_template_directory.ServiceHttpTemplateDirectory(self)
 
     def get_directory_handler_name(self):
-        return self.service_http_template_directory.get_directory_handler_name()
+        return self.system.get_directory_handler_name()
 
     def handle_directory_list(self, request, directory_list):
-        return self.service_http_template_directory.handle_directory_list(request, directory_list)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
-    def set_template_engine_plugin(self, template_engine_plugin):
-        self.template_engine_plugin = template_engine_plugin
+        return self.system.handle_directory_list(request, directory_list)

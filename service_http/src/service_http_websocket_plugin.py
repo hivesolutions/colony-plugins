@@ -36,9 +36,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ServiceHttpWebsocketPlugin(colony.base.system.Plugin):
+class ServiceHttpWebsocketPlugin(colony.Plugin):
     """
     The main class for the Http Service Websocket plugin.
     """
@@ -49,7 +49,7 @@ class ServiceHttpWebsocketPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
@@ -58,28 +58,22 @@ class ServiceHttpWebsocketPlugin(colony.base.system.Plugin):
         "websocket_handler"
     ]
     main_modules = [
-        "service_http.websocket.exceptions",
-        "service_http.websocket.system"
+        "service_http_websocket.exceptions",
+        "service_http_websocket.system"
     ]
 
-    service_http_websocket = None
-    """ The service http websocket (handler) """
-
-    websocket_handler_plugins = []
-    """ The websocket handler plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.websocket.system
-        self.service_http_websocket = service_http.websocket.system.ServiceHttpWebsocket(self)
+        colony.Plugin.load_plugin(self)
+        import service_http_websocket
+        self.system = service_http_websocket.ServiceHttpWebsocket(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def get_handler_name(self):
         """
@@ -89,7 +83,7 @@ class ServiceHttpWebsocketPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_websocket.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -99,14 +93,12 @@ class ServiceHttpWebsocketPlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_websocket.handle_request(request)
+        return self.system.handle_request(request)
 
-    @colony.base.decorators.load_allowed_capability("websocket_handler")
+    @colony.load_allowed_capability("websocket_handler")
     def websocket_handler_load_allowed(self, plugin, capability):
-        self.websocket_handler_plugins.append(plugin)
-        self.service_http_websocket_handler.websocket_handler_load(plugin)
+        self.system_handler.websocket_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("websocket_handler")
+    @colony.unload_allowed_capability("websocket_handler")
     def websocket_handler_unload_allowed(self, plugin, capability):
-        self.websocket_handler_plugins.remove(plugin)
-        self.service_http_websocket_handler.websocket_handler_unload(plugin)
+        self.system_handler.websocket_handler_unload(plugin)

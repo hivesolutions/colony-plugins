@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpPlugin(colony.base.system.Plugin):
+class ServiceHttpPlugin(colony.Plugin):
     """
     The main class for the Http Service plugin.
     """
@@ -51,9 +50,9 @@ class ServiceHttpPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "service.http"
@@ -65,110 +64,76 @@ class ServiceHttpPlugin(colony.base.system.Plugin):
         "http_service_error_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.utils")
+        colony.PluginDependency("pt.hive.colony.plugins.service.utils")
     ]
     main_modules = [
-        "service_http.http.exceptions",
-        "service_http.http.system"
+        "service_http.exceptions",
+        "service_http.system"
     ]
 
-    service_http = None
-    """ The service http """
-
-    http_service_handler_plugins = []
-    """ The http service handler plugins """
-
-    http_service_encoding_plugins = []
-    """ The http service encoding plugins """
-
-    http_service_authentication_handler_plugins = []
-    """ The http service authentication handler plugins """
-
-    http_service_error_handler_plugins = []
-    """ The http service error handler plugins """
-
-    service_utils_plugin = None
-    """ The service utils plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.http.system
-        self.service_http = service_http.http.system.ServiceHttp(self)
+        colony.Plugin.load_plugin(self)
+        import service_http
+        self.system = service_http.ServiceHttp(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        return self.service_http.start_service(parameters)
+        return self.system.start_service(parameters)
 
     def stop_service(self, parameters):
-        return self.service_http.stop_service(parameters)
+        return self.system.stop_service(parameters)
 
-    @colony.base.decorators.load_allowed_capability("http_service_handler")
+    @colony.load_allowed_capability("http_service_handler")
     def http_service_handler_load_allowed(self, plugin, capability):
-        self.http_service_handler_plugins.append(plugin)
-        self.service_http.http_service_handler_load(plugin)
+        self.system.http_service_handler_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("http_service_encoding")
+    @colony.load_allowed_capability("http_service_encoding")
     def http_service_encoding_load_allowed(self, plugin, capability):
-        self.http_service_encoding_plugins.append(plugin)
-        self.service_http.http_service_encoding_load(plugin)
+        self.system.http_service_encoding_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("http_service_authentication_handler")
+    @colony.load_allowed_capability("http_service_authentication_handler")
     def http_service_authentication_handler_load_allowed(self, plugin, capability):
-        self.http_service_authentication_handler_plugins.append(plugin)
-        self.service_http.http_service_authentication_handler_load(plugin)
+        self.system.http_service_authentication_handler_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("http_service_error_handler")
+    @colony.load_allowed_capability("http_service_error_handler")
     def http_service_error_handler_load_allowed(self, plugin, capability):
-        self.http_service_error_handler_plugins.append(plugin)
-        self.service_http.http_service_error_handler_load(plugin)
+        self.system.http_service_error_handler_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_service_handler")
+    @colony.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
-        self.http_service_handler_plugins.remove(plugin)
-        self.service_http.http_service_handler_unload(plugin)
+        self.system.http_service_handler_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_service_encoding")
+    @colony.unload_allowed_capability("http_service_encoding")
     def http_service_encoding_unload_allowed(self, plugin, capability):
-        self.http_service_encoding_plugins.remove(plugin)
-        self.service_http.http_service_encoding_unload(plugin)
+        self.system.http_service_encoding_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_service_authentication_handler")
+    @colony.unload_allowed_capability("http_service_authentication_handler")
     def http_service_authentication_handler_unload_allowed(self, plugin, capability):
-        self.http_service_authentication_handler_plugins.remove(plugin)
-        self.service_http.http_service_authentication_handler_unload(plugin)
+        self.system.http_service_authentication_handler_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("http_service_error_handler")
+    @colony.unload_allowed_capability("http_service_error_handler")
     def http_service_error_handler_unload_allowed(self, plugin, capability):
-        self.http_service_error_handler_plugins.remove(plugin)
-        self.service_http.http_service_error_handler_unload(plugin)
+        self.system.http_service_error_handler_unload(plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.service.utils")
-    def set_service_utils_plugin(self, service_utils_plugin):
-        self.service_utils_plugin = service_utils_plugin
-
-    @colony.base.decorators.set_configuration_property_method("service_configuration")
+    @colony.set_configuration_property_method("service_configuration")
     def service_configuration_set_configuration_property(self, property_name, property):
-        self.service_http.set_service_configuration_property(property)
+        self.system.set_service_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("service_configuration")
+    @colony.unset_configuration_property_method("service_configuration")
     def service_configuration_unset_configuration_property(self, property_name):
-        self.service_http.unset_service_configuration_property()
+        self.system.unset_service_configuration_property()

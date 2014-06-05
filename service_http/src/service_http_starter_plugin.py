@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpStarterPlugin(colony.base.system.Plugin):
+class ServiceHttpStarterPlugin(colony.Plugin):
     """
     The main class for the Http Service Starter plugin.
     """
@@ -51,29 +50,26 @@ class ServiceHttpStarterPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "main"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.service.http")
+        colony.PluginDependency("pt.hive.colony.plugins.service.http")
     ]
     main_modules = [
-        "service_http_starter.starter.service_http_starter_system"
+        "service_http_starter.system"
     ]
 
-    service_http_plugin = None
-    """ The service http plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
+        colony.Plugin.load_plugin(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
+        colony.Plugin.end_load_plugin(self)
         self.release_ready_semaphore()
 
         # defines the parameters and starts the service with
@@ -85,18 +81,10 @@ class ServiceHttpStarterPlugin(colony.base.system.Plugin):
         self.service_http_plugin.start_service(parameters)
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
+        colony.Plugin.unload_plugin(self)
         self.service_http_plugin.stop_service({})
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.service.http")
-    def set_service_http_plugin(self, service_http_plugin):
-        self.service_http_plugin = service_http_plugin

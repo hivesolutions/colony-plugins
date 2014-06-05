@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpProxyPlugin(colony.base.system.Plugin):
+class ServiceHttpProxyPlugin(colony.Plugin):
     """
     The main class for the Http Service Main Proxy plugin.
     """
@@ -51,9 +50,9 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
@@ -62,43 +61,27 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
         "directory_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
-        "service_http.proxy.exceptions",
-        "service_http.proxy.system"
+        "service_http_proxy.exceptions",
+        "service_http_proxy.system"
     ]
 
-    service_http_proxy = None
-    """ The service http proxy (handler) """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
-    element_pool_manager_plugin = None
-    """ The element pool manager plugin """
-
-    url_parser_plugin = None
-    """ The url parser plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.proxy.system
-        self.service_http_proxy = service_http.proxy.system.ServiceHttpProxy(self)
+        colony.Plugin.load_plugin(self)
+        import service_http_proxy
+        self.system = service_http_proxy.ServiceHttpProxy(self)
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.service_http_proxy_handler.load_handler()
+        colony.Plugin.end_load_plugin(self)
+        self.system.load_handler()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.service_http_proxy_handler.unload_handler()
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_handler()
 
     def get_handler_name(self):
         """
@@ -108,7 +91,7 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_proxy.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -118,16 +101,4 @@ class ServiceHttpProxyPlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_proxy.handle_request(request)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.pool.element_pool_manager")
-    def set_element_pool_manager_plugin(self, element_pool_manager_plugin):
-        self.element_pool_manager_plugin = element_pool_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.url_parser")
-    def set_url_parser_plugin(self, url_parser_plugin):
-        self.url_parser_plugin = url_parser_plugin
+        return self.system.handle_request(request)

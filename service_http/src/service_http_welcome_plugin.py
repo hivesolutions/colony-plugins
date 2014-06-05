@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ServiceHttpWelcomePlugin(colony.base.system.Plugin):
+class ServiceHttpWelcomePlugin(colony.Plugin):
     """
     The main class for the Http Service Welcome plugin.
     """
@@ -50,18 +50,15 @@ class ServiceHttpWelcomePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     main_modules = [
-        "service_http.welcome.system"
+        "service_http_welcome.system"
     ]
 
-    service_http_welcome = None
-    """ The service http welcome (handler) """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.welcome.system
-        self.service_http_welcome = service_http.welcome.system.ServiceHttpWelcome(self)
+        colony.Plugin.load_plugin(self)
+        import service_http_welcome
+        self.system = service_http_welcome.ServiceHttpWelcome(self)

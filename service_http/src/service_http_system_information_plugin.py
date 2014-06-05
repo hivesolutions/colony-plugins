@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpSystemInformationPlugin(colony.base.system.Plugin):
+class ServiceHttpSystemInformationPlugin(colony.Plugin):
     """
     The main class for the Http Service Main System Information Handler plugin.
     """
@@ -51,9 +50,9 @@ class ServiceHttpSystemInformationPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
@@ -62,37 +61,16 @@ class ServiceHttpSystemInformationPlugin(colony.base.system.Plugin):
         "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.template_engine")
+        colony.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
-        "service_http.system_information.system"
+        "service_http_system_information.system"
     ]
 
-    service_http_system_information = None
-    """ The service http system information (handler) """
-
-    system_information_plugins = []
-    """ The system information plugins """
-
-    template_engine_plugin = None
-    """ The template engine plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.system_information.system
-        self.service_http_system_information = service_http.system_information.system.ServiceHttpSystemInformation(self);
-
-    @colony.base.decorators.load_allowed
-    def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
-
-    @colony.base.decorators.unload_allowed
-    def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import service_http_system_information
+        self.system = service_http_system_information.ServiceHttpSystemInformation(self);
 
     def get_handler_name(self):
         """
@@ -102,7 +80,7 @@ class ServiceHttpSystemInformationPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_system_information.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -112,16 +90,4 @@ class ServiceHttpSystemInformationPlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_system_information.handle_request(request)
-
-    @colony.base.decorators.load_allowed_capability("system_information")
-    def system_information_load_allowed(self, plugin, capability):
-        self.system_information_plugins.append(plugin)
-
-    @colony.base.decorators.unload_allowed_capability("system_information")
-    def system_information_unload_allowed(self, plugin, capability):
-        self.system_information_plugins.append(plugin)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine")
-    def set_template_engine_plugin(self, template_engine_plugin):
-        self.template_engine_plugin = template_engine_plugin
+        return self.system.handle_request(request)
