@@ -58,20 +58,8 @@ NAME_REFERENCE_VALUE = "__name__"
 PACKAGE_REFERENCE_VALUE = "__package__"
 """ The package reference value """
 
-GLOBALS_REFERENCE_VALUE = "_globals"
-""" The globals reference value """
-
-LOCALS_REFERENCE_VALUE = "_locals"
-""" The locals reference value """
-
 DATA_REFERENCE_VALUE = "data_reference"
 """ The data reference value """
-
-DEFAULT_VALUE = "default"
-""" The default value """
-
-RESOURCES_VALUE = "resources"
-""" The resources value """
 
 CONTROLLER_CAMEL_VALUE = "Controller"
 """ The controller camel value """
@@ -208,8 +196,8 @@ class MvcUtils(colony.System):
 
         # sets the target map globals and locals
         # reference attributes
-        target_map[GLOBALS_REFERENCE_VALUE] = globals_map
-        target_map[LOCALS_REFERENCE_VALUE] = locals_map
+        target_map["_globals"] = globals_map
+        target_map["_locals"] = locals_map
 
         # creates the directory path to be used for testing, check
         # if the module refers a directory or a file
@@ -316,7 +304,7 @@ class MvcUtils(colony.System):
         # plugin instance and uses it to create the "default"
         # resources path to be used
         plugin_instance_path = self._get_module_path(system_instance)
-        resources_path = os.path.join(plugin_instance_path, RESOURCES_VALUE)
+        resources_path = os.path.join(plugin_instance_path, "resources")
 
         # sets the "relative" resources path in the controller
         _controller.set_relative_resources_path(resources_path)
@@ -341,7 +329,7 @@ class MvcUtils(colony.System):
         # plugin instance and uses it to create the "default"
         # resources path to be used
         plugin_instance_path = self._get_module_path(system_instance)
-        resources_path = os.path.join(plugin_instance_path, RESOURCES_VALUE)
+        resources_path = os.path.join(plugin_instance_path, "resources")
 
         # splits the package path into the extra and base
         # parts to be used in the business helper
@@ -365,7 +353,7 @@ class MvcUtils(colony.System):
         # models module to be used, in case no id is found the default
         # (global) module will be used
         id = entity_manager_arguments.get("id", None)
-        models_id = id or DEFAULT_VALUE
+        models_id = id or "default"
         models_module = self.models_modules_map.get(models_id, None)
 
         # in case no models module is found one must be created
@@ -917,7 +905,7 @@ class MvcUtils(colony.System):
         # models module to be used, in case no id is found the default
         # (global) module will be used
         id = entity_manager_arguments.get("id", None)
-        models_id = id or DEFAULT_VALUE
+        models_id = id or "default"
         models_module = self.models_modules_map.get(models_id, None)
 
         # generates the entity models map from the base entity models list
