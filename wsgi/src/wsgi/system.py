@@ -41,8 +41,7 @@ import types
 import datetime
 import threading
 
-import colony.base.system
-import colony.libs.structures_util
+import colony
 
 import exceptions
 
@@ -71,7 +70,7 @@ DEFAULT_CHARSET = "utf-8"
 this value is defined in such a way that all the
 knows characters are able to be encoded """
 
-class Wsgi(colony.base.system.System):
+class Wsgi(colony.System):
     """
     The wsgi class, responsible for the implementation
     of the colony side of the wsgi specification.
@@ -343,7 +342,7 @@ class WsgiRequest:
 
         # starts the map that will hold the various attributes
         # resulting from the parsing of the request
-        self.attributes_map = colony.libs.structures_util.OrderedMap(True)
+        self.attributes_map = colony.OrderedMap(True)
 
         # creates the map that will hold the various headers to
         # sent to the client (output headers)

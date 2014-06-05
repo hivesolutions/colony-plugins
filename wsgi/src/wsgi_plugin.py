@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class WsgiPlugin(colony.base.system.Plugin):
+class WsgiPlugin(colony.Plugin):
     """
     The main class for the Wsgi plugin.
     """
@@ -52,40 +51,25 @@ class WsgiPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "wsgi"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.rest")
+        colony.PluginDependency("pt.hive.colony.plugins.rest")
     ]
     main_modules = [
         "wsgi.exceptions",
         "wsgi.sytem"
     ]
 
-    wsgi = None
-    """ The wsgi """
-
-    rest_plugin = None
-    """ The reference to the rest plugin to be used to
-    route (and handle) the request to be received """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import wsgi.system
-        self.wsgi = wsgi.system.Wsgi(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import wsgi
+        self.system = wsgi.Wsgi(self)
 
     def handle(self, environ, start_response, prefix, alias):
-        return self.wsgi.handle(environ, start_response, prefix, alias)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.rest")
-    def set_rest_plugin(self, rest_plugin):
-        self.rest_plugin = rest_plugin
+        return self.system.handle(environ, start_response, prefix, alias)
