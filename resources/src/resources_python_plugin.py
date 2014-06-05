@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ResourcesPythonPlugin(colony.base.system.Plugin):
+class ResourcesPythonPlugin(colony.Plugin):
     """
     The main class for the Resources Python plugin.
     """
@@ -50,27 +50,24 @@ class ResourcesPythonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "resources_parser"
     ]
     main_modules = [
-        "resources.python.system"
+        "resources_python.system"
     ]
 
-    resources_python = None
-    """ The resources python (parser) """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import resources.python.system
-        self.resources_python = resources.python.system.ResourcesPython(self)
+        colony.Plugin.load_plugin(self)
+        import resources_python
+        self.system = resources_python.ResourcesPython(self)
 
     def get_resources_parser_name(self):
-        return self.resources_python.get_resources_parser_name()
+        return self.system.get_resources_parser_name()
 
     def parse_resource(self, resource):
-        return self.resources_python.parse_resource(resource)
+        return self.system.parse_resource(resource)

@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ResourcesJsonPlugin(colony.base.system.Plugin):
+class ResourcesJsonPlugin(colony.Plugin):
     """
     The main class for the Resources Json plugin.
     """
@@ -51,39 +50,25 @@ class ResourcesJsonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "resources_parser"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "resources.json.system"
+        "resources_json.system"
     ]
 
-    resources_json = None
-    """ The resources json (parser) """
-
-    json_plugin = None
-    """ The json plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import resources.json.system
-        self.resources_json = resources.json.system.ResourcesJson(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import resources_json
+        self.system = resources_json.ResourcesJson(self)
 
     def get_resources_parser_name(self):
-        return self.resources_json.get_resources_parser_name()
+        return self.system.get_resources_parser_name()
 
     def parse_resource(self, resource):
-        return self.resources_json.parse_resource(resource)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin
+        return self.system.parse_resource(resource)

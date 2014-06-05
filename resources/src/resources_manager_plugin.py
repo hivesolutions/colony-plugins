@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ResourcesManagerPlugin(colony.base.system.Plugin):
+class ResourcesManagerPlugin(colony.Plugin):
     """
     The main class for the Resources Manager plugin.
     """
@@ -51,9 +50,9 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "startup",
@@ -69,44 +68,37 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
         "plugin_manager.plugin.unload_plugin"
     ]
     main_modules = [
-        "resources.manager.exceptions",
-        "resources.manager.parser",
-        "resources.manager.system",
-        "resources.manager.tests"
+        "resources_manager.exceptions",
+        "resources_manager.parser",
+        "resources_manager.system",
+        "resources_manager.tests"
     ]
 
-    resources_manager = None
-    """ The resources manager """
-
-    resources_parser_plugins = []
-    """ The resources parser plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import resources.manager.system
-        import resources.manager.tests
-        self.resources_manager = resources.manager.system.ResourcesManager(self)
-        self.resources_manager_test = resources.manager.tests.ResourcesManagerTestCase
-        self.resources_manager.load_system()
+        colony.Plugin.load_plugin(self)
+        import resources_manager
+        self.system = resources_manager.ResourcesManager(self)
+        self.test = resources_manager.ResourcesManagerTestCase
+        self.system.load_system()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
+        colony.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.resources_manager.unload_system()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_system()
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.event_handler
+    @colony.event_handler
     def event_handler(self, event_name, *event_args):
-        colony.base.system.Plugin.event_handler(self, event_name, *event_args)
+        colony.Plugin.event_handler(self, event_name, *event_args)
 
     def parse_file(self, file_path, full_resources_path):
         """
@@ -122,49 +114,49 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
         resources path (directory).
         """
 
-        return self.resources_manager.parse_file(file_path, full_resources_path)
+        return self.system.parse_file(file_path, full_resources_path)
 
     def register_resources(self, resources_list, file_path, full_resources_path):
-        return self.resources_manager.register_resources(resources_list, file_path, full_resources_path)
+        return self.system.register_resources(resources_list, file_path, full_resources_path)
 
     def unregister_resources(self, resources_list, file_path, full_resources_path):
-        return self.resources_manager.unregister_resources(resources_list, file_path, full_resources_path)
+        return self.system.unregister_resources(resources_list, file_path, full_resources_path)
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
-        return self.resources_manager.register_resource(resource_namespace, resource_name, resource_type, resource_data)
+        return self.system.register_resource(resource_namespace, resource_name, resource_type, resource_data)
 
     def unregister_resource(self, resource_id):
-        return self.resources_manager.unregister_resource(resource_id)
+        return self.system.unregister_resource(resource_id)
 
     def is_resource_registered(self, resource_id):
-        return self.resources_manager.is_resource_registered(resource_id)
+        return self.system.is_resource_registered(resource_id)
 
     def is_resource_name(self, resource_name):
-        return self.resources_manager.is_resource_name(resource_name)
+        return self.system.is_resource_name(resource_name)
 
     def get_resource(self, resource_id):
-        return self.resources_manager.get_resource(resource_id)
+        return self.system.get_resource(resource_id)
 
     def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
-        return self.resources_manager.get_resources(resource_namespace, resource_name, resource_type)
+        return self.system.get_resources(resource_namespace, resource_name, resource_type)
 
     def load_resource_file(self, file_path):
-        return self.resources_manager.load_resource_file(file_path)
+        return self.system.load_resource_file(file_path)
 
     def get_real_string_value(self, string_value):
-        return self.resources_manager.get_real_string_value(string_value)
+        return self.system.get_real_string_value(string_value)
 
     def get_base_resources_path(self):
-        return self.resources_manager.get_base_resources_path()
+        return self.system.get_base_resources_path()
 
     def get_file_path_resources_list_map(self):
-        return self.resources_manager.file_path_resources_list_map
+        return self.system.file_path_resources_list_map
 
     def get_file_path_file_information_map(self):
-        return self.resources_manager.file_path_file_information_map
+        return self.system.file_path_file_information_map
 
     def get_test_case(self):
-        return self.resources_manager_test
+        return self.test
 
     def get_system_information(self):
         """
@@ -175,22 +167,20 @@ class ResourcesManagerPlugin(colony.base.system.Plugin):
         @return: The system information map.
         """
 
-        return self.resources_manager.get_system_information()
+        return self.system.get_system_information()
 
-    @colony.base.decorators.load_allowed_capability("resources_parser")
+    @colony.load_allowed_capability("resources_parser")
     def resources_parser_load_allowed(self, plugin, capability):
-        self.resources_parser_plugins.append(plugin)
-        self.resources_manager.load_resources_parser_plugin(plugin)
+        self.system.load_resources_parser_plugin(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("resources_parser")
+    @colony.unload_allowed_capability("resources_parser")
     def resources_parser_unload_allowed(self, plugin, capability):
-        self.resources_parser_plugins.remove(plugin)
-        self.resources_manager.unload_resources_parser_plugin(plugin)
+        self.system.unload_resources_parser_plugin(plugin)
 
-    @colony.base.decorators.event_handler_method("plugin_manager.plugin.end_load_plugin")
+    @colony.event_handler_method("plugin_manager.plugin.end_load_plugin")
     def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
-        self.resources_manager.register_plugin_resources(plugin)
+        self.system.register_plugin_resources(plugin)
 
-    @colony.base.decorators.event_handler_method("plugin_manager.plugin.unload_plugin")
+    @colony.event_handler_method("plugin_manager.plugin.unload_plugin")
     def unload_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
-        self.resources_manager.unregister_plugin_resources(plugin)
+        self.system.unregister_plugin_resources(plugin)
