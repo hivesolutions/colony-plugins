@@ -46,7 +46,7 @@ import colony
 
 import parser
 
-BASE_RESOURCES_PATH = "resources/manager/resources"
+BASE_RESOURCES_PATH = "resources_manager/resources"
 """ The base resources path """
 
 CONFIGURATION_PATH = "configuration"
