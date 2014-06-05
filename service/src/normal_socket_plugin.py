@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class NormalSocketPlugin(colony.base.system.Plugin):
+class NormalSocketPlugin(colony.Plugin):
     """
     The main class for the Normal Socket plugin.
     """
@@ -50,24 +50,21 @@ class NormalSocketPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "socket_provider"
     ]
     main_modules = [
-        "service.normal_socket.system"
+        "normal_socket.system"
     ]
 
-    normal_socket = None
-    """ The normal socket (provider) """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service.normal_socket.system
-        self.normal_socket = service.normal_socket.system.NormalSocket(self)
+        colony.Plugin.load_plugin(self)
+        import normal_socket
+        self.system = normal_socket.NormalSocket(self)
 
     def get_provider_name(self):
         """
@@ -77,7 +74,7 @@ class NormalSocketPlugin(colony.base.system.Plugin):
         @return: The socket provider name.
         """
 
-        return self.normal_socket.get_provider_name()
+        return self.system.get_provider_name()
 
     def provide_socket(self):
         """
@@ -88,7 +85,7 @@ class NormalSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.normal_socket.provide_socket()
+        return self.system.provide_socket()
 
     def provide_socket_parameters(self, parameters):
         """
@@ -101,4 +98,4 @@ class NormalSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.normal_socket.provide_socket_parameters(parameters)
+        return self.system.provide_socket_parameters(parameters)

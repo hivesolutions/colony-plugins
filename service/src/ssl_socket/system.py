@@ -42,8 +42,7 @@ import errno
 import types
 import socket
 
-import colony.base.system
-import colony.base.exceptions
+import colony
 
 PROVIDER_NAME = "ssl"
 """ The provider name """
@@ -84,7 +83,7 @@ constants in the ssl infra-structure, note that the map
 is constructed taking into account the existence of the
 constants in the ssl module defaulting to invalid otherwise """
 
-class SslSocket(colony.base.system.System):
+class SslSocket(colony.System):
     """
     The ssl socket (provider) class.
     """
@@ -279,7 +278,7 @@ def accept(self):
         if error.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
             # creates the error and populates it with the connection and the address
             # then raises it to the upper levels
-            error = colony.base.exceptions.OperationNotComplete("no handshake was possible")
+            error = colony.OperationNotComplete("no handshake was possible")
             error.socket = connection
             error.connection = connection
             error.address = address

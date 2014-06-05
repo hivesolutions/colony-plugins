@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class RawSocketPlugin(colony.base.system.Plugin):
+class RawSocketPlugin(colony.Plugin):
     """
     The main class for the Raw Socket plugin.
     """
@@ -50,24 +50,21 @@ class RawSocketPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "socket_provider"
     ]
     main_modules = [
-        "service.raw_socket.system"
+        "raw_socket.system"
     ]
 
-    raw_socket = None
-    """ The raw socket (provider) """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service.raw_socket.system
-        self.raw_socket = service.raw_socket.system.RawSocket(self)
+        colony.Plugin.load_plugin(self)
+        import raw_socket
+        self.system = raw_socket.RawSocket(self)
 
     def get_provider_name(self):
         """
@@ -77,7 +74,7 @@ class RawSocketPlugin(colony.base.system.Plugin):
         @return: The socket provider name.
         """
 
-        return self.raw_socket.get_provider_name()
+        return self.system.get_provider_name()
 
     def provide_socket(self):
         """
@@ -88,7 +85,7 @@ class RawSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.raw_socket.provide_socket()
+        return self.system.provide_socket()
 
     def provide_socket_parameters(self, parameters):
         """
@@ -101,4 +98,4 @@ class RawSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.raw_socket.provide_socket_parameters(parameters)
+        return self.system.provide_socket_parameters(parameters)

@@ -42,8 +42,7 @@ import socket
 import select
 import threading
 
-import colony.libs.map_util
-import colony.libs.call_util
+import colony
 
 import threads
 import exceptions
@@ -419,7 +418,7 @@ class AbstractService:
                     }
 
                     # copies the socket parameters to the parameters map
-                    colony.libs.map_util.map_copy(socket_parameters, parameters)
+                    colony.map_copy(socket_parameters, parameters)
 
                     # creates a new service socket with the socket provider plugin
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
@@ -1164,7 +1163,7 @@ class AbstractServiceConnectionHandler:
 
         try:
             # executes the callable with retry support
-            colony.libs.call_util.execute_retries(callable)
+            colony.execute_retries(callable)
         except BaseException, exception:
             # raises the connection change failure exception
             raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + unicode(exception))
@@ -1181,7 +1180,7 @@ class AbstractServiceConnectionHandler:
 
         try:
             # executes the callable with retry support
-            colony.libs.call_util.execute_retries(callable)
+            colony.execute_retries(callable)
         except BaseException, exception:
             # raises the connection change failure exception
             raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + unicode(exception))

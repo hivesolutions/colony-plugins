@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class SslSocketUpgraderPlugin(colony.base.system.Plugin):
+class SslSocketUpgraderPlugin(colony.Plugin):
     """
     The main class for the Ssl Socket Upgrader plugin.
     """
@@ -50,7 +50,7 @@ class SslSocketUpgraderPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "socket_upgrader"
@@ -59,16 +59,13 @@ class SslSocketUpgraderPlugin(colony.base.system.Plugin):
         colony.PackageDependency("Python 2.6", "ssl")
     ]
     main_modules = [
-        "service.ssl_socket_upgrader.system"
+        "ssl_socket_upgrader.system"
     ]
 
-    ssl_socket_upgrader = None
-    """ The ssl socket upgrader """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service.ssl_socket_upgrader.system
-        self.ssl_socket_upgrader = service.ssl_socket_upgrader.system.SslSocketUpgrader(self)
+        colony.Plugin.load_plugin(self)
+        import ssl_socket_upgrader
+        self.system = ssl_socket_upgrader.SslSocketUpgrader(self)
 
     def get_upgrader_name(self):
         """
@@ -78,7 +75,7 @@ class SslSocketUpgraderPlugin(colony.base.system.Plugin):
         @return: The socket upgrader name.
         """
 
-        return self.ssl_socket_upgrader.get_upgrader_name()
+        return self.system.get_upgrader_name()
 
     def upgrade_socket(self, socket):
         """
@@ -91,7 +88,7 @@ class SslSocketUpgraderPlugin(colony.base.system.Plugin):
         @return: The upgraded socket.
         """
 
-        return self.ssl_socket_upgrader.upgrade_socket(socket)
+        return self.system.upgrade_socket(socket)
 
     def upgrade_socket_parameters(self, socket, parameters):
         """
@@ -106,4 +103,4 @@ class SslSocketUpgraderPlugin(colony.base.system.Plugin):
         @return: The upgraded socket.
         """
 
-        return self.ssl_socket_upgrader.upgrade_socket_parameters(socket, parameters)
+        return self.system.upgrade_socket_parameters(socket, parameters)

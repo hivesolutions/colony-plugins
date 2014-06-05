@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ServiceUtilsPlugin(colony.base.system.Plugin):
+class ServiceUtilsPlugin(colony.Plugin):
     """
     The main class for the Service Utils plugin.
     """
@@ -50,9 +50,9 @@ class ServiceUtilsPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities_allowed = [
         "threads",
@@ -60,44 +60,28 @@ class ServiceUtilsPlugin(colony.base.system.Plugin):
         "socket_upgrader"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool")
+        colony.PluginDependency("pt.hive.colony.plugins.work.pool")
     ]
     main_modules = [
-        "service.utils.async",
-        "service.utils.exceptions",
-        "service.utils.sync",
-        "service.utils.system",
-        "service.utils.threads"
+        "service_utils.async",
+        "service_utils.exceptions",
+        "service_utils.sync",
+        "service_utils.system",
+        "service_utils.threads"
     ]
 
-    service_utils = None
-    """ The service utils """
-
-    socket_provider_plugins = []
-    """ The socket provider plugins """
-
-    socket_upgrader_plugins = []
-    """ The socket upgrader plugins """
-
-    work_pool_plugin = None
-    """ The work pool plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service.utils.system
-        self.service_utils = service.utils.system.ServiceUtils(self)
+        colony.Plugin.load_plugin(self)
+        import service_utils
+        self.system = service_utils.ServiceUtils(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def generate_service(self, parameters):
         """
@@ -110,7 +94,7 @@ class ServiceUtilsPlugin(colony.base.system.Plugin):
         @return: The generated service.
         """
 
-        return self.service_utils.generate_service(parameters)
+        return self.system.generate_service(parameters)
 
     def generate_service_port(self, parameters):
         """
@@ -123,28 +107,20 @@ class ServiceUtilsPlugin(colony.base.system.Plugin):
         @return: The newly generated port.
         """
 
-        return self.service_utils.generate_service_port(parameters)
+        return self.system.generate_service_port(parameters)
 
-    @colony.base.decorators.load_allowed_capability("socket_provider")
+    @colony.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-        self.service_utils.socket_provider_load(plugin)
+        self.system.socket_provider_load(plugin)
 
-    @colony.base.decorators.load_allowed_capability("socket_upgrader")
+    @colony.load_allowed_capability("socket_upgrader")
     def socket_upgrader_load_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.append(plugin)
-        self.service_utils.socket_upgrader_load(plugin)
+        self.system.socket_upgrader_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("socket_provider")
+    @colony.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
-        self.service_utils.socket_provider_unload(plugin)
+        self.system.socket_provider_unload(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("socket_upgrader")
+    @colony.unload_allowed_capability("socket_upgrader")
     def socket_upgrader_unload_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.remove(plugin)
-        self.service_utils.socket_upgrader_unload(plugin)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.work.pool")
-    def set_work_pool_plugin(self, work_pool_plugin):
-        self.work_pool_plugin = work_pool_plugin
+        self.system.socket_upgrader_unload(plugin)

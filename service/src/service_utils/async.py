@@ -45,9 +45,7 @@ import select
 import socket
 import threading
 
-import colony.libs.map_util
-
-import colony.base.exceptions
+import colony
 
 import threads
 import exceptions
@@ -425,7 +423,7 @@ class AbstractService:
 
                     # copies the socket parameters to the parameters map and then
                     # uses it to create new service socket with the socket provider plugin
-                    colony.libs.map_util.map_copy(socket_parameters, parameters)
+                    colony.map_copy(socket_parameters, parameters)
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
                 else:
                     # raises the socket provider not found exception
@@ -812,7 +810,7 @@ class ServiceConnection(Connection):
             try:
                 # accepts the connection retrieving the service connection object and the address
                 service_connection, service_address = _socket.accept()
-            except colony.base.exceptions.OperationNotComplete, error:
+            except colony.OperationNotComplete, error:
                 # unpacks the various components of the error, so
                 # that is possible to retrieve the connection and
                 # the address of the (still) pending connection

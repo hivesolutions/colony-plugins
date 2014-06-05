@@ -39,17 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
-import colony.base.system
+import colony
 
-PROVIDER_NAME = "normal"
+PROVIDER_NAME = "raw"
 """ The provider name """
 
 FAMILY_VALUE = "family"
 """ The family value """
 
-class NormalSocket(colony.base.system.System):
+class RawSocket(colony.System):
     """
-    The normal socket (provider) class.
+    The raw socket (provider) class.
     """
 
     def get_provider_name(self):
@@ -71,11 +71,11 @@ class NormalSocket(colony.base.system.System):
         @return: The provided socket.
         """
 
-        # creates the normal socket
-        normal_socket = self.provide_socket_parameters()
+        # creates the raw socket
+        raw_socket = self.provide_socket_parameters()
 
-        # returns the normal socket
-        return normal_socket
+        # returns the raw socket
+        return raw_socket
 
     def provide_socket_parameters(self, parameters = {}):
         """
@@ -89,13 +89,13 @@ class NormalSocket(colony.base.system.System):
         """
 
         # prints a debug message
-        self.plugin.debug("Providing a normal socket")
+        self.plugin.debug("Providing a raw socket")
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
-        # creates the normal socket
-        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+        # creates the raw socket
+        raw_socket = socket.socket(socket_family, socket.SOCK_RAW)
 
-        # returns the normal socket
-        return normal_socket
+        # returns the raw socket
+        return raw_socket

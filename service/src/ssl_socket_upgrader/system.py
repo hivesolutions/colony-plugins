@@ -41,7 +41,7 @@ import ssl
 import types
 import select
 
-import colony.base.system
+import colony
 
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
@@ -76,7 +76,7 @@ constants in the ssl infra-structure, note that the map
 is constructed taking into account the existence of the
 constants in the ssl module defaulting to invalid otherwise """
 
-class SslSocketUpgrader(colony.base.system.System):
+class SslSocketUpgrader(colony.System):
     """
     The ssl socket upgrader class.
     """

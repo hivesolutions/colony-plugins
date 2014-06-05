@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
-import colony.base.system
+import colony
 
 import sync
 import async
@@ -57,7 +57,7 @@ SERVICE_CLASSES_MAP = {
 }
 """ The map containing the various abstract service types """
 
-class ServiceUtils(colony.base.system.System):
+class ServiceUtils(colony.System):
     """
     The service utils class.
     """
@@ -78,7 +78,7 @@ class ServiceUtils(colony.base.system.System):
     """ The current port """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}

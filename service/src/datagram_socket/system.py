@@ -39,8 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
-import colony.base.system
-import colony.libs.host_util
+import colony
 
 PROVIDER_NAME = "datagram"
 """ The provider name """
@@ -63,7 +62,7 @@ TTL_VALUE = "ttl"
 DEFAULT_MULTICAST_TTL = 255
 """ The default multicast ttl """
 
-class DatagramSocket(colony.base.system.System):
+class DatagramSocket(colony.System):
     """
     The datagram socket (provider) class.
     """
@@ -152,7 +151,7 @@ class DatagramSocket(colony.base.system.System):
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
         # retrieves the addresses ip4
-        address_ip4 = colony.libs.host_util.get_address_ip4_all()
+        address_ip4 = colony.get_address_ip4_all()
 
         # converts the addresses to network mode
         address_ip4_network = socket.inet_aton(address_ip4)

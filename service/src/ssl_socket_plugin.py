@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class SslSocketPlugin(colony.base.system.Plugin):
+class SslSocketPlugin(colony.Plugin):
     """
     The main class for the Ssl Socket plugin.
     """
@@ -50,7 +50,7 @@ class SslSocketPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "socket_provider"
@@ -59,16 +59,13 @@ class SslSocketPlugin(colony.base.system.Plugin):
         colony.PackageDependency("Python 2.6", "ssl")
     ]
     main_modules = [
-        "service.ssl_socket.system"
+        "ssl_socket.system"
     ]
 
-    ssl_socket = None
-    """ The ssl socket (provider) """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service.ssl_socket.system
-        self.ssl_socket = service.ssl_socket.system.SslSocket(self)
+        colony.Plugin.load_plugin(self)
+        import ssl_socket
+        self.system = ssl_socket.SslSocket(self)
 
     def get_provider_name(self):
         """
@@ -78,7 +75,7 @@ class SslSocketPlugin(colony.base.system.Plugin):
         @return: The socket provider name.
         """
 
-        return self.ssl_socket.get_provider_name()
+        return self.system.get_provider_name()
 
     def provide_socket(self):
         """
@@ -89,7 +86,7 @@ class SslSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.ssl_socket.provide_socket()
+        return self.system.provide_socket()
 
     def provide_socket_parameters(self, parameters):
         """
@@ -102,4 +99,4 @@ class SslSocketPlugin(colony.base.system.Plugin):
         @return: The provided socket.
         """
 
-        return self.ssl_socket.provide_socket_parameters(parameters)
+        return self.system.provide_socket_parameters(parameters)
