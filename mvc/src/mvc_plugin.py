@@ -72,16 +72,16 @@ class MvcPlugin(colony.Plugin):
         "mvc.communication"
     ]
     main_modules = [
-        "mvc.mvc.communication",
-        "mvc.mvc.exceptions",
-        "mvc.mvc.file_handler",
-        "mvc.mvc.system"
+        "mvc.communication",
+        "mvc.exceptions",
+        "mvc.file_handler",
+        "mvc.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import mvc.mvc
-        self.system = mvc.mvc.Mvc(self)
+        import mvc
+        self.system = mvc.Mvc(self)
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
