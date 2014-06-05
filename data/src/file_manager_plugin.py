@@ -67,11 +67,11 @@ class FileManagerPlugin(colony.Plugin):
         import file_manager
         self.system = file_manager.DataFileManager(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
         colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
         colony.Plugin.unload_allowed(self, plugin, capability)
 
@@ -102,10 +102,10 @@ class FileManagerPlugin(colony.Plugin):
 
         return self.system.load_file_manager(engine_name, properties)
 
-    @colony.base.decorators.load_allowed_capability("file_engine")
+    @colony.load_allowed_capability("file_engine")
     def file_engine_load_allowed(self, plugin, capability):
         self.system.register_file_engine_plugin(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("file_engine")
+    @colony.unload_allowed_capability("file_engine")
     def file_engine_unload_allowed(self, plugin, capability):
         self.system.unregister_file_engine_plugin(plugin)

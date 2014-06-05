@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.test_util
+import colony
 
 import exceptions
 import test_mocks
@@ -89,7 +89,7 @@ class EntityManagerTest:
         # current entity manager context
         test_case.entity_manager.destroy()
 
-class EntityManagerBaseTestCase(colony.libs.test_util.ColonyTestCase):
+class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
     def setUp(self):
         self.plugin.info("Setting up Entity Manager Base Test Case...")

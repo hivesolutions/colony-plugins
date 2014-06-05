@@ -47,10 +47,7 @@ import calendar
 import datetime
 import tempfile
 
-import colony.base.system
-import colony.libs.path_util
-import colony.libs.structures_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 import structures
@@ -131,7 +128,7 @@ SQL_TYPES_MAP = {
 """ The map containing the association of the entity types with
 the corresponding sql types """
 
-class DataEntityManager(colony.base.system.System):
+class DataEntityManager(colony.System):
     """
     The data entity manager class.
     """
@@ -143,7 +140,7 @@ class DataEntityManager(colony.base.system.System):
     """ The map associating the id with the (loaded) entity manager """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
 
         self.entity_engine_plugins_map = {}
         self.loaded_entity_manager_map = {}
@@ -573,7 +570,7 @@ class EntityManager:
         finally:
             # removes the temporary directory files to avoid
             # the leaking of files (garbage collection)
-            colony.libs.path_util.remove_directory(directory_path)
+            colony.remove_directory(directory_path)
 
     def export_f(self, serializer, file_path = "default.emd", date_range = None):
         """
@@ -657,7 +654,7 @@ class EntityManager:
         finally:
             # removes the temporary directory files to avoid
             # the leaking of files (garbage collection)
-            colony.libs.path_util.remove_directory(directory_path)
+            colony.remove_directory(directory_path)
 
     def import_data(self, serializer, entity_classes = None, directory_path = None, full_mode = False, include_parents = False, encoding = DEFAULT_ENCODING):
         """
@@ -1339,7 +1336,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base creation of the table)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("create table ")
             query_buffer.write(relation_unique)
             query_buffer.write("(")
@@ -1416,7 +1413,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base altering of the table)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("drop table ")
             query_buffer.write(relation_unique)
 
@@ -1480,7 +1477,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base altering of the table)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("alter table ")
             query_buffer.write(target_name)
             query_buffer.write(" drop constraint ")
@@ -2071,7 +2068,7 @@ class EntityManager:
         # so that the appropriate structure may be created to
         # represent the empty structure
         is_to_many = entity_class.is_to_many(name)
-        default = colony.libs.structures_util.JournaledList() if is_to_many else None
+        default = colony.JournaledList() if is_to_many else None
 
         # retrieves the relation value from the new entity and
         # uses it to set the value in the entity note that no
@@ -2560,7 +2557,7 @@ class EntityManager:
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base creation of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("create table ")
         query_buffer.write(table_name)
         query_buffer.write("(")
@@ -2743,7 +2740,7 @@ class EntityManager:
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base deletion of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("drop table ")
         query_buffer.write(table_name)
         self.engine._allow_cascade() and query_buffer.write(" cascade")
@@ -2802,7 +2799,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base insertion of the values)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("insert into ")
             query_buffer.write(table_name)
             query_buffer.write("(")
@@ -3015,7 +3012,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base update of the values)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("update ")
             query_buffer.write(table_name)
             query_buffer.write(" set ")
@@ -3143,7 +3140,7 @@ class EntityManager:
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base delete of the values)
-            query_buffer = colony.libs.string_buffer_util.StringBuffer()
+            query_buffer = colony.StringBuffer()
             query_buffer.write("delete from ")
             query_buffer.write(table_name)
             query_buffer.write(" where ")
@@ -3385,7 +3382,7 @@ class EntityManager:
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base verify of the table)
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select ")
         query_buffer.write(table_id)
         query_buffer.write(" from ")
@@ -3496,7 +3493,7 @@ class EntityManager:
 
         # creates the string buffer to hold the select query
         # and write the initial select token
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
         query_buffer.write("select ")
 
         # writes the part of find query dedicated to the selecting
@@ -4640,7 +4637,7 @@ class EntityManager:
             field_name = _table_name + "." + filter_field_name
 
             # creates a new buffer for the filter field value
-            filter_field_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+            filter_field_value_buffer = colony.StringBuffer()
 
             # sets the is first filter field
             # value flag
@@ -5381,7 +5378,7 @@ class EntityManager:
                         if not attribute_partial in _entity.__dict__:
                             # creates and sets the new list to hold the various
                             # to many relation values in the attribute
-                            setattr(_entity, attribute_partial, colony.libs.structures_util.JournaledList())
+                            setattr(_entity, attribute_partial, colony.JournaledList())
 
                         # retrieves the list containing the relation values
                         # this is going to be used to set the entity on it
@@ -6134,7 +6131,7 @@ class EntityManager:
     def _export_generator(self, serializer, date_range = None):
         # creates a string buffer to hold the information of
         # the query to retrieve the generator items
-        query_buffer = colony.libs.string_buffer_util.StringBuffer()
+        query_buffer = colony.StringBuffer()
 
         # writes the initial select query string part to the
         # query buffer (this is the general part)
@@ -6893,7 +6890,7 @@ class EntityManager:
 
         # creates a string buffer to hold the information of
         # the various partial names
-        name_buffer = colony.libs.string_buffer_util.StringBuffer()
+        name_buffer = colony.StringBuffer()
 
         # iterates over all the partial names to write their
         # relation information into the name buffer for latter
