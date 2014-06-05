@@ -79,10 +79,6 @@ class CryptonPlugin(colony.Plugin):
         colony.Plugin.unload_plugin(self)
         self.system.unload_components()
 
-    @colony.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.Plugin.dependency_injected(self, plugin)
-
     @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
         colony.Plugin.set_configuration_property(self, property_name, property)
