@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class WorkPoolPlugin(colony.base.system.Plugin):
+class WorkPoolPlugin(colony.Plugin):
     """
     The main class for the Work Pool plugin
     """
@@ -51,44 +50,44 @@ class WorkPoolPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "work_pool",
         "system_information"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.threads.pool")
+        colony.PluginDependency("pt.hive.colony.plugins.threads.pool")
     ]
     main_modules = [
-        "work.pool.algorithms",
-        "work.pool.exceptions",
-        "work.pool.system"
+        "work_pool.algorithms",
+        "work_pool.exceptions",
+        "work_pool.system"
     ]
 
-    work_pool = None
-    """ The work pool """
-
-    thread_pool_plugin = None
-    """ The thread pool plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import work.pool.system
-        self.work_pool = work.pool.system.WorkPool(self)
+        colony.Plugin.load_plugin(self)
+        import work_pool
+        self.system = work_pool.WorkPool(self)
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.work_pool.unload()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload()
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    def create_new_work_pool(self, name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm):
-        return self.work_pool.create_new_work_pool(
+    def create_new_work_pool(
+        self,
+        name,
+        description,
+        work_processing_task_class,
+        work_processing_task_arguments,
+        number_threads, scheduling_algorithm,
+        maximum_number_threads,
+        maximum_number_works_thread,
+        work_scheduling_algorithm
+    ):
+        return self.system.create_new_work_pool(
             name,
             description,
             work_processing_task_class,
@@ -109,8 +108,4 @@ class WorkPoolPlugin(colony.base.system.Plugin):
         @return: The system information map.
         """
 
-        return self.work_pool.get_system_information()
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.threads.pool")
-    def set_thread_pool_plugin(self, thread_pool_plugin):
-        self.thread_pool_plugin = thread_pool_plugin
+        return self.system.get_system_information()

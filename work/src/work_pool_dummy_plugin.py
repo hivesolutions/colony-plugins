@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class WorkPoolDummyPlugin(colony.base.system.Plugin):
+class WorkPoolDummyPlugin(colony.Plugin):
     """
     The main class for the Work Pool Dummy plugin
     """
@@ -51,43 +50,29 @@ class WorkPoolDummyPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "startup"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.work.pool")
+        colony.PluginDependency("pt.hive.colony.plugins.work.pool")
     ]
     main_modules = [
-        "work.pool_dummy.system"
+        "work_pool_dummy.system"
     ]
 
-    work_pool_dummy = None
-    """ The work pool dummy """
-
-    work_pool_plugin = None
-    """ The work pool plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import work.pool_dummy.system
-        self.work_pool_dummy = work.pool_dummy.system.WorkPoolDummy(self)
+        colony.Plugin.load_plugin(self)
+        import work_pool_dummy
+        self.system = work_pool_dummy.WorkPoolDummy(self)
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.work_pool_dummy.start_pool()
+        colony.Plugin.end_load_plugin(self)
+        self.system.start_pool()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.work_pool_dummy.stop_pool()
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.work.pool")
-    def set_work_pool_plugin(self, work_pool_plugin):
-        self.work_pool_plugin = work_pool_plugin
+        colony.Plugin.unload_plugin(self)
+        self.system.stop_pool()

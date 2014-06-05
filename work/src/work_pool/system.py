@@ -39,8 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
-import colony.base.system
-import colony.libs.structures_util
+import colony
 
 import algorithms
 import exceptions
@@ -83,7 +82,7 @@ WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {
 }
 """ The work scheduling algorithm class map """
 
-class WorkPool(colony.base.system.System):
+class WorkPool(colony.System):
     """
     The work pool class.
     """
@@ -92,7 +91,7 @@ class WorkPool(colony.base.system.System):
     """ The list of currently enabled work pools """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.work_pools_list = []
 
     def unload(self):
@@ -159,7 +158,7 @@ class WorkPool(colony.base.system.System):
         """
 
         # creates the map to hold the system information (ordered  map)
-        work_pool_information = colony.libs.structures_util.OrderedMap()
+        work_pool_information = colony.OrderedMap()
 
         # iterates over all the work pools
         for work_pool in self.work_pools_list:

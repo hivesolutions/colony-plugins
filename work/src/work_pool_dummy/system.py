@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import thread
 
-import colony.base.system
+import colony
 
-class WorkPoolDummy(colony.base.system.System):
+class WorkPoolDummy(colony.System):
     """
     The work pool dummy class.
     """
@@ -93,7 +93,7 @@ class ProcessingClass:
     """
 
     work_pool_dummy = None
-    """ The work poool dummy """
+    """ The work pool dummy """
 
     work_list = []
     """ The list of work """
