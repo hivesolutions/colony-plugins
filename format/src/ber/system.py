@@ -39,8 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
-import colony.base.system
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -129,7 +128,7 @@ DEFAULT_TYPE_CONSTRUCTED = {
 DEFAULT_CLASS = 0x00
 """ The default class to be used """
 
-class Ber(colony.base.system.System):
+class Ber(colony.System):
     """
     The ber class.
     """
@@ -159,7 +158,7 @@ class BerStructure:
         Constructor of the class.
         """
 
-        self.buffer = colony.libs.string_buffer_util.StringBuffer()
+        self.buffer = colony.StringBuffer()
         self.type_alias_map = {}
 
         # creates the pack methods map reference

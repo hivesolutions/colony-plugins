@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class BerPlugin(colony.base.system.Plugin):
+class BerPlugin(colony.Plugin):
     """
     The main class for the Ber plugin.
     """
@@ -50,25 +50,22 @@ class BerPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "format.ber"
     ]
     main_modules = [
-        "format.ber.exceptions",
-        "format.ber.system"
+        "ber.exceptions",
+        "ber.system"
     ]
 
-    ber = None
-    """ The ber """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import format.ber.system
-        self.ber = format.ber.system.Ber(self)
+        colony.Plugin.load_plugin(self)
+        import ber
+        self.system = ber.Ber(self)
 
     def create_structure(self, parameters):
-        return self.ber.create_structure(parameters)
+        return self.system.create_structure(parameters)

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.base.system
+import colony
 
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
@@ -56,7 +56,7 @@ BASE64_VALUE = "base64"
 DEFAULT_MIME_TYPE = "application/octet-stream"
 """ The default mime type """
 
-class MimeUtils(colony.base.system.System):
+class MimeUtils(colony.System):
     """
     The mime utils class.
     """

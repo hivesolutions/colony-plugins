@@ -42,9 +42,7 @@ import types
 import base64
 import random
 
-import colony.base.system
-import colony.libs.structures_util
-import colony.libs.string_buffer_util
+import colony
 
 MIME_VERSION_VALUE = "MIME-Version"
 """ The mime version value """
@@ -71,7 +69,7 @@ VALID_BOUNDARY_CHARACTERS = (
 )
 """ The tuple containing the valid boundary characters """
 
-class Mime(colony.base.system.System):
+class Mime(colony.System):
     """
     The mime class.
     """
@@ -80,7 +78,7 @@ class Mime(colony.base.system.System):
     """ The map of extension reference """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.extension_map = {}
 
     def create_message(self, parameters):
@@ -153,7 +151,7 @@ class MimeMessage:
 
         self.part_list = []
         self.headers_map = {}
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.message_stream = colony.StringBuffer()
 
     def read_simple(self, message_contents):
         # strips the message contents
@@ -236,7 +234,7 @@ class MimeMessage:
 
     def get_value(self):
         # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        result = colony.StringBuffer()
 
         # in case this is multi part message
         if self.multi_part:
@@ -252,7 +250,7 @@ class MimeMessage:
         message = self.message_stream.get_value()
 
         # creates the ordered map to hold the header values
-        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+        headers_ordered_map = colony.OrderedMap()
 
         # in case this is multi part message
         if self.multi_part:
@@ -461,7 +459,7 @@ class MimeMessage:
         boundary = boundary or str()
 
         # creates the boundary string buffer
-        boundary_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        boundary_string_buffer = colony.StringBuffer()
 
         # iterates over the range to generate the random value
         for _index in range(32):

@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class MimeUtilsPlugin(colony.base.system.Plugin):
+class MimeUtilsPlugin(colony.Plugin):
     """
     The main class for the Mime Format Utils plugin.
     """
@@ -51,47 +50,33 @@ class MimeUtilsPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "format.mime.utils"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.format.mime")
+        colony.PluginDependency("pt.hive.colony.plugins.format.mime")
     ]
     main_modules = [
-        "format.mime_utils.system"
+        "mime_utils.system"
     ]
 
-    mime_utils = None
-    """ The mime utils """
-
-    mime_plugin = None
-    """ The mime plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import format.mime_utils.system
-        self.mime_utils = format.mime_utils.system.MimeUtils(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import mime_utils
+        self.system = mime_utils.MimeUtils(self)
 
     def add_attachment_contents(self, mime_message, contents, file_name):
-        return self.mime_utils.add_attachment_contents(mime_message, contents, file_name)
+        return self.system.add_attachment_contents(mime_message, contents, file_name)
 
     def add_attachment_contents_mime_type(self, mime_message, contents, file_name, mime_type):
-        return self.mime_utils.add_attachment_contents(mime_message, contents, file_name, mime_type)
+        return self.system.add_attachment_contents(mime_message, contents, file_name, mime_type)
 
     def add_contents(self, mime_message, contents_path, content_extensions):
-        return self.mime_utils.add_contents(mime_message, contents_path, content_extensions)
+        return self.system.add_contents(mime_message, contents_path, content_extensions)
 
     def add_contents_non_recursive(self, mime_message, contents_path, content_extensions):
-        return self.mime_utils.add_contents(mime_message, contents_path, content_extensions, False)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
-    def set_mime_plugin(self, mime_plugin):
-        self.mime_plugin = mime_plugin
+        return self.system.add_contents(mime_message, contents_path, content_extensions, False)
