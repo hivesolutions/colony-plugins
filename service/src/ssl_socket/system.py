@@ -133,7 +133,7 @@ class SslSocket(colony.System):
         # retrieves the plugin base path and uses it to retrieve the plugin
         # resources path (relative to the plugin path)
         plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
-        plugin_resources_path = plugin_path + "/service/ssl_socket/resources"
+        plugin_resources_path = plugin_path + "/ssl_socket/resources"
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
