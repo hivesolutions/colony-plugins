@@ -42,7 +42,7 @@ import colony
 import parser
 import exceptions
 
-TEST_IMAGE_PATH = "printing/manager/resources/test_logo.png"
+TEST_IMAGE_PATH = "printing_manager/resources/test_logo.png"
 """ The test image relative path """
 
 class PrintingManager(colony.System):
