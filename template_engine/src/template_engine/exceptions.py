@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.exceptions
+import colony
 
-class TemplateEngineException(colony.base.exceptions.ColonyException):
+class TemplateEngineException(colony.ColonyException):
     """
     The template engine exception class. This is
     the top level exception class from which all
