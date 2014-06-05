@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import random
 
-import colony.base.system
-import colony.libs.string_buffer_util
+import colony
 
 import PIL.Image
 import PIL.ImageDraw
@@ -77,7 +76,7 @@ RGBA_VALUE = "RGBA"
 JPEG_VALUE = "jpeg"
 """ The jpeg value """
 
-class Captcha(colony.base.system.System):
+class Captcha(colony.System):
     """
     The captcha class.
     """
@@ -122,7 +121,7 @@ class Captcha(colony.base.system.System):
         self._draw_text(image, text_font, string_value)
 
         # creates a new string buffer for the image
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.StringBuffer()
 
         # saves the image into the string buffer
         image.save(string_buffer, JPEG_VALUE)

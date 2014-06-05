@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class CaptchaPlugin(colony.base.system.Plugin):
+class CaptchaPlugin(colony.Plugin):
     """
     The main class for the Captcha plugin.
     """
@@ -50,9 +50,9 @@ class CaptchaPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "startup",
@@ -65,16 +65,13 @@ class CaptchaPlugin(colony.base.system.Plugin):
         "captcha.system"
     ]
 
-    captcha = None
-    """ The captcha """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import captcha.system
-        self.captcha = captcha.system.Captcha(self)
+        colony.Plugin.load_plugin(self)
+        import captcha
+        self.system = captcha.Captcha(self)
 
     def generate_captcha(self, string_value, properties):
-        return self.captcha.generate_captcha(string_value, properties)
+        return self.system.generate_captcha(string_value, properties)
 
     def generate_captcha_string_value(self, properties):
-        return self.captcha.generate_captcha_string_value(properties)
+        return self.system.generate_captcha_string_value(properties)
