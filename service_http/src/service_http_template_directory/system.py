@@ -55,7 +55,7 @@ DIRECTORY_HANDLER_NAME = "template"
 HTML_MIME_TYPE = "text/html"
 """ The html mime type """
 
-TEMPLATE_DIRECTORY_RESOURCES_PATH = "service_http/template_directory/resources"
+TEMPLATE_DIRECTORY_RESOURCES_PATH = "service_http_template_directory/resources"
 """ The template directory resources path """
 
 DIRECTORY_HTML_TEMPLATE_FILE_NAME = "directory.html.tpl"

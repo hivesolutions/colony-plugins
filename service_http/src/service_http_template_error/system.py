@@ -55,7 +55,7 @@ ERROR_HANDLER_NAME = "template"
 HTML_MIME_TYPE = "text/html"
 """ The html mime type """
 
-TEMPLATE_ERROR_RESOURCES_PATH = "service_http/template_error/resources"
+TEMPLATE_ERROR_RESOURCES_PATH = "service_http_template_error/resources"
 """ The template error resources path """
 
 ERROR_HTML_TEMPLATE_FILE_NAME = "error.html.tpl"
