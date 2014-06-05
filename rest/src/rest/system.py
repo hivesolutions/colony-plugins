@@ -43,9 +43,7 @@ import heapq
 import datetime
 import threading
 
-import colony.base.system
-import colony.libs.quote_util
-import colony.libs.string_buffer_util
+import colony
 
 import exceptions
 
@@ -148,7 +146,7 @@ DEFAULT_TOUCH_SECURE_DELTA = 360
 factor in the timestamp used in the touching of the
 (modified) date """
 
-class Rest(colony.base.system.System):
+class Rest(colony.System):
     """
     The rest (manager) class, the top level system class
     that handles the incoming rest requests.
@@ -190,7 +188,7 @@ class Rest(colony.base.system.System):
     critical sections in session information """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
@@ -405,7 +403,7 @@ class Rest(colony.base.system.System):
                     variable_value = request.attributes_map[variable_name]
 
                     # unquotes the variable value
-                    variable_value = colony.libs.quote_util.unquote_plus(variable_value)
+                    variable_value = colony.unquote_plus(variable_value)
 
                     # sets the variable value in the arguments map
                     arguments_map[variable_name] = variable_value
@@ -845,7 +843,7 @@ class Rest(colony.base.system.System):
         """
 
         # starts the matching regex value buffer
-        matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
+        matching_regex_value_buffer = colony.StringBuffer()
 
         # clears the matching regex list
         self.matching_regex_list = []
@@ -1387,7 +1385,7 @@ class RestRequest:
         # quotes the target path according to the url quoting schema
         # in case the quote flat is set
         target_path_quoted = quote and\
-            colony.libs.quote_util.quote(target_path, "/") or target_path
+            colony.quote(target_path, "/") or target_path
 
         # creates the final target path using the attributes
         # map in case they are present (by appending them to
@@ -1395,7 +1393,7 @@ class RestRequest:
         # is present) the target path is used
         target_path_quoted = attributes_map and\
             target_path_quoted + "?" +\
-            colony.libs.quote_util.url_encode(attributes_map) or\
+            colony.url_encode(attributes_map) or\
             target_path_quoted
 
         # checks if the current request is "marked" as asynchronous, for

@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class RestPlugin(colony.base.system.Plugin):
+class RestPlugin(colony.Plugin):
     """
     The main class for the Rest plugin.
     """
@@ -51,7 +50,7 @@ class RestPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "rest",
@@ -64,51 +63,32 @@ class RestPlugin(colony.base.system.Plugin):
         "rpc_service"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.random")
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
         "rest.exceptions",
         "rest.system"
     ]
 
-    rest = None
-    """ The rest (manager) object reference """
-
-    resources_manager_plugin = None
-    """ The resources manager plugin """
-
-    rest_encoder_plugins = []
-    """ The rest encoder plugins """
-
-    rest_service_plugins = []
-    """ The rest service plugins """
-
-    rpc_service_plugins = []
-    """ The rpc service plugins """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import rest.system
-        self.rest = rest.system.Rest(self)
+        colony.Plugin.load_plugin(self)
+        import rest
+        self.system = rest.Rest(self)
 
-    @colony.base.decorators.load_allowed
+    @colony.load_allowed
     def load_allowed(self, plugin, capability):
-        colony.base.system.Plugin.load_allowed(self, plugin, capability)
+        colony.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed
+    @colony.unload_allowed
     def unload_allowed(self, plugin, capability):
-        colony.base.system.Plugin.unload_allowed(self, plugin, capability)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.unload_allowed(self, plugin, capability)
 
     def is_request_handler(self, request):
-        return self.rest.is_request_handler(request)
+        return self.system.is_request_handler(request)
 
     def handle_request(self, request):
-        return self.rest.handle_request(request)
+        return self.system.handle_request(request)
 
     def is_active(self):
         """
@@ -118,7 +98,7 @@ class RestPlugin(colony.base.system.Plugin):
         @return: If the service is active.
         """
 
-        return self.rest.is_active()
+        return self.system.is_active()
 
     def get_handler_name(self):
         """
@@ -128,7 +108,7 @@ class RestPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.rest.get_handler_name()
+        return self.system.get_handler_name()
 
     def get_handler_port(self):
         """
@@ -138,7 +118,7 @@ class RestPlugin(colony.base.system.Plugin):
         @return: The handler port.
         """
 
-        return self.rest.get_handler_port()
+        return self.system.get_handler_port()
 
     def get_handler_properties(self):
         """
@@ -148,40 +128,20 @@ class RestPlugin(colony.base.system.Plugin):
         @return: The handler properties.
         """
 
-        return self.rest.get_handler_properties()
+        return self.system.get_handler_properties()
 
-    @colony.base.decorators.load_allowed_capability("rest_encoder")
-    def rest_encoder_load_allowed(self, plugin, capability):
-        self.rest_encoder_plugins.append(plugin)
-
-    @colony.base.decorators.load_allowed_capability("rest_service")
+    @colony.load_allowed_capability("rest_service")
     def rest_service_load_allowed(self, plugin, capability):
-        self.rest_service_plugins.append(plugin)
-        self.rest.load_rest_service_plugin(plugin)
+        self.system.load_rest_service_plugin(plugin)
 
-    @colony.base.decorators.load_allowed_capability("rpc_service")
+    @colony.load_allowed_capability("rpc_service")
     def rpc_service_load_allowed(self, plugin, capability):
-        self.rpc_service_plugins.append(plugin)
-        self.rest.update_service_methods(plugin)
+        self.system.update_service_methods(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("rest_encoder")
-    def rest_encoder_unload_allowed(self, plugin, capability):
-        self.rest_encoder_plugins.remove(plugin)
-
-    @colony.base.decorators.unload_allowed_capability("rest_service")
+    @colony.unload_allowed_capability("rest_service")
     def rest_service_unload_allowed(self, plugin, capability):
-        self.rest_service_plugins.remove(plugin)
-        self.rest.unload_rest_service_plugin(plugin)
+        self.system.unload_rest_service_plugin(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("rpc_service")
+    @colony.unload_allowed_capability("rpc_service")
     def rpc_servicer_unload_allowed(self, plugin, capability):
-        self.rpc_service_plugins.remove(plugin)
-        self.rest.update_service_methods()
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
-    def set_resources_manager_plugin(self, resources_manager_plugin):
-        self.resources_manager_plugin = resources_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
-    def set_random_plugin(self, random_plugin):
-        self.random_plugin = random_plugin
+        self.system.update_service_methods()
