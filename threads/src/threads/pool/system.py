@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import threading
 
-import colony.base.system
-import colony.libs.structures_util
+import colony
 
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """
@@ -88,7 +87,7 @@ SCHEDULING_ALGORITHM_NAME_MAP = {
 }
 """ The scheduling algorithm name map """
 
-class ThreadPool(colony.base.system.System):
+class ThreadPool(colony.System):
     """
     The thread pool class.
     """
@@ -97,7 +96,7 @@ class ThreadPool(colony.base.system.System):
     """ The list of currently enabled thread pools """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.thread_pools_list = []
 
     def unload(self):
@@ -161,7 +160,7 @@ class ThreadPool(colony.base.system.System):
         """
 
         # creates the map to hold the system information (ordered  map)
-        thread_pool_information = colony.libs.structures_util.OrderedMap()
+        thread_pool_information = colony.OrderedMap()
 
         # iterates over all the thread pools
         for thread_pool in self.thread_pools_list:

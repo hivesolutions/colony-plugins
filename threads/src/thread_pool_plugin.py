@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ThreadPoolPlugin(colony.base.system.Plugin):
+class ThreadPoolPlugin(colony.Plugin):
     """
     The main class for the Thread Pool plugin
     """
@@ -50,9 +50,9 @@ class ThreadPoolPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "threads",
@@ -63,23 +63,20 @@ class ThreadPoolPlugin(colony.base.system.Plugin):
         "threads.pool.system"
     ]
 
-    thread_pool = None
-    """ The thread pool """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import threads.pool.system
-        self.thread_pool = threads.pool.system.ThreadPool(self)
+        colony.Plugin.load_plugin(self)
+        import threads.pool
+        self.sytem = threads.pool.ThreadPool(self)
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.thread_pool.unload()
+        colony.Plugin.unload_plugin(self)
+        self.sytem.unload()
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
-        return self.thread_pool.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        return self.sytem.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
     def get_thread_task_descriptor_class(self):
-        return self.thread_pool.get_thread_task_descriptor_class()
+        return self.sytem.get_thread_task_descriptor_class()
 
     def get_system_information(self):
         """
@@ -90,4 +87,4 @@ class ThreadPoolPlugin(colony.base.system.Plugin):
         @return: The system information map.
         """
 
-        return self.thread_pool.get_system_information()
+        return self.sytem.get_system_information()
