@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ResourcesAutoloaderPlugin(colony.base.system.Plugin):
+class ResourcesAutoloaderPlugin(colony.Plugin):
     """
     The main class for the Resources Autoloader plugin.
     """
@@ -51,16 +50,16 @@ class ResourcesAutoloaderPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "main",
         "resources_autoloader"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager")
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
         "resources.autoloader.system"
@@ -73,28 +72,28 @@ class ResourcesAutoloaderPlugin(colony.base.system.Plugin):
     """ The resources manager plugin """
 
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
+        colony.Plugin.load_plugin(self)
         import resources.autoloader.system
         self.resources_autoloader = resources.autoloader.system.ResourcesAutoloader(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
+        colony.Plugin.end_load_plugin(self)
         self.resources_autoloader.load_autoloader()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
+        colony.Plugin.unload_plugin(self)
         self.resources_autoloader.unload_autoloader()
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
 
-    @colony.base.decorators.inject_dependencies
+    @colony.inject_dependencies
     def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.dependency_injected(self, plugin)
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
+    @colony.plugin_inject("pt.hive.colony.plugins.resources.manager")
     def set_resources_manager_plugin(self, resources_manager_plugin):
         self.resources_manager_plugin = resources_manager_plugin
