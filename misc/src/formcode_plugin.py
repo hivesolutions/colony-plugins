@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class FormcodePlugin(colony.base.system.Plugin):
+class FormcodePlugin(colony.Plugin):
     """
     The main class for the Formcode plugin.
     """
@@ -50,39 +50,36 @@ class FormcodePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "serializer.formcode"
     ]
     main_modules = [
-        "misc.formcode.exceptions",
-        "misc.formcode.serializer",
-        "misc.formcode.system"
+        "formcode_c.exceptions",
+        "formcode_c.serializer",
+        "formcode_c.system"
     ]
 
-    formcode = None
-    """ The formcode """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.formcode.system
-        self.formcode = misc.formcode.system.Formcode(self)
+        colony.Plugin.load_plugin(self)
+        import formcode_c
+        self.system = formcode_c.Formcode(self)
 
     def dumps(self, object):
-        return self.formcode.dumps(object)
+        return self.system.dumps(object)
 
     def dumps_base_path(self, object, base_path):
-        return self.formcode.dumps_base_path(object, base_path)
+        return self.system.dumps_base_path(object, base_path)
 
     def loads(self, formcode_string):
-        return self.formcode.loads(formcode_string)
+        return self.system.loads(formcode_string)
 
     def load_file(self, formcode_file):
-        return self.formcode.load_file(formcode_file)
+        return self.system.load_file(formcode_file)
 
     def load_file_encoding(self, formcode_file, encoding):
-        return self.formcode.load_file(formcode_file, encoding)
+        return self.system.load_file(formcode_file, encoding)
 
     def get_mime_type(self):
-        return self.formcode.get_mime_type()
+        return self.system.get_mime_type()

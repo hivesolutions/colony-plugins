@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class RandomPlugin(colony.base.system.Plugin):
+class RandomPlugin(colony.Plugin):
     """
     The main class for the Random plugin.
     """
@@ -50,23 +50,20 @@ class RandomPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "random"
     ]
     main_modules = [
-        "misc.random.system"
+        "random_c.system"
     ]
 
-    random = None
-    """ The random """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.random.system
-        self.random = misc.random.system.Random(self)
+        colony.Plugin.load_plugin(self)
+        import random_c
+        self.sytem = random_c.Random(self)
 
     def generate_random(self):
         """
@@ -81,7 +78,7 @@ class RandomPlugin(colony.base.system.Plugin):
         usage (with high entropy).
         """
 
-        return self.random.generate_random()
+        return self.sytem.generate_random()
 
     def generate_random_int(self):
         """
@@ -94,7 +91,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into integer.
         """
 
-        return self.random.generate_random_int()
+        return self.sytem.generate_random_int()
 
     def generate_random_int_number_digit(self, number_digits):
         """
@@ -110,7 +107,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into integer.
         """
 
-        return self.random.generate_random_int(number_digits)
+        return self.sytem.generate_random_int(number_digits)
 
     def generate_random_value(self):
         """
@@ -124,7 +121,7 @@ class RandomPlugin(colony.base.system.Plugin):
         @return: The generated random value (with high entropy).
         """
 
-        return self.random.generate_random_value()
+        return self.sytem.generate_random_value()
 
     def generate_random_md5(self):
         """
@@ -137,7 +134,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into an md5 value.
         """
 
-        return self.random.generate_random_md5()
+        return self.sytem.generate_random_md5()
 
     def generate_random_md5_string(self):
         """
@@ -150,7 +147,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into an md5 string value.
         """
 
-        return self.random.generate_random_md5_string()
+        return self.sytem.generate_random_md5_string()
 
     def generate_random_sha1(self):
         """
@@ -163,7 +160,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into an sha1 value.
         """
 
-        return self.random.generate_random_sha1()
+        return self.sytem.generate_random_sha1()
 
     def generate_random_sha1_string(self):
         """
@@ -176,7 +173,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into an sha1 string value.
         """
 
-        return self.random.generate_random_sha1_string()
+        return self.sytem.generate_random_sha1_string()
 
     def generate_random_sha256(self):
         """
@@ -189,7 +186,7 @@ class RandomPlugin(colony.base.system.Plugin):
         into an sha256 value.
         """
 
-        return self.random.generate_random_sha256()
+        return self.sytem.generate_random_sha256()
 
     def generate_random_sha256_string(self):
         """
@@ -202,4 +199,4 @@ class RandomPlugin(colony.base.system.Plugin):
         into an sha256 string value.
         """
 
-        return self.random.generate_random_sha256_string()
+        return self.sytem.generate_random_sha256_string()

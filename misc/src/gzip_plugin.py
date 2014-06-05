@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class GzipPlugin(colony.base.system.Plugin):
+class GzipPlugin(colony.Plugin):
     """
     The main class for the Gzip plugin.
     """
@@ -50,23 +50,20 @@ class GzipPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "zip"
     ]
     main_modules = [
-        "misc.gzip.system"
+        "gzip_c.system"
     ]
 
-    gzip_system = None
-    """ The gzip system """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.gzip.system
-        self.gzip_system = misc.gzip.system.Gzip(self)
+        colony.Plugin.load_plugin(self)
+        import gzip_c
+        self.system = gzip_c.Gzip(self)
 
     def gzip_contents(self, contents_string):
-        return self.gzip_system.gzip_contents(contents_string)
+        return self.system.gzip_contents(contents_string)

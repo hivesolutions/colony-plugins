@@ -39,30 +39,62 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-class GuidPlugin(colony.Plugin):
+class JsonException(colony.ColonyException):
     """
-    The main class for the Guid plugin.
+    The json exception class.
     """
 
-    id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid"
-    description = "A plugin to generate guid numbers"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "guid"
-    ]
-    main_modules = [
-        "guid_c"
-    ]
+    message = None
+    """ The exception's message """
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import guid_c
-        self.system = guid_c.Guid(self)
+class JsonEncodeException(JsonException):
+    """
+    The json encode exception class.
+    """
 
-    def generate_guid(self):
-        return self.system.generate_guid()
+    def __init__(self, object):
+        """
+        Constructor of the class.
+
+        @type object: Object
+        @param object: The object containing the encoding problems.
+        """
+
+        JsonException.__init__(self)
+        self.object = object
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Object not encodeable - %s" % self.object
+
+class JsonDecodeException(JsonException):
+    """
+    The json decode exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        JsonException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return self.message

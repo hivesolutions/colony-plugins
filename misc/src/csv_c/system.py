@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -39,30 +39,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-class GuidPlugin(colony.Plugin):
+import serializer
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
+MIME_TYPE = "text/csv"
+""" The mime type """
+
+class Csv(colony.System):
     """
-    The main class for the Guid plugin.
+    Provides functions to interact with csv.
     """
 
-    id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid"
-    description = "A plugin to generate guid numbers"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "guid"
-    ]
-    main_modules = [
-        "guid_c"
-    ]
+    def dumps(self, object):
+        return serializer.dumps(object)
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import guid_c
-        self.system = guid_c.Guid(self)
+    def loads(self, csv_string, header = True):
+        return serializer.loads(csv_string, header)
 
-    def generate_guid(self):
-        return self.system.generate_guid()
+    def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
+        # reads the csv file
+        csv_file_contents = csv_file.read()
+
+        # decodes the csv file contents using the default encoder
+        csv_file_contents_decoded = csv_file_contents.decode(encoding)
+
+        # loads the csv file contents
+        return self.loads(csv_file_contents_decoded)
+
+    def get_mime_type(self):
+        return MIME_TYPE

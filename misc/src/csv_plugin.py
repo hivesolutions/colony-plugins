@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class CsvPlugin(colony.base.system.Plugin):
+class CsvPlugin(colony.Plugin):
     """
     The main class for the Csv plugin.
     """
@@ -50,40 +50,37 @@ class CsvPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "serializer.csv"
     ]
     main_modules = [
-        "misc.csv.exceptions",
-        "misc.csv.serializer",
-        "misc.csv.system"
+        "csv_c.exceptions",
+        "csv_c.serializer",
+        "csv_c.system"
     ]
 
-    csv_system = None
-    """ The csv system """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.csv.system
-        self.csv_system = misc.csv.system.Csv(self)
+        colony.Plugin.load_plugin(self)
+        import csv_c
+        self.system = csv_c.Csv(self)
 
     def dumps(self, object):
-        return self.csv_system.dumps(object)
+        return self.system.dumps(object)
 
     def loads(self, csv_string):
-        return self.csv_system.loads(csv_string)
+        return self.system.loads(csv_string)
 
     def loads_no_header(self, csv_string):
-        return self.csv_system.loads(csv_string, False)
+        return self.system.loads(csv_string, False)
 
     def load_file(self, csv_file):
-        return self.csv_system.load_file(csv_file)
+        return self.system.load_file(csv_file)
 
     def load_file_encoding(self, csv_file, encoding):
-        return self.csv_system.load_file(csv_file, encoding)
+        return self.system.load_file(csv_file, encoding)
 
     def get_mime_type(self):
-        return self.csv_system.get_mime_type()
+        return self.system.get_mime_type()

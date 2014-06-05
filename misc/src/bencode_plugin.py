@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class BencodePlugin(colony.base.system.Plugin):
+class BencodePlugin(colony.Plugin):
     """
     The main class for the Bencode plugin.
     """
@@ -50,36 +50,33 @@ class BencodePlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "serializer.bencode"
     ]
     main_modules = [
-        "misc.bencode.exceptions",
-        "misc.bencode.serializer",
-        "misc.bencode.system"
+        "bencode_c.exceptions",
+        "bencode_c.serializer",
+        "bencode_c.system"
     ]
 
-    bencode = None
-    """ The bencode """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.bencode.system
-        self.bencode = misc.bencode.system.Bencode(self)
+        colony.Plugin.load_plugin(self)
+        import bencode_c
+        self.system = bencode_c.Bencode(self)
 
     def dumps(self, object):
-        return self.bencode.dumps(object)
+        return self.system.dumps(object)
 
     def loads(self, bencode_string):
-        return self.bencode.loads(bencode_string)
+        return self.system.loads(bencode_string)
 
     def load_file(self, bencode_file):
-        return self.bencode.load_file(bencode_file)
+        return self.system.load_file(bencode_file)
 
     def load_file_encoding(self, bencode_file, encoding):
-        return self.bencode.load_file(bencode_file, encoding)
+        return self.system.load_file(bencode_file, encoding)
 
     def get_mime_type(self):
-        return self.bencode.get_mime_type()
+        return self.system.get_mime_type()

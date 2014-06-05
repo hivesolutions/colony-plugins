@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ZipPlugin(colony.base.system.Plugin):
+class ZipPlugin(colony.Plugin):
     """
     The main class for the Zip plugin.
     """
@@ -50,23 +50,19 @@ class ZipPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "zip"
     ]
     main_modules = [
-        "misc.zip.system"
+        "zip_c.system"
     ]
 
-    zip = None
-    """ The zip reference to the plugin logic, this
-    is the object used as entry point for execution """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.zip.system
-        self.zip = misc.zip.system.Zip(self)
+        colony.Plugin.load_plugin(self)
+        import zip_c
+        self.system = zip_c.Zip(self)
 
     def zip(self, zip_file_path, input_directory, file_path_list = None):
         """
@@ -80,7 +76,7 @@ class ZipPlugin(colony.base.system.Plugin):
         @param file_path_list: List of relative file paths.
         """
 
-        return self.zip_system.zip(zip_file_path, input_directory, file_path_list)
+        return self.system.zip(zip_file_path, input_directory, file_path_list)
 
     def unzip(self, zip_file_path, output_directory):
         """
@@ -92,7 +88,7 @@ class ZipPlugin(colony.base.system.Plugin):
         @param output_directory: Full path to the directory where one wants to extract the zip file to.
         """
 
-        return self.zip_system.unzip(zip_file_path, output_directory)
+        return self.system.unzip(zip_file_path, output_directory)
 
     def get_file_paths(self, file_path):
         """
@@ -104,7 +100,7 @@ class ZipPlugin(colony.base.system.Plugin):
         @return: List of file paths.
         """
 
-        return self.zip_system.get_file_paths(file_path)
+        return self.system.get_file_paths(file_path)
 
     def get_directory_paths(self, file_path):
         """
@@ -116,4 +112,4 @@ class ZipPlugin(colony.base.system.Plugin):
         @return: List of directory paths.
         """
 
-        return self.zip_system.get_directory_paths(file_path)
+        return self.system.get_directory_paths(file_path)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class JsonPlugin(colony.base.system.Plugin):
+class JsonPlugin(colony.Plugin):
     """
     The main class for the Json plugin.
     """
@@ -50,43 +50,40 @@ class JsonPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "serializer.json"
     ]
     main_modules = [
-        "misc.json.exceptions",
-        "misc.json.serializer",
-        "misc.json.system"
+        "json_c.exceptions",
+        "json_c.serializer",
+        "json_c.system"
     ]
 
-    json = None
-    """ The json system """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.json.system
-        self.json = misc.json.system.Json(self)
+        colony.Plugin.load_plugin(self)
+        import json_c
+        self.system = json_c.Json(self)
 
     def dumps(self, object):
-        return self.json.dumps(object)
+        return self.system.dumps(object)
 
     def dumps_pretty(self, object):
-        return self.json.dumps_pretty(object)
+        return self.system.dumps_pretty(object)
 
     def dumps_buffer(self, object):
-        return self.json.dumps_buffer(object)
+        return self.system.dumps_buffer(object)
 
     def loads(self, json_string):
-        return self.json.loads(json_string)
+        return self.system.loads(json_string)
 
     def load_file(self, json_file):
-        return self.json.load_file(json_file)
+        return self.system.load_file(json_file)
 
     def load_file_encoding(self, json_file, encoding):
-        return self.json.load_file(json_file, encoding)
+        return self.system.load_file(json_file, encoding)
 
     def get_mime_type(self):
-        return self.json.get_mime_type()
+        return self.system.get_mime_type()

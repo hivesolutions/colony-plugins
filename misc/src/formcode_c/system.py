@@ -39,30 +39,37 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-class GuidPlugin(colony.Plugin):
+import serializer
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
+MIME_TYPE = "application/x-formcode"
+""" The mime type """
+
+class Formcode(colony.System):
     """
-    The main class for the Guid plugin.
+    Provides functions to interact with formcode.
     """
 
-    id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid"
-    description = "A plugin to generate guid numbers"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "guid"
-    ]
-    main_modules = [
-        "guid_c"
-    ]
+    def dumps(self, object):
+        return serializer.dumps(object)
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import guid_c
-        self.system = guid_c.Guid(self)
+    def dumps_base_path(self, object, base_path):
+        return serializer.dumps(object, base_path)
 
-    def generate_guid(self):
-        return self.system.generate_guid()
+    def loads(self, formcode_string):
+        return serializer.loads(formcode_string)
+
+    def load_file(self, formcode_file, encoding = DEFAULT_ENCODING):
+        # reads the formcode file
+        formcode_file_contents = formcode_file.read()
+
+        # decodes the formcode file contents using the default encoder
+        formcode_file_contents_decoded = formcode_file_contents.decode(encoding)
+
+        # loads the formcode file contents
+        return self.loads(formcode_file_contents_decoded)
+
+    def get_mime_type(self):
+        return MIME_TYPE

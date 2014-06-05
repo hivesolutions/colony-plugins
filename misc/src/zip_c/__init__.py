@@ -19,9 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -37,32 +34,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony
+import system
 
-class GuidPlugin(colony.Plugin):
-    """
-    The main class for the Guid plugin.
-    """
-
-    id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid"
-    description = "A plugin to generate guid numbers"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "guid"
-    ]
-    main_modules = [
-        "guid_c"
-    ]
-
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import guid_c
-        self.system = guid_c.Guid(self)
-
-    def generate_guid(self):
-        return self.system.generate_guid()
+from system import *

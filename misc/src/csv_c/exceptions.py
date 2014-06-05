@@ -39,40 +39,62 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-class UrlParserPlugin(colony.Plugin):
+class CsvException(colony.ColonyException):
     """
-    The main class for the Url Parser plugin.
+    The csv exception class.
     """
 
-    id = "pt.hive.colony.plugins.misc.url_parser"
-    name = "Url Parser"
-    description = "A plugin to parse url for agile interpretation"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "url_parse"
-    ]
-    main_modules = [
-        "url_parser_c.exceptions",
-        "url_parser_c.system"
-    ]
+    message = None
+    """ The exception's message """
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import url_parser_c
-        self.system = url_parser_c.UrlParser(self)
+class CsvEncodeException(CsvException):
+    """
+    The csv encode exception class.
+    """
 
-    def parse_url(self, url):
+    def __init__(self, object):
         """
-        Parses the given url retrieving the url object.
+        Constructor of the class.
 
-        @type url: String
-        @param url:  The url to be parsed.
-        @rtype: Url
-        @return: The url object representing the url
+        @type object: Object
+        @param object: The object containing the encoding problems.
         """
 
-        return self.system.parse_url(url)
+        CsvException.__init__(self)
+        self.object = object
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Object not encodable - %s" % self.object
+
+class CsvDecodeException(CsvException):
+    """
+    The csv decode exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        CsvException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Csv data not decodable - %s" % self.message

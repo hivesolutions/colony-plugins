@@ -58,14 +58,14 @@ class AutoloaderPlugin(colony.Plugin):
         "autoload"
     ]
     main_modules = [
-        "misc.autoloader.system",
-        "misc.autoloader.console"
+        "autoloader_c.system",
+        "autoloader_c.console"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import misc.autoloader
-        self.system = misc.autoloader.system.Autoloader(self)
+        import autoloader_c
+        self.system = autoloader_c.Autoloader(self)
         self.system.load_autoloader()
 
     def end_load_plugin(self):

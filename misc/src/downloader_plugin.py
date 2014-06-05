@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class DownloaderPlugin(colony.base.system.Plugin):
+class DownloaderPlugin(colony.Plugin):
     """
     The main class for the Downloader plugin.
     """
@@ -51,59 +50,41 @@ class DownloaderPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "download",
         "console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.client.http")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
-        "misc.downloader.console",
-        "misc.downloader.exceptions",
-        "misc.downloader.system"
+        "downloader_c.console",
+        "downloader_c.exceptions",
+        "downloader_c.system"
     ]
 
-    downloader = None
-    """ The downloader """
-
-    console_downloader = None
-    """ The console downloader """
-
-    client_http_plugin = None
-    """ The client http plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.downloader.system
-        import misc.downloader.console
-        self.downloader = misc.downloader.system.Downloader(self)
-        self.console_downloader = misc.downloader.console.ConsoleDownloader(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import downloader_c
+        self.system = downloader_c.Downloader(self)
+        self.console = downloader_c.ConsoleDownloader(self)
 
     def download_package(self, address, target_directory):
-        return self.downloader.download_package(address, target_directory)
+        return self.system.download_package(address, target_directory)
 
     def download_package_handlers(self, address, target_directory, handlers_map):
-        return self.downloader.download_package(address, target_directory, handlers_map)
+        return self.system.download_package(address, target_directory, handlers_map)
 
     def get_download_package_stream(self, address):
-        return self.downloader.get_download_package_stream(address)
+        return self.system.get_download_package_stream(address)
 
     def get_download_package_stream_handlers(self, address, handlers_map):
-        return self.downloader.get_download_package_stream(address, handlers_map)
+        return self.system.get_download_package_stream(address, handlers_map)
 
     def get_console_extension_name(self):
-        return self.console_downloader.get_console_extension_name()
+        return self.console.get_console_extension_name()
 
     def get_commands_map(self):
-        return self.console_downloader.get_commands_map()
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.client.http")
-    def set_client_http_plugin(self, client_http_plugin):
-        self.client_http_plugin = client_http_plugin
+        return self.console.get_commands_map()

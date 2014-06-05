@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class ImageTreatmentPlugin(colony.base.system.Plugin):
+class ImageTreatmentPlugin(colony.Plugin):
     """
     The main class for the Image Treatment plugin.
     """
@@ -50,7 +50,7 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "image_treatment"
@@ -59,16 +59,13 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "misc.image_treatment.system"
+        "image_treatment_c.system"
     ]
 
-    image_treatment = None
-    """ The image treatment """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.image_treatment.system
-        self.image_treatment = misc.image_treatment.system.ImageTreatment(self)
+        colony.Plugin.load_plugin(self)
+        import image_treatment_c
+        self.system = image_treatment_c.ImageTreatment(self)
 
     def resize_image(self, image_path, width, height):
         """
@@ -88,7 +85,7 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
         on the resized image.
         """
 
-        return self.image_treatment.resize_image(image_path, width, height)
+        return self.system.resize_image(image_path, width, height)
 
     def resize_image_aspect(self, image_path, width, height):
         """
@@ -109,7 +106,7 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
         on the resized image.
         """
 
-        return self.image_treatment.resize_image_aspect(image_path, width, height)
+        return self.system.resize_image_aspect(image_path, width, height)
 
     def resize_image_aspect_background(self, image_path, width, height):
         """
@@ -131,4 +128,4 @@ class ImageTreatmentPlugin(colony.base.system.Plugin):
         on the resized image.
         """
 
-        return self.image_treatment.resize_image_aspect_background(image_path, width, height)
+        return self.system.resize_image_aspect_background(image_path, width, height)

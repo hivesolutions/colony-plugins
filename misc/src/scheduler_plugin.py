@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class SchedulerPlugin(colony.base.system.Plugin):
+class SchedulerPlugin(colony.Plugin):
     """
     The main class for the Scheduler plugin.
     """
@@ -51,7 +50,7 @@ class SchedulerPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
         "main",
@@ -59,92 +58,75 @@ class SchedulerPlugin(colony.base.system.Plugin):
         "console_command_extension"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.misc.guid"),
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.console")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.guid"),
+        colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
-        "misc.scheduler.console",
-        "misc.scheduler.exceptions",
-        "misc.scheduler.system"
+        "scheduler_c.console",
+        "scheduler_c.exceptions",
+        "scheduler_c.system"
     ]
 
-    scheduler = None
-    """ The scheduler """
-
-    console_scheduler = None
-    """ The console scheduler """
-
-    guid_plugin = None
-    """ The guid plugin """
-
-    console_plugin = None
-    """ The console plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import misc.scheduler.system
-        import misc.scheduler.console
-        self.scheduler = misc.scheduler.system.Scheduler(self)
-        self.console_scheduler = misc.scheduler.console.ConsoleScheduler(self)
+        colony.Plugin.load_plugin(self)
+        import scheduler_c
+        self.system = scheduler_c.Scheduler(self)
+        self.console = scheduler_c.ConsoleScheduler(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
-        colony.base.system.Plugin.end_load_plugin(self)
-        self.scheduler.load_scheduler()
+        colony.Plugin.end_load_plugin(self)
+        self.system.load_scheduler()
 
     def unload_plugin(self):
-        colony.base.system.Plugin.unload_plugin(self)
-        self.scheduler.unload_scheduler()
+        colony.Plugin.unload_plugin(self)
+        self.system.unload_scheduler()
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.base.system.Plugin.end_unload_plugin(self)
+        colony.Plugin.end_unload_plugin(self)
         self.release_ready_semaphore()
 
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def get_console_extension_name(self):
-        return self.console_scheduler.get_console_extension_name()
+        return self.console.get_console_extension_name()
 
     def get_commands_map(self):
-        return self.console_scheduler.get_commands_map()
+        return self.console.get_commands_map()
 
     def register_task(self, task, time):
-        return self.scheduler.register_task(task, time)
+        return self.system.register_task(task, time)
 
     def register_task_absolute(self, task, absolute_time):
-        return self.scheduler.register_task_absolute(task, absolute_time)
+        return self.system.register_task_absolute(task, absolute_time)
 
     def register_task_date_time(self, task, date_time):
-        return self.scheduler.register_task_date_time(task, date_time)
+        return self.system.register_task_date_time(task, date_time)
 
     def register_task_date_time_absolute(self, task, absolute_date_time):
-        return self.scheduler.register_task_date_time_absolute(task, absolute_date_time)
+        return self.system.register_task_date_time_absolute(task, absolute_date_time)
 
     def register_task_recursive(self, task, time, recursion_list):
-        return self.scheduler.register_task_recursive(task, time, recursion_list)
+        return self.system.register_task_recursive(task, time, recursion_list)
 
     def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
-        return self.scheduler.register_task_absolute_recursive(task, absolute_time, recursion_list)
+        return self.system.register_task_absolute_recursive(task, absolute_time, recursion_list)
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
-        return self.scheduler.register_task_date_time_recursive(task, date_time, recursion_list)
+        return self.system.register_task_date_time_recursive(task, date_time, recursion_list)
 
     def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
-        return self.scheduler.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
+        return self.system.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
 
     def unregister_task(self, task):
-        return self.scheduler.unregister_task(task)
+        return self.system.unregister_task(task)
 
     def get_task_class(self):
         """
@@ -155,20 +137,12 @@ class SchedulerPlugin(colony.base.system.Plugin):
         @return: The task class for the current scope.
         """
 
-        return self.scheduler.get_task_class()
+        return self.system.get_task_class()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
-    def set_guid_plugin(self, guid_plugin):
-        self.guid_plugin = guid_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.console")
-    def set_console_plugin(self, console_plugin):
-        self.console_plugin = console_plugin
-
-    @colony.base.decorators.set_configuration_property_method("startup_configuration")
+    @colony.set_configuration_property_method("startup_configuration")
     def startup_configuration_set_configuration_property(self, property_name, property):
-        self.scheduler.set_startup_configuration_property(property)
+        self.system.set_startup_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("startup_configuration")
+    @colony.unset_configuration_property_method("startup_configuration")
     def startup_configuration_unset_configuration_property(self, property_name):
-        self.scheduler.unset_startup_configuration_property()
+        self.system.unset_startup_configuration_property()
