@@ -60,14 +60,14 @@ class Pkcs1Plugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.format.ber")
     ]
     main_modules = [
-        "pkcs1.exceptions",
-        "pkcs1.system"
+        "pkcs1_c.exceptions",
+        "pkcs1_c.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import pkcs1
-        self.system = pkcs1.Pkcs1(self)
+        import pkcs1_c
+        self.system = pkcs1_c.Pkcs1(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)
