@@ -41,7 +41,7 @@ import sys
 import time
 import traceback
 
-import colony.base.system
+import colony
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -151,7 +151,7 @@ STATUS_CODE_IMAGES = {
 }
 """ The status code images map """
 
-class ServiceHttpTemplateError(colony.base.system.System):
+class ServiceHttpTemplateError(colony.System):
     """
     The service http template error (handler) class.
     """

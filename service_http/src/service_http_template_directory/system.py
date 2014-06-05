@@ -40,8 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import time
 
-import colony.base.system
-import colony.libs.size_util
+import colony
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -68,7 +67,7 @@ FORMATS_MAP = {
 }
 """ The formats map """
 
-class ServiceHttpTemplateDirectory(colony.base.system.System):
+class ServiceHttpTemplateDirectory(colony.System):
     """
     The service http template directory (handler) class.
     """
@@ -115,7 +114,7 @@ class ServiceHttpTemplateDirectory(colony.base.system.System):
             # the size of the file according to the predefined rules
             # otherwise a slice must be used to indicate the size
             if directory_entry_type == "file":
-                directory_entry_size_string = colony.libs.size_util.size_round_unit(directory_entry_size)
+                directory_entry_size_string = colony.size_round_unit(directory_entry_size)
             else: directory_entry_size_string = "-"
 
             # sets the directory entry size string value

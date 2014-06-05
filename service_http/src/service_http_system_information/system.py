@@ -39,9 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 
-import colony.base.system
-import colony.libs.time_util
-import colony.libs.structures_util
+import colony
 
 HANDLER_NAME = "system_information"
 """ The handler name """
@@ -61,7 +59,7 @@ SYSTEM_INFORMATION_RESOURCES_PATH = "service_http_system_information/resources"
 SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME = "system_information.html.tpl"
 """ The system information html template file name """
 
-class ServiceHttpSystemInformation(colony.base.system.System):
+class ServiceHttpSystemInformation(colony.System):
     """
     The service http system information (handler) class.
     """
@@ -147,7 +145,7 @@ class ServiceHttpSystemInformation(colony.base.system.System):
         system_information_plugins = self.plugin.system_information_plugins
 
         # creates the map to hold the system information (ordered  map)
-        system_information = colony.libs.structures_util.OrderedMap()
+        system_information = colony.OrderedMap()
 
         # retrieves the framework information
         framework_information = self._get_framework_information()
@@ -252,7 +250,7 @@ class ServiceHttpSystemInformation(colony.base.system.System):
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
-        uptime_string = colony.libs.time_util.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
+        uptime_string = colony.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
 
         # retrieves the plugin manager instances
         plugin_manager_instances = plugin_manager.plugin_instances
@@ -261,7 +259,7 @@ class ServiceHttpSystemInformation(colony.base.system.System):
         plugins_string, replicas_string, instances_string = self._get_plugin_strings(plugin_manager_instances)
 
         # creates the framework information map
-        framework_information = colony.libs.structures_util.OrderedMap()
+        framework_information = colony.OrderedMap()
 
         # sets the framework information (map) values
         framework_information["uid"] = plugin_manager_uid

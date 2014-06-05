@@ -41,7 +41,7 @@ import re
 import struct
 import hashlib
 
-import colony.base.system
+import colony
 
 import exceptions
 
@@ -90,7 +90,7 @@ DIGITS_REGEX = re.compile(DIGITS_REGEX_VALUE)
 SPACE_REGEX = re.compile(SPACE_REGEX_VALUE)
 """ The spaces regex """
 
-class ServiceHttpWebsocket(colony.base.system.System):
+class ServiceHttpWebsocket(colony.System):
     """
     The service http webdav (handler) class.
     """
@@ -99,7 +99,7 @@ class ServiceHttpWebsocket(colony.base.system.System):
     """ The websocket handler plugins map """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.websocket_handler_plugins_map = {}
 
     def get_handler_name(self):

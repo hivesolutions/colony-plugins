@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpCgiPlugin(colony.base.system.Plugin):
+class ServiceHttpCgiPlugin(colony.Plugin):
     """
     The main class for the Http Service Cgi plugin.
     """
@@ -51,35 +50,25 @@ class ServiceHttpCgiPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT,
-        colony.base.system.IRON_PYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT,
+        colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.resources.manager")
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http.cgi.exceptions",
-        "service_http.cgi.system"
+        "service_http_cgi.exceptions",
+        "service_http_cgi.system"
     ]
 
-    service_http_cgi = None
-    """ The service http cgi (handler) """
-
-    resources_manager_plugin = None
-    """ The resources manager plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.cgi.system
-        self.service_http_cgi = service_http.cgi.system.ServiceHttpCgi(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import service_http_cgi
+        self.system = service_http_cgi.ServiceHttpCgi(self)
 
     def get_handler_name(self):
         """
@@ -89,7 +78,7 @@ class ServiceHttpCgiPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_cgi.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_request(self, request):
         """
@@ -99,8 +88,4 @@ class ServiceHttpCgiPlugin(colony.base.system.Plugin):
         @param request: The http request to be handled.
         """
 
-        return self.service_http_cgi.handle_request(request)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.manager")
-    def set_resources_manager_plugin(self, resources_manager_plugin):
-        self.resources_manager_plugin = resources_manager_plugin
+        return self.system.handle_request(request)

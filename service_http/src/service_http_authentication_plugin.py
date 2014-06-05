@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.base.decorators
+import colony
 
-class ServiceHttpAuthenticationPlugin(colony.base.system.Plugin):
+class ServiceHttpAuthenticationPlugin(colony.Plugin):
     """
     The main class for the http Service Authentication plugin.
     """
@@ -51,34 +50,24 @@ class ServiceHttpAuthenticationPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "http_service_authentication_handler"
     ]
     dependencies = [
-        colony.base.system.PluginDependency("pt.hive.colony.plugins.authentication")
+        colony.PluginDependency("pt.hive.colony.plugins.authentication")
     ]
     main_modules = [
-        "service_http.authentication.exceptions",
-        "service_http.authentication.system"
+        "service_http_authentication.exceptions",
+        "service_http_authentication.system"
     ]
 
-    service_http_authentication = None
-    """ The service http authentication (handler) """
-
-    authentication_plugin = None
-    """ The authentication plugin """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import service_http.authentication.system
-        self.service_http_authentication = service_http.authentication.system.ServiceHttpAuthentication(self)
-
-    @colony.base.decorators.inject_dependencies
-    def dependency_injected(self, plugin):
-        colony.base.system.Plugin.dependency_injected(self, plugin)
+        colony.Plugin.load_plugin(self)
+        import service_http_authentication
+        self.system = service_http_authentication.ServiceHttpAuthentication(self)
 
     def get_handler_name(self):
         """
@@ -88,7 +77,7 @@ class ServiceHttpAuthenticationPlugin(colony.base.system.Plugin):
         @return: The handler name.
         """
 
-        return self.service_http_authentication.get_handler_name()
+        return self.system.get_handler_name()
 
     def handle_authentication(self, username, password, properties):
         """
@@ -104,8 +93,4 @@ class ServiceHttpAuthenticationPlugin(colony.base.system.Plugin):
         @return: The authentication result.
         """
 
-        return self.service_http_authentication.handle_authentication(username, password, properties)
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.authentication")
-    def set_authentication_plugin(self, authentication_plugin):
-        self.authentication_plugin = authentication_plugin
+        return self.system.handle_authentication(username, password, properties)

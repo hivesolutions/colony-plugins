@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import sys
 
-import colony.base.system
+import colony
 
 HANDLER_NAME = "wsgi"
 """ The handler name """
@@ -141,7 +141,7 @@ DEFAULT_MODULE_NAME = "server"
 DEFAULT_APPLICATION_NAME = "application"
 """ The default application name """
 
-class ServiceHttpWsgi(colony.base.system.System):
+class ServiceHttpWsgi(colony.System):
     """
     The service http wsgi (handler) class.
     """
