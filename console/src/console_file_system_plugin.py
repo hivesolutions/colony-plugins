@@ -58,13 +58,13 @@ class ConsoleFileSystemPlugin(colony.Plugin):
         "console_command_extension"
     ]
     main_modules = [
-        "console.file_system.system"
+        "console_file_system.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import console.file_system
-        self.system = console.file_system.ConsoleFileSystem(self)
+        import console_file_system
+        self.system = console_file_system.ConsoleFileSystem(self)
 
     def get_console_extension_name(self):
         return self.system.get_console_extension_name()

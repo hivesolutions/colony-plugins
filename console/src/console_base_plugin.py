@@ -61,13 +61,13 @@ class ConsoleBasePlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
-        "console.base.system"
+        "console_base.system"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import console.base
-        self.system = console.base.ConsoleBase(self)
+        import console_base
+        self.system = console_base.ConsoleBase(self)
 
     def get_console_extension_name(self):
         return self.system.get_console_extension_name()

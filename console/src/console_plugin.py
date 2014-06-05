@@ -66,19 +66,19 @@ class ConsolePlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.authentication")
     ]
     main_modules = [
-        "console.console.authentication",
-        "console.console.exceptions",
-        "console.console.interfaces",
-        "console.console.system",
-        "console.console.test"
+        "console.authentication",
+        "console.exceptions",
+        "console.interfaces",
+        "console.system",
+        "console.test"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         self.system_command_plugins = []
-        import console.console
-        self.system = console.console.Console(self)
-        self.test = console.console.ConsoleTestCase
+        import console
+        self.system = console.Console(self)
+        self.test = console.ConsoleTestCase
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

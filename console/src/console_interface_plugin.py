@@ -61,16 +61,16 @@ class ConsoleInterfacePlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
-        "console.interface.exceptions",
-        "console.interface.system",
-        "console.interface.interface_unix",
-        "console.interface.interface_win32"
+        "console_interface.exceptions",
+        "console_interface.system",
+        "console_interface.interface_unix",
+        "console_interface.interface_win32"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import console.interface
-        self.system = console.interface.ConsoleInterface(self)
+        import console_interface
+        self.system = console_interface.ConsoleInterface(self)
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
