@@ -37,10 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
-import colony.libs.map_util
+import colony
 
-class InfoUser(colony.base.system.System):
+class InfoUser(colony.System):
     """
     The info user class, this is the back-end class that
     implements the concrete methods.
@@ -51,7 +50,7 @@ class InfoUser(colony.base.system.System):
     of the information about the users """
 
     def __init__(self, plugin):
-        colony.base.system.System.__init__(self, plugin)
+        colony.System.__init__(self, plugin)
         self.info_user_configuration = {}
 
     def get_user_info(self, user):
@@ -65,10 +64,10 @@ class InfoUser(colony.base.system.System):
         # retrieves the configuration and runs the clean operation
         # in it then copies the configuration to the target map
         configuration = configuration_property.get_data()
-        colony.libs.map_util.map_clean(self.info_user_configuration)
-        colony.libs.map_util.map_copy(configuration, self.info_user_configuration)
+        colony.map_clean(self.info_user_configuration)
+        colony.map_copy(configuration, self.info_user_configuration)
 
     def unset_configuration_property(self):
         # cleans the info user configuration map to avoid duplicate
         # values in the map (side effect may occur)
-        colony.libs.map_util.map_clean(self.info_user_configuration)
+        colony.map_clean(self.info_user_configuration)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.base.system
+import colony
 
-class InfoUserPlugin(colony.base.system.Plugin):
+class InfoUserPlugin(colony.Plugin):
     """
     The main class for the User Information plugin.
     """
@@ -50,8 +50,8 @@ class InfoUserPlugin(colony.base.system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
-        colony.base.system.CPYTHON_ENVIRONMENT,
-        colony.base.system.JYTHON_ENVIRONMENT
+        colony.CPYTHON_ENVIRONMENT,
+        colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
         "info.user"
@@ -60,30 +60,26 @@ class InfoUserPlugin(colony.base.system.Plugin):
         "info_user.system"
     ]
 
-    infor_user = None
-    """ The reference user info object to be used
-    in the access to the back-end system structures """
-
     def load_plugin(self):
-        colony.base.system.Plugin.load_plugin(self)
-        import info_user.system
-        self.info_user = info_user.system.InfoUser(self)
+        colony.Plugin.load_plugin(self)
+        import info_user
+        self.system = info_user.InfoUser(self)
 
-    @colony.base.decorators.set_configuration_property
+    @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
-        colony.base.system.Plugin.set_configuration_property(self, property_name, property)
+        colony.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property
+    @colony.unset_configuration_property
     def unset_configuration_property(self, property_name):
-        colony.base.system.Plugin.unset_configuration_property(self, property_name)
+        colony.Plugin.unset_configuration_property(self, property_name)
 
     def get_user_info(self, user):
-        return self.info_user.get_user_info(user)
+        return self.system.get_user_info(user)
 
-    @colony.base.decorators.set_configuration_property_method("configuration")
+    @colony.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
-        self.info_user.set_configuration_property(property)
+        self.system.set_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("configuration")
+    @colony.unset_configuration_property_method("configuration")
     def configuration_unset_configuration_property(self, property_name):
-        self.info_user.unset_configuration_property()
+        self.system.unset_configuration_property()
