@@ -134,10 +134,12 @@ class PrintingManager(colony.System):
                 # is not printing plugin available
                 printing_plugin = None
 
-        # in case no printing plugin is selected
-        if not printing_plugin:
-            # raises the printing not available exception
-            raise exceptions.PrintingPluginNotAvailable("the required printer is not available or no printers are available")
+        # in case no printing plugin is selected, there's no candidate
+        # for the requested type of printing and so an exception must
+        # be raised indicating such problem
+        if not printing_plugin: raise exceptions.PrintingPluginNotAvailable(
+            "the required printer is not available or no printers are available"
+        )
 
         # returns the printing plugin
         return printing_plugin
