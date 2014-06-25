@@ -43,18 +43,6 @@ import sys
 
 import colony
 
-BASE_ENTITY_MODULE_VALUE = "base_entity"
-""" The base entity module value """
-
-GLOBALS_REFERENCE_VALUE = "_globals"
-""" The globals reference value """
-
-LOCALS_REFERENCE_VALUE = "_locals"
-""" The locals reference value """
-
-DEFAULT_MODULE_NAME = "helper_module"
-""" The default module name """
-
 class BusinessHelper(colony.System):
     """
     The business helper class.
@@ -73,7 +61,7 @@ class BusinessHelper(colony.System):
         locals,
         global_values,
         base_directory_path,
-        target_module_name = DEFAULT_MODULE_NAME,
+        target_module_name = "helper_module",
         extra_symbols_map = {},
         extra_globals_map = {}
     ):
@@ -118,7 +106,7 @@ class BusinessHelper(colony.System):
         target_map = target_module.__dict__
 
         # retrieves the base entity module
-        base_entity_module = self._get_target_module(BASE_ENTITY_MODULE_VALUE, globals)
+        base_entity_module = self._get_target_module("base_entity", globals)
 
         # retrieves the entity class and sets it in the base
         # entity module (for latter reference)
@@ -139,11 +127,11 @@ class BusinessHelper(colony.System):
             globals[extra_global_name] = extra_global_value
 
         # sets the base entity module in the globals
-        globals[BASE_ENTITY_MODULE_VALUE] = base_entity_module
+        globals["base_entity"] = base_entity_module
 
         # sets the globals and locals reference attributes
-        target_map[GLOBALS_REFERENCE_VALUE] = globals
-        target_map[LOCALS_REFERENCE_VALUE] = locals
+        target_map["_globals"] = globals
+        target_map["_locals"] = locals
 
         # creates the the (complete) path to the module file
         # for file execution
