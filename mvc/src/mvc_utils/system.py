@@ -131,7 +131,14 @@ class MvcUtils(colony.System):
         self.package_path_models_map = {}
         self.package_path_controllers_map = {}
 
-    def import_module_mvc_utils(self, module_name, package_name, directory_path = None, system_instance = None):
+    def import_module_mvc_utils(
+        self,
+        module_name,
+        package_name,
+        directory_path = None,
+        system_instance = None,
+        **kwargs
+    ):
         # retrieves the directory path taking into account the call module directory
         directory_path = directory_path or colony.get_instance_module_directory(system_instance)
 
@@ -141,6 +148,11 @@ class MvcUtils(colony.System):
 
         # creates the locals map
         locals_map = {}
+
+        # iterates over the complete set of keyword based arguments provided
+        # to the method and sets the values in the globals map to be included
+        # and accessible under the controllers module to be imported
+        for key, value in kwargs.items(): globals_map[key] = value
 
         # creates the complete module name from the package name, avoiding the
         # usage of the package name in case it does not exists
@@ -263,14 +275,12 @@ class MvcUtils(colony.System):
         # sets the module functions in the base controller class
         self._set_module_functions(controller, base_controller)
 
-        # creates the controller with the sent arguments list and the arguments map
+        # creates the controller with the sent arguments list and the arguments
+        # map, sets the plugin in the controller and then constructs the controller
+        # structures, this method should create the necessary parameter structures
+        # for the controller, as expected by the specification
         _controller = base_controller(*base_arguments_list, **base_arguments_map)
-
-        # sets the plugin in the controller
         _controller.set_plugin(plugin)
-
-        # constructs the controller structures, this method should
-        # create the necessary parameter structures for the controller
         _controller._create_controller()
 
         # starts the controller structures, only in case the
@@ -621,6 +631,7 @@ class MvcUtils(colony.System):
         package_path = None,
         prefix_name = None,
         directory_path = None,
+        entity_manager_arguments = {},
         is_first = True
     ):
         """
@@ -652,11 +663,17 @@ class MvcUtils(colony.System):
         @type directory_path: String
         @param directory_path: The path to base directory to be used in the controller
         path resolution process.
+        @type entity_manager_arguments: Dictionary
+        @param entity_manager_arguments: The map containing the complete set of arguments
+        that are going to be used for access to the entity manager, this value is going
+        to be used to retrieve the associated models module to be accessible under the
+        controllers module to be loaded.
         @type is_first: bool
-        @param is_first: Auxiliary argument that controls if this is the first run (top recursion)
-        of if it sis nested call.
+        @param is_first: Auxiliary argument that controls if this is the first run
+        (top recursion) or if it is a nested call.
         @rtype: List
-        @return: The list containing the various created controllers.
+        @return: The list containing the various created controller instance, that may be
+        used from this moment on as they've been correctly started.
         """
 
         # initializes the list that will hold
@@ -713,11 +730,9 @@ class MvcUtils(colony.System):
             # to filter only those o correspond to python modules
             for module_item in module_items:
                 # splits the module item into the base and extension
-                # values
+                # values and verifies that the proper (python) extension
+                # is present, otherwise continues the current loop
                 module_base, module_extension = os.path.splitext(module_item)
-
-                # in case the module extension is not
-                # a python file, ignores the file
                 if not module_extension == PYTHON_EXTENSION: continue
 
                 # creates the module package paths from the (current)
@@ -746,6 +761,7 @@ class MvcUtils(colony.System):
                     package_path = module_package_path,
                     prefix_name = prefix_name,
                     directory_path = module_directory_path,
+                    entity_manager_arguments = entity_manager_arguments,
                     is_first = False
                 )
                 controllers.extend(_controllers)
@@ -769,6 +785,14 @@ class MvcUtils(colony.System):
         is_first and colony.reload_import(package_path)
         is_first and self._flush_globals(module_package_path)
 
+        # tries to retrieve the id value of the models package associated
+        # with the controllers to be loaded (in case it exists) and if it
+        # exists and is properly defined it's set as part of the keyword
+        # arguments for the module import (going to be included as globals)
+        models_id = entity_manager_arguments.get("id", None)
+        models_module = self.models_modules_map.get(models_id, None)
+        kwargs = dict(models = models_module) if models_module else dict()
+
         # imports the controllers module with the mvc utils support
         # this should allow the exporting of the various packages
         # included in the utils structure (extra import)
@@ -776,7 +800,8 @@ class MvcUtils(colony.System):
             module_name,
             package_name,
             directory_path,
-            system_instance
+            system_instance,
+            **kwargs
         )
 
         # retrieves the controllers module items
@@ -1270,8 +1295,7 @@ class MvcUtils(colony.System):
             # in case the item value type is not function
             # the item is not valid for setting and so the
             # current iteration loop is skipped
-            if not item_value_type == types.FunctionType:
-                continue
+            if not item_value_type == types.FunctionType: continue
 
             # in case the items starts with class reference
             # the item is meant to be referenced as class method
@@ -1285,8 +1309,7 @@ class MvcUtils(colony.System):
             # in case the target class already contains a reference
             # to the given item, no overlap should occur as so the
             # current loop is skipped
-            if hasattr(target_class, item):
-                continue
+            if hasattr(target_class, item): continue
 
             # sets the item in the target class
             setattr(target_class, item, item_value)
@@ -1439,11 +1462,9 @@ class MvcUtils(colony.System):
         globals_map = globals()
 
         # in case the package path is not present
-        # in the current environment globals (noting
-        # is to be done)
-        if not package_path in globals_map:
-            # returns immediately
-            return
+        # in the current environment globals (nothing
+        # should be done for the situation)
+        if not package_path in globals_map:  return
 
         # removes the package in the package
         # path from the globals map
