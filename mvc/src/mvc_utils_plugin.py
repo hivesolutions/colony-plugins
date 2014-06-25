@@ -102,8 +102,17 @@ class MvcUtilsPlugin(colony.Plugin):
             entity_manager_arguments = entity_manager_arguments
         )
 
-    def assign_controllers(self, system_instance, plugin_instance):
-        return self.system.create_controllers(system_instance, plugin_instance)
+    def assign_controllers(
+        self,
+        system_instance,
+        plugin_instance,
+        entity_manager_arguments = {}
+    ):
+        return self.system.create_controllers(
+            system_instance,
+            plugin_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
 
     def unassign_controllers(self, system_instance):
         return self.system.destroy_controllers(system_instance)
@@ -119,7 +128,11 @@ class MvcUtilsPlugin(colony.Plugin):
             plugin_instance,
             entity_manager_arguments = entity_manager_arguments
         )
-        self.system.create_controllers(system_instance, plugin_instance)
+        self.system.create_controllers(
+            system_instance,
+            plugin_instance,
+            entity_manager_arguments = entity_manager_arguments
+        )
         return True
 
     def unassign_models_controllers(
