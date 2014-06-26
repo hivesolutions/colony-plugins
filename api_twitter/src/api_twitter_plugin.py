@@ -60,8 +60,7 @@ class ApiTwitterPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "api_twitter.exceptions",
-        "api_twitter.system"
+        "api_twitter"
     ]
 
     def load_plugin(self):

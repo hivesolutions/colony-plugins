@@ -60,8 +60,7 @@ class ApiPaypalPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "api_paypal.exceptions",
-        "api_paypal.system"
+        "api_paypal"
     ]
 
     def load_plugin(self):
