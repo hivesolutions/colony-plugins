@@ -67,12 +67,7 @@ class MvcUtilsPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "mvc_utils.controller",
-        "mvc_utils.entity_model",
-        "mvc_utils.exceptions",
-        "mvc_utils.mvc_utils.model",
-        "mvc_utils.system",
-        "mvc_utils.utils"
+        "mvc_utils"
     ]
 
     def load_plugin(self):
