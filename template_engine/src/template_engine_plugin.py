@@ -58,10 +58,7 @@ class TemplateEnginePlugin(colony.Plugin):
         "template_engine"
     ]
     main_modules = [
-        "template_engine.ast",
-        "template_engine.exceptions",
-        "template_engine.system",
-        "template_engine.visitor"
+        "template_engine"
     ]
 
     def load_plugin(self):

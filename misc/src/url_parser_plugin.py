@@ -56,8 +56,7 @@ class UrlParserPlugin(colony.Plugin):
         "url_parse"
     ]
     main_modules = [
-        "url_parser_c.exceptions",
-        "url_parser_c.system"
+        "url_parser_c"
     ]
 
     def load_plugin(self):

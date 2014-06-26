@@ -60,8 +60,7 @@ class Pkcs1Plugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.format.ber")
     ]
     main_modules = [
-        "pkcs1_c.exceptions",
-        "pkcs1_c.system"
+        "pkcs1_c"
     ]
 
     def load_plugin(self):

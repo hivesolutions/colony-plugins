@@ -65,7 +65,7 @@ class BusinessHelperPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager")
     ]
     main_modules = [
-        "business_helper.system"
+        "business_helper"
     ]
 
     def load_plugin(self):

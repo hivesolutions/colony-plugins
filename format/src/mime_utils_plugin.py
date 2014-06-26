@@ -61,7 +61,7 @@ class MimeUtilsPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.format.mime")
     ]
     main_modules = [
-        "mime_utils_c.system"
+        "mime_utils_c"
     ]
 
     def load_plugin(self):

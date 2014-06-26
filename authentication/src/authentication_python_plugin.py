@@ -58,9 +58,7 @@ class AuthenticationPythonPlugin(colony.Plugin):
         "configuration_model_provider"
     ]
     main_modules = [
-        "authentication_python.configuration.authentication_configuration",
-        "authentication_python.exceptions",
-        "authentication_python.system"
+        "authentication_python"
     ]
 
     def load_plugin(self):

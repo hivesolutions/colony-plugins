@@ -60,10 +60,7 @@ class PrintingWin32Plugin(colony.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "printing_win32.constants",
-        "printing_win32.exceptions",
-        "printing_win32.system",
-        "printing_win32.visitor"
+        "printing_win32"
     ]
 
     def load_plugin(self):

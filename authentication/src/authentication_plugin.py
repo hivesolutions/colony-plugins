@@ -60,7 +60,7 @@ class AuthenticationPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication.system"
+        "authentication"
     ]
 
     def load_plugin(self):

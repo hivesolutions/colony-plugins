@@ -56,9 +56,7 @@ class BencodePlugin(colony.Plugin):
         "serializer.bencode"
     ]
     main_modules = [
-        "bencode_c.exceptions",
-        "bencode_c.serializer",
-        "bencode_c.system"
+        "bencode_c"
     ]
 
     def load_plugin(self):

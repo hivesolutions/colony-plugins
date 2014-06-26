@@ -56,7 +56,7 @@ class AuthenticationXmlPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication_xml.system"
+        "authentication_xml"
     ]
 
     def load_plugin(self):

@@ -61,8 +61,7 @@ class ServiceHttpFastCgiPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http_fast_cgi.exceptions",
-        "service_http_fast_cgi.system"
+        "service_http_fast_cgi"
     ]
 
     def load_plugin(self):

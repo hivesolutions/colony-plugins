@@ -58,8 +58,7 @@ class AutoloaderPlugin(colony.Plugin):
         "autoload"
     ]
     main_modules = [
-        "autoloader_c.system",
-        "autoloader_c.console"
+        "autoloader_c"
     ]
 
     def load_plugin(self):

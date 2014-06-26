@@ -61,7 +61,7 @@ class ServiceHttpWsgiPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http_wsgi.system"
+        "service_http_wsgi"
     ]
 
     def load_plugin(self):

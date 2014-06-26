@@ -46,7 +46,7 @@ class RandomPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.misc.random"
     name = "Random"
-    description = "A plugin to generate ramdom numbers"
+    description = "A plugin to generate random numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -57,7 +57,7 @@ class RandomPlugin(colony.Plugin):
         "random"
     ]
     main_modules = [
-        "random_c.system"
+        "random_c"
     ]
 
     def load_plugin(self):

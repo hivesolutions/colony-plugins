@@ -60,8 +60,7 @@ class ApiAtPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
     ]
     main_modules = [
-        "api_at.exceptions",
-        "api_at.system"
+        "api_at"
     ]
 
     def load_plugin(self):

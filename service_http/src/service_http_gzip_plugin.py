@@ -60,7 +60,7 @@ class ServiceHttpGzipPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.gzip")
     ]
     main_modules = [
-        "service_http_gzip.system"
+        "service_http_gzip"
     ]
 
     def load_plugin(self):

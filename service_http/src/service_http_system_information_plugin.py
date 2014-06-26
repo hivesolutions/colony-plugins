@@ -64,7 +64,7 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
-        "service_http_system_information.system"
+        "service_http_system_information"
     ]
 
     def load_plugin(self):

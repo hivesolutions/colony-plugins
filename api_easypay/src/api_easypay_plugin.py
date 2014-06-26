@@ -59,8 +59,7 @@ class ApiEasypayPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
-        "api_easypay.exceptions",
-        "api_easypay.system"
+        "api_easypay"
     ]
 
     def load_plugin(self):

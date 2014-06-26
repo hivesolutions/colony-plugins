@@ -59,7 +59,7 @@ class SslSocketPlugin(colony.Plugin):
         colony.PackageDependency("Python 2.6", "ssl")
     ]
     main_modules = [
-        "ssl_socket.system"
+        "ssl_socket"
     ]
 
     def load_plugin(self):

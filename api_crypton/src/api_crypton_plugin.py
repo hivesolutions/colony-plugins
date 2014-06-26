@@ -59,7 +59,7 @@ class ApiCryptonPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
-        "api_crypton.system"
+        "api_crypton"
     ]
 
     def load_plugin(self):

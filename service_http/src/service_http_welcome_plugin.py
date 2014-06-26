@@ -55,7 +55,7 @@ class ServiceHttpWelcomePlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     main_modules = [
-        "service_http_welcome.system"
+        "service_http_welcome"
     ]
 
     def load_plugin(self):

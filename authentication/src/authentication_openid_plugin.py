@@ -56,7 +56,7 @@ class AuthenticationOpenidPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication_openid.system"
+        "authentication_openid"
     ]
 
     def load_plugin(self):

@@ -61,7 +61,7 @@ class ServiceHttpTemplateDirectoryPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
-        "service_http_template_directory.system"
+        "service_http_template_directory"
     ]
 
     def load_plugin(self):

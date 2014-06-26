@@ -58,8 +58,7 @@ class BerPlugin(colony.Plugin):
         "format.ber"
     ]
     main_modules = [
-        "ber_c.exceptions",
-        "ber_c.system"
+        "ber_c"
     ]
 
     def load_plugin(self):

@@ -62,9 +62,7 @@ class WorkPoolPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.threads.pool")
     ]
     main_modules = [
-        "work_pool.algorithms",
-        "work_pool.exceptions",
-        "work_pool.system"
+        "work_pool"
     ]
 
     def load_plugin(self):

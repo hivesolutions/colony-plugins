@@ -58,7 +58,7 @@ class ConsoleFileSystemPlugin(colony.Plugin):
         "console_command_extension"
     ]
     main_modules = [
-        "console_file_system.system"
+        "console_file_system"
     ]
 
     def load_plugin(self):

@@ -58,7 +58,7 @@ class RawSocketPlugin(colony.Plugin):
         "socket_provider"
     ]
     main_modules = [
-        "raw_socket.system"
+        "raw_socket"
     ]
 
     def load_plugin(self):

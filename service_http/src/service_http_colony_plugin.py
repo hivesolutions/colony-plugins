@@ -61,8 +61,7 @@ class ServiceHttpColonyPlugin(colony.Plugin):
         "http_handler"
     ]
     main_modules = [
-        "service_http_colony.exceptions",
-        "service_http_colony.system"
+        "service_http_colony"
     ]
 
     def load_plugin(self):

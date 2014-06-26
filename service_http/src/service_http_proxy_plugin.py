@@ -66,8 +66,7 @@ class ServiceHttpProxyPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
-        "service_http_proxy.exceptions",
-        "service_http_proxy.system"
+        "service_http_proxy"
     ]
 
     def load_plugin(self):

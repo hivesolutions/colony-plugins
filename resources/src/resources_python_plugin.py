@@ -58,7 +58,7 @@ class ResourcesPythonPlugin(colony.Plugin):
         "resources_parser"
     ]
     main_modules = [
-        "resources_python.system"
+        "resources_python"
     ]
 
     def load_plugin(self):

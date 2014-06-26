@@ -60,8 +60,7 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.authentication")
     ]
     main_modules = [
-        "service_http_authentication.exceptions",
-        "service_http_authentication.system"
+        "service_http_authentication"
     ]
 
     def load_plugin(self):

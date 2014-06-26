@@ -62,8 +62,7 @@ class WsgiPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.rest")
     ]
     main_modules = [
-        "wsgi.exceptions",
-        "wsgi.sytem"
+        "wsgi"
     ]
 
     def load_plugin(self):

@@ -60,8 +60,7 @@ class ApiDropboxPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "api_dropbox.exceptions",
-        "api_dropbox.system"
+        "api_dropbox"
     ]
 
     def load_plugin(self):

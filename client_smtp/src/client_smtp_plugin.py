@@ -60,8 +60,7 @@ class ClientSmtpPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.client.utils")
     ]
     main_modules = [
-        "client_smtp.exceptions",
-        "client_smtp.system"
+        "client_smtp"
     ]
 
     def load_plugin(self):

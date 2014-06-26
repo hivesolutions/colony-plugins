@@ -60,7 +60,7 @@ class ThreadPoolPlugin(colony.Plugin):
         "system_information"
     ]
     main_modules = [
-        "threads.pool.system"
+        "threads.pool"
     ]
 
     def load_plugin(self):

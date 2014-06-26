@@ -61,7 +61,7 @@ class WorkPoolDummyPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.work.pool")
     ]
     main_modules = [
-        "work_pool_dummy.system"
+        "work_pool_dummy"
     ]
 
     def load_plugin(self):

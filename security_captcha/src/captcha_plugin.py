@@ -62,7 +62,7 @@ class CaptchaPlugin(colony.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "captcha.system"
+        "captcha"
     ]
 
     def load_plugin(self):

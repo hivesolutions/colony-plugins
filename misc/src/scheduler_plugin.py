@@ -62,9 +62,7 @@ class SchedulerPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
-        "scheduler_c.console",
-        "scheduler_c.exceptions",
-        "scheduler_c.system"
+        "scheduler_c"
     ]
 
     def load_plugin(self):

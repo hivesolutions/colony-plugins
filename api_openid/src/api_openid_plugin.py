@@ -62,9 +62,7 @@ class ApiOpenidPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
-        "api_openid.exceptions",
-        "api_openid.parser",
-        "api_openid.system"
+        "api_openid"
     ]
 
     def load_plugin(self):

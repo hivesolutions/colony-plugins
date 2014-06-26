@@ -58,8 +58,7 @@ class ServiceHttpWebsocketPlugin(colony.Plugin):
         "websocket_handler"
     ]
     main_modules = [
-        "service_http_websocket.exceptions",
-        "service_http_websocket.system"
+        "service_http_websocket"
     ]
 
     def load_plugin(self):

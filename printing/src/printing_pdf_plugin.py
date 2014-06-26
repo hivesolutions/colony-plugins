@@ -60,9 +60,7 @@ class PrintingPdfPlugin(colony.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "printing_pdf.exceptions",
-        "printing_pdf.system",
-        "printing_pdf.visitor"
+        "printing_pdf"
     ]
 
     def load_plugin(self):

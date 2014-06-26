@@ -61,8 +61,7 @@ class ClientHttpPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
     ]
     main_modules = [
-        "client_http.exceptions",
-        "client_http.system"
+        "client_http"
     ]
 
     def load_plugin(self):

@@ -61,7 +61,7 @@ class ConsoleBasePlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.console")
     ]
     main_modules = [
-        "console_base.system"
+        "console_base"
     ]
 
     def load_plugin(self):

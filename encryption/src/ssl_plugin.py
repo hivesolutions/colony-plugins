@@ -61,7 +61,7 @@ class SslPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1")
     ]
     main_modules = [
-        "ssl_c.system"
+        "ssl_c"
     ]
 
     def load_plugin(self):

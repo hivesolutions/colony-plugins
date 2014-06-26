@@ -56,8 +56,7 @@ class AuthenticationEntityManagerPlugin(colony.Plugin):
         "authentication_handler"
     ]
     main_modules = [
-        "authentication_entity_manager.exceptions",
-        "authentication_entity_manager.system"
+        "authentication_entity_manager"
     ]
 
     def load_plugin(self):

@@ -57,8 +57,7 @@ class RsaPlugin(colony.Plugin):
         "encryption.rsa"
     ]
     main_modules = [
-        "rsa_c.exceptions",
-        "rsa_c.system"
+        "rsa_c"
     ]
 
     def load_plugin(self):

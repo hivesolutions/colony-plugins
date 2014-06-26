@@ -63,7 +63,7 @@ class JinjaPlugin(colony.Plugin):
         colony.PackageDependency("Jinja template engine", "jinja2")
     ]
     main_modules = [
-        "jinja.system"
+        "jinja"
     ]
 
     def load_plugin(self):

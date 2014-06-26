@@ -61,7 +61,7 @@ class ServiceHttpStarterPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.service.http")
     ]
     main_modules = [
-        "service_http_starter.system"
+        "service_http_starter"
     ]
 
     def load_plugin(self):

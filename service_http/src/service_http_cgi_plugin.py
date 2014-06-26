@@ -61,8 +61,7 @@ class ServiceHttpCgiPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http_cgi.exceptions",
-        "service_http_cgi.system"
+        "service_http_cgi"
     ]
 
     def load_plugin(self):

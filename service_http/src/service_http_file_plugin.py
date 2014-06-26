@@ -65,8 +65,7 @@ class ServiceHttpFilePlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "service_http_file.exceptions",
-        "service_http_file.system"
+        "service_http_file"
     ]
 
     def load_plugin(self):

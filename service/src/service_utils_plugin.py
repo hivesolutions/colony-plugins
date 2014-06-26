@@ -63,11 +63,7 @@ class ServiceUtilsPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.work.pool")
     ]
     main_modules = [
-        "service_utils.async",
-        "service_utils.exceptions",
-        "service_utils.sync",
-        "service_utils.system",
-        "service_utils.threads"
+        "service_utils"
     ]
 
     def load_plugin(self):

@@ -62,8 +62,7 @@ class CryptonPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
     ]
     main_modules = [
-        "crypton.exceptions",
-        "crypton.system"
+        "crypton"
     ]
 
     def load_plugin(self):

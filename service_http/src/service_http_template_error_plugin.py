@@ -61,7 +61,7 @@ class ServiceHttpTemplateErrorPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.template_engine")
     ]
     main_modules = [
-        "service_http_template_error.system"
+        "service_http_template_error"
     ]
 
     def load_plugin(self):

@@ -62,7 +62,7 @@ class ResourcesAutoloaderPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
     ]
     main_modules = [
-        "resources_autoloader.system"
+        "resources_autoloader"
     ]
 
     def load_plugin(self):

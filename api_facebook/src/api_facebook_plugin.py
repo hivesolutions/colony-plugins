@@ -60,8 +60,7 @@ class ApiFacebookPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "api_facebook.exceptions",
-        "api_facebook.system"
+        "api_facebook"
     ]
 
     def load_plugin(self):

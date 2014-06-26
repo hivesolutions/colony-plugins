@@ -57,7 +57,7 @@ class DiffieHellmanPlugin(colony.Plugin):
         "encryption.diffie_hellman"
     ]
     main_modules = [
-        "diffie_hellman_c.system"
+        "diffie_hellman_c"
     ]
 
     def load_plugin(self):

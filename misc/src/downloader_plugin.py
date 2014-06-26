@@ -60,9 +60,7 @@ class DownloaderPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
-        "downloader_c.console",
-        "downloader_c.exceptions",
-        "downloader_c.system"
+        "downloader_c"
     ]
 
     def load_plugin(self):

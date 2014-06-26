@@ -58,7 +58,7 @@ class NormalSocketPlugin(colony.Plugin):
         "socket_provider"
     ]
     main_modules = [
-        "normal_socket.system"
+        "normal_socket"
     ]
 
     def load_plugin(self):

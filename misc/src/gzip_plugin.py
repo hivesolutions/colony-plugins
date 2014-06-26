@@ -57,7 +57,7 @@ class GzipPlugin(colony.Plugin):
         "zip"
     ]
     main_modules = [
-        "gzip_c.system"
+        "gzip_c"
     ]
 
     def load_plugin(self):

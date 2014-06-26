@@ -59,14 +59,13 @@ class ClientUtilsPlugin(colony.Plugin):
         "socket_upgrader"
     ]
     main_modules = [
-        "client.utils.exceptions",
-        "client.utils.system"
+        "client_utils"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import client.utils
-        self.system = client.utils.ClientUtils(self)
+        import client_utils
+        self.system = client_utils.ClientUtils(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

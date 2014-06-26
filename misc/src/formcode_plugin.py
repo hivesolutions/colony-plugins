@@ -56,9 +56,7 @@ class FormcodePlugin(colony.Plugin):
         "serializer.formcode"
     ]
     main_modules = [
-        "formcode_c.exceptions",
-        "formcode_c.serializer",
-        "formcode_c.system"
+        "formcode_c"
     ]
 
     def load_plugin(self):

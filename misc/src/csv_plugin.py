@@ -57,9 +57,7 @@ class CsvPlugin(colony.Plugin):
         "serializer.csv"
     ]
     main_modules = [
-        "csv_c.exceptions",
-        "csv_c.serializer",
-        "csv_c.system"
+        "csv_c"
     ]
 
     def load_plugin(self):

@@ -57,9 +57,7 @@ class JsonPlugin(colony.Plugin):
         "serializer.json"
     ]
     main_modules = [
-        "json_c.exceptions",
-        "json_c.serializer",
-        "json_c.system"
+        "json_c"
     ]
 
     def load_plugin(self):

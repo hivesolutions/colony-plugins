@@ -56,7 +56,7 @@ class ZipPlugin(colony.Plugin):
         "zip"
     ]
     main_modules = [
-        "zip_c.system"
+        "zip_c"
     ]
 
     def load_plugin(self):

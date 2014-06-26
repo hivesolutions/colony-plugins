@@ -59,7 +59,7 @@ class ImageTreatmentPlugin(colony.Plugin):
         colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
     ]
     main_modules = [
-        "image_treatment_c.system"
+        "image_treatment_c"
     ]
 
     def load_plugin(self):

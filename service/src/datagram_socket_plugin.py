@@ -58,7 +58,7 @@ class DatagramSocketPlugin(colony.Plugin):
         "socket_provider"
     ]
     main_modules = [
-        "datagram_socket.system"
+        "datagram_socket"
     ]
 
     def load_plugin(self):

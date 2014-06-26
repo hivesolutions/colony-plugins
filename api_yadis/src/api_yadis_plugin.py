@@ -59,9 +59,7 @@ class ApiYadisPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
-        "api_yadis.exceptions",
-        "api_yadis.parser",
-        "api_yadis.system"
+        "api_yadis"
     ]
 
     def load_plugin(self):

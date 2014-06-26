@@ -58,7 +58,7 @@ class MimePlugin(colony.Plugin):
         "format.mime"
     ]
     main_modules = [
-        "mime_c.system"
+        "mime_c"
     ]
 
     def load_plugin(self):

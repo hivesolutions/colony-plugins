@@ -57,7 +57,7 @@ class InfoUserPlugin(colony.Plugin):
         "info.user"
     ]
     main_modules = [
-        "info_user.system"
+        "info_user"
     ]
 
     def load_plugin(self):

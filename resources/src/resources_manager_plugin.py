@@ -68,10 +68,7 @@ class ResourcesManagerPlugin(colony.Plugin):
         "plugin_manager.plugin.unload_plugin"
     ]
     main_modules = [
-        "resources_manager.exceptions",
-        "resources_manager.parser",
-        "resources_manager.system",
-        "resources_manager.tests"
+        "resources_manager"
     ]
 
     def load_plugin(self):
