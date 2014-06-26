@@ -72,10 +72,7 @@ class MvcPlugin(colony.Plugin):
         "mvc.communication"
     ]
     main_modules = [
-        "mvc.communication",
-        "mvc.exceptions",
-        "mvc.file_handler",
-        "mvc.system"
+        "mvc"
     ]
 
     def load_plugin(self):
