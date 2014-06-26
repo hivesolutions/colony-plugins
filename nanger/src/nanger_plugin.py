@@ -60,7 +60,7 @@ class NangerPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "nanger.system"
+        "nanger"
     ]
 
     def load_plugin(self):
