@@ -67,8 +67,7 @@ class RestPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.random")
     ]
     main_modules = [
-        "rest.exceptions",
-        "rest.system"
+        "rest"
     ]
 
     def load_plugin(self):
