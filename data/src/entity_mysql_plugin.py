@@ -59,7 +59,7 @@ class EntityMysqlPlugin(colony.Plugin):
         colony.PackageDependency("MySQL-Python extension module", "MySQLdb")
     ]
     main_modules = [
-        "entity_mysql.system"
+        "entity_mysql"
     ]
 
     def load_plugin(self):

@@ -59,7 +59,7 @@ class FileManagerPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "file_manager.system"
+        "file_manager"
     ]
 
     def load_plugin(self):

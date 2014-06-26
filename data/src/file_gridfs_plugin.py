@@ -61,7 +61,7 @@ class FileGridfsPlugin(colony.Plugin):
         colony.PackageDependency("MongoDB GridFS python bindings", "gridfs")
     ]
     main_modules = [
-        "file_gridfs.system"
+        "file_gridfs"
     ]
 
     def load_plugin(self):

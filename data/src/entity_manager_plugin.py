@@ -62,12 +62,7 @@ class EntityManagerPlugin(colony.Plugin):
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     main_modules = [
-        "entity_manager.decorators",
-        "entity_manager.exceptions",
-        "entity_manager.structures",
-        "entity_manager.system",
-        "entity_manager.test_mocks",
-        "entity_manager.test"
+        "entity_manager"
     ]
 
     def load_plugin(self):

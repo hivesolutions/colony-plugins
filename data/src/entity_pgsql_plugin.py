@@ -59,7 +59,7 @@ class EntityPgsqlPlugin(colony.Plugin):
         colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb")
     ]
     main_modules = [
-        "entity_pgsql.system"
+        "entity_pgsql"
     ]
 
     def load_plugin(self):

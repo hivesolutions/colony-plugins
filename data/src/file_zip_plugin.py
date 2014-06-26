@@ -56,7 +56,7 @@ class FileZipPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "file_zip.system"
+        "file_zip"
     ]
 
     def load_plugin(self):

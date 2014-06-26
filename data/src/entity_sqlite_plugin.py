@@ -56,7 +56,7 @@ class EntitySqlitePlugin(colony.Plugin):
         "entity_engine"
     ]
     main_modules = [
-        "entity_sqlite.system"
+        "entity_sqlite"
     ]
 
     def load_plugin(self):

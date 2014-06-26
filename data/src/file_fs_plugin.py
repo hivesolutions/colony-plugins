@@ -56,7 +56,7 @@ class FileFsPlugin(colony.Plugin):
         "file_engine"
     ]
     main_modules = [
-        "file_fs.system"
+        "file_fs"
     ]
 
     def load_plugin(self):
