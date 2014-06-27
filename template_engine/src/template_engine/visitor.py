@@ -280,9 +280,11 @@ class Visitor:
     def get_global_map(self):
         return self.global_map
 
-    def write(self, *args, **kwargs):
+    def write(self, data, *args, **kwargs):
         if not self.string_buffer: return
-        self.string_buffer.write(*args, **kwargs)
+        is_unicode = type(data) == types.UnicodeType
+        if is_unicode and self.encoding: data = data.encode(self.encoding)
+        self.string_buffer.write(data, *args, **kwargs)
 
     def set_global_map(self, global_map):
         self.global_map = global_map
@@ -501,6 +503,7 @@ class Visitor:
         # runs the final appending of the prefix value to the value
         # and then writes the final string/unicode value to the buffer
         value = prefix + value
+        print(repr(value))
         self.write(value)
 
     def process_var(self, node):
