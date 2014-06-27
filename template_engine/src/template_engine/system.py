@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import re
+import types
 
 import colony
 
@@ -614,9 +615,11 @@ class TemplateFile(object):
         @param base_path: The base file system path that is going to be
         used for processing templates in the include and extends operation.
         @type file_path: String
-        @param file_path: The path to the file to be used.
+        @param file_path: The path to the file to be used, this value may or
+        may not be defined depending on how the template is created.
         @type encoding: String
-        @param encoding: The encoding used in the file.
+        @param encoding: The encoding used in the file, in case this value
+        is not defined the encoding is assumed to be the default one.
         @type root_node: AstNode
         @param root_node: The root node to be used.
         @type eval: bool
@@ -783,10 +786,16 @@ class TemplateFile(object):
         when the complete set of attribute are set in the
         current template structure (to avoid errors).
 
+        The resulting value from this operation should always
+        be a valid unicode string that may be used in any kind
+        of transform operation. Alternatively and if the get value
+        flag is not set the buffer is returned, but this option
+        should be used carefully to avoid any encoding problems.
+
         @type get_value: bool
         @param get_value: If the final string value of
         the contents should be retrieved as a result.
-        @rtype: String
+        @rtype: String/Buffer
         @return: The result value from the visitor or the
         string buffer in case the get value flag was set
         to a false value.
@@ -808,6 +817,12 @@ class TemplateFile(object):
         # buffer, otherwise retrieves the string buffer as the value
         if get_value: value = string_buffer.get_value()
         else: value = string_buffer
+
+        # in case the returned value from the string buffer is not
+        # a valid unicode string it must be decoded using the currently
+        # defined encoding or the default one in case it's not defined
+        is_bytes = type(value) == types.StringType
+        if is_bytes: value = value.decode(self.encoding or "utf-8")
 
         # returns the final value to the caller method, this may
         # either have the reference to the string buffer of the
