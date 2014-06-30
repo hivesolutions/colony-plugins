@@ -2641,9 +2641,9 @@ class Cookie(object):
         map, with all the name and values association.
         """
 
-        # in case the string value is invalid
+        # in case the string value is invalid, raises an invalid
+        # cookie exception to indicate the parsing problem
         if self.string_value == None:
-            # raises an invalid cookie exception
             raise exceptions.InvalidCookie("invalid cookie string value")
 
         # retrieves the value pairs by splitting the
