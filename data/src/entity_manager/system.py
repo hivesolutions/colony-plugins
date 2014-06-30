@@ -5921,7 +5921,12 @@ class EntityManager:
 
             # converts the current entity map into an entity
             # object and then adds it to the entities list
-            entity = target_class.from_map(entity_map, self, set_empty_relations = False, cls_names = cls_names)
+            entity = target_class.from_map(
+                entity_map,
+                self,
+                set_empty_relations = False,
+                cls_names = cls_names
+            )
             entities.append(entity)
 
         # starts a new transaction for the importing of the
