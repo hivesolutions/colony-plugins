@@ -503,7 +503,6 @@ class Visitor:
         # runs the final appending of the prefix value to the value
         # and then writes the final string/unicode value to the buffer
         value = prefix + value
-        print(repr(value))
         self.write(value)
 
     def process_var(self, node):
