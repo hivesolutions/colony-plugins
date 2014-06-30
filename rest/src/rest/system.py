@@ -74,12 +74,6 @@ HANDLER_PORT = 80
 SERVICES_SERVICE_NAME = "services"
 """ The services service name """
 
-GET_METHOD_VALUE = "GET"
-""" The get method value """
-
-POST_METHOD_VALUE = "POST"
-""" The post method value """
-
 COOKIE_VALUE = "Cookie"
 """ The cookie value """
 
@@ -109,12 +103,6 @@ LOCALHOST_VALUES = (
     "127.0.0.1"
 )
 """ The localhost values """
-
-HOST_VALUE = "Host"
-""" The host value """
-
-LOCATION_VALUE = "Location"
-""" The location value """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
@@ -478,10 +466,10 @@ class Rest(colony.System):
         @return: The handler properties.
         """
 
-        return {
-            "handler_base_filename" : HANDLER_BASE_FILENAME,
-            "handler_extension" : HANDLER_EXTENSION
-        }
+        return dict(
+            handler_base_filename = HANDLER_BASE_FILENAME,
+            handler_extension = HANDLER_EXTENSION
+        )
 
     def load_rest_service_plugin(self, rest_service_plugin):
         """
@@ -709,7 +697,8 @@ class Rest(colony.System):
 
     def remove_session(self, session):
         """
-        Removes a session from the sessions map.
+        Removes a session from the sessions map, this should
+        avoid any other access to the requested session.
 
         @type session: RestSession
         @param session: The session to be removed from the map.
@@ -718,11 +707,11 @@ class Rest(colony.System):
         # retrieves the session id
         session_id = session.get_session_id()
 
-        # in case the session  id exist in the rest
-        # session map
-        if session_id in self.rest_session_map:
-            # unsets the session from the rest session map
-            del self.rest_session_map[session_id]
+        # in case the session id does not exists in the rest
+        # session map returns immediately otherwise removed
+        # the session instance from the registration map
+        if not session_id in self.rest_session_map: return
+        del self.rest_session_map[session_id]
 
     def update_session(self, session):
         """
@@ -1018,7 +1007,13 @@ class RestRequest:
         self._generation_time = time.time()
         self._generation_clock = time.clock()
 
-    def start_session(self, force = False, session_id = None, timeout = DEFAULT_TIMEOUT, maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT):
+    def start_session(
+        self,
+        force = False,
+        session_id = None,
+        timeout = DEFAULT_TIMEOUT,
+        maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT
+    ):
         """
         Starts the session for the given session id,
         or generates a new session id.
@@ -1041,12 +1036,12 @@ class RestRequest:
         # must return immediately
         if self.session and not force: return
 
-        # in case no session id is defined
+        # in case no session id is defined, must generate a new
+        # one using a secure algorithm for it (avoid corruption)
         if not session_id:
-            # retrieves the random plugin
+            # retrieves the random plugin and uses it to generate
+            # a new random based session identifier to be used
             random_plugin = self.rest.plugin.random_plugin
-
-            # creates a new random session id
             session_id = random_plugin.generate_random_md5_string()
 
         # creates a new rest session and sets
@@ -1245,7 +1240,7 @@ class RestRequest:
 
         # in case the operation is of type get must return
         # valid otherwise returns false (default validation)
-        if self.request.operation_type == GET_METHOD_VALUE: return True
+        if self.request.operation_type == "GET": return True
         else: return False
 
     def is_post(self):
@@ -1259,7 +1254,7 @@ class RestRequest:
 
         # in case the operation is of type post must return
         # valid otherwise returns false (default validation)
-        if self.request.operation_type == POST_METHOD_VALUE: return True
+        if self.request.operation_type == "POST": return True
         else: return False
 
     def is_debug(self, minimum_level = 6):
@@ -1407,7 +1402,7 @@ class RestRequest:
         self.request.status_code = status_code
 
         # sets the location header (using the quoted target path)
-        self.request.set_header(LOCATION_VALUE, target_path_quoted)
+        self.request.set_header("Location", target_path_quoted)
 
     def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
         """
@@ -2145,17 +2140,16 @@ class RestRequest:
         Retrieves the domain using the http request header
         host value.
 
-        @rtype: Sring
+        @rtype: String
         @return: The currently used domain.
         """
 
         # retrieves the host value from the request headers
-        host = self.request.get_header(HOST_VALUE)
+        host = self.request.get_header("Host")
 
-        # in case the host is not defined
-        if not host:
-            # returns invalid
-            return None
+        # in case the host is not defined, returns an invalid
+        # value immediately, can't parse any value
+        if not host: return None
 
         # retrieves the domain removing the port part
         # of the host value
@@ -2166,11 +2160,15 @@ class RestRequest:
 
 class RestSession:
     """
-    The rest session class.
+    The rest session class, defining the abstract interfaces
+    that should be used by any of the concrete session
+    implementations that are going to be created at runtime.
     """
 
     session_id = None
-    """ The session id """
+    """ The session id used to securely identify each
+    session, this value should be secure enough to avoid
+    session tampering (could pose a security risk) """
 
     timeout = None
     """ The timeout """
@@ -2193,7 +2191,12 @@ class RestSession:
     _access_lock = None
     """ The lock used to control the access to the session """
 
-    def __init__(self, session_id = None, timeout = DEFAULT_TIMEOUT, maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT):
+    def __init__(
+        self,
+        session_id = None,
+        timeout = DEFAULT_TIMEOUT,
+        maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT
+    ):
         """
         Constructor of the class.
 
