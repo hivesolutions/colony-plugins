@@ -161,21 +161,28 @@ class Rest(colony.System):
     service_methods_map = {}
     """ The service methods map """
 
-    rest_session_list = []
+    session_c = None
+    """ The reference to the class that is going to be
+    used for session creation and loading, this may
+    not be defined and for such situations the default
+    class is going to be used (in memory) """
+
+    session_list = []
     """ The list used as priority queue for session
     cancellation """
 
-    rest_session_map = {}
+    session_map = {}
     """ The map associating the session id with the
     rest session, this should be the primary and fallback
     way of accessing and loading a session for the request """
 
-    rest_session_lock = None
+    session_lock = None
     """ The lock that controls the access to the
     critical sections in session information """
 
-    def __init__(self, plugin):
+    def __init__(self, plugin, session_c = None):
         colony.System.__init__(self, plugin)
+        self.session_c = session_c or ShelveSession
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
@@ -183,9 +190,10 @@ class Rest(colony.System):
         self.regex_index_plugin_id_map = {}
         self.service_methods = []
         self.service_methods_map = {}
-        self.rest_session_list = []
-        self.rest_session_map = {}
-        self.rest_session_lock = threading.RLock()
+        self.session_list = []
+        self.session_map = {}
+        self.session_lock = threading.RLock()
+        self.session_c.load()
 
     def get_handler_filename(self):
         """
@@ -690,8 +698,8 @@ class Rest(colony.System):
 
         # pushes the session tuple to the rest session list (heap)
         # and then sets the session in the rest session map
-        heapq.heappush(self.rest_session_list, session_tuple)
-        self.rest_session_map[session_id] = session
+        heapq.heappush(self.session_list, session_tuple)
+        self.session_map[session_id] = session
 
     def remove_session(self, session):
         """
@@ -708,8 +716,8 @@ class Rest(colony.System):
         # in case the session id does not exists in the rest
         # session map returns immediately otherwise removed
         # the session instance from the registration map
-        if not session_id in self.rest_session_map: return
-        del self.rest_session_map[session_id]
+        if not session_id in self.session_map: return
+        del self.session_map[session_id]
 
     def update_session(self, session):
         """
@@ -730,7 +738,7 @@ class Rest(colony.System):
         session_tuple = (session_expire_time, session_id)
 
         # pushes the session tuple to the rest session list (heap)
-        heapq.heappush(self.rest_session_list, session_tuple)
+        heapq.heappush(self.session_list, session_tuple)
 
     def clear_sessions(self):
         """
@@ -741,11 +749,11 @@ class Rest(colony.System):
 
         # removes the complete set of session timeout tuples
         # so that no more session invalidation occurs
-        self.rest_session_list = []
+        self.session_list = []
 
         # clears the rest session map, removing all the
         # registered session from it
-        self.rest_session_map.clear()
+        self.session_map.clear()
 
     def get_session(self, session_id):
         """
@@ -756,7 +764,7 @@ class Rest(colony.System):
         @param session_id: The id of the session to retrieve.
         """
 
-        return self.rest_session_map.get(session_id, None)
+        return self.session_map.get(session_id, None)
 
     def update_session_list(self):
         """
@@ -772,15 +780,15 @@ class Rest(colony.System):
             # in case the rest session list
             # is not valid (empty), breaks the
             # loop since there is nothing to be done
-            if not self.rest_session_list: break
+            if not self.session_list: break
 
             # acquires the rest session lock
-            self.rest_session_lock.acquire()
+            self.session_lock.acquire()
 
             try:
                 # retrieves the first session information
                 # form the rest session list (ordered list)
-                session_expire_time, session_id = self.rest_session_list[0]
+                session_expire_time, session_id = self.session_list[0]
 
                 # in case the session expire time is still in the
                 # future, breaks the loop because there are no
@@ -794,7 +802,7 @@ class Rest(colony.System):
                 if session == None:
                     # pops the last element from the res
                     # session list (heap) and continues the loop
-                    heapq.heappop(self.rest_session_list)
+                    heapq.heappop(self.session_list)
                     continue
 
                 # retrieves the expire time for the current session
@@ -815,14 +823,14 @@ class Rest(colony.System):
                     session_tuple = (session_expire_time_current, session_id)
 
                     # pushes the session tuple to the rest session list (heap)
-                    heapq.heappush(self.rest_session_list, session_tuple)
+                    heapq.heappush(self.session_list, session_tuple)
 
                 # pops the last element from the res
                 # session list (heap)
-                heapq.heappop(self.rest_session_list)
+                heapq.heappop(self.session_list)
             finally:
                 # releases the rest session lock
-                self.rest_session_lock.release()
+                self.session_lock.release()
 
     def _update_matching_regex(self):
         """
@@ -924,7 +932,7 @@ class Rest(colony.System):
         # sets the base value in matching regex base values map
         self.matching_regex_base_values_map[matching_regex] = current_base_value
 
-class RestRequest:
+class RestRequest(object):
     """
     The rest request class, responsible for the representation
     of a request coming through the rest layer system.
@@ -2156,7 +2164,7 @@ class RestRequest:
         # returns the domain
         return domain
 
-class RestSession:
+class RestSession(object):
     """
     The rest session class, defining the abstract interfaces
     that should be used by any of the concrete session
@@ -2219,6 +2227,10 @@ class RestSession:
         # current time and the given timeout
         # and maximum timeout
         self._generate_expire_time(timeout, maximum_timeout)
+
+    @classmethod
+    def load(cls):
+        pass
 
     def update(self, domain = None, include_sub_domain = False, secure = False):
         self.start(
@@ -2556,9 +2568,11 @@ class ShelveSession(RestSession):
     the sessions to be created.
     """
 
-    pass
+    @classmethod
+    def load(cls):
+        super(ShelveSession, cls).load()
 
-class Cookie:
+class Cookie(object):
     """
     The cookie class representing an http cookie.
     """
