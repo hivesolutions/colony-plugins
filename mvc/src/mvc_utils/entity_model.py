@@ -183,6 +183,7 @@ def _class_get(
     id_value,
     options = {},
     apply = True,
+    apply_name = None,
     context = None,
     namespace = None,
     entity_manager = None,
@@ -199,6 +200,10 @@ def _class_get(
     extracted from the current context according to the
     class naming and the applied to the retrieved model.
 
+    The class naming to be used in the field retrieval for
+    the apply operation may be changed in case the apply
+    name attribute is correctly defined.
+
     An extra attribute may be used to avoid raising an
     exception in case no model is found for the parameters.
 
@@ -210,6 +215,11 @@ def _class_get(
     from the provided context and the applied in the current
     model. Note that this is a fallback operation meaning that
     if it fails nothing will happen (no exception raised).
+    @type apply_name: String
+    @param apply_name: The name of the field attribute that
+    is going to be used as the basis for the apply operation,
+    in case this value is not defined the (default) model name
+    underscore notation value will be used (most of the times).
     @type options: Dictionary
     @param options: The map of options for the retrieval
     of the entity model.
@@ -218,7 +228,8 @@ def _class_get(
     retrieval process, will affect filtering.
     @type namespace: String
     @param namespace: The namespace prefix to be used in the
-    retrieval of the context session attribute.
+    retrieval of the context session attribute, this field
+    is rarely used and must be used carefully.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -282,10 +293,11 @@ def _class_get(
     controller = cls.get_controller_g(context)
     if not controller: return entity_model
 
+    # verifies if the apply name value has been defined for the field or
     # retrieves the name of the model entitie's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and applies the
     # data from the field to the model (apply operation)
-    name = entity_model._get_entity_class_name()
+    name = apply_name or entity_model._get_entity_class_name()
     data = controller.get_field(context, name, {})
     entity_model.apply(data)
 
