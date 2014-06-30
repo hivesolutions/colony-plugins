@@ -3676,12 +3676,21 @@ class EntityClass(object):
         return map
 
     @classmethod
-    def from_map(cls, map, entity_manager, recursive = True, set_empty_relations = True, set_mtime = True, cls_names = None):
+    def from_map(
+        cls,
+        map,
+        entity_manager,
+        entity = None,
+        recursive = True,
+        set_empty_relations = True,
+        set_mtime = True,
+        cls_names = None
+    ):
         # creates a new entity class from the current
         # class using the current entity manager, no scope
         # or entities map is provided so a new diffusion
         # scope is created
-        entity = cls.build(entity_manager)
+        entity = entity or cls.build(entity_manager)
 
         # retrieves the complete set of names from the class
         # to be used to set the correct values into the entity
@@ -3732,7 +3741,12 @@ class EntityClass(object):
 
                         # converts the map into an entity object (in case the value is valid)
                         # and the adds it to the list of entity values
-                        _entity = _value and target_class.from_map(_value, entity_manager, recursive, set_empty_relations)
+                        _entity = _value and target_class.from_map(
+                            _value,
+                            entity_manager,
+                            recursive = recursive,
+                            set_empty_relations = set_empty_relations
+                        )
                         values.append(_entity)
 
                     # sets the sequence of values as the current value reference
@@ -3750,7 +3764,12 @@ class EntityClass(object):
 
                     # converts the map into an entity object (in case the value is valid)
                     # and sets it as the value to be set in the entity
-                    value = value and target_class.from_map(value, entity_manager, recursive, set_empty_relations)
+                    value = value and target_class.from_map(
+                        value,
+                        entity_manager,
+                        recursive = recursive,
+                        set_empty_relations = set_empty_relations
+                    )
 
             # sets the correct value associated with the name in
             # the entity (value attribution)
