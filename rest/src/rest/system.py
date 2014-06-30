@@ -62,11 +62,9 @@ HANDLER_FILENAME = "rest.py"
 LIST_METHODS_NAME = "system.listMethods"
 """ The list methods name """
 
-APACHE_CONTAINER = "apache"
-""" The apache container """
-
 HANDLER_NAME = "rest"
-""" The handler name """
+""" The handler name, to be used as the primary
+identifier for the current handling infra-structure """
 
 HANDLER_PORT = 80
 """ The handler port """
@@ -169,7 +167,8 @@ class Rest(colony.System):
 
     rest_session_map = {}
     """ The map associating the session id with the
-    rest session """
+    rest session, this should be the primary and fallback
+    way of accessing and loading a session for the request """
 
     rest_session_lock = None
     """ The lock that controls the access to the
@@ -431,10 +430,10 @@ class Rest(colony.System):
         manager = self.plugin.manager
 
         # in case the current container is apache
-        if manager.container == APACHE_CONTAINER:
-            return True
-        else:
-            return False
+        # the service is considered to be active
+        is_apache = manager.container == "apache"
+        if is_apache: return True
+        else: return False
 
     def get_handler_name(self):
         """
@@ -444,7 +443,6 @@ class Rest(colony.System):
         @return: The handler name.
         """
 
-        # returns the handler name
         return HANDLER_NAME
 
     def get_handler_port(self):
@@ -628,12 +626,15 @@ class Rest(colony.System):
         @return: The translated python request.
         """
 
-        # returns the translated request
         return data
 
     def translate_result(self, result, encoder_name = None):
         """
         Translates the given python result into the encoding defined.
+
+        This method will try to find the correct encoder according to
+        the requested name failing with an exception in case no rest
+        encoder plugin is loaded for the requested naming.
 
         @type result: Any
         @param result: The python result to be translated into encoded data.
@@ -646,31 +647,29 @@ class Rest(colony.System):
         # retrieves the rest encoder plugins
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
-        # in case the encoder name is defined
-        if encoder_name:
-            # iterates over all the rest encoder plugins
-            for rest_encoder_plugin in rest_encoder_plugins:
-                if rest_encoder_plugin.get_encoder_name() == encoder_name:
-                    # retrieves the content type from the rest encoder plugin
-                    content_type = rest_encoder_plugin.get_content_type()
+        # in case no encoder name is defined the default result is
+        # returns as a plain string of the provided result
+        if not encoder_name: "text/plain", str(result)
 
-                    # calls the the encoder plugin to encode the result
-                    result_encoded = rest_encoder_plugin.encode_value(result)
+        # iterates over all the complete set of rest encoder plugins
+        # trying to find the encoder for the requested name
+        for rest_encoder_plugin in rest_encoder_plugins:
+            # verifies if the current rest encoder is the valid one and in
+            # case it's not skips the current loop, not found
+            is_valid = rest_encoder_plugin.get_encoder_name() == encoder_name
+            if not is_valid: continue
 
-                    # returns the content type and the encoded result
-                    return content_type, result_encoded
-
-            # raises the invalid encoder exception
-            raise exceptions.InvalidEncoder("the " + encoder_name + " encoder is invalid")
-        else:
-            # sets the default content type
-            content_type = "text/plain"
-
-            # retrieves the result encoded with the default encoder
-            result_encoded = str(result)
-
-            # returns the content type and the encoded result
+            # retries the content type that is going to be returned from
+            # the rest encoder plugin and then runs the encoding process
+            # returning then a tuple containing both the content type and
+            # the result data for the request that is being processed
+            content_type = rest_encoder_plugin.get_content_type()
+            result_encoded = rest_encoder_plugin.encode_value(result)
             return content_type, result_encoded
+
+        # raises the invalid encoder exception because no valid encoder
+        # has been found for the requested name
+        raise exceptions.InvalidEncoder("the " + encoder_name + " encoder is invalid")
 
     def add_session(self, session):
         """
@@ -690,9 +689,8 @@ class Rest(colony.System):
         session_tuple = (session_expire_time, session_id)
 
         # pushes the session tuple to the rest session list (heap)
+        # and then sets the session in the rest session map
         heapq.heappush(self.rest_session_list, session_tuple)
-
-        # sets the session in the rest session map
         self.rest_session_map[session_id] = session
 
     def remove_session(self, session):
@@ -2183,7 +2181,8 @@ class RestSession:
     """ The cookie """
 
     attributes_map = {}
-    """ The attributes map """
+    """ The attributes map, that should be accessible much
+    like a map using the set and get base interaction """
 
     _maximum_expire_time = None
     """ The maximum expire time """
@@ -2549,6 +2548,15 @@ class RestSession:
         # sets the expire time as the calculated expire time
         # or as the maximum expire time in case it's smaller
         self.expire_time = self._maximum_expire_time > expire_time and expire_time or self._maximum_expire_time
+
+class ShelveSession(RestSession):
+    """
+    Shelve based implementation of the rest session, meant
+    to provide a minimal and simple persistence layer for
+    the sessions to be created.
+    """
+
+    pass
 
 class Cookie:
     """
