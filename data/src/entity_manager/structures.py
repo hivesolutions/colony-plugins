@@ -472,16 +472,13 @@ class EntityClass(object):
 
         # in case the value is not a dictionary, it's not
         # a lazy loaded relation description (that's for sure)
-        if not value_type == types.DictType:
-            # returns the value, immediately
-            return value
+        if not value_type == types.DictType: return value
 
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
         # of an entity attribute
         if not hasattr(self.__class__, name) or not getattr(self.__class__, name) == value:
-            # returns the value, immediately
             return value
 
         # checks if the current attribute name refers a relation
