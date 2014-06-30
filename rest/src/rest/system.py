@@ -322,11 +322,9 @@ class Rest(colony.System):
         else:
             # iterates over all the matching regex in the matching regex list
             for matching_regex in self.matching_regex_list:
-                # retrieves the resource path match
+                # retrieves the resource path match and in case there is
+                # no valid resource path match, must continue the loop
                 resource_path_match = matching_regex.match(resource_path)
-
-                # in case there is no valid resource path match, must
-                # continue the loop to try to find one
                 if not resource_path_match: continue
 
                 # retrieves the base value for the matching regex
