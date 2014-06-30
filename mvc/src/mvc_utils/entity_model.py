@@ -985,7 +985,7 @@ def _class_apply_context(
 def __getstate__(self):
     return self.to_map()
 
-def __setstate__(self, state, entity_manager = None):
+def __setstate__(self, state):
     cls = self.__class__
     cls.from_map(state, self._entity_manager, entity = self)
 
