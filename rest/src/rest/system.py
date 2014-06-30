@@ -317,7 +317,8 @@ class Rest(colony.System):
             self.handle_rest_request_services(rest_request)
             return
 
-        # otherwise it's a "general" request
+        # otherwise it's a "general" request and the typical handling
+        # strategy is going to be performed (as usual)
         else:
             # iterates over all the matching regex in the matching regex list
             for matching_regex in self.matching_regex_list:
@@ -2285,7 +2286,7 @@ class RestSession(object):
 
     @classmethod
     def get_s(cls, sid):
-        if not cls.STORAGE: cls.open()
+        if not cls.STORAGE: cls.load()
         session = cls.STORAGE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
