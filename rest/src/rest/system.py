@@ -2595,7 +2595,7 @@ class ShelveSession(RestSession):
 
     @classmethod
     def get_s(cls, sid):
-        if not cls.SHELVE: cls.open()
+        if not cls.SHELVE: cls.load()
         session = cls.SHELVE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
