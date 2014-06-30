@@ -982,6 +982,13 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
+def __getstate__(self):
+    return self.to_map()
+
+def __setstate__(self, state, entity_manager = None):
+    cls = self.__class__
+    cls.from_map(state, self._entity_manager, entity = self)
+
 @utils.transaction_m
 def delete(
     self,
