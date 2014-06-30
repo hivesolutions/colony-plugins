@@ -3602,6 +3602,13 @@ class EntityClass(object):
         # correctly convert them into the appropriate the
         # correct value and set them in the map
         for name in names:
+            # verifies if the current name refers a relation
+            # and if that's the case skips the current step
+            # as relations are not meant to be serialized
+            # at this state of the loop
+            is_relation = entity_class.is_relation(name)
+            if is_relation: continue
+
             # retrieves the value for the current
             # name and sets it in the map
             value = self.get_value(name)
