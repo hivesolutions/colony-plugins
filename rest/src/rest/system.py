@@ -71,9 +71,6 @@ identifier for the current handling infra-structure """
 HANDLER_PORT = 80
 """ The handler port """
 
-SERVICES_SERVICE_NAME = "services"
-""" The services service name """
-
 SESSION_ID_VALUE = "session_id"
 """ The session id value """
 
@@ -312,13 +309,14 @@ class Rest(colony.System):
         rest_request.set_encoder_name(encoder_name)
         rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
 
-        # in case the request is meant to be handled by services
-        if resource_name == SERVICES_SERVICE_NAME:
+        # in case the request is meant to be handled by services a
+        # special case is selected and a special handling is performed
+        if resource_name == "services":
             # handles the request with the services request handler
+            # and then return immediately as the request is handled
             self.handle_rest_request_services(rest_request)
-
-            # returns immediately
             return
+
         # otherwise it's a "general" request
         else:
             # iterates over all the matching regex in the matching regex list
