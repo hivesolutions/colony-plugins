@@ -38,8 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import os
 import time
 import heapq
+import shelve
 import datetime
 import threading
 
@@ -71,12 +73,6 @@ HANDLER_PORT = 80
 
 SERVICES_SERVICE_NAME = "services"
 """ The services service name """
-
-COOKIE_VALUE = "Cookie"
-""" The cookie value """
-
-SET_COOKIE_VALUE = "Set-Cookie"
-""" The set cookie value """
 
 SESSION_ID_VALUE = "session_id"
 """ The session id value """
@@ -461,7 +457,6 @@ class Rest(colony.System):
         @return: The handler port.
         """
 
-        # returns the handler port
         return HANDLER_PORT
 
     def get_handler_properties(self):
@@ -758,13 +753,17 @@ class Rest(colony.System):
     def get_session(self, session_id):
         """
         Retrieves the session with the given session id
-        from the sessions map.
+        from the underlying registry that stores the various
+        session in secondary/main memory.
 
         @type session_id: String
         @param session_id: The id of the session to retrieve.
+        @rtype: RestSession
+        @return: The session that has been loaded from memory
+        or an invalid value in case no session was found
         """
 
-        return self.session_map.get(session_id, None)
+        return self.session_c.get_s(session_id)
 
     def update_session_list(self):
         """
@@ -965,19 +964,24 @@ class RestRequest(object):
     """ The path list """
 
     encoder_name = None
-    """ The encoder name """
+    """ The encoder name, as the name of the encoder that is
+    going to be used in the handling of the request """
 
     content_type = None
-    """ The content type """
+    """ The type of the content that is going to be returned
+    as part of this request """
 
     result_translated = None
-    """ The translated result """
+    """ The translated result as a data string of contents that
+    are going to be returned as part of the result for request """
 
     rest_encoder_plugins = []
-    """ The rest encoder plugins """
+    """ The rest encoder plugins that are going to be used
+    in the translation process of the request workflow """
 
     rest_encoder_plugins_map = []
-    """ The rest encoder plugins map """
+    """ The rest encoder plugins map that contains the various
+    "translation" plugins associated with their "names" """
 
     parameters_map = {}
     """ The parameters map, used to store temporary data """
@@ -1052,7 +1056,7 @@ class RestRequest(object):
 
         # creates a new rest session and sets
         # it as the current session (uses the timeout information)
-        self.session = RestSession(
+        self.session = self.rest.session_c.new(
             session_id,
             timeout = timeout,
             maximum_timeout = maximum_timeout
@@ -1074,12 +1078,13 @@ class RestRequest(object):
 
     def stop_session(self):
         """
-        Stops the current session.
+        Stops the current session, this operation should clear
+        the current session and remove it from the current context.
         """
 
         # in case no session is defined, creates
         # a new empty session
-        if not self.session: self.session = RestSession()
+        if not self.session: self.session = self.session_c()
 
         # retrieves the host name value
         domain = self._get_domain()
@@ -1314,6 +1319,11 @@ class RestRequest(object):
         # in case there is a session available, must try to update the
         # cookie associated information in the response
         if self.session:
+            # runs the flush operation in the currently associated session
+            # so that the complete data is store in the data source and may
+            # be accessed in further/future requests
+            self.session.flush()
+
             # retrieves the session cookie, this is a structure
             # that represents the cookie allowing some manage
             session_cookie = self.session.get_cookie()
@@ -1328,7 +1338,7 @@ class RestRequest(object):
 
                 # sets the session id in the cookie and then invalidates
                 # it so that no extra cookies are set
-                self.request.append_header(SET_COOKIE_VALUE, serialized_session_cookie)
+                self.request.append_header("Set-Cookie", serialized_session_cookie)
                 self.session.set_cookie(None)
 
         # sets the content type for the request, this should
@@ -2071,7 +2081,7 @@ class RestRequest(object):
         if self.session: return
 
         # retrieves the cookie value from the request
-        cookie_value = self.request.get_header(COOKIE_VALUE)
+        cookie_value = self.request.get_header("Cookie")
 
         # in case there is not valid cookie value,
         # must return immediately
@@ -2177,26 +2187,35 @@ class RestSession(object):
     session tampering (could pose a security risk) """
 
     timeout = None
-    """ The timeout """
+    """ The timeout value in seconds for the session, this
+    value is going to be used as the basis for the calculus
+    of the expire time """
 
     maximum_timeout = None
-    """ The maximum timeout """
+    """ The maximum timeout value consisting of an hard value
+    on until when the session may be extended using the typical
+    touch mechanism """
 
     expire_time = None
-    """ The expire time """
+    """ The expire time as seconds since epoch from which the
+    session is going to be considered expired and removed from
+    the associated storage mechanism """
 
     cookie = None
-    """ The cookie """
+    """ The cookie structure associated with the session this
+    structure is going to be used in serialization """
 
     attributes_map = {}
     """ The attributes map, that should be accessible much
     like a map using the set and get base interaction """
 
     _maximum_expire_time = None
-    """ The maximum expire time """
+    """ The maximum expire time, calculates using the provided
+    maximum timeout value and should be an epoch based value """
 
     _access_lock = None
-    """ The lock used to control the access to the session """
+    """ The lock used to control the access to the session, this
+    is required to avoid concurrent access the the session """
 
     def __init__(
         self,
@@ -2228,9 +2247,53 @@ class RestSession(object):
         # and maximum timeout
         self._generate_expire_time(timeout, maximum_timeout)
 
+    def __getstate__(self):
+        return dict(
+            session_id = self.session_id,
+            timeout = self.timeout,
+            maximum_timeout = self.maximum_timeout,
+            expire_time = self.expire_time,
+            attributes_map = self.attributes_map,
+            _maximum_expire_time = self._maximum_expire_time
+        )
+
+    def __setstate__(self, state):
+        self.session_id = state["session_id"]
+        self.timeout = state["timeout"]
+        self.maximum_timeout = state["maximum_timeout"]
+        self.expire_time = state["expire_time"]
+        self.attributes_map = state["attributes_map"]
+        self._maximum_expire_time = state["_maximum_expire_time"]
+        self._access_lock = threading.RLock()
+
     @classmethod
     def load(cls):
-        pass
+        cls.STORAGE = {}
+
+    @classmethod
+    def unload(cls):
+        cls.STORAGE = None
+
+    @classmethod
+    def count(cls):
+        return len(cls.STORAGE)
+
+    @classmethod
+    def new(cls, *args, **kwargs):
+        if not cls.STORAGE: cls.load()
+        session = cls(*args, **kwargs)
+        cls.STORAGE[session.session_id] = session
+        return session
+
+    @classmethod
+    def get_s(cls, sid):
+        if not cls.STORAGE: cls.open()
+        session = cls.STORAGE.get(sid, None)
+        if not session: return session
+        is_expired = session.is_expired()
+        if is_expired: del cls.STORAGE[sid]
+        session = None if is_expired else session
+        return session
 
     def update(self, domain = None, include_sub_domain = False, secure = False):
         self.start(
@@ -2315,104 +2378,40 @@ class RestSession(object):
 
         self._access_lock.release()
 
+    def flush(self):
+        pass
+
+    def is_expired(self):
+        return time.time() > self.expire_time
+
     def get_session_id(self):
-        """
-        Retrieves the session id.
-
-        @rtype: String
-        @return: The session id.
-        """
-
         return self.session_id
 
     def set_session_id(self, session_id):
-        """
-        Sets the session id.
-
-        @type session_id: String
-        @param session_id: The session id.
-        """
-
         self.session_id = session_id
 
     def get_timeout(self):
-        """
-        Retrieves the timeout.
-
-        @rtype: float
-        @return: The timeout.
-        """
-
         return self.timeout
 
     def set_timeout(self, timeout):
-        """
-        Sets the timeout.
-
-        @type timeout: float
-        @param timeout: The timeout.
-        """
-
         self.timeout = timeout
 
     def get_maximum_timeout(self):
-        """
-        Retrieves the maximum timeout.
-
-        @rtype: float
-        @return: The maximum timeout.
-        """
-
         return self.maximum_timeout
 
     def set_maximum_timeout(self, maximum_timeout):
-        """
-        Sets the maximum timeout.
-
-        @type maximum_timeout: float
-        @param maximum_timeout: The maximum timeout.
-        """
-
         self.maximum_timeout = maximum_timeout
 
     def get_expire_time(self):
-        """
-        Retrieves the expire time.
-
-        @rtype: float
-        @return: The expire time.
-        """
-
         return self.expire_time
 
     def set_expire_time(self, expire_time):
-        """
-        Sets the expire time.
-
-        @type expire_time: float
-        @param expire_time: The expire time.
-        """
-
         self.expire_time = expire_time
 
     def get_cookie(self):
-        """
-        Retrieves the cookie.
-
-        @type cookie: Cookie
-        @param cookie: The cookie.
-        """
-
         return self.cookie
 
     def set_cookie(self, cookie):
-        """
-        Sets the cookie.
-
-        @type cookie: Cookie
-        @param cookie: The cookie.
-        """
-
         self.cookie = cookie
 
     def get_attribute(self, attribute_name, default = None):
@@ -2569,8 +2568,46 @@ class ShelveSession(RestSession):
     """
 
     @classmethod
-    def load(cls):
+    def load(cls, file_path = "session.shelve"):
         super(ShelveSession, cls).load()
+        base_path = colony.conf("SESSION_BASE_PATH", "")
+        file_path = os.path.join(base_path, file_path)
+        cls.SHELVE = shelve.open(
+            file_path,
+            protocol = 2,
+            writeback = True
+        )
+
+    @classmethod
+    def unload(cls):
+        super(ShelveSession, cls).unload()
+        cls.SHELVE.close()
+        cls.SHELVE = None
+
+    @classmethod
+    def count(cls):
+        return len(cls.SHELVE)
+
+    @classmethod
+    def new(cls, *args, **kwargs):
+        if not cls.SHELVE: cls.load()
+        session = cls(*args, **kwargs)
+        cls.SHELVE[session.session_id] = session
+        return session
+
+    @classmethod
+    def get_s(cls, sid):
+        if not cls.SHELVE: cls.open()
+        session = cls.SHELVE.get(sid, None)
+        if not session: return session
+        is_expired = session.is_expired()
+        if is_expired: del cls.SHELVE[sid]
+        session = None if is_expired else session
+        return session
+
+    def flush(self):
+        cls = self.__class__
+        cls.SHELVE.sync()
 
 class Cookie(object):
     """
@@ -2630,9 +2667,8 @@ class Cookie(object):
                 name, value = value_splitted
             else:
                 # sets the name as the first element
+                # and the value as an invalid value
                 name = value_splitted[0]
-
-                # sets the value as invalid (not set)
                 value = None
 
             # sets the value in the attributes map
