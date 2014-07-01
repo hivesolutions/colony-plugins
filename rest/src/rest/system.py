@@ -668,28 +668,32 @@ class Rest(colony.System):
 
     def _update_matching_regex(self):
         """
-        Updates the matching regex.
+        Updates the matching regex, reconstructing the current
+        matching regex using the currently registered routes.
+
+        This is an expensive operation and should be used carefully
+        to avoid unwanted resources consumption.
+
+        Any change in the routes map should trigger an update on the
+        master matching regex so that it keeps updated.
         """
 
         # starts the matching regex value buffer
         matching_regex_value_buffer = colony.StringBuffer()
 
-        # clears the matching regex list
+        # clears the matching regex list and map, because they
+        # are going to be re-created as part of the method
         self.matching_regex_list = []
-
-        # clears the matching regex base value map
         self.matching_regex_base_values_map.clear()
 
-        # sets the is first plugin flag
+        # starts the various values that define the state of the iteration
+        # cycle that will be used to created the matching regex
         is_first_plugin = True
-
-        # starts the index value
         index = 0
-
-        # starts the current base value
         current_base_value = 0
 
-        # iterates over all the items in the rest service routes map
+        # iterates over all the items in the rest service routes map in
+        # order to populate and create the matching regex
         for rest_service_plugin_id, routes_list in self.rest_service_routes_map.items():
             # in case it's the first plugin to be used in
             # the creation of the matching regex unset the flag
@@ -703,7 +707,8 @@ class Rest(colony.System):
             # sets the is first flag
             is_first = True
 
-            # iterates over all the routes in the routes list
+            # iterates over all the routes in the routes list adding them
+            # to the group as a set of "or" based operations
             for route in routes_list:
                 # in case it's the first route updates the flag otherwise
                 # writes the "or" operator to the buffer
@@ -717,35 +722,34 @@ class Rest(colony.System):
             matching_regex_value_buffer.write(")")
 
             # sets the rest service plugin id in the regex index
-            # plugin id map
+            # plugin id map, so that the reverse resolution may be used
             self.regex_index_plugin_id_map[index] = rest_service_plugin_id
 
-            # increments the index
+            # increments the index indicating that one more regular
+            # expression group has been added to the master regex
             index += 1
 
             # in case the current index is in the limit of the python
-            # regex compilation
+            # regex compilation, must split the regex as a new one
             if index % REGEX_COMILATION_LIMIT == 0:
                 # retrieves the matching regex value from the matching
-                # regex value buffer
+                # regex value buffer then compiles it adding it to the
+                # list of matching regex (for latter usage)
                 matching_regex_value = matching_regex_value_buffer.get_value()
-
-                # compiles the matching regex value
                 matching_regex = re.compile(matching_regex_value)
-
-                # adds the matching regex to the matching regex list
                 self.matching_regex_list.append(matching_regex)
 
                 # sets the base value in matching regex base values map
+                # so that it may be used latter for reverse loading
                 self.matching_regex_base_values_map[matching_regex] = current_base_value
 
-                # re-sets the current base value
-                current_base_value = index
-
-                # resets the matching regex value buffer
+                # resets the matching regex value buffer, so that it starts
+                # to be populated once more with new values
                 matching_regex_value_buffer.reset()
 
-                # sets the is first flag
+                # re-sets the current base value as restores the is first
+                # flag value to the original value
+                current_base_value = index
                 is_first = True
 
         # retrieves the matching regex value from the matching
