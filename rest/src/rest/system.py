@@ -893,16 +893,11 @@ class Rest(colony.System):
                 is_first = True
 
         # retrieves the matching regex value from the matching
-        # regex value buffer
+        # regex value buffer, compiles it and adds the (new)
+        # matching regex to the matching regex list and map
         matching_regex_value = matching_regex_value_buffer.get_value()
-
-        # compiles the matching regex value
         matching_regex = re.compile(matching_regex_value)
-
-        # adds the matching regex to the matching regex list
         self.matching_regex_list.append(matching_regex)
-
-        # sets the base value in matching regex base values map
         self.matching_regex_base_values_map[matching_regex] = current_base_value
 
 class RestRequest(object):
