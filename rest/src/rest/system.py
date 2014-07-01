@@ -653,13 +653,7 @@ class Rest(colony.System):
         of all the sessions in the rest manager.
         """
 
-        # removes the complete set of session timeout tuples
-        # so that no more session invalidation occurs
-        self.session_list = []
-
-        # clears the rest session map, removing all the
-        # registered session from it
-        self.session_map.clear()
+        self.session_c.clear()
 
     def get_session(self, session_id):
         """
@@ -2108,6 +2102,10 @@ class RestSession(object):
         cls.GC_PENDING = False
 
     @classmethod
+    def clear(cls):
+        cls.STORAGE.clear()
+
+    @classmethod
     def count(cls):
         return len(cls.STORAGE)
 
@@ -2432,6 +2430,10 @@ class ShelveSession(RestSession):
         super(ShelveSession, cls).unload()
         cls.SHELVE.close()
         cls.SHELVE = None
+
+    @classmethod
+    def clear(cls):
+        cls.SHELVE.clear()
 
     @classmethod
     def count(cls):
