@@ -715,7 +715,12 @@ class EntityClass(object):
             # to extend the current names map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_names_map = parent.get_names_map()
-            colony.map_extend(names_map, parent_names_map, override = False, copy_base_map = False)
+            colony.map_extend(
+                names_map,
+                parent_names_map,
+                override = False,
+                copy_base_map = False
+            )
 
         # retrieves all of the names for the
         # class and then sets them in the names
@@ -3596,12 +3601,12 @@ class EntityClass(object):
 
         # retrieves all the (symbol) names for the current
         # entity, this value are going to
-        names = entity_class.get_names()
+        names = entity_class.get_names_map()
 
-        # iterates over all the names in the names list to
+        # iterates over all the names in the names map to
         # correctly convert them into the appropriate the
         # correct value and set them in the map
-        for name in names:
+        for name, _value in names.iteritems():
             # verifies if the current name refers a relation
             # and if that's the case skips the current step
             # as relations are not meant to be serialized
@@ -3622,7 +3627,7 @@ class EntityClass(object):
         # retrieves all the relations from the entity class
         # used for the conversion, these are the relations
         # that are going to be converted and set on the map
-        relations = entity_class.get_relations()
+        relations = entity_class.get_all_relations()
 
         # iterates over all the relations to convert them
         # into the appropriate map representation and set
@@ -3650,7 +3655,7 @@ class EntityClass(object):
                 # "casts" a possible invalid value into an
                 # empty list to provide compatibility with
                 # the iteration
-                value = value == None and [] or value
+                value = [] if value == None else value
 
                 # iterates over all the values in the to many
                 # relation to convert them into maps
@@ -3672,7 +3677,7 @@ class EntityClass(object):
                 # retrieves the value of the relation and converts
                 # it into the map representation in case it's valid
                 value = self.get_value(relation, load_lazy = True)
-                relation_value = value and value.to_map(target_class, depth - 1) or value
+                relation_value = value.to_map(target_class, depth - 1) if value else value
 
             # sets the relation value (list of maps or map)
             # in the current entity map representation
