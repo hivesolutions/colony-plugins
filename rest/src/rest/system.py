@@ -835,13 +835,11 @@ class Rest(colony.System):
 
         # iterates over all the items in the rest service routes map
         for rest_service_plugin_id, routes_list in self.rest_service_routes_map.items():
-            # in case it's the first plugin
-            if is_first_plugin:
-                # unsets the is first plugin flag
-                is_first_plugin = False
-            else:
-                # adds the or operand to the matching regex value buffer
-                matching_regex_value_buffer.write("|")
+            # in case it's the first plugin to be used in
+            # the creation of the matching regex unset the flag
+            # otherwise adds the "or" character to the buffer
+            if is_first_plugin: is_first_plugin = False
+            else: matching_regex_value_buffer.write("|")
 
             # adds the group part of the regex to the matching regex value buffer
             matching_regex_value_buffer.write("(")
