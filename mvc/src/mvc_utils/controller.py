@@ -4271,7 +4271,7 @@ def _cast_attribute_value(self, attribute_value):
     # returns the file attribute tuple
     return file_attribute_tuple
 
-def _get_path(self, request):
+def _get_path(self, request, sanitize = False):
     """
     Retrieves the "real" path from the request
     this method takes into account the base path.
@@ -4281,9 +4281,16 @@ def _get_path(self, request):
     path attribute must be used to retrieve the "real"
     path.
 
+    If the sanitize flag is set some of the possible
+    parameters are removed so that they are not part
+    of the canonical path of the request.
+
     @type request: Request
     @param request: The request to be used to
     retrieve the "real" url path.
+    @type sanitize: bool
+    @param sanitize: If the returned path should be sanitized
+    by removing some of its (extra) parameters.
     @rtype: String
     @return: The "original" base path from the http
     url, taking into account the base path. This value
@@ -4295,12 +4302,18 @@ def _get_path(self, request):
 
     # in case the (original) path is not valid (problem
     # in the request retrieval) the "processed" path
-    # must be used as a fall-back
-    if not path:
-        # sets the request path as the path
-        path = request.request.path
+    # must be used as a fall-back, sets the request path
+    # as the path (that is going to be used)
+    if not path: path = request.request.path
 
-    # returns the path
+    # in case no sanitization is required for the current path
+    # the method returns the control flow immediately
+    if not sanitize: return path
+
+    # sanitizes the path by replacing some of it's parts
+    # avoiding possible parameter problems
+    path = path.replace("?async=1", "")
+    path = path.replace("&async=1", "")
     return path
 
 def _get_host(self, request, prefix_path = None):
