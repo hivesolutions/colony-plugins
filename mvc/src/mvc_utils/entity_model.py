@@ -982,8 +982,12 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
-def __getstate__(self):
-    return self.to_map()
+def __getstate__(self, depth = 2):
+    is_attached = self.is_attached()
+    is_attached and self.detach()
+    try: state = self.to_map(depth = depth)
+    finally: is_attached and self.attach()
+    return state
 
 def __setstate__(self, state):
     cls = self.__class__
@@ -1598,6 +1602,8 @@ def relation(self, name, options = {}, force = True, entity_manager = None):
     # immediately avoiding a reloading of the relation
     value = self.get_value(name)
     if not force and value: return
+
+    print("relation: " + name)
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
