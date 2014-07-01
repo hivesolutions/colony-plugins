@@ -115,6 +115,9 @@ class Rest(colony.System):
     """
     The rest (manager) class, the top level system class
     that handles the incoming rest requests.
+
+    The current rest infra-structure supports both the service
+    mode (remote method calls) and the typical routing.
     """
 
     matching_regex_list = []
