@@ -323,7 +323,10 @@ class Rest(colony.System):
         and it's not recommended.
 
         @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
+        @param rest_request: The rest request to be handled,
+        this request is going to be used for the resolution
+        process of the remote method and for the passing of
+        the proper parameters/arguments into it.
         """
 
         # retrieves the (underlying) request for the current
