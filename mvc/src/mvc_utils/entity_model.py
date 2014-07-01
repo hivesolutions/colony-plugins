@@ -1560,16 +1560,22 @@ def reload(self, options = {}, entity_manager = None):
     # reloads the entity using the entity manager
     entity_manager.reload(self, options)
 
-def relation(self, name, options = {}, entity_manager = None):
+def relation(self, name, options = {}, force = True, entity_manager = None):
     """
     Loads a relation for the current instance in the
     data source described in the current entity manager.
     This method provides the persistence layer for
     loading of an object's relation.
 
+    In case the relation is already loaded/set there's
+    no reloading if the force flag is not set.
+
     @type options: Dictionary
     @param options: The map of options for the (partial) loading
     of the entity model's relation.
+    @type force: bool
+    @param force: If the reloading of the relation should be forced
+    even in situations where the relations is already loaded.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1578,6 +1584,13 @@ def relation(self, name, options = {}, entity_manager = None):
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
+
+    # retrieve the value for the provided name (avoiding
+    # the loading of the relation) and in case the force
+    # flag is not set and there's a valid value returns
+    # immediately avoiding a reloading of the relation
+    value = self.get_value(name)
+    if not force and value: return
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
