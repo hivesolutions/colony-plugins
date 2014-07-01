@@ -71,18 +71,6 @@ identifier for the current handling infra-structure """
 HANDLER_PORT = 80
 """ The handler port """
 
-SESSION_ID_VALUE = "session_id"
-""" The session id value """
-
-LANG_VALUE = "lang"
-""" The lang value """
-
-EXPIRES_VALUE = "expires"
-""" The expires value """
-
-PATH_VALUE = "path"
-""" The path value """
-
 DOMAIN_VALUE = "domain"
 """ The domain value """
 
@@ -106,9 +94,6 @@ DEFAULT_LANG_VALUE = "en"
 
 DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The default expiration delta timestamp """
-
-DEFAULT_PATH = "/"
-""" The default path """
 
 DEFAULT_TIMEOUT = 86400
 """ The default timeout (twenty four hours of life) """
@@ -478,16 +463,15 @@ class Rest(colony.System):
         # retrieves the rest service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
-        # retrieves the rest service plugin routes
+        # retrieves the rest service plugin routes and registers them
+        # under the proper routes map setting then the plugin in the
+        # proper identifier to instance resolution map
         routes_list = rest_service_plugin.get_routes()
-
-        # initializes the rest service plugin id routes list
         self.rest_service_routes_map[rest_service_plugin_id] = routes_list
-
-        # sets the rest service plugin in the plugin id plugin map
         self.plugin_id_plugin_map[rest_service_plugin_id] = rest_service_plugin
 
-        # updates the matching regex
+        # updates the matching regex because the loading of the plugin
+        # may have changed the global regex (new partial regex)
         self._update_matching_regex()
 
     def unload_rest_service_plugin(self, rest_service_plugin):
@@ -501,13 +485,13 @@ class Rest(colony.System):
         # retrieves the rest service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
-        # deletes the route list for the plugin
+        # deletes the route list associated with the plugin to be unloaded
+        # and removed the identifier to instance resolution map
         del self.rest_service_routes_map[rest_service_plugin_id]
-
-        # deletes the rest service plugin from the plugin id plugin map
         del self.plugin_id_plugin_map[rest_service_plugin_id]
 
-        # updates the matching regex
+        # updates the matching regex because some of the regex expressions
+        # may have been removed by the unload operation of the plugin
         self._update_matching_regex()
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
@@ -867,13 +851,10 @@ class Rest(colony.System):
 
             # iterates over all the routes in the routes list
             for route in routes_list:
-                # in case it's the first route
-                if is_first:
-                    # unsets the is first flag
-                    is_first = False
-                else:
-                    # adds the or operand to the matching regex value buffer
-                    matching_regex_value_buffer.write("|")
+                # in case it's the first route updates the flag otherwise
+                # writes the "or" operator to the buffer
+                if is_first: is_first = False
+                else: matching_regex_value_buffer.write("|")
 
                 # adds the route to the matching regex value buffer
                 matching_regex_value_buffer.write(route)
@@ -2088,7 +2069,7 @@ class RestRequest(object):
         cookie.parse()
 
         # retrieves the session id
-        session_id = cookie.get_attribute(SESSION_ID_VALUE)
+        session_id = cookie.get_attribute("session_id")
 
         # in case there is no session id defined in the
         # current cookie, must return immediately
@@ -2115,7 +2096,7 @@ class RestRequest(object):
         if self.session: return
 
         # retrieves the session id attribute value from the request
-        session_id = self.request.get_attribute(SESSION_ID_VALUE)
+        session_id = self.request.get_attribute("session_id")
 
         # in case there is no valid session id
         # returns immediately
@@ -2316,10 +2297,10 @@ class RestSession(object):
         current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
 
         self.cookie = Cookie()
-        self.cookie.set_main_attribute_name(SESSION_ID_VALUE)
-        self.cookie.set_attribute(SESSION_ID_VALUE, self.session_id)
-        self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
-        self.cookie.set_attribute(EXPIRES_VALUE, current_date_time_formatted)
+        self.cookie.set_main_attribute_name("session_id")
+        self.cookie.set_attribute("session_id", self.session_id)
+        self.cookie.set_attribute("lang", DEFAULT_LANG_VALUE)
+        self.cookie.set_attribute("expires", current_date_time_formatted)
 
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
@@ -2340,10 +2321,10 @@ class RestSession(object):
         self.session_id = None
 
         self.cookie = Cookie()
-        self.cookie.set_main_attribute_name(SESSION_ID_VALUE)
-        self.cookie.set_attribute(SESSION_ID_VALUE, "")
-        self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
-        self.cookie.set_attribute(EXPIRES_VALUE, DEFAULT_EXPIRATION_DATE)
+        self.cookie.set_main_attribute_name("session_id")
+        self.cookie.set_attribute("session_id", "")
+        self.cookie.set_attribute("lang", DEFAULT_LANG_VALUE)
+        self.cookie.set_attribute("expires", DEFAULT_EXPIRATION_DATE)
 
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
@@ -2494,7 +2475,7 @@ class RestSession(object):
         if not domain: return
 
         # sets the domain in the cookie
-        self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
+        self.cookie.set_attribute("path", "/")
 
         # in case the domain is local, returns immediately
         # to avoid problems in the browser
@@ -2673,6 +2654,10 @@ class Cookie(object):
         """
         Serializes the cookie into a string value, using
         the current attributes map.
+
+        @rtype: String
+        @return: The linear version of the cookie as default
+        serialized value according to http specification.
         """
 
         # starts the string value
@@ -2685,7 +2670,10 @@ class Cookie(object):
             main_attribute_value = self.attributes_map[self.main_attribute_name]
 
             # serializes the main attribute
-            serialized_attribute = self._serialize_attribute(self.main_attribute_name, main_attribute_value)
+            serialized_attribute = self._serialize_attribute(
+                self.main_attribute_name,
+                main_attribute_value
+            )
 
             # appends the serialized attribute to the string value
             string_value += serialized_attribute
@@ -2701,7 +2689,8 @@ class Cookie(object):
                 # appends the serialized attribute to the string value
                 string_value += serialized_attribute
 
-        # returns the string value
+        # returns the string value, representing the serialized version
+        # of the cookie as per http specification
         return string_value
 
     def get_attribute(self, attribute_name):
