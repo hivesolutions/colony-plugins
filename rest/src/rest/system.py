@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import os
 import time
-import heapq
 import shelve
 import datetime
 import threading
@@ -61,15 +60,14 @@ HANDLER_EXTENSION = "py"
 HANDLER_FILENAME = "rest.py"
 """ The handler filename """
 
-LIST_METHODS_NAME = "system.listMethods"
-""" The list methods name """
-
 HANDLER_NAME = "rest"
 """ The handler name, to be used as the primary
 identifier for the current handling infra-structure """
 
 HANDLER_PORT = 80
-""" The handler port """
+""" The handler port, this is the default port value
+meaning that additional configuration values may
+change the port that is going to be used at runtime """
 
 DOMAIN_VALUE = "domain"
 """ The domain value """
@@ -143,19 +141,6 @@ class Rest(colony.System):
     not be defined and for such situations the default
     class is going to be used (in memory) """
 
-    session_list = []
-    """ The list used as priority queue for session
-    cancellation """
-
-    session_map = {}
-    """ The map associating the session id with the
-    rest session, this should be the primary and fallback
-    way of accessing and loading a session for the request """
-
-    session_lock = None
-    """ The lock that controls the access to the
-    critical sections in session information """
-
     def __init__(self, plugin, session_c = None):
         colony.System.__init__(self, plugin)
         self.session_c = session_c or ShelveSession
@@ -166,9 +151,6 @@ class Rest(colony.System):
         self.regex_index_plugin_id_map = {}
         self.service_methods = []
         self.service_methods_map = {}
-        self.session_list = []
-        self.session_map = {}
-        self.session_lock = threading.RLock()
         self.session_c.load()
 
     def get_handler_filename(self):
@@ -262,10 +244,6 @@ class Rest(colony.System):
         # constructs the rest path list
         path_list = middle_path_name + [last_path_initial_name]
 
-        # updates the session list (garbage collection), this should
-        # remove the session that have expired
-        self.update_session_list()
-
         # creates the rest request object that is going to be used
         # for the rest level handling this object encapsulates the
         # underlying server oriented object
@@ -281,8 +259,8 @@ class Rest(colony.System):
             # no valid session could be loaded
             self.plugin.debug("Session is invalid no session loaded or updated")
 
-        # "touches" the rest request updating it's
-        # internal timing structures
+        # "touches" the rest request updating it's internal timing
+        # structures, note that this operation is mandatory
         rest_request.touch()
 
         # sets a series of attributes in the rest request that may be
@@ -337,69 +315,77 @@ class Rest(colony.System):
 
     def handle_rest_request_services(self, rest_request):
         """
-        Handles the rest request meant for services.
+        Handles the rest request meant for services, these
+        are special requests where the path of the request
+        should be considered to be a method name and the
+        parameter of the request arguments to the remote
+        method. This is considered legacy operation mode
+        and it's not recommended.
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
         """
 
-        # retrieves the request
+        # retrieves the (underlying) request for the current
+        # rest request, this value may be used latter for the
+        # access to internal structures and then retrieves the
+        # name of the "encoder" for the current request
         request = rest_request.get_request()
-
-        # retrieves the rest path list
-        path_list = rest_request.get_path_list()
-
-        # retrieves the rest encoder name
         encoder_name = rest_request.get_encoder_name()
 
-        # creates the real method name, joining the rest path list
+        # retrieves the complete set of strings (items) that make
+        # part of the current request's path and then joins them
+        # with the "token" separator as the method name
+        path_list = rest_request.get_path_list()
         method_name = ".".join(path_list)
 
-        # in case there is a list methods request
-        if method_name == LIST_METHODS_NAME:
-            result = self.service_methods
-        # tries to call the requested method
+        # in case there is a list methods request, this is considered
+        # to be a special call and the result is "automatically" set
+        # as the current set of service methods
+        if method_name == "system.listMethods": result = self.service_methods
+
+        # in case the method is current registered in the service methods
+        # and is a valid method, the typical work flow is performed
         elif method_name in self.service_methods_map:
-            # retrieves the rpc method
+            # retrieves the rpc method using the provided method
+            # name (this will fail in case the method does not exists)
             rpc_method = self.service_methods_map[method_name]
 
-            # creates the arguments map
+            # creates the arguments map, that will hold the various
+            # arguments for the method call created from the request
             arguments_map = {}
 
             # iterates over all the variable names in the function
-            # variables
+            # variables to try to map the arguments and the arguments
             for variable_name in rpc_method.func_code.co_varnames:
-                if variable_name in request.attributes_map:
-                    # retrieves the variable value from the attributes map
-                    variable_value = request.attributes_map[variable_name]
+                if not variable_name in request.attributes_map: continue
 
-                    # unquotes the variable value
-                    variable_value = colony.unquote_plus(variable_value)
+                # retrieves the variable value from the attributes map,
+                # unquotes the variable value and sets the variable
+                # value in the arguments map (as expected)
+                variable_value = request.attributes_map[variable_name]
+                variable_value = colony.unquote_plus(variable_value)
+                arguments_map[variable_name] = variable_value
 
-                    # sets the variable value in the arguments map
-                    arguments_map[variable_name] = variable_value
-
-            # calls the rpc method with the arguments map
+            # calls the rpc method with the arguments map created using
+            # the various attributes from the request
             result = rpc_method(**arguments_map)
-        # in case the method name is not valid
-        else:
-            # raises the invalid method exception
-            raise exceptions.InvalidMethod("the method name " + method_name + " is not valid")
 
-        # serializes the result for the given encoder name retrieving the content type
-        # and the translated result
+        # in case the method name is not valid must raise an exception
+        # indicating the problem on the method name
+        else: raise exceptions.InvalidMethod("the method name " + method_name + " is not valid")
+
+        # serializes the result for the given encoder name retrieving
+        # the content type and the translated result, these values are
+        # going to be set in the request (as expected by specification)
         content_type, result_translated = self.translate_result(result, encoder_name)
 
-        # sets the default status code for the rest request
+        # sets the default (success) status code the content type
+        # and the result (data) itself in the request, then runs
+        # the flush operation on the request (to update it)
         rest_request.set_status_code(200)
-
-        # sets the content type for the rest request
         rest_request.set_content_type(content_type)
-
-        # sets the result for the rest request
         rest_request.set_result_translated(result_translated)
-
-        # flushes the rest request
         rest_request.flush()
 
     def is_active(self):
@@ -496,17 +482,12 @@ class Rest(colony.System):
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
         if updated_rpc_service_plugin:
-            updated_rpc_service_plugins = [
-                updated_rpc_service_plugin
-            ]
+            updated_rpc_service_plugins = [updated_rpc_service_plugin]
         else:
-            # clears the service methods list
-            self.service_methods = []
-
-            # clears the service map
-            self.service_methods_map = {}
-
+            # clears the service methods list and map and
             # retrieves the updated rpc service plugins
+            self.service_methods = []
+            self.service_methods_map = {}
             updated_rpc_service_plugins = self.plugin.rpc_service_plugins
 
         for rpc_service_plugin in updated_rpc_service_plugins:
@@ -653,67 +634,6 @@ class Rest(colony.System):
         # has been found for the requested name
         raise exceptions.InvalidEncoder("the " + encoder_name + " encoder is invalid")
 
-    def add_session(self, session):
-        """
-        Adds a session to the sessions map.
-
-        @type session: RestSession
-        @param session: The session to be added to the map.
-        """
-
-        # retrieves the session id and the expire
-        # time to be able to create the session tuple
-        session_id = session.get_session_id()
-        session_expire_time = session.get_expire_time()
-
-        # creates the session tuple form the session
-        # expire time and id (to be used for session cancellation)
-        session_tuple = (session_expire_time, session_id)
-
-        # pushes the session tuple to the rest session list (heap)
-        # and then sets the session in the rest session map
-        heapq.heappush(self.session_list, session_tuple)
-        self.session_map[session_id] = session
-
-    def remove_session(self, session):
-        """
-        Removes a session from the sessions map, this should
-        avoid any other access to the requested session.
-
-        @type session: RestSession
-        @param session: The session to be removed from the map.
-        """
-
-        # retrieves the session id
-        session_id = session.get_session_id()
-
-        # in case the session id does not exists in the rest
-        # session map returns immediately otherwise removed
-        # the session instance from the registration map
-        if not session_id in self.session_map: return
-        del self.session_map[session_id]
-
-    def update_session(self, session):
-        """
-        Updates a session instance in the current rest request
-        this updates the session list with the new values.
-
-        @type session: RestSession
-        @param session: The session to be updated.
-        """
-
-        # retrieves the session id and the expire
-        # time to be able to create the session tuple
-        session_id = session.get_session_id()
-        session_expire_time = session.get_expire_time()
-
-        # creates the session tuple form the session
-        # expire time and id (to be used for session cancellation)
-        session_tuple = (session_expire_time, session_id)
-
-        # pushes the session tuple to the rest session list (heap)
-        heapq.heappush(self.session_list, session_tuple)
-
     def clear_sessions(self):
         """
         Removes all the sessions from the current internal
@@ -743,72 +663,6 @@ class Rest(colony.System):
         """
 
         return self.session_c.get_s(session_id)
-
-    def update_session_list(self):
-        """
-        Updates the session list, checking for old
-        session and stopping them (garbage collection).
-        """
-
-        # retrieves the current time
-        current_time = time.time()
-
-        # iterates continuously
-        while True:
-            # in case the rest session list
-            # is not valid (empty), breaks the
-            # loop since there is nothing to be done
-            if not self.session_list: break
-
-            # acquires the rest session lock
-            self.session_lock.acquire()
-
-            try:
-                # retrieves the first session information
-                # form the rest session list (ordered list)
-                session_expire_time, session_id = self.session_list[0]
-
-                # in case the session expire time is still in the
-                # future, breaks the loop because there are no
-                # more sessions to be removed (ordered list)
-                if session_expire_time > current_time: break
-
-                # retrieves the session for the current session id and verifies that it
-                # is valid (exists in the current internal structures) in case it does
-                # not, continues the loop to continue session invalidation
-                session = self.get_session(session_id)
-                if session == None:
-                    # pops the last element from the res
-                    # session list (heap) and continues the loop
-                    heapq.heappop(self.session_list)
-                    continue
-
-                # retrieves the expire time for the current session
-                session_expire_time_current = session.get_expire_time()
-
-                # in case the session expire time for current time
-                # is the same (no touch in between) the session should
-                # be removed (garbage collection)
-                if session_expire_time_current == session_expire_time:
-                    # removes the session from the rest manager structures
-                    self.remove_session(session)
-                # otherwise there has been a new session expire time
-                # update (no cancellation should be made)
-                else:
-                    # creates the session tuple form the session
-                    # expire (current) time and id (to be used for
-                    # session cancellation)
-                    session_tuple = (session_expire_time_current, session_id)
-
-                    # pushes the session tuple to the rest session list (heap)
-                    heapq.heappush(self.session_list, session_tuple)
-
-                # pops the last element from the res
-                # session list (heap)
-                heapq.heappop(self.session_list)
-            finally:
-                # releases the rest session lock
-                self.session_lock.release()
 
     def _update_matching_regex(self):
         """
@@ -1042,27 +896,20 @@ class RestRequest(object):
         # starts the session with the defined domain
         self.session.start(domain, secure = is_secure)
 
-        # adds the session to the rest
-        self.rest.add_session(self.session)
-
     def stop_session(self):
         """
         Stops the current session, this operation should clear
         the current session and remove it from the current context.
         """
 
-        # in case no session is defined, creates
-        # a new empty session
+        # in case no session is defined, creates a new empty
+        # session that is going to be used for the operation
         if not self.session: self.session = self.session_c()
 
-        # retrieves the host name value
+        # retrieves the domain value and uses it in the stop
+        # operation of the currently defined session
         domain = self._get_domain()
-
-        # stops the session with the defined domain
         self.session.stop(domain)
-
-        # removes the session from the rest
-        self.rest.remove_session(self.session)
 
     def clear_sessions(self):
         """
@@ -2075,7 +1922,9 @@ class RestRequest(object):
 
         # if no session is selected, raises an invalid session
         # exception to indicate the error
-        if not self.session: raise exceptions.InvalidSession("no session started or session timed out")
+        if not self.session: raise exceptions.InvalidSession(
+            "no session started or session timed out"
+        )
 
     def _update_session_attribute(self):
         """
@@ -2095,12 +1944,13 @@ class RestRequest(object):
         # returns immediately
         if not session_id: return
 
-        # retrieves the session from the session id
-        self.session = self.rest.get_session(session_id)
-
-        # if no session is selected, raises an invalid session
+        # retrieves the session from the session id and if
+        # no session is selected, raises an invalid session
         # exception to indicate the error
-        if not self.session: raise exceptions.InvalidSession("no session started or session timed out")
+        self.session = self.rest.get_session(session_id)
+        if not self.session: raise exceptions.InvalidSession(
+            "no session started or session timed out"
+        )
 
     def _get_controller(self):
         """
@@ -2519,7 +2369,9 @@ class RestSession(object):
         current_time = time.time()
 
         # calculates the maximum expire time in case it's not defined
-        self._maximum_expire_time = self._maximum_expire_time or current_time + maximum_timeout
+        # as the sum of the current time and the maximum timeout
+        if not self._maximum_expire_time:
+            self._maximum_expire_time = current_time + maximum_timeout
 
         # calculates the expire time incrementing
         # the timeout to the current time
@@ -2527,7 +2379,8 @@ class RestSession(object):
 
         # sets the expire time as the calculated expire time
         # or as the maximum expire time in case it's smaller
-        self.expire_time = self._maximum_expire_time > expire_time and expire_time or self._maximum_expire_time
+        self.expire_time = expire_time if self._maximum_expire_time > expire_time\
+            else self._maximum_expire_time
 
 class ShelveSession(RestSession):
     """
