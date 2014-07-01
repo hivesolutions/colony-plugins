@@ -297,30 +297,26 @@ class Rest(colony.System):
                 resource_path_match = matching_regex.match(resource_path)
                 if not resource_path_match: continue
 
-                # retrieves the base value for the matching regex
+                # retrieves the base value for the matching regex and uses
+                # the value together with the group regex to calculates the
+                # rest service plugin index to be used in the plugin id retrieval
                 base_value = self.matching_regex_base_values_map[matching_regex]
-
-                # retrieves the index of the captured group
                 group_index = resource_path_match.lastindex
-
-                # calculates the rest service plugin index from the base value,
-                # the group index and subtracts one value
                 rest_service_plugin_index = base_value + group_index - 1
-
-                # retrieves the plugin id from the rest service plugin index
                 plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
-
-                # retrieves the rest service plugin using the plugin id
                 rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
 
-                # handles the rest request to the rest service plugin
+                # handles the rest request using the rest service plugin and
+                # returns the control flow to the caller method immediately
                 rest_service_plugin.handle_rest_request(rest_request)
-
-                # returns immediately
                 return
 
-        # raises the rest request not handled exception
-        raise exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
+        # raises the rest request not handled exception, because of the control
+        # flow has reached this place no matching regex has able to handle the
+        # request and so no service plugin was able to handle it
+        raise exceptions.RestRequestNotHandled(
+            "no rest service plugin could handle the request"
+        )
 
     def handle_rest_request_services(self, rest_request):
         """
