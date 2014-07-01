@@ -127,22 +127,29 @@ class Rest(colony.System):
 
     matching_regex_base_values_map = {}
     """ The map containing the base values for the
-    various matching regex """
+    various matching regex, this is going to be used at runtime
+    to retrieve the base index in each partial resolution """
 
     rest_service_routes_map = {}
-    """ The rest service routes map """
+    """ The rest service routes map that associates the plugin
+    identifier with a list containing the complete set of routes
+    for it (used for the master regex construction) """
 
     plugin_id_plugin_map = {}
-    """ The plugin id plugin map """
+    """ The plugin id plugin map associating the identifier of
+    the plugin with the concrete plugin """
 
     regex_index_plugin_id_map = {}
-    """ The regex index plugin id map """
+    """ The regex index plugin id map that associates a certain
+    integer index value with the plugin identifier for handling """
 
     service_methods = []
-    """ The service methods list """
+    """ The service methods list, containing references to
+    the complete set of methods that may be remotely called """
 
     service_methods_map = {}
-    """ The service methods map """
+    """ The service methods map associating the complete method
+    name with the proper method object, to be called at runtime """
 
     session_c = None
     """ The reference to the class that is going to be
