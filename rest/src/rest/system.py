@@ -2030,6 +2030,11 @@ class RestSession(object):
     """ The cookie structure associated with the session this
     structure is going to be used in serialization """
 
+    dirty = False
+    """ Flag value that controls if the current session is considered
+    dirty meaning that one of its value has changed during the
+    current loading and that required an update on storage """
+
     attributes_map = {}
     """ The attributes map, that should be accessible much
     like a map using the set and get base interaction """
@@ -2063,6 +2068,7 @@ class RestSession(object):
         self.timeout = timeout
         self.maximum_timeout = maximum_timeout
 
+        self.dirty = False
         self.attributes_map = {}
 
         self._access_lock = threading.RLock()
@@ -2223,10 +2229,16 @@ class RestSession(object):
         self._access_lock.release()
 
     def flush(self):
-        pass
+        self.mark()
+
+    def mark(self):
+        self.dirty = False
 
     def is_expired(self):
         return time.time() > self.expire_time
+
+    def is_dirty(self):
+        return self.dirty
 
     def get_session_id(self):
         return self.session_id
@@ -2289,6 +2301,7 @@ class RestSession(object):
         """
 
         self.attributes_map[attribute_name] = attribute_value
+        self.dirty = True
 
     def unset_attribute(self, attribute_name):
         """
@@ -2298,11 +2311,9 @@ class RestSession(object):
         @param attribute_name: The name of the attribute to unset.
         """
 
-        # in case the attribute name exists in
-        # the attributes map must unset it from
-        # the exiting attributes map
-        if attribute_name in self.attributes_map:
-            del self.attributes_map[attribute_name]
+        if not attribute_name in self.attributes_map: return
+        del self.attributes_map[attribute_name]
+        self.dirty = True
 
     def get_attributes_map(self):
         """
@@ -2323,6 +2334,7 @@ class RestSession(object):
         """
 
         self.attributes_map = attributes_map
+        self.dirty = True
 
     def _set_domain(self, domain, include_sub_domain = False):
         """
@@ -2470,6 +2482,8 @@ class ShelveSession(RestSession):
             if is_expired: cls.expire(sid)
 
     def flush(self):
+        if not self.is_dirty(): return
+        self.mark()
         cls = self.__class__
         cls.SHELVE.sync()
 
