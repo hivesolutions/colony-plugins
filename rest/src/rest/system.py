@@ -2091,6 +2091,7 @@ class RestSession(object):
     @classmethod
     def load(cls):
         cls.STORAGE = {}
+        cls.gc()
 
     @classmethod
     def unload(cls):
@@ -2113,9 +2114,20 @@ class RestSession(object):
         session = cls.STORAGE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
-        if is_expired: del cls.STORAGE[sid]
+        if is_expired: cls.expire(sid)
         session = None if is_expired else session
         return session
+
+    @classmethod
+    def expire(cls, sid):
+        del cls.STORAGE[sid]
+
+    @classmethod
+    def gc(cls):
+        for sid in cls.SHELVE:
+            session = cls.SHELVE.get(sid, None)
+            is_expired = session.is_expired()
+            if is_expired: cls.expire(sid)
 
     def update(self, domain = None, include_sub_domain = False, secure = False):
         self.start(
@@ -2394,7 +2406,6 @@ class ShelveSession(RestSession):
 
     @classmethod
     def load(cls, file_path = "session.shelve"):
-        super(ShelveSession, cls).load()
         base_path = colony.conf("SESSION_BASE_PATH", "")
         file_path = os.path.join(base_path, file_path)
         cls.SHELVE = shelve.open(
@@ -2402,10 +2413,10 @@ class ShelveSession(RestSession):
             protocol = 2,
             writeback = True
         )
+        cls.gc()
 
     @classmethod
     def unload(cls):
-        super(ShelveSession, cls).unload()
         cls.SHELVE.close()
         cls.SHELVE = None
 
@@ -2426,9 +2437,20 @@ class ShelveSession(RestSession):
         session = cls.SHELVE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
-        if is_expired: del cls.SHELVE[sid]
+        if is_expired: cls.expire(sid)
         session = None if is_expired else session
         return session
+
+    @classmethod
+    def expire(cls, sid):
+        del cls.SHELVE[sid]
+
+    @classmethod
+    def gc(cls):
+        for sid in cls.SHELVE:
+            session = cls.SHELVE.get(sid, None)
+            is_expired = session.is_expired()
+            if is_expired: cls.expire(sid)
 
     def flush(self):
         cls = self.__class__
