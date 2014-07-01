@@ -93,12 +93,17 @@ DEFAULT_LANG_VALUE = "en"
 DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The default expiration delta timestamp """
 
-DEFAULT_TIMEOUT = 86400
-""" The default timeout (twenty four hours of life) """
+DEFAULT_TIMEOUT = 259200
+""" The default timeout (seventy two hours of life)
+note that a "touch" operation on the session will
+extend the session lifetime and ensure that there's
+always the same time until expiration """
 
 DEFAULT_MAXIMUM_TIMEOUT = DEFAULT_TIMEOUT * 64
 """ The default maximum timeout (sixty four
-times the timeout value) """
+times the timeout value) this is the hard limit on
+the amount of time until for the expiration meaning
+that this is the limit for the touch operation """
 
 DEFAULT_TOUCH_SECURE_DELTA = 360
 """ The default time delta used to introduce a security
@@ -2091,11 +2096,12 @@ class RestSession(object):
     @classmethod
     def load(cls):
         cls.STORAGE = {}
-        cls.gc()
+        cls.GC_PENDING = True
 
     @classmethod
     def unload(cls):
         cls.STORAGE = None
+        cls.GC_PENDING = False
 
     @classmethod
     def count(cls):
@@ -2111,6 +2117,7 @@ class RestSession(object):
     @classmethod
     def get_s(cls, sid):
         if not cls.STORAGE: cls.load()
+        if cls.GC_PENDING: cls.gc()
         session = cls.STORAGE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
@@ -2124,6 +2131,7 @@ class RestSession(object):
 
     @classmethod
     def gc(cls):
+        cls.GC_PENDING = False
         for sid in cls.SHELVE:
             session = cls.SHELVE.get(sid, None)
             is_expired = session.is_expired()
@@ -2406,6 +2414,7 @@ class ShelveSession(RestSession):
 
     @classmethod
     def load(cls, file_path = "session.shelve"):
+        super(ShelveSession, cls).load()
         base_path = colony.conf("SESSION_BASE_PATH", "")
         file_path = os.path.join(base_path, file_path)
         cls.SHELVE = shelve.open(
@@ -2413,10 +2422,10 @@ class ShelveSession(RestSession):
             protocol = 2,
             writeback = True
         )
-        cls.gc()
 
     @classmethod
     def unload(cls):
+        super(ShelveSession, cls).unload()
         cls.SHELVE.close()
         cls.SHELVE = None
 
@@ -2434,6 +2443,7 @@ class ShelveSession(RestSession):
     @classmethod
     def get_s(cls, sid):
         if not cls.SHELVE: cls.load()
+        if cls.GC_PENDING: cls.gc()
         session = cls.SHELVE.get(sid, None)
         if not session: return session
         is_expired = session.is_expired()
@@ -2447,6 +2457,7 @@ class ShelveSession(RestSession):
 
     @classmethod
     def gc(cls):
+        cls.GC_PENDING = False
         for sid in cls.SHELVE:
             session = cls.SHELVE.get(sid, None)
             is_expired = session.is_expired()
