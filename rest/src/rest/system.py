@@ -2068,7 +2068,7 @@ class RestSession(object):
         self.timeout = timeout
         self.maximum_timeout = maximum_timeout
 
-        self.dirty = False
+        self.dirty = True
         self.attributes_map = {}
 
         self._access_lock = threading.RLock()
