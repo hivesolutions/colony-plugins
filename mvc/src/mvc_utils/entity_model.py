@@ -1283,7 +1283,14 @@ def store_relations(
 
         # stores the relation combining the persist type given and the current
         # model persist type in the meta information
-        self.store_relation(relation_name, _persist_type, relation_persist_type, validate, force_persist, raise_exception, entity_manager = entity_manager)
+        self.store_relation(
+            relation_name,
+            _persist_type,
+            relation_persist_type, validate,
+            force_persist,
+            raise_exception,
+            entity_manager = entity_manager
+        )
 
 def store_relation(
     self,
