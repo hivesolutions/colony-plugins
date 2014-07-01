@@ -110,9 +110,6 @@ DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 DEFAULT_PATH = "/"
 """ The default path """
 
-DEFAULT_STATUS_CODE = 200
-""" The default status code """
-
 DEFAULT_TIMEOUT = 86400
 """ The default timeout (twenty four hours of life) """
 
@@ -133,7 +130,8 @@ class Rest(colony.System):
 
     matching_regex_list = []
     """ The list of matching regex to be used in
-    route matching """
+    route matching, this value will be iterated to
+    try to find a good match for the incoming request """
 
     matching_regex_base_values_map = {}
     """ The map containing the base values for the
@@ -408,7 +406,7 @@ class Rest(colony.System):
         content_type, result_translated = self.translate_result(result, encoder_name)
 
         # sets the default status code for the rest request
-        rest_request.set_status_code(DEFAULT_STATUS_CODE)
+        rest_request.set_status_code(200)
 
         # sets the content type for the rest request
         rest_request.set_content_type(content_type)
