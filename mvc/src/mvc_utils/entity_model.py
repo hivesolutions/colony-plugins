@@ -1603,8 +1603,6 @@ def relation(self, name, options = {}, force = True, entity_manager = None):
     value = self.get_value(name)
     if not force and value: return
 
-    print("relation: " + name)
-
     # loads a relation with the provided options (partial
     # loading) using the entity manager
     entity_manager.relation(self, name, options)
