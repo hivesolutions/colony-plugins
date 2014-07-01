@@ -2462,7 +2462,6 @@ class ShelveSession(RestSession):
             session = cls.SHELVE.get(sid, None)
             is_expired = session.is_expired()
             if is_expired: cls.expire(sid)
-        cls.SHELVE.sync()
 
     def flush(self):
         cls = self.__class__
