@@ -2229,10 +2229,10 @@ class RestSession(object):
         self._access_lock.release()
 
     def flush(self):
-        self.mark()
+        self.mark(dirty = False)
 
-    def mark(self):
-        self.dirty = False
+    def mark(self, dirty = True):
+        self.dirty = dirty
 
     def is_expired(self):
         return time.time() > self.expire_time
@@ -2301,7 +2301,7 @@ class RestSession(object):
         """
 
         self.attributes_map[attribute_name] = attribute_value
-        self.dirty = True
+        self.mark()
 
     def unset_attribute(self, attribute_name):
         """
@@ -2313,7 +2313,7 @@ class RestSession(object):
 
         if not attribute_name in self.attributes_map: return
         del self.attributes_map[attribute_name]
-        self.dirty = True
+        self.mark()
 
     def get_attributes_map(self):
         """
@@ -2334,7 +2334,7 @@ class RestSession(object):
         """
 
         self.attributes_map = attributes_map
-        self.dirty = True
+        self.mark()
 
     def _set_domain(self, domain, include_sub_domain = False):
         """
@@ -2483,7 +2483,7 @@ class ShelveSession(RestSession):
 
     def flush(self):
         if not self.is_dirty(): return
-        self.mark()
+        self.mark(dirty = False)
         cls = self.__class__
         cls.SHELVE.sync()
 
