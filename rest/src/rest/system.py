@@ -52,7 +52,8 @@ REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
 
 HANDLER_BASE_FILENAME = "/dynamic/rest/"
-""" The handler base filename """
+""" The handler base filename this is the base path
+that is considered to be the prefix of the request """
 
 HANDLER_EXTENSION = "py"
 """ The handler extension """
@@ -189,59 +190,62 @@ class Rest(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given request.
+        Handles the given request, this is the main entry point
+        for the handling of the request and the responsible for
+        the creation and routing of the rest request.
+
+        Multiple types of handling are possible ranging from remote
+        procedure call ones to simple service ones.
 
         @type request: Request
         @param request: The request to be handled.
         """
 
-        # retrieves the rest encoder plugins
+        # retrieves the rest encoder plugins, these values are going
+        # to be set in the rest request that is going to be created
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
-        # retrieves the request filename
+        # retrieves the request filename as the uri of the provided
+        # (native) request object
         request_filename = request.uri
 
-        # retrieves the handler base filename length
+        # retrieves the handler base filename length and removed that
+        # part of the filename from it to create the resource path and
+        # splits it around its own components
         handler_base_filename_length = len(HANDLER_BASE_FILENAME)
-
-        # retrieves the resource path
         resource_path = request_filename[handler_base_filename_length:]
-
-        # splits the resource path
         resource_path_splitted = resource_path.split("/")
 
-        # retrieves the rest resource name
+        # retrieves the rest resource name and path name and then
+        # splits the last name into its own components
         resource_name = resource_path_splitted[0]
-
-        # retrieves the middle path name
         middle_path_name = resource_path_splitted[1:-1]
-
-        # retrieves the last path name
         last_path_name = resource_path_splitted[-1]
-
-        # splits the last path name
         last_path_name_splitted = last_path_name.rsplit(".", 1)
-
-        # retrieves the last path name splitted length
         last_path_name_splitted_length = len(last_path_name_splitted)
 
         # sets the default last path initial extension
         last_path_initial_extension = None
 
-        # in case there is an extension defined
+        # in case there is an extension defined in the path the name
+        # and the extension are extracted from the split value
         if last_path_name_splitted_length >= 2:
-            # retrieves the last path initial name
             last_path_initial_name = last_path_name_splitted[0]
-
-            # retrieves the last path extension
             last_path_initial_extension = last_path_name_splitted[1]
-        # in case there is no extension defined
+
+        # otherwise in case there's at least a name defined it's extracted
+        # from the splitted value to be evaluated
         elif last_path_name_splitted_length == 1:
-            # retrieves the last path initial name
             last_path_initial_name, = last_path_name_splitted
+
+        # as a fallback procedure an exception must be raised indicating
+        # that the provided path for evaluation is invalid as it's not
+        # defined according to the specification
         else:
-            # raises a bad service request exception
-            raise exceptions.InvalidPath("invalid last path name value size: " + str(last_path_name_splitted_length))
+            raise exceptions.InvalidPath(
+                "invalid last path name value size: " +\
+                str(last_path_name_splitted_length)
+            )
 
         # retrieves the encoder name
         encoder_name = last_path_initial_extension
