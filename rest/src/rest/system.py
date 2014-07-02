@@ -70,12 +70,6 @@ HANDLER_PORT = 80
 meaning that additional configuration values may
 change the port that is going to be used at runtime """
 
-DOMAIN_VALUE = "domain"
-""" The domain value """
-
-SECURE_VALUE = "secure"
-""" The secure value """
-
 LOCALHOST_VALUES = (
     "localhost",
     "127.0.0.1"
@@ -2379,8 +2373,8 @@ class RestSession(object):
         # flag is active, sets the domain in the cookie
         # (including sub domains) otherwise sets only the
         # current domain in the cookie
-        if include_sub_domain: self.cookie.set_attribute(DOMAIN_VALUE, "." + domain)
-        else: self.cookie.set_attribute(DOMAIN_VALUE, domain)
+        if include_sub_domain: self.cookie.set_attribute("domain", "." + domain)
+        else: self.cookie.set_attribute("domain", domain)
 
     def _set_secure(self, secure = False):
         """
@@ -2397,7 +2391,7 @@ class RestSession(object):
 
         # in case the secure flag is set adds the simple secure
         # attribute to the cookie
-        if secure: self.cookie.set_attribute(SECURE_VALUE)
+        if secure: self.cookie.set_attribute("secure")
 
     def _generate_expire_time(self, timeout, maximum_timeout):
         """
