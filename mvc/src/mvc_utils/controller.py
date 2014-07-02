@@ -3242,6 +3242,7 @@ def start_session(self, request, force = False, set_cookie = True):
     not set_cookie and request_session.set_cookie(None)
 
     # returns the "just" created request session
+    # to the caller method so that it may be used
     return request_session
 
 def reset_session(self, request):
