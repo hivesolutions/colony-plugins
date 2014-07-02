@@ -527,55 +527,53 @@ class Rest(colony.System):
         # to be used in the update to unpack their details and register them
         # in the current internal structures (for usage)
         for rpc_service_plugin in updated_rpc_service_plugins:
-            # retrieves all the method names for the current rpc service
+            # retrieves all the method and all the alias for the current rpc
+            # service plugin in iteration, these values are going to be used
+            # in the current plugin registration process
             available_rpc_methods = rpc_service_plugin.get_available_rpc_methods()
-
-            # retrieves all the method alias for the current rpc service
             available_rpc_methods_alias = rpc_service_plugin.get_rpc_methods_alias()
 
-            # in case the plugin contains the rpc method metadata
+            # in case the plugin contains the rpc method metadata, must follow
+            # the proper logic for "additional" rpc method registration
             if rpc_service_plugin.contains_metadata_key("rpc_method"):
-                # retrieves the metadata values for the rpc method
+                # retrieves the metadata values for the rpc method, these values
+                # may contain extra methods that are going to be registered
                 metadata_values = rpc_service_plugin.get_metadata_key("rpc_method")
 
-                # iterates over all the metadata values
+                # iterates over all the metadata values, to register the complete
+                # set of method associated with each metadata value
                 for metadata_value in metadata_values:
-                    # retrieves the method name of the rpc method
+                    # retrieves the method name and alias of the rpc method, these
+                    # values are going to be used in method retrieval
                     method_name = metadata_value["method_name"]
-
-                    # retrieves the alias for the rpc method
                     alias = metadata_value["alias"]
 
                     # retrieves the method for the rpc method from the plugin instance
+                    # and adds it to the list methods and to the alias map
                     method = getattr(rpc_service_plugin, method_name)
-
-                    # adds the method to the list of available rpc methods
                     available_rpc_methods.append(method)
-
-                    # adds the alias to the list of available rpc methods alias
                     available_rpc_methods_alias[method] = alias
 
-            # retrieves the list of all the available rpc methods
+            # retrieves the list of all the available rpc methods as a string name
+            # and then iterates over the complete set of alias to add also the alis
+            # for the methods to this same list
             available_rpc_methods_string = [value.__name__ for value in available_rpc_methods]
-
-            # iterates over all the rpc method alias keys
             for available_rpc_method_alias_key in available_rpc_methods_alias:
                 available_rpc_methods_alias_string = available_rpc_methods_alias[available_rpc_method_alias_key]
                 available_rpc_methods_string.extend(available_rpc_methods_alias_string)
 
             # extends the service methods list with the available rpc methods string
+            # this is going to add the new names to the registry
             self.service_methods.extend(available_rpc_methods_string)
 
-            # retrieves the service id
+            # retrieves the service id and alias, these are the complete set of names
+            # that may identify the service, and so constructs the list with both
             service_id = rpc_service_plugin.get_service_id()
-
-            # retrieves the list of service alias
             service_alias = rpc_service_plugin.get_service_alias()
-
-            # creates a list with all the possible service names
             service_names = [service_id] + service_alias
 
-            # iterates over all the possible service names
+            # iterates over all the possible service names an through all the method
+            # names to create "all" the fully qualified names for the methods
             for service_name in service_names:
                 for available_rpc_method_string in available_rpc_methods_string:
                     composite_available_rpc_method_string = service_name + "." + available_rpc_method_string
