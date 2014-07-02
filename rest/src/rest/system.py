@@ -582,21 +582,32 @@ class Rest(colony.System):
             # iterates over all the available rpc methods to generate the service methods map
             # that are going to be used at runtime for resolution of the methods
             for available_rpc_method in available_rpc_methods:
+                # sets both the list containing the service method names and
+                # the basic names as empty lists, note that the basic names
+                # list will not have the fully qualified names
                 service_method_names = []
                 service_method_basic_names = []
 
+                # starts the population of the lists with the basic method
+                # names for the current rpc method in registration
                 service_method_names.append(available_rpc_method.__name__)
                 service_method_basic_names.append(available_rpc_method.__name__)
 
+                # adds the complete set of alias at each of the lists, this
+                # alias may be used at runtime as an alternate name for the method
                 alias_service_method_names = [value for value in available_rpc_methods_alias[available_rpc_method]]
                 service_method_names.extend(alias_service_method_names)
                 service_method_basic_names.extend(alias_service_method_names)
 
+                # iterates over each of the service names to register the fully qualified
+                # name of the method (complex name) under the "names" list
                 for service_name in service_names:
                     for service_method_basic_name in service_method_basic_names:
                         service_method_complex_name = service_name + "." + service_method_basic_name
                         service_method_names.append(service_method_complex_name)
 
+                # registers the method for the complete set of (complex) method names
+                # under the proper service methods map, that is going to be used at runtime
                 for service_method_name in service_method_names:
                     self.service_methods_map[service_method_name] = available_rpc_method
 
