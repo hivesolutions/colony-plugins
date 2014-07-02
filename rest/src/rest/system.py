@@ -1910,6 +1910,12 @@ class RestRequest(object):
             token = token
         )
 
+    def field_s(self, name, value):
+        controller = self._get_controller()
+        if not controller: return
+        form_data = controller.process_form_data(self)
+        form_data[name] = value
+
     def form(self, name, default = None, cast = None, required = False):
         controller = self._get_controller()
         if not controller: return default
