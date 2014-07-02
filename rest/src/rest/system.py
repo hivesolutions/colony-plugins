@@ -680,6 +680,10 @@ class Rest(colony.System):
         """
         Updates the matching regex, reconstructing the current
         matching regex using the currently registered routes.
+        
+        Note that the master regular expression is split into
+        various regex in order to circumvent the python limitation
+        on the maximum number of groups in regex.
 
         This is an expensive operation and should be used carefully
         to avoid unwanted resources consumption.
@@ -2503,7 +2507,9 @@ class Cookie(object):
     """
 
     string_value = None
-    """ The string value """
+    """ The string value with the serialized content
+    of the cookie, this value is going to be used in
+    the parsing operation as the basis for parsing """
 
     main_attribute_name = None
     """ The main attribute name """
@@ -2535,29 +2541,26 @@ class Cookie(object):
             raise exceptions.InvalidCookie("invalid cookie string value")
 
         # retrieves the value pairs by splitting the
-        # string value
+        # string value, this is the default way of
+        # separating the various parts of a cookie 
         value_pairs = self.string_value.split(";")
 
         # iterates over all the value pairs to
         # retrieve the name and value pairs
         for value_pair in value_pairs:
             # strips the value pair to remove
-            # extra white spaces
+            # extra white spaces and then splits
+            # the value pair (into name and value)
             value_pair_stripped = value_pair.strip()
-
-            # splits the value pair
             value_splitted = value_pair_stripped.split("=")
 
-            # in case the value pairs does respect
-            # the key value
-            if len(value_splitted) == 2:
-                # retrieves the name and the value
-                name, value = value_splitted
-            else:
-                # sets the name as the first element
-                # and the value as an invalid value
-                name = value_splitted[0]
-                value = None
+            # verifies if the length of the value splitted is
+            # the expected one (conformant with key value) and
+            # for such situations unpacks the value normally
+            # otherwise sets the first value as the name and
+            # the value as an invalid/unset value
+            if len(value_splitted) == 2: name, value = value_splitted
+            else: name = value_splitted[0]; value = None
 
             # sets the value in the attributes map
             self.attributes_map[name] = value
@@ -2655,6 +2658,6 @@ class Cookie(object):
 
         # converts the attribute into the correct key value
         # pair defaulting to a single name attribute in case
-        # no value is defined
+        # no value is defined (default fallback strategy)
         if attribute_value == None: return attribute_name + ";"
         else: return attribute_name + "=" + str(attribute_value) + ";"
