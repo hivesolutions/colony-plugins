@@ -2671,7 +2671,7 @@ class Cookie(object):
         @type attribute_value: Object
         @param attribute_value: The of the attribute to be serialized.
         @rtype: String
-        @return: The cookie serialized string.
+        @return: The serialized for of the name and attribute pair.
         """
 
         # converts the attribute into the correct key value
