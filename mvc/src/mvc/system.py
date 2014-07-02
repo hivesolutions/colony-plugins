@@ -87,7 +87,8 @@ to the proper type value to be used in casting """
 
 class Mvc(colony.System):
     """
-    The mvc class.
+    The mvc class, responsible for the management of the
+    mvc routes and all the services related with mvc.
     """
 
     mvc_file_handler = None
