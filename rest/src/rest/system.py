@@ -2518,6 +2518,8 @@ class ShelveSession(RestSession):
 class Cookie(object):
     """
     The cookie class representing an http cookie.
+    This class may be used for both parsing and
+    serialization of a cookie structure.
     """
 
     string_value = None
@@ -2526,10 +2528,13 @@ class Cookie(object):
     the parsing operation as the basis for parsing """
 
     main_attribute_name = None
-    """ The main attribute name """
+    """ The main attribute name, that consists of the
+    main value from which the cookie will be created
+    (eg: the session identifier) """
 
     attributes_map = {}
-    """ The attributes map """
+    """ The attributes map associating each of the
+    attribute names with the corresponding value """
 
     def __init__(self, string_value = None):
         """
