@@ -896,12 +896,15 @@ class RestRequest(object):
         @param timeout: The timeout to be used in the session.
         @type maximum_timeout: float
         @param maximum_timeout: The maximum timeout to be used in the session.
+        @rtype: RestSession
+        @return: The session that has just be started/created or
+        the already created session in case no "force" is required.
         """
 
         # in case a session exists and force flag is disabled
         # avoids creation (provides duplicate creation blocking)
         # must return immediately
-        if self.session and not force: return
+        if self.session and not force: return self.session
 
         # in case no session id is defined, must generate a new
         # one using a secure algorithm for it (avoid corruption)
@@ -927,8 +930,10 @@ class RestRequest(object):
         # used in secure channels (the cookie must be set accordingly)
         is_secure = self.request.is_secure()
 
-        # starts the session with the defined domain
+        # starts the session with the defined domain and then
+        # returns the same session as the created session
         self.session.start(domain, secure = is_secure)
+        return self.session
 
     def stop_session(self):
         """
@@ -1526,7 +1531,7 @@ class RestRequest(object):
         """
 
         session = self.get_session()
-        if not session: return None
+        if not session: session = self.start_session()
         session.set_attribute(name, value)
 
     def unset_s(self, name):
