@@ -580,37 +580,24 @@ class Rest(colony.System):
                     self.service_methods.append(composite_available_rpc_method_string)
 
             # iterates over all the available rpc methods to generate the service methods map
+            # that are going to be used at runtime for resolution of the methods
             for available_rpc_method in available_rpc_methods:
-                # creates the service method names list
                 service_method_names = []
-
-                # creates the service method basic names list
                 service_method_basic_names = []
 
-                # adds the available rpc method to the service method names list
                 service_method_names.append(available_rpc_method.__name__)
-
-                # adds the available rpc method to the service basic method names list
                 service_method_basic_names.append(available_rpc_method.__name__)
 
-                # retrieves all the alias to the current service methods
                 alias_service_method_names = [value for value in available_rpc_methods_alias[available_rpc_method]]
-
-                # adds the available rpc method alias to the service method names list
                 service_method_names.extend(alias_service_method_names)
-
-                # adds the available rpc method alias to the service basic method names list
                 service_method_basic_names.extend(alias_service_method_names)
 
-                # iterates over all the service names
                 for service_name in service_names:
                     for service_method_basic_name in service_method_basic_names:
                         service_method_complex_name = service_name + "." + service_method_basic_name
                         service_method_names.append(service_method_complex_name)
 
-                # iterates over all the service method names
                 for service_method_name in service_method_names:
-                    # adds the available rpc method to the map with the service method name as key
                     self.service_methods_map[service_method_name] = available_rpc_method
 
     def translate_request(self, data):
