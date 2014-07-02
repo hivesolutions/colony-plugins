@@ -939,6 +939,9 @@ class RestRequest(object):
         """
         Stops the current session, this operation should clear
         the current session and remove it from the current context.
+
+        Note that the session will become unset in the current
+        request after this method is called (invalidation)
         """
 
         # in case no session is defined, creates a new empty
@@ -949,6 +952,10 @@ class RestRequest(object):
         # operation of the currently defined session
         domain = self._get_domain()
         self.session.stop(domain)
+
+        # unsets the current session for the request as it
+        # amy longer be used for any other operation
+        self.session = None
 
     def clear_sessions(self):
         """
