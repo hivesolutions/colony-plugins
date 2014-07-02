@@ -1096,8 +1096,46 @@ def get_field(
     # for the not split values (not sequences)
     if cast_type and not split: field_value = self._cast_safe(field_value, cast_type, default)
 
-    # returns the retrieved field value
+    # returns the retrieved field value, note that this value
+    # may assume any data type (no assumptions should be made)
     return field_value
+
+def set_field(self, request, field_name, field_value):
+    """
+    Sets the provided field value "under" the field with the
+    requested name for the form data.
+
+    This operation will trigger the processing of the form
+    data and for that it should be used carefully.
+
+    Using this method is considered dangerous and should only
+    be done when changing the current request's for is allowed.
+
+    @type request: Request
+    @param request: The request to be used.
+    @type field_name: String
+    @param field_name: The name of the field to be used
+    in the update/set operation of the value.
+    @type field_value: Object
+    @param field_value: The value that is going to be set for
+    the target field, this value may assume any data type.
+    """
+
+    # retrieves the content type from the request and
+    # then uses it to normalize the type for parsing
+    content_type = request.get_type()
+    type = CONTENT_TYPE_MAP.get(content_type, "form")
+
+    # creates the method name using the "just" retrieved type
+    # and then retrieves the associated method
+    method_name = "process_%s_data" % type
+    method = getattr(self, method_name)
+
+    # processes (and retrieves) the data map from the
+    # request and then uses it to set the new field value
+    # under the requested field name
+    form_data_map = method(request)
+    form_data_map[field_name] = field_value
 
 def get_json(self, request):
     """
