@@ -110,11 +110,7 @@ class Consumer(root_entity.RootEntity):
 
         # adds the validation methods to the status attribute
         self.add_validation("status", "not_none", True)
-        self.add_validation(
-            "status",
-            "in_enumeration",
-            properties = dict(values = Consumer.STATUS_ENUM)
-        )
+        self.add_validation("status", "in_enumeration", values = Consumer.STATUS_ENUM)
 
     def _generate_api_key(self):
         # retrieves the random plugin
