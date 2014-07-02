@@ -932,12 +932,17 @@ def add_validation(
     validation_method_name,
     validate_null = False,
     properties = {},
-    contexts = (DEFAULT_VALIDATION_CONTEXT,)
+    contexts = (DEFAULT_VALIDATION_CONTEXT,),
+    **kwargs
 ):
     """
     Adds a validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties
     map.
+
+    This methods allows the providing of properties through additional
+    arguments, keep in mind that only one type of argument providing is
+    allowed (can only use properties or kwargs).
 
     @type attribute_name: String
     @param attribute_name: The name of the attribute to "receive" the validation.
@@ -953,14 +958,20 @@ def add_validation(
     method should be applied.
     """
 
+    # retrieves the proper properties map taking into account if it's
+    # valid and defined and falling back to keyword arguments otherwise
+    properties = properties or kwargs
+
     # adds the validation method suffix to the validate method name
     validation_method_name = validation_method_name + VALIDATION_METHOD_SUFFIX
 
-    # in case the validation method does not exist in
-    # the current object
+    # in case the validation method does not exist in the current
+    # object raises an invalid validation method exception
     if not hasattr(self, validation_method_name):
-        # raises an invalid validation method exception
-        raise exceptions.InvalidValidationMethod("the current validation method does not exist: " + validation_method_name)
+        raise exceptions.InvalidValidationMethod(
+            "the current validation method does not exist: " +\
+            validation_method_name
+        )
 
     # retrieves the validation method
     validation_method = getattr(self, validation_method_name)
