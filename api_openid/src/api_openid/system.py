@@ -438,7 +438,16 @@ class OpenidServer:
 
         pass
 
-    def generate_openid_structure(self, provider_url = None, association_type = HMAC_SHA256_VALUE, session_type = NO_ENCRYPTION_VALUE, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
+    def generate_openid_structure(
+        self,
+        provider_url = None,
+        association_type = HMAC_SHA256_VALUE,
+        session_type = NO_ENCRYPTION_VALUE,
+        prime_value = None,
+        base_value = None,
+        consumer_public = None,
+        set_structure = True
+    ):
         # creates a new openid structure
         openid_structure = OpenidStructure(provider_url, association_type = association_type, session_type = session_type)
 
