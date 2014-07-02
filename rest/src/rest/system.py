@@ -493,15 +493,39 @@ class Rest(colony.System):
         self._update_matching_regex()
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
+        """
+        Runs the update operation on the service methods meaning that
+        there's the internal structures are updated, taking into account
+        the newly registered service plugins.
+
+        This method should be called whenever a new plugin is registered
+        or whenever one is removed.
+
+        The update may be partial in case the plugin with new methods is
+        provided as argument.
+
+        @type updated_rpc_service_plugin: Plugin
+        @param updated_rpc_service_plugin: The plugin that is being registered
+        and that should have it's methods registered.
+        """
+
+        # verifies if the the plugin that is going to be updated has been
+        # provided if that's the case this is a partial update and the rpc
+        # service plugins to be used are only the one provided
         if updated_rpc_service_plugin:
             updated_rpc_service_plugins = [updated_rpc_service_plugin]
+
+        # otherwise it's a full update and the internal structure must be
+        # cleared and re-constructed based on the current set of rpc service
+        # plugins registered in the plugin (complete re-construction)
         else:
-            # clears the service methods list and map and
-            # retrieves the updated rpc service plugins
             self.service_methods = []
             self.service_methods_map = {}
             updated_rpc_service_plugins = self.plugin.rpc_service_plugins
 
+        # iterates over the complete set of rpc service plugins that are going
+        # to be used in the update to unpack their details and register them
+        # in the current internal structures (for usage)
         for rpc_service_plugin in updated_rpc_service_plugins:
             # retrieves all the method names for the current rpc service
             available_rpc_methods = rpc_service_plugin.get_available_rpc_methods()
@@ -674,7 +698,7 @@ class Rest(colony.System):
         """
         Updates the matching regex, reconstructing the current
         matching regex using the currently registered routes.
-        
+
         Note that the master regular expression is split into
         various regex in order to circumvent the python limitation
         on the maximum number of groups in regex.
@@ -2536,7 +2560,7 @@ class Cookie(object):
 
         # retrieves the value pairs by splitting the
         # string value, this is the default way of
-        # separating the various parts of a cookie 
+        # separating the various parts of a cookie
         value_pairs = self.string_value.split(";")
 
         # iterates over all the value pairs to
