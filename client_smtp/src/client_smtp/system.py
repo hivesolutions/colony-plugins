@@ -102,7 +102,7 @@ class ClientSmtp(colony.System):
     def create_request(self, parameters):
         pass
 
-class SmtpClient:
+class SmtpClient(object):
     """
     The smtp client class, representing
     a client connection in the smtp protocol.

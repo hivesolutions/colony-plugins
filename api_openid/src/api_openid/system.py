@@ -376,7 +376,7 @@ class ApiOpenid(colony.System):
         # returns the result
         return result
 
-class OpenidServer:
+class OpenidServer(object):
     """
     The class that represents an openid server connection.
     """
@@ -399,7 +399,15 @@ class OpenidServer:
     diffie_hellman = None
     """ the diffie hellman management structure """
 
-    def __init__(self, api_openid_plugin = None, encryption_diffie_hellman_plugin = None, random_plugin = None, api_openid = None, openid_structure = None, diffie_hellman = None):
+    def __init__(
+        self,
+        api_openid_plugin = None,
+        encryption_diffie_hellman_plugin = None,
+        random_plugin = None,
+        api_openid = None,
+        openid_structure = None,
+        diffie_hellman = None
+    ):
         """
         Constructor of the class.
 
@@ -910,7 +918,7 @@ class OpenidServer:
 
         return "\n".join([key + ":" + value for key, value in values_map.items()])
 
-class OpenidClient:
+class OpenidClient(object):
     """
     The class that represents an openid client connection.
     """
@@ -1491,7 +1499,7 @@ class OpenidClient:
         # returns the yadis remote client
         return self.yadis_remote_client
 
-class OpenidStructure:
+class OpenidStructure(object):
     """
     The openid structure class.
     """

@@ -146,7 +146,7 @@ class ApiTwitter(colony.System):
         open_client and twitter_client.open()
         return twitter_client
 
-class TwitterClient:
+class TwitterClient(object):
     """
     The class that represents a twitter client connection.
     """
@@ -175,7 +175,15 @@ class TwitterClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, client_http_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
+    def __init__(
+        self,
+        json_plugin = None,
+        client_http_plugin = None,
+        username = None,
+        password = None,
+        encoding = None,
+        oauth_structure = None
+    ):
         """
         Constructor of the class.
 

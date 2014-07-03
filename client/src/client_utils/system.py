@@ -169,7 +169,7 @@ class ClientUtils(colony.System):
         # removes the socket upgrader plugin from the socket upgrader plugins map
         del self.socket_upgrader_plugins_map[upgrader_name]
 
-class AbstractClient:
+class AbstractClient(object):
     """
     The abstract client class.
     """

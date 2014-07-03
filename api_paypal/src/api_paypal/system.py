@@ -117,7 +117,7 @@ class ApiPaypal(colony.System):
         open_client and paypal_client.open()
         return paypal_client
 
-class PaypalClient:
+class PaypalClient(object):
     """
     The class that represents a paypal client connection.
     """

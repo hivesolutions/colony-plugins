@@ -83,7 +83,7 @@ class ApiYadis(colony.System):
         open_client and yadis_client.open()
         return yadis_client
 
-class YadisClient:
+class YadisClient(object):
     """
     The class that represents a yadis client connection.
     """

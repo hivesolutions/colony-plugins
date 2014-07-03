@@ -153,7 +153,7 @@ class ApiFacebook(colony.System):
         open_client and facebook_client.open()
         return facebook_client
 
-class FacebookClient:
+class FacebookClient(object):
     """
     The class that represents a facebook client connection.
     """

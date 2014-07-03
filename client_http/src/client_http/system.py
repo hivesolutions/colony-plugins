@@ -271,7 +271,7 @@ class ClientHttp(colony.System):
     def create_request(self, parameters):
         pass
 
-class HttpClient:
+class HttpClient(object):
     """
     The http client class, representing
     a client connection in the http protocol.
@@ -369,7 +369,21 @@ class HttpClient:
         parameters = parameters or {}
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, contents = None, save_message = True, yield_response = False, handlers_map = {}):
+    def fetch_url(
+        self,
+        url,
+        method = GET_METHOD_VALUE,
+        parameters = {},
+        protocol_version = HTTP_1_1_VERSION,
+        headers = {},
+        content_type = DEFAULT_CONTENT_TYPE,
+        content_type_charset = DEFAULT_CHARSET,
+        encode_path = False,
+        contents = None,
+        save_message = True,
+        yield_response = False,
+        handlers_map = {}
+    ):
         """
         Fetches the url for the given url, method and (http) parameters.
 
@@ -598,7 +612,20 @@ class HttpClient:
         # creates the http request with the host, the port, the path, the parameters, operation type,
         # the headers, the protocol version, the content type, the content type charset, the encode path,
         # the url and the base url
-        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, encode_path, url, base_url)
+        request = HttpRequest(
+            host = host,
+            port = port,
+            path = path,
+            attributes_map = parameters,
+            operation_type = operation_type,
+            headers_map = headers,
+            protocol_version = protocol_version,
+            content_type = content_type,
+            content_type_charset = content_type_charset,
+            encode_path = encode_path,
+            url = url,
+            base_url = base_url
+        )
 
         # in case the contents are defined
         if contents:
@@ -624,7 +651,14 @@ class HttpClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, save_message = True, yield_response = False, handlers_map = {}, response_timeout = None):
+    def retrieve_response(
+        self,
+        request,
+        save_message = True,
+        yield_response = False,
+        handlers_map = {},
+        response_timeout = None
+    ):
         """
         Retrieves the response from the sent request.
 
@@ -1369,7 +1403,7 @@ class HttpClient:
         # as first argument and the data as second
         handler_method(response, data)
 
-class HttpRequest:
+class HttpRequest(object):
     """
     The http request class.
     """
@@ -1434,7 +1468,21 @@ class HttpRequest:
     content_length = None
     """ The content length """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, url = None, base_url = None):
+    def __init__(
+        self,
+        host = "none",
+        port = None,
+        path = "none",
+        attributes_map = {},
+        operation_type = GET_METHOD_VALUE,
+        headers_map = {},
+        protocol_version = HTTP_1_1_VERSION,
+        content_type = DEFAULT_CONTENT_TYPE,
+        content_type_charset = DEFAULT_CHARSET,
+        encode_path = False,
+        url = None,
+        base_url = None
+    ):
         """
         Constructor of the class.
 
@@ -1753,7 +1801,7 @@ class HttpRequest:
         # returns the encoded unicode value
         return unicode_value_encoded
 
-class HttpResponse:
+class HttpResponse(object):
     """
     The http response class.
     """

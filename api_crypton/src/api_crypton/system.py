@@ -80,7 +80,7 @@ class ApiCrypton(colony.System):
         open_client and crypton_client.open()
         return crypton_client
 
-class CryptonClient:
+class CryptonClient(object):
     """
     The class that represents a crypton client connection.
     """

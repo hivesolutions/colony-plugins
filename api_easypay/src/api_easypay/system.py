@@ -116,7 +116,7 @@ class ApiEasypay(colony.System):
         open_client and easypay_client.open()
         return easypay_client
 
-class EasypayClient:
+class EasypayClient(object):
     """
     The class that represents a easypay client connection.
     """

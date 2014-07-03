@@ -144,7 +144,7 @@ class ApiDropbox(colony.System):
         open_client and dropbox_client.open()
         return dropbox_client
 
-class DropboxClient:
+class DropboxClient(object):
     """
     The class that represents a dropbox client connection.
     """

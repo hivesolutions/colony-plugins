@@ -108,7 +108,7 @@ class ApiAt(colony.System):
         open_client and at_client.open()
         return at_client
 
-class AtClient:
+class AtClient(object):
     """
     The class that represents a at client connection.
     Will be used to encapsulate the http request
