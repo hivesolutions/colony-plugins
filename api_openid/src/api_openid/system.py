@@ -413,7 +413,7 @@ class OpenidServer(object):
 
         @type api_openid_plugin: ApiOpenidPlugin
         @param api_openid_plugin: The api openid plugin.
-        @type diffie_hellman_plugin: EncryptionDiffieHellmanPlugin
+        @type diffie_hellman_plugin: DiffieHellmanPlugin
         @param diffie_hellman_plugin: The diffie hellman plugin.
         @type random_plugin: RandomPlugin
         @param random_plugin: The random plugin.
