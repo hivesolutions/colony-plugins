@@ -980,7 +980,17 @@ class OpenidClient:
             # closes the yadis remote client
             self.yadis_remote_client.close()
 
-    def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
+    def generate_openid_structure(
+        self,
+        provider_url,
+        claimed_id,
+        identity,
+        return_to,
+        realm,
+        association_type = DEFAULT_OPENID_ASSOCIATE_TYPE,
+        session_type = DEFAULT_OPENID_SESSION_TYPE,
+        set_structure = True
+    ):
         # creates a new openid structure
         openid_structure = OpenidStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
 
