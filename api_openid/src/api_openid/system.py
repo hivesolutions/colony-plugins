@@ -198,8 +198,8 @@ class ApiOpenid(colony.System):
         @return: The created remote server.
         """
 
-        # retrieves the encryption diffie hellman plugin
-        encryption_diffie_hellman_plugin = self.plugin.encryption_diffie_hellman_plugin
+        # retrieves the diffie hellman plugin
+        diffie_hellman_plugin = self.plugin.diffie_hellman_plugin
 
         # retrieves the random plugin
         random_plugin = self.plugin.random_plugin
@@ -208,7 +208,7 @@ class ApiOpenid(colony.System):
         openid_structure = api_attributes.get("openid_structure", None)
 
         # creates the openid server
-        openid_server = OpenidServer(self.plugin, encryption_diffie_hellman_plugin, random_plugin, self, openid_structure)
+        openid_server = OpenidServer(self.plugin, diffie_hellman_plugin, random_plugin, self, openid_structure)
 
         # in case the server is meant to be open
         # opens the server
@@ -384,8 +384,8 @@ class OpenidServer(object):
     api_openid_plugin = None
     """ The api openid plugin """
 
-    encryption_diffie_hellman_plugin = None
-    """ The encryption diffie hellman plugin """
+    diffie_hellman_plugin = None
+    """ The diffie hellman plugin """
 
     random_plugin = None
     """ The random plugin """
@@ -402,7 +402,7 @@ class OpenidServer(object):
     def __init__(
         self,
         api_openid_plugin = None,
-        encryption_diffie_hellman_plugin = None,
+        diffie_hellman_plugin = None,
         random_plugin = None,
         api_openid = None,
         openid_structure = None,
@@ -413,8 +413,8 @@ class OpenidServer(object):
 
         @type api_openid_plugin: ApiOpenidPlugin
         @param api_openid_plugin: The api openid plugin.
-        @type encryption_diffie_hellman_plugin: EncryptionDiffieHellmanPlugin
-        @param encryption_diffie_hellman_plugin: The encryption diffie hellman plugin.
+        @type diffie_hellman_plugin: EncryptionDiffieHellmanPlugin
+        @param diffie_hellman_plugin: The diffie hellman plugin.
         @type random_plugin: RandomPlugin
         @param random_plugin: The random plugin.
         @type api_openid: ServiceOpenid
@@ -426,7 +426,7 @@ class OpenidServer(object):
         """
 
         self.api_openid_plugin = api_openid_plugin
-        self.encryption_diffie_hellman_plugin = encryption_diffie_hellman_plugin
+        self.diffie_hellman_plugin = diffie_hellman_plugin
         self.random_plugin = random_plugin
         self.api_openid = api_openid
         self.openid_structure = openid_structure
@@ -482,7 +482,7 @@ class OpenidServer(object):
 
         # creates the diffie hellman management structure with the prime
         # and base values given
-        self.diffie_hellman = self.encryption_diffie_hellman_plugin.create_structure(parameters)
+        self.diffie_hellman = self.diffie_hellman_plugin.create_structure(parameters)
 
         # sets the a value in the diffie hellman structure
         self.diffie_hellman.set_A_value(consumer_public)
