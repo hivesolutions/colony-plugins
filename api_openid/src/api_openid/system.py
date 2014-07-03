@@ -1550,7 +1550,16 @@ class OpenidStructure:
     types_list = []
     """ the list of extension types accepted by the provider """
 
-    def __init__(self, provider_url = None, claimed_id = None, identity = None, return_to = None, realm = None, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
+    def __init__(
+        self,
+        provider_url = None,
+        claimed_id = None,
+        identity = None,
+        return_to = None,
+        realm = None,
+        association_type = DEFAULT_OPENID_ASSOCIATE_TYPE,
+        session_type = DEFAULT_OPENID_SESSION_TYPE
+    ):
         """
         Constructor of the class.
 
