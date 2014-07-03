@@ -68,7 +68,7 @@ class ApiOpenidPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_openid
-        self.api_openid = api_openid.ApiOpenid(self)
+        self.system = api_openid.ApiOpenid(self)
 
     def create_server(self, api_attributes):
         """
