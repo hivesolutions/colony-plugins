@@ -2687,6 +2687,10 @@ def serialize(self, request, contents, serializer = None):
     @type serializer: Object
     @param serializer: The serializer (protocol) compliant object that
     is going to be used for the "forced" serialization process.
+    @rtype: String
+    @return: The final serialized value that may be used for reference,
+    please note that this value should not be set again in the request
+    as that may create some unnecessary performance issues. 
     """
 
     # in case the provided serializer value is string based it must
@@ -2707,6 +2711,11 @@ def serialize(self, request, contents, serializer = None):
     data = serializer.dumps(contents)
     mime_type = serializer.get_mime_type()
     self.set_contents(request, data, content_type = mime_type)
+    
+    # returns the final serialized data to the caller method so that it
+    # may be inspected and analyzed to check for any issue, it may also
+    # be re-used for a different context that the request one
+    return data
 
 def process_set_contents(
     self,
