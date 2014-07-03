@@ -219,7 +219,18 @@ class TwitterClient:
             # closes the http client
             self.http_client.close({})
 
-    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE, set_structure = True):
+    def generate_oauth_structure(
+        self,
+        oauth_consumer_key,
+        oauth_consumer_secret,
+        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature = None,
+        oauth_timestamp = None,
+        oauth_nonce = None,
+        oauth_version = DEFAULT_OAUTH_VERSION,
+        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE,
+        set_structure = True
+    ):
         """
         Generates a new oauth structure, for the given parameters.
 
@@ -240,13 +251,23 @@ class TwitterClient:
         @type oauth_callback: String
         @param oauth_callback: The callback.
         @type set_structure: bool
-        @param set_structure: The set structure flag (if the structure should be set in the client).
+        @param set_structure: The set structure flag (if the structure
+        should be set in the client).
         @rtype: OauthStructure
         @return: The generated oauth structure.
         """
 
         # constructs a new oauth structure
-        oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
+        oauth_structure = OauthStructure(
+            oauth_consumer_key,
+            oauth_consumer_secret,
+            oauth_signature_method,
+            oauth_signature,
+            oauth_timestamp,
+            oauth_nonce,
+            oauth_version,
+            oauth_callback
+        )
 
         # in case the structure is meant to be set
         if set_structure:
