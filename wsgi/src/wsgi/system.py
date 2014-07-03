@@ -102,7 +102,7 @@ class Wsgi(colony.System):
 
         # creates a new wsgi request object with the provided
         # environment map (this object should be able to "emulate"
-        # the default rest request) then provides the rest plugin
+        # the default request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
         request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
