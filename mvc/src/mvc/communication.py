@@ -354,7 +354,7 @@ class MvcCommunicationHandler:
                 "operation" : "channel",
                 "channel" : channel
             }
-            delegate.handle_changed(request, parameters)
+            delegate.changed(request, parameters)
 
         # in case the complete set of channels has been successful
         # verified (authentication/validation process) can now
@@ -407,7 +407,7 @@ class MvcCommunicationHandler:
             "operation" : "data",
             "data" : data
         }
-        delegate.handle_data(request, parameters)
+        delegate.data(request, parameters)
 
         # writes the success message to the client end point to
         # notify it about the success of the channel registration
@@ -428,7 +428,7 @@ class MvcCommunicationHandler:
             "operation" : "channel",
             "channel" : channel
         }
-        delegate.handle_changed(request, parameters)
+        delegate.changed(request, parameters)
 
         # in case the the  channel has been successful
         # verified (authentication/validation process) can now
