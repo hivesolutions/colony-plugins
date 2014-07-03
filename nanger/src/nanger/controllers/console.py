@@ -103,7 +103,7 @@ class ConsoleController(base.BaseController):
 
         # retrieves the id of the interpreter instance to be used
         # in case the instance id exists none is created
-        instance = self.get_field(request, "instance", None)
+        instance = request.field("instance", None)
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -201,10 +201,10 @@ class ConsoleController(base.BaseController):
         # id of the interpreter instance to be used and the final
         # field attribute is the (is) file flag indicating if the
         # command should be compiled in multiple or single line mode
-        command = self.get_field(request, "command", "")
-        instance = self.get_field(request, "instance", None)
-        file = self.get_field(request, "file", 0, int)
-        name = self.get_field(request, "name", "<input>")
+        command = request.field("command", "")
+        instance = request.field("instance", None)
+        file = request.field("file", 0, cast = int)
+        name = request.field("name", "<input>")
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)
@@ -315,8 +315,8 @@ class ConsoleController(base.BaseController):
         # retrieves the command that it's meant to be executed by
         # the current python virtual machine, then retrieves the
         # id of the interpreter instance to be used
-        command = self.get_field(request, "command", "")
-        instance = self.get_field(request, "instance", None)
+        command = request.field("command", "")
+        instance = request.field("instance", None)
 
         # in case no instance (identifier) is found a new randomly generated
         # value is created for it (secure generation)

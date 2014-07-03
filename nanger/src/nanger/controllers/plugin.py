@@ -56,9 +56,9 @@ class PluginController(base.BaseController):
 
         # retrieves the various fields that are going to be used to
         # perform the query over the plugins
-        filter = self.get_field(request, "filter_string", "")
-        start_record = self.get_field(request, "start_record", 0, int)
-        number_records = self.get_field(request, "number_records", 9, int)
+        filter = request.field("filter_string", "")
+        start_record = request.field("start_record", 0, cast = int)
+        number_records = request.field("number_records", 9, cast = int)
 
         # uses the plugin manager to retrieve the list of all plugin instances
         # (this is a list of object and as such is not serializable)

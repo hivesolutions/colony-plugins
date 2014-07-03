@@ -100,12 +100,7 @@ class MainController(base.BaseController):
         # tries to retrieve the provided count parameter that will
         # condition the amount of lines retrieved, defaulting to
         # the default value in case none is provided
-        count = self.get_field(
-            request,
-            "count",
-            default = 3000,
-            cast_type = int
-        )
+        count = request.field("count", 3000, cast = int)
 
         # retrieves the memory handler installed in the current
         # plugin manager and then uses it to retrieve the sequence
