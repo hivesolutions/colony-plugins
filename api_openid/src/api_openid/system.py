@@ -944,7 +944,14 @@ class OpenidClient(object):
     yadis_remote_client = None
     """ The yadis remote client for the connection """
 
-    def __init__(self, api_openid_plugin = None, client_http_plugin = None, api_yadis_plugin = None, api_openid = None, openid_structure = None):
+    def __init__(
+        self,
+        api_openid_plugin = None,
+        client_http_plugin = None,
+        api_yadis_plugin = None,
+        api_openid = None,
+        openid_structure = None
+    ):
         """
         Constructor of the class.
 
