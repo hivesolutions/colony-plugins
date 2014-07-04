@@ -982,17 +982,6 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
-def __getstate__(self, depth = 1, detach = True):
-    is_attached = self.is_attached()
-    detach and is_attached and self.detach()
-    try: state = self.to_map(depth = depth)
-    finally: detach and is_attached and self.attach()
-    return state
-
-def __setstate__(self, state):
-    cls = self.__class__
-    cls.from_map(state, self._entity_manager, entity = self)
-
 @utils.transaction_m
 def delete(
     self,

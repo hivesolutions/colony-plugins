@@ -181,7 +181,7 @@ INVALID_NAMES = set((
 """ The tuple containing all the names that are
 considered to be invalid for the entity model """
 
-class Connection:
+class Connection(object):
     """
     The connection class representing the global
     and abstract connection to be consumed by
@@ -493,6 +493,18 @@ class EntityClass(object):
 
         # returns the retrieves (lazy) attribute
         return attribute
+
+    def __getstate__(self, depth = None, detach = True):
+        depth = depth or self._depth() or 0
+        is_attached = self.is_attached()
+        detach and is_attached and self.detach()
+        try: state = self.to_map(depth = depth)
+        finally: detach and is_attached and self.attach()
+        return state
+
+    def __setstate__(self, state):
+        cls = self.__class__
+        cls.from_map(state, self._entity_manager, entity = self)
 
     @classmethod
     def build(cls, entity_manager = None, entities = None, scope = None):
@@ -4524,6 +4536,22 @@ class EntityClass(object):
         # returns the attribute value that triggered the lazy load
         # of the class concrete values
         return attribute
+
+    def _depth(self):
+        """
+        Retrieves the depth as an integer that is going to be
+        used as part of the serialization process for the model
+        the more depth provided the more relations serialized.
+
+        This value should be changed carefully to avoid an overload
+        of data to be serialized (could pose performance issues).
+
+        @rtype: int
+        @return: The depth value as an integer to be used in the
+        get state serialization process of the model.
+        """
+
+        return 0
 
     @classmethod
     def get_serializer(cls, name = None):
