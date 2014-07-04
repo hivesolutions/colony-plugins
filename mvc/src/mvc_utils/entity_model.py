@@ -982,11 +982,11 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
-def __getstate__(self, depth = 0):
+def __getstate__(self, depth = 1, detach = True):
     is_attached = self.is_attached()
-    is_attached and self.detach()
+    detach and is_attached and self.detach()
     try: state = self.to_map(depth = depth)
-    finally: is_attached and self.attach()
+    finally: detach and is_attached and self.attach()
     return state
 
 def __setstate__(self, state):
