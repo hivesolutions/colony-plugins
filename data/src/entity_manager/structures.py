@@ -3717,6 +3717,14 @@ class EntityClass(object):
             scope = scope
         )
 
+        # verifies the current status of both the entities
+        # and the scope and in case these values are not set
+        # set's it for the first time as the entity values
+        # so that they are re-used along the various entities
+        # that are going to be created as part of the loading
+        if entities == None: entities = entity._entities
+        if scope == None: scope = entity._scope
+
         # retrieves the complete set of names from the class
         # to be used to set the correct values into the entity
         # note that if a class for name retrieval is defined
@@ -3730,6 +3738,9 @@ class EntityClass(object):
             # in case the current name does not exists
             # in the map, must skip the cycle
             if not name in map: continue
+            
+            if name == "basket_lines":
+                print "asdsad"
 
             # retrieves the current value for the name to
             # be iterated, this may value may be a sequence
