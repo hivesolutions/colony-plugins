@@ -3644,8 +3644,11 @@ class EntityClass(object):
             # must be converted into the map representation
             if is_to_many:
                 # retrieves the value of the relation loading a lazy
-                # loaded relation (in case it's necessary)
+                # loaded relation (in case it's necessary) in case
+                # the returned value is still lazy the current iteration
+                # loop is skipped to avoid storing invalid values
                 value = self.get_value(relation, load_lazy = True)
+                if colony.is_lazy(value): continue
 
                 # creates the relations value as a new empty
                 # list that is going to be populated with the
@@ -3676,7 +3679,11 @@ class EntityClass(object):
             else:
                 # retrieves the value of the relation and converts
                 # it into the map representation in case it's valid
+                # note that the value is verifies to check if it's
+                # a lazy loaded value, if that's the case the current
+                # relation storage is skipped to avoid problems
                 value = self.get_value(relation, load_lazy = True)
+                if colony.is_lazy(value): continue
                 relation_value = value.to_map(target_class, depth - 1) if value else value
 
             # sets the relation value (list of maps or map)
@@ -3695,6 +3702,8 @@ class EntityClass(object):
         entity = None,
         recursive = True,
         set_empty_relations = True,
+        entities = None,
+        scope = None,
         set_mtime = True,
         cls_names = None
     ):
@@ -3702,14 +3711,18 @@ class EntityClass(object):
         # class using the current entity manager, no scope
         # or entities map is provided so a new diffusion
         # scope is created
-        entity = entity or cls.build(entity_manager)
+        entity = entity or cls.build(
+            entity_manager,
+            entities = entities,
+            scope = scope
+        )
 
         # retrieves the complete set of names from the class
         # to be used to set the correct values into the entity
         # note that if a class for name retrieval is defined
         # only the names at that hierarchy level are retrieved
         # this may be important for performance reasons
-        names = cls_names and cls_names.get_names() or cls.get_names_map()
+        names = cls_names.get_names() if cls_names else cls.get_names_map()
 
         # iterates over the complete set of entity names to set
         # the associated values into the entity
@@ -3752,12 +3765,15 @@ class EntityClass(object):
                         target_class = class_name and entity_manager.get_entity(class_name) or cls.get_target(name)
 
                         # converts the map into an entity object (in case the value is valid)
-                        # and the adds it to the list of entity values
+                        # and the adds it to the list of entity values the new object will
+                        # re-use the same set of entities and scope from the top level one
                         _entity = _value and target_class.from_map(
                             _value,
                             entity_manager,
                             recursive = recursive,
-                            set_empty_relations = set_empty_relations
+                            set_empty_relations = set_empty_relations,
+                            entities = entities,
+                            scope = scope
                         )
                         values.append(_entity)
 
@@ -3775,12 +3791,15 @@ class EntityClass(object):
                     target_class = class_name and entity_manager.get_entity(class_name) or cls.get_target(name)
 
                     # converts the map into an entity object (in case the value is valid)
-                    # and sets it as the value to be set in the entity
+                    # and sets it as the value to be set in the entity, note that the scope
+                    # is re-used from the top level entity to the bottom one
                     value = value and target_class.from_map(
                         value,
                         entity_manager,
                         recursive = recursive,
-                        set_empty_relations = set_empty_relations
+                        set_empty_relations = set_empty_relations,
+                        entities = entities,
+                        scope = scope
                     )
 
             # sets the correct value associated with the name in
