@@ -2882,6 +2882,14 @@ def retrieve_template_file(
     # values, this value will replaces the provided locale
     locale = locale_request and self.get_locale(locale_request) or locale
 
+    # retrieves the base list, consisting of the directory part of the provided
+    # file path in case it exists and then retrieves the "relative path" as the
+    # first element of that list (as expected by the current definition), this
+    # relative path value will latter be used for the correct resolution of the
+    # partial page, as this inclusion is made relative
+    base_list = file_path.rsplit("/", 1)[:-1] or [""]
+    relative_path = base_list[0]
+
     # processes the file path according to the locale, the resulting file path
     # will be localized taking into account the exists (or not) of the file
     # according to the default file construction rules
@@ -2915,7 +2923,7 @@ def retrieve_template_file(
         PAGE_INCLUDE_VALUE,
         partial_page,
         locale = locale,
-        base_path = self.templates_path
+        base_path = os.path.join(self.templates_path, relative_path)
     )
 
     # assigns the proper locale variable to the current template
