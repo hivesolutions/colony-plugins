@@ -3738,9 +3738,6 @@ class EntityClass(object):
             # in case the current name does not exists
             # in the map, must skip the cycle
             if not name in map: continue
-            
-            if name == "basket_lines":
-                print "asdsad"
 
             # retrieves the current value for the name to
             # be iterated, this may value may be a sequence
