@@ -66,14 +66,19 @@ DEFAULT_STATUS_CODE = 200
 DEFAULT_ALIAS_LOCALES = {}
 """ The default alias locales """
 
-DEFAULT_TEMPLATE_FILE_ENCODING = "utf-8"
-""" The default template file encoding """
-
 DEFAULT_WILDCARD_ACL_VALUE = "*"
 """ The default wildcard value for acl """
 
 DEFAULT_MAXIMUM_ACL_VALUE = 10000
 """ The default maximum value for acl """
+
+TO_ONE_RELATION = 1
+""" The to one relation constant value that should
+be used in the identification process of a relation """
+
+TO_MANY_RELATION = 2
+""" The to many relation identifying the relations
+that are considered to be sequence based """
 
 BASE_PATH_DELTA_VALUE = 2
 """ The delta value to be applied to retrieve the base path """
@@ -312,6 +317,14 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "relation" : None
 }
 """ The map associating the data types with the cast types """
+
+RELATION_VALUES_MAP = {
+    TO_ONE_RELATION : {},
+    TO_MANY_RELATION : []
+}
+""" The (default) relation values map that should
+map the various types of relations with the values
+that are going to be used for default placeholding """
 
 CONTENT_TYPE_MAP = {
     "application/x-www-form-urlencoded" : "form",
@@ -779,8 +792,9 @@ def save_entity_relations(
             raise RuntimeError("invalid relation item length")
 
         # retrieves the default relation value according
-        # to the relation type
-        default_relation_value = DEFAULT_RELATION_VALUES_MAP[relation_type]
+        # to the relation type, this value may be used as
+        # a placeholder in case no value is found for relation
+        default_relation_value = RELATION_VALUES_MAP[relation_type]
 
         # retrieves the relation value
         relation_value = entity_map.get(relation_name, default_relation_value)
@@ -2823,7 +2837,7 @@ def process_template_file(self, request, template_file, variable_encoding = None
 def retrieve_template_file(
     self,
     file_path = None,
-    encoding = DEFAULT_TEMPLATE_FILE_ENCODING,
+    encoding = "utf-8",
     partial_page = None,
     locale = None,
     locale_request = None,
