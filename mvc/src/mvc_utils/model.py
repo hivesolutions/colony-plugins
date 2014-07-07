@@ -46,45 +46,6 @@ import colony
 import utils
 import exceptions
 
-VALIDATION_METHOD_SUFFIX = "_validate"
-""" The validation method suffix """
-
-DEFAULT_VALIDATION_CONTEXT = "default"
-""" The default validation context """
-
-LAZY_LOADED_VALUE = "%lazy-loaded%"
-""" The lazy loaded value """
-
-REGEX_VALUE = "regex"
-""" The regex value """
-
-TARGET_VALUE = "target"
-""" The target value """
-
-VALUES_VALUE = "values"
-""" The values value """
-
-DATA_TYPE_VALUE = "data_type"
-""" The data type value """
-
-RELATION_VALUE = "relation"
-""" The relation value """
-
-SECURE_VALUE = "secure"
-""" The secure value """
-
-CLASS_VALUE = "_class"
-""" The class value """
-
-PARAMETERS_VALUE = "_parameters"
-""" The parameters value """
-
-MODIFIED_TIME_VALUE = "_mtime"
-""" The modified time value """
-
-VALIDATION_FAILED_MESSAGE = "validation failed"
-""" The (default) validation failed message """
-
 EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.\-]+$"
 """ The email regex value """
 
@@ -103,17 +64,18 @@ TO_ONE_RELATION = "to-one"
 TO_MANY_RELATION = "to-many"
 """ The string value of a "to-many" relation """
 
-DATA_TYPE_CAST_TYPES_MAP = {
-    "text" : unicode,
-    "string" : unicode,
-    "integer" : int,
-    "float" : float,
-    "date" : colony.timestamp_datetime,
-    "data" : unicode,
-    "metadata" : dict,
-    "relation" : None
-}
-""" The map associating the data types with the cast types """
+DATA_TYPE_CAST_TYPES_MAP = dict(
+    text = unicode,
+    string = unicode,
+    integer = int,
+    float = float,
+    date = colony.timestamp_datetime,
+    data = unicode,
+    metadata = dict,
+    relation = None
+)
+""" The map associating the data types with the cast types,
+this is going to be used in the apply operation """
 
 METHOD_TYPES = (
     types.MethodType,
@@ -155,7 +117,7 @@ def _start_model(self):
 
     # sets the initial (and default) context for
     # the running of the validation process
-    self.validation_context = DEFAULT_VALIDATION_CONTEXT
+    self.validation_context = "default"
 
     # starts the map that will hold the various
     # parameter attributes of the model, this is going
@@ -414,7 +376,7 @@ def apply(self, map, permissive = False):
         for item_name, item_value in map.items():
             # in case the class or the parameters (reserved values)
             # item is found, special handling is required
-            if item_name in (CLASS_VALUE, PARAMETERS_VALUE, MODIFIED_TIME_VALUE):
+            if item_name in ("_class", "_parameters", "_mtime"):
                 # sets the class or parameters "directly"
                 # in the model
                 setattr(self, item_name, item_value)
@@ -463,8 +425,8 @@ def apply(self, map, permissive = False):
 
             # retrieves the value data type and secure
             # attributes to "take some decisions"
-            value_data_type = class_value.get(DATA_TYPE_VALUE, None)
-            value_secure = class_value.get(SECURE_VALUE, False)
+            value_data_type = class_value.get("data_type", None)
+            value_secure = class_value.get("secure", False)
 
             # in case the value is a secure attribute
             # (cannot change it automatically), continues
@@ -473,7 +435,7 @@ def apply(self, map, permissive = False):
 
             # in case the data type of the field is relation
             # (presence of an object relation)
-            if value_data_type == RELATION_VALUE:
+            if value_data_type == "relation":
                 # retrieves the relation information method
                 relation_method = getattr(cls, "_relation_" + item_name)
 
@@ -932,7 +894,7 @@ def add_validation(
     validation_method_name,
     validate_null = False,
     properties = {},
-    contexts = (DEFAULT_VALIDATION_CONTEXT,),
+    contexts = ("default",),
     **kwargs
 ):
     """
@@ -963,7 +925,7 @@ def add_validation(
     properties = properties or kwargs
 
     # adds the validation method suffix to the validate method name
-    validation_method_name = validation_method_name + VALIDATION_METHOD_SUFFIX
+    validation_method_name = validation_method_name + "_validate"
 
     # in case the validation method does not exist in the current
     # object raises an invalid validation method exception
@@ -985,7 +947,7 @@ def add_custom_validation(
     validation_method,
     validate_null = False,
     properties = {},
-    contexts = (DEFAULT_VALIDATION_CONTEXT,)
+    contexts = ("default",)
 ):
     """
     Adds a "custom" validation method to the attribute with the given name.
@@ -1148,7 +1110,7 @@ def validate(self):
     # with expected success
     return is_valid
 
-def validate_exception(self, exception_message = VALIDATION_FAILED_MESSAGE, error_description = True):
+def validate_exception(self, exception_message = "validation failed", error_description = True):
     """
     Validates all the attributes in the current object.
     This method raises an exception in case an error occurs.
@@ -1350,7 +1312,7 @@ def length_equal_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not equal to the target value
     if not len(attribute_value) == target_value:
@@ -1370,7 +1332,7 @@ def length_less_than_validate(self, attribute_name, attribute_value, properties)
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not less than
     # the target value
@@ -1391,7 +1353,7 @@ def length_less_than_or_equal_validate(self, attribute_name, attribute_value, pr
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not less than
     # or equal to the target value
@@ -1412,7 +1374,7 @@ def length_greater_than_validate(self, attribute_name, attribute_value, properti
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not less than
     # the target value
@@ -1433,7 +1395,7 @@ def length_greater_than_or_equal_validate(self, attribute_name, attribute_value,
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not less than
     # or equal to the target value
@@ -1455,7 +1417,7 @@ def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the values from the properties
-    values = properties[VALUES_VALUE]
+    values = properties["values"]
 
     # in case the attribute value is not in the values
     if not attribute_value in values:
@@ -1476,7 +1438,7 @@ def not_in_enumeration_validate(self, attribute_name, attribute_value, propertie
     """
 
     # retrieves the values from the properties
-    values = properties[VALUES_VALUE]
+    values = properties["values"]
 
     # in case the attribute value is in the values
     if attribute_value in values:
@@ -1497,7 +1459,7 @@ def is_equal_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the values are different
     if not attribute_value == target_value:
@@ -1518,7 +1480,7 @@ def is_different_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the values are the same
     if attribute_value == target_value:
@@ -1538,7 +1500,7 @@ def greater_than_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not
     # greater than the target value
@@ -1576,7 +1538,7 @@ def greater_than_or_equal_validate(self, attribute_name, attribute_value, proper
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not greater
     # than or equal to the target value
@@ -1614,7 +1576,7 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not
     # less than the target value
@@ -1652,7 +1614,7 @@ def less_than_or_equal_validate(self, attribute_name, attribute_value, propertie
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # in case the attribute value is not less
     # than or equal to the target value
@@ -1785,7 +1747,7 @@ def matches_regex_validate(self, attribute_name, attribute_value, properties):
     # passed instead of the compiled regular
     # expression or else the model would become
     # unserializable)
-    regex = properties[REGEX_VALUE]
+    regex = properties["regex"]
 
     # matches the regex
     match = re.match(regex, attribute_value)
@@ -1814,7 +1776,7 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the target
-    target = properties[TARGET_VALUE]
+    target = properties["target"]
 
     # initializes the validation failed flag
     validation_failed = False
@@ -1900,7 +1862,7 @@ def password_strength_validate(self, attribute_name, attribute_value, properties
     """
 
     # retrieves the target value from the properties
-    target_value = properties[TARGET_VALUE]
+    target_value = properties["target"]
 
     # calculates the password strength
     password_strength = colony.password_strength(attribute_value)
@@ -1944,7 +1906,7 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
 
     # retrieves the data type from the model class attribute value
     # and uses it to retrieve the cast type
-    data_type = model_class_attribute_value[DATA_TYPE_VALUE]
+    data_type = model_class_attribute_value["data_type"]
     cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)
 
     # in case no cast type is defined
