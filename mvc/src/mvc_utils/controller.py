@@ -52,7 +52,9 @@ import colony
 import exceptions
 
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
-""" The default content type """
+""" The default content type, that is going to be used
+for both the setting of contents operation and for the
+processing and setting of template contents """
 
 DEFAULT_LOCALE = "en_us"
 """ The default locale that is going to be used
