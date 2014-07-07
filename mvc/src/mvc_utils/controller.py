@@ -159,15 +159,16 @@ DEFAULT_VALUE_ATTRIBUTE = 10
 DEFAULT_SESSION_ATTRIBUTE = "user_acl"
 """ The default session attribute to be used in template """
 
-DATA_TYPE_CAST_TYPES_MAP = {
-    "text" : unicode,
-    "string" : unicode,
-    "integer" : int,
-    "float" : float,
-    "date" : colony.timestamp_datetime,
-    "relation" : None
-}
-""" The map associating the data types with the cast types """
+DATA_TYPE_CAST_TYPES_MAP = dict(
+    text = unicode,
+    string = unicode,
+    integer = int,
+    float = float,
+    date = colony.timestamp_datetime,
+    relation = None
+)
+""" The map associating the data types with the cast types
+this is going to be used in the (safe) casting operations """
 
 RELATION_VALUES_MAP = {
     TO_ONE_RELATION : {},
