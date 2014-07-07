@@ -54,23 +54,9 @@ import exceptions
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 """ The default content type """
 
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
-
 DEFAULT_LOCALE = "en_us"
-""" The default locale """
-
-DEFAULT_STATUS_CODE = 200
-""" The default status code """
-
-DEFAULT_ALIAS_LOCALES = {}
-""" The default alias locales """
-
-DEFAULT_WILDCARD_ACL_VALUE = "*"
-""" The default wildcard value for acl """
-
-DEFAULT_MAXIMUM_ACL_VALUE = 10000
-""" The default maximum value for acl """
+""" The default locale that is going to be used
+as the last resort in terms of locale resolution """
 
 TO_ONE_RELATION = 1
 """ The to one relation constant value that should
@@ -103,146 +89,11 @@ DATE_FORMAT = "%Y/%m/%d"
 DATE_TIME_FORMAT = "%Y/%m/%d %H:%M:%S"
 """ The date time format """
 
-MVC_PATH_VALUE = "mvc_path"
-""" The mvc path value """
-
-BASE_PATH_VALUE = "base_path"
-""" The base path value """
-
-BACK_PATH_VALUE = "../"
-""" The back path value """
-
-EXTRAS_VALUE = "extras"
-""" The extras value """
-
-TEMPLATES_VALUE = "templates"
-""" The templates value """
-
-LOCALES_VALUE = "locales"
-""" The locales value """
-
-ENVIRONMENT_VALUE = "environment"
-""" The environment value """
-
-EXCEPTION_VALUE = "exception"
-""" The exception value """
-
-EXCEPTION_NAME_VALUE = "exception_name"
-""" The exception name value """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
-PAGE_INCLUDE_VALUE = "page_include"
-""" The page include value """
-
-METHOD_VALUE = "method"
-""" The method value """
-
-STATUS_VALUE = "status"
-""" The status value """
-
-COLONY_VERSION_VALUE = "colony_version"
-""" The colony version value """
-
-PYTHON_VERSION_VALUE = "python_version"
-""" The python version value """
-
-PYTHON_EXECUTABLE_PATH_VALUE = "python_executable_path"
-""" The python executable path value """
-
-SERVER_TIME_VALUE = "server_time"
-""" The server time value """
-
-MESSAGE_VALUE = "message"
-""" The message value """
-
-TRACEBACK_VALUE = "traceback"
-""" The traceback value """
-
-PERMISSION_VALUE = "permission"
-""" The permission value """
-
-VALUE_VALUE = "value"
-""" The value value """
-
-SESSION_ATTRIBUTE_VALUE = "session_attribute"
-""" The session attribute value """
-
-EXTRA_EXTRAS_PATH_VALUE = "extra_extras_path"
-""" The extra extras path value """
-
-EXTRA_TEMPLATES_PATH_VALUE = "extra_templates_path"
-""" The extra templates path value """
-
-VALIDATION_MAP_VALUE = "validation_map"
-""" The validation map value """
-
-VALIDATION_ERRORS_MAP_VALUE = "validation_errors_map"
-""" The validation errors map value """
-
-DATA_TYPE_VALUE = "data_type"
-""" The data type value """
-
-NAME_TYPE_VALUE = "name"
-""" The name type value """
-
-SEQUENCE_TYPE_VALUE = "sequence"
-""" The sequence type value """
-
-MAP_TYPE_VALUE = "map"
-""" The map type value """
-
-OBJECT_ID_VALUE = "object_id"
-""" the object id value """
-
-LOCALE_VALUE = "locale"
-""" The locale value """
-
-RELATIVE_VALUE_VALUE = "relative_value"
-""" The relative value value """
-
-FORM_DATA_VALUE = "form-data"
-""" The form data value """
-
-CONTENTS_VALUE = "contents"
-""" The contents value """
-
-FILENAME_VALUE = "filename"
-""" The filename value """
-
-HOST_VALUE = "Host"
-""" The host value """
-
-REFERER_VALUE = "Referer"
-""" The referer value """
-
-ACCEPT_LANGUAGE_VALUE = "Accept-Language"
-""" The accept language header value """
-
-PARAMETERS_VALUE = "_parameters"
-""" The parameters value """
-
-JSON_DATA_PRIVATE_VALUE = "_json_data"
-""" The json data value to be used to store json data cache """
-
-FORM_DATA_PRIVATE_VALUE = "_form_data"
-""" The form data value to be used to store form data cache """
-
 DASHED_WORD_PAIR_REPLACEMENT_VALUE = "\\1-\\2"
 """ The replacement value for two capture groups to be separated by dash """
 
 UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE = "\\1_\\2"
 """ The replacement value for two capture groups to be separated by underscore """
-
-LOCALE_SESSION_ATTRIBUTE = "_locale"
-""" The locale session attribute name """
-
-DASH_VALUE = "-"
-""" The dash value """
-
-UNDERSCORE_VALUE = "_"
-""" The underscore value """
 
 SHORT_TIMEOUT = 1800
 """ The short (value) timeout (in seconds) """
@@ -444,18 +295,18 @@ def get_exception_map(self, exception, request = None):
     # creates the exception map, with information on
     # the exception and on the (global) environment
     exception_map = {
-        ENVIRONMENT_VALUE : {
-            METHOD_VALUE : request and request.get_request().get_method(),
-            STATUS_VALUE : request and request.get_request().status_code,
-            COLONY_VERSION_VALUE : request and request.get_plugin_manager().get_version(),
-            PYTHON_VERSION_VALUE : platform.python_version(),
-            PYTHON_EXECUTABLE_PATH_VALUE : sys.executable,
-            SERVER_TIME_VALUE : datetime.datetime.now().strftime("%a, %d %b %Y %H:%M%S %z")
+        "environment" : {
+            "method" : request and request.get_request().get_method(),
+            "status" : request and request.get_request().status_code,
+            "colony_version" : request and request.get_plugin_manager().get_version(),
+            "python_version" : platform.python_version(),
+            "python_executable_path" : sys.executable,
+            "server_time" : datetime.datetime.now().strftime("%a, %d %b %Y %H:%M%S %z")
         },
-        EXCEPTION_VALUE : {
-            EXCEPTION_NAME_VALUE : exception_class_name,
-            MESSAGE_VALUE : exception_message,
-            TRACEBACK_VALUE : formatted_traceback
+        "exception" : {
+            "exception_name" : exception_class_name,
+            "message" : exception_message,
+            "traceback" : formatted_traceback
         }
     }
 
@@ -499,10 +350,10 @@ def process_map_model_validation_error(self, exception_map, exception):
 
     # sets both the validation and the validation errors map in the map
     # so that the exception may contain some debugging information
-    exception_map[VALIDATION_MAP_VALUE] = validation_map
-    exception_map[VALIDATION_ERRORS_MAP_VALUE] = validation_errors_map
+    exception_map["validation_map"] = validation_map
+    exception_map["validation_errors_map"] = validation_errors_map
 
-def get_entity_id_attribute(self, entity, id_attribute_name = OBJECT_ID_VALUE):
+def get_entity_id_attribute(self, entity, id_attribute_name = "object_id"):
     """
     Retrieves the id attribute (value) from the given entity that may
     be both an entity object or an entity map represented by a dictionary.
@@ -612,7 +463,7 @@ def get_entity_model(
         # retrieves the entity model id data type, then retrieves
         # the associated cast type and used it to cast the entity
         # model id (this is the safest way possible)
-        entity_model_id_data_type = entity_model_id_value[DATA_TYPE_VALUE]
+        entity_model_id_data_type = entity_model_id_value["data_type"]
         cast_type = DATA_TYPE_CAST_TYPES_MAP[entity_model_id_data_type]
         entity_model_id_casted = self._cast_safe(entity_model_id, cast_type, -1)
 
@@ -1180,7 +1031,7 @@ def get_pattern(self, parameters, pattern_name, pattern_type = None):
 
     # retrieves the pattern names from the parameters
     # and retrieves the patter from it
-    pattern_names = parameters[PATTERN_NAMES_VALUE]
+    pattern_names = parameters["pattern_names"]
     pattern_value = pattern_names.get(pattern_name, None)
 
     # casts the pattern value using the safe mode, avoids
@@ -1210,7 +1061,7 @@ def set_pattern(self, parameters, pattern_name, pattern_value):
 
     # retrieves the map of patterns from the parameters map and then
     # uses it to set the pattern value for the provided name
-    pattern_names = parameters[PATTERN_NAMES_VALUE]
+    pattern_names = parameters["pattern_names"]
     pattern_names[pattern_name] = pattern_value
 
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):
@@ -1231,12 +1082,12 @@ def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
 
     # retrieves the entity parameters
-    entity_parameters = entity_map.get(PARAMETERS_VALUE, {})
+    entity_parameters = entity_map.get("_parameters", {})
 
     # removes the parameters from the entity map
     # in order to avoid possible attribute problems
     # in case the delete parameters is set
-    if delete_parameters and (PARAMETERS_VALUE in entity_map): del entity_map[PARAMETERS_VALUE]
+    if delete_parameters and ("_parameters" in entity_map): del entity_map["_parameters"]
 
     # returns the entity parameters
     return entity_parameters
@@ -1445,7 +1296,7 @@ def create_form_data_string(self, request, data_map):
     # returns the form data map string
     return form_data_map_string
 
-def create_form_data(self, request, data_map, encoding = DEFAULT_ENCODING):
+def create_form_data(self, request, data_map, encoding = "utf-8"):
     """
     Processes the data map, creating a single map with all the
     attributes described in the form data format.
@@ -1481,7 +1332,7 @@ def create_form_data(self, request, data_map, encoding = DEFAULT_ENCODING):
     # returns the form data map
     return form_data_map
 
-def process_json_data(self, request, encoding = DEFAULT_ENCODING, force = False):
+def process_json_data(self, request, encoding = "utf-8", force = False):
     """
     Processes the json data (attributes), creating a map containing
     the hierarchy of defined structure for the "json" contents.
@@ -1501,7 +1352,7 @@ def process_json_data(self, request, encoding = DEFAULT_ENCODING, force = False)
 
     # tries to retrieves the base attributes map from the
     # "cached" data in the request
-    data_map = request.get_parameter(JSON_DATA_PRIVATE_VALUE)
+    data_map = request.get_parameter("_json_data")
 
     # in case there is cached data pending in the
     # request and the force flag is not set
@@ -1517,10 +1368,10 @@ def process_json_data(self, request, encoding = DEFAULT_ENCODING, force = False)
     data_map = self.json_plugin.loads(contents)
     is_valid = type(data_map) == types.DictType
     data_map = data_map if is_valid else dict(root = data_map)
-    request.set_parameter(JSON_DATA_PRIVATE_VALUE, data_map)
+    request.set_parameter("_json_data", data_map)
     return data_map
 
-def process_form_data(self, request, encoding = DEFAULT_ENCODING, nullify = False, force = False):
+def process_form_data(self, request, encoding = "utf-8", nullify = False, force = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -1544,7 +1395,7 @@ def process_form_data(self, request, encoding = DEFAULT_ENCODING, nullify = Fals
     # tries to retrieve the base attributes map from the
     # "cached" data in the request, this will provide
     # a faster way to access the form data
-    base_attributes_map = request.get_parameter(FORM_DATA_PRIVATE_VALUE)
+    base_attributes_map = request.get_parameter("_form_data")
 
     # in case there is cached data pending in the
     # request and the force flag is not set
@@ -1617,12 +1468,12 @@ def process_form_data(self, request, encoding = DEFAULT_ENCODING, nullify = Fals
 
     # sets the "processed" form data in the request
     # for latter possible cache match
-    request.set_parameter(FORM_DATA_PRIVATE_VALUE, base_attributes_map)
+    request.set_parameter("_form_data", base_attributes_map)
 
     # returns the base attributes map
     return base_attributes_map
 
-def process_form_data_flat(self, request, encoding = DEFAULT_ENCODING, nullify = False):
+def process_form_data_flat(self, request, encoding = "utf-8", nullify = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -1674,8 +1525,8 @@ def process_form_data_flat(self, request, encoding = DEFAULT_ENCODING, nullify =
 def process_acl_values(
     self,
     acl_list, key,
-    wildcard_value = DEFAULT_WILDCARD_ACL_VALUE,
-    maximum_value = DEFAULT_MAXIMUM_ACL_VALUE
+    wildcard_value = "*",
+    maximum_value = 10000
 ):
     """
     Processes the various acl values in the given list.
@@ -1784,7 +1635,7 @@ def get_mvc_path(self, request, delta_value = 1):
     # the delta value
     for _index in range(path_list_length - delta_value):
         # adds the back path to the base path
-        base_path += BACK_PATH_VALUE
+        base_path += "../"
 
     # returns the base path
     return base_path
@@ -1930,7 +1781,7 @@ def set_contents(
     request.set_result_translated(contents)
     request.flush()
 
-def set_status_code(self, request, status_code = DEFAULT_STATUS_CODE):
+def set_status_code(self, request, status_code = 200):
     """
     Sets the given status code in the given request.
 
@@ -1957,7 +1808,7 @@ def get_referer(self, request):
     """
 
     # retrieves the "referer" header
-    referer_header = request.get_header(REFERER_VALUE)
+    referer_header = request.get_header("Referer")
 
     # returns the "referer" header (url)
     return referer_header
@@ -2451,7 +2302,7 @@ def redirect_back(
     """
 
     # retrieves the "referer" header
-    referer_header = request.get_header(REFERER_VALUE)
+    referer_header = request.get_header("Referer")
 
     # sets the target to the "referer" header or the
     # default target in case the "referer" is invalid
@@ -2922,7 +2773,7 @@ def retrieve_template_file(
     )
     if partial_page: self.assign_include_template_file(
         template_file,
-        PAGE_INCLUDE_VALUE,
+        "page_include",
         partial_page,
         locale = locale,
         base_path = os.path.join(self.templates_path, relative_path)
@@ -2967,8 +2818,8 @@ def apply_base_path_template_file(self, request, template_file):
     # expected by the call to this method
     mvc_path = self.get_mvc_path(request)
     base_path = self.get_base_path(request)
-    template_file.assign(MVC_PATH_VALUE, mvc_path)
-    template_file.assign(BASE_PATH_VALUE, base_path)
+    template_file.assign("mvc_path", mvc_path)
+    template_file.assign("base_path", base_path)
 
 def assign_instance_template_file(self, request, template_file):
     """
@@ -3549,7 +3400,7 @@ def get_session_id(self, request):
     session_id = request_session.get_session_id()
     return session_id
 
-def get_attribute_decoded(self, request, attribute_name, encoding = DEFAULT_ENCODING):
+def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
     """
     Retrieves the attribute from the request with
     the given attribute name and decoded using the given
@@ -3638,7 +3489,7 @@ def get_locale(
     self,
     request,
     available_locales = (DEFAULT_LOCALE,),
-    alias_locales = DEFAULT_ALIAS_LOCALES,
+    alias_locales = {},
     default_locale = DEFAULT_LOCALE
 ):
     """
@@ -3747,7 +3598,7 @@ def set_locale_session(self, request, locale):
     """
 
     # sets the locale session attribute
-    self.set_session_attribute(request, LOCALE_SESSION_ATTRIBUTE, locale)
+    self.set_session_attribute(request, "_locale", locale)
 
 def range_d(self, request, default = "day", _datetime = False):
     """
@@ -3805,19 +3656,19 @@ def update_resources_path(self, parameters = {}):
     """
 
     # retrieves the extra path values
-    extra_extras_path = parameters.get(EXTRA_EXTRAS_PATH_VALUE, "")
-    extra_template_path = parameters.get(EXTRA_TEMPLATES_PATH_VALUE, "")
+    extra_extras_path = parameters.get("extra_extras_path", "")
+    extra_template_path = parameters.get("extra_templates_path", "")
 
     # creates the templates path from the extras path
-    extras_path = os.path.join(self.resources_path, EXTRAS_VALUE)
+    extras_path = os.path.join(self.resources_path, "extras")
     extras_path = os.path.join(extras_path, extra_extras_path)
 
     # creates the templates path from the resources path
-    templates_path = os.path.join(self.resources_path, TEMPLATES_VALUE)
+    templates_path = os.path.join(self.resources_path, "templates")
     templates_path = os.path.join(templates_path, extra_template_path)
 
     # creates the locales path from the resources path
-    locales_path = os.path.join(self.resources_path, LOCALES_VALUE)
+    locales_path = os.path.join(self.resources_path, "locales")
 
     # sets the extras path
     self.set_extras_path(extras_path)
@@ -3867,8 +3718,8 @@ def set_relative_resources_path(
 
     # creates the parameters map to be used
     parameters = {
-        EXTRA_EXTRAS_PATH_VALUE : extra_extras_path,
-        EXTRA_TEMPLATES_PATH_VALUE : extra_templates_path
+        "extra_extras_path" : extra_extras_path,
+        "extra_templates_path" : extra_templates_path
     }
 
     # sets the resources path
@@ -4308,22 +4159,22 @@ def _cast_attribute_value(self, attribute_value):
 
     # in case the form data value is not defined
     # in the attribute value
-    if not FORM_DATA_VALUE in attribute_value:
+    if not "form-data" in attribute_value:
         # returns the attribute value
         return attribute_value
 
     # in case the filename does not exists in the
     # attribute value (normal field)
-    if not FILENAME_VALUE in attribute_value:
+    if not "filename" in attribute_value:
         # returns the "contents" from the attribute
         # value (form data value)
-        return attribute_value[CONTENTS_VALUE]
+        return attribute_value["contents"]
 
     # retrieves the filename and the contents
     # from the attribute to create the file attribute
     # tuple (filename and contents)
-    filename = attribute_value[FILENAME_VALUE]
-    contents = attribute_value[CONTENTS_VALUE]
+    filename = attribute_value["filename"]
+    contents = attribute_value["contents"]
     file_attribute_tuple = (filename, contents)
 
     # returns the file attribute tuple
@@ -4389,7 +4240,7 @@ def _get_host(self, request, prefix_path = None):
     """
 
     # retrieves the host value from the request headers
-    host = request.request.get_header(HOST_VALUE)
+    host = request.request.get_header("Host")
 
     # in case there is a prefix path defined
     if prefix_path:
@@ -4606,7 +4457,7 @@ def _dasherize(self, string_value):
     camel_cased_underscored_string_value = CAMEL_CASED_WORD_PAIR_REGEX.sub(UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE, camel_cased_underscored_string_value)
 
     # replaces the non-character matches with dashes
-    camel_case_dasherized_string_value = NON_CHARACTER_REGEX.sub(DASH_VALUE, camel_cased_underscored_string_value)
+    camel_case_dasherized_string_value = NON_CHARACTER_REGEX.sub("-", camel_cased_underscored_string_value)
 
     # lowers the case of the string_value
     dasherized_string_value = camel_case_dasherized_string_value.lower()
@@ -4649,7 +4500,7 @@ def _dasherize_underscored(self, string_value):
     """
 
     # replaces the underscores for dashes
-    dasherized_string_value = string_value.replace(UNDERSCORE_VALUE, DASH_VALUE)
+    dasherized_string_value = string_value.replace("_", "-")
 
     # returns the dasherized value
     return dasherized_string_value
@@ -4777,7 +4628,7 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
 
         # set the current attribute name with an "escaped" name
         # and associates it with the "new" next parent structure
-        parent_structure[UNDERSCORE_VALUE + current_attribute_name] = next_parent_structure
+        parent_structure["_" + current_attribute_name] = next_parent_structure
 
     # processes the form attribute in flat mode for the next parent structure,
     # the attribute names list and the attribute value
@@ -4822,21 +4673,21 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
 
     # in case the match value is of type map
     # the parentheses need to be removed from it
-    if match_name == MAP_TYPE_VALUE: match_value = match_value[1:-1]
+    if match_name == "map": match_value = match_value[1:-1]
 
     # in case it's the only (last) match available
     if is_last_attribute_name:
         # in case the match is of type name, must
         # set the attribute value in the parent structure
-        if match_name == NAME_TYPE_VALUE:
+        if match_name == "name":
             parent_structure[match_value] = attribute_value
         # in case the match is of type sequence, adds
         # the attribute value to the parent structure
-        elif match_name == SEQUENCE_TYPE_VALUE:
+        elif match_name == "sequence":
             parent_structure.append(attribute_value)
         # in case the match is of type map, sets the
         # attribute value in the parent structure
-        elif match_name == MAP_TYPE_VALUE:
+        elif match_name == "map":
             parent_structure[match_value] = attribute_value
 
     # there is more parsing to be made
@@ -4856,18 +4707,18 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
 
         # in case the next match value is of type map
         # the parentheses need to be removed
-        if next_match_name == MAP_TYPE_VALUE:
+        if next_match_name == "map":
             # retrieves the next match value without the parentheses
             next_match_value = next_match_value[1:-1]
 
         # in case the next match is of type name
-        if next_match_name == NAME_TYPE_VALUE:
+        if next_match_name == "name":
             # raises the invalid attribute name exception
             raise exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
         # in case the next match is of type list, a list needs to
         # be created in order to support the sequence, in case a list
         # already exists it is used instead
-        elif next_match_name == SEQUENCE_TYPE_VALUE:
+        elif next_match_name == "sequence":
             # in case the match value exists in the
             # parent structure there is no need to create a new structure
             # the previous one should be used
@@ -4883,12 +4734,12 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # in case the next match is of type map, a map needs to
         # be created in order to support the mapping structure, in case a map
         # already exists it is used instead
-        elif next_match_name == MAP_TYPE_VALUE:
+        elif next_match_name == "map":
             # in case the current match is a sequence
             # it's required to check for the valid structure
             # it may be set or it may be a new structure depending
             # on the current "selected" index
-            if match_name == SEQUENCE_TYPE_VALUE:
+            if match_name == "sequence":
                 # retrieves the parent structure length
                 parent_structure_length = len(parent_structure)
 
@@ -4913,11 +4764,11 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
                 current_attribute_value = {}
 
         # in case the match is of type name (first match)
-        if match_name == NAME_TYPE_VALUE:
+        if match_name == "name":
             # sets the current attribute value in the parent structure
             parent_structure[match_value] = current_attribute_value
         # in case the match is of type sequence
-        elif match_name == SEQUENCE_TYPE_VALUE:
+        elif match_name == "sequence":
             # retrieves the parent structure length
             parent_structure_length = len(parent_structure)
 
@@ -4928,7 +4779,7 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
                 # parent structure
                 parent_structure.append(current_attribute_value)
         # in case the match is of type map
-        elif match_name == MAP_TYPE_VALUE:
+        elif match_name == "map":
             # sets the current attribute value in the parent structure
             parent_structure[match_value] = current_attribute_value
 
@@ -4997,7 +4848,7 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     entity_model_attribute_value = getattr(entity_model, attribute_key)
 
     # retrieves the data type from the entity model attribute value
-    data_type = entity_model_attribute_value[DATA_TYPE_VALUE]
+    data_type = entity_model_attribute_value["data_type"]
 
     # retrieves the cast type for the data type
     cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)
@@ -5296,7 +5147,7 @@ def _get_locales_session(self, request):
     """
 
     # retrieves the accepted language
-    locale = self.get_session_attribute(request, LOCALE_SESSION_ATTRIBUTE)
+    locale = self.get_session_attribute(request, "_locale")
 
     # creates the locales list
     locales_list = locale and [locale] or []
@@ -5316,7 +5167,7 @@ def _get_locales_header(self, request):
     """
 
     # retrieves the accepted language
-    accept_language = request.get_header(ACCEPT_LANGUAGE_VALUE)
+    accept_language = request.get_header("Accept-Language")
 
     # retrieves the locales map for the accept language
     locales_map = self._get_locales_map(accept_language)
@@ -5368,8 +5219,8 @@ def _get_locales_map(self, accept_language):
     # iterates over all the accept language matches (iterator)
     for accept_language_match in accept_language_match_iterator:
         # retrieves the values from the accept language match
-        locale = accept_language_match.group(LOCALE_VALUE)
-        relative_value = accept_language_match.group(RELATIVE_VALUE_VALUE)
+        locale = accept_language_match.group("locale")
+        relative_value = accept_language_match.group("relative_value")
 
         # converts the locale to its lower case representation
         # so that it's normalized for a normalized value
@@ -5432,7 +5283,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
         # as json information, (map) decoding it using
         # the default encoding (utf-8)
         bundle_contents = bundle_file.read()
-        bundle_contents = bundle_contents.decode(DEFAULT_ENCODING)
+        bundle_contents = bundle_contents.decode("utf-8")
         bundle = self.json_plugin.loads(bundle_contents)
     finally:
         # closes the bundle file (no more reading to be
@@ -5517,14 +5368,14 @@ def get_process_method(controller, request, process_method_name):
         attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes[PERMISSION_VALUE]
+        attribute_permission = attributes["permission"]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes:
-            attribute_value = attributes[VALUE_VALUE]
+        if "value" in attributes:
+            attribute_value = attributes["value"]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5533,8 +5384,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes:
-            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
+        if "session_attribute" in attributes:
+            attribute_session_attribute = attributes["session_attribute"]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
@@ -5571,14 +5422,14 @@ def get_process_method(controller, request, process_method_name):
         attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes[PERMISSION_VALUE]
+        attribute_permission = attributes["permission"]
         attribute_permission_value = self.get_value(attribute_permission)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes:
-            attribute_value = attributes[VALUE_VALUE]
+        if "value" in attributes:
+            attribute_value = attributes["value"]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5587,8 +5438,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes:
-            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
+        if "session_attribute" in attributes:
+            attribute_session_attribute = attributes["session_attribute"]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
@@ -5625,18 +5476,18 @@ def get_process_method(controller, request, process_method_name):
         attributes = node.get_attributes()
 
         # retrieves the attribute permission value
-        attribute_permission = attributes[PERMISSION_VALUE]
+        attribute_permission = attributes["permission"]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
         # retrieves the attribute value value
-        attribute_value = attributes[VALUE_VALUE]
+        attribute_value = attributes["value"]
         attribute_value_value = self.get_value(attribute_value)
 
         # verifies if the value attribute exists in the attributes map
         # if that's the case retrieves its value (should be an integer)
         # as the value that is going to be used for comparison
-        if VALUE_VALUE in attributes:
-            attribute_value = attributes[VALUE_VALUE]
+        if "value" in attributes:
+            attribute_value = attributes["value"]
             attribute_value_value = self.get_value(attribute_value)
 
         # otherwise the default value is set this is considered to be the
@@ -5645,8 +5496,8 @@ def get_process_method(controller, request, process_method_name):
 
         # in case the session attribute exists in the attributes map
         # must retrieve it and parse it as a literal value
-        if SESSION_ATTRIBUTE_VALUE in attributes:
-            attribute_session_attribute = attributes[SESSION_ATTRIBUTE_VALUE]
+        if "session_attribute" in attributes:
+            attribute_session_attribute = attributes["session_attribute"]
             attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
 
         # otherwise the default value should be used as no explicit
