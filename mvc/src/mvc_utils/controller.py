@@ -246,12 +246,6 @@ SHORT_MAXIMUM_TIMEOUT = SHORT_TIMEOUT * 3
 """ The short (value) maximum timeout (three times
 the timeout value) """
 
-TO_ONE_RELATION_VALUE = 1
-""" The to one relation value """
-
-TO_MANY_RELATION_VALUE = 2
-""" The to many relation value """
-
 PERSIST_UPDATE = 0x01
 """ The persist only on update (or save) persist type that only
 allows the updating of fields in an (already) associated entity """
@@ -318,12 +312,6 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "relation" : None
 }
 """ The map associating the data types with the cast types """
-
-DEFAULT_RELATION_VALUES_MAP = {
-    TO_ONE_RELATION_VALUE : {},
-    TO_MANY_RELATION_VALUE : []
-}
-""" The default relation values map """
 
 CONTENT_TYPE_MAP = {
     "application/x-www-form-urlencoded" : "form",

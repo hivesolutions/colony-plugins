@@ -48,30 +48,6 @@ ERROR_STATUS_CODE = 500
 the code raised as a fallback for any unhandled
 exception by default behavior """
 
-VALIDATE_VALUE = "validate"
-""" The validate value """
-
-VALIDATION_FAILED_VALUE = "validation_failed"
-""" The validation failed value """
-
-SERIALIZER_VALUE = "serializer"
-""" The serializer value """
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding """
-
-EXCEPTION_HANDLER_VALUE = "exception_handler"
-""" The exception handler value """
-
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
-TO_ONE_RELATION_VALUE = 1
-""" The to one relation value """
-
-TO_MANY_RELATION_VALUE = 2
-""" The to many relation value """
-
 PERSIST_UPDATE = 0x01
 """ The persist only on update (or save) persist type that only
 allows the updating of fields in an (already) associated entity """
@@ -161,7 +137,7 @@ def validated(
 
             # in case the controller instance does not have the validate method
             # an exception should be raised indicating the problem
-            if not hasattr(self, VALIDATE_VALUE):
+            if not hasattr(self, "validate"):
                 raise exceptions.ControllerValidationError("validation method not found", self)
 
             # tests if the controller instance contains the validate method and
@@ -187,7 +163,7 @@ def validated(
 
             # tries to retrieves the validation failed method from the current controller
             # instance, this is going to be used in case the validation method is enabled
-            validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and\
+            validation_failed_method = hasattr(self, "validation_failed") and\
                 self.validation_failed or None
 
             # in case the reasons list is not empty, there was a validation that failed
@@ -477,8 +453,8 @@ def serialized(serialization_parameters = None, default_success = True):
 
                 # retrieves the serializer and the exception
                 # values from the parameters
-                serializer = parameters.get(SERIALIZER_VALUE, None)
-                exception_handler = parameters.get(EXCEPTION_HANDLER_VALUE, None)
+                serializer = parameters.get("serializer", None)
+                exception_handler = parameters.get("exception_handler", None)
 
                 # in case the serializer and the exception
                 # handler are not set must raise the exception
@@ -547,7 +523,7 @@ def serialized(serialization_parameters = None, default_success = True):
                 # success message sent the default success message is create, then
                 # serialized and written to the output stream in the request
                 is_flushed = request.is_flushed()
-                serializer = parameters.get(SERIALIZER_VALUE, None)
+                serializer = parameters.get("serializer", None)
                 should_default = not is_flushed and default_success and serializer
                 if should_default:
                     success_serialized = serializer.dumps(dict(result = "success"))
