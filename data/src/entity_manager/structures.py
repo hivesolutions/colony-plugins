@@ -67,60 +67,60 @@ RESERVED_NAMES = ("_class", "_mtime")
 """ The tuple containing the names that are considered to be
 reserved (special cases) for the queries """
 
-PYTHON_TYPES_MAP = {
-    "text" : (
+PYTHON_TYPES_MAP = dict(
+    text = (
         types.StringType,
         types.UnicodeType,
         types.NoneType
     ),
-    "string" : (
+    string = (
         types.StringType,
         types.UnicodeType,
         types.NoneType
     ),
-    "integer" : (
+    integer = (
         types.IntType,
         types.LongType,
         types.NoneType
     ),
-    "float" : (
+    float = (
         types.IntType,
         types.LongType,
         types.FloatType,
         types.NoneType
     ),
-    "date" : (
+    date = (
         datetime.datetime,
         types.IntType,
         types.LongType,
         types.FloatType,
         types.NoneType
     ),
-    "data" : (
+    data = (
         types.StringType,
         types.UnicodeType,
         types.NoneType
     ),
-    "metadata" : (
+    metadata = (
         types.DictType,
         types.StringType,
         types.UnicodeType,
         types.NoneType
     )
-}
+)
 """ The map containing the association between the entity
 types and the valid values for python types """
 
-PYTHON_CAST_MAP = {
-    "text" : unicode,
-    "string" : unicode,
-    "integer" : int,
-    "float" : float,
-    "date" : float,
-    "data" : unicode,
-    "metadata" : dict,
-    "relation" : None
-}
+PYTHON_CAST_MAP = dict(
+    text = unicode,
+    string = unicode,
+    integer = int,
+    float = float,
+    date = float,
+    data = unicode,
+    metadata = dict,
+    relation = None
+)
 """ The map containing the association between the entity
 type and the best cast type for the value """
 
@@ -4444,14 +4444,14 @@ class EntityClass(object):
         # creates the map of options to load the various
         # entities that are associated with the current
         # entity in the appropriate (reverse) relation
-        options = {
-            "eager" : (
+        options = dict(
+            eager = (
                 name,
             ),
-            "entities" : self._entities,
-            "scope" : self._scope,
-            "minimal" : True
-        }
+            entities = self._entities,
+            scope = self._scope,
+            minimal = True
+        )
 
         # runs the "finding" the appropriate (place holder) entity
         # then retrieves the relation attribute from it to set it
@@ -4504,9 +4504,9 @@ class EntityClass(object):
         # creates the map of options to load the various
         # base value for the concrete entity defined, this way
         # it will be possible to populate all the base names
-        options = {
-            "scope" : self._scope
-        }
+        options = dict(
+            scope = self._scope
+        )
 
         # runs the "finding" the appropriate (place holder) entity
         # then retrieves the attribute from it and retrieves the
