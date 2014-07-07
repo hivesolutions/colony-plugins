@@ -3716,6 +3716,7 @@ class EntityClass(object):
         set_empty_relations = True,
         entities = None,
         scope = None,
+        reset = True,
         set_mtime = True,
         cls_names = None
     ):
@@ -3728,6 +3729,11 @@ class EntityClass(object):
             entities = entities,
             scope = scope
         )
+
+        # in case the reset flag is set the constructor of the
+        # model must be "re-called" again so that the default
+        # values are set one more time (as expected)
+        if reset: entity.__init__()
 
         # verifies the current status of both the entities
         # and the scope and in case these values are not set
@@ -3747,7 +3753,7 @@ class EntityClass(object):
         # iterates over the complete set of entity names to set
         # the associated values into the entity
         for name in names:
-            # in case the current name does not exists
+            # in case the current name does not exist
             # in the map, must skip the cycle
             if not name in map: continue
 
