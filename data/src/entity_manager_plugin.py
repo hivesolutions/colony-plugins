@@ -53,7 +53,7 @@ class EntityManagerPlugin(colony.Plugin):
         colony.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "plugin_test_case_bundle"
+        "test"
     ]
     capabilities_allowed = [
         "entity_engine"
