@@ -85,10 +85,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
     def setUp(self):
         self.plugin.info("Setting up Entity Manager Base Test Case...")
 
-        # retrieves the entity manager test
+        # retrieves the entity manager test and then
+        # performs the set up of it (as expected)
         self.entity_manager_test = self.plugin.entity_manager_test
-
-        # performs the set up
         self.entity_manager_test.set_up(self)
 
     def tearDown(self):
