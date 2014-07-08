@@ -115,18 +115,18 @@ OPTIONS_KEYS = (
 )
 """ The list of keys that may appear in an options map """
 
-SQL_TYPES_MAP = {
-    "text" : "text",
-    "string" : "varchar(255)",
-    "integer" : "integer",
-    "long" : "bigint",
-    "float" : "double precision",
-    "date" : "double precision",
-    "data" : "text",
-    "metadata" : "text"
-}
+SQL_TYPES_MAP = dict(
+    text = "text",
+    string = "varchar(255)",
+    integer = "integer",
+    long = "bigint",
+    float = "double precision",
+    date = "double precision",
+    data = "text",
+    metadata = "text"
+)
 """ The map containing the association of the entity types with
-the corresponding sql types """
+the corresponding sql types to be used during runtime mapping """
 
 class DataEntityManager(colony.System):
     """
