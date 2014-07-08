@@ -4423,6 +4423,11 @@ class EntityClass(object):
         current associated data source.
         """
 
+        # in case the entity manger is not currently loaded in the
+        # current model it's not possible to run the loading and
+        # so the attribute must be considered to be lazy
+        if not self._entity_manager: return colony.Lazy
+
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
@@ -4489,6 +4494,11 @@ class EntityClass(object):
         @return: The value for the attribute that triggered the concrete
         load of the class (lazy load).
         """
+
+        # in case the entity manger is not currently loaded in the
+        # current model it's not possible to run the loading and
+        # so the attribute must be considered to be lazy
+        if not self._entity_manager: return colony.Lazy
 
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
