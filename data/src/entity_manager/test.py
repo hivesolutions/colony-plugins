@@ -42,32 +42,19 @@ import colony
 import exceptions
 import test_mocks
 
-class EntityManagerTest:
+class EntityManagerTest(colony.Test):
     """
     The entity manager class.
     """
 
-    entity_manager_plugin = None
-    """ The entity manager plugin """
-
-    def __init__(self, entity_manager_plugin):
-        """
-        Constructor of the class.
-
-        @type entity_manager_plugin: EntityManagerPlugin
-        @param entity_manager_plugin: The entity manager plugin.
-        """
-
-        self.entity_manager_plugin = entity_manager_plugin
-
     def get_plugin_test_case_bundle(self):
         return (
-            EntityManagerBasePluginTestCase,
+            EntityManagerBaseTestCase,
         )
 
     def set_up(self, test_case):
         # retrieves the entity manager (system)
-        entity_manager = self.entity_manager_plugin.entity_manager
+        entity_manager = self.plugin.entity_manager
 
         # loads a new entity manager, extends it with the
         # entity manager test mocks opens it (loading and
@@ -90,6 +77,10 @@ class EntityManagerTest:
         test_case.entity_manager.destroy()
 
 class EntityManagerBaseTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "Entity Manager Base Plugin test case"
 
     def setUp(self):
         self.plugin.info("Setting up Entity Manager Base Test Case...")
@@ -1324,17 +1315,3 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.nullify(recursive = True)
         self.assertEqual(person.name, None)
         self.assertEqual(address.country, None)
-
-class EntityManagerBasePluginTestCase:
-
-    @staticmethod
-    def get_test_case():
-        return EntityManagerBaseTestCase
-
-    @staticmethod
-    def get_pre_conditions():
-        return None
-
-    @staticmethod
-    def get_description():
-        return "Entity Manager Base Plugin test case"
