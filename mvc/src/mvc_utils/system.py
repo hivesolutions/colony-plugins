@@ -793,6 +793,11 @@ class MvcUtils(colony.System):
         models_module = self.models_modules_map.get(models_id, None)
         kwargs = dict(models = models_module) if models_module else dict()
 
+        # in case there's a valid models module loaded for the current set
+        # of controllers loading process it's set in the systems instance
+        # so that it may be referred latter by any controller logic
+        if models_module: setattr(system_instance, "models", models_module)
+
         # imports the controllers module with the mvc utils support
         # this should allow the exporting of the various packages
         # included in the utils structure (extra import)
