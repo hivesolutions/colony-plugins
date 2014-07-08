@@ -47,20 +47,20 @@ class EntityManagerTest(colony.Test):
     The entity manager class.
     """
 
-    def get_plugin_test_case_bundle(self):
+    def get_bundle(self):
         return (
             EntityManagerBaseTestCase,
         )
 
     def set_up(self, test_case):
         # retrieves the entity manager (system)
-        entity_manager = self.plugin.entity_manager
+        system = self.plugin.system
 
         # loads a new entity manager, extends it with the
         # entity manager test mocks opens it (loading and
         # generator creation) and begins a new  transaction
         # context (for the current set of operations)
-        test_case.entity_manager = entity_manager.load_entity_manager("sqlite")
+        test_case.entity_manager = system.load_entity_manager("sqlite")
         test_case.entity_manager.extend_module(test_mocks)
         test_case.entity_manager.open(start = False)
         test_case.entity_manager.create_generator()
@@ -87,14 +87,14 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the entity manager test and then
         # performs the set up of it (as expected)
-        self.entity_manager_test = self.plugin.entity_manager_test
-        self.entity_manager_test.set_up(self)
+        self.test = self.plugin.test
+        self.test.set_up(self)
 
     def tearDown(self):
         self.plugin.info("Tearing down Entity Manager Base Test Case...")
 
         # performs the tear down
-        self.entity_manager_test.tear_down(self)
+        self.test.tear_down(self)
 
     def test_create(self):
         # creates the complete set of entities existent in the current
