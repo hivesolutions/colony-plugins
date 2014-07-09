@@ -2399,6 +2399,7 @@ class EntityManager:
         # value for the selected field name
         field_name = value.get("generator_field_name", field_name)
         value = self.grab_id(field_name)
+        value = int(value)
 
         # sets the generated value in the entity, final setting
         # of the generated value
@@ -2708,6 +2709,12 @@ class EntityManager:
         # index "on top" of it
         table_id = entity_class.get_id()
 
+        # writes the "final" create definition query character
+        # and then retrieves the "final" query value from
+        # the query (string) buffer
+        query_buffer.write(")")
+        query = query_buffer.get_value()
+
         # creates the indexes for the primary key field and adds
         # them to the list of index queries
         index_query = self.engine._index_query(entity_class, table_id, "hash")
@@ -2721,13 +2728,6 @@ class EntityManager:
         index_tree_query = self.engine._index_query(entity_class, "_mtime", "btree")
         index_queries.append(index_query)
         index_queries.append(index_tree_query)
-
-        # writes the "final" create definition query character
-        query_buffer.write(")")
-
-        # retrieves the "final" query value from
-        # the query (string) buffer
-        query = query_buffer.get_value()
 
         # returns the generated definition query
         # and the list of index creation queries
