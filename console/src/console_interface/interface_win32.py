@@ -222,8 +222,10 @@ class ConsoleInterfaceWin32:
             return None
 
         # unpacks the console buffer info structure into the various
-        # components of it
-        _buffer_x, _buffer_y, _current_x, _current_y, _wattr, left, top, right, bottom, _max_x, _max_y = struct.unpack("hhhhHhhhhhh", console_buffer_info.raw)
+        # components of it so that they may be used in the context
+        _buffer_x, _buffer_y, _current_x, _current_y,\
+        _wattr, left, top, right, bottom, _max_x,\
+        _max_y = struct.unpack("hhhhHhhhhhh", console_buffer_info.raw)
 
         # calculates the width and the height of the console
         # window from the right, left, bottom, and top positions
