@@ -159,9 +159,6 @@ class EntityManagerPlugin(colony.Plugin):
 
         return self.decorators.lock_table
 
-    def get_bundle(self):
-        return self.test.get_bundle()
-
     @colony.load_allowed_capability("entity_engine")
     def entity_engine_load_allowed(self, plugin, capability):
         self.system.register_entity_engine_plugin(plugin)
