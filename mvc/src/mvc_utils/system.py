@@ -1495,7 +1495,6 @@ class RawModel(object):
     This class is a simple stub class.
     """
 
-    @classmethod
     def __new__(cls, *args, **kwargs):
         # creates the new instance using the default
         # object "instancing" strategy

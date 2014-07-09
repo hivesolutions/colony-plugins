@@ -448,7 +448,6 @@ class EntityClass(object):
         self._entities = {}
         self._scope = {}
 
-    @classmethod
     def __new__(cls, *args, **kwargs):
         # creates the new instance using the default
         # object "instancing" strategy
