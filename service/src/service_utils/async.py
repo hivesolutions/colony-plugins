@@ -312,7 +312,7 @@ class AbstractService:
                 # prints a warning message message using the service
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
-                    "Runtime problem: %s, while handling event" %\
+                    "Runtime problem: %s, while handling event" %
                     unicode(exception)
                 )
 
@@ -351,7 +351,7 @@ class AbstractService:
             # prints a warning message message using the service
             # plugin (this message is considered important)
             self.service_plugin.warning(
-                "Runtime problem: %s, while starting the service" %\
+                "Runtime problem: %s, while starting the service" %
                 unicode(exception)
             )
 
