@@ -39,12 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import exceptions
 
-AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
-""" The authentication handler value """
-
-ARGUMENTS_VALUE = "arguments"
-""" the arguments value """
-
 class ConsoleAuthentication:
     """
     The console authentication class.
@@ -79,19 +73,19 @@ class ConsoleAuthentication:
 
         # in case the authentication handler property is not defined
         # must raise the missing property exception
-        if not AUTHENTICATION_HANDLER_VALUE in properties:
-            raise exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
+        if not "authentication_handler" in properties:
+            raise exceptions.MissingProperty("authentication_handler")
 
         # in case the arguments property is not defined must raise the
         # missing property exception
-        if not ARGUMENTS_VALUE in properties:
-            raise exceptions.MissingProperty(ARGUMENTS_VALUE)
+        if not "arguments" in properties:
+            raise exceptions.MissingProperty("arguments")
 
         # retrieves the various property elements from the provided
         # map of properties, this should include the authentication
         # handler and the arguments for authentication
-        authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
-        arguments = properties[ARGUMENTS_VALUE]
+        authentication_handler = properties["authentication_handler"]
+        arguments = properties["arguments"]
 
         # retrieves the authentication plugin and uses it to try
         # to authenticate the current user retrieving the result
