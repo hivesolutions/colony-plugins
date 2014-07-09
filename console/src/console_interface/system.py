@@ -178,7 +178,7 @@ class ConsoleInterface(colony.System):
         Unloads the console system and all of its internal structures.
         """
 
-        # clenaups the console interface in case
+        # cleanups the console interface in case
         # it's valid (defined and loaded)
         self.console_interface and self.console_interface.cleanup({})
 
@@ -216,7 +216,7 @@ class ConsoleInterface(colony.System):
             # interface method, retrieving the password
             password = self._prompt_value(PASSWORD_MESSAGE + ": ", console_interface_method)
 
-            # authenticates the user (throught the console system)
+            # authenticates the user (through the console system)
             authentication_result = console_context.authenticate_user(username, password)
 
             # in case the authentication as succeed
