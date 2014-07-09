@@ -4028,6 +4028,13 @@ class EntityClass(object):
             # (probably an unicode object)
             return string_value
 
+        # in case the attribute data type is integer it must
+        # cast as a valid integer (simple casting) so that
+        # unexpected data types exist for the current value
+        if data_type == "integer":
+            integer_value = int(value)
+            return integer_value
+
         # in case the attribute date type is date
         # it must be converted back from the data
         # source float value into the date time
