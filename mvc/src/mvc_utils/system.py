@@ -1499,7 +1499,7 @@ class RawModel(object):
     def __new__(cls, _cls):
         # creates the new instance using the default
         # object "instancing" strategy
-        self = object.__new__(cls)
+        self = cls.__new__()
 
         # calls the underlying start method that
         # must create and start the most basic
