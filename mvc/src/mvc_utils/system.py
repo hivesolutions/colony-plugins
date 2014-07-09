@@ -1496,10 +1496,10 @@ class RawModel(object):
     """
 
     @classmethod
-    def __new__(cls, _cls):
+    def __new__(cls, *args, **kwargs):
         # creates the new instance using the default
         # object "instancing" strategy
-        self = super(RawModel, cls).__new__(cls)
+        self = object.__new__(cls, *args, **kwargs)
 
         # calls the underlying start method that
         # must create and start the most basic
