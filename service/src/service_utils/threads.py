@@ -106,7 +106,9 @@ class ServiceAcceptingThread(threading.Thread):
                 service_tuple = self.service_tuple_queue.pop()
             except BaseException, exception:
                 # prints an error message about the problem accessing the service tuple queue
-                self.abstract_service.service_utils_plugin.error("Error accessing service tuple queue: " + unicode(exception))
+                self.abstract_service.service_utils_plugin.error(
+                    "Error accessing service tuple queue: " + unicode(exception)
+                )
             finally:
                 # releases the service tuple queue condition
                 self.service_tuple_queue_condition.release()
@@ -117,10 +119,14 @@ class ServiceAcceptingThread(threading.Thread):
                 service_connection, service_address, port = service_tuple
 
                 # inserts the connection and address into the pool
-                self.abstract_service._insert_connection_pool(service_connection, service_address, port)
+                self.abstract_service._insert_connection_pool(
+                    service_connection, service_address, port
+                )
             except BaseException, exception:
                 # prints a warning message about the problem accepting the socket
-                self.abstract_service.service_utils_plugin.warning("Error accepting socket: " + unicode(exception))
+                self.abstract_service.service_utils_plugin.warning(
+                    "Error accepting socket: " + unicode(exception)
+                )
 
     def stop(self):
         # acquires the service tuple queue condition
@@ -199,7 +205,7 @@ class ServiceExecutionThread(threading.Thread):
 
                 # in case the stop flag is set must break
                 # the loop immediately
-                if self.stop_flag: break;
+                if self.stop_flag: break
 
                 # retrieves the current timestamp value so that it's
                 # possible to compare the target callable timestamp and
@@ -217,7 +223,10 @@ class ServiceExecutionThread(threading.Thread):
                 heapq.heappop(self.callable_queue)
             except BaseException, exception:
                 # prints an error message about the problem accessing the callable queue
-                self.abstract_service.service_utils_plugin.error("Error accessing callable queue: " + unicode(exception))
+                # this may happen for a wide range of reasons
+                self.abstract_service.service_utils_plugin.error(
+                    "Error accessing callable queue: " + unicode(exception)
+                )
             finally:
                 # releases the callable queue condition
                 self.callable_queue_condition.release()
@@ -227,7 +236,9 @@ class ServiceExecutionThread(threading.Thread):
                 callable()
             except BaseException, exception:
                 # prints a warning message about the problem executing callable
-                self.abstract_service.service_utils_plugin.warning("Error executing callable: " + unicode(exception))
+                self.abstract_service.service_utils_plugin.warning(
+                    "Error executing callable: " + unicode(exception)
+                )
 
                 # in case there are still retries remaining to be used for the
                 # callable the callable is inserted back to the list with one
