@@ -114,15 +114,24 @@ class ConsoleInterface(colony.System):
         # retrieves the console plugin
         console_plugin = self.plugin.console_plugin
 
-        # notifies the ready semaphore
+        # notifies the ready semaphore so that the current current plugins's
+        # thread is considered to be completed
         self.plugin.release_ready_semaphore()
 
+        # retrieves the value of the global (allow) terminal boolean value
+        # in case it's currently not set (default value) the control flow
+        # must be returned immediately to the caller avoiding the loading
+        # of the console interface, this may be used to avoid the typical
+        # blocking call problems involving the console thread
+        allow_terminal = colony.conf("TERMINAL", False, cast = bool)
+        if not allow_terminal: return
+
         # retrieves the active configuration value (checks if
-        # the console interface should start)
+        # the console interface should start or not)
         active = self.console_interface_configuration.get(ACTIVE_VALUE, True)
 
         # in case the active flag is not set, must return immediately
-        # no need to load the console
+        # no need to load the console as it's considered inactive
         if not active: return
 
         # in case the console interface class is not defined, must
