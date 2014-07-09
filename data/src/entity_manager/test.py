@@ -1283,11 +1283,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # runs the nullify process on the person in a non recursive
         # fashion (no relations are affected) then verifies that the
-        # unset attributes in the person are none but that the ones
-        # in the address are not
+        # unset attributes in the person and address are none (not set)
         person.nullify(recursive = False)
         self.assertEqual(person.name, None)
-        self.assertNotEqual(address.country, None)
+        self.assertEqual(address.country, None)
 
         # creates the the person and address entities and populates
         # them with some values, then sets the address relation
