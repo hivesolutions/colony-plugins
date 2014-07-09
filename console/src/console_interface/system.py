@@ -80,9 +80,6 @@ CONSOLE_CONTEXT_VALUE = "console_context"
 TEST_VALUE = "test"
 """ The test value """
 
-ANONYMOUS_VALUE = "anonymous"
-""" The anonymous value """
-
 class ConsoleInterface(colony.System):
     """
     The console interface class.
@@ -282,7 +279,7 @@ class ConsoleInterface(colony.System):
         console_user = console_context.get_user()
 
         # retrieves the console user
-        console_user = console_user or ANONYMOUS_VALUE
+        console_user = console_user or "anonymous"
 
         # retrieves the console base name
         console_base_name = console_context.get_base_name()
