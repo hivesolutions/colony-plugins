@@ -65,3 +65,7 @@ The best ways to get involved:
 ## License
 
 Colony is an open-source project licensed under the [GNU General Public License Version 3](http://www.gnu.org/licenses/gpl.html).
+
+## Build Automation
+
+[![Build Status](https://travis-ci.org/hivesolutions/colony_plugins.png?branch=master)](https://travis-ci.org/hivesolutions/colony_plugins)
