@@ -452,7 +452,7 @@ class EntityClass(object):
     def __new__(cls, _cls):
         # creates the new instance using the default
         # object "instancing" strategy
-        self = cls.__new__()
+        self = super(EntityClass, cls).__new__(cls)
 
         # calls the underlying start method that
         # must create and start the most basic
