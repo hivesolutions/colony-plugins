@@ -4137,7 +4137,7 @@ class EntityClass(object):
         # possible security problems)
         raise exceptions.ValidationError(
             "invalid name '%s', attribute does not exist in '%s'" %
-                (name, cls.__name__)
+            (name, cls.__name__)
         )
 
     @classmethod
@@ -4193,7 +4193,7 @@ class EntityClass(object):
         # possible security problems)
         raise exceptions.ValidationError(
             "invalid value for name '%s' in '%s', expected '%s'" %
-                (name, cls.__name__, attribute_data_type)
+            (name, cls.__name__, attribute_data_type)
         )
 
     @classmethod
@@ -4226,7 +4226,7 @@ class EntityClass(object):
         # the request name is not correctly set in the current entity
         raise exceptions.ValidationError(
             "name '%s' unset for attribute of type '%s', expected attribute set" %
-                (name, cls.__name__)
+            (name, cls.__name__)
         )
 
     @classmethod
