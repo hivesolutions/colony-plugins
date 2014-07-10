@@ -47,7 +47,7 @@ class ServiceHttpPlugin(colony.Plugin):
     id = "pt.hive.colony.plugins.service.http"
     name = "Http Service"
     description = "The plugin that offers the http service"
-    version = "1.0.0"
+    version = "1.0.1"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
         colony.CPYTHON_ENVIRONMENT,

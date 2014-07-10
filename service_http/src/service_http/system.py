@@ -97,19 +97,27 @@ RESPONSE_TIMEOUT = 3
 """ The response timeout """
 
 CHUNK_SIZE = 4096
-""" The chunk size """
+""" The chunk size to be used for the reading/writing
+operations, should be chosen taking into account a
+different set of factors (eg: page size or disk blocks) """
 
 SERVER_NAME = "Hive-Colony-Web"
-""" The server name """
+""" The server name used as the main part of the
+identification process of the server """
 
-SERVER_VERSION = "1.0.0"
-""" The server version """
+SERVER_VERSION = "1.0.1"
+""" The server version, this value should be coherent
+with the current plugin's version """
 
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
-""" The environment version """
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) +\
+    "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version, that should somehow identity
+the currently running environment  """
 
-SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (python-" + sys.platform + " " + ENVIRONMENT_VERSION + ")"
-""" The server identifier """
+SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (python-" +\
+    sys.platform + " " + ENVIRONMENT_VERSION + ")"
+""" The server identifier, this value will be presented
+in the server's identification areas (eg: http headers) """
 
 NUMBER_THREADS = 15
 """ The number of threads """
