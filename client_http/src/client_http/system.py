@@ -584,7 +584,22 @@ class HttpClient(object):
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, encode_path, contents, url, base_url):
+    def send_request(
+        self,
+        host,
+        port,
+        path,
+        parameters,
+        operation_type,
+        headers,
+        protocol_version,
+        content_type,
+        content_type_charset,
+        encode_path,
+        contents,
+        url,
+        base_url
+    ):
         """
         Sends the request for the given parameters.
 
@@ -951,7 +966,15 @@ class HttpClient(object):
         # returns the response
         yield response
 
-    def retrieve_response_chunked(self, response, message_value, save_message = True, yield_response = False, handlers_map = {}, response_timeout = None):
+    def retrieve_response_chunked(
+        self,
+        response,
+        message_value,
+        save_message = True,
+        yield_response = False,
+        handlers_map = {},
+        response_timeout = None
+    ):
         # creates the message string buffer
         message = colony.StringBuffer()
 
@@ -1345,7 +1368,8 @@ class HttpClient(object):
         to a response with no message body contents.
         """
 
-        return (status_code_integer >= 100 and status_code_integer < 200) or status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
+        return (status_code_integer >= 100 and status_code_integer < 200) or\
+            status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
 
     def _call_handler(self, event_name, handlers_map, response):
         """
