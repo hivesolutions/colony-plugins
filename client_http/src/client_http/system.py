@@ -1840,7 +1840,9 @@ class HttpResponse(object):
     """
 
     request = None
-    """ The request that originated the response """
+    """ The request that originated the response,
+    should be used as a reference to the original
+    values that originated "this" response """
 
     protocol_version = "none"
     """ The protocol version """
