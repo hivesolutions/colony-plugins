@@ -140,7 +140,8 @@ STATUS_CODE_VALUES = {
     504 : "Gateway Timeout",
     505 : "HTTP Version Not Supported"
 }
-""" The status code values map """
+""" The status code values map, mapping the standard
+http error codes with their descriptive value """
 
 CHUNKED_VALUE = "chunked"
 """ The chunked value """
@@ -322,7 +323,15 @@ class HttpClient(object):
     _http_client_lock = None
     """ Lock to control the fetching of the queries """
 
-    def __init__(self, client_http, protocol_version, content_type_charset = DEFAULT_CHARSET, key_file_path = None, certificate_file_path = None, ssl_version = None):
+    def __init__(
+        self,
+        client_http,
+        protocol_version,
+        content_type_charset = DEFAULT_CHARSET,
+        key_file_path = None,
+        certificate_file_path = None,
+        ssl_version = None
+    ):
         """
         Constructor of the class.
 
