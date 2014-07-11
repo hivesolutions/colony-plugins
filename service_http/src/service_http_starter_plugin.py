@@ -74,10 +74,10 @@ class ServiceHttpStarterPlugin(colony.Plugin):
 
         # defines the parameters and starts the service with
         # this map as the configuration
-        parameters = {
-            "socket_provider" : "normal",
-            "port" : 8080
-        }
+        parameters = dict(
+            socket_provider = "normal",
+            port = 8080
+        )
         self.service_http_plugin.start_service(parameters)
 
     def unload_plugin(self):
