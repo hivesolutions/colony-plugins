@@ -83,7 +83,7 @@ class EntityMysql(colony.System):
     def create_engine(self, entity_manager):
         return MysqlEngine(self, entity_manager)
 
-class MysqlEngine:
+class MysqlEngine(object):
     """
     The engine class that handles all the adaptation
     process from the general entity manager structures
@@ -665,7 +665,7 @@ class MysqlEngine:
     def _allow_for_update(self):
         return True
 
-class MysqlConnection:
+class MysqlConnection(object):
     """
     Class representing an abstraction on top of
     the mysql connection, to provide necessary

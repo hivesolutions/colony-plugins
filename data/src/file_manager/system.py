@@ -97,7 +97,7 @@ class DataFileManager(colony.System):
         engine_name = file_engine_plugin.get_engine_name()
         del self.file_engine_plugins_map[engine_name]
 
-class FileManager:
+class FileManager(object):
     """
     The file manager class.
     This class is responsible for the coordination of
@@ -258,7 +258,7 @@ class FileManager:
 
         return self.file_engine_plugin.list(connection, directory_name)
 
-class Connection:
+class Connection(object):
     """
     The class representing a data source (file)
     connection with the associated attributes.

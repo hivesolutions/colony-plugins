@@ -272,7 +272,7 @@ class FileFs(colony.System):
         # returns the file name list
         return file_name_list
 
-class FsConnection:
+class FsConnection(object):
     """
     The connection that holds the information, regarding
     the connection to the file system (fs) engine.

@@ -72,7 +72,7 @@ class EntitySqlite(colony.System):
     def create_engine(self, entity_manager):
         return SqliteEngine(self, entity_manager)
 
-class SqliteEngine:
+class SqliteEngine(object):
 
     sqlite_system = None
     """ The reference to the "owning" system entity """
@@ -474,7 +474,7 @@ class SqliteEngine:
     def _allow_for_update(self):
         return False
 
-class SqliteConnection:
+class SqliteConnection(object):
     """
     Class representing an abstraction on top of
     the sqlite connection, to provide necessary

@@ -71,7 +71,7 @@ class EntityPgsql(colony.System):
     def create_engine(self, entity_manager):
         return PgsqlEngine(self, entity_manager)
 
-class PgsqlEngine:
+class PgsqlEngine(object):
 
     pgsql_system = None
     """ The reference to the "owning" system entity """
