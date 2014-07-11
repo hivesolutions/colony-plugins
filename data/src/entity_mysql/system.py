@@ -142,6 +142,10 @@ class MysqlEngine:
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
         database = parameters.get("database", "default")
+        host = colony.conf("DB_HOST", host)
+        user = colony.conf("DB_USER", user)
+        password = colony.conf("DB_PASSWORD", password)
+        database = colony.conf("DB_NAME", database)
         connection._connection = MysqlConnection(host, user, password, database)
         connection._transaction_level = 0
         connection._user = user
