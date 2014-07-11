@@ -49,9 +49,6 @@ import model
 import controller
 import entity_model
 
-ENGINE_VALUE = "engine"
-""" The engine value """
-
 NAME_REFERENCE_VALUE = "__name__"
 """ The name reference value """
 
@@ -70,7 +67,8 @@ PYTHON_EXTENSION = ".py"
 """ The python extension """
 
 DEFAULT_ENGINE = "sqlite"
-""" The default engine """
+""" The default engine that is going to be used for
+database management in case no valid one is defined """
 
 DEFAULT_DATABASE_PREFIX = ""
 """ The default database prefix, that is going to
@@ -407,8 +405,10 @@ class MvcUtils(colony.System):
         # manager with them (in case there are no entity manager defined no loading occurs)
         if base_entity_models:
             # retrieves the engine from the entity manager arguments or uses
-            # the default engine
-            engine = entity_manager_arguments.get(ENGINE_VALUE, DEFAULT_ENGINE)
+            # the default engine as a fallback procedure, it will also try
+            # to retrieve the engine to be used from the global configuration
+            engine = entity_manager_arguments.get("engine", DEFAULT_ENGINE)
+            engine = colony.conf("DB_ENGINE", engine)
 
             # retrieves the connection parameters from the entity manager arguments or uses
             # the default connection parameters and resolves them into the proper representation

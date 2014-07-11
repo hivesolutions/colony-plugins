@@ -57,15 +57,6 @@ DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
 (serialization) of the data in the files """
 
-ID_VALUE = "id"
-""" The id value """
-
-OPTIONS_VALUE = "options"
-""" The options value """
-
-ENTITIES_LIST_VALUE = "entities_list"
-""" The entities list value """
-
 GENERATOR_VALUE = "_generator"
 """ The value that is going to be used to create (and refer)
 the generator table (table name) """
@@ -175,15 +166,15 @@ class DataEntityManager(colony.System):
 
         # tries to retrieve the id of the "target" entity manager, falling back to
         # an undefined value for the id
-        id = properties.get(ID_VALUE, None)
+        id = properties.get("id", None)
 
         # retrieves the options to be used to configure the entity manager to be
         # created, these options are going to "guide" the entity manager runtime
-        options = properties.get(OPTIONS_VALUE, {})
+        options = properties.get("options", {})
 
         # tries to retrieve the entities (classes) list, then generates the map
         # describing the various entities from the entities list
-        entities_list = properties.get(ENTITIES_LIST_VALUE, [])
+        entities_list = properties.get("entities_list", [])
         entities_map = self._generate_class_map(entities_list)
 
         # in case the engine name does not exist in the entity manager
@@ -656,7 +647,15 @@ class EntityManager:
             # the leaking of files (garbage collection)
             colony.remove_directory(directory_path)
 
-    def import_data(self, serializer, entity_classes = None, directory_path = None, full_mode = False, include_parents = False, encoding = DEFAULT_ENCODING):
+    def import_data(
+        self,
+        serializer,
+        entity_classes = None,
+        directory_path = None,
+        full_mode = False,
+        include_parents = False,
+        encoding = DEFAULT_ENCODING
+    ):
         """
         Imports data encoded with the expected serializer input
         into the data source associated with the current entity
