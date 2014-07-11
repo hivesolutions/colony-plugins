@@ -434,9 +434,8 @@ class ServiceHttp(colony.System):
             resolution_order_item_value = service_configuration.get(resolution_order_item, None)
 
             # in case the resolution order item value is not set
-            if not resolution_order_item_value:
-                # continues the loop
-                continue
+            # nothing to be done, continues the loop
+            if not resolution_order_item_value: continue
 
             # retrieves the resolution order values
             resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, resolution_order_item_value.keys())
@@ -462,14 +461,10 @@ class ServiceHttp(colony.System):
                 # writes the resolution order item value
                 regex_buffer.write("(" + resolution_order_item + ")")
 
-            # retrieves the regex value
+            # retrieves the regex value, compiles it and sets the resolution
+            # order regex value in the resolution order item value map
             regex_value = regex_buffer.get_value()
-
-            # compiles the regex value
             regex = re.compile(regex_value)
-
-            # sets the resolution order regex value in the resolution order item
-            # value map
             resolution_order_item_value[RESOLUTION_ORDER_REGEX_VALUE] = regex
 
         # cleans the http service configuration
@@ -493,15 +488,13 @@ class ServiceHttp(colony.System):
         return self.http_service_configuration
 
     def _get_encoding_handler(self, encoding):
-        # in case no encoding is defined
-        if not encoding:
-            # returns none
-            return None
+        # in case no encoding is defined returns an invalid value
+        # to the caller method (could not find anything)
+        if not encoding: return None
 
         # in case the encoding is not found in the http service
-        # encoding handler plugins map
+        # encoding handler plugins map raises an exception
         if not encoding in self.http_service_encoding_plugins_map:
-            # raises the encoding not found exception
             raise exceptions.EncodingNotFound("encoding %s not found" % encoding)
 
         # retrieves the http service encoding handler plugin
@@ -528,19 +521,13 @@ class ServiceHttp(colony.System):
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
 
-        # retrieves the end points value
+
+        # retrieves the various parameter values that are going to
+        # be used as the basis for the (new) parameters creation
         end_points = parameters.get("end_points", [])
-
-        # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
-
-        # retrieves the port value
         port = parameters.get("port", DEFAULT_PORT)
-
-        # retrieves the encoding value
         encoding = parameters.get("encoding", None)
-
-        # retrieves the socket parameters value
         socket_parameters = parameters.get("socket_parameters", {})
 
         # retrieves the service configuration
@@ -565,56 +552,74 @@ class ServiceHttp(colony.System):
         work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
         http_log_file_path = service_configuration.get("log_file_path", None)
 
-        # resolves the http  log file path using the plugin manager
+        # uses the global configuration to try to configure some of the
+        # parameters for the configuration to be created
+        bind_host = colony.conf("SERVER_HOST", BIND_HOST)
+        port = colony.conf("SERVER_PORT", port, cast = int)
+        ssl = colony.conf("SERVER_SSL", False, cast = bool)
+
+        # creates the proper string definition of the connection type
+        # and uses it to create the (full) end point definition tuple
+        connection_s = "ssl" if ssl else "normal"
+        end_point = (connection_s, bind_host, port, {})
+
+        # verifies if the configuration endpoint should be overriden,
+        # this should happen when at least one global wide configuration
+        # value is defined, if that's the case the end points are re-written
+        override = True if colony.conf("SERVER_HOST") else False
+        override = True if colony.conf("SERVER_PORT") else override
+        override = True if colony.conf("SERVER_SSL") else override
+        if override: end_points = (end_point,)
+
+        # resolves the http log file path using the plugin manager,
+        # this path will be used for the writing of the log files, then
+        # creates the http log file (using a file rotator) and then
+        # opens it to be able to start writing in it
         http_log_file_path = plugin_manager.resolve_file_path(http_log_file_path, True, True)
-
-        # creates the http log file (using a file rotator)
         self.http_log_file = http_log_file_path and colony.FileRotator(http_log_file_path) or None
-
-        # opens the http log file
         self.http_log_file and self.http_log_file.open()
 
         # retrieves the encoding handler for the given encoding
         encoding_handler = self._get_encoding_handler(encoding)
 
         # creates the pool configuration map
-        pool_configuration = {
-            "name" : "http pool",
-            "description" : "pool to support http client connections",
-            "number_threads" : number_threads,
-            "scheduling_algorithm" : scheduling_algorithm,
-            "maximum_number_threads" : maximum_number_threads,
-            "maximum_number_works_thread" : maximum_number_work_threads,
-            "work_scheduling_algorithm" : work_scheduling_algorithm
-        }
+        pool_configuration = dict(
+            name = "http pool",
+            description = "pool to support http client connections",
+            number_threads = number_threads,
+            scheduling_algorithm = scheduling_algorithm,
+            maximum_number_threads = maximum_number_threads,
+            maximum_number_works_thread = maximum_number_work_threads,
+            work_scheduling_algorithm = work_scheduling_algorithm
+        )
 
         # creates the extra parameters map
-        extra_parameters = {
-            "encoding" : encoding,
-            "encoding_handler" : encoding_handler,
-            "log_file" : self.http_log_file
-        }
+        extra_parameters = dict(
+            encoding = encoding,
+            encoding_handler = encoding_handler,
+            log_file = self.http_log_file
+        )
 
         # creates the parameters map
-        parameters = {
-            "type" : CONNECTION_TYPE,
-            "service_plugin" : self.plugin,
-            "service_handling_task_class" : HttpClientServiceHandler,
-            "end_points" : end_points,
-            "socket_provider" : socket_provider,
-            "bind_host" : BIND_HOST,
-            "port" : port,
-            "socket_parameters" : socket_parameters,
-            "chunk_size" : CHUNK_SIZE,
-            "service_configuration" : service_configuration,
-            "extra_parameters" : extra_parameters,
-            "pool_configuration" : pool_configuration,
-            "service_type" : service_type,
-            "client_connection_timeout" : client_connection_timeout,
-            "connection_timeout" : connection_timeout,
-            "request_timeout" : request_timeout,
-            "response_timeout" : response_timeout
-        }
+        parameters = dict(
+            type = CONNECTION_TYPE,
+            service_plugin = self.plugin,
+            service_handling_task_class = HttpClientServiceHandler,
+            end_points = end_points,
+            socket_provider = socket_provider,
+            bind_host = bind_host,
+            port = port,
+            socket_parameters = socket_parameters,
+            chunk_size = CHUNK_SIZE,
+            service_configuration = service_configuration,
+            extra_parameters = extra_parameters,
+            pool_configuration = pool_configuration,
+            service_type = service_type,
+            client_connection_timeout = client_connection_timeout,
+            connection_timeout = connection_timeout,
+            request_timeout = request_timeout,
+            response_timeout = response_timeout
+        )
 
         # returns the parameters
         return parameters
