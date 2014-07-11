@@ -195,7 +195,9 @@ class Connection(object):
     """ The flag controlling the status (closing) of the connection """
 
     connection_parameters = {}
-    """ The general parameters to be used in the connection """
+    """ The general parameters to be used in the connection,
+    this value may be unset in case no "special" configuration
+    is set for the connection to be created """
 
     commit_handlers = []
     """ The list of handlers to be called upon the (next) commit,
@@ -211,7 +213,7 @@ class Connection(object):
     """ The lock that controls the access to the calling of the
     handlers this lock ensures sequence in the calling """
 
-    def __init__(self, connection_parameters):
+    def __init__(self, connection_parameters = {}):
         """
         Constructor of the class.
 
