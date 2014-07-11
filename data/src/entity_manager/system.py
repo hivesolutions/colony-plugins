@@ -266,7 +266,7 @@ class DataEntityManager(colony.System):
         # with the class implementation reference
         return class_map
 
-class EntityManager:
+class EntityManager(object):
     """
     The entity manager class, responsible for
     the overall management of entities and
