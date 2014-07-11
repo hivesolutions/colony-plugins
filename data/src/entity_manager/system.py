@@ -475,8 +475,8 @@ class EntityManager:
         # closed one must be created and connected
         if self.connection == None or self.connection.is_closed():
             # creates a new connection with the specified parameters for the
-            # appropriate connection handling
-            self.connection = self.connection or structures.Connection({})
+            # appropriate connection handling in case it's not available
+            self.connection = self.connection or structures.Connection()
 
             # connects the connection using the engine, the connection parameters
             # are sent to provide configuration over the connection
