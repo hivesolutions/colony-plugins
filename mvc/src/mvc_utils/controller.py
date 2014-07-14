@@ -5223,10 +5223,9 @@ def _get_locales_map(self, accept_language):
         # so that it's normalized for a normalized value
         locale_lower = self._lower_locale(locale)
 
-        # retrieves the relative value in float mode
-        relative_value_float = relative_value == None and 1.0 or float(relative_value)
-
+        # retrieves the relative value in float mode and then
         # sets the locale lower value in the locales map
+        relative_value_float = 1.0 if relative_value == None else float(relative_value)
         locales_map[locale_lower] = relative_value_float
 
     # returns the locales map
