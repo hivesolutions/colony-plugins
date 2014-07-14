@@ -110,8 +110,8 @@ class Crypton(colony.System):
             (r"crypton/consumers", self.consumer_controller.create, "post")
         )
 
-    def get_controller(self, controller_name):
-        controller = self.controllers[controller_name]
+    def get_controller(self, name):
+        controller = self.controllers[name]
         return controller
 
     def set_configuration_property(self, configuration_property):

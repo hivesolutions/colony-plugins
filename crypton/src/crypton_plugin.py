@@ -99,8 +99,8 @@ class CryptonPlugin(colony.Plugin):
 
         return self.system.get_patterns()
 
-    def get_controller(self, controller_name):
-        return self.system.get_controller(controller_name)
+    def get_controller(self, name):
+        return self.system.get_controller(name)
 
     @colony.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
