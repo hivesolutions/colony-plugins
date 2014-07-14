@@ -118,16 +118,11 @@ class AuthenticationEntityManager(colony.System):
         if not username or not password:
             raise exceptions.AuthenticationError("an username and a password must be provided")
 
-        # creates the filter map
-        filter = {
-            "username" : username
-        }
-
         # retrieves the users that match the authentication parameters
-        user_entities = entity_manager.find(login_entity_class, filter)
-
-        # retrieves the user
-        user_entity = user_entities and user_entities[0] or None
+        # and retrieves the first user as the possible valid one, defaulting
+        # to an invalid/unset value in case no entities exist
+        user_entities = entity_manager.find(login_entity_class, username = username)
+        user_entity = user_entities[0] if user_entities else None
 
         # in case the user was not found an authentication
         # error must be raised about the issue
@@ -136,9 +131,9 @@ class AuthenticationEntityManager(colony.System):
         # checks that the password is valid
         password_valid = colony.password_match(user_entity.password_hash, password, login_salt)
 
-        # in case the password is valid
+        # in case the password is valid, creates the return
+        # value as a map containing some of the user data
         if password_valid:
-            # creates the return value
             return_value = {
                 VALID_VALUE : True,
                 USERNAME_VALUE : username
