@@ -2736,7 +2736,7 @@ def retrieve_template_file(
     # retrieves the appropriate locale value, in case the locale request
     # is set the appropriate locale may be retrieved from session or header
     # values, this value will replaces the provided locale
-    locale = locale_request and self.get_locale(locale_request) or locale
+    locale = self.get_locale(locale_request) if locale_request else locale
 
     # retrieves the base list, consisting of the directory part of the provided
     # file path in case it exists and then retrieves the "relative path" as the
@@ -5125,13 +5125,11 @@ def _lower_locale(self, locale):
     @return: The lower locale string value.
     """
 
-    # converts the locale to lower
+    # converts the locale to lower, then replaces
+    # the slashes with underscores and finally returns
+    # the locale lower (value) to the caller method
     locale_lower = locale.lower()
-
-    # replaces the slashes with underscores
     locale_lower = locale_lower.replace("-", "_")
-
-    # returns the locale lower (value)
     return locale_lower
 
 def _get_locales_session(self, request):
