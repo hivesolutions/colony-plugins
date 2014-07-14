@@ -263,9 +263,8 @@ class Rest(colony.System):
         rest_request = RestRequest(self, request)
 
         try:
-            # updates the rest request session
-            # loading the appropriate session in
-            # case it exists
+            # updates the rest request session loading the appropriate
+            # session in case it exists (under the storage)
             rest_request.update_session()
         except:
             # logs a debug message about the fact that
@@ -1046,10 +1045,6 @@ class RestRequest(object):
         self.session.timeout = timeout
         self.session.maximum_timeout = maximum_timeout
         self.session._generate_expire_time(timeout, maximum_timeout)
-
-        # updates the session in the rest request, provides
-        # the infra-structure to update expire structures
-        self.rest.update_session(self.session)
 
     def read(self):
         """
