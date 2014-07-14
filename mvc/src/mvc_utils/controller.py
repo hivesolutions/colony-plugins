@@ -3189,11 +3189,9 @@ def get_session_attribute(
     @return The retrieved session attribute.
     """
 
-    # tries to retrieve the request session
+    # tries to retrieve the request session and in case the request
+    # session is invalid, an unset/invalid value is returned
     request_session = request.get_session()
-
-    # in case the request session
-    # is invalid, must return invalid
     if not request_session: return None
 
     # resolves the complete session attribute name, taking into
@@ -3549,10 +3547,8 @@ def get_locale(
 
         # retrieves the (first) locale from the available
         # locales list, it's considered to be the primary
-        # locale
+        # locale, then breaks the current loop (value selected)
         locale = available_locales_list[0]
-
-        # breaks the loop
         break
 
     # resolves the alias locale (retrieving the
