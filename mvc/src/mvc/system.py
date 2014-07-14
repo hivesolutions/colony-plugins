@@ -821,6 +821,16 @@ class Mvc(colony.System):
         # be used during the life time of the request
         rest_request.resolve = self.resolve
 
+        # in case there's an encoder name defined and the current (mvc)
+        # plugin references an encoding plugin that candidates for that
+        # type of encoding it's set as the current serialized, this is
+        # used as the default serialization process and may be overriden
+        # if there's a plugin in the controller that is better suited
+        if encoder and hasattr(self.plugin, encoder + "_plugin"):
+            encoder_plugin = getattr(self.plugin, encoder + "_plugin")
+            parameters["serializer"] = encoder_plugin
+            rest_request.serializer = encoder_plugin
+
         # in case there's an encoder name defined and the controller
         # plugin references an encoding plugin that candidates for that
         # type of encoding the same plugin is set as the serializer for

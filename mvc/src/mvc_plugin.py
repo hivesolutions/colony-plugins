@@ -63,6 +63,7 @@ class MvcPlugin(colony.Plugin):
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.csv"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.json")
     ]
     events_handled = [
