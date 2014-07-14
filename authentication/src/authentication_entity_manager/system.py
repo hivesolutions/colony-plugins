@@ -114,8 +114,8 @@ class AuthenticationEntityManager(colony.System):
         login_entity_class = entity_manager.get_entity_class(login_entity_name)
 
         # in case the username or password are not defined
+        # an authentication error must be raised
         if not username or not password:
-            # raises an authentication error
             raise exceptions.AuthenticationError("an username and a password must be provided")
 
         # creates the filter map
@@ -129,10 +129,9 @@ class AuthenticationEntityManager(colony.System):
         # retrieves the user
         user_entity = user_entities and user_entities[0] or None
 
-        # in case the user was not found
-        if not user_entity:
-            # raises an authentication error
-            raise exceptions.AuthenticationError("user not found")
+        # in case the user was not found an authentication
+        # error must be raised about the issue
+        if not user_entity: raise exceptions.AuthenticationError("user not found")
 
         # checks that the password is valid
         password_valid = colony.password_match(user_entity.password_hash, password, login_salt)
@@ -145,9 +144,8 @@ class AuthenticationEntityManager(colony.System):
                 USERNAME_VALUE : username
             }
         # otherwise there is no valid username password
-        # combination
+        # combination and raises an exception
         else:
-            # raises the authentication error
             raise exceptions.AuthenticationError("invalid username password combination")
 
         # returns the return value
