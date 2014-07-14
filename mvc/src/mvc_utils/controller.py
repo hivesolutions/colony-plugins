@@ -2735,7 +2735,7 @@ def retrieve_template_file(
 
     # retrieves the appropriate locale value, in case the locale request
     # is set the appropriate locale may be retrieved from session or header
-    # values, this value will replaces the provided locale
+    # values, this value will replace the provided locale (override support)
     locale = self.get_locale(locale_request) if locale_request else locale
 
     # retrieves the base list, consisting of the directory part of the provided
