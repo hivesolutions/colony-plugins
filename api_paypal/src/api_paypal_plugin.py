@@ -56,8 +56,7 @@ class ApiPaypalPlugin(colony.Plugin):
         "api.paypal"
     ]
     dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.client.http")
     ]
     main_modules = [
         "api_paypal"
