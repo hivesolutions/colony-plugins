@@ -39,18 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import base
+controllers = colony.__import__("controllers")
 
-models = colony.__import__("models")
-
-class ConsumerController(base.BaseController):
-
-    def create(self, request):
-        # retrieves the consumer from the request
-        # and applies it to the consumer entity
-        consumer = request.field("consumer", {})
-        consumer = models.Consumer.new(consumer)
-
-        # generates the consumer api key for the
-        consumer.generate_api_key()
-        consumer.create()
+class BaseController(controllers.Controller):
+    pass
