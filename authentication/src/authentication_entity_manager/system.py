@@ -44,12 +44,6 @@ import exceptions
 HANDLER_NAME = "entity_manager"
 """ The handler name """
 
-USERNAME_VALUE = "username"
-""" The username value """
-
-VALID_VALUE = "valid"
-""" The valid value """
-
 ENTITY_MANAGER_VALUE = "entity_manager"
 """ The entity manager value """
 
@@ -82,23 +76,20 @@ class AuthenticationEntityManager(colony.System):
         @param request: The authentication request to be handled.
         """
 
-        # retrieves the request username
+        # retrieves the complete set of values that are going
+        # to be used for the authentication process
         username = request.get_username()
-
-        # retrieves the request password
         password = request.get_password()
-
-        # retrieves the request arguments
         arguments = request.get_arguments()
 
         # in case the entity manager in not defined in arguments
+        # raises an exception indicating the miss of the manager
         if not ENTITY_MANAGER_VALUE in arguments:
-            # raises an exception
             raise exceptions.MissingArgument(ENTITY_MANAGER_VALUE)
 
         # in case the local entity name value in not defined in arguments
+        # must raises an exception because that's required
         if not LOGIN_ENTITY_NAME_VALUE in arguments:
-            # raises an exception
             raise exceptions.MissingArgument(LOGIN_ENTITY_NAME_VALUE)
 
         # retrieves the entity manager
@@ -133,11 +124,10 @@ class AuthenticationEntityManager(colony.System):
 
         # in case the password is valid, creates the return
         # value as a map containing some of the user data
-        if password_valid:
-            return_value = {
-                VALID_VALUE : True,
-                USERNAME_VALUE : username
-            }
+        if password_valid: return_value = dict(
+            valid = True,
+            username = username
+        )
         # otherwise there is no valid username password
         # combination and raises an exception
         else:
