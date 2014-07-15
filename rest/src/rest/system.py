@@ -162,7 +162,15 @@ class Rest(colony.System):
         self.regex_index_plugin_id_map = {}
         self.service_methods = []
         self.service_methods_map = {}
-        self.session_c.load()
+
+        # tries to run the loading process for the currently
+        # assigned session class in case it fails the session
+        # class is changed to the fallback value and the proper
+        # loading strategy is re-started for that session
+        try: self.session_c.load()
+        except:
+            self.session_c = RestSession
+            self.session_c.load()
 
     def get_handler_filename(self):
         """
