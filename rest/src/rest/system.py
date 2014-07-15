@@ -2481,19 +2481,15 @@ class ShelveSession(RestSession):
     to provide a minimal and simple persistence layer for
     the sessions to be created.
 
-    The aim of the this class is to provide a complete thread
-    safe infra-structure that can be used safely in a multi
-    threaded environment without creating corruption.
+    The usage of this shelve based session is restricted
+    to the fact that it's not thread safe and so it should
+    never be used under at concurrent based environment.
     """
 
     SHELVE = None
     """ The global reference to the shelve file that is
     going to be used in the session storage process, this
     variable starts with the unset value (not loaded) """
-
-    _LOCK = threading.RLock()
-    """ The globally unique lock structure that is going to
-    be used for the access control to the shelve object """
 
     @classmethod
     def load(cls, file_path = "session.shelve"):
@@ -2527,9 +2523,7 @@ class ShelveSession(RestSession):
     def new(cls, *args, **kwargs):
         if not cls.SHELVE: cls.load()
         session = cls(*args, **kwargs)
-        cls._LOCK.acquire()
-        try: cls.SHELVE[session.session_id] = session
-        finally: cls._LOCK.release()
+        cls.SHELVE[session.session_id] = session
         return session
 
     @classmethod
@@ -2545,9 +2539,7 @@ class ShelveSession(RestSession):
 
     @classmethod
     def expire(cls, sid):
-        cls._LOCK.acquire()
-        try: del cls.SHELVE[sid]
-        finally: cls._LOCK.release()
+        del cls.SHELVE[sid]
 
     @classmethod
     def gc(cls):
@@ -2560,12 +2552,8 @@ class ShelveSession(RestSession):
     def flush(self):
         if not self.is_dirty(): return
         cls = self.__class__
-        cls._LOCK.acquire()
-        try:
-            self.mark(dirty = False)
-            cls.SHELVE.sync()
-        finally:
-            cls._LOCK.release()
+        self.mark(dirty = False)
+        cls.SHELVE.sync()
 
 class Cookie(object):
     """
