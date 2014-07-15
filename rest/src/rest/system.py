@@ -2338,6 +2338,10 @@ class RestSession(object):
     def get_remaining(self):
         remaining = self.expire_time - time.time()
         return 0 if remaining < 0 else remaining
+    
+    def get_name(self):
+        cls = self.__class__
+        return cls.__name__
 
     def get_attribute(self, attribute_name, default = None):
         """
