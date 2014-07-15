@@ -2950,12 +2950,14 @@ def assign_session_template_file(self, request, template_file, variable_prefix =
     session_timeout = request_session.get_timeout()
     session_maximum_timeout = request_session.get_maximum_timeout()
     session_expire_time = request_session.get_expire_time()
+    session_name = request_session.get_name()
 
     # assigns the various session properties to the template file
     template_file.assign(variable_prefix + "id", session_id)
     template_file.assign(variable_prefix + "timeout", session_timeout)
     template_file.assign(variable_prefix + "maximum_timeout", session_maximum_timeout)
     template_file.assign(variable_prefix + "expire_time", session_expire_time)
+    template_file.assign(variable_prefix + "name", session_name)
 
     # retrieves the session attributes map, this map should contain
     # a key value association between the various session attributes
