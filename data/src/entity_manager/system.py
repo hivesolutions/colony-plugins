@@ -121,7 +121,8 @@ the corresponding sql types to be used during runtime mapping """
 
 class DataEntityManager(colony.System):
     """
-    The data entity manager class.
+    The data entity manager class, responsible for the construction
+    and loading of new entity manager instances.
     """
 
     entity_engine_plugins_map = {}
@@ -232,10 +233,9 @@ class DataEntityManager(colony.System):
         """
 
         # retrieves the entity manager for the given id from the
-        # loaded entity manager map, sets as none if not found
+        # loaded entity manager map, sets as none if not found, then
+        # returns it to the caller method (as expected)
         entity_manager = self.loaded_entity_manager_map.get(id, None)
-
-        # returns the entity manager
         return entity_manager
 
     def get_entity_class(self):
