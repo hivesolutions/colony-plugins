@@ -2498,7 +2498,10 @@ class ShelveSession(RestSession):
     @classmethod
     def load(cls, file_path = "session.shelve"):
         super(ShelveSession, cls).load()
-        base_path = colony.conf("SESSION_BASE_PATH", "")
+        base_path = colony.conf("SESSION_PATH", "")
+        base_path = os.path.abspath(base_path)
+        exists_path = os.path.exists(base_path)
+        if not exists_path: os.makedirs(base_path)
         file_path = os.path.join(base_path, file_path)
         cls.SHELVE = cls.SHELVE or shelve.open(
             file_path,
