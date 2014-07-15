@@ -48,7 +48,9 @@ PLUGIN_HANDLER_VALUE = "plugin_handler"
 """ The plugin handler value """
 
 DEFAULT_ERROR_STATUS_CODE = 500
-""" The default error status code """
+""" The default error status code, this value
+is going to be set in the request in case no
+valid status code is set in it """
 
 class ServiceHttpColony(colony.System):
     """
@@ -117,7 +119,8 @@ class ServiceHttpColony(colony.System):
                 http_handler_plugin.handle_request(request)
                 request.status_code = request.status_code or DEFAULT_ERROR_STATUS_CODE
 
-                # returns immediately
+                # returns immediately as the request has been correctly
+                # handled by the current handler in iteration
                 return
 
         # raises the request not handled exception
