@@ -962,7 +962,7 @@ class RestRequest(object):
         self.session.stop(domain)
 
         # unsets the current session for the request as it
-        # amy longer be used for any other operation
+        # will no longer be used for any other operation
         self.session = None
 
     def clear_sessions(self):
@@ -1455,10 +1455,9 @@ class RestRequest(object):
         """
 
         # retrieves the session attributes map in case the session
-        # is defined otherwise retrieves the default map
+        # is defined otherwise retrieves the default map, then returns
+        # the session attributes map to the caller method (for usage)
         session_attributes_map = self.session and self.session.attributes_map or {}
-
-        # returns the session attributes map
         return session_attributes_map
 
     def get_plugin_manager(self):
@@ -2338,7 +2337,7 @@ class RestSession(object):
     def get_remaining(self):
         remaining = self.expire_time - time.time()
         return 0 if remaining < 0 else remaining
-    
+
     def get_name(self):
         cls = self.__class__
         return cls.__name__
