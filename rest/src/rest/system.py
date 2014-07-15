@@ -2512,7 +2512,7 @@ class ShelveSession(RestSession):
     @classmethod
     def unload(cls):
         super(ShelveSession, cls).unload()
-        cls.SHELVE.close()
+        cls.SHELVE and cls.SHELVE.close()
         cls.SHELVE = None
 
     @classmethod
@@ -2527,7 +2527,9 @@ class ShelveSession(RestSession):
     def new(cls, *args, **kwargs):
         if not cls.SHELVE: cls.load()
         session = cls(*args, **kwargs)
-        cls.SHELVE[session.session_id] = session
+        cls._LOCK.acquire()
+        try: cls.SHELVE[session.session_id] = session
+        finally: cls._LOCK.release()
         return session
 
     @classmethod
@@ -2543,7 +2545,9 @@ class ShelveSession(RestSession):
 
     @classmethod
     def expire(cls, sid):
-        del cls.SHELVE[sid]
+        cls._LOCK.acquire()
+        try: del cls.SHELVE[sid]
+        finally: cls._LOCK.release()
 
     @classmethod
     def gc(cls):
