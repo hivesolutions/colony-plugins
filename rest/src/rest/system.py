@@ -41,6 +41,7 @@ import re
 import os
 import time
 import shelve
+import cPickle
 import datetime
 import threading
 
@@ -153,7 +154,7 @@ class Rest(colony.System):
 
     def __init__(self, plugin, session_c = None):
         colony.System.__init__(self, plugin)
-        self.session_c = session_c or RestSession
+        self.session_c = session_c or RedisSession
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
@@ -2326,6 +2327,10 @@ class RestSession(object):
     def set_cookie(self, cookie):
         self.cookie = cookie
 
+    def get_remaining(self):
+        remaining = self.expire_time - time.time()
+        return 0 if remaining < 0 else remaining
+
     def get_attribute(self, attribute_name, default = None):
         """
         Retrieves the attribute value for the given
@@ -2554,6 +2559,65 @@ class ShelveSession(RestSession):
         cls = self.__class__
         self.mark(dirty = False)
         cls.SHELVE.sync()
+
+class RedisSession(RestSession):
+
+    REDIS = None
+
+    @classmethod
+    def load(cls, file_path = "session.shelve"):
+        super(RedisSession, cls).load()
+        import redis
+        url = colony.conf("REDISTOGO_URL", "redis://localhost")
+        cls.REDIS = cls.REDIS or redis.from_url(url)
+        cls.REDIS.ping()
+
+    @classmethod
+    def unload(cls):
+        super(ShelveSession, cls).unload()
+        cls.REDIS = None
+
+    @classmethod
+    def clear(cls):
+        cls.REDIS.flushdb()
+
+    @classmethod
+    def count(cls):
+        return 0
+
+    @classmethod
+    def new(cls, *args, **kwargs):
+        if not cls.REDIS: cls.load()
+        session = cls(*args, **kwargs)
+        remaining = session.get_remaining()
+        session_s = cPickle.dumps(session, protocol = 2)
+        cls.REDIS.setex(session.session_id, session_s, int(remaining))
+        return session
+
+    @classmethod
+    def get_s(cls, sid):
+        if not cls.REDIS: cls.load()
+        session_s = cls.REDIS.get(sid)
+        if not session_s: return session_s
+        session = cPickle.loads(session_s)
+        is_expired = session.is_expired()
+        if is_expired: cls.expire(sid)
+        session = None if is_expired else session
+        return session
+
+    @classmethod
+    def expire(cls, sid):
+        cls.REDIS.delete(sid)
+
+    def flush(self):
+        if not self.is_dirty(): return
+        cls = self.__class__
+        self.mark(dirty = False)
+        remaining = self.get_remaining()
+        session_s = cPickle.dumps(self, protocol = 2)
+        cls.REDIS.setex(self.session_id, session_s, int(remaining))
+        try: cls.REDIS.bgsave()
+        except: pass
 
 class Cookie(object):
     """
