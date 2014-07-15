@@ -58,8 +58,14 @@ _EPOLLHUP = 0x010
 _EPOLLRDHUP = 0x2000
 _EPOLLONESHOT = (1 << 30)
 _EPOLLET = (1 << 31)
+""" The various constant values that are going to be
+used in the detection of errors and states for the
+non blocking connection states """
 
 WSAEWOULDBLOCK = 10035
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
 
 BIND_HOST = ""
 """ The default bind host to be used when no other
