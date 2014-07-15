@@ -2576,7 +2576,8 @@ class RedisSession(RestSession):
     def load(cls, file_path = "session.shelve"):
         super(RedisSession, cls).load()
         import redis
-        url = colony.conf("REDISTOGO_URL", "redis://localhost")
+        url = colony.conf("REDISTOGO_URL", None)
+        if not url: raise RuntimeError("invalid redis url")
         cls.REDIS = cls.REDIS or redis.from_url(url)
         cls.REDIS.ping()
 
