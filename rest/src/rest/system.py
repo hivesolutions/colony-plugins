@@ -2050,6 +2050,18 @@ class RestSession(object):
     implementations that are going to be created at runtime.
     """
 
+    STORAGE = None
+    """ The global storage object that is going to be used for
+    the storage of (in-memory) data representing the current
+    session state, this should be used only for the trivial and
+    simplified session implementations """
+
+    GC_PENDING = True
+    """ The global flag that indicates if a garbage collection
+    (gc) operation is pending for the current session class, if
+    this value is unset the next session access should trigger
+    a garbage collection operation (may block some time) """
+
     session_id = None
     """ The session id used to securely identify each
     session, this value should be secure enough to avoid
@@ -2143,7 +2155,7 @@ class RestSession(object):
 
     @classmethod
     def load(cls):
-        cls.STORAGE = {}
+        cls.STORAGE = cls.STORAGE or dict()
         cls.GC_PENDING = True
 
     @classmethod
