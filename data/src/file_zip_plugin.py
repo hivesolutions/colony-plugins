@@ -76,9 +76,6 @@ class FileZipPlugin(colony.Plugin):
     def close_connection(self, connection):
         return self.system.close_connection(connection)
 
-    def get(self, connection, file_name):
-        return self.system.get(connection, file_name)
-
     def put(self, connection, file_path, file_name):
         return self.system.put(connection, file_path, file_name)
 
@@ -93,3 +90,6 @@ class FileZipPlugin(colony.Plugin):
 
     def list(self, connection, directory_name):
         return self.system.list(connection, directory_name)
+
+    def mtime(self, connection, file_name):
+        return self.system.mtime(connection, file_name)

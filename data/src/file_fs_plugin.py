@@ -93,3 +93,6 @@ class FileFsPlugin(colony.Plugin):
 
     def list(self, connection, directory_name):
         return self.system.list(connection, directory_name)
+
+    def mtime(self, connection, file_name):
+        return self.system.mtime(connection, file_name)

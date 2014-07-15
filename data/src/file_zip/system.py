@@ -199,6 +199,9 @@ class FileZip(colony.System):
     def list(self, connection, directory_name):
         pass
 
+    def mtime(self, connection, file_name):
+        pass
+
 class ZipConnection(object):
     """
     The connection that holds the information, regarding

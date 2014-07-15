@@ -199,3 +199,6 @@ class FileGridfs(colony.System):
 
         # returns the file name list
         return file_name_list
+
+    def mtime(self, connection, file_name):
+        pass

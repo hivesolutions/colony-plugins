@@ -219,44 +219,33 @@ class FileManager(object):
         self.connection_parameters = connection_parameters
 
     def get(self, file_name):
-        # retrieves the connection object
         connection = self.get_connection()
-
         return self.file_engine_plugin.get(connection, file_name)
 
     def put(self, file_path, file_name = None):
-        # retrieves the connection object
         connection = self.get_connection()
-
-        # sets the file name (target path) as the base
-        # file path name in case no file name is defined
         file_name = file_name or os.path.basename(file_path)
-
         return self.file_engine_plugin.put(connection, file_path, file_name)
 
     def put_file(self, file, file_name):
-        # retrieves the connection object
         connection = self.get_connection()
-
         return self.file_engine_plugin.put_file(connection, file, file_name)
 
     def put_data(self, data, file_name):
-        # retrieves the connection object
         connection = self.get_connection()
-
         return self.file_engine_plugin.put_data(connection, data, file_name)
 
     def delete(self, file_name):
-        # retrieves the connection object
         connection = self.get_connection()
-
         return self.file_engine_plugin.delete(connection, file_name)
 
     def list(self, directory_name):
-        # retrieves the connection object
         connection = self.get_connection()
-
         return self.file_engine_plugin.list(connection, directory_name)
+
+    def mtime(self, file_name):
+        connection = self.get_connection()
+        return self.file_engine_plugin.mtime(connection, file_name)
 
 class Connection(object):
     """
