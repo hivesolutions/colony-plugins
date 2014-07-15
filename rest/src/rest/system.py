@@ -153,7 +153,7 @@ class Rest(colony.System):
 
     def __init__(self, plugin, session_c = None):
         colony.System.__init__(self, plugin)
-        self.session_c = session_c or ShelveSession
+        self.session_c = session_c or RestSession
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
