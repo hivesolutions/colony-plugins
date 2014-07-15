@@ -1743,10 +1743,14 @@ def set_contents(
     contents = "",
     content_type = DEFAULT_CONTENT_TYPE,
     touch_date = False,
-    max_age = None
+    max_age = None,
+    etag = None,
+    verify = True
 ):
     """
-    Sets the given contents in the given request.
+    Sets the given contents in the given request. In case the
+    verify mode is enabled this method also handled the proper
+    cache verification according to the etag standards.
 
     @type request: Request
     @param request: The request to be set with the contents.
@@ -1764,24 +1768,47 @@ def set_contents(
     for the current set of contents, this value provides the resources
     to set cache in the client side for the defined amount of seconds. It
     should be used carefully to avoid unwanted behavior.
+    @type etag: String
+    @param etag: The string based etag value that is going to be used for
+    both verification of cache and also to set the associated header value.
+    @type verify: bool
+    @param verify: If the cache invalidation verify mode should be enabled,
+    meaning that a not modified value will be returned in case the etag
+    value for the contents to be sent has not changed.
     """
+
+    # tries to retrieve the if none match value that is going to
+    # be used to verify the server side cache (not modified) in
+    # case the verify mode is currently set
+    target = request.get_header("If-None-Match")
 
     # in case the touch date flag is set touches the date
     # updating the internal last modified date value, useful
     # for situation where cache is meant to be used inside the
     # page loading scope
-    touch_date and request.touch_date()
+    if touch_date: request.touch_date()
 
     # if the max age field is requested for the current set of
     # contents its set so that the client side creates cache
     # for the current set of content to be "sent"
-    max_age and request.set_max_age(max_age)
+    if max_age: request.set_max_age(max_age)
+
+    # verifies if the etag value was provided and if that's the
+    # case sets the proper header in the request, then in case the
+    # verify mode is set and the etag is provided verifies if the
+    # provided target value (etag) is valid and if that's the case
+    # sets the current request as cached (not modified)
+    if etag: request.set_header("ETag", etag)
+    cached = etag and verify and etag == target
+    cached = True if cached else False
 
     # sets the content type, then the result as translated into
     # the target content type and then flushes the data meaning
-    # that the buffer is written to the request
+    # that the buffer is written to the request, note that in case
+    # cached mode is enabled no data is going to be sent
     request.set_content_type(content_type)
-    request.set_result_translated(contents)
+    if cached: request.set_status_code(304)
+    else: request.set_result_translated(contents)
     request.flush()
 
 def set_status_code(self, request, status_code = 200):
