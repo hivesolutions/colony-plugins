@@ -153,7 +153,7 @@ class Rest(colony.System):
 
     def __init__(self, plugin, session_c = None):
         colony.System.__init__(self, plugin)
-        self.session_c = session_c or RestSession
+        self.session_c = session_c or ShelveSession
         self.matching_regex_list = []
         self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
@@ -2468,14 +2468,27 @@ class ShelveSession(RestSession):
     Shelve based implementation of the rest session, meant
     to provide a minimal and simple persistence layer for
     the sessions to be created.
+
+    The aim of the this class is to provide a complete thread
+    safe infra-structure that can be used safely in a multi
+    threaded environment without creating corruption.
     """
+
+    SHELVE = None
+    """ The global reference to the shelve file that is
+    going to be used in the session storage process, this
+    variable starts with the unset value (not loaded) """
+
+    _LOCK = threading.RLock()
+    """ The globally unique lock structure that is going to
+    be used for the access control to the shelve object """
 
     @classmethod
     def load(cls, file_path = "session.shelve"):
         super(ShelveSession, cls).load()
         base_path = colony.conf("SESSION_BASE_PATH", "")
         file_path = os.path.join(base_path, file_path)
-        cls.SHELVE = shelve.open(
+        cls.SHELVE = cls.SHELVE or shelve.open(
             file_path,
             protocol = 2,
             writeback = True
@@ -2527,9 +2540,13 @@ class ShelveSession(RestSession):
 
     def flush(self):
         if not self.is_dirty(): return
-        self.mark(dirty = False)
         cls = self.__class__
-        cls.SHELVE.sync()
+        cls._LOCK.acquire()
+        try:
+            self.mark(dirty = False)
+            cls.SHELVE.sync()
+        finally:
+            cls._LOCK.release()
 
 class Cookie(object):
     """
