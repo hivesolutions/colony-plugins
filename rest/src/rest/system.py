@@ -1198,9 +1198,13 @@ class RestRequest(object):
                 self.request.append_header("Set-Cookie", serialized_session_cookie)
                 self.session.set_cookie(None)
 
+        # in case the current result translated is an invalid value it
+        # must be "defaulted" as an empty string (would create issues)
+        if self.result_translated == None: self.result_translated = str()
+
         # sets the content type for the request, this should
         # be able to asset the correct content type in the
-        # target request object
+        # target request object (may be re-used many times)
         self.request.content_type = self.content_type
 
         # writes the result translated and flushes the
