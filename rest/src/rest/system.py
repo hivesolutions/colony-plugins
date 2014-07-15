@@ -2184,8 +2184,8 @@ class RestSession(object):
     @classmethod
     def gc(cls):
         cls.GC_PENDING = False
-        for sid in cls.SHELVE:
-            session = cls.SHELVE.get(sid, None)
+        for sid in cls.STORAGE:
+            session = cls.STORAGE.get(sid, None)
             is_expired = session.is_expired()
             if is_expired: cls.expire(sid)
 
