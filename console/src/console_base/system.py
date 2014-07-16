@@ -164,7 +164,7 @@ class ConsoleBase(colony.System):
         # timestamp and calculates the uptime as the difference between
         # both values (time delta)
         current_time = time.time()
-        plugin_manager_timestamp = plugin_manager.plugin_manager_timestamp
+        plugin_manager_timestamp = plugin_manager.get_timestamp()
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
