@@ -1599,7 +1599,7 @@ class RestRequest(object):
 
         if self._session: return self._session
         try: self.update_session()
-        except: pass
+        except: self._session = None
         return self._session
 
     def get_session(self, block = True):
