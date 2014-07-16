@@ -1527,7 +1527,8 @@ def process_form_data_flat(self, request, encoding = "utf-8", nullify = False):
 
 def process_acl_values(
     self,
-    acl_list, key,
+    acl_list,
+    key,
     wildcard_value = "*",
     maximum_value = 10000
 ):
@@ -1539,11 +1540,12 @@ def process_acl_values(
     @type acl_list: List
     @param acl_list: The list of acl (access control list) to
     be used for acl permission value retrieval.
-    @type key: String
+    @type key: String/List
     @param key: The key to be used for retrieval of acl permissions
-    value (this key is joined with the current wildcard).
+    value (this key is joined with the current wildcard). This value
+    may also be a list of keys and the most permissive one will be used.
     @type wildcard_key: String
-    @param wildcard_key: The wilcard key to be used for retrieval
+    @param wildcard_key: The wildcard key to be used for retrieval
     of wildcard values.
     @type maximum_value: int
     @param maximum_value: The maximum value valid for acl permission
@@ -1552,8 +1554,25 @@ def process_acl_values(
     @return: The lowest processed acl permission value for the given key.
     """
 
+    # verifies if the provided key value represents a sequence
+    # and if that's the case runs a series of recursions to gather
+    # the lowest (most permissive) value for the keys
+    is_sequence = type(key) in (types.ListType, types.TupleType)
+    if is_sequence:
+        permissions = []
+        for _key in key:
+            permission = self.process_acl_values(
+                acl_list,
+                _key,
+                wildcard_value = wildcard_value,
+                maximum_value = maximum_value
+            )
+            permissions.append(permission)
+        permission = min(permissions)
+        return permission
+
     # starts the permission values list with only the maximum
-    # value in it
+    # value in it as this is considered the fallback value
     permission_values = [maximum_value]
 
     # iterates over all the acl in the acl list
@@ -1563,14 +1582,14 @@ def process_acl_values(
         key_permissions = acl.get(key, maximum_value)
 
         # adds the various permission values to the permission
-        # values list
+        # values list to be used latter in evaluation
         permission_values.append(wildcard_permissions)
         permission_values.append(key_permissions)
 
-    # retrieves the minimum value from the permission values
+    # retrieves the minimum value from the permission values,
+    # meaning that the most permissive will be used and then
+    # returns such value to the caller method
     permission = min(permission_values)
-
-    # returns the permission
     return permission
 
 def validate_acl_session(
@@ -1586,9 +1605,10 @@ def validate_acl_session(
 
     @type request: Request
     @param request: The request to be used.
-    @type key: String
+    @type key: String/List
     @param key: The key to be used for retrieval of acl permissions
-    value (this key is joined with the current wildcard).
+    value (this key is joined with the current wildcard). This value
+    may also be a list of keys and the most permissive one will be used.
     @type value: int
     @param value: The value to be used for testing as minimal
     valid value.
@@ -1603,7 +1623,7 @@ def validate_acl_session(
     user_acl = self.get_session_attribute(request, session_attribute) or {}
 
     # process the acl values, retrieving the permissions value
-    permissions = self.process_acl_values((user_acl, ), key)
+    permissions = self.process_acl_values((user_acl,), key)
 
     # checks if the value is valid according
     # to the retrieved permissions
