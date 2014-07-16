@@ -1588,6 +1588,10 @@ class RestRequest(object):
         note that in case no session information is available or
         the information is invalid no session will be set.
 
+        This method should be used as a way to provide lazy access
+        to the session (session is only loaded when required), to be
+        able to minimize the resources used for loading session.
+
         @rtype: Session
         @return: The session that was "loaded" from the current request
         or an invalid/unset value in case no session was loaded.
