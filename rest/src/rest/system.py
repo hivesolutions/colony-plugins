@@ -825,10 +825,14 @@ class RestRequest(object):
     indirectly through the proper accessor method """
 
     resource_name = None
-    """ The resource name """
+    """ The resource name, considered to be the "driver" for the
+    proper rest plugin handler (eg: mvc) """
 
     path_list = None
-    """ The path list """
+    """ The path list, considered to be the remainder of the
+    provided path without the resource name, this value is
+    going to be provided to the "target" rest handler, through
+    the rest request object """
 
     encoder_name = None
     """ The encoder name, as the name of the encoder that is
@@ -851,7 +855,8 @@ class RestRequest(object):
     "translation" plugins associated with their "names" """
 
     parameters_map = {}
-    """ The parameters map, used to store temporary data """
+    """ The parameters map, used to store temporary data, this
+    is considered a legacy item an should not be used anymore """
 
     _generation_time = None
     """ The original time of generation of the rest request
