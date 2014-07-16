@@ -2621,7 +2621,7 @@ class ShelveSession(RestSession):
 class RedisSession(RestSession):
     """
     Redis based session that uses a redis server to store a
-    serialized version of the session associated with a string
+    serialized version of the session associated with string
     based session identifier values.
 
     This is a thread/concurrent safe session implementation that
@@ -2629,7 +2629,7 @@ class RedisSession(RestSession):
     a priority (and a requirement).
 
     To be able to use this session the proper configuration
-    variables must be set to defined the connection with redis.
+    variables must be set to define the connection with redis.
     """
 
     REDIS = None
