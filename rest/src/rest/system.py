@@ -563,7 +563,7 @@ class Rest(colony.System):
                     available_rpc_methods_alias[method] = alias
 
             # retrieves the list of all the available rpc methods as a string name
-            # and then iterates over the complete set of alias to add also the alis
+            # and then iterates over the complete set of alias to add also the alias
             # for the methods to this same list
             available_rpc_methods_string = [value.__name__ for value in available_rpc_methods]
             for available_rpc_method_alias_key in available_rpc_methods_alias:
