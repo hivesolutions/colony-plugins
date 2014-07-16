@@ -2619,8 +2619,23 @@ class ShelveSession(RestSession):
         cls.SHELVE.sync()
 
 class RedisSession(RestSession):
+    """
+    Redis based session that uses a redis server to store a
+    serialized version of the session associated with a string
+    based session identifier values.
+
+    This is a thread/concurrent safe session implementation that
+    may be used for highly parallel scenarios where scaling is
+    a priority (and a requirement).
+
+    To be able to use this session the proper configuration
+    variables must be set to defined the connection with redis.
+    """
 
     REDIS = None
+    """ The underlying redis connection object that will be
+    used for the storage and loading of sessions, this connection
+    is supposed to be permanent and auto-reconnection possible """
 
     @classmethod
     def load(cls, file_path = "session.shelve"):
