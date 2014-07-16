@@ -273,15 +273,6 @@ class Rest(colony.System):
         # underlying server oriented object
         rest_request = RestRequest(self, request)
 
-        try:
-            # updates the rest request session loading the appropriate
-            # session in case it exists (under the storage)
-            rest_request.update_session()
-        except:
-            # logs a debug message about the fact that
-            # no valid session could be loaded
-            self.plugin.debug("Session is invalid no session loaded or updated")
-
         # "touches" the rest request updating it's internal timing
         # structures, note that this operation is mandatory
         rest_request.touch()
@@ -820,10 +811,6 @@ class RestRequest(object):
     layer, meaning that data has already been sent to the
     underlying stream """
 
-    session = None
-    """ The associated session object, should allays be access
-    indirectly through the proper accessor method """
-
     resource_name = None
     """ The resource name, considered to be the "driver" for the
     proper rest plugin handler (eg: mvc) """
@@ -858,6 +845,17 @@ class RestRequest(object):
     """ The parameters map, used to store temporary data, this
     is considered a legacy item an should not be used anymore """
 
+    _session = None
+    """ The associated session object, should allays be access
+    indirectly through the proper accessor method, this is a
+    private object and should be used with proper care """
+
+    _updated = False
+    """ The flag that controls if the update (session) operation
+    that loads the session from the currently available structures
+    in the request has been already run for the request, this flag
+    avoid the multiple unnecessary retries for loading the session """
+
     _generation_time = None
     """ The original time of generation of the rest request
     measured as seconds since the epoch """
@@ -889,6 +887,13 @@ class RestRequest(object):
         self._generation_time = time.time()
         self._generation_clock = time.clock()
 
+    @property
+    def session(self):
+        if self._session: return self._session
+        try: self.update_session()
+        except: pass
+        return self._session
+
     def start_session(
         self,
         force = False,
@@ -919,7 +924,7 @@ class RestRequest(object):
         # in case a session exists and force flag is disabled
         # avoids creation (provides duplicate creation blocking)
         # must return immediately
-        if self.session and not force: return self.session
+        if self._session and not force: return self._session
 
         # in case no session id is defined, must generate a new
         # one using a secure algorithm for it (avoid corruption)
@@ -931,7 +936,7 @@ class RestRequest(object):
 
         # creates a new rest session and sets
         # it as the current session (uses the timeout information)
-        self.session = self.rest.session_c.new(
+        self._session = self.rest.session_c.new(
             session_id,
             timeout = timeout,
             maximum_timeout = maximum_timeout
@@ -947,8 +952,8 @@ class RestRequest(object):
 
         # starts the session with the defined domain and then
         # returns the same session as the created session
-        self.session.start(domain, secure = is_secure)
-        return self.session
+        self._session.start(domain, secure = is_secure)
+        return self._session
 
     def stop_session(self):
         """
@@ -961,16 +966,16 @@ class RestRequest(object):
 
         # in case no session is defined, creates a new empty
         # session that is going to be used for the operation
-        if not self.session: self.session = self.session_c()
+        if not self._session: self._session = self.session_c()
 
         # retrieves the domain value and uses it in the stop
         # operation of the currently defined session
         domain = self._get_domain()
-        self.session.stop(domain)
+        self._session.stop(domain)
 
         # unsets the current session for the request as it
         # will no longer be used for any other operation
-        self.session = None
+        self._session = None
 
     def clear_sessions(self):
         """
@@ -983,26 +988,37 @@ class RestRequest(object):
         # the sessions from the rest manager and then invalidate
         # the current session
         self.rest.clear_sessions()
-        self.session = None
+        self._session = None
 
     def update_session(self):
         """
-        Updates the current session.
+        Updates the current session from request's state.
         This method tries to "load" the session associated
         with the current request.
         The updating of the session will be archived using
         a set of predefined techniques.
         """
 
-        # updates the session using the attribute method
-        # this strategy goes through the especially designated
-        # session id attribute to load the session
-        self._update_session_attribute()
+        # verifies if the flag that controls the execution of
+        # the session updating operation is set and if that's
+        # the case skips the current execution logic
+        if self._updated: return
 
-        # updates the session using the cookie method, this
-        # strategy loads the cookie from the session id attribute
-        # defined in the cookie header
-        self._update_session_cookie()
+        try:
+            # updates the session using the attribute method
+            # this strategy goes through the especially designated
+            # session id attribute to load the session
+            self._update_session_attribute()
+
+            # updates the session using the cookie method, this
+            # strategy loads the cookie from the session id attribute
+            # defined in the cookie header
+            self._update_session_cookie()
+        finally:
+            # sets the updated flag, meaning that at least one
+            # execution of the update session operation has been
+            # performed and that no more session update should run
+            self._updated = True
 
     def touch(self):
         """
@@ -1013,7 +1029,7 @@ class RestRequest(object):
         # in case the session is defined updates the
         # expire time according to the timeout and
         # the current time
-        self.session and self.session.update_expire_time()
+        self._session and self._session.update_expire_time()
 
     def touch_date(self, secure_delta = DEFAULT_TOUCH_SECURE_DELTA):
         """
@@ -1049,7 +1065,7 @@ class RestRequest(object):
         # in case no session is defined must return immediately
         # not possible to change timeout in case no session is
         # currently defined
-        if not self.session: return
+        if not self._session: return
 
         # sets the maximum timeout value in case is not currently
         # set as the triple value of the timeout
@@ -1058,9 +1074,9 @@ class RestRequest(object):
         # updates the session timeout and maximum timeout values
         # and then generates the expire time from the current
         # time and the given timeout and maximum timeout
-        self.session.timeout = timeout
-        self.session.maximum_timeout = maximum_timeout
-        self.session._generate_expire_time(timeout, maximum_timeout)
+        self._session.timeout = timeout
+        self._session.maximum_timeout = maximum_timeout
+        self._session._generate_expire_time(timeout, maximum_timeout)
 
     def read(self):
         """
@@ -1191,15 +1207,15 @@ class RestRequest(object):
 
         # in case there is a session available, must try to update the
         # cookie associated information in the response
-        if self.session:
+        if self._session:
             # runs the flush operation in the currently associated session
             # so that the complete data is store in the data source and may
             # be accessed in further/future requests
-            self.session.flush()
+            self._session.flush()
 
             # retrieves the session cookie, this is a structure
             # that represents the cookie allowing some manage
-            session_cookie = self.session.get_cookie()
+            session_cookie = self._session.get_cookie()
 
             # in case there is a session cookie and the
             # the request is set to allow setting of cookies
@@ -1212,7 +1228,7 @@ class RestRequest(object):
                 # sets the session id in the cookie and then invalidates
                 # it so that no extra cookies are set
                 self.request.append_header("Set-Cookie", serialized_session_cookie)
-                self.session.set_cookie(None)
+                self._session.set_cookie(None)
 
         # in case the current result translated is an invalid value it
         # must be "defaulted" as an empty string (would create issues)
@@ -1464,7 +1480,7 @@ class RestRequest(object):
         # retrieves the session attributes map in case the session
         # is defined otherwise retrieves the default map, then returns
         # the session attributes map to the caller method (for usage)
-        session_attributes_map = self.session and self.session.attributes_map or {}
+        session_attributes_map = self.session.attributes_map if self.session else {}
         return session_attributes_map
 
     def get_plugin_manager(self):
@@ -1613,7 +1629,7 @@ class RestRequest(object):
         @param session: The associated session.
         """
 
-        self.session = session
+        self._session = session
 
     def lock_session(self):
         """
@@ -1959,7 +1975,7 @@ class RestRequest(object):
 
         # in case there's already a loaded session for
         # the current rest request returns immediately
-        if self.session: return
+        if self._session: return
 
         # retrieves the cookie value from the request
         cookie_value = self.request.get_header("Cookie")
@@ -1983,11 +1999,11 @@ class RestRequest(object):
         # tries to retrieve the session from the session id
         # this value may be invalid (not set) in case no
         # session could be retrieved from session id
-        self.session = self.rest.get_session(session_id)
+        self._session = self.rest.get_session(session_id)
 
         # if no session is selected, raises an invalid session
         # exception to indicate the error
-        if not self.session: raise exceptions.InvalidSession(
+        if not self._session: raise exceptions.InvalidSession(
             "no session started or session timed out"
         )
 
@@ -2000,7 +2016,7 @@ class RestRequest(object):
 
         # in case there's already a loaded session for
         # the current rest request returns immediately
-        if self.session: return
+        if self._session: return
 
         # retrieves the session id attribute value from the request
         session_id = self.request.get_attribute("session_id")
@@ -2012,8 +2028,8 @@ class RestRequest(object):
         # retrieves the session from the session id and if
         # no session is selected, raises an invalid session
         # exception to indicate the error
-        self.session = self.rest.get_session(session_id)
-        if not self.session: raise exceptions.InvalidSession(
+        self._session = self.rest.get_session(session_id)
+        if not self._session: raise exceptions.InvalidSession(
             "no session started or session timed out"
         )
 
