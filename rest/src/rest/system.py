@@ -889,10 +889,7 @@ class RestRequest(object):
 
     @property
     def session(self):
-        if self._session: return self._session
-        try: self.update_session()
-        except: pass
-        return self._session
+        return self.ensure_session()
 
     def start_session(
         self,
@@ -1585,37 +1582,60 @@ class RestRequest(object):
         if not session: return
         session.unset_attribute(name)
 
+    def ensure_session(self):
+        """
+        Ensures that the session is loaded from the current request,
+        note that in case no session information is available or
+        the information is invalid no session will be set.
+
+        @rtype: Session
+        @return: The session that was "loaded" from the current request
+        or an invalid/unset value in case no session was loaded.
+        """
+
+        if self._session: return self._session
+        try: self.update_session()
+        except: pass
+        return self._session
+
     def get_session(self, block = True):
         """
-        Retrieves the associated session.
+        Retrieves the associated session using the proper
+        locking mechanisms (secure way).
 
         @type block: bool
-        @param block: If the lock should be
-        used while accessing the session.
+        @param block: If the lock should be used while
+        accessing the session.
         @rtype: RestSession
         @return: The associated session.
         """
 
+        # makes sure that the session attribute is
+        # loaded from the current request, note that
+        # the session may be unset in case it was not
+        # possible to load it from the request
+        self.ensure_session()
+
         # in case the session is not set or the
         # block (lock) flag is not set the
         # session may be returned immediately
-        if not self.session or not block:
+        if not self._session or not block:
             # returns the session immediately,
             # no need to run through blocking
-            return self.session
+            return self._session
 
         # locks the current session to avoid
         # any erroneous modification
-        self.session.lock()
+        self._session.lock()
 
         try:
             # saves the current session into
             # a local variable for "safe" return
-            session = self.session
+            session = self._session
         finally:
             # releases the session lock allowing
             # usage by other thread
-            self.session.release()
+            self._session.release()
 
         # returns the "just" retrieved session
         # in a safe manner (run through lock)
