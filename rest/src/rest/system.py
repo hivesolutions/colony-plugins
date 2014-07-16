@@ -73,9 +73,11 @@ change the port that is going to be used at runtime """
 
 LOCALHOST_VALUES = (
     "localhost",
-    "127.0.0.1"
+    "127.0.0.1",
+    "::1"
 )
-""" The localhost values """
+""" The set defining the various string values that
+may represent the localhost (hostname and ip addresses) """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
