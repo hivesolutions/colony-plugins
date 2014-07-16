@@ -243,10 +243,9 @@ class ServiceHttpSystemInformation(colony.System):
         # retrieves the current time
         current_time = time.time()
 
-        # retrieves the plugin manager timestamp
-        plugin_manager_timestamp = plugin_manager.plugin_manager_timestamp
-
-        # calculates the uptime
+        # retrieves the plugin manager timestamp and uses it for the
+        # calculus of the uptime for the current system
+        plugin_manager_timestamp = plugin_manager.get_timestamp()
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
