@@ -2397,27 +2397,36 @@ def mark_redirect_to(self, request):
     """
     "Marks" the "redirect to" operation, so that only one
     try for redirection is accepted.
-    This method avoid possible (unwanted) replicas in the
+
+    This method avoids possible (unwanted) replicas in the
     redirection process.
-    This should be called in the redirection manager method.
+
+    This method should be called in the redirection manager
+    method (eg: the showing of the login page)
 
     @type request: Request
     @param request: The request to be used.
     """
 
     # retrieves both the target and the mark session attributes
-    # for processing of the mark
+    # for processing of the mark under the current method
     redirect_target = self.get_session_attribute(request, "redirect_to_target")
-    redirect_mark = self.get_session_attribute(request, "redirect_to_mark", unset_session_attribute = True)
+    redirect_mark = self.get_session_attribute(
+        request,
+        "redirect_to_mark",
+        unset_session_attribute = True
+    )
 
     # in case the "redirect to" is already "marked" the redirection has
     # been done and now the normal behavior should prevail (removes the
     # "redirect to" session attribute)
-    redirect_mark and self.unset_session_attribute(request, "redirect_to_target")
+    if redirect_mark: self.unset_session_attribute(request, "redirect_to_target")
 
-    # in case the redirect target is set and no marking
-    # is do, need to mark it
-    redirect_target and not redirect_mark and self.set_session_attribute(request, "redirect_to_mark", True)
+    # in case the redirect target is set and no marking is done, meaning
+    # that the next time this method is called the redirect to target
+    # will be removed from session (no other possible access)
+    if redirect_target and not redirect_mark:
+        self.set_session_attribute(request, "redirect_to_mark", True)
 
 def redirect_to(self, request, quote = False):
     """
