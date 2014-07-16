@@ -2637,12 +2637,18 @@ class RedisSession(RestSession):
     used for the storage and loading of sessions, this connection
     is supposed to be permanent and auto-reconnection possible """
 
+    BGSAVE = True
+    """ The global configuration variable that controls if the
+    current redis infra-structure should trigger a background
+    save (bgsave) operation on each flush """
+
     @classmethod
-    def load(cls, file_path = "session.shelve"):
+    def load(cls, bgsave = True):
         super(RedisSession, cls).load()
         import redis
         url = colony.conf("REDISTOGO_URL", None)
         if not url: raise RuntimeError("invalid redis url")
+        cls.BGSAVE = bgsave
         cls.REDIS = cls.REDIS or redis.from_url(url)
         cls.REDIS.ping()
 
@@ -2690,6 +2696,7 @@ class RedisSession(RestSession):
         remaining = self.get_remaining()
         session_s = cPickle.dumps(self, protocol = 2)
         cls.REDIS.setex(self.session_id, session_s, int(remaining))
+        if not cls.BGSAVE: return
         try: cls.REDIS.bgsave()
         except: pass
 
