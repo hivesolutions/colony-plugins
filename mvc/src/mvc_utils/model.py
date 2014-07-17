@@ -1142,15 +1142,11 @@ def is_valid(self):
     @return: If the current structure is valid.
     """
 
-    # in case the validation errors map
-    # is not valid or empty
-    if self.validation_errors_map:
-        # returns false (invalid)
-        return False
-    # otherwise it's empty (no errors)
-    else:
-        # returns true (valid)
-        return True
+    # verifies if the validation errors map contains any
+    # value in it, if that's the case the current model
+    # is considered to be invalid otherwise it's valid
+    if self.validation_errors_map: return False
+    else: return True
 
 def is_stored(self):
     """
