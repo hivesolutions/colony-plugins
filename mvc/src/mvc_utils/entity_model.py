@@ -1279,9 +1279,10 @@ def store_relations(
         self.store_relation(
             relation_name,
             _persist_type,
-            relation_persist_type, validate,
-            force_persist,
-            raise_exception,
+            relation_persist_type,
+            validate = validate,
+            force_persist = force_persist,
+            raise_exception = raise_exception,
             entity_manager = entity_manager
         )
 
@@ -1434,7 +1435,7 @@ def store_relation(
     remove_relations and self.delete_value(relation_name)
 
     # adds an error to the entity on the relation
-    # for latter usage
+    # for latter usage and presentation to user
     error_set and self.add_error(relation_name, "relation validation failed")
 
 def create(self, *args, **kwargs):
