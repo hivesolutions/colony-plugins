@@ -1083,10 +1083,8 @@ def validate(self):
             validation_method, validate_null, properties = validation_tuple
 
             # in case the validate null is not set and the
-            # attribute value is none (skip)
-            if not validate_null and attribute_value == None:
-                # continues the loop
-                continue
+            # attribute value is none (skips the current loop)
+            if not validate_null and attribute_value == None: continue
 
             # calls the validation method for validation on the
             # given attribute from the model
