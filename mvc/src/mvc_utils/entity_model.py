@@ -75,30 +75,6 @@ UPDATED_STATE_VALUE = 2
 REMOVED_STATE_VALUE = 3
 """ The removed state value """
 
-TARGET_ENTITY_VALUE = "target_entity"
-""" The target entity value """
-
-DATA_STATE_VALUE = "data_state"
-""" The data state value """
-
-RELATION_VALUE = "relation"
-""" The relation value """
-
-DATA_TYPE_VALUE = "data_type"
-""" The data type value """
-
-PERSIST_TYPE_VALUE = "persist_type"
-""" The persist type value """
-
-DATA_REFERENCE_VALUE = "data_reference"
-""" The data reference value """
-
-DATE_VALUE = "date"
-""" The date value """
-
-CLASS_VALUE = "_class"
-""" The class value """
-
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
@@ -650,7 +626,7 @@ def _class_is_reference(cls):
     # checks if the class is a data reference, by testing it
     # for the presence of the data reference value and by
     # testing the (possible) existing value against true validation
-    if hasattr(cls, DATA_REFERENCE_VALUE) and cls.data_reference == True:
+    if hasattr(cls, "data_reference") and cls.data_reference == True:
         # returns valid (the model class is in fact
         # a data reference model class)
         return True
@@ -1094,7 +1070,7 @@ def store(
         # model this will allow the saving process to prevent any problem
         # with validation in the saving process that will imply the
         # "rollback" of the transaction and the consequent invalidation
-        # of the data
+        # of the data (this process is recursive on model's relations)
         validate and self.preemptive_validate(persist_type)
 
         # tries to call the on store method, in order to notify the
@@ -1267,7 +1243,7 @@ def store_relations(
         # retrieves the attributes of the model for the current relation
         # in order to retrieve the appropriate persist type
         model_attributes = getattr(self.__class__, relation_name)
-        relation_persist_type = force_persist and PERSIST_ALL or model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE)
+        relation_persist_type = force_persist and PERSIST_ALL or model_attributes.get("persist_type", PERSIST_NONE)
 
         # recalculates the new persist type for the relation storing based on the
         # relation persist type and the current model persist type (associate type
@@ -1885,7 +1861,7 @@ def is_saved(self):
 
     # in case the current entity model
     # does not contain the data state value
-    if not hasattr(self, DATA_STATE_VALUE):
+    if not hasattr(self, "data_state"):
         # returns false
         return False
 
@@ -1909,7 +1885,7 @@ def is_updated(self):
 
     # in case the current entity model
     # does not contain the data state value
-    if not hasattr(self, DATA_STATE_VALUE):
+    if not hasattr(self, "data_state"):
         # returns false
         return False
 
@@ -1933,7 +1909,7 @@ def is_removed(self):
 
     # in case the current entity model
     # does not contain the data state value
-    if not hasattr(self, DATA_STATE_VALUE):
+    if not hasattr(self, "data_state"):
         # returns false
         return False
 
@@ -1943,6 +1919,29 @@ def is_removed(self):
 
     # returns the removed value
     return removed
+
+def is_related(self, name):
+    """
+    Verifies if the relation with the provided name is somehow
+    considered to be valid (related) with the current model instance.
+
+    A relation is considered to be valid in case the persist type
+    of it is either save or update.
+
+    @type name: String
+    @param name: The name of the relation that is going to be
+    validated for proper validity.
+    @rtype: bool
+    @return: If the relation with the provided name is considered
+    valid/related under the current model instance.
+    """
+
+    # retrieves the complete set of attributes of the relation
+    # (from the model class) and verifies if the persist type
+    # of it allows either save or update (is related validation)
+    attributes = getattr(self.__class__, name)
+    persist_type = attributes.get("persist_type", PERSIST_NONE)
+    return persist_type & (PERSIST_SAVE | PERSIST_UPDATE)
 
 def resolve_to_one(self, map, model_class, permissive):
     """
@@ -2017,7 +2016,7 @@ def resolve_to_one(self, map, model_class, permissive):
         # tries to retrieve a custom class model class name from
         # the provided relation map, in such case the model class
         # to be used must be retrieved from the entity manager
-        class_name = map.get(CLASS_VALUE, None)
+        class_name = map.get("_class", None)
         _model_class = class_name and self._entity_manager.get_entity(class_name) or model_class
 
         # creates the "new" entity (model)
@@ -2120,7 +2119,7 @@ def resolve_to_many(self, maps_list, model_class, permissive):
         # tries to retrieve a custom class model class name from
         # the provided relation map, in such case the model class
         # to be used must be retrieved from the entity manager
-        class_name = map.get(CLASS_VALUE, None)
+        class_name = map.get("_class", None)
         _model_class = class_name and self._entity_manager.get_entity(class_name) or model_class
 
         # in case the entity is valid applies the current item value (data map) to
@@ -2340,10 +2339,10 @@ def _load_value(self, key, value):
     if not class_value_type == types.DictType: return
 
     # retrieves the value data type
-    value_data_type = class_value.get(DATA_TYPE_VALUE, None)
+    value_data_type = class_value.get("data_type", None)
 
     # in case the data type of the field is relation (presence of an object relation)
-    if value_data_type == RELATION_VALUE:
+    if value_data_type == "relation":
         # retrieves the value type
         value_type = type(value)
 
@@ -2411,7 +2410,7 @@ def _load_value(self, key, value):
             # sets the entity instances list in the current object
             setattr(self, key, entity_instances_list)
     # in case its a date attribute (requires conversion)
-    elif value_data_type == DATE_VALUE:
+    elif value_data_type == "date":
         # in case there is a valid value defined
         if value:
             # retrieves the date value from the value (timestamp)
@@ -2535,7 +2534,7 @@ def _validate_relations(self, persist_type):
         # in order to retrieve the appropriate persist type, then re-calculate
         # the relation persist type based on these values
         model_attributes = getattr(self.__class__, relation_name)
-        model_persist_type = model_attributes.get(PERSIST_TYPE_VALUE, PERSIST_NONE)
+        model_persist_type = model_attributes.get("persist_type", PERSIST_NONE)
         relation_persist_type = model_persist_type & (persist_type | PERSIST_ASSOCIATE)
 
         # checks if the relation persist type is enough to allow the current
