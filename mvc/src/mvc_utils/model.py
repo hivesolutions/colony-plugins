@@ -1016,10 +1016,10 @@ def add_error(self, attribute_name, error_message, avoid_duplicates = True):
     """
 
     # in case the attribute name is not defined in the validation
-    # errors map
+    # errors map, must create a new sequence to store the values
     if not attribute_name in self.validation_errors_map:
         # starts the validation errors map for the attribute name
-        # as an empty list
+        # as an empty list (default initialization value)
         self.validation_errors_map[attribute_name] = []
 
     # retrieves the validation errors (list) for the
@@ -1092,7 +1092,7 @@ def validate(self):
 
     # checks if the current validation process has success
     # running (all the validation tests passed)
-    is_valid = self.is_valid()
+    is_valid = self.is_valid(recursive = True)
 
     # in case the validation was not successful and the current
     # model contains the fail validate method defined it's called
@@ -1134,13 +1134,54 @@ def validate_exception(self, exception_message = "validation failed", error_desc
     model_validation_errors_map = self.validation_errors_map
     raise exceptions.ModelValidationError(exception_message + ": " + str(model_validation_errors_map), self)
 
-def is_valid(self):
+def is_valid(self, recursive = True):
     """
-    Retrieves if the current structure is valid.
+    Retrieves if the current structure is valid. The strategy
+    for this evaluation may be either linear or recursive,
+    meaning that the current entity is only valid if all of
+    its relations are.
 
+    While running the recursive approach of the method each
+    validation may be verified to be a valid relation in
+    case the proper method exists.
+
+    @type recursive: bool
+    @param recursive: If a recursive strategy for evaluation
+    of the consistency/validity of the model should be applied.
     @rtype: bool
-    @return: If the current structure is valid.
+    @return: If the current structure is valid, note that if
+    the recursive value is set the relations are also considered
+    to be valid at this point of the workflow
     """
+
+    # retrieves the complete set of names of relations for which
+    # the validation process will be executed (recursion step),
+    # note that in case the recursive flag is not set no relations
+    # are considered in the list (no validation applied)
+    relation_names = self.get_relation_names() if recursive else []
+    for relation_name in relation_names:
+
+        # retrieves the value of the current relation in iteration
+        # and verifies that it's valid and not lazy loaded
+        relation_value = self.get_value(relation_name)
+        if relation_value == None: continue
+        if self.is_lazy_loaded(relation_name): continue
+
+        # verifies if the current instance contains the is related
+        # method that should verify of the current relation in iteration
+        # is somehow related with the model instance
+        has_method = hasattr(self, "is_related")
+        is_related = self.is_related(relation_name) if has_method else True
+        if not is_related: continue
+
+        # verifies if the relation is of type to many and in case it's
+        # not encapsulates the current relation in a sequence value,
+        # iterating then over these values for proper validation
+        is_to_many = self.is_to_many(relation_name)
+        if not is_to_many: relation_value = [relation_value]
+        for value in relation_value:
+            if value.is_valid(recursive = recursive): continue
+            return False
 
     # verifies if the validation errors map contains any
     # value in it, if that's the case the current model
