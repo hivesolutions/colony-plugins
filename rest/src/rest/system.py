@@ -2524,8 +2524,7 @@ class RestSession(object):
     def _generate_expire_time(self, timeout, maximum_timeout):
         """
         Generates the expire time value from the
-        given timeout value using the current
-        time.
+        given timeout value using the current time.
         The maximum timeout is used to control the generated
         expire time, and for calculation of the maximum expire time.
 
