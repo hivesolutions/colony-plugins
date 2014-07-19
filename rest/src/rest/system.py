@@ -108,6 +108,12 @@ DEFAULT_TOUCH_SECURE_DELTA = 360
 factor in the timestamp used in the touching of the
 (modified) date """
 
+DEFAULT_DIRTY_INTERVAL = 600
+""" The default amount of seconds that are going to be
+considered valid as an interval to mark a session as
+dirty for the new calculus of expire time, this value
+avoids an exhaustion on flushing the session data """
+
 class Rest(colony.System):
     """
     The rest (manager) class, the top level system class
@@ -2314,14 +2320,25 @@ class RestSession(object):
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
 
-    def update_expire_time(self):
+    def update_expire_time(self, dirty_interval = DEFAULT_DIRTY_INTERVAL):
         """
-        Updates the expire time value according
-        to the currently defined timeout and
-        maximum timeout values.
+        Updates the expire time value according to the currently
+        defined timeout and maximum timeout values.
+
+        This update will mark the current session as dirty only
+        in case the expire time delta exceeds the provided interval.
+
+        @type dirty_interval: float
+        @param dirty_interval: The minimum amount of seconds (delta) that
+        must be defined between the original and the new expire time, so
+        that the current session will be marked as dirty (and flushed).
+        This value helps maintaining performance in session management.
         """
 
+        original = self.expire_time
         self._generate_expire_time(self.timeout, self.maximum_timeout)
+        should_mark = self.expire_time - original > dirty_interval
+        if should_mark: self.mark()
 
     def lock(self):
         """
@@ -2529,8 +2546,8 @@ class RestSession(object):
         if not self._maximum_expire_time:
             self._maximum_expire_time = current_time + maximum_timeout
 
-        # calculates the expire time incrementing
-        # the timeout to the current time
+        # calculates the (new) expire time by incrementing the timeout
+        # to the currently defined time (extending session lifetime)
         expire_time = current_time + timeout
 
         # sets the expire time as the calculated expire time
