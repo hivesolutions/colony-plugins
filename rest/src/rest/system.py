@@ -279,10 +279,6 @@ class Rest(colony.System):
         # underlying server oriented object
         rest_request = RestRequest(self, request)
 
-        # "touches" the rest request updating it's internal timing
-        # structures, note that this operation is mandatory
-        rest_request.touch()
-
         # sets a series of attributes in the rest request that may be
         # used latter for a series of operations
         rest_request.set_resource_name(resource_name)
@@ -293,9 +289,12 @@ class Rest(colony.System):
         # in case the request is meant to be handled by services a
         # special case is selected and a special handling is performed
         if resource_name == "services":
-            # handles the request with the services request handler
-            # and then return immediately as the request is handled
+            # handles the request with the services request handler,
+            # note that proper callback are called before and after
+            # and then returns immediately as the request is handled
+            rest_request.pre_handle()
             self.handle_rest_request_services(rest_request)
+            rest_request.post_handle()
             return
 
         # otherwise it's a "general" request and the typical handling
@@ -317,9 +316,12 @@ class Rest(colony.System):
                 plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
                 rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
 
-                # handles the rest request using the rest service plugin and
+                # handles the rest request using the rest service plugin,
+                # note that proper callback are called before and after and
                 # returns the control flow to the caller method immediately
+                rest_request.pre_handle()
                 rest_service_plugin.handle_rest_request(rest_request)
+                rest_request.post_handle()
                 return
 
         # raises the rest request not handled exception, because of the control
@@ -896,6 +898,14 @@ class RestRequest(object):
     @property
     def session(self):
         return self.ensure_session()
+
+    def pre_handle(self):
+        pass
+
+    def post_handle(self):
+        # "touches" the rest request updating it's internal timing
+        # structures, note that this operation is mandatory
+        self.touch()
 
     def start_session(
         self,
