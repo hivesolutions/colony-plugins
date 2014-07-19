@@ -279,10 +279,6 @@ class Rest(colony.System):
         # underlying server oriented object
         rest_request = RestRequest(self, request)
 
-        # "touches" the rest request updating it's internal timing
-        # structures, note that this operation is mandatory
-        rest_request.touch()
-
         # sets a series of attributes in the rest request that may be
         # used latter for a series of operations
         rest_request.set_resource_name(resource_name)
@@ -1044,7 +1040,7 @@ class RestRequest(object):
         # in case the session is defined updates the
         # expire time according to the timeout and
         # the current time (extending it's life)
-        if self.session: self.session.update_expire_time()
+        if self._session: self._session.update_expire_time()
 
     def touch_date(self, secure_delta = DEFAULT_TOUCH_SECURE_DELTA):
         """
@@ -1223,6 +1219,11 @@ class RestRequest(object):
         # in case there is a session available, must try to update the
         # cookie associated information in the response
         if self._session:
+            # "touches" the rest request updating it's internal timing
+            # structures, note that this operation is mandatory in order
+            # to properly extend the current session's lifetime
+            self._session.update_expire_time()
+
             # runs the flush operation in the currently associated session
             # so that the complete data is store in the data source and may
             # be accessed in further/future requests
