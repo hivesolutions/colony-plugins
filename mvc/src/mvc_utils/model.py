@@ -1158,7 +1158,8 @@ def is_valid(self, recursive = True):
     # the validation process will be executed (recursion step),
     # note that in case the recursive flag is not set no relations
     # are considered in the list (no validation applied)
-    relation_names = self.get_relation_names() if recursive else []
+    has_relations = hasattr(self, "get_relation_names")
+    relation_names = self.get_relation_names() if recursive and has_relations else []
     for relation_name in relation_names:
 
         # retrieves the value of the current relation in iteration
