@@ -205,7 +205,18 @@ class DropboxClient(object):
             # closes the http client
             self.http_client.close({})
 
-    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE, set_structure = True):
+    def generate_oauth_structure(
+        self,
+        oauth_consumer_key,
+        oauth_consumer_secret,
+        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature = None,
+        oauth_timestamp = None,
+        oauth_nonce = None,
+        oauth_version = DEFAULT_OAUTH_VERSION,
+        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE,
+        set_structure = True
+    ):
         """
         Generates a new oauth structure, for the given parameters.
 
@@ -769,12 +780,22 @@ class OauthStructure:
     """ The token secret """
 
     oauth_verifier = None
-    """ The verififer """
+    """ The verifier """
 
     oauth_access_token = None
     """ The oauth access token """
 
-    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE):
+    def __init__(
+        self,
+        oauth_consumer_key,
+        oauth_consumer_secret,
+        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature = None,
+        oauth_timestamp = None,
+        oauth_nonce = None,
+        oauth_version = DEFAULT_OAUTH_VERSION,
+        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE
+    ):
         """
         Constructor of the class.
 
