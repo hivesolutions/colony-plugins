@@ -1814,47 +1814,50 @@
 
             // registers for the key down event in the current body
             // element so that global keyboard events are captured
-            isValid && _body.keydown(function(event) {
-                        // retrieves the currently matched object as the log
-                        // element that is going to be used in the operations
-                        var console = matchedObject;
+            isValid && _body.keydown(onKeyDown = function(event) {
+                // retrieves the currently matched object as the log
+                // element that is going to be used in the operations
+                var console = matchedObject;
 
-                        // retrieves the key value that is going to be used
-                        // in the resolution of the proper method
-                        var keyValue = event.keyCode
-                                ? event.keyCode
-                                : event.charCode ? event.charCode : event.which;
+                // retrieves the key value that is going to be used
+                // in the resolution of the proper method
+                var keyValue = event.keyCode ? event.keyCode : event.charCode
+                        ? event.charCode
+                        : event.which;
 
-                        // in case the shift key is pressed some special
-                        // operations may be performed
-                        if (event.shiftKey) {
-                            switch (keyValue) {
-                                case 70 :
-                                    // checks if the current console is currently displayed
-                                    // in fullscreen and then checks if the autocomplete box
-                                    // is visible
-                                    var isFullscreen = console.hasClass("fullscreen");
+                // in case the shift key is pressed some special
+                // operations may be performed
+                if (event.shiftKey) {
+                    switch (keyValue) {
+                        case 70 :
+                            // checks if the current console is currently displayed
+                            // in fullscreen and then checks if the autocomplete box
+                            // is visible
+                            var isFullscreen = console.hasClass("fullscreen");
 
-                                    // in case the current mode is fullscreen, changes to the
-                                    // window model otherwise changes to fullscreen, then in
-                                    // case the autocomplete window is shows runs the layout
-                                    // update in it using the autocomplete function
-                                    isFullscreen
-                                            ? _window(console)
-                                            : fullscreen(console);
+                            // in case the current mode is fullscreen, changes to the
+                            // window model otherwise changes to fullscreen, then in
+                            // case the autocomplete window is shows runs the layout
+                            // update in it using the autocomplete function
+                            isFullscreen
+                                    ? _window(console)
+                                    : fullscreen(console);
 
-                                    // prevents the default event to avoid unwanted behavior
-                                    event.preventDefault();
+                            // prevents the default event to avoid unwanted behavior
+                            event.preventDefault();
 
-                                    // breaks the swith
-                                    break;
-                            }
-                        }
+                            // breaks the swith
+                            break;
+                    }
+                }
 
-                        // stops the event propagation this should be able
-                        // to avoid possible problems with double handling
-                        event.stopPropagation();
-                        event.stopImmediatePropagation();
+                // stops the event propagation this should be able
+                // to avoid possible problems with double handling
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+            });
+            matchedObject.bind("destroyed", function() {
+                        _body.unbind("keydown", onKeyDown);
                     });
         };
 
