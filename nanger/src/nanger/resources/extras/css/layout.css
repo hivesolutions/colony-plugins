@@ -29,11 +29,16 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
+.meta {
+    display: none;
+}
+
 .log {
     background-color: #272822;
     color: #ffffff;
     font-family: Consolas, monospace;
     font-size: 13px;
+    font-style: normal;
     height: 360px;
     line-height: 20px;
     margin: 20px 0px 20px 0px;
@@ -48,6 +53,7 @@
     color: #ffffff;
     font-family: Consolas, monospace;
     font-size: 13px;
+    font-style: normal;
     height: 360px;
     line-height: 20px;
     margin: 20px 0px 20px 0px;
