@@ -963,11 +963,16 @@
             var tokenStructure = getToken(console);
             var token = tokenStructure[0];
 
+            // retrieves the currently defined base path as this is going to
+            // be used for the resolution of the complete url value
+            var basePath = jQuery(".meta > #base-path");
+            basePath = basePath.html();
+
             // runs the remove query to retrieve the various autcomplete
             // results (this query is meant to be fast 100ms maximum)
             jQuery.ajax({
                 type : "post",
-                url : "console/autocomplete",
+                url : basePath + "console/autocomplete",
                 data : {
                     command : token,
                     instance : console.data("instance")
@@ -1163,9 +1168,14 @@
             // complete execution of the previous lines)
             command = _pending + "\n" + command;
 
+            // retrieves the currently defined base path as this is going to
+            // be used for the resolution of the complete url value
+            var basePath = jQuery(".meta > #base-path");
+            basePath = basePath.html();
+
             jQuery.ajax({
                         type : "post",
-                        url : "console/execute",
+                        url : basePath + "console/execute",
                         data : {
                             command : command,
                             instance : console.data("instance"),
@@ -1705,11 +1715,16 @@
             // the initial loading of the console
             current.hide();
 
+            // retrieves the currently defined base path as this is going to
+            // be used for the resolution of the complete url value
+            var basePath = jQuery(".meta > #base-path");
+            basePath = basePath.html();
+
             // runs the remove query to retrieve the various autcomplete
             // results (this query is meant to be fast 100ms maximum)
             jQuery.ajax({
                         type : "post",
-                        url : "console/init",
+                        url : basePath + "console/init",
                         success : function(data) {
                             // unpacks the resulting json data into the result
                             // and the instance part, so that they may be used
