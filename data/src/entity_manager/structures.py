@@ -2455,7 +2455,7 @@ class EntityClass(object):
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
         if not attribute_type == types.DictType: return False
-        data_type = attribute.get("data_type", None)
+        data_type = attribute.get("type", None)
 
         # checks the value of the data type to "see"
         # if it refers a relation value
@@ -3855,7 +3855,7 @@ class EntityClass(object):
         # on the attribute and then uses it to
         # retrieve the data type of the attribute
         attribute = getattr(cls, name)
-        attribute_data_type = attribute.get("data_type", None)
+        attribute_data_type = attribute.get("type", None)
 
         # in case the "requested" attribute is a relation
         # additional processing must be done to retrieve
@@ -3873,7 +3873,7 @@ class EntityClass(object):
             # current attribute in order to retrieve the
             # appropriate data type (target id attribute data type)
             attribute = getattr(target_class, target_id)
-            attribute_data_type = attribute.get("data_type", None)
+            attribute_data_type = attribute.get("type", None)
 
         # returns the "calculated" attribute
         # data type

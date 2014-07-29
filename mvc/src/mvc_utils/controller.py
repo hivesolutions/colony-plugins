@@ -466,7 +466,7 @@ def get_entity_model(
         # retrieves the entity model id data type, then retrieves
         # the associated cast type and used it to cast the entity
         # model id (this is the safest way possible)
-        entity_model_id_data_type = entity_model_id_value["data_type"]
+        entity_model_id_data_type = entity_model_id_value["type"]
         cast_type = DATA_TYPE_CAST_TYPES_MAP[entity_model_id_data_type]
         entity_model_id_casted = self._cast_safe(entity_model_id, cast_type, -1)
 

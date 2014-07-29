@@ -1281,7 +1281,7 @@ class EntityManager(object):
 
         # retrieves the current table type (table id type) for the
         # construction of the relation table (for indirect relations)
-        table_type = self.types_map[table_id_value.get("data_type", "integer")]
+        table_type = self.types_map[table_id_value.get("type", "integer")]
 
         # retrieves the complete set of indirect relations for the
         # current entity class, the list is going to be used during
@@ -1331,7 +1331,7 @@ class EntityManager(object):
 
             # retrieves the associated sql (data) type for the type
             # of the (target) table id attribute (foreign key)
-            target_type = self.types_map[target_id_value.get("data_type", "integer")]
+            target_type = self.types_map[target_id_value.get("type", "integer")]
 
             # creates the buffer to hold the query and populates it with the
             # base values of the query (base creation of the table)
@@ -2614,7 +2614,7 @@ class EntityManager(object):
 
                 # retrieves the associated sql (data) type for the type
                 # of the (target) table id attribute (foreign key)
-                sql_type = self.types_map[table_id_value.get("data_type", "integer")]
+                sql_type = self.types_map[table_id_value.get("type", "integer")]
 
                 # creates the index for the foreign key field and adds
                 # it to the list of index queries
@@ -2624,7 +2624,7 @@ class EntityManager(object):
             else:
                 # retrieves the associated sql (data) type for the type
                 # of the current item value
-                sql_type = self.types_map[item_value.get("data_type", "integer")]
+                sql_type = self.types_map[item_value.get("type", "integer")]
 
             # writes the comma to the query buffer only in case the
             # is first flag is not set
@@ -2677,7 +2677,7 @@ class EntityManager(object):
 
             # retrieves the associated sql (data) type for the type
             # of the table id (item) value
-            table_id_type = self.types_map[table_id_value.get("data_type", "integer")]
+            table_id_type = self.types_map[table_id_value.get("type", "integer")]
 
             # writes the upper table id information into the current query
             # buffer, this information includes the table id,

@@ -425,7 +425,7 @@ def apply(self, map, permissive = False):
 
             # retrieves the value data type and secure
             # attributes to "take some decisions"
-            value_data_type = class_value.get("data_type", None)
+            value_data_type = class_value.get("type", None)
             value_secure = class_value.get("secure", False)
 
             # in case the value is a secure attribute

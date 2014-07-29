@@ -2339,7 +2339,7 @@ def _load_value(self, key, value):
     if not class_value_type == types.DictType: return
 
     # retrieves the value data type
-    value_data_type = class_value.get("data_type", None)
+    value_data_type = class_value.get("type", None)
 
     # in case the data type of the field is relation (presence of an object relation)
     if value_data_type == "relation":
