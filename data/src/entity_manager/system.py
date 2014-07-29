@@ -6545,8 +6545,13 @@ class EntityManager(object):
             _filters = []
 
             # iterates over all the set of filters
-            # to normalize them
+            # to normalize each of them
             for filter in filters:
+                # in case the filter is not valid or empty it
+                # should be ignored and so the current iteration
+                # step is skipped (no normalization process)
+                if not filter: continue
+
                 # in case the (filter) type is not present
                 # in the filter (it must be the default equals
                 # filter)
@@ -6633,8 +6638,8 @@ class EntityManager(object):
                         # as a sequence of values
                         filter["fields"] = ({"name" : filter_fields, "value" : None},)
 
-                # adds the filter tot the list
-                # of (normalized) filters
+                # adds the filter to the list of (normalized) filters
+                # as the filter is now considered to be normalized
                 _filters.append(filter)
 
             # sets the filters tuple in the options map
