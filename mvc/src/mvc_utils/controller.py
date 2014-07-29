@@ -4901,11 +4901,10 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
         # of the entity model)
         return
 
-    # retrieves the entity model attribute value
+    # retrieves the entity model attribute value and uses it
+    # to infer the data type for the current attribute 
     entity_model_attribute_value = getattr(entity_model, attribute_key)
-
-    # retrieves the data type from the entity model attribute value
-    data_type = entity_model_attribute_value["data_type"]
+    data_type = entity_model_attribute_value["type"]
 
     # retrieves the cast type for the data type
     cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)

@@ -47,13 +47,13 @@ class RootEntity(structures.EntityClass):
 
     object_id = dict(
         id = True,
-        data_type = "integer",
+        type = "integer",
         generated = True
     )
     """ The object id of the root entity """
 
     status = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The status of the entity (1-enabled, 2-disabled) """
 
@@ -80,13 +80,13 @@ class RootEntityAbstract(structures.EntityClass):
 
     object_id = dict(
         id = True,
-        data_type = "integer",
+        type = "integer",
         generated = True
     )
     """ The object id of the root entity abstract """
 
     status = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The status of the entity (1-enabled, 2-disabled) """
 
@@ -106,13 +106,13 @@ class Logable(structures.EntityClass):
 
     object_id = dict(
         id = True,
-        data_type = "integer",
+        type = "integer",
         generated = True
     )
     """ The object id of the "logable" """
 
     log_id = dict(
-        data_type = "integer",
+        type = "integer",
         generated = True,
         generator_type = "table",
         generator_field_name = "logable_log_id"
@@ -120,7 +120,7 @@ class Logable(structures.EntityClass):
     """ The id of the log entry (primary identifier) """
 
     log_number = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The log number of the taxable """
 
@@ -141,7 +141,7 @@ class Taxable(RootEntity):
     """
 
     tax_number = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The tax number of the taxable """
 
@@ -155,42 +155,42 @@ class Person(RootEntity):
     """
 
     name = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The name of the person """
 
     age = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The age of the person """
 
     parent = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The parent for the current person """
 
     children = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The children of the current person """
 
     dogs = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The dogs "owned" by the person """
 
     cars = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The cars "owned" by the person """
 
     employees = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The employees associated with the person """
 
     address = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The address associated with the person """
 
@@ -265,12 +265,12 @@ class Employee(Person, Logable, Taxable):
     """
 
     salary = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The salary of the employee """
 
     boss = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The boss of the employee (only one is allowed) """
 
@@ -300,22 +300,22 @@ class Address(RootEntity):
     """
 
     street = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The street of the address """
 
     number = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The door number of the address """
 
     country = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The country of the address """
 
     person = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The person associated with the address """
 
@@ -345,17 +345,17 @@ class Dog(RootEntity):
     """
 
     name = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The name of the dog """
 
     owner = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The owner of the dog """
 
     enemy = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The enemy of the dog """
 
@@ -392,7 +392,7 @@ class Cat(RootEntity):
     """
 
     name = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The name of the cat """
 
@@ -411,22 +411,22 @@ class Car(RootEntity):
     """
 
     tires = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The salary of the cat """
 
     owners = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The owner of the car """
 
     suppliers = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The suppliers of spare parts to the car """
 
     mechanic = dict(
-        data_type = "relation"
+        type = "relation"
     )
     """ The mechanic (person) to be used to repair the car """
 
@@ -480,7 +480,7 @@ class Operation(Logable):
     """
 
     name = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The name of the operation """
 
@@ -498,7 +498,7 @@ class Chair(RootEntityAbstract):
     """
 
     legs = dict(
-        data_type = "integer"
+        type = "integer"
     )
     """ The salary of the cat """
 
@@ -517,12 +517,12 @@ class File(RootEntity):
     """
 
     filename = dict(
-        data_type = "text"
+        type = "text"
     )
     """ The name (representation) of the file """
 
     data = dict(
-        data_type = "data"
+        type = "data"
     )
     """ The (binary) data of the file """
 

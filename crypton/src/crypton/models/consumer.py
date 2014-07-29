@@ -60,21 +60,21 @@ class Consumer(root_entity.RootEntity):
     """ The status enumeration """
 
     name = dict(
-        data_type = "text",
+        type = "text",
         mandatory = True,
         secure = True
     )
     """ The consumers's name """
 
     api_key = dict(
-        data_type = "text",
+        type = "text",
         mandatory = True,
         secure = True
     )
     """ The consumers's value """
 
     status = dict(
-        data_type = "integer",
+        type = "integer",
         mandatory = True,
         secure = True
     )

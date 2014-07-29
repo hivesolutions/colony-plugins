@@ -1942,7 +1942,7 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
 
     # retrieves the data type from the model class attribute value
     # and uses it to retrieve the cast type
-    data_type = model_class_attribute_value["data_type"]
+    data_type = model_class_attribute_value["type"]
     cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)
 
     # in case no cast type is defined

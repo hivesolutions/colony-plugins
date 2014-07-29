@@ -49,7 +49,7 @@ class RootEntity(models.EntityModel):
 
     object_id = dict(
         id = True,
-        data_type = "integer",
+        type = "integer",
         generated = True
     )
     """ The object id of the root entity, this should
