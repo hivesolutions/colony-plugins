@@ -299,7 +299,7 @@ RESOLUTION_ORDER_REGEX_VALUE = "resolution_order_regex"
 DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 """ The default content type charset value """
 
-DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
+DEFAULT_CACHE_CONTROL_VALUE = "no-store, no-cache, must-revalidate"
 """ The default cache control value """
 
 UPGRADE_MESSAGE_SIZE_MAP = {
