@@ -243,7 +243,7 @@ def _class_get(
     entity_model = entity_manager.get(cls, id_value, options, **kwargs)
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
 
-    # in case no entity model was found for the requested parameters
+    # in case no entity model was not found for the requested parameters
     # an error must be raised indicating such problems as the retrieval
     # of a related entity is considered to be of mandatory value
     if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
@@ -403,6 +403,7 @@ def _class_find_one(
     context = None,
     namespace = None,
     entity_manager = None,
+    raise_e = False,
     **kwargs
 ):
     """
@@ -423,6 +424,9 @@ def _class_find_one(
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
+    @type raise_e: boolean
+    @param raise_e: If an exception must be raised in case no
+    model instance is found for the requested parameters.
     @rtype: Entity
     @return: The retrieved entity model (first retrieval).
     """
@@ -451,6 +455,11 @@ def _class_find_one(
     entity_models = entity_manager.find(cls, options, **kwargs)
     entity_model = entity_models and entity_models[0] or None
     entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
+
+    # in case no entity model was not found for the requested parameters
+    # an error must be raised indicating such problems as the retrieval
+    # of a related entity is considered to be of mandatory value
+    if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
 
     # returns the retrieved entity model
     return entity_model
