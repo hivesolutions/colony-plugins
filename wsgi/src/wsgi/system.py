@@ -453,7 +453,7 @@ class WsgiRequest:
         """
 
         if not "Cache-Control" in self.headers_out:
-            self.headers_out["Cache-Control"] = "no-store, no-cache, must-revalidate"
+            self.headers_out["Cache-Control"] = "no-cache, must-revalidate"
 
     def parse_post_attributes(self):
         """
