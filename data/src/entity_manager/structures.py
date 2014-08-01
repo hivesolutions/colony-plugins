@@ -3573,7 +3573,7 @@ class EntityClass(object):
         value = self.__class__._from_sql_value(name, sql_value, encoding)
         return value
 
-    def to_map(self, entity_class = None, depth = 0):
+    def to_map(self, entity_class = None, depth = 0, special = True):
         """
         Converts the current entity (instance) into a linear
         (non recursive) map representation with a random
@@ -3594,6 +3594,12 @@ class EntityClass(object):
         @type depth: int
         @param depth: The depth (recursion) level to be used in
         the conversion of relations for the entity.
+        @type special: bool
+        @param special: If the special attributes of the model
+        instance should also be serialized if present.
+        @rtype: Dictionary
+        @return: The map representing the current instance, this
+        map should be safe to be serialized (no loops).
         """
 
         # creates the map to hold all the value for the
@@ -3604,6 +3610,10 @@ class EntityClass(object):
         # retrieves the entity class (level) to be used
         # in the conversion to the map structure
         entity_class = entity_class or self.__class__
+
+        # in case the special flag is set the special attributes
+        # of the current instance should also be serialized
+        if special and hasattr(self, "mtime"): map["_mtime"] = self.mtime
 
         # retrieves the id name and values and sets the id
         # value in the map (this is a mandatory field event
@@ -3683,7 +3693,11 @@ class EntityClass(object):
 
                     # converts the value into a map and set it as
                     # the relation value in the relation value list
-                    _relation_value = _value.to_map(target_class, depth - 1)
+                    _relation_value = _value.to_map(
+                        entity_class = target_class,
+                        depth = depth - 1,
+                        special = special
+                    )
                     relation_value.append(_relation_value)
 
             # otherwise it must be a to one relation and only
@@ -3697,7 +3711,11 @@ class EntityClass(object):
                 # relation storage is skipped to avoid problems
                 value = self.get_value(relation, load_lazy = True)
                 if colony.is_lazy(value): continue
-                relation_value = value.to_map(target_class, depth - 1) if value else value
+                relation_value = value.to_map(
+                    entity_class = target_class,
+                    depth = depth - 1,
+                    special = special
+                ) if value else value
 
             # sets the relation value (list of maps or map)
             # in the current entity map representation
@@ -3800,7 +3818,8 @@ class EntityClass(object):
                             recursive = recursive,
                             set_empty_relations = set_empty_relations,
                             entities = entities,
-                            scope = scope
+                            scope = scope,
+                            set_mtime = set_mtime
                         )
                         values.append(_entity)
 
@@ -3826,7 +3845,8 @@ class EntityClass(object):
                         recursive = recursive,
                         set_empty_relations = set_empty_relations,
                         entities = entities,
-                        scope = scope
+                        scope = scope,
+                        set_mtime = set_mtime
                     )
 
             # sets the correct value associated with the name in
@@ -3843,7 +3863,9 @@ class EntityClass(object):
         # as reference for possible insertions, this is only
         # applied in case the set modification time flag is set
         _mtime = map.get("_mtime", None)
-        set_mtime and _mtime and  setattr(entity, "_mtime", _mtime)
+        if set_mtime and _mtime:
+            setattr(entity, "_mtime", _mtime)
+            setattr(entity, "mtime", _mtime)
 
         # returns the "just" updated entity (entity with the
         # map values)
