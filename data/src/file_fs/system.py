@@ -45,7 +45,10 @@ ENGINE_NAME = "fs"
 """ The engine name """
 
 BUFFER_SIZE = 4096
-""" The size of the buffer for writing """
+""" The size of the buffer for writing, this values
+is relevant for the performance of that operation as
+a small value would imply many operations and a large
+value may require a large amount of memory"""
 
 class FileFs(colony.System):
     """
@@ -271,6 +274,21 @@ class FileFs(colony.System):
 
         # returns the file name list
         return file_name_list
+
+    def size(self, connection, file_name):
+        # retrieves the base file connection and
+        # then uses it to retrieve the base path
+        file_connection = connection.file_connection
+        base_path = file_connection.base_path
+
+        # strips the extra path separator values
+        # (avoids problems working with the file system)
+        file_name = file_name.lstrip("/")
+
+        # creates the target file path from the base path
+        # and uses it to retrieve the size of the file (in bytes)
+        target_file_path = os.path.join(base_path, file_name)
+        return os.path.getsize(target_file_path)
 
     def mtime(self, connection, file_name):
         # retrieves the base file connection and

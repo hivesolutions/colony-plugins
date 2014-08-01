@@ -243,6 +243,10 @@ class FileManager(object):
         connection = self.get_connection()
         return self.file_engine_plugin.list(connection, directory_name)
 
+    def size(self, file_name):
+        connection = self.get_connection()
+        return self.file_engine_plugin.size(connection, file_name)
+
     def mtime(self, file_name):
         connection = self.get_connection()
         return self.file_engine_plugin.mtime(connection, file_name)
