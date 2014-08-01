@@ -375,10 +375,10 @@ def apply(self, map, permissive = False):
         # apply the to the current model
         for item_name, item_value in map.items():
             # in case the class or the parameters (reserved values)
-            # item is found, special handling is required
+            # item are found, special handling is required
             if item_name in ("_class", "_parameters", "_mtime"):
-                # sets the class or parameters "directly"
-                # in the model
+                # sets the class or parameters "directly" in the model
+                # so that they are properly updated (as expected)
                 setattr(self, item_name, item_value)
 
                 # continues the loop no need to
