@@ -621,13 +621,13 @@ class EntityManager(object):
 
                 # creates the meta information map containing some general
                 # information about the contents present in the container file
-                information = {
-                    "type" : "json",
-                    "entities" : [entity_name for entity_name in self.entities_map],
-                    "time" : time.time(),
-                    "range" : date_range,
-                    "encoding" : DEFAULT_ENCODING
-                }
+                information = dict(
+                    type = "json",
+                    entities = [entity_name for entity_name in self.entities_map],
+                    time = time.time(),
+                    range = date_range,
+                    encoding = DEFAULT_ENCODING
+                )
 
                 # dumps the information structure using the json serializer
                 # to serialize its data
@@ -2914,7 +2914,8 @@ class EntityManager(object):
                 query_buffer.write("'%s'" % entity_class.__name__)
 
             # retrieves the proper modification time either from
-            # the entity or from the current system time
+            # the entity or from the current system time, this allows
+            # the forced setting of an mtime (useful for bulk import)
             _mtime = hasattr(entity, "_mtime") and entity._mtime or time.time()
 
             # writes the comma to the query buffer only in case the
@@ -3067,7 +3068,8 @@ class EntityManager(object):
                 query_buffer.write(field_sql_value)
 
             # retrieves the proper modification time either from
-            # the entity or from the current system time
+            # the entity or from the current system time, this allows
+            # the forced setting of an mtime (useful for bulk import)
             _mtime = hasattr(entity, "_mtime") and entity._mtime or time.time()
 
             # writes the comma to the query buffer only in case the
@@ -5221,6 +5223,10 @@ class EntityManager(object):
             current_class_name = result_map["_class"]
             current_class = self.entities_map.get(current_class_name, structures.EntityClass)
 
+            # retrieves the current modified time value for the
+            # current entity class level (to be set in new instances)
+            current_modified_time = result_map["_mtime"]
+
             # in case the current class does not exists in the
             # map of entities the map reference must be created
             # and set on the entities map
@@ -5235,8 +5241,11 @@ class EntityManager(object):
             # map (for latter possible re-usage)
             if not id in entities[current_class]:
                 # creates a new entity instance and associates it
-                # with the entities "cache" map
-                entities[current_class][id] = current_class.build(self, entities, scope)
+                # with the entities "cache" map, note that the created
+                # instance will be properly set with the time value
+                instance = current_class.build(self, entities, scope)
+                instance.mtime = current_modified_time
+                entities[current_class][id] = instance
 
             # retrieves the entity reference from the map
             # of entities cache (cache retrieval) and then
@@ -5336,6 +5345,10 @@ class EntityManager(object):
                         target_class_name = result_map[current_path + "_class"]
                         target_class = self.entities_map.get(target_class_name, structures.EntityClass)
 
+                        # retrieves the current modified time value for the
+                        # current entity class level (to be set in new instances)
+                        current_modified_time = result_map[current_path + "_mtime"]
+
                         # in case the target class does not exists in the
                         # map of entities the map reference must be created
                         # and set on the entities map
@@ -5351,7 +5364,9 @@ class EntityManager(object):
                         if not target_id_value in entities[target_class]:
                             # creates a new entity class and associates it
                             # with the entities "cache" map
-                            entities[target_class][target_id_value] = target_class.build(self, entities, scope)
+                            instance = target_class.build(self, entities, scope)
+                            instance.mtime = current_modified_time
+                            entities[target_class][target_id_value] = instance
 
                         # retrieves the "new" entity from the entities map, taking
                         # into account the proper target class and the current
@@ -5509,7 +5524,7 @@ class EntityManager(object):
             current_class = self.entities_map.get(current_class_name, structures.EntityClass)
 
             # retrieves the current modified time value for the
-            # current entity class level
+            # current entity class level (to be set in new instances)
             current_modified_time = result_map["_mtime"]
 
             # in case the current class does not exists in the
@@ -5530,7 +5545,8 @@ class EntityManager(object):
                 # attribute is set in the new map (properly decoded)
                 entities[current_class][id] = {
                     "_class" : current_class_name.decode("utf-8"),
-                    "_mtime" : current_modified_time
+                    "_mtime" : current_modified_time,
+                    "mtime" : current_modified_time
                 }
 
             # retrieves the entity reference from the map
@@ -5660,7 +5676,8 @@ class EntityManager(object):
                             # the proper decoding action performed
                             entities[target_class][target_id_value] = {
                                 "_class" : target_class_name.decode("utf-8"),
-                                "_mtime" : target_modified_time
+                                "_mtime" : target_modified_time,
+                                "mtime" : target_modified_time
                             }
 
                         # retrieves the "new" entity from the entities map, taking
