@@ -375,7 +375,8 @@ def apply(self, map, permissive = False):
         # apply the to the current model
         for item_name, item_value in map.items():
             # in case the class or the parameters (reserved values)
-            # item are found, special handling is required
+            # item are found, special handling is required so that the
+            # value is immediately set in the instance (no validation)
             if item_name in ("_class", "_parameters", "_mtime", "mtime"):
                 # sets the class or parameters "directly" in the model
                 # so that they are properly updated (as expected)
