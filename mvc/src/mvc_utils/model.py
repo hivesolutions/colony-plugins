@@ -376,7 +376,7 @@ def apply(self, map, permissive = False):
         for item_name, item_value in map.items():
             # in case the class or the parameters (reserved values)
             # item are found, special handling is required
-            if item_name in ("_class", "_parameters", "_mtime"):
+            if item_name in ("_class", "_parameters", "_mtime", "mtime"):
                 # sets the class or parameters "directly" in the model
                 # so that they are properly updated (as expected)
                 setattr(self, item_name, item_value)
