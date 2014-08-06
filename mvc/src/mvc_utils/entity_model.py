@@ -100,7 +100,8 @@ DATA_TYPE_CAST_TYPES_MAP = {
     "metadata" : dict,
     "relation" : None
 }
-""" The map associating the data types with the cast types """
+""" The map associating the data types with the cast types
+so that they may be used for default and fallback casting """
 
 def _class_get_class_name(cls):
     """
