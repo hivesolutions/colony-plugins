@@ -102,6 +102,25 @@ DATA_TYPE_CAST_TYPES_MAP = {
 }
 """ The map associating the data types with the cast types """
 
+def _class_get_class_name(cls):
+    """
+    Retrieves the name of the current class in the "standard"
+    underscore based form so that it may be used in routing
+    and for some other purposes.
+
+    This method is a utility for this common task.
+
+    @rtype: String
+    @return: The entity class name in the "standard"
+    underscore based form, to be used for routing.
+    """
+
+    # retrieves the current class standard (camel cased)
+    # name and then converts it to underscore notation
+    class_name = cls.__name__
+    class_name = colony.to_underscore(class_name)
+    return class_name
+
 def _class_get_entity(cls, entity_name, entity_manager = None):
     """
     Class method that retrieves the reference to an entity
@@ -273,7 +292,7 @@ def _class_get(
     # retrieves the name of the model entitie's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and applies the
     # data from the field to the model (apply operation)
-    name = apply_name or entity_model._get_entity_class_name()
+    name = apply_name or cls.get_class_name()
     data = controller.get_field(context, name, {})
     entity_model.apply(data)
 
