@@ -2324,8 +2324,8 @@ def _get_entity_class_pluralized(self, entity_class = None):
     # the pluralized version using the default suffix based
     # strategy (may create syntactic errors)
     entity_class_name = entity_class.__name__
-    lower_cased_entity_class_name = colony.to_underscore(entity_class_name)
-    entity_class_pluralized = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
+    lower_entity_class_name = colony.to_underscore(entity_class_name)
+    entity_class_pluralized = lower_entity_class_name + PLURALIZATION_SUFFIX_VALUE
 
     # returns the "just" created entity class
     # pluralized value to the caller method
