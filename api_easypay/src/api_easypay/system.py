@@ -380,7 +380,7 @@ class EasypayClient(object):
         get_payment_details_date_read = self.get_xml_node_text(get_payment_details_root_node, "ep_date_read")
         get_payment_details_status_read = self.get_xml_node_text(get_payment_details_root_node, "ep_status_read")
 
-        # converst the numeric payment details
+        # converts the numeric payment details
         get_payment_details_value = float(get_payment_details_value)
         get_payment_details_value_fixed = float(get_payment_details_value_fixed)
         get_payment_details_value_var = float(get_payment_details_value_var)

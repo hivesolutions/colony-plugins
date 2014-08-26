@@ -112,15 +112,15 @@ class AuthenticationEntityManager(colony.System):
         # retrieves the users that match the authentication parameters
         # and retrieves the first user as the possible valid one, defaulting
         # to an invalid/unset value in case no entities exist
-        user_entities = entity_manager.find(login_entity_class, username = username)
-        user_entity = user_entities[0] if user_entities else None
+        users = entity_manager.find(login_entity_class, username = username)
+        user = users[0] if users else None
 
         # in case the user was not found an authentication
         # error must be raised about the issue
-        if not user_entity: raise exceptions.AuthenticationError("user not found")
+        if not user: raise exceptions.AuthenticationError("user not found")
 
         # checks that the password is valid
-        password_valid = colony.password_match(user_entity.password_hash, password, login_salt)
+        password_valid = colony.password_match(user.password_hash, password, login_salt)
 
         # in case the password is valid, creates the return
         # value as a map containing some of the user data
