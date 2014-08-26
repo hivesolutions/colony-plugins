@@ -171,12 +171,12 @@ class SignatureController(base.BaseController):
             )
         )
 
-        # retrieves the consumer entity with the api key
-        consumer_entity = models.Consumer.find_one(filter)
+        # retrieves the consumer (entity) with the api key
+        consumer = models.Consumer.find_one(filter)
 
         # raises an exception in case no consumer was found
         # this is the expected behavior for such problem
-        if not consumer_entity:
+        if not consumer:
             raise crypton.AccessDeniedException("invalid api key")
 
     def _get_key_path(self, key_name, key_type):
