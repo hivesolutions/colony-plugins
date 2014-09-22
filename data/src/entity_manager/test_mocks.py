@@ -101,7 +101,7 @@ class RootEntityAbstract(structures.EntityClass):
 class Logable(structures.EntityClass):
     """
     The (interface) class that decorates an entity with
-    the "logable" attribute for polymorphic retrieval.
+    the "loggable" attribute for polymorphic retrieval.
     """
 
     object_id = dict(
@@ -109,7 +109,7 @@ class Logable(structures.EntityClass):
         type = "integer",
         generated = True
     )
-    """ The object id of the "logable" """
+    """ The object id of the "loggable" """
 
     log_id = dict(
         type = "integer",
