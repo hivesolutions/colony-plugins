@@ -740,8 +740,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         breed_dog.object_id = 2
         breed_dog.name = "name_breed_dog"
         breed_dog.owner = breeder
-        breed_dog.digital_tag = 123
-        self.entity_manager.save(breeder)
+        breed_dog.digital_tag = "123"
         self.entity_manager.save(breed_dog)
 
         # retrieves both the breeder so that the proper relations at
