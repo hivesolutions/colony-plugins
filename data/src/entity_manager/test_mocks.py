@@ -293,6 +293,26 @@ class Employee(Person, Logable, Taxable):
             is_mapper = True
         )
 
+class Breeder(Person):
+    """
+    The specialized version of a person that takes care of a
+    professional/specialized dog or cat.
+    """
+
+    license_number = dict(
+        type = "text"
+    )
+    """ The license number as a set of characters for the
+    breeder that is going to identify him professionally """
+
+    @staticmethod
+    def _relation_dogs():
+        return dict(
+            type = "to-many",
+            target = BreedDog,
+            reverse = "owner"
+        )
+
 class Address(RootEntity):
     """
     The address entity class, representing the typical
@@ -383,6 +403,19 @@ class Dog(RootEntity):
             target = Cat,
             is_mapper = True
         )
+
+class BreedDog(Dog):
+    """
+    The specialized dog class for dogs that are meant to be
+    adopted by proper breeders, should contain special attributes
+    like the digital tag.
+    """
+
+    digital_tag = dict(
+        type = "text"
+    )
+    """ The digital tag of the dog, meant to identify
+    it in any intervention """
 
 class Cat(RootEntity):
     """
