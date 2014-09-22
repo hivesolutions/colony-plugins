@@ -723,6 +723,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         pass
 
     def test_multilevel(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(test_mocks.Breeder)
+        self.entity_manager.create(test_mocks.BreedDog)
+
         # creates the initial breeder entity that will be used latter
         # to be set as the owner of the new breed dog
         breeder = test_mocks.Breeder()
