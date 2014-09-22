@@ -726,8 +726,6 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         pass
 
     def test_find(self):
-        # tenho de testar se o find esta a a funcar bem e
-        # se as relacoes nao estao lazy nos sitios indicados
         pass
 
     def test_invalid_relation(self):
@@ -1309,3 +1307,32 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.nullify(recursive = True)
         self.assertEqual(person.name, None)
         self.assertEqual(address.country, None)
+
+    def test_multilevel(self):
+        # creates the initial breeder entity that will be used latter
+        # to be set as the owner of the new breed dog
+        breeder = test_mocks.Breeder()
+        breeder.object_id = 1
+        breeder.name = "name_breeder"
+        self.entity_manager.save(breeder)
+
+        # creates the breed dog entity that is going to be associated
+        # to the breeder at a multi layer relation level
+        breed_dog = test_mocks.BreedDog()
+        breed_dog.object_id = 2
+        breed_dog.name = "name_breed_dog"
+        breed_dog.owner = breeder
+        breed_dog.digital_tag = 123
+        self.entity_manager.save(breeder)
+        self.entity_manager.save(breed_dog)
+
+        # retrieves both the breeder so that the proper relations at
+        # a multi layer level may be properly tested
+        saved_breeder = self.entity_manager.get(test_mocks.Breeder, 1)
+        self.assertNotEqual(saved_breeder, None)
+
+        # verifies that the to many dogs relations is correctly retrieved
+        # and that the breed dog level attributes are available
+        self.assertNotEqual(saved_breeder.dogs, [])
+        self.assertEqual(saved_breeder.dogs[0].object_id, breed_dog.object_id)
+        self.assertEqual(saved_breeder.dogs[0].digital_tag, breed_dog.digital_tag)
