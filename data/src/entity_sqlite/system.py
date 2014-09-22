@@ -113,6 +113,7 @@ class SqliteEngine(object):
         file_path = parameters.get("file_path", None)
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
+        show_sql = colony.conf("SHOW_SQL", False)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
         connection._connection = SqliteConnection(
@@ -120,6 +121,7 @@ class SqliteEngine(object):
             cache_size = cache_size,
             synchronous = synchronous
         )
+        connection._show_sql = show_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -249,6 +251,10 @@ class SqliteEngine(object):
             # prints a debug message about the query that is going to be
             # executed under the pgsql engine (for debugging purposes)
             self.sqlite_system.debug("[%s] %s" %  (ENGINE_NAME, query))
+
+            # in case the current connections requests that the sql string
+            # should be displayed it's printed to the logger properly
+            if connection._show_sql: self.sqlite_system.info("[%s] %s" % (ENGINE_NAME, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect

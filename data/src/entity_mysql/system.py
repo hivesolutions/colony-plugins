@@ -146,11 +146,13 @@ class MysqlEngine(object):
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
+        show_sql = colony.conf("SHOW_SQL", False)
         connection._connection = MysqlConnection(host, user, password, database)
         connection._transaction_level = 0
         connection._user = user
         connection._host = host
         connection._database = database
+        connection._show_sql = show_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -357,6 +359,10 @@ class MysqlEngine(object):
             # prints a debug message about the query that is going to be
             # executed under the mysql engine (for debugging purposes)
             self.mysql_system.debug("[%s] %s" %  (ENGINE_NAME, query))
+
+            # in case the current connections requests that the sql string
+            # should be displayed it's printed to the logger properly
+            if connection._show_sql: self.mysql_system.info("[%s] %s" % (ENGINE_NAME, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
