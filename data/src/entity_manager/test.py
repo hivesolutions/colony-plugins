@@ -732,6 +732,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         breeder = test_mocks.Breeder()
         breeder.object_id = 1
         breeder.name = "name_breeder"
+        breeder.license_number = "license_number_breeder"
         self.entity_manager.save(breeder)
 
         # creates the breed dog entity that is going to be associated
@@ -740,7 +741,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         breed_dog.object_id = 2
         breed_dog.name = "name_breed_dog"
         breed_dog.owner = breeder
-        breed_dog.digital_tag = "123"
+        breed_dog.digital_tag = "digital_tag_breed_dog"
         self.entity_manager.save(breed_dog)
 
         # retrieves both the breeder so that the proper relations at
@@ -753,6 +754,13 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertNotEqual(saved_breeder.dogs, [])
         self.assertEqual(saved_breeder.dogs[0].object_id, breed_dog.object_id)
         self.assertEqual(saved_breeder.dogs[0].digital_tag, breed_dog.digital_tag)
+
+        # retrieves the breed dog using an eager approach to the owner and then
+        # verifies that the license number is properly set (as expected)
+        saved_breed_dog = self.entity_manager.get(test_mocks.BreedDog, 2, dict(
+            eager = ("owner",)
+        ))
+        self.assertEqual(saved_breed_dog.owner.license_number, breeder.license_number)
 
     def test_save_with_cycle(self):
         pass
@@ -936,7 +944,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute (defaults as descending)
-        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : "name"})
+        persons = self.entity_manager.find(test_mocks.Person, dict(
+            order_by = "name"
+        ))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -947,7 +957,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in descending order (explicit)
-        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : (("name", "descending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, dict(
+            order_by = (("name", "descending"),)
+        ))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -958,7 +970,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in ascending order (explicit)
-        persons = self.entity_manager.find(test_mocks.Person, {"order_by" : (("name", "ascending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, dict(
+            order_by = (("name", "ascending"),)
+        ))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -989,7 +1003,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in descending order
-        persons = self.entity_manager.find(test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "descending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, dict(
+            eager = ("address",),
+            order_by = (("address.street", "descending"),)
+        ))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1000,7 +1017,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in ascending order
-        persons = self.entity_manager.find(test_mocks.Person, {"eager" : ("address",), "order_by" : (("address.street", "ascending"),)})
+        persons = self.entity_manager.find(test_mocks.Person, dict(
+            eager = ("address",),
+            order_by = (("address.street", "ascending"),)
+        ))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order

@@ -417,6 +417,15 @@ class BreedDog(Dog):
     """ The digital tag of the dog, meant to identify
     it in any intervention """
 
+    @staticmethod
+    def _relation_owner():
+        return dict(
+            type = "to-one",
+            target = Breeder,
+            reverse = "dogs",
+            is_mapper = True
+        )
+
 class Cat(RootEntity):
     """
     The cat entity class, representing the typical
