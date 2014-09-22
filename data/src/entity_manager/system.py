@@ -3301,7 +3301,8 @@ class EntityManager(object):
 
                 # retrieves the target class, the reverse value and
                 # then the is to many flag for the current (direct)
-                # relation
+                # relation, these values are going to be used for
+                # the proper mapping operation (as requested)
                 target_class = entity.get_target(direct_relation)
                 reverse = entity.get_reverse(direct_relation)
                 is_to_many = entity.is_to_many(direct_relation)
@@ -3313,6 +3314,12 @@ class EntityManager(object):
                 target_is_reference = target_class.is_reference()
                 if target_is_reference: target_class = self.get_entity(target_class.__name__)
                 if not target_class: continue
+
+                # runs the concrete level class resolution, meaning that the
+                # proper inheritance level for the reverse relation name will
+                # be discovered for the mapping of the relation allowing multiple
+                # levels to be used (and re-used)
+                target_class = target_class.get_cls(reverse)
 
                 # in case the relation is of type to many it must be validated
                 # so that the value is assured to be a sequence
