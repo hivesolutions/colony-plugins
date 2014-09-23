@@ -959,6 +959,7 @@ def add_custom_validation(
     """
     Adds a "custom" validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties map.
+
     This method should be used carefully and should be considered a secondary
     resource for attribute validation.
 
@@ -1044,15 +1045,42 @@ def remove_custom_validation(
     validation_method,
     contexts = ("default",)
 ):
+    """
+    Removes a previously added "custom" validation method from a certain
+    attribute, avoiding its execution at runtime.
+
+    This method should be used carefully and should be considered a secondary
+    resource for attribute validation.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute that will have
+    the provided validation methods removed from execution.
+    @type validation_method_name: Function
+    @param validation_method_name: The function with validation method
+    that will be removed from execution for the attribute.
+    @type contexts: Tuple
+    @param contexts: The (validation) contexts for which the the validation
+    method should be removed.
+    """
+
+    # iterates over the complete set of contexts from which the validation
+    # method will be removed (complete validation method removal)
     for context in contexts:
+        # creates a list that will hold the various valid/matching
+        # validation tuples and then retrieves the context validation
+        # map using it to retrieve the validation list (containing the tuples)
         validation_tuples = []
         context_validation_map = self.validation_map[context]
         attribute_validation_list = context_validation_map[attribute_name]
 
+        # iterates over the complete set of validation tuples in the
+        # attribute validation list trying to find the valid ones
         for validation_tuple in attribute_validation_list:
             if not validation_tuple[0] == validation_method: continue
             validation_tuples.append(validation_tuple)
 
+        # iterates over the complete set of (valid) validation tuples
+        # and removes them from the attribute validation list
         for validation_tuple in validation_tuples:
             attribute_validation_list.remove(validation_tuple)
 
