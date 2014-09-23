@@ -958,8 +958,7 @@ def add_custom_validation(
 ):
     """
     Adds a "custom" validation method to the attribute with the given name.
-    The adding of the validation can be configured using the properties
-    map.
+    The adding of the validation can be configured using the properties map.
     This method should be used carefully and should be considered a secondary
     resource for attribute validation.
 
@@ -1010,6 +1009,27 @@ def remove_validation(
     validation_method_name,
     contexts = ("default",)
 ):
+    """
+    Removes a named based validation method from the current entity
+    and for the provided attribute (name).
+
+    This method removes the complete set of method taking for the
+    method name independently of the original properties provided.
+
+    The set of contexts is respected and only the validation methods
+    that are registered for the provided contexts are removed.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute that will have
+    the provided validation methods removed from execution.
+    @type validation_method_name: String
+    @param validation_method_name: The name of the validation method
+    that will be removed from execution for the attribute.
+    @type contexts: Tuple
+    @param contexts: The (validation) contexts for which the the validation
+    method should be removed.
+    """
+
     validation_method_name = validation_method_name + "_validate"
     validation_method = getattr(self, validation_method_name)
     self.remove_custom_validation(
