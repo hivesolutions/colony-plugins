@@ -940,7 +940,13 @@ def add_validation(
     validation_method = getattr(self, validation_method_name)
 
     # adds the "custom" validation method to the current model
-    self.add_custom_validation(attribute_name, validation_method, validate_null, properties, contexts)
+    self.add_custom_validation(
+        attribute_name,
+        validation_method,
+        validate_null = validate_null,
+        properties = properties,
+        contexts = contexts
+    )
 
 def add_custom_validation(
     self,
@@ -990,13 +996,45 @@ def add_custom_validation(
         # validation map (creating a new list if necessary)
         attribute_validation_list = context_validation_map.get(attribute_name, [])
 
-        # adds the validation tuple to the
-        # attribute (validation) list
+        # adds the validation tuple to the attribute (validation) list
+        # so that it's going to be used latter in the validation process
         attribute_validation_list.append(validation_tuple)
 
         # sets the correct references in the structures
         context_validation_map[attribute_name] = attribute_validation_list
         self.validation_map[context] = context_validation_map
+
+def remove_validation(
+    self,
+    attribute_name,
+    validation_method_name,
+    contexts = ("default",)
+):
+    validation_method_name = validation_method_name + "_validate"
+    validation_method = getattr(self, validation_method_name)
+    self.remove_custom_validation(
+        attribute_name,
+        validation_method,
+        contexts = contexts
+    )
+
+def remove_custom_validation(
+    self,
+    attribute_name,
+    validation_method,
+    contexts = ("default",)
+):
+    for context in contexts:
+        validation_tuples = []
+        context_validation_map = self.validation_map[context]
+        attribute_validation_list = context_validation_map[attribute_name]
+
+        for validation_tuple in attribute_validation_list:
+            if not validation_tuple[0] == validation_method: continue
+            validation_tuples.append(validation_tuple)
+
+        for validation_tuple in validation_tuples:
+            attribute_validation_list.remove(validation_tuple)
 
 def add_error(self, attribute_name, error_message, avoid_duplicates = True):
     """
