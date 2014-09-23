@@ -1031,6 +1031,9 @@ def remove_validation(
     method should be removed.
     """
 
+    # constructs the proper (complete) validation method name and then
+    # retrieves the method reference calling then the custom removal
+    # method to process the removal of validation from the attribute
     validation_method_name = validation_method_name + "_validate"
     validation_method = getattr(self, validation_method_name)
     self.remove_custom_validation(
