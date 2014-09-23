@@ -283,7 +283,8 @@ class EntityManager(object):
     is the reference to the instance created for this manager """
 
     id = None
-    """ The identifier for the entity manager """
+    """ The identifier for the entity manager, this may be
+    used to reference the entity manager in a semi-unique fashion """
 
     entities_map = None
     """ The map associating the various entity class names
@@ -973,6 +974,11 @@ class EntityManager(object):
         self.close_connection()
 
     def start(self):
+        # verifies if the global configuration value for the
+        # schema building is set, this value will affect the
+        # way some of the creation operations will execute
+        build_schema = colony.conf("BUILD_SCHEMA", True)
+
         # begins the transaction that will start
         # all the internal and external structures
         # associated with the current entity manager
@@ -983,8 +989,8 @@ class EntityManager(object):
             # available classes this will ensure the definition
             # of the various entity classes on the data source,
             # after it creates the generator table
-            self.create_definitions()
-            self.create_generator()
+            if build_schema: self.create_definitions()
+            if build_schema: self.create_generator()
         except:
             # "rollsback" the current transaction (something failed)
             # and re-raises the exception for upper except
