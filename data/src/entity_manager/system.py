@@ -977,7 +977,7 @@ class EntityManager(object):
         # verifies if the global configuration value for the
         # schema building is set, this value will affect the
         # way some of the creation operations will execute
-        build_schema = colony.conf("BUILD_SCHEMA", True)
+        build_schema = colony.conf("BUILD_SCHEMA", True, cast = bool)
 
         # begins the transaction that will start
         # all the internal and external structures
