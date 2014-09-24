@@ -119,6 +119,7 @@ class Diagnostics(colony.System):
         data = dict(
             id = identifier,
             initial = time.time(),
+            method = request.get_method(),
             path = request.get_path(),
             operations = dict(),
             totals = dict()
@@ -135,9 +136,6 @@ class Diagnostics(colony.System):
         data = requests[identifier]
         self.set_time(data)
         self.pop_state("request")
-
-        import pprint
-        pprint.pprint(data)
 
     def template_begin(self, identifier):
         templates = self.data.get("templates", {})
