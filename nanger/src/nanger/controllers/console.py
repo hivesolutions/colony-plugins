@@ -227,10 +227,10 @@ class ConsoleController(base.BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = {
-            "manager" : plugin_manager,
-            "plugins" : plugin_manager.plugins
-        }
+        locals = dict(
+            manager = plugin_manager,
+            plugins = plugin_manager.plugins
+        )
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
@@ -325,10 +325,10 @@ class ConsoleController(base.BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = {
-            "manager" : plugin_manager,
-            "plugins" : plugin_manager.plugins
-        }
+        locals = dict(
+            manager = plugin_manager,
+            plugins = plugin_manager.plugins
+        )
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
@@ -405,21 +405,21 @@ class ConsoleController(base.BaseController):
         # will have no extra values associated (basic keywords)
         for keyword in BASE_KEYWORDS:
             if not keyword.startswith(command): continue
-            commands.append((keyword, "keyword", {}))
+            commands.append((keyword, "keyword", dict()))
 
         # iterates over all the space keywords in order to be able to
         # filter and add them to the commands list, these keywords
         # will have the extra space character appended
         for keyword in SPACE_KEYWORDS:
             if not keyword.startswith(command): continue
-            commands.append((keyword, "keyword", {"extra" : " "}))
+            commands.append((keyword, "keyword", dict(extra = " ")))
 
         # iterates over all the base keywords in order to be able to
         # filter and add them to the commands list, these keywords
         # will have the extra dot character appended
         for keyword in DOT_KEYWORDS:
             if not keyword.startswith(command): continue
-            commands.append((keyword, "keyword", {"extra" : ":"}))
+            commands.append((keyword, "keyword", dict(extra = ":")))
 
         # sorts the commands according to their default (alphabetic order) so
         # that they are presented to the end user in the best way possible
