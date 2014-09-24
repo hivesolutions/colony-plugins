@@ -48,6 +48,13 @@ SIZE_LIMIT = 20000
 """ The limit in size of an array of the sub set of
 requests that will be used in search for filter string """
 
+METHOD_COLOR = dict(
+    GET = "green",
+    POST = "blue"
+)
+""" The map that associates the various http verbs/methods
+with the proper color string to be used in display """
+
 mvc_utils = colony.__import__("mvc_utils")
 
 class DiagnosticsController(base.BaseController):
@@ -105,13 +112,7 @@ class DiagnosticsController(base.BaseController):
             if not "time" in _request: continue
 
             _request = copy.copy(_request)
-            time = _request["time"]
-
-            if time >= 1000: time_color = "text-red"
-            elif time >= 200: time_color = "text-orange"
-            else: time_color = "text-normal"
-
-            _request["time_color"] = time_color
+            self._build_request(_request)
             requests.append(_request)
 
         requests.reverse()
@@ -126,6 +127,7 @@ class DiagnosticsController(base.BaseController):
         data = diagnostics_plugin.get_data()
         requests = data.get("requests", [])
         _request = requests[request_id]
+        self._build_request(_request)
 
         # generates and processes the template with the provided values
         # changing the current request accordingly, note that there's
@@ -137,3 +139,16 @@ class DiagnosticsController(base.BaseController):
             area = "diagnostics",
             data = _request
         )
+
+    def _build_request(self, request):
+        method = request["method"]
+        time = request["time"]
+
+        method_color = METHOD_COLOR.get(method, "normal")
+
+        if time >= 1000: time_color = "text-red"
+        elif time >= 200: time_color = "text-orange"
+        else: time_color = "text-normal"
+
+        request["method_c"] = method_color
+        request["time_c"] = time_color
