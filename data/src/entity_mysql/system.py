@@ -383,7 +383,7 @@ class MysqlEngine(object):
 
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
-            colony.notify_g("sql.executed", query, delta, ENGINE_NAME)
+            colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
         except MySQLdb.OperationalError, exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification

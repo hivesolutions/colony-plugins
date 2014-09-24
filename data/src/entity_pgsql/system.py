@@ -308,7 +308,7 @@ class PgsqlEngine(object):
 
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
-            colony.notify_g("sql.executed", query, delta, ENGINE_NAME)
+            colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
         except BaseException, exception:
             # closes the cursor (safe closing)
             # and re-raises the exception
