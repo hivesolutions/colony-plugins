@@ -12,16 +12,14 @@
             <div class="time text-right %[time_c]" data-width="80">%[time] ms</div>
             <div class="table-clear"></div>
         </li>
+        <li class="table-row table-header">
+            <div class="owner text-left" data-width="80">method</div>
+            <div class="message text-left" data-width="620">path</div>
+            <div class="type text-right %[time_c]" data-width="80">time</div>
+            <div class="table-clear"></div>
+        </li>
         <div class="filter-no-results quote">
             No results found
-        </div>
-        <div class="filter-contents">
-            <li class="table-row table-header">
-                <div class="owner text-left" data-width="80">method</div>
-                <div class="message text-left" data-width="620">path</div>
-                <div class="type text-right %[time_c]" data-width="80">time</div>
-                <div class="table-clear"></div>
-            </li>
         </div>
         <div class="filter-more">
             <span class="button more">Load more</span>
