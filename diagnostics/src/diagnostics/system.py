@@ -40,4 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony
 
 class Diagnostics(colony.System):
-    pass
+
+    def start(self):
+        colony.register_g("sql.executed", self.sql_executed)
+
+    def stop(self):
+        colony.unregister_g("sql.executed", self.sql_executed)
+
+    def get_data(self):
+        return dict()
+
+    def sql_executed(self, query, time):
+        print query
