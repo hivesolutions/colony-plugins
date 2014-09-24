@@ -139,8 +139,7 @@ class Diagnostics(colony.System):
         import pprint
         pprint.pprint(data)
 
-    def template_begin(self, request):
-        identifier = id(request)
+    def template_begin(self, identifier):
         templates = self.data.get("templates", {})
         templates_l = self.data.get("templates_l", [])
         data = dict(
@@ -155,8 +154,7 @@ class Diagnostics(colony.System):
         self.data["templates_l"] = templates_l
         self.push_state("template", data)
 
-    def template_end(self, request, template_file):
-        identifier = id(request)
+    def template_end(self, identifier, template_file):
         templates = self.data.get("templates", {})
         data = templates[identifier]
         data["file_path"] = template_file.file_path
