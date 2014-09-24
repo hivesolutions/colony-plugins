@@ -1729,17 +1729,30 @@ class RestRequest(object):
             # usage by other thread
             session.release()
 
-    def get_path(self):
+    def get_method(self):
         """
-        Retrieves the path as a string by joining
-        the various components of the path list.
+        Retrieves the http verb/method for the current request,
+        this value is stored and the operation type value of the
+        original/underlying request object.
 
         @rtype: String
-        @return: The path as a string resulting from
-        the joining of its various components.
+        @return: The normalized http verb/method for the request.
         """
 
-        return "/".join(self.path_list)
+        return  self.request.operation_type
+
+    def get_path(self):
+        """
+        Retrieves the path component of the uri/url by gathering
+        the original path of the request and removing any extra
+        get based arguments from it.
+
+        @rtype: String
+        @return: The (original) path of the request as a canonical
+        version of the uri/url.
+        """
+
+        return self.request.original_path.split("?", 1)[0]
 
     def get_type(self):
         """
