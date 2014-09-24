@@ -87,7 +87,7 @@ OUT_OF_BAND_CALLBACK_VALUE = "oob"
 """ The out of band (default) callback value """
 
 HMAC_HASH_MODULES_MAP = {
-    HMAC_SHA1_VALUE : hashlib.sha1 #@UndefinedVariable
+    HMAC_SHA1_VALUE : hashlib.sha1
 }
 """ The map associating the hmac values with the hashlib hash function modules """
 
@@ -306,7 +306,11 @@ class DropboxClient(object):
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = hmac.new(
+                oauth_consumer_secret_escaped,
+                message,
+                hashlib.sha1
+            ).digest().encode("base64")[:-1]
 
         # fetches the retrieval url with the given parameters retrieving the json
         result = self._fetch_url(retrieval_url, parameters)
@@ -376,7 +380,11 @@ class DropboxClient(object):
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = hmac.new(
+                oauth_consumer_secret_escaped,
+                message,
+                hashlib.sha1
+            ).digest().encode("base64")[:-1]
 
         # fetches the retrieval url with the given parameters retrieving the json
         result = self._fetch_url(retrieval_url, parameters)
@@ -588,7 +596,13 @@ class DropboxClient(object):
             self._build_oauth_arguments(url, parameters, method)
 
         # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET, contents = contents)
+        http_response = http_client.fetch_url(
+            url,
+            method,
+            parameters,
+            content_type_charset = DEFAULT_CHARSET,
+            contents = contents
+        )
 
         # retrieves the contents from the http response
         contents = http_response.received_message
@@ -650,16 +664,26 @@ class DropboxClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+            oauth_consumer_secret_escaped = "%s&%s" % (
+                self._escape_url(self.oauth_structure.oauth_consumer_secret),
+                self._escape_url(self.oauth_structure.oauth_token_secret)
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (
+                self._escape_url(key),
+                self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING)
+            )) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = hmac.new(
+                oauth_consumer_secret_escaped,
+                message,
+                hashlib.sha1
+            ).digest().encode("base64")[:-1]
 
     def _escape_url(self, url_text):
         """
