@@ -93,6 +93,10 @@ class Accessor(dict):
         ref = dict.__getattribute__(self, "__ref__")()
         return cmp(ref, value)
 
+    def __hash__(self):
+        ref = dict.__getattribute__(self, "__ref__")()
+        return hash(ref)
+
     def __call__(self, *args, **kwargs):
         ref = dict.__getattribute__(self, "ref")
         is_callable = hasattr(ref, "__call__")
@@ -118,4 +122,5 @@ class Accessor(dict):
         raise KeyError("'%s' not found" % name)
 
 def accessor(value):
+
     return Accessor(value)
