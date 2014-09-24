@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
 import time
 
 import colony
@@ -79,15 +80,17 @@ class DiagnosticsController(base.BaseController):
         start_record = request.field("start_record", 0, cast = int)
         number_records = request.field("number_records", 9, cast = int)
 
+        # converts the filter into a lower cased representation to be able to
+        # perform a case insensitive comparison
+        _filter = filter.lower()
+
         data = diagnostics_plugin.get_data()
         requests = data.get("requests_l", [])
         requests = requests[SIZE_LIMIT * -1:]
 
-        valid = []
-
-        # converts the filter into a lower cased representation to be able to
-        # perform a case insensitive comparison
-        _filter = filter.lower()
+        # creates the list that will hold the final set of requests to be
+        # presented, these request should be a result of a filtering
+        _requests = []
 
         for _request in requests:
             path = _request["path"]
@@ -96,12 +99,21 @@ class DiagnosticsController(base.BaseController):
 
             if not _filter in path: continue
             if until and initial > until: continue
+            if not "time" in _request: continue
 
-            valid.append(_request)
+            _request = copy.copy(_request)
+            time = _request["time"]
 
-        valid.reverse()
-        valid = valid[start_record:start_record + number_records]
-        self.serialize(request, valid, serializer = json_plugin)
+            if time >= 1000: time_color = "text-red"
+            elif time >= 200: time_color = "text-orange"
+            else: time_color = "text-normal"
+
+            _request["time_color"] = time_color
+            _requests.append(_request)
+
+        _requests.reverse()
+        _requests = _requests[start_record:start_record + number_records]
+        self.serialize(request, _requests, serializer = json_plugin)
 
     def requests_show(self, request, request_id = None):
         pass
