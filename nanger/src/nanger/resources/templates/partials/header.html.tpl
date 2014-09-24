@@ -26,6 +26,12 @@
                 <a href="{{ base_path }}log">log</a>
             {% endif %}
             //
+            {% if area == "diagnostics" %}
+                <a href="{{ base_path }}diagnostics" class="active">diagnostics</a>
+            {% else %}
+                <a href="{{ base_path }}diagnostics">diagnostics</a>
+            {% endif %}
+            //
             {% if area == "about" %}
                 <a href="{{ base_path }}about" class="active">about</a>
             {% else %}

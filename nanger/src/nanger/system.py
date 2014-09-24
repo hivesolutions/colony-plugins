@@ -83,6 +83,7 @@ class Nanger(colony.System):
             (r"nanger/plugins", self.main_controller.plugins, "get"),
             (r"nanger/console", self.main_controller.console, "get"),
             (r"nanger/log", self.main_controller.log, "get"),
+            (r"nanger/diagnostics", self.main_controller.diagnostics, "get"),
             (r"nanger/about", self.main_controller.about, "get"),
             (r"nanger/plugins/list", self.plugin_controller.list, "get"),
             (r"nanger/plugins/<plugin_id>", self.plugin_controller.show, "get"),
