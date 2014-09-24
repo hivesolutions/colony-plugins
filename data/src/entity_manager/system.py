@@ -1783,6 +1783,12 @@ class EntityManager(object):
         entity._entities[entity_class][id_value] = entity
 
     def save(self, entity, generate = True):
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
+        identifier = colony.unique()
+
+        colony.notify_g("orm.begin", identifier, "save")
+
         # generates all the generated attributes of the
         # entity (in case any is set to be generated)
         # this should include any generated identifier
@@ -1809,7 +1815,13 @@ class EntityManager(object):
         # may be useful for consequent data usage
         entity.data_state = SAVED_STATE_VALUE
 
+        colony.notify_g("orm.end", identifier)
+
     def update(self, entity, lock = False):
+        identifier = colony.unique()
+
+        colony.notify_g("orm.begin", identifier, "update")
+
         # retrieves the entity class for the entity
         # and the id value of the entity to be used
         # for the (possible) locking of the entity
@@ -1841,7 +1853,13 @@ class EntityManager(object):
         # may be useful for consequent data usage
         entity.data_state = UPDATED_STATE_VALUE
 
+        colony.notify_g("orm.end", identifier)
+
     def remove(self, entity, lock = False):
+        identifier = colony.unique()
+
+        colony.notify_g("orm.begin", identifier, "remove")
+
         # retrieves the entity class for the entity
         # and the id value of the entity to be used
         # for the (possible) locking of the entity
@@ -1864,6 +1882,8 @@ class EntityManager(object):
         # updates the data state of the entity to removed, this
         # may be useful for consequent data usage
         entity.data_state = REMOVED_STATE_VALUE
+
+        colony.notify_g("orm.end", identifier)
 
     def save_update(self, entity, generate = True, lock = False):
         # retrieves the entity class associated with
@@ -2130,9 +2150,13 @@ class EntityManager(object):
         return result
 
     def get(self, entity_class, id_value, options = None, lock = False, **kwargs):
-        # triggers a notify operation about the beginning of a anew
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
+        identifier = colony.unique()
+
+        # triggers a notify operation about the beginning of a new
         # data (orm) operation to be performed (may be used for debug)
-        colony.notify_g("orm.begin", "get", options)
+        colony.notify_g("orm.begin", identifier, "get", options)
 
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
@@ -2183,15 +2207,19 @@ class EntityManager(object):
 
         # notifies the colony infra-structure about the ending of the
         # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", "get", options, 1)
+        colony.notify_g("orm.end", identifier, 1)
 
         # returns the processed result value
         return result
 
     def count(self, entity_class, options = None, lock = False, **kwargs):
-        # triggers a notify operation about the beginning of a anew
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
+        identifier = colony.unique()
+
+        # triggers a notify operation about the beginning of a new
         # data (orm) operation to be performed (may be used for debug)
-        colony.notify_g("orm.begin", "count", options)
+        colony.notify_g("orm.begin", identifier, "count", options)
 
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
@@ -2215,16 +2243,20 @@ class EntityManager(object):
 
         # notifies the colony infra-structure about the ending of the
         # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", "count", options, 1)
+        colony.notify_g("orm.end", identifier, 1)
 
         # returns the processed result value, number of rows
         # in the data source for the query
         return result
 
     def find(self, entity_class, options = {}, lock = False, **kwargs):
-        # triggers a notify operation about the beginning of a anew
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
+        identifier = colony.unique()
+
+        # triggers a notify operation about the beginning of a new
         # data (orm) operation to be performed (may be used for debug)
-        colony.notify_g("orm.begin", "find", options)
+        colony.notify_g("orm.begin", identifier, "find", options)
 
         # in case the lock flag is set the entity class with
         # is completely locked (this blocks the data source
@@ -2254,7 +2286,7 @@ class EntityManager(object):
 
         # notifies the colony infra-structure about the ending of the
         # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", "find", options, count)
+        colony.notify_g("orm.end", identifier, count)
 
         # returns the final set of results to the caller method this
         # should contain a sequence of model based objects or in case

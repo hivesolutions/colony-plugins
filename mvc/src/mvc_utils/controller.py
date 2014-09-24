@@ -2536,6 +2536,8 @@ def template(
     for operations that don't set the contents in the request.
     """
 
+    identifier = colony.unique()
+    colony.notify_g("template.begin", identifier)
     template_file = self.template_file(request = request, *args, **kwargs)
     contents = self.process_set_contents(
         request,
@@ -2547,6 +2549,7 @@ def template(
         content_type = content_type,
         set_contents = set_contents
     )
+    colony.notify_g("template.end", identifier, template_file)
     return contents
 
 def template_file(self, template = None, *args, **kwargs):
