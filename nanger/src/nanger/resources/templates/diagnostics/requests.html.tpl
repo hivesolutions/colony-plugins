@@ -5,7 +5,7 @@
         <li class="template table-row">
             <div class="owner text-left" data-width="70">%[method]</div>
             <div class="message text-left" data-width="630">%[path]</div>
-            <div class="type text-right %[type]" data-width="80">%[time] ms</div>
+            <div class="type text-right %[time_color]" data-width="80">%[time] ms</div>
             <div class="table-clear"></div>
         </li>
         <div class="filter-no-results quote">
