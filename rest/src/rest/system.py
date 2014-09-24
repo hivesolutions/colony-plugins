@@ -1729,6 +1729,18 @@ class RestRequest(object):
             # usage by other thread
             session.release()
 
+    def get_path(self):
+        """
+        Retrieves the path as a string by joining
+        the various components of the path list.
+
+        @rtype: String
+        @return: The path as a string resulting from
+        the joining of its various components.
+        """
+
+        return "/".join(self.path_list)
+
     def get_type(self):
         """
         Retrieves the content type for the current rest request
