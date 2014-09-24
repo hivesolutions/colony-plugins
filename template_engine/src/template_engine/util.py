@@ -98,7 +98,7 @@ class Accessor(dict):
         is_callable = hasattr(ref, "__call__")
         return ref.__call__(*args, **kwargs) if is_callable else ref
 
-    def __getattribute__ (self, name):
+    def __getattribute__(self, name):
         if name == "ref": return dict.__getattribute__(self, "ref")
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
@@ -108,7 +108,7 @@ class Accessor(dict):
         if is_callable: result = ref(); return accessor(getattr(result, name))
         return dict.__getattribute__(self, name)
 
-    def __getitem__ (self, name):
+    def __getitem__(self, name):
         ref = dict.__getattribute__(self, "ref")
         is_map = dict.__getattribute__(self, "is_map")
         is_callable = hasattr(ref, "__call__")
