@@ -186,7 +186,7 @@ class Diagnostics(colony.System):
 
     def sql_executed(self, query, engine, time):
         data = dict(
-            query = query,
+            query = query.decode("utf-8"),
             engine = engine,
             time = time
         )
