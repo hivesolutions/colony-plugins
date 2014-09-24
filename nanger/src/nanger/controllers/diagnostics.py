@@ -59,7 +59,7 @@ class DiagnosticsController(base.BaseController):
             request = request,
             template = "diagnostics/requests.html.tpl",
             title = "Requests",
-            area = "requests",
+            area = "diagnostics",
             until = time.time()
         )
 
