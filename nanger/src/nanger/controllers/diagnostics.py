@@ -84,15 +84,18 @@ class DiagnosticsController(base.BaseController):
         # perform a case insensitive comparison
         _filter = filter.lower()
 
+        # retrieves the complete set of diagnostics data from the associated
+        # plugin and then retrieves the allowed request from it (so that no
+        # to large filtering operation is process)
         data = diagnostics_plugin.get_data()
-        requests = data.get("requests_l", [])
-        requests = requests[SIZE_LIMIT * -1:]
+        requests_l = data.get("requests_l", [])
+        requests_l = requests_l[SIZE_LIMIT * -1:]
 
         # creates the list that will hold the final set of requests to be
         # presented, these request should be a result of a filtering
-        _requests = []
+        requests = []
 
-        for _request in requests:
+        for _request in requests_l:
             path = _request["path"]
             initial = _request["initial"]
             path = path.lower()
@@ -109,11 +112,28 @@ class DiagnosticsController(base.BaseController):
             else: time_color = "text-normal"
 
             _request["time_color"] = time_color
-            _requests.append(_request)
+            requests.append(_request)
 
-        _requests.reverse()
-        _requests = _requests[start_record:start_record + number_records]
-        self.serialize(request, _requests, serializer = json_plugin)
+        requests.reverse()
+        requests = requests[start_record:start_record + number_records]
+        self.serialize(request, requests, serializer = json_plugin)
 
     def requests_show(self, request, request_id = None):
-        pass
+        # retrieves the json plugin to be used for the retrieval
+        # of the diagnostics information to be shown
+        diagnostics_plugin = self.plugin.diagnostics_plugin
+
+        data = diagnostics_plugin.get_data()
+        requests = data.get("requests", [])
+        _request = requests[request_id]
+
+        # generates and processes the template with the provided values
+        # changing the current request accordingly, note that there's
+        # a defined partial page and a base template value defined
+        self._template(
+            request = request,
+            template = "requests/show.html.tpl",
+            title = "Request",
+            area = "diagnostics",
+            data = _request
+        )
