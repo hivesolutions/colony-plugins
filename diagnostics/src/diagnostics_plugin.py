@@ -57,7 +57,6 @@ class DiagnosticsPlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "startup",
         "diagnostics"
     ]
     main_modules = [
