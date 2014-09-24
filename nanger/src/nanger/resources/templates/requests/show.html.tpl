@@ -1,6 +1,12 @@
 {% extends "general.html.tpl" %}
 {% block content %}
-    <div class="quote">{{ data.path }}</div>
+    <div class="quote">
+        {% if data.method == "GET" %}
+            <a href="{{ data.path }}">{{ data.path }}</a>
+        {% else %}
+            <span>{{ data.path }}</span>
+        {% endif %}
+    </div>
     <div class="separator-horizontal"></div>
     <table>
         <tbody>
