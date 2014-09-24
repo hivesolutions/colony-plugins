@@ -900,10 +900,10 @@ class RestRequest(object):
         return self.ensure_session()
 
     def pre_handle(self, rest_request):
-        colony.notify_g("request.start", rest_request)
+        colony.notify_g("request.begin", rest_request)
 
     def post_handle(self, rest_request):
-        colony.notify_g("request.stop", rest_request)
+        colony.notify_g("request.end", rest_request)
 
     def start_session(
         self,
