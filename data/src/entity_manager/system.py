@@ -1791,35 +1791,36 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "save")
 
-        # generates all the generated attributes of the
-        # entity (in case any is set to be generated)
-        # this should include any generated identifier
-        generate and self._generate_fields(entity)
+        try:
+            # generates all the generated attributes of the
+            # entity (in case any is set to be generated)
+            # this should include any generated identifier
+            generate and self._generate_fields(entity)
 
-        # runs the global set of validations for the current
-        # entity so that integrity for it is ensured
-        entity.validate_s()
+            # runs the global set of validations for the current
+            # entity so that integrity for it is ensured
+            entity.validate_s()
 
-        # generates the query for the saving operation and
-        # executes it in the context for the data source
-        query = self._save_query(entity)
-        self.execute_query(query)
+            # generates the query for the saving operation and
+            # executes it in the context for the data source
+            query = self._save_query(entity)
+            self.execute_query(query)
 
-        # maps (saves) all relations for the entity that are considered
-        # to be not mapped directly by the associated table
-        self.map(entity)
+            # maps (saves) all relations for the entity that are considered
+            # to be not mapped directly by the associated table
+            self.map(entity)
 
-        # enables the entity, providing the entity with the
-        # mechanisms necessary for data source communication
-        self.enable(entity)
+            # enables the entity, providing the entity with the
+            # mechanisms necessary for data source communication
+            self.enable(entity)
 
-        # updates the data state of the entity to saved, this
-        # may be useful for consequent data usage
-        entity.data_state = SAVED_STATE_VALUE
-
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack
-        colony.notify_g("orm.end", identifier)
+            # updates the data state of the entity to saved, this
+            # may be useful for consequent data usage
+            entity.data_state = SAVED_STATE_VALUE
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack
+            colony.notify_g("orm.end", identifier)
 
     def update(self, entity, lock = False):
         # generates the unique identifier of the current operation
@@ -1830,40 +1831,41 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "update")
 
-        # retrieves the entity class for the entity
-        # and the id value of the entity to be used
-        # for the (possible) locking of the entity
-        entity_class = entity.__class__
-        id_value = entity.get_id_value()
+        try:
+            # retrieves the entity class for the entity
+            # and the id value of the entity to be used
+            # for the (possible) locking of the entity
+            entity_class = entity.__class__
+            id_value = entity.get_id_value()
 
-        # runs the global set of validations for the current
-        # entity so that integrity for it is ensured
-        entity.validate_u()
+            # runs the global set of validations for the current
+            # entity so that integrity for it is ensured
+            entity.validate_u()
 
-        # in case the lock flag is set, locks the
-        # data source for the current entity
-        lock and self.lock(entity_class, id_value)
+            # in case the lock flag is set, locks the
+            # data source for the current entity
+            lock and self.lock(entity_class, id_value)
 
-        # generates the query for the updating operation and
-        # executes it in the context for the data source
-        query = self._update_query(entity)
-        self.execute_query(query)
+            # generates the query for the updating operation and
+            # executes it in the context for the data source
+            query = self._update_query(entity)
+            self.execute_query(query)
 
-        # maps (saves) all relations for the entity that are considered
-        # to be not mapped directly by the associated table
-        self.map(entity)
+            # maps (saves) all relations for the entity that are considered
+            # to be not mapped directly by the associated table
+            self.map(entity)
 
-        # enables the entity, providing the entity with the
-        # mechanisms necessary for data source communication
-        self.enable(entity)
+            # enables the entity, providing the entity with the
+            # mechanisms necessary for data source communication
+            self.enable(entity)
 
-        # updates the data state of the entity to updated, this
-        # may be useful for consequent data usage
-        entity.data_state = UPDATED_STATE_VALUE
-
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack
-        colony.notify_g("orm.end", identifier)
+            # updates the data state of the entity to updated, this
+            # may be useful for consequent data usage
+            entity.data_state = UPDATED_STATE_VALUE
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack
+            colony.notify_g("orm.end", identifier)
 
     def remove(self, entity, lock = False):
         # generates the unique identifier of the current operation
