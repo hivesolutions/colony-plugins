@@ -44,7 +44,7 @@ class Diagnostics(colony.System):
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
         self.data = dict()
-        self.diagnostics = colony.config("DIAGNOSTICS", False, cast = bool)
+        self.diagnostics = colony.conf("DIAGNOSTICS", False, cast = bool)
 
     def start(self):
         if not self.diagnostics: return
