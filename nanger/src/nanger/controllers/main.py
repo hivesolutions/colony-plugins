@@ -121,18 +121,14 @@ class MainController(base.BaseController):
         )
 
     def diagnostics(self, request):
-        diagnostics_plugin = self.plugin.diagnostics_plugin
-        data = diagnostics_plugin.get_data()
-
         # generates and processes the template with the provided values
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
             request = request,
-            template = "general/log.html.tpl",
+            template = "general/diagnostics.html.tpl",
             title = "Diagnostics",
-            area = "diagnostics",
-            data = data
+            area = "diagnostics"
         )
 
     def about(self, request):
