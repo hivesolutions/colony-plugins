@@ -2130,6 +2130,10 @@ class EntityManager(object):
         return result
 
     def get(self, entity_class, id_value, options = None, lock = False, **kwargs):
+        # triggers a notify operation about the beginning of a anew
+        # data (orm) operation to be performed (may be used for debug)
+        colony.notify_g("orm.begin", "get", options)
+
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
@@ -2177,10 +2181,18 @@ class EntityManager(object):
         result = self.find(entity_class, options)
         result = result and result[0] or None
 
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack (includes result count)
+        colony.notify_g("orm.end", "get", options, 1)
+
         # returns the processed result value
         return result
 
     def count(self, entity_class, options = None, lock = False, **kwargs):
+        # triggers a notify operation about the beginning of a anew
+        # data (orm) operation to be performed (may be used for debug)
+        colony.notify_g("orm.begin", "count", options)
+
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
@@ -2201,11 +2213,19 @@ class EntityManager(object):
         # no eager loading perform much faster)
         result = self.find(entity_class, options, lock)
 
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack (includes result count)
+        colony.notify_g("orm.end", "count", options, 1)
+
         # returns the processed result value, number of rows
         # in the data source for the query
         return result
 
     def find(self, entity_class, options = {}, lock = False, **kwargs):
+        # triggers a notify operation about the beginning of a anew
+        # data (orm) operation to be performed (may be used for debug)
+        colony.notify_g("orm.begin", "find", options)
+
         # in case the lock flag is set the entity class with
         # is completely locked (this blocks the data source
         # information on the data for the entity class)
@@ -2227,6 +2247,13 @@ class EntityManager(object):
         cursor = self.execute_query(query, False)
         try: result = self._find_result(entity_class, field_names, options, cursor)
         finally: cursor.close()
+
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack (includes result count)
+        colony.notify_g("orm.end", "find", options, len(result))
+
+        # returns the final set of results to the caller method this
+        # should contain a sequence of model based objects
         return result
 
     def execute(self, query):
