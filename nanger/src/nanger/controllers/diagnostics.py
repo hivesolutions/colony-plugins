@@ -152,7 +152,7 @@ class DiagnosticsController(base.BaseController):
         else: time_color = "text-normal"
 
         if code // 100 in (4, 5): code_color = "text-red"
-        elif code // 100 in (3,): code_color = "text-orange"
+        elif code // 100 in (3,): code_color = "text-blue"
         else: code_color = "text-normal"
 
         request["method_c"] = method_color
