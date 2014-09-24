@@ -292,9 +292,9 @@ class Rest(colony.System):
             # handles the request with the services request handler,
             # note that proper callback are called before and after
             # and then returns immediately as the request is handled
-            rest_request.pre_handle()
+            rest_request.pre_handle(rest_request)
             self.handle_rest_request_services(rest_request)
-            rest_request.post_handle()
+            rest_request.post_handle(rest_request)
             return
 
         # otherwise it's a "general" request and the typical handling
@@ -319,9 +319,9 @@ class Rest(colony.System):
                 # handles the rest request using the rest service plugin,
                 # note that proper callback are called before and after and
                 # returns the control flow to the caller method immediately
-                rest_request.pre_handle()
+                rest_request.pre_handle(rest_request)
                 rest_service_plugin.handle_rest_request(rest_request)
-                rest_request.post_handle()
+                rest_request.post_handle(rest_request)
                 return
 
         # raises the rest request not handled exception, because of the control
@@ -899,11 +899,11 @@ class RestRequest(object):
     def session(self):
         return self.ensure_session()
 
-    def pre_handle(self):
-        pass
+    def pre_handle(self, rest_request):
+        colony.notify_g("request.start", rest_request)
 
-    def post_handle(self):
-        pass
+    def post_handle(self, rest_request):
+        colony.notify_g("request.stop", rest_request)
 
     def start_session(
         self,
