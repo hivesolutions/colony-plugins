@@ -6,16 +6,18 @@
             <div class="method text-left" data-width="80">
                 <span class="tag %[method_c]">%[method]</span>
             </div>
-            <div class="path text-left" data-width="620">
+            <div class="path text-left" data-width="580">
                 <a href="{{ base_path }}diagnostics/requests/%[id]">%[path]</a>
             </div>
-            <div class="time text-right %[time_c]" data-width="80">%[time] ms</div>
+            <div class="time text-right %[time_c]" data-width="60">%[time] ms</div>
+            <div class="time text-right %[code_c]" data-width="60">%[code]</div>
             <div class="table-clear"></div>
         </li>
         <li class="table-row table-header">
             <div class="owner text-left" data-width="80">method</div>
-            <div class="message text-left" data-width="620">path</div>
-            <div class="type text-right %[time_c]" data-width="80">time</div>
+            <div class="message text-left" data-width="580">path</div>
+            <div class="type text-right" data-width="60">time</div>
+            <div class="type text-right" data-width="60">code</div>
             <div class="table-clear"></div>
         </li>
         <div class="filter-no-results quote">

@@ -143,6 +143,7 @@ class DiagnosticsController(base.BaseController):
     def _build_request(self, request):
         method = request["method"]
         time = request["time"]
+        code = request["code"]
 
         method_color = METHOD_COLOR.get(method, "normal")
 
@@ -150,5 +151,10 @@ class DiagnosticsController(base.BaseController):
         elif time >= 200: time_color = "text-orange"
         else: time_color = "text-normal"
 
+        if code // 100 in (4, 5): code_color = "text-red"
+        elif code // 100 in (3,): code_color = "text-orange"
+        else: code_color = "text-normal"
+
         request["method_c"] = method_color
         request["time_c"] = time_color
+        request["code_c"] = code_color
