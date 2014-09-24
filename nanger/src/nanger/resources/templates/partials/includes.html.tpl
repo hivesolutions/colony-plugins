@@ -11,4 +11,5 @@
 <script type="text/javascript" src="{{ base_path }}resources/libs/jquery/jquery-1.4.2-min.js"></script>
 <script type="text/javascript" src="{{ base_path }}resources/libs/uxf/js/ux-min.js"></script>
 <script type="text/javascript" src="{{ base_path }}resources/libs/layout/js/layout.js"></script>
+<script type="text/javascript" src="{{ base_path }}resources/libs/layout/js/layout-extras.js"></script>
 <script type="text/javascript" src="{{ base_path }}resources/js/main.js"></script>
