@@ -121,6 +121,20 @@ class Accessor(dict):
         if is_callable: result = ref(); return accessor(getattr(result, name))
         raise KeyError("'%s' not found" % name)
 
-def accessor(value):
+    def __iter__(self):
+        is_map = dict.__getattribute__(self, "is_map")
+        if is_map: return self.__itermap__()
+        else: return self.__iterseq__()
 
+    def __itermap__(self):
+        ref = dict.__getattribute__(self, "ref")
+        for key, value in ref:
+            yield (accessor(key), accessor(value))
+
+    def __iterseq__(self):
+        ref = dict.__getattribute__(self, "ref")
+        for value in ref:
+            yield accessor(value)
+
+def accessor(value):
     return Accessor(value)
