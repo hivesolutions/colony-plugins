@@ -1787,6 +1787,8 @@ class EntityManager(object):
         # this will generate a fast oriented identifier
         identifier = colony.unique()
 
+        # triggers a notify operation about the beginning of a new
+        # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "save")
 
         # generates all the generated attributes of the
@@ -1815,11 +1817,17 @@ class EntityManager(object):
         # may be useful for consequent data usage
         entity.data_state = SAVED_STATE_VALUE
 
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack
         colony.notify_g("orm.end", identifier)
 
     def update(self, entity, lock = False):
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
         identifier = colony.unique()
 
+        # triggers a notify operation about the beginning of a new
+        # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "update")
 
         # retrieves the entity class for the entity
@@ -1853,11 +1861,17 @@ class EntityManager(object):
         # may be useful for consequent data usage
         entity.data_state = UPDATED_STATE_VALUE
 
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack
         colony.notify_g("orm.end", identifier)
 
     def remove(self, entity, lock = False):
+        # generates the unique identifier of the current operation
+        # this will generate a fast oriented identifier
         identifier = colony.unique()
 
+        # triggers a notify operation about the beginning of a new
+        # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "remove")
 
         # retrieves the entity class for the entity
@@ -1883,6 +1897,8 @@ class EntityManager(object):
         # may be useful for consequent data usage
         entity.data_state = REMOVED_STATE_VALUE
 
+        # notifies the colony infra-structure about the ending of the
+        # current data (orm) operation in stack
         colony.notify_g("orm.end", identifier)
 
     def save_update(self, entity, generate = True, lock = False):
