@@ -2219,6 +2219,10 @@ class EntityManager(object):
         options = options and self.normalize_options(options) or {}
         self.process_kwargs(options, kwargs)
 
+        # creates the proper find query for the entity class and
+        # the provided options, the executes the query (avoiding the
+        # closing of the cursor) and runs the find result operation
+        # in order to obtain the proper find result entities
         query, field_names = self._find_query(entity_class, options)
         cursor = self.execute_query(query, False)
         try: result = self._find_result(entity_class, field_names, options, cursor)
