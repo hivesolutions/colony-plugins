@@ -15,6 +15,10 @@
                 <td class="left value" width="50%">{{ data.method }}</td>
             </tr>
             <tr>
+                <td class="right label" width="50%">status code</td>
+                <td class="left value" width="50%">{{ data.status_code }}</td>
+            </tr>
+            <tr>
                 <td class="right label" width="50%">time</td>
                 <td class="left value" width="50%">{{ data.time }} ms</td>
             </tr>
