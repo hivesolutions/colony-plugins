@@ -2248,12 +2248,17 @@ class EntityManager(object):
         try: result = self._find_result(entity_class, field_names, options, cursor)
         finally: cursor.close()
 
+        # calculates the number of results retrieved from the current
+        # operation, takes into account the kind/type of result
+        count = len(result) if type(result) == list else 1
+
         # notifies the colony infra-structure about the ending of the
         # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", "find", options, len(result))
+        colony.notify_g("orm.end", "find", options, count)
 
         # returns the final set of results to the caller method this
-        # should contain a sequence of model based objects
+        # should contain a sequence of model based objects or in case
+        # the count flag was set a single value (simple result)
         return result
 
     def execute(self, query):
