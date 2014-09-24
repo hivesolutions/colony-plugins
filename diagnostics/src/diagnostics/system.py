@@ -88,7 +88,7 @@ class Diagnostics(colony.System):
 
     def add_operation(self, name, target, data):
         state = self.peek_state(target)
-        if not state: return
+        if not state: return False
         totals = state["totals"]
         operations = state["operations"]
         sequence = operations.get(name, [])
@@ -98,6 +98,12 @@ class Diagnostics(colony.System):
         total += time
         operations[name] = sequence
         totals[name] = total
+        return True
+
+    def try_operation(self, name, targets, data):
+        for target in targets:
+            result = self.add_operation(name, target, data)
+            if result: break
 
     def set_time(self, data):
         initial = data["initial"]
@@ -133,14 +139,13 @@ class Diagnostics(colony.System):
         import pprint
         pprint.pprint(data)
 
-    def template_begin(self, file, file_path):
-        identifier = id(file)
+    def template_begin(self, request):
+        identifier = id(request)
         templates = self.data.get("templates", {})
         templates_l = self.data.get("templates_l", [])
         data = dict(
             id = identifier,
             initial = time.time(),
-            file_path = file_path,
             operations = dict(),
             totals = dict()
         )
@@ -150,17 +155,16 @@ class Diagnostics(colony.System):
         self.data["templates_l"] = templates_l
         self.push_state("template", data)
 
-    def template_end(self, file):
-        identifier = id(file)
+    def template_end(self, request, template_file):
+        identifier = id(request)
         templates = self.data.get("templates", {})
         data = templates[identifier]
+        data["file_path"] = template_file.file_path
         self.set_time(data)
         self.pop_state("template")
-        self.add_operation("template", "request", data)
-        self.add_operation("template", "template", data)
+        self.try_operation("template", ("template", "request"), data)
 
-    def orm_begin(self, operation, options):
-        identifier = id(options)
+    def orm_begin(self, identifier, operation, options = None):
         orms = self.data.get("orms", {})
         orms_l = self.data.get("orms_l", [])
         data = dict(
@@ -176,15 +180,13 @@ class Diagnostics(colony.System):
         self.data["orms_l"] = orms_l
         self.push_state("orm", data)
 
-    def orm_end(self, operation, options, count):
-        identifier = id(options)
+    def orm_end(self, identifier, count = None):
         orms = self.data.get("orms", {})
         data = orms[identifier]
+        data["count"] = count
         self.set_time(data)
         self.pop_state("orm")
-        self.add_operation("orm", "request", data)
-        self.add_operation("orm", "template", data)
-        self.add_operation("orm", "orm", data)
+        self.try_operation("orm", ("orm", "template", "request"), data)
 
     def sql_executed(self, query, engine, time):
         data = dict(
@@ -195,6 +197,4 @@ class Diagnostics(colony.System):
         sql = self.data.get("sql", [])
         sql.append(data)
         self.data["sql"] = sql
-
-        self.add_operation("sql", "request", data)
-        self.add_operation("sql", "orm", data)
+        self.try_operation("sql", ("orm", "template", "request"), data)
