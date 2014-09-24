@@ -243,10 +243,19 @@ class DropboxClient(object):
         """
 
         # constructs a new oauth structure
-        oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
+        oauth_structure = OauthStructure(
+            oauth_consumer_key,
+            oauth_consumer_secret,
+            oauth_signature_method = oauth_signature_method,
+            oauth_signature = oauth_signature,
+            oauth_timestamp = oauth_timestamp,
+            oauth_nonce = oauth_nonce,
+            oauth_version = oauth_version,
+            oauth_callback = oauth_callback
+        )
 
         # in case the structure is meant to be set
-        # sets it in the current instance and returs
+        # sets it in the current instance and returns
         # the structure that was "just" generated
         if set_structure: self.set_oauth_structure(oauth_structure)
         return oauth_structure
