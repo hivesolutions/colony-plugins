@@ -5,7 +5,7 @@
             <div class="name">
                 <a href="{{ base_path }}diagnostics/requests">Requests List</a>
             </div>
-            <div class="description">Display diagnostics grouped inside requests</div>
+            <div class="description">Displays diagnostics grouped inside requests</div>
         </li>
     </ul>
 {% endblock %}
