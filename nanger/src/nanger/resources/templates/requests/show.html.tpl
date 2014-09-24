@@ -12,11 +12,11 @@
         <tbody>
             <tr>
                 <td class="right label" width="50%">method</td>
-                <td class="left value" width="50%">{{ data.method }}</td>
+                <td class="left value text-{{ data.method_c }}" width="50%">{{ data.method }}</td>
             </tr>
             <tr>
-                <td class="right label" width="50%">status code</td>
-                <td class="left value" width="50%">{{ data.status_code }}</td>
+                <td class="right label" width="50%">code</td>
+                <td class="left value {{ data.code_c }}" width="50%">{{ data.code }}</td>
             </tr>
             <tr>
                 <td class="right label" width="50%">time</td>
