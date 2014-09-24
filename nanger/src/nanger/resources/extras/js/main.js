@@ -1812,6 +1812,16 @@
             var _body = jQuery("body");
             var isValid = matchedObject.length > 0;
 
+            // registers for the post async event so that it's possible
+            // to scroll the log down again as the inital position
+            _body.bind("post_async", onPostAsync = function() {
+                        var scrollHeight = matchedObject[0].scrollHeight;
+                        matchedObject.scrollTop(scrollHeight);
+                    });
+            matchedObject.bind("destroyed", function() {
+                        _body.unbind("post_async", onPostAsync);
+                    });
+
             // registers for the key down event in the current body
             // element so that global keyboard events are captured
             isValid && _body.keydown(onKeyDown = function(event) {
