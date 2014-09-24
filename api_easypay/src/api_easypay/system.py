@@ -166,7 +166,15 @@ class EasypayClient(object):
         # closes the http client in case it is defined
         if self.http_client: self.http_client.close({})
 
-    def generate_easypay_structure(self, username, cin, country = DEFAULT_COUNTRY, language = DEFAULT_LANGUAGE, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_easypay_structure(
+        self,
+        username,
+        cin,
+        country = DEFAULT_COUNTRY,
+        language = DEFAULT_LANGUAGE,
+        api_version = DEFAULT_API_VERSION,
+        set_structure = True
+    ):
         """
         Generates the easypay structure for the given arguments.
 
@@ -198,7 +206,17 @@ class EasypayClient(object):
         # returns the easypay structure
         return easypay_structure
 
-    def generate_reference(self, amount, transaction_key, entity, reference_type = "auto", name = None, description = None, mobile = None, email = None):
+    def generate_reference(
+        self,
+        amount,
+        transaction_key,
+        entity,
+        reference_type = "auto",
+        name = None,
+        description = None,
+        mobile = None,
+        email = None
+    ):
         # sets the retrieval url, using the test url
         # in case the client is running in test mode
         retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
@@ -590,7 +608,8 @@ class EasypayClient(object):
         child_nodes = xml_node.childNodes
 
         # collects the child text nodes
-        child_node_data_list = [child_node.data for child_node in child_nodes if child_node.nodeType == xml.dom.minidom.Node.TEXT_NODE]
+        child_node_data_list = [child_node.data for child_node in\
+            child_nodes if child_node.nodeType == xml.dom.minidom.Node.TEXT_NODE]
 
         # converts the child text nodes to a string
         xml_node_text = "".join(child_node_data_list)
@@ -618,7 +637,14 @@ class EasypayStructure:
     api_version = None
     """ The version of the api being used """
 
-    def __init__(self, username, cin, country, language, api_version = DEFAULT_API_VERSION):
+    def __init__(
+        self,
+        username,
+        cin,
+        country,
+        language,
+        api_version = DEFAULT_API_VERSION
+    ):
         """
         Constructor of the class.
 
