@@ -80,7 +80,7 @@ class PluginController(base.BaseController):
             # the comparison fails continues the loop immediately
             id = loaded_plugin.id.lower()
             name = loaded_plugin.name.lower()
-            if not id.startswith(_filter) and not name.startswith(_filter): continue
+            if not _filter in id and not _filter in name: continue
 
             # creates the plugin map containing the identifier and the
             # name of the plugin and then adds it to the plugins list
