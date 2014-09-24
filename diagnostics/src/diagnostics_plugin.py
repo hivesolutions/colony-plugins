@@ -57,6 +57,7 @@ class DiagnosticsPlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "startup",
         "diagnostics"
     ]
     main_modules = [
@@ -67,3 +68,11 @@ class DiagnosticsPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import diagnostics
         self.diagnostics = diagnostics.Diagnostics(self)
+        self.diagnostics.start()
+
+    def unload_plugin(self):
+        colony.Plugin.unload_plugin(self)
+        self.diagnostics.stop()
+
+    def get_data(self):
+        return self.diagnostics.get_data()
