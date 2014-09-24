@@ -41,14 +41,22 @@ import colony
 
 class Diagnostics(colony.System):
 
+    def __init__(self, plugin):
+        colony.System.__init__(self, plugin)
+        self.data = dict()
+        self.diagnostics = colony.config("DIAGNOSTICS", False, cast = bool)
+
     def start(self):
+        if not self.diagnostics: return
         colony.register_g("sql.executed", self.sql_executed)
 
     def stop(self):
+        if not self.diagnostics: return
         colony.unregister_g("sql.executed", self.sql_executed)
 
     def get_data(self):
-        return dict()
+        return self.data
 
-    def sql_executed(self, query, time):
-        print query
+    def sql_executed(self, query, time, engine):
+        sql = self.data.get("sql", [])
+        sql.append((query, time, engine))
