@@ -84,11 +84,11 @@ class PluginController(base.BaseController):
 
             # creates the plugin map containing the identifier and the
             # name of the plugin and then adds it to the plugins list
-            plugin = {
-                "id" : loaded_plugin.id,
-                "name" : loaded_plugin.name,
-                "short_name" : loaded_plugin.short_name
-            }
+            plugin = dict(
+                id = loaded_plugin.id,
+                name = loaded_plugin.name,
+                short_name = loaded_plugin.short_name
+            )
             plugins.append(plugin)
 
         # sorts the plugins list using the default alphabetic order and
