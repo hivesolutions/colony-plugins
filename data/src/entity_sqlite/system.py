@@ -272,6 +272,10 @@ class SqliteEngine(object):
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow: self.sqlite_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            
+            # triggers a notification about the sql query execution that
+            # has just been performed (should contain also the time in ms)
+            colony.notify_g("sql.executed", query, delta, ENGINE_NAME)
         except:
             # closes the cursor (safe closing)
             # and re-raises the exception
