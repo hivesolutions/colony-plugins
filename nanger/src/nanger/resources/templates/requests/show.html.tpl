@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <td class="right label" width="50%">time</td>
-                <td class="left value" width="50%">{{ data.time }} ms</td>
+                <td class="left value {{ data.time_c }}" width="50%">{{ data.time }} ms</td>
             </tr>
             {% for key, value in data.totals %}
                 <tr>
