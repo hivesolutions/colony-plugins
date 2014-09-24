@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 import colony
 
 class Diagnostics(colony.System):
@@ -44,19 +46,66 @@ class Diagnostics(colony.System):
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
         self.data = dict()
+        self.currents = dict()
         self.diagnostics = colony.conf("DIAGNOSTICS", False, cast = bool)
 
     def start(self):
         if not self.diagnostics: return
+        colony.register_g("request.start", self.request_start)
+        colony.register_g("request.stop", self.request_stop)
         colony.register_g("sql.executed", self.sql_executed)
 
     def stop(self):
         if not self.diagnostics: return
+        colony.unregister_g("request.start", self.request_start)
+        colony.unregister_g("request.stop", self.request_stop)
         colony.unregister_g("sql.executed", self.sql_executed)
 
     def get_data(self):
         return self.data
 
+    def request_start(self, request):
+        requests = self.data.get("requests", {})
+        requests_l = self.data.get("requests_l", [])
+        data = dict(
+            id = request._generation_time,
+            initial = request._generation_time,
+            path = request.get_path(),
+            operations = dict()
+        )
+        requests[request] = data
+        requests_l.append(request)
+        self.data["requests"] = requests
+        self.data["requests_l"] = requests_l
+        self.currents["request"] = data
+
+    def request_stop(self, request):
+        requests = self.data.get("requests", {})
+        data = requests[request]
+        initial = data["initial"]
+        final = time.time()
+        delta = int((final - initial) * 1000)
+        data["final"] = final
+        data["time"] = delta
+        self.currents["request"] = None
+
+        import pprint
+        pprint.pprint(data)
+
     def sql_executed(self, query, time, engine):
+        data = dict(
+            query = query,
+            time = time,
+            engine = engine
+        )
         sql = self.data.get("sql", [])
-        sql.append((query, time, engine))
+        sql.append(data)
+        self.data["sql"] = sql
+
+        request_data = self.currents.get("request", None)
+        if not request_data: return
+
+        operations = request_data["operations"]
+        sql = operations.get("sql", [])
+        sql.append(data)
+        operations["sql"] = sql
