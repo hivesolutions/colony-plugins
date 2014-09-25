@@ -911,7 +911,7 @@ class RestRequest(object):
     def post_handle(self, rest_request):
         colony.notify_g("request.end", rest_request)
 
-    def except_handle(self, rest_request):
+    def except_handle(self, rest_request, exception):
         colony.notify_g("request.end", rest_request)
 
     def start_session(
