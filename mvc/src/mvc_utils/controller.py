@@ -2538,18 +2538,20 @@ def template(
 
     identifier = colony.unique()
     colony.notify_g("template.begin", identifier)
-    template_file = self.template_file(request = request, *args, **kwargs)
-    contents = self.process_set_contents(
-        request,
-        template_file,
-        apply_base_path = apply_base_path,
-        assign_session = assign_session,
-        assign_flash = assign_flash,
-        variable_encoding = variable_encoding,
-        content_type = content_type,
-        set_contents = set_contents
-    )
-    colony.notify_g("template.end", identifier, template_file)
+    try:
+        template_file = self.template_file(request = request, *args, **kwargs)
+        contents = self.process_set_contents(
+            request,
+            template_file,
+            apply_base_path = apply_base_path,
+            assign_session = assign_session,
+            assign_flash = assign_flash,
+            variable_encoding = variable_encoding,
+            content_type = content_type,
+            set_contents = set_contents
+        )
+    finally:
+        colony.notify_g("template.end", identifier, template_file)
     return contents
 
 def template_file(self, template = None, *args, **kwargs):
