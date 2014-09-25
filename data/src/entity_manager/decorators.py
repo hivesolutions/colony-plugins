@@ -68,11 +68,6 @@ def transaction(transaction_type = "required"):
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the transaction decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
             """
 
             # retrieves the instance self, to be used to
@@ -117,10 +112,6 @@ def transaction(transaction_type = "required"):
 
         @type function: Function
         @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
         @rtype: Function
         @return: The decorator interceptor function.
         """
@@ -167,11 +158,6 @@ def lock_table(table_name, parameters):
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the lock_table decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
             """
 
             # retrieves the instance self, to be used to
@@ -201,10 +187,6 @@ def lock_table(table_name, parameters):
 
         @type function: Function
         @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
         @rtype: Function
         @return: The decorator interceptor function.
         """
