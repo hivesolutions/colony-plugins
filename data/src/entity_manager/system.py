@@ -1146,14 +1146,14 @@ class EntityManager(object):
         # value with the current relation loaded and filtering
         # it based on the target id name and the target id value
         # also sets the minimal flag for faster retrieval
-        options = {
-            "eager" : {
+        options = dict(
+            eager = {
                 relation_name : {
                     target_id : target_id_value
                 }
             },
-            "minimal" : True
-        }
+            minimal = True
+        )
 
         # tries to retrieve the entity from the data source, making
         # sure that the relation is retrieved using the filter on
@@ -2090,13 +2090,13 @@ class EntityManager(object):
         # creates the (new) options map containing a new level
         # of indirection for the loading of the relation with
         # the provided options
-        _options = {
-            "eager" : {
+        _options = dict(
+            eager = {
                 name : options
             },
-            "scope" : entity._scope,
-            "minimal" : True
-        }
+            scope = entity._scope,
+            minimal = True
+        )
 
         # retrieves the value of the identifier attribute
         # of the entity to be used for the retrieval of
@@ -5650,11 +5650,11 @@ class EntityManager(object):
                 # creates a new entity instance and associates it
                 # with the entities "cache" map, note that the class
                 # attribute is set in the new map (properly decoded)
-                entities[current_class][id] = {
-                    "_class" : current_class_name.decode("utf-8"),
-                    "_mtime" : current_modified_time,
-                    "mtime" : current_modified_time
-                }
+                entities[current_class][id] = dict(
+                    _class = current_class_name.decode("utf-8"),
+                    _mtime = current_modified_time,
+                    mtime = current_modified_time
+                )
 
             # retrieves the entity reference from the map
             # of entities cache (cache retrieval)
@@ -5781,11 +5781,11 @@ class EntityManager(object):
                             # with the entities "cache" map, note that the
                             # class attribute is set in the new map, with
                             # the proper decoding action performed
-                            entities[target_class][target_id_value] = {
-                                "_class" : target_class_name.decode("utf-8"),
-                                "_mtime" : target_modified_time,
-                                "mtime" : target_modified_time
-                            }
+                            entities[target_class][target_id_value] = dict(
+                                _class = target_class_name.decode("utf-8"),
+                                _mtime = target_modified_time,
+                                mtime = target_modified_time
+                            )
 
                         # retrieves the "new" entity from the entities map, taking
                         # into account the proper target class and the current
@@ -6329,19 +6329,19 @@ class EntityManager(object):
         # the retrieval is of type minimal and that
         # the eager loaded relation are loaded, the
         # retrieval is made in map mode
-        options = {
-            "map" : True,
-            "minimal" : True,
-            "eager" : eager,
-            "filters" : (
-                {
-                    "type" : "in",
-                    "fields" : {
+        options = dict(
+            map = True,
+            minimal = True,
+            eager = eager,
+            filters = (
+                dict(
+                    type = "in",
+                    fields = {
                         id : id_values
                     }
-                },
+                ),
             )
-        }
+        )
 
         # retrieves the new entities from the entity manager, according to
         # the provided options map (these entities are going to be used
@@ -6527,9 +6527,9 @@ class EntityManager(object):
         if self._is_filter(options):
             # creates a new options map with the filters
             # defined in it
-            options = {
-                "filters" : options
-            }
+            options = dict(
+                filters = options
+            )
 
         # in case the eager option is present
         # must be processed
@@ -6692,20 +6692,20 @@ class EntityManager(object):
                     if filter_value_type in SEQUENCE_TYPES:
                         # creates an in filter and sets
                         # the filter fields as the filter elements
-                        filter = {
-                            "type" : "in",
-                            "fields" : filter
-                        }
+                        filter = dict(
+                            type = "in",
+                            fields = filter
+                        )
 
                     # otherwise the "normal" equals filter should
                     # be applied assuming it's a normal set of filters
                     else:
                         # creates an equals filter and sets
                         # the filter fields as the filter elements
-                        filter = {
-                            "type" : "equals",
-                            "fields" : filter
-                        }
+                        filter = dict(
+                            type = "equals",
+                            fields = filter
+                        )
 
                 # in case the (filter) fields are defined in the
                 # filter map
@@ -6744,10 +6744,10 @@ class EntityManager(object):
                                 # creates the complete filter field using the
                                 # invalid value as the value and the filter field
                                 # as the name of the filter field
-                                filter_field = {
-                                    "name" : filter_field,
-                                    "value" : None
-                                }
+                                filter_field = dict(
+                                    name = filter_field,
+                                    value = None
+                                )
 
                             # adds the filter field to the filter fields
                             _filter_fields.append(filter_field)
@@ -6899,12 +6899,12 @@ class EntityManager(object):
         if not range_start == None:
             # creates the start date filter with the
             # range start value
-            start_filter = {
-                "type" : "greater_equal",
-                "fields" : {
-                    "_mtime" : str(range_start)
-                }
-            }
+            start_filter = dict(
+                type = "greater_equal",
+                fields = dict(
+                    _mtime = str(range_start)
+                )
+            )
 
             # adds the start date filter to the list of filters
             filters.append(start_filter)
@@ -6914,12 +6914,12 @@ class EntityManager(object):
         if not range_end == None:
             # creates the end date filter with the
             # range end value
-            end_filter = {
-                "type" : "lesser",
-                "fields" : {
-                    "_mtime" : str(range_end)
-                }
-            }
+            end_filter = dict(
+                type = "lesser",
+                fields = dict(
+                    _mtime = str(range_end)
+                )
+            )
 
             # adds the end date filter to the list of filters
             filters.append(end_filter)
