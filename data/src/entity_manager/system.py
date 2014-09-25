@@ -2271,6 +2271,10 @@ class EntityManager(object):
         return result
 
     def find(self, entity_class, options = {}, lock = False, **kwargs):
+        # sets the default count value (number of result) so that even
+        # for exception situations there's a proper handling
+        count = 0
+
         # generates the unique identifier of the current operation
         # this will generate a fast oriented identifier
         identifier = colony.unique()
@@ -2278,10 +2282,6 @@ class EntityManager(object):
         # triggers a notify operation about the beginning of a new
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "find", options)
-
-        # sets the default count value (number of result) so that even
-        # for exception situations there's a proper handling
-        count = 0
 
         try:
             # in case the lock flag is set the entity class with
