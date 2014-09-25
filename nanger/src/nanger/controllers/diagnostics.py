@@ -141,20 +141,30 @@ class DiagnosticsController(base.BaseController):
         )
 
     def _build_request(self, request):
+        # retrieves the various components of the request that are
+        # going to be processed for the build to be performed
         method = request["method"]
         time = request["time"]
         code = request["code"]
 
+        # retrieves the proper color to be used in the decoration of
+        # the method value of the current request
         method_color = METHOD_COLOR.get(method, "normal")
 
+        # takes into account the amount of time used for the processing
+        # of the requests and uses it to color the time value
         if time >= 1000: time_color = "text-red"
         elif time >= 200: time_color = "text-orange"
         else: time_color = "text-normal"
 
+        # verifies if any error has occurred for the current request and
+        # uses the result of such evaluation to choose the color for the code
         if code // 100 in (4, 5): code_color = "text-red"
         elif code // 100 in (3,): code_color = "text-blue"
         else: code_color = "text-normal"
 
+        # populates the request data structure with the proper colors for
+        # each of the components of the request (from processing)
         request["method_c"] = method_color
         request["time_c"] = time_color
         request["code_c"] = code_color
