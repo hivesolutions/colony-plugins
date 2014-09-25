@@ -102,19 +102,30 @@ class DiagnosticsController(base.BaseController):
         # presented, these request should be a result of a filtering
         requests = []
 
+        # iterates over the complete set of requests in the requests list in
+        # order to filter the ones that match the requested criteria
         for _request in requests_l:
+            # unpacks the various components of the request and then normalizes
+            # some of its values for quantification
             path = _request["path"]
             initial = _request["initial"]
             path = path.lower()
 
+            # verifies if the complete set of criteria options/values are matched
+            # and of that's not the case skips the iteration (not matching/valid)
             if not _filter in path: continue
             if until and initial > until: continue
             if not "time" in _request: continue
 
+            # creates a replica/copy of the current request in iteration, then runs
+            # the build operation on it and adds it to the list of requests
             _request = copy.copy(_request)
             self._build_request(_request)
             requests.append(_request)
 
+        # reverses the requests list to keep the correct order of display (from
+        # newest to oldest) and then gathers the subset of requested values running
+        # then the serialization process over the values
         requests.reverse()
         requests = requests[start_record:start_record + number_records]
         self.serialize(request, requests, serializer = json_plugin)
@@ -124,9 +135,13 @@ class DiagnosticsController(base.BaseController):
         # of the diagnostics information to be shown
         diagnostics_plugin = self.plugin.diagnostics_plugin
 
+        # retrieves the complete set of diagnostics data and uses it to
+        # gather the request structure that is going to be displayed,
+        # then builds it populating it with new data
         data = diagnostics_plugin.get_data()
         requests = data.get("requests", [])
         _request = requests[request_id]
+        _request = copy.copy(_request)
         self._build_request(_request)
 
         # generates and processes the template with the provided values
