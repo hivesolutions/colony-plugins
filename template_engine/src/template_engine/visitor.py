@@ -1535,6 +1535,9 @@ class EvalVisitor(Visitor):
     Attention should also be taken to the fact that using the eval
     function may create some multithreading lock issues where a
     thread gets blocked by other's gil (global interpreter lock).
+
+    Overall this is also a slower evaluator of values as the eval
+    function required the creation of new contexts (slow operations).
     """
 
     def get_value(self, attribute, localize = False, default = None):
