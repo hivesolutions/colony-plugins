@@ -293,8 +293,11 @@ class Rest(colony.System):
             # note that proper callback are called before and after
             # and then returns immediately as the request is handled
             rest_request.pre_handle(rest_request)
-            self.handle_rest_request_services(rest_request)
-            rest_request.post_handle(rest_request)
+            try: self.handle_rest_request_services(rest_request)
+            except BaseException, exception: rest_request.except_handle(
+                rest_request, exception
+            ); raise
+            else: rest_request.post_handle(rest_request)
             return
 
         # otherwise it's a "general" request and the typical handling
@@ -320,8 +323,11 @@ class Rest(colony.System):
                 # note that proper callback are called before and after and
                 # returns the control flow to the caller method immediately
                 rest_request.pre_handle(rest_request)
-                rest_service_plugin.handle_rest_request(rest_request)
-                rest_request.post_handle(rest_request)
+                try: rest_service_plugin.handle_rest_request(rest_request)
+                except BaseException, exception: rest_request.except_handle(
+                    rest_request, exception
+                ); raise
+                else: rest_request.post_handle(rest_request)
                 return
 
         # raises the rest request not handled exception, because of the control
@@ -903,6 +909,9 @@ class RestRequest(object):
         colony.notify_g("request.begin", rest_request)
 
     def post_handle(self, rest_request):
+        colony.notify_g("request.end", rest_request)
+
+    def except_handle(self, rest_request):
         colony.notify_g("request.end", rest_request)
 
     def start_session(
