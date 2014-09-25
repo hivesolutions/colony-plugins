@@ -2536,6 +2536,7 @@ def template(
     for operations that don't set the contents in the request.
     """
 
+    template_file = None
     identifier = colony.unique()
     colony.notify_g("template.begin", identifier)
     try:
