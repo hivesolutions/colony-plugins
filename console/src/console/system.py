@@ -877,7 +877,7 @@ class ConsoleContext(colony.Protected):
         # to the internal defined value
         get_line_method = self._get_line or sys.stdin.readline
 
-        # returns the result of the get line mehtod calling
+        # returns the result of the get line method calling
         # the system method is used in case none is defined
         return get_line_method()
 
