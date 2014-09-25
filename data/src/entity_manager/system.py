@@ -1876,32 +1876,33 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "remove")
 
-        # retrieves the entity class for the entity
-        # and the id value of the entity to be used
-        # for the (possible) locking of the entity
-        entity_class = entity.__class__
-        id_value = entity.get_id_value()
+        try:
+            # retrieves the entity class for the entity
+            # and the id value of the entity to be used
+            # for the (possible) locking of the entity
+            entity_class = entity.__class__
+            id_value = entity.get_id_value()
 
-        # in case the lock flag is set, locks the
-        # data source for the current entity
-        lock and self.lock(entity_class, id_value)
+            # in case the lock flag is set, locks the
+            # data source for the current entity
+            lock and self.lock(entity_class, id_value)
 
-        # generates the query for the removal operation and
-        # executes it in the context for the data source
-        query = self._remove_query(entity)
-        self.execute_query(query)
+            # generates the query for the removal operation and
+            # executes it in the context for the data source
+            query = self._remove_query(entity)
+            self.execute_query(query)
 
-        # enables the entity, providing the entity with the
-        # mechanisms necessary for data source communication
-        self.enable(entity)
+            # enables the entity, providing the entity with the
+            # mechanisms necessary for data source communication
+            self.enable(entity)
 
-        # updates the data state of the entity to removed, this
-        # may be useful for consequent data usage
-        entity.data_state = REMOVED_STATE_VALUE
-
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack
-        colony.notify_g("orm.end", identifier)
+            # updates the data state of the entity to removed, this
+            # may be useful for consequent data usage
+            entity.data_state = REMOVED_STATE_VALUE
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack
+            colony.notify_g("orm.end", identifier)
 
     def save_update(self, entity, generate = True, lock = False):
         # retrieves the entity class associated with
@@ -2176,56 +2177,57 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "get", options)
 
-        # normalizes the options, this is going to expand the
-        # options map into a larger and easily accessible
-        # map of values (this only happens in case the options
-        # are already defined) and the runs the processing of
-        # the provided keyword arguments (options expansion)
-        options = options and self.normalize_options(options) or {}
-        self.process_kwargs(options, kwargs)
+        try:
+            # normalizes the options, this is going to expand the
+            # options map into a larger and easily accessible
+            # map of values (this only happens in case the options
+            # are already defined) and the runs the processing of
+            # the provided keyword arguments (options expansion)
+            options = options and self.normalize_options(options) or {}
+            self.process_kwargs(options, kwargs)
 
-        # retrieves the table id field, to be used
-        # to create the appropriate equals filter
-        table_id = entity_class.get_id()
+            # retrieves the table id field, to be used
+            # to create the appropriate equals filter
+            table_id = entity_class.get_id()
 
-        # retrieves the filters from the provided options
-        # and converts it into a list to be "workable",
-        # because this value should be an non manipulable tuple
-        filters = list(options.get("filters", []))
+            # retrieves the filters from the provided options
+            # and converts it into a list to be "workable",
+            # because this value should be an non manipulable tuple
+            filters = list(options.get("filters", []))
 
-        # adds the id value filtering part to the initial
-        # options map provided, this is an extension to the
-        # existing filters
-        filters.append(dict(
-            type = "equals",
-            fields = (
-                dict(
-                    name = table_id,
-                    value = id_value
-                ),
-            )
-        ))
+            # adds the id value filtering part to the initial
+            # options map provided, this is an extension to the
+            # existing filters
+            filters.append(dict(
+                type = "equals",
+                fields = (
+                    dict(
+                        name = table_id,
+                        value = id_value
+                    ),
+                )
+            ))
 
-        # sets the appropriate set of filters in the options
-        # to be able to retrieve the exact match on the
-        # identifier of the requested entity class
-        options["filters"] = filters
+            # sets the appropriate set of filters in the options
+            # to be able to retrieve the exact match on the
+            # identifier of the requested entity class
+            options["filters"] = filters
 
-        # in case the lock flag is set the entity class with
-        # the requested id value is locked until the transaction
-        # is "committed" or "rollbacked"
-        lock and self.lock(entity_class, id_value)
+            # in case the lock flag is set the entity class with
+            # the requested id value is locked until the transaction
+            # is "committed" or "rollbacked"
+            lock and self.lock(entity_class, id_value)
 
-        # "finds" the various entities that respect the created
-        # options map, this should return either a list of size
-        # one values or a none value and so the value must be
-        # processes to the appropriate single value
-        result = self.find(entity_class, options)
-        result = result and result[0] or None
-
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", identifier, 1)
+            # "finds" the various entities that respect the created
+            # options map, this should return either a list of size
+            # one values or a none value and so the value must be
+            # processes to the appropriate single value
+            result = self.find(entity_class, options)
+            result = result and result[0] or None
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack (includes result count)
+            colony.notify_g("orm.end", identifier, 1)
 
         # returns the processed result value
         return result
@@ -2239,29 +2241,30 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "count", options)
 
-        # normalizes the options, this is going to expand the
-        # options map into a larger and easily accessible
-        # map of values (this only happens in case the options
-        # are already defined) and the runs the processing of
-        # the provided keyword arguments (options expansion)
-        options = options and self.normalize_options(options) or {}
-        self.process_kwargs(options, kwargs)
+        try:
+            # normalizes the options, this is going to expand the
+            # options map into a larger and easily accessible
+            # map of values (this only happens in case the options
+            # are already defined) and the runs the processing of
+            # the provided keyword arguments (options expansion)
+            options = options and self.normalize_options(options) or {}
+            self.process_kwargs(options, kwargs)
 
-        # sets the count flag in the options as true this
-        # will provide access to the counting of the rows in
-        # the current query
-        options["count"] = True
+            # sets the count flag in the options as true this
+            # will provide access to the counting of the rows in
+            # the current query
+            options["count"] = True
 
-        # "finds" the various entities that respect the created
-        # options map, this should return an integer representing
-        # the number of "rows" that fulfill the requirements defined
-        # in the options map (simple queries with no filter and
-        # no eager loading perform much faster)
-        result = self.find(entity_class, options, lock)
-
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", identifier, 1)
+            # "finds" the various entities that respect the created
+            # options map, this should return an integer representing
+            # the number of "rows" that fulfill the requirements defined
+            # in the options map (simple queries with no filter and
+            # no eager loading perform much faster)
+            result = self.find(entity_class, options, lock)
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack (includes result count)
+            colony.notify_g("orm.end", identifier, 1)
 
         # returns the processed result value, number of rows
         # in the data source for the query
@@ -2276,35 +2279,40 @@ class EntityManager(object):
         # data (orm) operation to be performed (may be used for debug)
         colony.notify_g("orm.begin", identifier, "find", options)
 
-        # in case the lock flag is set the entity class with
-        # is completely locked (this blocks the data source
-        # information on the data for the entity class)
-        lock and self.lock(entity_class)
+        # sets the default count value (number of result) so that even
+        # for exception situations there's a proper handling
+        count = 0
 
-        # normalizes the options, this is going to expand the
-        # options map into a larger and easily accessible
-        # map of values (this only happens in case the options
-        # are already defined) and the runs the processing of
-        # the provided keyword arguments (options expansion)
-        options = options and self.normalize_options(options) or {}
-        self.process_kwargs(options, kwargs)
+        try:
+            # in case the lock flag is set the entity class with
+            # is completely locked (this blocks the data source
+            # information on the data for the entity class)
+            lock and self.lock(entity_class)
 
-        # creates the proper find query for the entity class and
-        # the provided options, the executes the query (avoiding the
-        # closing of the cursor) and runs the find result operation
-        # in order to obtain the proper find result entities
-        query, field_names = self._find_query(entity_class, options)
-        cursor = self.execute_query(query, False)
-        try: result = self._find_result(entity_class, field_names, options, cursor)
-        finally: cursor.close()
+            # normalizes the options, this is going to expand the
+            # options map into a larger and easily accessible
+            # map of values (this only happens in case the options
+            # are already defined) and the runs the processing of
+            # the provided keyword arguments (options expansion)
+            options = options and self.normalize_options(options) or {}
+            self.process_kwargs(options, kwargs)
 
-        # calculates the number of results retrieved from the current
-        # operation, takes into account the kind/type of result
-        count = len(result) if type(result) == list else 1
+            # creates the proper find query for the entity class and
+            # the provided options, the executes the query (avoiding the
+            # closing of the cursor) and runs the find result operation
+            # in order to obtain the proper find result entities
+            query, field_names = self._find_query(entity_class, options)
+            cursor = self.execute_query(query, False)
+            try: result = self._find_result(entity_class, field_names, options, cursor)
+            finally: cursor.close()
 
-        # notifies the colony infra-structure about the ending of the
-        # current data (orm) operation in stack (includes result count)
-        colony.notify_g("orm.end", identifier, count)
+            # calculates the number of results retrieved from the current
+            # operation, takes into account the kind/type of result
+            count = len(result) if type(result) == list else 1
+        finally:
+            # notifies the colony infra-structure about the ending of the
+            # current data (orm) operation in stack (includes result count)
+            colony.notify_g("orm.end", identifier, count)
 
         # returns the final set of results to the caller method this
         # should contain a sequence of model based objects or in case
