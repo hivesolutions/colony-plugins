@@ -103,11 +103,6 @@ def validated(
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the transaction decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
             """
 
             # retrieves the self reference
@@ -209,14 +204,10 @@ def validated(
 
     def decorator(function, *args, **kwargs):
         """
-        The decorator function for the load_allowed decorator.
+        The decorator function for the load allowed decorator.
 
         @type function: Function
         @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
         @rtype: Function
         @return: The decorator interceptor function.
         """
@@ -282,11 +273,6 @@ def transaction(
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the transaction decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
             """
 
             # retrieves the reference to the self instance so that
@@ -374,14 +360,10 @@ def transaction(
 
     def decorator(function, *args, **kwargs):
         """
-        The decorator function for the load_allowed decorator.
+        The decorator function for the load allowed decorator.
 
         @type function: Function
         @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
         @rtype: Function
         @return: The decorator interceptor function.
         """
@@ -390,6 +372,52 @@ def transaction(
         # and returns it to the caller method
         decorator_interceptor_function = create_decorator_interceptor(function)
         return decorator_interceptor_function
+
+    # returns the created decorator
+    return decorator
+
+def eager(function, *args, **kwargs):
+    """"
+    The eager decorator meant to be used for situations where
+    a generator based function/method is meant to be executed
+    immediately (no generator returned).
+
+    This is a convenience decorator to be used mostly under
+    data model validation processes.
+
+    @type function: Function
+    @param function: The function that is going to be decorator
+    and have the result of calls eager loaded.
+    @rtype: Function
+    @return: The resulting decorated function that may be used
+    freely under a "generator environment".
+    """
+
+    # retrieves the function specification and uses
+    # it to verify if the yield argument is part of
+    # it and sets the flag that controls such existence
+    # in accordance with the existence of it
+    function_spec = inspect.getargspec(function)
+    function_args = function_spec.args
+    if "_yield" in function_args: is_yield = True
+    else: is_yield = False
+
+    def decorator(*args, **kwargs):
+        # in case the yield mode is set tries to retrieve
+        # the value of such variable, as it will control
+        # the behavior of the function call
+        if is_yield: _yield = kwargs.get("_yield", False)
+        else: _yield = None
+
+        # calls the concrete function with the proper arguments and
+        # in case the yield mode is active retrieves the complete set
+        # of values from the generator as the return value (as expected)
+        return_value = function(*args, **kwargs)
+        if is_yield and not _yield: return_value = all(return_value)
+
+        # returns the return value, this is the value returned
+        # by the called function (can assume any type)
+        return return_value
 
     # returns the created decorator
     return decorator
@@ -423,11 +451,6 @@ def serialized(serialization_parameters = None, default_success = True):
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the transaction decorator.
-
-            @type args: pointer
-            @param args: The function arguments list.
-            @type kwargs: pointer pointer
-            @param kwargs: The function arguments map.
             """
 
             # retrieves the self reference
@@ -545,14 +568,10 @@ def serialized(serialization_parameters = None, default_success = True):
 
     def decorator(function, *args, **kwargs):
         """
-        The decorator function for the load_allowed decorator.
+        The decorator function for the load allowed decorator.
 
         @type function: Function
         @param function: The function to be decorated.
-        @type args: pointer
-        @param args: The function arguments list.
-        @type kwargs: pointer pointer
-        @param kwargs: The function arguments map.
         @rtype: Function
         @return: The decorator interceptor function.
         """
