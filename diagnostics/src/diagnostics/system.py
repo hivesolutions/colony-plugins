@@ -153,10 +153,10 @@ class Diagnostics(colony.System):
         self.data["templates_l"] = templates_l
         self.push_state("template", data)
 
-    def template_end(self, identifier, template_file):
+    def template_end(self, identifier, template_file = None):
         templates = self.data.get("templates", {})
         data = templates[identifier]
-        data["file_path"] = template_file.file_path
+        data["file_path"] = template_file and template_file.file_path
         self.set_time(data)
         self.pop_state("template")
         self.try_operation("template", ("template", "request"), data)
