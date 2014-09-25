@@ -604,7 +604,7 @@ class TemplateFile(object):
         file_path = None,
         encoding = None,
         root_node = None,
-        eval = True
+        eval = False
     ):
         """
         Constructor of the class.
@@ -624,7 +624,8 @@ class TemplateFile(object):
         @param root_node: The root node to be used.
         @type eval: bool
         @param eval: If the evaluation based visitor should be used instead
-        of the normal (and safe) interpreter based visitor.
+        of the normal (and safe) interpreter based visitor. Care should be
+        taking while deciding which visitor to be used.
         """
 
         self.manager = manager

@@ -1531,6 +1531,10 @@ class EvalVisitor(Visitor):
     that are passed. Keep in mind that this is not a safe
     environment (not sandboxed) and should not be used to run
     arbitrary/unsafe code.
+
+    Attention should also be taken to the fact that using the eval
+    function may create some multithreading lock issues where a
+    thread gets blocked by other's gil (global interpreter lock).
     """
 
     def get_value(self, attribute, localize = False, default = None):
