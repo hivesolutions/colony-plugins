@@ -2017,7 +2017,15 @@ class RestRequest(object):
         port = service_connection.connection_address[1]
         return port
 
-    def field(self, name, default = None, cast = None, split = False, token = ","):
+    def field(
+        self,
+        name,
+        default = None,
+        cast = None,
+        mandatory = False,
+        split = False,
+        token = ","
+    ):
         controller = self._get_controller()
         if not controller: return default
         return controller.get_field(
@@ -2025,6 +2033,7 @@ class RestRequest(object):
             name,
             default = default,
             cast_type = cast,
+            mandatory = mandatory,
             split = split,
             token = token
         )
