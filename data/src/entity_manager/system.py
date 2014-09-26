@@ -4757,8 +4757,7 @@ class EntityManager(object):
                 # in case the is first filter field
                 # value is set
                 if is_first_filter_field_value:
-                    # unsets the is first filter field
-                    # value
+                    # unsets the is first filter field value
                     is_first_filter_field_value = False
                 # otherwise the wildcard operator must
                 # be added to the filter field value
