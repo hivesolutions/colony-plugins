@@ -1044,6 +1044,7 @@ def store(
     validate = True,
     force_persist = False,
     raise_exception = False,
+    store_relations = True,
     entity_manager = None
 ):
     """
@@ -1065,6 +1066,9 @@ def store(
     @type raise_exception: bool
     @param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
+    @type store_relations: bool
+    @param store_relations: If the complete set of relations of the
+    current entity should also be persisted (chained storage).
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1116,12 +1120,14 @@ def store(
         try:
             # stores the various relations of the entity model persisting
             # them into the data source and then persists the entity model
-            # itself, names persistence
-            self.store_relations(
+            # itself (names persistence), note that this operation may be
+            # prevent using the proper flag (store relations flag)
+            if store_relations: self.store_relations(
                 persist_type,
                 validate = validate,
                 force_persist = force_persist,
                 raise_exception = raise_exception,
+                store_relations = store_relations,
                 entity_manager = entity_manager
             )
             self.persist(persist_type, entity_manager = entity_manager)
@@ -1151,7 +1157,13 @@ def store(
     if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE: self.post_save(persist_type)
     if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE: self.post_update(persist_type)
 
-def store_f(self, validate = True, raise_exception = False, entity_manager = None):
+def store_f(
+    self,
+    validate = True,
+    raise_exception = False,
+    store_relations = True,
+    entity_manager = None
+):
     """
     Utility method, that may be used as a shorthand if
     the storing of the entity in the data source is meant
@@ -1167,6 +1179,9 @@ def store_f(self, validate = True, raise_exception = False, entity_manager = Non
     @type raise_exception: bool
     @param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
+    @type store_relations: bool
+    @param store_relations: If the complete set of relations of the
+    current entity should also be persisted (chained storage).
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1180,6 +1195,7 @@ def store_f(self, validate = True, raise_exception = False, entity_manager = Non
         validate = validate,
         force_persist = True,
         raise_exception = raise_exception,
+        store_relations = store_relations,
         entity_manager = entity_manager
     )
 
@@ -1222,6 +1238,7 @@ def store_relations(
     validate = False,
     force_persist = False,
     raise_exception = False,
+    store_relations = True,
     entity_manager = None
 ):
     """
@@ -1246,6 +1263,9 @@ def store_relations(
     @type raise_exception: bool
     @param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
+    @type store_relations: bool
+    @param store_relations: If the complete set of relations of the
+    current entity should also be persisted (chained storage).
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1288,6 +1308,7 @@ def store_relations(
             validate = validate,
             force_persist = force_persist,
             raise_exception = raise_exception,
+            store_relations = store_relations,
             entity_manager = entity_manager
         )
 
@@ -1299,6 +1320,7 @@ def store_relation(
     validate = False,
     force_persist = False,
     raise_exception = False,
+    store_relations = True,
     entity_manager = None
 ):
     """
@@ -1330,6 +1352,9 @@ def store_relation(
     @type raise_exception: bool
     @param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
+    @type store_relations: bool
+    @param store_relations: If the complete set of relations of the
+    current entity should also be persisted (chained storage).
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1416,6 +1441,7 @@ def store_relation(
                 persist_type,
                 validate,
                 force_persist = force_persist,
+                store_relations = store_relations,
                 entity_manager = entity_manager
             )
 
