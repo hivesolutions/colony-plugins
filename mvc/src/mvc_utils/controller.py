@@ -3780,10 +3780,10 @@ def set_relative_resources_path(
     resources_path = os.path.join(plugin_path, relative_resources_path)
 
     # creates the parameters map to be used
-    parameters = {
-        "extra_extras_path" : extra_extras_path,
-        "extra_templates_path" : extra_templates_path
-    }
+    parameters = dict(
+        extra_extras_path = extra_extras_path,
+        extra_templates_path = extra_templates_path
+    )
 
     # sets the resources path
     self.set_resources_path(resources_path, update_resources, parameters)
@@ -3902,10 +3902,10 @@ def set_flash(self, request, message, message_type):
 
     # creates the flash map with both the message
     # contents and the message type
-    flash = {
-        "message" : message,
-        "type" : message_type
-    }
+    flash = dict(
+        message = message,
+        type = message_type
+    )
 
     # sets the flash map in the session
     self.set_session_attribute(request, "_flash", flash)
