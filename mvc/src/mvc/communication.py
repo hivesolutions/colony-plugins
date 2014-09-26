@@ -349,11 +349,11 @@ class MvcCommunicationHandler:
         channels = request.get_attribute("channels") or None
         channels = channels and channels.split(",") or ()
         for channel in channels:
-            parameters = {
-                "communication_handler" : self,
-                "operation" : "channel",
-                "channel" : channel
-            }
+            parameters = dict(
+                communication_handler = self,
+                operation = "channel",
+                channel = channel
+            )
             delegate.changed(request, parameters)
 
         # in case the complete set of channels has been successful
@@ -402,11 +402,11 @@ class MvcCommunicationHandler:
         # handled and constructs the parameters map with it sending
         # it for data handling in the correct method
         data = request.get_attribute("data")
-        parameters = {
-            "communication_handler" : self,
-            "operation" : "data",
-            "data" : data
-        }
+        parameters = dict(
+            communication_handler = self,
+            operation = "data",
+            data = data
+        )
         delegate.data(request, parameters)
 
         # writes the success message to the client end point to
@@ -423,11 +423,11 @@ class MvcCommunicationHandler:
         # the security of the registration by calling the changed
         # method with the appropriate parameters
         channel = request.get_attribute("channel")
-        parameters = {
-            "communication_handler" : self,
-            "operation" : "channel",
-            "channel" : channel
-        }
+        parameters = dict(
+            communication_handler = self,
+            operation = "channel",
+            channel = channel
+        )
         delegate.changed(request, parameters)
 
         # in case the the  channel has been successful
