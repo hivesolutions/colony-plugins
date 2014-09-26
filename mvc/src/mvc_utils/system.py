@@ -77,19 +77,19 @@ be used in case none os provided through parameters """
 DEFAULT_DATABASE_SUFFIX = "database.db"
 """ The default database suffix """
 
-DEFAULT_CONNECTION_PARAMETERS = {
-    "file_path" : "mvc_utils_system.db",
-    "autocommit" : False
-}
+DEFAULT_CONNECTION_PARAMETERS = dict(
+    file_path = "mvc_utils_system.db",
+    autocommit = False
+)
 """ The default connection parameters """
 
-DEFAULT_MANAGER_ARGUMENTS = {
-    "id" : "pt.hive.colony.database",
-    "engine" : "sqlite",
-    "connection_parameters" : {
-        "autocommit" : False
-    }
-}
+DEFAULT_MANAGER_ARGUMENTS = dict(
+    id = "pt.hive.colony.database",
+    engine = "sqlite",
+    connection_parameters = dict(
+        autocommit = False
+    )
+)
 """ The default entity manager arguments that are going to
 be used in case an invalid value is provided as the base
 entity manager arguments for the construction of the values """
