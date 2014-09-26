@@ -177,13 +177,13 @@ class ApnHandler(handler.Handler):
         # creates the message structure using with the
         # message (string) as the alert and then converts
         # it into a json format (payload)
-        message_s = {
-           "aps" : {
-                "alert" : message,
-                "sound" : "default",
-                "badge" : 0
-            }
-        }
+        message_s = dict(
+           aps = dict(
+                alert = message,
+                sound = "default",
+                badge = 0
+            )
+        )
         payload = json.dumps(message_s)
         if not json: payload = MESSAGE_TEMPLATE % (message.replace("\"", "\\\""), "default", 0).encode("utf-8")
 
