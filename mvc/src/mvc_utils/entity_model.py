@@ -90,16 +90,16 @@ TO_MANY_RELATIONS = (
 )
 """ The tuple containing the "to-many" relations """
 
-DATA_TYPE_CAST_TYPES_MAP = {
-    "text" : unicode,
-    "string" : unicode,
-    "integer" : int,
-    "float" : float,
-    "date" : colony.timestamp_datetime,
-    "data" : unicode,
-    "metadata" : dict,
-    "relation" : None
-}
+DATA_TYPE_CAST_TYPES_MAP = dict(
+    text = unicode,
+    string = unicode,
+    integer = int,
+    float = float,
+    date =  colony.timestamp_datetime,
+    data = unicode,
+    metadata = dict,
+    relation = None
+)
 """ The map associating the data types with the cast types
 so that they may be used for default and fallback casting """
 
@@ -595,10 +595,10 @@ def _class_lock_row_g(cls, name, value, entity_manager = None):
     # containing the definition of the field for locking
     table_name = cls.get_name()
     sql_value = cls._get_sql_value(name, value)
-    parameters = {
-        "field_name" : name,
-        "field_value" : sql_value
-    }
+    parameters = dict(
+        field_name = name,
+        field_value = sql_value
+    )
 
     # locks the entity manager (table) data source for the given
     # parameters (field definition)
@@ -827,11 +827,11 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # creates the wildcard based filter with an empty set of field
         # (empty map) that is populated with the various field names
         # contained in the name sequence
-        _filter = {
-            "type" : "like",
-            "like_type" : type_s,
-            "fields" : {}
-        }
+        _filter = dict(
+            type = "like",
+            like_type = type_s,
+            fields = dict()
+        )
 
         # retrieves the fields part of the filter and adds the various
         # partial names to it with the filter string as the value
@@ -868,23 +868,23 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # ensures automatic handling of sequence "typed" filters
         _value = [target._cast_value(name, value) for value in value.split(";")]
         _value = None if len(_value) == 0 else _value[0] if len(_value) == 1 else _value
-        _filter = {
-            "type" : operation,
-            "fields" : {
+        _filter = dict(
+            type = operation,
+            fields = {
                 name : _value
             }
-        }
+        )
         _filters.append(_filter)
 
     # creates the complete filter value according to the provided
     # specification and returns it to the caller method
-    filter = {
-        "range" : (start_record, number_records),
-        "order_by" : order_by or (),
-        "eager" : eager,
-        "filters" : filters,
-        "map" : map
-    }
+    filter = dict(
+        range = (start_record, number_records),
+        order_by = order_by or (),
+        eager = eager,
+        filters = filters,
+        map = map
+    )
     return filter
 
 def _class_apply_context(
@@ -2047,10 +2047,10 @@ def resolve_to_one(self, map, model_class, permissive):
         # creates the map of options so that the diffusion
         # scope is the same as the current entity in order
         # to re-use existent entities in the scope
-        options = {
-            "entities" : self._entities,
-            "scope" : self._scope
-        }
+        options = dict(
+            entities = self._entities,
+            scope = self._scope
+        )
 
         # casts the id value into the appropriate data type
         # and uses it to retrieve the appropriate entity value
@@ -2137,16 +2137,16 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     # in the referred identifiers list and using the current diffusion
     # scope, this should retrieve all the associated entities from the
     # current data source
-    options = {
-        "filters" : {
-            "type" : "in",
-            "fields" : {
+    options = dict(
+        filters = dict(
+            type = "in",
+            fields = {
                 id_name : id_values_list
             }
-        },
-        "entities" : self._entities,
-        "scope" : self._scope
-    }
+        ),
+        entities = self._entities,
+        scope = self._scope
+    )
 
     # retrieves all the entity models from the data source that are contained
     # in the range of defined identifiers, avoids retrieving the entity models
