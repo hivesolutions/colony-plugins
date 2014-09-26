@@ -297,21 +297,21 @@ def get_exception_map(self, exception, request = None):
 
     # creates the exception map, with information on
     # the exception and on the (global) environment
-    exception_map = {
-        "environment" : {
-            "method" : request and request.get_request().get_method(),
-            "status" : request and request.get_request().status_code,
-            "colony_version" : request and request.get_plugin_manager().get_version(),
-            "python_version" : platform.python_version(),
-            "python_executable_path" : sys.executable,
-            "server_time" : datetime.datetime.now().strftime("%a, %d %b %Y %H:%M%S %z")
-        },
-        "exception" : {
-            "exception_name" : exception_class_name,
-            "message" : exception_message,
-            "traceback" : formatted_traceback
-        }
-    }
+    exception_map = dict(
+        environment = dict(
+            method = request and request.get_request().get_method(),
+            status = request and request.get_request().status_code,
+            colony_version = request and request.get_plugin_manager().get_version(),
+            python_version = platform.python_version(),
+            python_executable_path = sys.executable,
+            server_time = datetime.datetime.now().strftime("%a, %d %b %Y %H:%M%S %z")
+        ),
+        exception = dict(
+            exception_name = exception_class_name,
+            message = exception_message,
+            traceback = formatted_traceback
+        )
+    )
 
     # converts the exception class name to underscore notation and uses it
     # to create the name of the method that will process the exception
@@ -880,6 +880,7 @@ def get_field(
     field_name,
     default = None,
     cast_type = None,
+    mandatory = False,
     split = False,
     token = ","
 ):
@@ -906,6 +907,9 @@ def get_field(
     @type cast_type: Type
     @param cast_type: The type to be used in the optional casting
     of the field value.
+    @type mandatory: bool
+    @param mandatory: If an exception should be raised in case the
+    field is not found under the provided request.
     @type split: bool
     @param split: Flag indicating if the field value should be
     divided into multiple values using the token as separator.
@@ -928,9 +932,22 @@ def get_field(
     method = getattr(self, method_name)
 
     # processes (and retrieves) the data map from the
-    # request and then uses it to retrieve the field
-    # from it (the retrieval of the form data may be cached)
+    # request, deserializing the values and starting
+    # the process of mounting the data structure
     form_data_map = method(request)
+
+    # verifies if the requested field (name) exists in
+    # the generated form data map and in case it does not
+    # and the mandatory (strict) mode is active raises an
+    # exception indicating the value (not found) error
+    exists = field_name in form_data_map
+    if mandatory and not exists: raise ValueError(
+        "mandatory field '%s' not found in request" % field_name
+    )
+
+    # uses the generated form data map to retrieve the value
+    # that was requested, defaulting to the provided default
+    # value if it was not found in the data structure
     field_value = form_data_map.get(field_name, default)
 
     # in case the current field value is invalid, should return
@@ -1717,10 +1734,9 @@ def get_base_path_complete(self, request, suffix_path = "", prefix_path = HTTP_P
     # value of the url construction
     host = self._get_host(request)
 
-    # in case no host is defined
-    if not host:
-        # raises the insufficient http information exception
-        raise exceptions.InsufficientHttpInformation("no host value defined")
+    # in case no host is defined, must raise the
+    # insufficient http information exception
+    if not host: raise exceptions.InsufficientHttpInformation("no host value defined")
 
     # retrieves the path, removes the arguments part
     # of it and the splits it in the separator value
@@ -4330,10 +4346,9 @@ def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VA
     # tries retrieves the host value
     host = self._get_host(request)
 
-    # in case no host is defined
-    if not host:
-        # raises the insufficient http information exception
-        raise exceptions.InsufficientHttpInformation("no host value defined")
+    # in case no host is defined must raise the insufficient
+    # http information exception
+    if not host: raise exceptions.InsufficientHttpInformation("no host value defined")
 
     # retrieves the path
     path = self._get_path(request)
