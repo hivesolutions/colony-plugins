@@ -471,7 +471,8 @@ def serialized(serialization_parameters = None, default_success = True):
                 # this area it must be considered not handled gracefully
                 # and must be considered an anomaly
                 self.warning(
-                    "There was an exception in controller: " + unicode(exception)
+                    "There was an exception in controller (%s): " %\
+                    exception.__class__.__name__ + unicode(exception)
                 )
 
                 # retrieves the serializer and the exception
