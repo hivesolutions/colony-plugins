@@ -52,7 +52,7 @@ NEWLINE_CHARACTER = "\n"
 SEPARATOR_CHARACTER = ";"
 """ The separator character """
 
-LIST_TYPES = (types.ListType, types.TupleType)
+LIST_TYPES = (types.ListType, types.TupleType, types.GeneratorType)
 """ A tuple with the various list types """
 
 def dumps(object):
@@ -89,9 +89,18 @@ def _chunk(object, string_buffer):
     # or is empty there is no need to codify it
     if not object: return
 
+    # sets the "original" and default value for the attribute names
+    # so that no local variable is referenced before assignment
+    attribute_names = None
+
+    # verifies if the type of the object provided for serialization
+    # is generator, if that's the case special handling is required
+    # as these objects defer in interface from tuples and lists
+    is_generator = object_type == types.GeneratorType
+
     # retrieves the first object item to try to detect the kind
     # of mode for serialization that must be used
-    _object_item = object[0]
+    _object_item = object.next() if is_generator else object[0]
     _object_item_type = type(_object_item)
 
     # in case the type of the first object item is a list or a tuple
@@ -105,69 +114,85 @@ def _chunk(object, string_buffer):
     # element (considered to be the header element representation)
     if map_mode:
         # retrieves the (header) attribute names in order to
-        # create the header value
-        attribute_names = _attribute_names(object)
+        # create the header value, from its names
+        attribute_names = _attribute_names(_object_item, object = [] if is_generator else object)
         header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
         # writes the header value to the string buffer
         string_buffer.write(header_value)
 
-    # iterates over all the object (items)
-    # in the object list for serialization
+    # in case the generator mode is defined we must run the proper
+    # chunk line operation for the first line as we're never going
+    # to have a chance to iterate over that line again
+    if is_generator: _chunk_line(
+        string_buffer,
+        _object_item,
+        attribute_names = attribute_names,
+        map_mode = map_mode
+    )
+
+    # iterates over all the object (items) in the object list for
+    # serialization so that it's able to chunk (serialize) each item
     for object_item in object:
-        # retrieves the various object items attribute values
-        # (from the previously calculated attribute names) in
-        # case the simple mode is used there is no need to retrieve
-        # them using the header name
-        attribute_values = map_mode and colony.object_attribute_values(
+        _chunk_line(
+            string_buffer,
             object_item,
-            attribute_names
-        ) or object_item
+            attribute_names = attribute_names,
+            map_mode = map_mode
+        )
 
-        # retrieves the attribute values length
-        attribute_values_length = len(attribute_values)
+def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = False):
+    # retrieves the various object items attribute values
+    # (from the previously calculated attribute names) in
+    # case the simple mode is used there is no need to retrieve
+    # them using the header name
+    attribute_values = map_mode and colony.object_attribute_values(
+        object_item,
+        attribute_names
+    ) or object_item
 
-        # starts the index value
-        index = 0
+    # retrieves the attribute values length
+    attribute_values_length = len(attribute_values)
 
-        # iterates over all the attribute values
-        # to write them to the string buffer
-        for attribute_value in attribute_values:
-            # retrieves the attribute value type
-            attribute_value_type = type(attribute_value)
+    # starts the index value, that is going to be used in
+    # the write operation of the various attributes in line
+    index = 0
 
-            # in case the attribute value is not of string types uses the default
-            # system conversion to convert then if the attribute value is of type
-            # unicode encodes the attribute value using the default encoding
-            if not attribute_value_type in types.StringTypes: attribute_value = str(attribute_value)
-            attribute_value_encoded = attribute_value_type == types.UnicodeType and\
-                attribute_value.encode(DEFAULT_ENCODING) or\
-                (attribute_value and str(attribute_value))
+    # iterates over all the attribute values
+    # to write them to the string buffer
+    for attribute_value in attribute_values:
+        # retrieves the attribute value type
+        attribute_value_type = type(attribute_value)
 
-            # writes the encoded attribute value (in case
-            # the value is valid)
-            attribute_value_encoded and string_buffer.write(attribute_value_encoded)
+        # in case the attribute value is not of string types uses the default
+        # system conversion to convert then if the attribute value is of type
+        # unicode encodes the attribute value using the default encoding
+        if not attribute_value_type in types.StringTypes: attribute_value = str(attribute_value)
+        attribute_value_encoded = attribute_value_type == types.UnicodeType and\
+            attribute_value.encode(DEFAULT_ENCODING) or\
+            (attribute_value and str(attribute_value))
 
-            # in case the current index represents the last
-            # attribute must continue the loop as the the
-            # separator character is not required in this case
-            if index == attribute_values_length - 1: continue
+        # writes the encoded attribute value (in case
+        # the value is valid)
+        attribute_value_encoded and string_buffer.write(attribute_value_encoded)
 
-            # writes the separator character and then increments
-            # the current index so that it's possible to count values
-            string_buffer.write(SEPARATOR_CHARACTER)
-            index += 1
+        # in case the current index represents the last
+        # attribute must continue the loop as the the
+        # separator character is not required in this case
+        if index == attribute_values_length - 1: continue
 
-        # writes the new line in the string buffer
-        string_buffer.write(NEWLINE_CHARACTER)
+        # writes the separator character and then increments
+        # the current index so that it's possible to count values
+        string_buffer.write(SEPARATOR_CHARACTER)
+        index += 1
 
-def _attribute_names(object, sort = True):
-    # retrieves the first element (for initial
-    # set reference)
-    object_item = object[0]
+    # writes the new line in the string buffer
+    string_buffer.write(NEWLINE_CHARACTER)
 
+def _attribute_names(object_item, object = [], sort = True):
     # creates the first and initial set of attribute names
-    # from the first object item
+    # from the first object item, this is considered to be
+    # the default one from which all the other will intersect
     attribute_names = colony.object_attribute_names(object_item)
 
     # iterates over all the other object items in the set
@@ -206,10 +231,9 @@ def _dechunk(chunks, header):
     # creates the object list
     object_list = []
 
-    # retrieves the header value
+    # retrieves the header value and unpacks it retrieving its complete
+    # set of names, considering them to be the header of the csv
     header_value = chunks[0]
-
-    # retrieves the header value
     header_names = [value.strip() for value in header_value.split(SEPARATOR_CHARACTER)]
 
     # calculates the number of header names
