@@ -2851,15 +2851,17 @@ class HttpRequest:
         return self.received_message
 
     def write(self, message, flush = 1, encode = True):
-        # retrieves the message type
+        # retrieves the message type, so that it's possible to
+        # "know" if an encoding operation is required or not
         message_type = type(message)
 
-        # in case the message type is unicode
+        # in case the message type is unicode it must be encoded
+        # into a plain string using the defined content type value
         if message_type == types.UnicodeType and encode:
-            # encodes the message with the defined content type charset
             message = message.encode(self.content_type_charset)
 
-        # writes the message to the message stream
+        # writes the message to the message stream so that it's
+        # properly sent to the client side of the connection
         self.message_stream.write(message)
 
     def flush(self):
