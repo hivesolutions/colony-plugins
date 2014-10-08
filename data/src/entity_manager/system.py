@@ -1822,7 +1822,7 @@ class EntityManager(object):
             # current data (orm) operation in stack
             colony.notify_g("orm.end", identifier)
 
-    def update(self, entity, lock = False):
+    def update(self, entity, immutable = True, lock = False):
         # generates the unique identifier of the current operation
         # this will generate a fast oriented identifier
         identifier = colony.unique()
@@ -1848,7 +1848,7 @@ class EntityManager(object):
 
             # generates the query for the updating operation and
             # executes it in the context for the data source
-            query = self._update_query(entity)
+            query = self._update_query(entity, immutable = immutable)
             self.execute_query(query)
 
             # maps (saves) all relations for the entity that are considered
@@ -3037,7 +3037,7 @@ class EntityManager(object):
         # queries (multiple inserts)
         return queries
 
-    def _update_query(self, entity):
+    def _update_query(self, entity, immutable = True):
         # retrieves the entity class associated with
         # the entity
         entity_class = entity.__class__
@@ -3069,8 +3069,10 @@ class EntityManager(object):
 
         # retrieves the map that associates the various
         # field names with the value for its immutable
-        # property in case it's set to valid
-        immutable_map = entity_class.get_immutable_map()
+        # property in case it's set to valid, note that
+        # in case the immutable flag is not set an empty
+        # map is created instead (no immutable validation)
+        immutable_map = entity_class.get_immutable_map() if immutable else dict()
 
         # creates the list to hold the set of queries
         # generated for updating a set of data
