@@ -3354,7 +3354,8 @@ class HttpRequest:
         or the default in case none is defined.
 
         @rtype: String
-        @return: The status code value.
+        @return: The status code value as the string that
+        describes the currently defined status code.
         """
 
         # in case a status message is defined
