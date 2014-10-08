@@ -126,10 +126,13 @@ class DataEntityManager(colony.System):
     """
 
     entity_engine_plugins_map = {}
-    """ The map of entity engine plugins """
+    """ The map of entity engine plugins, should associate
+    the name of the engine with the plugin instance """
 
     loaded_entity_manager_map = {}
-    """ The map associating the id with the (loaded) entity manager """
+    """ The map associating the id with the (loaded) entity
+    manager, contains the complete set of entity manager instances
+    and may be used for runtime retrieval """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
