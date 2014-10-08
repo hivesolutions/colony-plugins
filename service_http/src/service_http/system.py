@@ -3363,8 +3363,12 @@ class HttpRequest:
             # status code value
             status_code_value = self.status_message
         else:
-            # retrieves the value for the status code
-            status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
+            # retrieves the value for the status code, defaulting
+            # to the default value in case none is defined (error)
+            status_code_value = STATUS_CODE_VALUES.get(
+                self.status_code,
+                DEFAULT_STATUS_CODE_VALUE
+            )
 
         # returns the status code value
         return status_code_value
