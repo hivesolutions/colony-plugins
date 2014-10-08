@@ -134,7 +134,7 @@ class Diagnostics(colony.System):
         identifier = id(request)
         requests = self.data.get("requests", {})
         data = requests[identifier]
-        data["code"] = request.get_status_code()
+        data["code"] = request.get_status_code() or 500
         self.set_time(data)
         self.pop_state("request")
 
