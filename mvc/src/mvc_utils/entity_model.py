@@ -1042,6 +1042,7 @@ def store(
     self,
     persist_type = PERSIST_UPDATE | PERSIST_SAVE,
     validate = True,
+    immutable = True,
     force_persist = False,
     raise_exception = False,
     store_relations = True,
@@ -1059,6 +1060,10 @@ def store(
     @type validate: bool
     @param validate: Flag controlling if a validation should
     be run in the model before persisting it.
+    @type immutable: bool
+    @param immutable: Flag that controls/defines if the immutable
+    rules should be respected for update operations, this flag is
+    not propagated to the underlying calls (security issues).
     @type force_persist: bool
     @param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
@@ -1130,7 +1135,11 @@ def store(
                 store_relations = store_relations,
                 entity_manager = entity_manager
             )
-            self.persist(persist_type, entity_manager = entity_manager)
+            self.persist(
+                persist_type,
+                immutable = immutable,
+                entity_manager = entity_manager
+            )
         finally:
             # attaches the current entity model back
             # enabling it to communicate with the data
@@ -1527,13 +1536,16 @@ def save(self, entity_manager = None):
     # saves the entity using the entity manager
     entity_manager.save(self)
 
-def update(self, entity_manager = None):
+def update(self, immutable = True, entity_manager = None):
     """
     Updates the current instance in the data source
     described in the current entity manager.
     This method provides the persistence layer for
     updating an object.
 
+    @type immutable: bool
+    @param immutable: Flag indicating if the immutable field
+    rules should be respected for the update operations.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1549,7 +1561,7 @@ def update(self, entity_manager = None):
     self.set_context(entity_manager = entity_manager)
 
     # updates the entity using the entity manager
-    entity_manager.update(self)
+    entity_manager.update(self, immutable = immutable)
 
 def remove(self, entity_manager = None):
     """
@@ -1652,7 +1664,13 @@ def save_update(self, entity_manager = None):
     # saves or updates the entity using the entity manager
     entity_manager.save_update(self)
 
-def persist(self, persist_type, validate = False, entity_manager = None):
+def persist(
+    self,
+    persist_type,
+    validate = False,
+    immutable = True,
+    entity_manager = None
+):
     """
     Persists the current instance into the data source
     described in the current entity manager.
@@ -1667,6 +1685,9 @@ def persist(self, persist_type, validate = False, entity_manager = None):
     @type validate: bool
     @param validate: Flag controlling if a validation should
     be run in the model before persisting it.
+    @type immutable: bool
+    @param immutable: Flag indicating if the immutable field
+    rules should be respected for the update operations.
     @type entity_manager: EntityManager
     @param entity_manager: The optional entity manager
     reference to be used.
@@ -1689,7 +1710,10 @@ def persist(self, persist_type, validate = False, entity_manager = None):
         # updates the entity using the entity manager
         # this operation must change and persist the
         # values of the entity in the data source
-        self.update(entity_manager = entity_manager)
+        self.update(
+            entity_manager = entity_manager,
+            immutable = immutable
+        )
 
     # in case the entity is not persisted and the persist
     # type allows saving
