@@ -1456,7 +1456,7 @@ def store_relation(
 
             # in case the relation is not valid it must be removed
             # from the entity to avoid "malicious" association to be set
-            # on the data source
+            # on the data source (corrupting data from a security point)
             not is_associable and remove_relations.append(_relation_value)
         except exceptions.ModelValidationError:
             # in case the raise exception flag is set
