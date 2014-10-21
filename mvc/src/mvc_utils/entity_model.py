@@ -1705,7 +1705,7 @@ def persist(
     is_persisted = self.is_persisted()
 
     # in case the entity is persisted and the persist
-    # type allows updating
+    # type allows updating, then update is performed
     if is_persisted and persist_type & PERSIST_UPDATE:
         # updates the entity using the entity manager
         # this operation must change and persist the
@@ -1716,7 +1716,7 @@ def persist(
         )
 
     # in case the entity is not persisted and the persist
-    # type allows saving
+    # type allows saving, then save is performed
     elif not is_persisted and persist_type & PERSIST_SAVE:
         # saves the entity using the entity manager
         # this operation must set and persist the
@@ -2565,9 +2565,67 @@ def _validate(self, persist_type):
     # avoid stack overflowing (returns as valid to avoid exception)
     if hasattr(self, "_validating") and self._validating == True: return True
 
+    # verifies if the validation is required taking into account the
+    # current persistence state of the entity and both of the persist
+    # types that are considered valid for validation, in case no validation
+    # is required the current process returns in success (valid)
+    is_valid_save = (persist_type & PERSIST_SAVE) and not self.is_persisted()
+    is_valid_update = (persist_type & PERSIST_UPDATE) and self.is_persisted()
+    if not is_valid_save and not is_valid_update: return True
+
     # sets the current entity in the validating operation, this flag
     # should be able to avoid unnecessary recursion
     self._validating = True
+
+    # creates the method that will be run for the execution of the
+    # validation process of each of the model's attributes, so that
+    # it's possible to skip the validation process for some attributes
+    def checker(name):
+        # retrieves the complete attributes/specification of the attribute
+        # under the definition of the current model
+        model_attributes = getattr(self.__class__, name)
+
+        # retrieves the target attribute data type for the model and in
+        # case it's not a relation the validation is considered valid
+        model_type = model_attributes.get("type", None)
+        if not model_type == "relation": return True
+
+        # assuming that the attribute refers a relation at least one persist
+        # type must be valid according to the current persist type of validation
+        model_persist_type = model_attributes.get("persist_type", PERSIST_NONE)
+        relation_persist_type = model_persist_type & (persist_type | PERSIST_ASSOCIATE)
+        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE): return False
+
+        # retrieves the value of the relation for the current entity and in case
+        # the value is not defined the validation is not required (return valid)
+        relation_value = self.get_value(name)
+        if relation_value == None: return False
+
+        # retrieves the relation value from the entity and then converts it to an
+        # enumerable type for compatibility (if required by the relation type)
+        relation_is_to_many = self.is_to_many(name)
+        relation_value = not relation_is_to_many and [relation_value] or relation_value
+
+        # iterates over all the relation values for validation check in case a
+        # in case at least one the value required validation the valid value
+        # is returned so that the validation is performed
+        for _relation_value in relation_value:
+            # in case the (current) relation value is not set must
+            # continue the loop for more relation validation check
+            if _relation_value == None: continue
+
+            # verifies that at least one of the possible persist modes
+            # is valid for the current relation value and if that's the
+            # case returns a valid value meaning that the validation
+            # process is going to be processed for such value
+            is_valid_save = (relation_persist_type & PERSIST_SAVE) and not _relation_value.is_persisted()
+            is_valid_update = (relation_persist_type & PERSIST_UPDATE) and _relation_value.is_persisted()
+            if not is_valid_save and not is_valid_update: continue
+            return True
+
+        # fallback value meaning that no validation will be performed for the
+        # current attribute name (if reached this point it's a relation)
+        return False
 
     try:
         # validates the relations of the current entity model
@@ -2575,7 +2633,7 @@ def _validate(self, persist_type):
         # validates the current entity model and also retrieves
         # the result of the validation
         relations_result_value = self._validate_relations(persist_type)
-        result_value = self.validate()
+        result_value = self.validate(checker = checker)
     finally:
         # restores the validating variable to the original invalid
         # state (avoids possible misbehavior)

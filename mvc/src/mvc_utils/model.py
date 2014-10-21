@@ -1138,11 +1138,18 @@ def clear_errors(self):
     # a new map to hold the values (clear process)
     self.validation_errors_map = {}
 
-def validate(self):
+def validate(self, checker = None):
     """
     Validates all the attributes in the current object.
     This method returns if the validation was successful or not.
 
+    An optional checker function may be provided so that the
+    validation process is controlled/managed by such function.
+
+    @type checker: Function
+    @param checker: Checker function that if existent will be
+    run for each of the model's attribute so that it's possible
+    to infer if a validation should be performed for that attribute.
     @rtype: bool
     @return: If the model validation was successful or not.
     """
@@ -1162,6 +1169,12 @@ def validate(self):
         # persisted and the value in the data source was already validated)
         # the data model remains consistent for sure
         if self.is_stored() and not self.has_value(attribute_name): continue
+
+        # in case there's a checker method method that will verify if the
+        # attribute qualifies for validation then runs it and verifies if
+        # the result is negative, if that's the case skips the validation
+        # for the current attribute name (validation not required)
+        if checker and not checker(attribute_name): continue
 
         # retrieves the attribute value
         attribute_value = self.get_value(attribute_name)
