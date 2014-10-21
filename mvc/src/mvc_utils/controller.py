@@ -697,7 +697,11 @@ def save_entity_relations(
 
             try:
                 # calls the relation method for the entity (saving or updating it)
-                relation_entity = relation_value and relation_method(request, relation_value, persist_type = _relation_persist_type) or None
+                relation_entity = relation_value and relation_method(
+                    request,
+                    relation_value,
+                    persist_type = _relation_persist_type
+                ) or None
             except exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
                 # in the model validation error
