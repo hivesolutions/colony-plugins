@@ -5562,7 +5562,7 @@ class EntityManager(object):
         # method that ensures order in the to many relation values, this
         # is very important to ensure a minimal and primary order in their
         # values (the running of this sorting is recursive)
-        for entity in _entities_list: self._sort_to_many_e(entity, entity_class)
+        for entity in _entities_list: self._sort_to_many_e(entity, entity_class, options)
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
@@ -5859,7 +5859,11 @@ class EntityManager(object):
                 # converts the item value into the appropriate value
                 # representation and sets it into the entity (map) in
                 # the correct attribute name
-                _entity[attribute_name] = _class._from_sql_value(attribute_name, item_value, encoding = database_encoding)
+                _entity[attribute_name] = _class._from_sql_value(
+                    attribute_name,
+                    item_value,
+                    encoding = database_encoding
+                )
 
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
@@ -5870,13 +5874,19 @@ class EntityManager(object):
         # method that ensures order in the to many relation values, this
         # is very important to ensure a minimal and primary order in their
         # values (the running of this sorting is recursive)
-        for entity in _entities_list: self._sort_to_many_m(entity, entity_class)
+        for entity in _entities_list: self._sort_to_many_m(entity, entity_class, options)
 
         # returns the list of retrieved entities,
         # the final result set (ordered list)
         return _entities_list, _entities_map, _visited_map
 
-    def _sort_to_many_e(self, entity, entity_class, visited = None):
+    def _sort_to_many_e(self, entity, entity_class, options, visited = None):
+        # retrieves the reference to the eager loaded relations
+        # for the current result set, these are going to be the
+        # relations that are going to be sorted (avoids duplicated
+        # sorting, causing performance and other issues) 
+        eager = options.get("eager", {})
+        
         # creates the visited map in case it's not already defined
         # (first iteration) then checks if the entity is already
         # present in the visited map in case it is return immediately
@@ -5889,11 +5899,6 @@ class EntityManager(object):
         # visited map (preemptive visiting)
         visited[entity] = True
 
-        # retrieves the complete set of relation from the
-        # current entity class to allow recursive sorting
-        # on the relation values (if present)
-        all_relations = entity_class.get_all_relations()
-
         # retrieves the map of to many relations so that is
         # possible to percolate over them to sort their values
         # according to their identifier
@@ -5901,7 +5906,7 @@ class EntityManager(object):
 
         # iterates over all the relations to allow recursive
         # sorting in their values
-        for relation in all_relations:
+        for relation in eager:
             # retrieves the relation and in case it's not valid
             # (not set or empty sequence) continues the loops
             # no action is performed
@@ -5918,7 +5923,12 @@ class EntityManager(object):
             # all the values to sort their to many relation (this is
             # considered to be the recursion step)
             if not entity_class.is_to_many(relation): value = [value]
-            for _value in value: self._sort_to_many_e(_value, target_class, visited)
+            for _value in value: self._sort_to_many_e(
+                _value,
+                target_class,
+                eager[relation],
+                visited = visited
+            )
 
         # iterates over all the levels in the to many relations map
         # (all the class levels and relations)
@@ -5926,6 +5936,10 @@ class EntityManager(object):
             # iterates over all the relations in the current to many
             # relations class to sort the relation values
             for relation in relations:
+                # in case the relation is not present in the eager set
+                # of relations there's no need to sort it's values
+                if not relation in eager: continue 
+
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
                 # no action is performed
@@ -5948,7 +5962,13 @@ class EntityManager(object):
                 # are at least ordered by their identifier value (some order)
                 value.sort(comparator)
 
-    def _sort_to_many_m(self, entity, entity_class, visited = None):
+    def _sort_to_many_m(self, entity, entity_class, options, visited = None):
+        # retrieves the reference to the eager loaded relations
+        # for the current result set, these are going to be the
+        # relations that are going to be sorted (avoids duplicated
+        # sorting, causing performance and other issues) 
+        eager = options.get("eager", {})
+        
         # creates the visited map in case it's not already defined
         # (first iteration) then checks if the entity is already
         # present in the visited map in case it is return immediately
@@ -5961,11 +5981,6 @@ class EntityManager(object):
         # visited map (preemptive visiting)
         visited[id(entity)] = True
 
-        # retrieves the complete set of relation from the
-        # current entity class to allow recursive sorting
-        # on the relation values (if present)
-        all_relations = entity_class.get_all_relations()
-
         # retrieves the map of to many relations so that is
         # possible to percolate over them to sort their values
         # according to their identifier
@@ -5973,7 +5988,7 @@ class EntityManager(object):
 
         # iterates over all the relations to allow recursive
         # sorting in their values
-        for relation in all_relations:
+        for relation in eager:
             # retrieves the relation and in case it's not valid
             # (not set or empty sequence) continues the loops
             # no action is performed
@@ -5990,7 +6005,12 @@ class EntityManager(object):
             # all the values to sort their to many relation (this is
             # considered to be the recursion step)
             if not entity_class.is_to_many(relation): value = [value]
-            for _value in value: self._sort_to_many_m(_value, target_class, visited)
+            for _value in value: self._sort_to_many_m(
+                _value,
+                target_class,
+                eager[relation],
+                visited = visited
+            )
 
         # iterates over all the levels in the to many relations map
         # (all the class levels and relations)
@@ -5998,6 +6018,10 @@ class EntityManager(object):
             # iterates over all the relations in the current to many
             # relations class to sort the relation values
             for relation in relations:
+                # in case the relation is not present in the eager set
+                # of relations there's no need to sort it's values
+                if not relation in eager: continue 
+                
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
                 # no action is performed
