@@ -2573,10 +2573,6 @@ def _validate(self, persist_type):
     is_valid_update = (persist_type & PERSIST_UPDATE) and self.is_persisted()
     if not is_valid_save and not is_valid_update: return True
 
-    # sets the current entity in the validating operation, this flag
-    # should be able to avoid unnecessary recursion
-    self._validating = True
-
     # creates the method that will be run for the execution of the
     # validation process of each of the model's attributes, so that
     # it's possible to skip the validation process for some attributes
@@ -2626,6 +2622,10 @@ def _validate(self, persist_type):
         # fallback value meaning that no validation will be performed for the
         # current attribute name (if reached this point it's a relation)
         return False
+
+    # sets the current entity in the validating operation, this flag
+    # should be able to avoid unnecessary recursion
+    self._validating = True
 
     try:
         # validates the relations of the current entity model
