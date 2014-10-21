@@ -5884,9 +5884,9 @@ class EntityManager(object):
         # retrieves the reference to the eager loaded relations
         # for the current result set, these are going to be the
         # relations that are going to be sorted (avoids duplicated
-        # sorting, causing performance and other issues) 
+        # sorting, causing performance and other issues)
         eager = options.get("eager", {})
-        
+
         # creates the visited map in case it's not already defined
         # (first iteration) then checks if the entity is already
         # present in the visited map in case it is return immediately
@@ -5904,8 +5904,8 @@ class EntityManager(object):
         # according to their identifier
         to_many_map = entity_class.get_to_many_map()
 
-        # iterates over all the relations to allow recursive
-        # sorting in their values
+        # iterates over all the eager loaded relations to allow
+        # recursive sorting of their (also eager loaded) values
         for relation in eager:
             # retrieves the relation and in case it's not valid
             # (not set or empty sequence) continues the loops
@@ -5938,7 +5938,7 @@ class EntityManager(object):
             for relation in relations:
                 # in case the relation is not present in the eager set
                 # of relations there's no need to sort it's values
-                if not relation in eager: continue 
+                if not relation in eager: continue
 
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
@@ -5966,9 +5966,9 @@ class EntityManager(object):
         # retrieves the reference to the eager loaded relations
         # for the current result set, these are going to be the
         # relations that are going to be sorted (avoids duplicated
-        # sorting, causing performance and other issues) 
+        # sorting, causing performance and other issues)
         eager = options.get("eager", {})
-        
+
         # creates the visited map in case it's not already defined
         # (first iteration) then checks if the entity is already
         # present in the visited map in case it is return immediately
@@ -5986,8 +5986,8 @@ class EntityManager(object):
         # according to their identifier
         to_many_map = entity_class.get_to_many_map()
 
-        # iterates over all the relations to allow recursive
-        # sorting in their values
+        # iterates over all the eager loaded relations to allow
+        # recursive sorting of their (also eager loaded) values
         for relation in eager:
             # retrieves the relation and in case it's not valid
             # (not set or empty sequence) continues the loops
@@ -6020,8 +6020,8 @@ class EntityManager(object):
             for relation in relations:
                 # in case the relation is not present in the eager set
                 # of relations there's no need to sort it's values
-                if not relation in eager: continue 
-                
+                if not relation in eager: continue
+
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
                 # no action is performed
