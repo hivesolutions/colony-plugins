@@ -2593,9 +2593,10 @@ def _validate(self, persist_type):
         if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE): return False
 
         # retrieves the value of the relation for the current entity and in case
-        # the value is not defined the validation is not required (return valid)
+        # the value is not defined the validation is performed (fallback behavior)
+        # note that this case "covers": none, empty and invalid cases
         relation_value = self.get_value(name)
-        if relation_value == None: return False
+        if not relation_value: return True
 
         # retrieves the relation value from the entity and then converts it to an
         # enumerable type for compatibility (if required by the relation type)
