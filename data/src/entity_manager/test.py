@@ -1361,4 +1361,59 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(address.country, None)
 
     def test_sort_to_many(self):
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Dog)
+
+        # creates the base person that is going to have the various
+        # dogs associated for the sort of to many relations test
+        person = test_mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # creates the complete range of dogs that are going to be used
+        # in the sorting test, note that they are associated with the
+        # previously created person (all of them)
+        dog_a = test_mocks.Dog()
+        dog_a.object_id = 2
+        dog_a.name = "name_dog_a"
+        dog_a.owner = person
+        dog_b = test_mocks.Dog()
+        dog_b.object_id = 3
+        dog_b.name = "name_dog_b"
+        dog_b.owner = person
+        dog_c = test_mocks.Dog()
+        dog_c.object_id = 4
+        dog_c.name = "name_dog_c"
+        dog_c.owner = person
+        self.entity_manager.save(dog_a)
+        self.entity_manager.save(dog_b)
+        self.entity_manager.save(dog_c)
+
+        # retrieves the person that was created from the data source, using
+        # no ordering in the relations (default ordering should apply)
+        person = self.entity_manager.get(test_mocks.Person, 1)
+
+        # verifies that the retrieval was a success and that the dogs are
+        # correctly sorted using the default sorting (identifier ascending)
+        self.assertNotEqual(person, None)
+        self.assertNotEqual(person.dogs, [])
+        self.assertEqual(person.dogs[0].object_id, 2)
+        self.assertEqual(person.dogs[1].object_id, 3)
+        self.assertEqual(person.dogs[2].object_id, 4)
+
+        # re-retrieves the person from the data source, sorting the dogs
+        # relation using the name in a descending order
+        person = self.entity_manager.get(test_mocks.Person, 1, options = dict(
+            eager = ("dogs",),
+            order_by = (("dogs.name", "descending"),)
+        ))
+
+        # verifies that the retrieval was a success and that the dogs are now
+        # sorted in the opposite order, when compared with the first retrieval
+        self.assertNotEqual(person, None)
+        self.assertNotEqual(person.dogs, [])
+        self.assertEqual(person.dogs[0].object_id, 4)
+        self.assertEqual(person.dogs[1].object_id, 3)
+        self.assertEqual(person.dogs[2].object_id, 2)

@@ -6799,6 +6799,37 @@ class EntityManager(object):
             # sets the filters tuple in the options map
             options["filters"] = tuple(_filters)
 
+        # retrieves both the references to the eager loaded relations
+        # and to the order (by) sorting tuples for the current options
+        # so that it's possible to propagate the order by direction to
+        # the eager loaded relation, this is going to be used to correctly
+        # "indicate" to the lower levels the way the sorting is performed
+        eager = options.get("eager", ())
+        order_by = options.get("order_by", ())
+        for order_name, order_direction in order_by:
+            # splits the name or the order by value into the various
+            # components and verifies if it refers a relation (at least
+            # one head value is preset), otherwise skips the iteration
+            # as there's nothing to be done (no propagation required)
+            parts = order_name.split(".")
+            head = parts[:-1]
+            tail = parts[-1]
+            if not head: continue
+
+            # sets the initial (current) value for the iteration as the
+            # eager map and then iterates over the various header values
+            # finding the proper leaf node of the eager map sequence
+            current = eager
+            for part in head: current = current[part]
+
+            # retrieves the value of the order by attribute for the leaf
+            # node and extends it with the new order by value, note that
+            # a list is used for this operation (mutability required)
+            _order_by = current.get("order_by", ())
+            _order_by = list(_order_by)
+            _order_by.append((tail, order_direction))
+            current["order_by"] = tuple(_order_by)
+
         # sets the normalized option, avoids
         # extra normalization (performance issues)
         options["_normalized"] = True
