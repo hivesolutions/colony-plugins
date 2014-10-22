@@ -1176,13 +1176,15 @@ def validate(self, checker = None):
         # for the current attribute name (validation not required)
         if checker and not checker(attribute_name): continue
 
-        # retrieves the attribute value
+        # retrieves the attribute value, this is the value that is going
+        # to be "fed" into the various validation methods registered for it
         attribute_value = self.get_value(attribute_name)
 
-        # iterates over all the validation tuples
+        # iterates over all the validation tuples to execute/run the
+        # complete set of validation methods for the attribute
         for validation_tuple in validation_tuple_list:
             # retrieves the validation method the validate null and properties
-            # from the validation tuple
+            # from the validation tuple to be used for the validation
             validation_method, validate_null, properties = validation_tuple
 
             # in case the validate null is not set and the
@@ -1190,7 +1192,7 @@ def validate(self, checker = None):
             if not validate_null and attribute_value == None: continue
 
             # calls the validation method for validation on the
-            # given attribute from the model
+            # given attribute from the model (performs the validation)
             validation_method(attribute_name, attribute_value, properties)
 
     # checks if the current validation process has success

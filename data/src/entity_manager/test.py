@@ -1359,3 +1359,6 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.nullify(recursive = True)
         self.assertEqual(person.name, None)
         self.assertEqual(address.country, None)
+
+    def test_sort_to_many(self):
+        pass
