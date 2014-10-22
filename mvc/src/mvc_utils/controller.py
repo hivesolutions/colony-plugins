@@ -674,7 +674,9 @@ def save_entity_relations(
             if relation_value:
                 # validate the given entity for relation with the relation
                 # value in the attribute of name relation name
-                valid_relation = self.validate_entity_relation(entity, relation_value, relation_name)
+                valid_relation = self.validate_entity_relation(
+                    entity, relation_value, relation_name
+                )
             # otherwise the validation is not required
             # the value is not valid, not set
             else:
