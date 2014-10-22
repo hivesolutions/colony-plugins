@@ -6260,14 +6260,16 @@ class EntityManager(object):
                     # creates the query to save a new entry in the generator
                     # table setting the initial next id value and the initial
                     # modification time values
-                    query = "insert into %s(name, next_id, _mtime) values('%s', %d, %f)" % (GENERATOR_VALUE, name, next_id, _mtime)
+                    query = "insert into %s(name, next_id, _mtime) values('%s', %d, %f)" %\
+                        (GENERATOR_VALUE, name, next_id, _mtime)
                 # otherwise the name is already defined in the generator
                 # table in the data source, and so an update is the
                 # necessary operation (update query)
                 else:
                     # creates the query to update the generator table set
                     # the new next id and update the modification time
-                    query = "update %s set next_id = %d, _mtime = %f where name = '%s'" % (GENERATOR_VALUE, next_id, _mtime, name)
+                    query = "update %s set next_id = %d, _mtime = %f where name = '%s'" %\
+                        (GENERATOR_VALUE, next_id, _mtime, name)
 
                 # executes the query in the data source to update
                 # the generator table
