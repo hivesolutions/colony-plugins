@@ -1420,8 +1420,8 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
     def test_normalize_options(self):
         # creates a simple filter for name base selection and runs
-        # the normalization process, creting the full complex based
-        # filtering strcutrue and verifies the result
+        # the normalization process, creating the full complex based
+        # filtering structure and verifies the result
         result = self.entity_manager.normalize_options(dict(
             name = "person_a"
         ))
