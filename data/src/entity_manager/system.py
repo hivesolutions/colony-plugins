@@ -3776,7 +3776,14 @@ class EntityManager(object):
                 # of the values (provides easy interface for it)
                 field_names.append(field_name)
 
-        def join_names(entity_class, options, order_names = False, is_first = True, prefix = "", base_class = None):
+        def join_names(
+            entity_class,
+            options,
+            order_names = False,
+            is_first = True,
+            prefix = "",
+            base_class = None
+        ):
             # retrieves the complete map of relations (ordered
             # by parent class) for the current entity class
             # to be processed, this is going to be used for
@@ -6524,6 +6531,12 @@ class EntityManager(object):
         normalization process targets the simplification of
         the query structure.
 
+        Note that the process is not recursive meaning that only
+        the current level of options is normalized, an exception
+        exists for the propagation of the order by directions on
+        relation values where a normalization process is also
+        required for the associated eager loading relations.
+
         @type options: Dictionary/Object
         @param options: The map of options to be normalized.
         This value may be a filters value and in that case it
@@ -6537,7 +6550,8 @@ class EntityManager(object):
         # tries to retrieve the normalized flag from
         # the options map (for lazy loading) only in case the
         # options is a dictionary
-        is_normalized = type(options) == types.DictionaryType and options.get("_normalized", False) or False
+        is_normalized = type(options) == types.DictionaryType and\
+            options.get("_normalized", False) or False
 
         # in case the options are already normalized
         # no need to normalize again (performance issues)
@@ -6799,12 +6813,11 @@ class EntityManager(object):
             # sets the filters tuple in the options map
             options["filters"] = tuple(_filters)
 
-        # retrieves both the references to the eager loaded relations
-        # and to the order (by) sorting tuples for the current options
-        # so that it's possible to propagate the order by direction to
-        # the eager loaded relation, this is going to be used to correctly
-        # "indicate" to the lower levels the way the sorting is performed
-        eager = options.get("eager", ())
+        # retrieves the reference to the order (by) sorting tuples for
+        # the current options so that it's possible to propagate the order
+        # by direction into the associated eager loaded relations, this
+        # is going to be used to correctly "indicate" to the lower levels
+        # the way the sorting is going to be performed (indication)
         order_by = options.get("order_by", ())
         for order_name, order_direction in order_by:
             # splits the name or the order by value into the various
@@ -6817,10 +6830,14 @@ class EntityManager(object):
             if not head: continue
 
             # sets the initial (current) value for the iteration as the
-            # eager map and then iterates over the various header values
-            # finding the proper leaf node of the eager map sequence
-            current = eager
-            for part in head: current = current[part]
+            # options map and then iterates over the various header values
+            # finding the proper leaf node of the eager map sequence, note
+            # that the various nodes are going to be normalized (required)
+            current = options
+            for part in head:
+                eager = current.get("eager", ())
+                current = eager[part]
+                self.normalize_options(current)
 
             # retrieves the value of the order by attribute for the leaf
             # node and extends it with the new order by value, note that

@@ -1417,3 +1417,52 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(person.dogs[0].object_id, 4)
         self.assertEqual(person.dogs[1].object_id, 3)
         self.assertEqual(person.dogs[2].object_id, 2)
+
+    def test_normalize_options(self):
+        # creates a simple filter for name base selection and runs
+        # the normalization process, creting the full complex based
+        # filtering strcutrue and verifies the result
+        result = self.entity_manager.normalize_options(dict(
+            name = "person_a"
+        ))
+        self.assertEqual(result, dict(
+            _normalized = True,
+            filters = (
+                dict(
+                     type = "equals",
+                     fields = [
+                        dict(
+                            name = "name",
+                            value = "person_a"
+                        ),
+                    ]
+                ),
+            )
+        ))
+
+        # normalizes the options map of a find operation that
+        # orders the enemies of the associated dogs meaning that
+        # order by propagation will occur and then verifies that
+        # the result is normalized and valid
+        result = self.entity_manager.normalize_options(dict(
+            eager = dict(
+                dogs = dict(
+                    eager = ("enemies", )
+                )
+            ),
+            order_by = (("dogs.enemies.name", "descending"),)
+        ))
+        self.assertEqual(result, dict(
+            _normalized = True,
+            eager = dict(
+                dogs = dict(
+                    _normalized = True,
+                    eager = dict(
+                        enemies = dict(
+                            order_by = (("name", "descending"),)
+                        )
+                    ),
+                )
+            ),
+            order_by = (("dogs.enemies.name", "descending"),)
+        ))
