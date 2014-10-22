@@ -5937,8 +5937,10 @@ class EntityManager(object):
             # relations class to sort the relation values
             for relation in relations:
                 # in case the relation is not present in the eager set
-                # of relations there's no need to sort it's values
+                # of relations or the order by indication is defined/set
+                # for such relation there's no need to sort it's values
                 if not relation in eager: continue
+                if "order_by" in eager[relation]: continue
 
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
@@ -6019,8 +6021,10 @@ class EntityManager(object):
             # relations class to sort the relation values
             for relation in relations:
                 # in case the relation is not present in the eager set
-                # of relations there's no need to sort it's values
+                # of relations or the order by indication is defined/set
+                # for such relation there's no need to sort it's values
                 if not relation in eager: continue
+                if "order_by" in eager[relation]: continue
 
                 # retrieves the relation and in case it's not valid
                 # (not set or empty sequence) continues the loops
