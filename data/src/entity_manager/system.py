@@ -5423,9 +5423,7 @@ class EntityManager(object):
                         error_flag = True
                         break
 
-
                     current_path += attribute_partial + "."
-
 
                     # retrieves the relation attributes for the current
                     # relation, then retrieves the target relation class
@@ -5436,7 +5434,7 @@ class EntityManager(object):
 
                     # retrieves the value of the id attribute of the target relation
                     # class, this value is going to be used to check for existing
-                    # entity
+                    # entity, meaning that if it's not defined a new entity is found
                     target_id_value = result_map.get(current_path + target_id, None)
 
                     # in case the identifier value is not found in the result
