@@ -5386,10 +5386,6 @@ class EntityManager(object):
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
             for item_name, item_value in result_map.iteritems():
-
-                #@TODO: this kind of parsing must be removed because
-                # it is too expensive
-
                 # splits the item name around the dot separation
                 # token to create the item path
                 item_path = item_name.split(".")
@@ -5398,8 +5394,6 @@ class EntityManager(object):
                 # from the (complete) item path
                 attribute_path = item_path[:-1]
                 attribute_name = item_path[-1]
-
-
 
                 # unsets the error flag, by default no
                 # error should occur, during the path traversing
@@ -5411,11 +5405,10 @@ class EntityManager(object):
                 _entity = entity
                 _class = current_class
 
-
-                #@TODO: remove this create it's not always
-                # necessary
+                # creates the initial string that will be used to
+                # store the current fully qualified path value for
+                # the various attributes to be updates/unpacked
                 current_path = str()
-
 
                 # "traverses" the complete attribute path to
                 # progressively retrieve or create the relation
@@ -5430,6 +5423,8 @@ class EntityManager(object):
                         error_flag = True
                         break
 
+                    # updates the current path with the attribute partial
+                    # in iteration (by appending it to the end of the string)
                     current_path += attribute_partial + "."
 
                     # retrieves the relation attributes for the current
@@ -5515,9 +5510,10 @@ class EntityManager(object):
                         relation_list = getattr(_entity, attribute_partial)
 
                         # checks if the "new" entity is present in the relation
-                        # list and in case it's not sets it in the relations list
-                        #@todo: this is slow as hell (must check presence in list)
-                        if not _new_entity in relation_list: _new_entity and relation_list._append(_new_entity)
+                        # list and in case it's not sets it in the relations list,
+                        # this is an expensive operation (presence check in list)
+                        if not _new_entity in relation_list:
+                            _new_entity and relation_list._append(_new_entity)
 
                     # otherwise it must be a to one relation and sets the setting
                     # of the "new" entity is just a trivial set on the entity
@@ -5690,10 +5686,6 @@ class EntityManager(object):
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
             for item_name, item_value in result_map.iteritems():
-
-                #@TODO: this kind of parsing must be removed because
-                # it is too expensive
-
                 # splits the item name around the dot separation
                 # token to create the item path
                 item_path = item_name.split(".")
@@ -5702,8 +5694,6 @@ class EntityManager(object):
                 # from the (complete) item path
                 attribute_path = item_path[:-1]
                 attribute_name = item_path[-1]
-
-
 
                 # unsets the error flag, by default no
                 # error should occur, during the path traversing
@@ -5715,12 +5705,10 @@ class EntityManager(object):
                 _entity = entity
                 _class = current_class
 
-
-                #@TODO: remove this create it's not always
-                # necessary
+                # creates the initial string that will be used to
+                # store the current fully qualified path value for
+                # the various attributes to be updates/unpacked
                 current_path = str()
-
-
 
                 # "traverses" the complete attribute path to
                 # progressively retrieve or create the relation
@@ -5735,9 +5723,9 @@ class EntityManager(object):
                         error_flag = True
                         break
 
-
+                    # updates the current path with the attribute partial
+                    # in iteration (by appending it to the end of the string)
                     current_path += attribute_partial + "."
-
 
                     # retrieves the relation attributes for the current
                     # relation, then retrieves the target relation class
@@ -5830,9 +5818,10 @@ class EntityManager(object):
                         relation_list = _entity[attribute_partial]
 
                         # checks if the "new" entity is present in the relation
-                        # list and in case it's not sets it in the relations list
-                        #@todo: this is slow as hell (must check presence in list)
-                        if not _new_entity in relation_list: _new_entity and relation_list.append(_new_entity)
+                        # list and in case it's not sets it in the relations list,
+                        # this is an expensive operation (presence check in list)
+                        if not _new_entity in relation_list:
+                            _new_entity and relation_list.append(_new_entity)
 
                     # otherwise it must be a to one relation and sets the setting
                     # of the "new" entity is just a trivial set on the entity
