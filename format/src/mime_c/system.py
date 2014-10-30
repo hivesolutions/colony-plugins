@@ -112,13 +112,15 @@ class Mime(colony.System):
         return mime_type
 
     def set_configuration_property(self, configuration_propery):
-        # retrieves the configuration
+        # retrieves the configuration and verifies that the retrieved
+        # value is valid to be processed in the current handler
         configuration = configuration_propery.get_data()
+        if not configuration: return
 
-        # retrieves the extension map
+        # retrieves the extension map from the configuration and
+        # and updates the current extension map reference so that
+        # the new values are used instead
         extension_map = configuration["extension"]
-
-        # sets the extension map
         self.extension_map = extension_map
 
     def unset_configuration_property(self):
