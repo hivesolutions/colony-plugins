@@ -41,6 +41,7 @@ import os
 import types
 import base64
 import random
+import mimetypes
 
 import colony
 
@@ -71,11 +72,13 @@ VALID_BOUNDARY_CHARACTERS = (
 
 class Mime(colony.System):
     """
-    The mime class.
+    The mime class, responsible for operations related with
+    the standards related with the mime specification.
     """
 
     extension_map = {}
-    """ The map of extension reference """
+    """ The map of extension references, that maps the extension
+    name with the associated mime type """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
@@ -87,18 +90,25 @@ class Mime(colony.System):
     def create_message_part(self, parameters):
         return MimeMessagePart()
 
-    def get_mime_type_file_name(self, file_name):
+    def get_mime_type_file_name(self, file_name, fallback = True):
         # retrieves the base name and extension from the
-        # file name
+        # file name and then converts the extension value
+        # into its lower cased version to be normalizes in
+        # the way it's the mime is retrieved
         _base, extension = os.path.splitext(file_name)
-
-        # converts the extension to lower case
         extension = extension.lower()
 
-        # retrieves the (mime) type from the extension mime type mapping
+        # retrieves the (mime) type from the extension mime type mapping,
+        # this strategy uses the current extension map registry
         mime_type = self.extension_map.get(extension, None)
 
-        # returns the mime type
+        # in case the mime type is not retrieved with success and the
+        # fallback flag is set the inner system strategy is used
+        if not mime_type and fallback:
+            mime_type, _encoding = mimetypes.guess_type(file_name)
+
+        # returns the resolved mime type, this value may be invalid/unset
+        # in case no resolution was possible
         return mime_type
 
     def set_configuration_property(self, configuration_propery):
