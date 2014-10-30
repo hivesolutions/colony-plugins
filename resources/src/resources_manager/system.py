@@ -594,13 +594,15 @@ class ResourcesManager(colony.System):
         # retrieves the plugin configuration resources list
         plugin_configuration_resources_list = self.plugin_id_configuration_resources_list_map[plugin_id]
 
-        # iterates over all the plugin configuration resources
+        # iterates over all the plugin configuration resources so that
+        # it's possible to registers them as configuration properties
         for plugin_configuration_resource in plugin_configuration_resources_list:
-            # retrieves the plugin configuration resource name
+            # retrieves the plugin configuration resource name and uses it
+            # to set the plugin configuration resource as property in the plugin
             plugin_configuration_resource_name = plugin_configuration_resource.name
-
-            # sets the plugin configuration resource as configuration property in the plugin
-            plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
+            plugin.set_configuration_property(
+                plugin_configuration_resource_name, plugin_configuration_resource
+            )
 
     def unregister_plugin_resources(self, plugin):
         """
@@ -625,10 +627,9 @@ class ResourcesManager(colony.System):
 
         # iterates over all the plugin configuration resources
         for plugin_configuration_resource in plugin_configuration_resources_list:
-            # retrieves the plugin configuration resource name
+            # retrieves the plugin configuration resource name and uses it
+            # to unset the plugin configuration resource as property in the plugin
             plugin_configuration_resource_name = plugin_configuration_resource.name
-
-            # unsets the plugin configuration resource as configuration property in the plugin
             plugin.unset_configuration_property(plugin_configuration_resource_name)
 
     def process_resource(self, resource, full_resources_path):
@@ -717,8 +718,8 @@ class ResourcesManager(colony.System):
             # returns invalid (lazy loading)
             return False
 
-        # sets the resource as parsed
-        # (completely loaded)
+        # sets the resource as parsed (completely loaded), these resource
+        # is not going to be processed again (eager loaded)
         resource.parsed = True
 
         # returns valid (loaded)
