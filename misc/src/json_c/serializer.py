@@ -48,7 +48,7 @@ import calendar
 
 import colony
 
-import exceptions
+from json_c import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,
@@ -79,16 +79,16 @@ EXCLUSION_TYPES = {
 """ The map used to exclude invalid types from an object """
 
 NUMBER_TYPES = {
-    types.IntType : True,
-    types.LongType: True,
-    types.FloatType : True,
+    int : True,
+    colony.legacy.LONG: True,
+    float : True,
     decimal.Decimal : True,
 }
 """ The map used to check number types """
 
 SEQUENCE_TYPES = {
-    types.TupleType : True,
-    types.ListType : True,
+    tuple : True,
+    list : True,
     types.GeneratorType : True
 }
 """ The map used to check sequence types """
@@ -268,7 +268,7 @@ def dump_parts(object, objects = None, cycles = False):
         # yields the method value
         yield "\"method\""
     # in case the object is a boolean
-    elif object_type is types.BooleanType:
+    elif object_type is bool:
         # in case the object is valid (true)
         if object:
             # yields the true value
@@ -278,7 +278,7 @@ def dump_parts(object, objects = None, cycles = False):
             # yields the false value
             yield "false"
     # in case the object is a dictionary
-    elif object_type is types.DictionaryType:
+    elif object_type is dict:
         # yields the dictionary initial value
         yield "{"
 
@@ -315,7 +315,7 @@ def dump_parts(object, objects = None, cycles = False):
         # yields the dictionary final value
         yield "}"
     # in case the object is a string
-    elif object_type in types.StringTypes:
+    elif object_type in colony.legacy.STRINGS:
         # yields the string value
         yield "\"" + string_escape_re.sub(escape_character, object) + "\""
     # in case the object is a sequence
@@ -347,7 +347,7 @@ def dump_parts(object, objects = None, cycles = False):
     # in case the object is a number
     elif object_type in NUMBER_TYPES:
         # yields the number unicode value
-        yield unicode(object)
+        yield colony.legacy.UNICODE(object)
     # in case the object is a date time
     elif object_type == datetime.datetime:
         # converts the object (date time) to a time tuple
@@ -357,9 +357,9 @@ def dump_parts(object, objects = None, cycles = False):
         date_time_timestamp = calendar.timegm(object_time_tuple)
 
         # yields the timestamp unicode value
-        yield unicode(date_time_timestamp)
+        yield colony.legacy.UNICODE(date_time_timestamp)
     # in case the object is an instance
-    elif object_type is types.InstanceType or hasattr(object, "__class__"):
+    elif hasattr(object, "__class__"):
         # yields the dictionary initial value
         yield "{"
 
@@ -464,7 +464,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         # yields the method value
         yield "\"method\""
     # in case the object is a boolean
-    elif object_type is types.BooleanType:
+    elif object_type is bool:
         # in case the object is valid (true)
         if object:
             # yields the true value
@@ -474,7 +474,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
             # yields the false value
             yield "false"
     # in case the object is a dictionary
-    elif object_type is types.DictionaryType:
+    elif object_type is dict:
         # yields the dictionary initial value
         yield "{"
 
@@ -527,7 +527,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         # yields the dictionary final value
         yield "}"
     # in case the object is a string
-    elif object_type in types.StringTypes:
+    elif object_type in colony.legacy.STRINGS:
         # yields the string value
         yield "\"" + string_escape_re.sub(escape_character, object) + "\""
     # in case the object is a sequence
@@ -559,7 +559,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     # in case the object is a number
     elif object_type in NUMBER_TYPES:
         # yields the number unicode value
-        yield unicode(object)
+        yield colony.legacy.UNICODE(object)
     # in case the object is a date time
     elif object_type == datetime.datetime:
         # converts the object (date time) to a time tuple
@@ -569,9 +569,9 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         date_time_timestamp = calendar.timegm(object_time_tuple)
 
         # yields the timestamp unicode value
-        yield unicode(date_time_timestamp)
+        yield colony.legacy.UNICODE(date_time_timestamp)
     # in case the object is an instance
-    elif object_type is types.InstanceType or hasattr(object, "__class__"):
+    elif hasattr(object, "__class__"):
         # yields the dictionary initial value
         yield "{"
 
@@ -693,7 +693,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
         # writes the method value
         string_buffer.write("\"method\"")
     # in case the object is a boolean
-    elif object_type is types.BooleanType:
+    elif object_type is bool:
         # in case the object is valid (true)
         if object:
             # writes the true value
@@ -703,7 +703,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
             # writes the false value
             string_buffer.write("false")
     # in case the object is a dictionary
-    elif object_type is types.DictionaryType:
+    elif object_type is dict:
         # writes the dictionary initial value
         string_buffer.write("{")
 
@@ -737,7 +737,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
         # writes the dictionary final value
         string_buffer.write("}")
     # in case the object is a string
-    elif object_type in types.StringTypes:
+    elif object_type in colony.legacy.STRINGS:
         # writes the escaped string value
         string_buffer.write("\"" + string_escape_re.sub(escape_character, object) + "\"")
     # in case the object is a sequence
@@ -778,7 +778,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
         # writes the timestamp string value
         string_buffer.write(str(date_time_timestamp))
     # in case the object is an instance
-    elif object_type is types.InstanceType or hasattr(object, "__class__"):
+    elif hasattr(object, "__class__"):
         # writes the dictionary initial value
         string_buffer.write("{")
 
@@ -874,7 +874,7 @@ def loads(data):
                             except KeyError:
                                 if character == "u":
                                     hex_code = characters.next() + characters.next() + characters.next() + characters.next()
-                                    value += unichr(int(hex_code, 16))
+                                    value += colony.legacy.unichr(int(hex_code, 16))
                                 else:
                                     # raises the json decode exception
                                     raise exceptions.JsonDecodeException("Bad Escape Sequence Found")
@@ -992,7 +992,7 @@ def loads(data):
                     # retrieves the top of the stack
                     top = stack[-1]
 
-                    if type(top) is types.ListType:
+                    if type(top) is list:
                         # retrieves the top id
                         top_id = id(top)
 
@@ -1012,10 +1012,10 @@ def loads(data):
                         else:
                             # raises the json decode exception
                             raise exceptions.JsonDecodeException("Expected list separator ','")
-                    elif type(top) is types.DictionaryType:
+                    elif type(top) is dict:
                         # appends the value to the stack
                         stack.append(value)
-                    elif type(top) in types.StringTypes:
+                    elif type(top) in colony.legacy.STRINGS:
                         # retrieves the top id
                         top_id = id(top)
 
