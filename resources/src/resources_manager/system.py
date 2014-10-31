@@ -44,7 +44,7 @@ import threading
 
 import colony
 
-import parser
+from resources_manager import parser
 
 BASE_RESOURCES_PATH = "resources_manager/resources"
 """ The base resources path """
@@ -671,7 +671,7 @@ class ResourcesManager(colony.System):
 
         # in case the resource type is string
         if resource_type == STRING_TYPE:
-            resource.data = unicode(resource.data)
+            resource.data = colony.legacy.UNICODE(resource.data)
         # in case the resource type is boolean
         elif resource_type == BOOLEAN_TYPE:
             # in case the resource data contains the true value
@@ -765,7 +765,9 @@ class ResourcesManager(colony.System):
             variable_name = match_group[2:-1]
 
             # retrieves the variable value, decoding it with the file system encoding
-            variable_value = os.environ.get(variable_name, "").decode(file_system_encoding)
+            variable_value = os.environ.get(variable_name, "")
+            variable_value = colony.legacy.bytes(variable_value)
+            variable_value = variable_value.decode(file_system_encoding)
 
             # sets the new resource data
             real_string_value = real_string_value.replace(match_group, variable_value)
