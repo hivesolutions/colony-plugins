@@ -37,12 +37,11 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
 import hashlib
 
 import colony
 
-import exceptions
+from api_facebook import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -576,7 +575,7 @@ class FacebookClient(object):
         # retrieves the data type and returns immediately
         # in case it is not of type dictionary
         data_type = type(data)
-        if not data_type == types.DictType: return
+        if not data_type == dict: return
 
         # retrieves the error code and returns
         # immediately in case the error code is not set
@@ -885,7 +884,7 @@ class FacebookClientOauth:
         # retrieves the data type and returns immediately
         # in case it is not of type dictionary
         data_type = type(data)
-        if not data_type == types.DictType: return
+        if not data_type == dict: return
 
         # retrieves the error code and returns
         # immediately in case the error code is not set
