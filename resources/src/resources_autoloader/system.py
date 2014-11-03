@@ -127,9 +127,12 @@ class ResourcesAutoloader(colony.System):
 
                 # unloads the "pending" resource files for unloading
                 self._unload_pending_resource_files(verified_resource_paths_list)
-            except BaseException, exception:
-                # prints an error message
-                self.autoloader_plugin.error("There was a problem autoloading resources: %s" % unicode(exception))
+            except BaseException as exception:
+                # prints an error message 
+                self.autoloader_plugin.error(
+                    "There was a problem autoloading resources: %s" %\
+                    colony.legacy.UNICODE(exception)
+                )
 
             # sleeps for the given sleep time
             time.sleep(SLEEP_TIME_VALUE)
