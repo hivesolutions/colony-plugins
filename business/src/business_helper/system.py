@@ -139,7 +139,7 @@ class BusinessHelper(colony.System):
 
         # executes the file in the given environment
         # to import the symbols
-        execfile(module_file_path, target_map, target_map)
+        colony.legacy.execfile(module_file_path, target_map, target_map)
 
         # returns the target module
         return target_module
