@@ -41,7 +41,7 @@ import xml.dom
 
 import colony
 
-import exceptions
+from api_easypay import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
