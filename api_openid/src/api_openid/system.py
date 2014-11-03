@@ -44,8 +44,8 @@ import datetime
 
 import colony
 
-import parser
-import exceptions
+from api_openid import parser
+from api_openid import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -1384,9 +1384,12 @@ class OpenidClient(object):
         try:
             # feeds the result to the yadis html parser
             yadis_html_parser.feed(result)
-        except Exception, exception:
+        except Exception as exception:
             # prints an info message
-            self.api_openid_plugin.info("There was a problem parsing yadis html: %s" % unicode(exception))
+            self.api_openid_plugin.info(
+                "There was a problem parsing yadis html: %s" %\
+                colony.legacy.UNICODE(exception)
+            )
 
         # retrieves the yadis provider url
         yadis_provider_url = yadis_html_parser.yadis_provider_url
