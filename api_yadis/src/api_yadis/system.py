@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import parser
+from api_yadis import parser
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """

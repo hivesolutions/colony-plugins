@@ -34,10 +34,10 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import exceptions
-import parser
-import system
+from . import exceptions
+from . import parser
+from . import system
 
-from exceptions import *
-from parser import *
-from system import *
+from .exceptions import ApiYadisException
+from .parser import Parser, Resource, Service, valid_node
+from .system import ApiYadis
