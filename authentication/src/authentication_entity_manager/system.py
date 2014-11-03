@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import exceptions
+from authentication_entity_manager import exceptions
 
 HANDLER_NAME = "entity_manager"
 """ The handler name """
