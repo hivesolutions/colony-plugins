@@ -44,7 +44,7 @@ import hashlib
 
 import colony
 
-import exceptions
+from api_twitter import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -333,7 +333,7 @@ class TwitterClient(object):
             oauth_consumer_secret_escaped = "%s&" % self._escape_url(self.oauth_structure.oauth_consumer_secret)
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
@@ -413,7 +413,7 @@ class TwitterClient(object):
             oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
@@ -990,7 +990,7 @@ class TwitterClient(object):
             oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
