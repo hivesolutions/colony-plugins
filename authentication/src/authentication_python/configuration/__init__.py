@@ -34,6 +34,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import authentication_configuration
+from . import authentication_configuration
 
-from authentication_configuration import *
+from .authentication_configuration import authentication_configuration as _authentication_configuration

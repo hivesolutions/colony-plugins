@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import exceptions
+from authentication_python import exceptions
 
 HANDLER_NAME = "python"
 """ The handler name """
@@ -122,7 +122,7 @@ class AuthenticationPython(colony.System):
         symbols_map = {}
 
         # interprets the python file path with the symbols map
-        execfile(file_path, symbols_map, symbols_map)
+        colony.legacy.execfile(file_path, symbols_map, symbols_map)
 
         # tries to retrieve the authentication configuration
         authentication_configuration = symbols_map.get(AUTHENTICATION_CONFIGURATION_VALUE, {})
