@@ -114,7 +114,7 @@ class Authentication(colony.System):
             try:
                 # handles the authentication request retrieving the return value
                 return_value = authentication_handler_plugin.handle_request(authentication_request)
-            except BaseException, exception:
+            except BaseException as exception:
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception)
 
