@@ -394,9 +394,9 @@ class Autoloader(colony.System):
             # loads the proper plugin into the current environment
             plugin = plugin_manager.get_plugin_by_module_name(module_name)
             load_plugins and plugin_manager.load_plugin(plugin.id)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem loading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem loading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
 
     def unload_module(self, module_name, operations = None):
         """
@@ -423,9 +423,9 @@ class Autoloader(colony.System):
 
             # stops the module
             plugin_manager.stop_module(module_name)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem unloading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem unloading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
 
     def reload_module(self, plugin, module_name, load_plugins = True, operations = None):
         """
@@ -493,9 +493,9 @@ class Autoloader(colony.System):
             # iterates over all the loaded plugins ids to load
             # them into the current plugin manager instance
             for loaded_plugin_id in loaded_plugins_ids: plugin_manager.load_plugin(loaded_plugin_id)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem reloading module %s: %s" % (module_name, unicode(exception)))
+            self.plugin.error("There was a problem reloading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
 
     def unload_autoloader(self):
         """

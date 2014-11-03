@@ -45,7 +45,7 @@ import threading
 
 import colony
 
-import exceptions
+from scheduler_c import exceptions
 
 METHOD_CALL_TYPE = "method_call"
 """ The method call type """
@@ -459,7 +459,10 @@ class Scheduler(colony.System):
             # cancels the current event, and in case a value
             # error occurs prints a warning message
             try: self.scheduler.cancel(current_event)
-            except ValueError, exception: self.plugin.warning("Problem canceling the current event: %s" % unicode(exception))
+            except ValueError as exception: self.plugin.warning(
+                "Problem canceling the current event: %s" %\
+                colony.legacy.UNICODE(exception)
+            )
 
         # cancels the scheduler item
         scheduler_item.canceled = True
@@ -501,9 +504,12 @@ class Scheduler(colony.System):
             # calls the task method with the task method arguments, this
             # os the execution of the schedule task itself
             item_task_method(*task_method_arguments)
-        except BaseException, exception:
+        except BaseException as exception:
             # prints an error message
-            self.plugin.error("Problem executing scheduler task: " + item_id_string + " (" + item_task_method_name + ") with error: " + unicode(exception))
+            self.plugin.error(
+                "Problem executing scheduler task: " + item_id_string +\
+                " (" + item_task_method_name + ") with error: " + colony.legacy.UNICODE(exception)
+            )
 
         # in case the continue flag is not set
         if not self.continue_flag:
