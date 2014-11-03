@@ -44,9 +44,9 @@ import types
 
 import colony
 
-import interfaces
-import exceptions
-import authentication
+from console import interfaces
+from console import exceptions
+from console import authentication
 
 VALID_VALUE = "valid"
 """ The valid value """
@@ -97,8 +97,8 @@ COMPLETE_PERCENTAGE = 100
 """ The percentage value that defines a completed task """
 
 SEQUENCE_TYPES = (
-    types.ListType,
-    types.TupleType
+    list,
+    tuple
 )
 """ The sequence types """
 
@@ -209,9 +209,9 @@ class Console(colony.System):
             # runs the command handler with the arguments,
             # the arguments map, the output method and the console context
             command_handler(arguments, arguments_map, output_method, console_context)
-        except Exception, exception:
+        except Exception as exception:
             # prints the exception message
-            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
+            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + colony.legacy.UNICODE(exception))
 
             # logs the stack trace value
             self.plugin.log_stack_trace()
@@ -732,9 +732,9 @@ class ConsoleContext(colony.Protected):
             # sets the authentication information with the authentication
             # result value
             self.authentication_information = authentication_result
-        except BaseException, exception:
+        except BaseException as exception:
             # prints a debug message
-            self.console.plugin.debug("Problem authenticating user: %s" % unicode(exception))
+            self.console.plugin.debug("Problem authenticating user: %s" % colony.legacy.UNICODE(exception))
 
             # invalidates the user and authentication information as
             # the authentication failed

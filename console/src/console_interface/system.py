@@ -41,7 +41,7 @@ import sys
 
 import colony
 
-import exceptions
+from console_interface import exceptions
 
 console_interface_class = None
 
@@ -154,11 +154,11 @@ class ConsoleInterface(colony.System):
             # sets the console interface get line method
             # as the console interface method
             console_interface_method = self.console_interface.get_line
-        except BaseException, exception:
+        except BaseException as exception:
             # prints a info message about the issue while starting the
             # console interface (nor critical) and then sets the read line
             # method as the console interface method as a method for fallback
-            self.plugin.info("Problem starting console interface: %s" % unicode(exception))
+            self.plugin.info("Problem starting console interface: %s" % colony.legacy.UNICODE(exception))
             console_interface_method = sys.stdin.readline
 
         # sets the method used to retrieve a line in the current

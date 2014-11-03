@@ -44,7 +44,7 @@ import ctypes
 import msvcrt
 import struct
 
-import exceptions
+from console_interface import exceptions
 
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """

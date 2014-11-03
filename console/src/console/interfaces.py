@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 SPECIAL_CHARACTER_ORDINAL = 0xe0
 """ The special character ordinal """
 
@@ -215,7 +213,7 @@ class ConsoleInterfaceCharacter:
         character_type = type(character)
 
         # in case the character type is not string
-        if not character_type == types.StringType:
+        if not character_type == str:
             # returns immediately false (not end of line)
             return
 
