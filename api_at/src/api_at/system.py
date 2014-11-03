@@ -46,7 +46,7 @@ import xml.dom.minidom
 
 import colony
 
-import exceptions
+from api_at import exceptions
 
 INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base url to be used for invoice
