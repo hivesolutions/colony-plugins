@@ -1156,7 +1156,9 @@ class MvcUtils(colony.System):
         plugin_manager = self.plugin.manager
 
         # resolves the file path
-        connection_parameters["file_path"] = plugin_manager.resolve_file_path(connection_parameters["file_path"], True, True)
+        connection_parameters["file_path"] = plugin_manager.resolve_file_path(
+            connection_parameters["file_path"], True, True
+        )
 
     def _get_entity_classes(self, module, entity_class):
         """
@@ -1190,7 +1192,8 @@ class MvcUtils(colony.System):
             # in case the module item type is type,
             # the module item is subclass of the entity class and
             # the entity class is not a data reference (virtual)
-            if module_item_type == types.TypeType and issubclass(module_item, entity_class) and (not hasattr(module_item, "data_reference") or module_item.data_reference == False):
+            if module_item_type == types.TypeType and issubclass(module_item, entity_class) and\
+                (not hasattr(module_item, "data_reference") or module_item.data_reference == False):
                 # adds the module item to the entity classes
                 entity_classes.append(module_item)
 
