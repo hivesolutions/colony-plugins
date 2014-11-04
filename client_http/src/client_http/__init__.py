@@ -37,6 +37,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 from . import exceptions
 from . import system
 
-from exceptions import ClientHttpException, HttpInvalidUrlData, HttpRuntimeException,\
+from .exceptions import ClientHttpException, HttpInvalidUrlData, HttpRuntimeException,\
     HttpInvalidDataException
-from system import ClientHttp
+from .system import ClientHttp

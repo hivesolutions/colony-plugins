@@ -37,5 +37,5 @@ __license__ = "GNU General Public License (GPL), Version 3"
 from . import exceptions
 from . import system
 
-from exceptions import CryptonException, AccessDeniedException
-from system import Crypton
+from .exceptions import CryptonException, AccessDeniedException
+from .system import Crypton
