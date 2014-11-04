@@ -294,7 +294,7 @@ class Rest(colony.System):
             # and then returns immediately as the request is handled
             rest_request.pre_handle(rest_request)
             try: self.handle_rest_request_services(rest_request)
-            except BaseException, exception: rest_request.except_handle(
+            except BaseException as exception: rest_request.except_handle(
                 rest_request, exception
             ); raise
             else: rest_request.post_handle(rest_request)
@@ -324,7 +324,7 @@ class Rest(colony.System):
                 # returns the control flow to the caller method immediately
                 rest_request.pre_handle(rest_request)
                 try: rest_service_plugin.handle_rest_request(rest_request)
-                except BaseException, exception: rest_request.except_handle(
+                except BaseException as exception: rest_request.except_handle(
                     rest_request, exception
                 ); raise
                 else: rest_request.post_handle(rest_request)
