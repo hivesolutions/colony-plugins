@@ -41,6 +41,8 @@ import time
 import heapq
 import threading
 
+import colony
+
 CONDITION_TIMEOUT = 1.0
 """ The timeout value for the condition object,
 this value should not be to small otherwise system
@@ -104,10 +106,10 @@ class ServiceAcceptingThread(threading.Thread):
                 # pops the top service tuple to be used in the accepting
                 # process inserting it into the connection pool
                 service_tuple = self.service_tuple_queue.pop()
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints an error message about the problem accessing the service tuple queue
                 self.abstract_service.service_utils_plugin.error(
-                    "Error accessing service tuple queue: " + unicode(exception)
+                    "Error accessing service tuple queue: " + colony.legacy.UNICODE(exception)
                 )
             finally:
                 # releases the service tuple queue condition
@@ -122,10 +124,10 @@ class ServiceAcceptingThread(threading.Thread):
                 self.abstract_service._insert_connection_pool(
                     service_connection, service_address, port
                 )
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints a warning message about the problem accepting the socket
                 self.abstract_service.service_utils_plugin.warning(
-                    "Error accepting socket: " + unicode(exception)
+                    "Error accepting socket: " + colony.legacy.UNICODE(exception)
                 )
 
     def stop(self):
@@ -221,11 +223,11 @@ class ServiceExecutionThread(threading.Thread):
                 # pops the top callable to be used in the calling process
                 # the callable queue should not be empty
                 heapq.heappop(self.callable_queue)
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints an error message about the problem accessing the callable queue
                 # this may happen for a wide range of reasons
                 self.abstract_service.service_utils_plugin.error(
-                    "Error accessing callable queue: " + unicode(exception)
+                    "Error accessing callable queue: " + colony.legacy.UNICODE(exception)
                 )
             finally:
                 # releases the callable queue condition
@@ -234,10 +236,10 @@ class ServiceExecutionThread(threading.Thread):
             try:
                 # calls the callable object
                 callable()
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints a warning message about the problem executing callable
                 self.abstract_service.service_utils_plugin.warning(
-                    "Error executing callable: " + unicode(exception)
+                    "Error executing callable: " + colony.legacy.UNICODE(exception)
                 )
 
                 # in case there are still retries remaining to be used for the

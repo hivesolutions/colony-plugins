@@ -40,11 +40,13 @@ from . import sync
 from . import system
 from . import threads
 
-from .async import AbstractService, SelectPolling, EpollPolling, KqueuePolling, Connection,\
-    ServiceConnection, ClientConnection
+from .async import SelectPolling, EpollPolling, KqueuePolling, Connection
 from .exceptions import ServiceUtilsException, SocketProviderNotFound, SocketUpgraderNotFound,\
     ServerRequestTimeout, ClientRequestTimeout, ServerResponseTimeout, ClientResponseTimeout,\
     RequestClosed, PortStarvationReached, ConnectionChangeFailure
-from .sync import *
-from .system import *
-from .threads import *
+from .sync import AbstractServiceConnectionHandler, AbstractServiceConnectionlessHandler
+from .system import ServiceUtils
+from .threads import ServiceAcceptingThread, ServiceExecutionThread
+
+from .async import AbstractService as AbstractServiceAsync
+from .sync import AbstractService as AbstractServiceSync

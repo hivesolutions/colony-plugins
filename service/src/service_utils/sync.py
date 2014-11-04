@@ -141,7 +141,7 @@ if EPOLL_SUPPORT:
     REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
     """ The register mask value """
 
-class AbstractService:
+class AbstractService(object):
     """
     The abstract service class.
     """
@@ -701,7 +701,7 @@ class AbstractService:
         self.service_accepting_thread.join()
         self.service_execution_thread.join()
 
-class AbstractServiceConnectionHandler:
+class AbstractServiceConnectionHandler(object):
     """
     The abstract service connection handler.
     """
@@ -754,7 +754,18 @@ class AbstractServiceConnectionHandler:
     busy_status = False
     """ The busy status of the handler """
 
-    def __init__(self, service, service_plugin, service_configuration, connection_timeout, request_timeout, response_timeout, chunk_size, client_service_class, extra_parameters):
+    def __init__(
+        self,
+        service,
+        service_plugin,
+        service_configuration,
+        connection_timeout,
+        request_timeout,
+        response_timeout,
+        chunk_size,
+        client_service_class,
+        extra_parameters
+    ):
         """
         Constructor of the class.
 
@@ -1271,7 +1282,7 @@ class AbstractServiceConnectionHandler:
         # returns the connection socket file descriptor
         return connection_socket_file_descriptor
 
-class AbstractServiceConnectionlessHandler:
+class AbstractServiceConnectionlessHandler(object):
     """
     The abstract service connectionless handler.
     """
@@ -1309,7 +1320,18 @@ class AbstractServiceConnectionlessHandler:
     busy_status = False
     """ The busy status of the handler """
 
-    def __init__(self, service, service_plugin, service_configuration, connection_timeout, request_timeout, response_timeout, chunk_size, client_service_class, extra_parameters):
+    def __init__(
+        self,
+        service,
+        service_plugin,
+        service_configuration,
+        connection_timeout,
+        request_timeout,
+        response_timeout,
+        chunk_size,
+        client_service_class,
+        extra_parameters
+    ):
         """
         Constructor of the class.
 
@@ -1345,7 +1367,13 @@ class AbstractServiceConnectionlessHandler:
         self.service_connections_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration, exceptions.ServiceUtilsException, extra_parameters)
+        self.client_service = client_service_class(
+            self.service_plugin,
+            self,
+            service_configuration,
+            exceptions.ServiceUtilsException,
+            extra_parameters
+        )
 
     def start(self):
         pass
@@ -1436,7 +1464,17 @@ class AbstractServiceConnectionlessHandler:
 
         # creates the new service connection  and sets the service execution thread
         # on the service connection (for callable execution)
-        service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.request_timeout, self.response_timeout, self.chunk_size)
+        service_connection = ServiceConnectionless(
+            self.service_plugin,
+            self,
+            connection_socket,
+            connection_address,
+            connection_port,
+            connection_data,
+            self.request_timeout,
+            self.response_timeout,
+            self.chunk_size
+        )
         service_connection.service_execution_thread = self.service.service_execution_thread
 
         # creates the connection tuple
@@ -1536,7 +1574,7 @@ class AbstractServiceConnectionlessHandler:
             # removes the ready service connection (via remove work)
             self.remove_work(connection_tuple)
 
-class ServiceConnection:
+class ServiceConnection(object):
     """
     The service connection class.
     Describes a service connection.
