@@ -42,7 +42,7 @@ import threading
 
 import colony
 
-import exceptions
+from client_smtp import exceptions
 
 DEFAULT_PORT = 25
 """ The default port """
