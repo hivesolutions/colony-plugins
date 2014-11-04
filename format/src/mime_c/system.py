@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import types
 import base64
 import random
 import mimetypes
@@ -224,7 +223,7 @@ class MimeMessage:
         message_type = type(message)
 
         # in case the message type is unicode
-        if message_type == types.UnicodeType and encode:
+        if message_type == colony.legacy.UNICODE and encode:
             # encodes the message with the defined content type charset
             message = message.encode(self.content_type_charset)
 
@@ -327,7 +326,7 @@ class MimeMessage:
 
         # in case the header value type is unicode
         # and the encode flag is set
-        if encode and header_value_type == types.UnicodeType:
+        if encode and header_value_type == colony.legacy.UNICODE:
             # encodes the header value with the content type charset
             header_value = header_value.encode(self.content_type_charset)
 

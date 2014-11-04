@@ -37,11 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 import colony
 
-import exceptions
+from ber_c import exceptions
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -713,7 +711,7 @@ class BerStructure:
         octets = []
 
         # converts the value to long, to save on operations
-        value = long(value)
+        value = colony.legacy.LONG(value)
 
         # iterates continuously
         while True:
@@ -761,7 +759,8 @@ class BerStructure:
 
         # sets the octets string as the value or the encoded
         # unicode value (using the default encoding)
-        octets_string = value_type == types.UnicodeType and value.encode(DEFAULT_ENCODING) or value
+        octets_string = value_type == colony.legacy.UNICODE and\
+            value.encode(DEFAULT_ENCODING) or value
 
         # returns the octets string
         return octets_string
@@ -1079,7 +1078,7 @@ class BerStructure:
 
         # in case the type is described
         # as a direct integer value
-        if type_value_type == types.IntType:
+        if type_value_type == int:
             # sets the type number as the type value
             type_number = type_value
 
