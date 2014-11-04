@@ -39,11 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import base
+from .base import BaseController
 
 models = colony.__import__("models")
 
-class ConsumerController(base.BaseController):
+class ConsumerController(BaseController):
 
     def create(self, request):
         # retrieves the consumer from the request

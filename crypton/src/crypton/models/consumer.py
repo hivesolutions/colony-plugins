@@ -37,11 +37,11 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import root_entity
+from .root_entity import RootEntity
 
-root_entity = root_entity
+RootEntity = RootEntity
 
-class Consumer(root_entity.RootEntity):
+class Consumer(RootEntity):
     """
     The consumer class, which represents a generic
     consumer client with an api key.
@@ -86,7 +86,7 @@ class Consumer(root_entity.RootEntity):
         default values for a typical consumer.
         """
 
-        root_entity.RootEntity.__init__(self)
+        RootEntity.__init__(self)
         self.name = None
         self.api_key = None
         self.status = Consumer.STATUS_INACTIVE
@@ -98,7 +98,7 @@ class Consumer(root_entity.RootEntity):
         """
 
         # adds the inherited validations
-        root_entity.RootEntity.set_validation(self)
+        RootEntity.set_validation(self)
 
         # adds the validation methods to the name attribute
         self.add_validation("name", "not_none", True)
