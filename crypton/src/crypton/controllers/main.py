@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from .base import BaseController
+import base
 
 DEFAULT_ALGORITHM_NAME = "sha1"
 """ The default algorithm name """
 
 models = colony.__import__("models")
 
-class MainController(BaseController):
+class MainController(base.BaseController):
 
     def encrypt(self, request):
         signature_controller = self.system.signature_controller

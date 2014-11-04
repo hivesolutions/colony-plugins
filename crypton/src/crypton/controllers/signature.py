@@ -44,7 +44,7 @@ import colony
 
 import crypton
 
-from .base import BaseController
+import base
 
 CONSUMER_STATUS_ACTIVE = 1
 """ The consumer active status """
@@ -54,7 +54,7 @@ DEFAULT_NUMBER_BITS = 256
 
 models = colony.__import__("models")
 
-class SignatureController(BaseController):
+class SignatureController(base.BaseController):
 
     def encrypt(self, request, api_key, key_name, message):
         # retrieves the ssl plugin
