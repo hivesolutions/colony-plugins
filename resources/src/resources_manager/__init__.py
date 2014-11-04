@@ -39,7 +39,9 @@ from . import parser
 from . import system
 from . import tests
 
-from .exceptions import *
-from .parser import *
-from .system import *
-from .tests import *
+from .exceptions import ResourcesManagerException
+from .parser import Parser, ResourcesFileParser, PluginConfiguration, Resource,\
+    Validation, Expression, UnaryExpressionNode, BinaryExpression, Operand,\
+    EqualsExpression, valid_node
+from .system import ResourcesManager
+from .tests import ResourcesManagerTestCase

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom.minidom
 
-class Parser:
+class Parser(object):
     """
     The abstract parser class.
     """
@@ -247,7 +247,7 @@ class ResourcesFileParser(Parser):
         elif node_name == "data":
             operand.data = self.parse_data(operand_element)
 
-class PluginConfiguration:
+class PluginConfiguration(object):
     """
     The plugin configuration class.
     """
@@ -262,7 +262,7 @@ class PluginConfiguration:
         self.plugin_id = plugin_id
         self.resources_list = []
 
-class Resource:
+class Resource(object):
     """
     The resource class.
     """
@@ -297,7 +297,7 @@ class Resource:
 
         return self.data
 
-class Validation:
+class Validation(object):
     """
     The validation class.
     """
@@ -308,7 +308,7 @@ class Validation:
     def __init__(self, expression = None):
         self.expression = expression
 
-class Expression:
+class Expression(object):
     """
     The expression class.
     """
@@ -362,7 +362,7 @@ class BinaryExpression(Expression):
         self.first_operand = first_operand
         self.second_operand = second_operand
 
-class Operand:
+class Operand(object):
     """
     The operand class.
     """
