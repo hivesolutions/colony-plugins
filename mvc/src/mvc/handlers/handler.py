@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 class Handler(object):
     """
     The abstract handler class to be used for handlers that
@@ -60,7 +58,7 @@ class Handler(object):
         # in case it's not a map returns immediately, plain messages
         # are not "filterable"
         message_t = type(message)
-        if not message_t == types.DictType: return message
+        if not message_t == dict: return message
 
         # iterates over the complete set of filters registered in the
         # handler and runs them in the message, retrieving the filtered

@@ -34,16 +34,16 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import controller
-import entity_model
-import exceptions
-import model
-import system
-import utils
+from . import controller
+from . import entity_model
+from . import exceptions
+from . import model
+from . import system
+from . import utils
 
-from controller import *
-from entity_model import *
-from exceptions import *
-from model import *
-from system import *
-from utils import *
+from .exceptions import MvcUtilsExceptionException, InvalidValidationMethod, InvalidAttributeName,\
+    InsufficientHttpInformation, NotFoundError, ValidationError, ModelValidationError,\
+    ControllerValidationError, ControllerValidationReasonFailed, ValidationMethodError,\
+    ModelApplyException
+from .system import MvcUtils
+from .utils import validated, transaction, eager, serialized, Controller

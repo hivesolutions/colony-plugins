@@ -43,8 +43,8 @@ import types
 
 import colony
 
-import utils
-import exceptions
+from mvc_utils import utils
+from mvc_utils import exceptions
 
 EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.\-]+$"
 """ The email regex value """
@@ -65,12 +65,12 @@ TO_MANY_RELATION = "to-many"
 """ The string value of a "to-many" relation """
 
 DATA_TYPE_CAST_TYPES_MAP = dict(
-    text = unicode,
-    string = unicode,
+    text = colony.legacy.UNICODE,
+    string = colony.legacy.UNICODE,
     integer = int,
     float = float,
     date = colony.timestamp_datetime,
-    data = unicode,
+    data = colony.legacy.UNICODE,
     metadata = dict,
     relation = None
 )
@@ -168,7 +168,7 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     # checks if the provided map (reference) is in fact a sequence
     # and so a proxy model (for sequences) must be created, this way
     # it's possible to offer bulk operations
-    is_sequence = type(map) in (types.ListType, types.TupleType)
+    is_sequence = type(map) in (list, tuple)
 
     # creates a new model from the class reference
     # the default values should be applied
@@ -418,7 +418,7 @@ def apply(self, map, permissive = False):
             # in case the class value type is not dictionary (meta
             # information dictionary), cannot retrieve the required
             # information, must raise an exception
-            if not class_value_type == types.DictType:
+            if not class_value_type == dict:
                 raise exceptions.ModelApplyException(
                     "item name '%s' not defined in model class '%s'" %
                         (item_name, cls.__name__)

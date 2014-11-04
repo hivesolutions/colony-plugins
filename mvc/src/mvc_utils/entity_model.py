@@ -37,13 +37,12 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
 import datetime
 
 import colony
 
-import utils
-import exceptions
+from mvc_utils import utils
+from mvc_utils import exceptions
 
 PERSIST_UPDATE = 0x01
 """ The persist only on update (or save) persist type that only
@@ -91,12 +90,12 @@ TO_MANY_RELATIONS = (
 """ The tuple containing the "to-many" relations """
 
 DATA_TYPE_CAST_TYPES_MAP = dict(
-    text = unicode,
-    string = unicode,
+    text = colony.legacy.UNICODE,
+    string = colony.legacy.UNICODE,
     integer = int,
     float = float,
     date =  colony.timestamp_datetime,
-    data = unicode,
+    data = colony.legacy.UNICODE,
     metadata = dict,
     relation = None
 )
@@ -816,7 +815,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # case it's not a sequence converts it to a immutable
         # sequence (tuple) for iteration
         name_type = type(name)
-        if not name_type in (types.ListType, types.TupleType): name = (name,)
+        if not name_type in (list, tuple): name = (name,)
 
         # retrieves the first name element from the sequence and uses
         # it to resolver the value, retrieving the filter structure
@@ -2415,7 +2414,7 @@ def _load_value(self, key, value):
 
     # in case the class value type is not
     # dictionary, must return immediately
-    if not class_value_type == types.DictType: return
+    if not class_value_type == dict: return
 
     # retrieves the value data type
     value_data_type = class_value.get("type", None)
@@ -2439,7 +2438,7 @@ def _load_value(self, key, value):
         if relation_type in TO_ONE_RELATIONS:
             # in case the value is of type dictionary
             # (to-one relations require list representation)
-            if value_type == types.DictType:
+            if value_type == dict:
                 # creates a new target entity instance
                 target_entity_instance = target_entity()
 
@@ -2462,7 +2461,7 @@ def _load_value(self, key, value):
 
             # in case the value type is a list
             # (to-many relations require list representation)
-            if value_type == types.ListType:
+            if value_type == list:
                 # iterates over all the values to process them
                 for value_item in value:
                     # retrieves the value item type
@@ -2471,7 +2470,7 @@ def _load_value(self, key, value):
                     # in case the type of the value item is
                     # not dictionary (not valid) continues the
                     # current loop
-                    if not value_item_type == types.DictType: continue
+                    if not value_item_type == dict: continue
 
                     # creates a new target entity instance
                     target_entity_instance = target_entity()

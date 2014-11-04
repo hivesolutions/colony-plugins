@@ -41,7 +41,7 @@ import inspect
 
 import colony
 
-import exceptions
+from mvc_utils import exceptions
 
 ERROR_STATUS_CODE = 500
 """ The error status code, this is going to be
@@ -466,13 +466,13 @@ def serialized(serialization_parameters = None, default_success = True):
                 # calls the callback function,
                 # retrieving the return value
                 return_value = colony.call_safe(function, *args, **kwargs)
-            except BaseException, exception:
+            except BaseException as exception:
                 # logs a warning message because if an exception reached
                 # this area it must be considered not handled gracefully
                 # and must be considered an anomaly
                 self.warning(
                     "There was an exception in controller (%s): " %\
-                    exception.__class__.__name__ + unicode(exception)
+                    exception.__class__.__name__ + colony.legacy.UNICODE(exception)
                 )
 
                 # retrieves the serializer and the exception

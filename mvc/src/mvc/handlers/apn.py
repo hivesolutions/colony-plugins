@@ -47,7 +47,7 @@ except: ssl = None
 try: import json
 except: json = None
 
-import handler
+from mvc.handlers import handler
 
 HOST = "gateway.push.apple.com"
 """ The host of the apn service to be used when

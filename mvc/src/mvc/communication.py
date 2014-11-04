@@ -40,9 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import threading
 
-import handlers
+from mvc import handlers
 
-import exceptions
+from mvc import exceptions
 
 DEFAULT_UPDATE_POLL_TIMEOUT = 0.5
 """ The default update poll timeout, this value if
@@ -58,7 +58,7 @@ stays "waiting" for a response for the server """
 VALID_STATUS_CODE = 200
 """ The valid status code """
 
-class MvcCommunicationHandler:
+class MvcCommunicationHandler(object):
     """
     The mvc communication (handler) class.
 
@@ -1054,7 +1054,7 @@ class ConnectionProcessingThread(threading.Thread):
         )
         request.process()
 
-class CommunicationConnection:
+class CommunicationConnection(object):
     """
     The communication connection class.
     """

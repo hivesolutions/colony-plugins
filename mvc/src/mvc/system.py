@@ -42,9 +42,9 @@ import types
 
 import colony
 
-import exceptions
-import file_handler
-import communication
+from mvc import exceptions
+from mvc import file_handler
+from mvc import communication
 
 NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value """
@@ -642,7 +642,7 @@ class Mvc(colony.System):
         # parameters part of the query sequence with key based values
         for key, value in kwargs.iteritems():
             value_t = type(value)
-            is_string = value_t in types.StringTypes
+            is_string = value_t in colony.legacy.STRINGS
             if not is_string: value = str(value)
             replacer = names_t.get(key, None)
             if replacer:
@@ -1287,5 +1287,5 @@ class Mvc(colony.System):
 
         # creates the tuple value from the value and returns
         # the value to the caller method
-        tuple_value = type(value) == types.TupleType and value or (value,)
+        tuple_value = type(value) == tuple and value or (value,)
         return tuple_value

@@ -34,14 +34,17 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import handlers
-import communication
-import exceptions
-import file_handler
-import system
+from . import handlers
+from . import communication
+from . import exceptions
+from . import file_handler
+from . import system
 
-from handlers import *
-from communication import *
-from exceptions import *
-from file_handler import *
-from system import *
+from .handlers import *
+from .communication import MvcCommunicationHandler, ConnectionProcessingThread,\
+    CommunicationConnection
+from .exceptions import ServiceException, ServiceRequestNotTranslatable, BadServiceRequest,\
+    InvalidTokenValue, RuntimeRequestException, MvcRequestNotHandled, FileNotFoundException,\
+    InvalidCommunicationCommandException, CommunicationCommandException
+from .file_handler import MvcFileHandler, ChunkHandler
+from .system import *

@@ -44,10 +44,10 @@ import types
 
 import colony
 
-import utils
-import model
-import controller
-import entity_model
+from mvc_utils import utils
+from mvc_utils import model
+from mvc_utils import controller
+from mvc_utils import entity_model
 
 NAME_REFERENCE_VALUE = "__name__"
 """ The name reference value """
@@ -222,7 +222,7 @@ class MvcUtils(colony.System):
 
         # executes the file in the given environment
         # to import the symbols
-        execfile(python_file_path, target_map, target_map)
+        colony.legacy.execfile(python_file_path, target_map, target_map)
 
         # returns the target (imported) module
         return target_module
@@ -1195,7 +1195,7 @@ class MvcUtils(colony.System):
             # and the module associated with it must be the same as the one
             # from which the entity models are being extracted (avoids multiple
             # inclusion of referred/external models
-            is_valid = module_item_type == types.TypeType and issubclass(module_item, entity_class) and\
+            is_valid = module_item_type == type and issubclass(module_item, entity_class) and\
                 (not hasattr(module_item, "data_reference") or module_item.data_reference == False) and\
                  module_item.__module__ == module.__name__
             if not is_valid: continue
@@ -1240,7 +1240,7 @@ class MvcUtils(colony.System):
 
             # in case the module item type is type ands
             # the module item is subclass of the base class
-            if module_item_type == types.TypeType and issubclass(module_item, base_class):
+            if module_item_type == type and issubclass(module_item, base_class):
                 # adds the module item to the classes
                 classes.append(module_item)
 

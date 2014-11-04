@@ -64,7 +64,7 @@ RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 """ The relative paths regex """
 
-class MvcFileHandler:
+class MvcFileHandler(object):
     """
     The mvc file handler class.
     """
@@ -213,7 +213,7 @@ class MvcFileHandler:
         # returns the escaped path
         return escaped_path
 
-class ChunkHandler:
+class ChunkHandler(object):
     """
     The chunk handler class.
     """

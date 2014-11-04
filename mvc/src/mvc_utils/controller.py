@@ -41,7 +41,6 @@ import os
 import re
 import sys
 import time
-import types
 import datetime
 import calendar
 import platform
@@ -49,7 +48,7 @@ import traceback
 
 import colony
 
-import exceptions
+from mvc_utils import exceptions
 
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 """ The default content type, that is going to be used
@@ -162,8 +161,8 @@ DEFAULT_SESSION_ATTRIBUTE = "user_acl"
 """ The default session attribute to be used in template """
 
 DATA_TYPE_CAST_TYPES_MAP = dict(
-    text = unicode,
-    string = unicode,
+    text = colony.legacy.UNICODE,
+    string = colony.legacy.UNICODE,
     integer = int,
     float = float,
     date = colony.timestamp_datetime,
@@ -293,7 +292,7 @@ def get_exception_map(self, exception, request = None):
     exception_class = exception.__class__
     exception_class_name = exception_class.__name__
     exception_message = exception.message if hasattr(exception, "message") else None
-    exception_message = exception_message or unicode(exception)
+    exception_message = exception_message or colony.legacy.UNICODE(exception)
 
     # creates the exception map, with information on
     # the exception and on the (global) environment
@@ -381,7 +380,7 @@ def get_entity_id_attribute(self, entity, id_attribute_name = "object_id"):
     # in case the entity type is a dictionary, must
     # retrieve the id attribute using as reference the
     # given id attribute name
-    if entity_type == types.DictType:
+    if entity_type == dict:
         # retrieves the id attribute value from the entity (map)
         # using the provided id attribute name
         id_attribute_value = entity.get(id_attribute_name, None)
@@ -446,8 +445,8 @@ def get_entity_model(
 
     # in case the create and update maps are not really maps, assumes
     # they are entity objects and converts them into a map
-    if not update_values_map_type == types.DictType: update_values_map = self._convert_entity_map(update_values_map)
-    if not create_values_map_type == types.DictType: create_values_map = self._convert_entity_map(create_values_map)
+    if not update_values_map_type == dict: update_values_map = self._convert_entity_map(update_values_map)
+    if not create_values_map_type == dict: create_values_map = self._convert_entity_map(create_values_map)
 
     # retrieves the id attribute name (key)
     id_key = entity_model.get_id()
@@ -561,7 +560,7 @@ def set_entity_relation(self, entity, relation_name, relation_value):
 
     # in case the type if the relation value is list must
     # iterate and validate and the values in it
-    if relation_value_type == types.ListType:
+    if relation_value_type == list:
         # iterates over all the values
         # of the list (relation value)
         for value in relation_value:
@@ -613,7 +612,7 @@ def save_entity_relations(
 
     # in case the entity map is not really a map, assumes
     # it is an entity object and converts it into a map
-    if not entity_map_type == types.DictType: entity_map = self._convert_entity_map(entity_map)
+    if not entity_map_type == dict: entity_map = self._convert_entity_map(entity_map)
 
     # iterates over all the relations
     for relation_name, relation_item in relations_map.items():
@@ -1291,7 +1290,7 @@ def create_form_data_string(self, request, data_map):
             # makes the attribute value the first value
             # in the list and keeps the rest of the list
             # so that it can be processed in the next iterations
-            attribute_value_list = attribute_value_type == types.ListType and attribute_value or None
+            attribute_value_list = attribute_value_type == list and attribute_value or None
             attribute_value = attribute_value_list and attribute_value_list[0] or attribute_value
             attribute_value_list = attribute_value_list and attribute_value_list[1:] or None
 
@@ -1392,7 +1391,7 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     # in the private json data value and returns the data map
     contents = request.read()
     data_map = self.json_plugin.loads(contents)
-    is_valid = type(data_map) == types.DictType
+    is_valid = type(data_map) == dict
     data_map = data_map if is_valid else dict(root = data_map)
     request.set_parameter("_json_data", data_map)
     return data_map
@@ -1450,7 +1449,7 @@ def process_form_data(self, request, encoding = "utf-8", nullify = False, force 
 
         # in case the attribute value type is list must iterate over each
         # of the values and assign the values to the associated index values
-        if attribute_value_type == types.ListType:
+        if attribute_value_type == list:
             # starts the index to be used as counter for the
             # list structure assignment
             index = 0
@@ -1580,7 +1579,7 @@ def process_acl_values(
     # verifies if the provided key value represents a sequence
     # and if that's the case runs a series of recursions to gather
     # the lowest (most permissive) value for the keys
-    is_sequence = type(key) in (types.ListType, types.TupleType)
+    is_sequence = type(key) in (list, tuple)
     if is_sequence:
         permissions = []
         for _key in key:
@@ -3522,7 +3521,7 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
     attribute_value_type = type(attribute_value)
 
     # in case the attribute value is a list
-    if attribute_value_type == types.ListType:
+    if attribute_value_type == list:
         # starts the attribute value decoded as list
         attribute_value_decoded = []
 
@@ -3536,14 +3535,14 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
 
             # decodes the attribute value item, only in case
             # it's a valid string
-            attribute_value_item_decoded = attribute_value_item_type == types.StringType and\
+            attribute_value_item_decoded = attribute_value_item_type == colony.legacy.BYTES and\
                 attribute_value_item.decode(encoding) or attribute_value_item
 
             # adds the attribute value item to the attribute
             # value decoded
             attribute_value_decoded.append(attribute_value_item_decoded)
     # in case the attribute is a map
-    elif attribute_value_type == types.DictType:
+    elif attribute_value_type == dict:
         # starts the attribute value decoded as map
         attribute_value_decoded = {}
 
@@ -3557,7 +3556,7 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
 
             # decodes the attribute value value, only in case
             # it's a valid string
-            attribute_value_value_decoded = attribute_value_value_type == types.StringType and\
+            attribute_value_value_decoded = attribute_value_value_type == colony.legacy.BYTES and\
                 attribute_value_value.decode(encoding) or attribute_value_value
 
             # sets the attribute value value in the attribute value decoded map
@@ -3566,7 +3565,7 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
     else:
         # decodes the attribute value, only in case
         # it's a valid string
-        attribute_value_decoded = attribute_value_type == types.StringType and\
+        attribute_value_decoded = attribute_value_type == colony.legacy.BYTES and\
             attribute_value.decode(encoding) or attribute_value
 
     # returns the attribute value decoded
@@ -4237,7 +4236,7 @@ def _cast_attribute_value(self, attribute_value):
 
     # in case the attribute value type is not
     # dictionary (map)
-    if not attribute_value_type == types.DictionaryType:
+    if not attribute_value_type == dict:
         # returns the attribute value
         # (immediately)
         return attribute_value
@@ -4402,12 +4401,12 @@ def _range_d(self, request, default):
 
     # retrieves the various temporal values that are going to be
     # uses int the calculus of the time ranges
-    year = self.get_field(request, "year", None, types.IntType)
-    month = self.get_field(request, "month", None, types.IntType)
-    day = self.get_field(request, "day", None, types.IntType)
-    hour = self.get_field(request, "hour", None, types.IntType)
-    start = self.get_field(request, "start", None, types.IntType)
-    end = self.get_field(request, "end", None, types.IntType)
+    year = self.get_field(request, "year", None, int)
+    month = self.get_field(request, "month", None, int)
+    day = self.get_field(request, "day", None, int)
+    hour = self.get_field(request, "hour", None, int)
+    start = self.get_field(request, "start", None, int)
+    end = self.get_field(request, "end", None, int)
 
     # in case the start and end (timestamp values) are specified
     # the method should return immediately with their values
@@ -4619,7 +4618,8 @@ def _create_form_data(self, request, data_map, form_data_map_key, form_data_map,
         attribute_value_type = type(attribute_value)
 
         # retrieves the form data map key format
-        form_data_map_key_format = attribute_value_type in (types.ListType, types.TupleType) and FORM_DATA_LIST_KEY_FORMAT or FORM_DATA_MAP_KEY_FORMAT
+        form_data_map_key_format = attribute_value_type in (list, tuple) and\
+            FORM_DATA_LIST_KEY_FORMAT or FORM_DATA_MAP_KEY_FORMAT
 
         # retrieves the attribute form data map key
         attribute_form_data_map_key = form_data_map_key_format % (form_data_map_key, attribute_name)
@@ -4629,16 +4629,16 @@ def _create_form_data(self, request, data_map, form_data_map_key, form_data_map,
 
         # invokes this same function recursively
         # in case the attribute value is a map
-        if attribute_value_type == types.DictType:
+        if attribute_value_type == dict:
             self._create_form_data(request, attribute_value, attribute_form_data_map_key, form_data_map, encoding)
         # invokes this same function recursively for each
         # item in case the attribute value is a list
-        elif attribute_value_type in (types.ListType, types.TupleType):
+        elif attribute_value_type in (list, tuple):
             for attribute_value_item in attribute_value:
                 self._create_form_data(request, attribute_value_item, attribute_form_data_map_key, form_data_map, encoding)
         # decodes the attribute value and sets it
         # in the form data map in case it is a unicode string
-        elif attribute_value_type == types.UnicodeType:
+        elif attribute_value_type == colony.legacy.UNICODE:
             # encodes the attribute value
             new_form_data_attribute_value = attribute_value.encode(encoding)
         # otherwise converts the attribute value to
@@ -4659,7 +4659,7 @@ def _create_form_data(self, request, data_map, form_data_map_key, form_data_map,
         # and set in the form data map
         form_data_attribute_value = form_data_map.get(attribute_form_data_map_key, None)
         form_data_attribute_value_type = type(form_data_attribute_value)
-        form_data_attribute_value = not form_data_attribute_value_type in (types.ListType, types.NoneType) and [form_data_attribute_value] or form_data_attribute_value
+        form_data_attribute_value = not form_data_attribute_value_type in (list, type(None)) and [form_data_attribute_value] or form_data_attribute_value
         form_data_attribute_value = form_data_attribute_value and form_data_attribute_value + [new_form_data_attribute_value] or new_form_data_attribute_value
         form_data_map[attribute_form_data_map_key] = form_data_attribute_value
 
@@ -4706,7 +4706,7 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
     next_parent_structure_type = type(next_parent_structure)
 
     # in case the next parent structure is not of type dictionary
-    if not next_parent_structure_type == types.DictType:
+    if not next_parent_structure_type == dict:
         # creates a new next parent structure map
         next_parent_structure = {}
 
@@ -5057,7 +5057,7 @@ def _convert_entity_map(self, entity):
         # in case the type of the value is list
         # (this is a to many relation and all the
         # element must be converted)
-        if value_type == types.ListType:
+        if value_type == list:
             # creates the list to hold the various
             # converted value
             values_list = []
@@ -5075,7 +5075,7 @@ def _convert_entity_map(self, entity):
             value = values_list
         # in case the value is of type instance or contains
         # the dict attribute, it must be an entity reference
-        elif value_type == types.InstanceType or hasattr(value, "__dict__"):
+        elif hasattr(value, "__dict__"):
             # converts the entity into map representation and
             # sets it as the value
             value = self._convert_entity_map(value)
