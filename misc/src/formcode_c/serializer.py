@@ -40,7 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
-import exceptions
+import colony
+
+from formcode_c import exceptions
 
 NAME_TYPE_VALUE = "name"
 """ The name type value """
@@ -58,15 +60,15 @@ ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
 
 NUMBER_TYPES = {
-    types.IntType : True,
-    types.LongType: True,
-    types.FloatType : True
+    int : True,
+    colony.legacy.LONG : True,
+    float : True
 }
 """ The map used to check number types """
 
 SEQUENCE_TYPES = {
-    types.TupleType : True,
-    types.ListType : True,
+    tuple : True,
+    list : True,
     types.GeneratorType : True
 }
 """ The map used to check sequence types """
@@ -106,18 +108,18 @@ def dump_parts(object, current_path):
                 # yields the part
                 yield part
     # in case the object is a dictionary
-    elif object_type is types.DictionaryType:
+    elif object_type is dict:
         # iterates over all the object items
         for key, value in object.items():
             # creates the new current path
-            new_current_path = current_path + "[" + unicode(key) + "]"
+            new_current_path = current_path + "[" + colony.legacy.UNICODE(key) + "]"
 
             # iterates over all the parts of the value
             for part in dump_parts(value, new_current_path):
                 # yields the part
                 yield part
     # in case the object is a boolean
-    elif object_type is types.BooleanType:
+    elif object_type is bool:
         # in case the object is valid (true)
         if object:
             # yields the true value
@@ -129,9 +131,9 @@ def dump_parts(object, current_path):
     # in case the object is a number
     elif object_type in NUMBER_TYPES:
         # yields the number unicode value
-        yield _create_value(unicode(object), current_path)
+        yield _create_value(colony.legacy.UNICODE(object), current_path)
     # in case the object is a string
-    elif object_type in types.StringTypes:
+    elif object_type in colony.legacy.STRINGS:
         # yields the string value
         yield _create_value(object, current_path)
     # in case a different type is set
