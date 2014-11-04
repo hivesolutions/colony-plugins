@@ -44,7 +44,7 @@ import colony
 
 import crypton
 
-import base
+from crypton.controllers import base
 
 CONSUMER_STATUS_ACTIVE = 1
 """ The consumer active status """

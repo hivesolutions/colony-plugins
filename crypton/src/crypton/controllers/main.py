@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import base
+from crypton.controllers import base
 
 DEFAULT_ALGORITHM_NAME = "sha1"
 """ The default algorithm name """
