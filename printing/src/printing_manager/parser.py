@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 import xml.dom.minidom
+
+import colony
 
 from printing_manager import ast
 
@@ -124,7 +124,7 @@ class PrintingLanguageParser(Parser):
     def load_printing_language_string(self, string):
         # creates the xml document DOM object, the provided
         # string is encoded to avoid possible parsing problems
-        string = type(string) == types.UnicodeType and string.encode(DEFAULT_CHARSET) or string
+        string = type(string) == colony.legacy.UNICODE and string.encode(DEFAULT_CHARSET) or string
         xml_document = xml.dom.minidom.parseString(string)
 
         self.load_printing_language(xml_document)
