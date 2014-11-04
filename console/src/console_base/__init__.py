@@ -36,4 +36,4 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 from . import system
 
-from .system import *
+from .system import ConsoleBase

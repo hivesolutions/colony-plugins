@@ -37,5 +37,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 from . import exceptions
 from . import system
 
-from .exceptions import *
-from .system import *
+from .exceptions import ConsoleInterfaceException, UndefinedConsoleInterface,\
+    IncompatibleConsoleInterface
+from .system import ConsoleInterface

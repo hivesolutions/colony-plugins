@@ -40,8 +40,8 @@ from . import interfaces
 from . import system
 from . import test
 
-from .authentication import *
-from .exceptions import *
-from .interfaces import *
-from .system import *
-from .test import *
+from .authentication import ConsoleAuthentication
+from .exceptions import ConsoleException, MissingProperty, AuthenticationFailed
+from .interfaces import ConsoleInterfaceCharacter
+from .system import Console
+from .test import ConsoleTestCase
