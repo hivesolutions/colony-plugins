@@ -43,7 +43,7 @@ import threading
 
 import colony
 
-import exceptions
+from client_utils import exceptions
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -838,7 +838,7 @@ class ClientConnection:
                     if not data:
                         # breaks the loop
                         break
-            except BaseException, exception:
+            except BaseException as exception:
                 # in case there was at least one
                 # successful read
                 if read_flag:
@@ -865,7 +865,9 @@ class ClientConnection:
                     self.close()
 
                     # raises the client request timeout exception
-                    raise exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+                    raise exceptions.ClientRequestTimeout(
+                        "problem receiving data: " + colony.legacy.UNICODE(exception)
+                    )
 
             # breaks the loop
             break
@@ -943,9 +945,9 @@ class ClientConnection:
 
                         # returns the data back into the queue
                         self.return_data(data)
-                except BaseException, exception:
+                except BaseException as exception:
                     # prints a debug message
-                    self.client_plugin.debug("Problem while receiving pending data: " + unicode(exception))
+                    self.client_plugin.debug("Problem while receiving pending data: " + colony.legacy.UNICODE(exception))
 
                     # reconnects the connection socket
                     self._reconnect_connection_socket()
@@ -972,7 +974,7 @@ class ClientConnection:
                         # sends the data in chunks, the send to command is used for
                         # a non connection oriented connection
                         number_bytes_sent = self.connection_socket.sendto(message, self.connection_address)
-                except BaseException, exception:
+                except BaseException as exception:
                     # in case the number of retries (available)
                     # is greater than zero
                     if retries > 0:
@@ -988,7 +990,7 @@ class ClientConnection:
                         self.close()
 
                         # raises the client response timeout exception
-                        raise exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
+                        raise exceptions.ClientResponseTimeout("problem sending data: " + colony.legacy.UNICODE(exception))
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent
