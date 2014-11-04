@@ -34,10 +34,10 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import console
-import exceptions
-import system
+from . import console
+from . import exceptions
+from . import system
 
-from console import *
-from exceptions import *
-from system import *
+from .console import ConsoleDownloader
+from .exceptions import DownloaderException, InvalidStatusCodeException
+from .system import Downloader

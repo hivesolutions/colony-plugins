@@ -150,9 +150,12 @@ class Downloader(colony.System):
             # notifies the handlers about the message
             colony.message(handlers_map, "Saved data as %s [%s/s]. " % (file_name, speed_string))
 
-        except Exception, exception:
+        except Exception as exception:
             # prints an info message
-            self.plugin.info("Problem while downloading file: " + address + ", error: " + unicode(exception))
+            self.plugin.info(
+                "Problem while downloading file: " + address +\
+                ", error: " + colony.legacy.UNICODE(exception)
+            )
 
     def get_download_package_stream(self, address, handlers_map = {}):
         """
@@ -203,8 +206,11 @@ class Downloader(colony.System):
 
             # returns the file contents
             return file_contents
-        except Exception, exception:
-            self.plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
+        except Exception as exception:
+            self.plugin.error(
+                "Problem while downloading file: " + address +\
+                ", error: " + colony.legacy.UNICODE(exception)
+            )
 
     def get_file_name_url(self, url):
         """
