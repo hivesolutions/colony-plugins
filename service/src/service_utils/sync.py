@@ -304,9 +304,9 @@ class AbstractService(object):
             elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
                 # runs the loop for connectionless type
                 self._loop_connectionless()
-        except BaseException, exception:
+        except BaseException as exception:
             # prints a warning message message
-            self.service_plugin.warning("Runtime problem: %s, while starting the service" % unicode(exception))
+            self.service_plugin.warning("Runtime problem: %s, while starting the service" % colony.legacy.UNICODE(exception))
 
             # sets the service connection active flag as false
             self.service_connection_active = False
@@ -503,9 +503,9 @@ class AbstractService(object):
 
             # returns the selected values read
             return selected_values_read
-        except BaseException, exception:
+        except BaseException as exception:
             # prints info message about connection
-            self.service_utils_plugin.info("The socket is not valid for selection of the pool: " + unicode(exception))
+            self.service_utils_plugin.info("The socket is not valid for selection of the pool: " + colony.legacy.UNICODE(exception))
 
             # returns invalid
             return None
@@ -537,9 +537,9 @@ class AbstractService(object):
             # service accepting thread
             service_tuple = (service_connection, service_address, port)
             self.service_accepting_thread.add_service_tuple(service_tuple)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message about the problem accepting the socket
-            self.service_utils_plugin.error("Error accepting service tuple: " + unicode(exception))
+            self.service_utils_plugin.error("Error accepting service tuple: " + colony.legacy.UNICODE(exception))
 
     def _read_service_socket(self, service_socket):
         """
@@ -562,9 +562,9 @@ class AbstractService(object):
 
             # inserts the data, socket and address into the pool
             self._insert_data_pool(service_data, service_socket, service_address, port)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message about the problem reading from socket
-            self.service_utils_plugin.error("Error reading from socket: " + unicode(exception))
+            self.service_utils_plugin.error("Error reading from socket: " + colony.legacy.UNICODE(exception))
 
     def _activate_service_sockets(self):
         """
@@ -804,7 +804,13 @@ class AbstractServiceConnectionHandler(object):
         self.connection_socket_connection_socket_file_descriptor_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration, exceptions.ServiceUtilsException, extra_parameters)
+        self.client_service = client_service_class(
+            self.service_plugin,
+            self,
+            service_configuration,
+            exceptions.ServiceUtilsException,
+            extra_parameters
+        )
 
     def start(self):
         self.__start_base()
@@ -936,9 +942,9 @@ class AbstractServiceConnectionHandler(object):
         try:
             # adds the connection to the current service connection handler
             self.add_connection(connection_socket, connection_address, connection_port)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error for not being able to add connection
-            self.service.service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % unicode(exception))
+            self.service.service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % colony.legacy.UNICODE(exception))
 
     def work_removed(self, work_reference):
         """
@@ -955,9 +961,9 @@ class AbstractServiceConnectionHandler(object):
         try:
             # removes the connection using the socket as reference
             self.remove_connection_socket(connection_socket)
-        except Exception, exception:
+        except Exception as exception:
             # prints an error for not being able to remove connection
-            self.service.service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
+            self.service.service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % colony.legacy.UNICODE(exception))
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
@@ -977,7 +983,7 @@ class AbstractServiceConnectionHandler(object):
         # the service connections map
         if connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
+            raise exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + colony.legacy.UNICODE(connection_socket))
 
         # creates the new service connection and sets the service execution thread
         # on the service connection (for callable execution)
@@ -1034,7 +1040,7 @@ class AbstractServiceConnectionHandler(object):
         # the service connections map
         if not connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + unicode(connection_socket))
+            raise exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + colony.legacy.UNICODE(connection_socket))
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
@@ -1137,9 +1143,9 @@ class AbstractServiceConnectionHandler(object):
             try:
                 # handles the current request, retrieving the return value
                 return_value = self.client_service.handle_request(ready_service_connection)
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+                self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
 
                 # sets the return value to false, to close the connection
                 return_value = False
@@ -1175,9 +1181,9 @@ class AbstractServiceConnectionHandler(object):
         try:
             # executes the callable with retry support
             colony.execute_retries(callable)
-        except BaseException, exception:
+        except BaseException as exception:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + unicode(exception))
+            raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + colony.legacy.UNICODE(exception))
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
@@ -1192,9 +1198,9 @@ class AbstractServiceConnectionHandler(object):
         try:
             # executes the callable with retry support
             colony.execute_retries(callable)
-        except BaseException, exception:
+        except BaseException as exception:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + unicode(exception))
+            raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + colony.legacy.UNICODE(exception))
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
@@ -1564,9 +1570,9 @@ class AbstractServiceConnectionlessHandler(object):
             try:
                 # handles the current request
                 self.client_service.handle_request(service_connection)
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+                self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
 
             # retrieves the connection tuple
             connection_tuple = service_connection.get_connection_tuple()
@@ -2090,7 +2096,7 @@ class ServiceConnection(object):
                     if not data:
                         # breaks the loop
                         break
-            except BaseException, exception:
+            except BaseException as exception:
                 # in case there was at least one
                 # successful read
                 if read_flag:
@@ -2114,7 +2120,7 @@ class ServiceConnection(object):
                         continue
 
                     # raises the client request timeout exception
-                    raise exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+                    raise exceptions.ClientRequestTimeout("problem receiving data: " + colony.legacy.UNICODE(exception))
 
             # breaks the loop
             break
@@ -2161,7 +2167,7 @@ class ServiceConnection(object):
             try:
                 # sends the data in chunks
                 number_bytes_sent = self.connection_socket.send(message)
-            except BaseException, exception:
+            except BaseException as exception:
                 # in case the number of retries (available)
                 # is greater than zero
                 if retries > 0:
@@ -2174,7 +2180,7 @@ class ServiceConnection(object):
                 # raised
                 else:
                     # raises the client response timeout exception
-                    raise exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
+                    raise exceptions.ServerResponseTimeout("problem sending data: " + colony.legacy.UNICODE(exception))
 
             # decrements the number of bytes sent
             number_bytes -= number_bytes_sent
