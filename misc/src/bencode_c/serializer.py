@@ -44,7 +44,7 @@ import calendar
 
 import colony
 
-import exceptions
+from bencode_c import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,
@@ -75,14 +75,14 @@ EXCLUSION_TYPES = {
 """ The map of types to be excluded from object serialization """
 
 INT_TYPES = {
-    types.IntType : True,
-    types.LongType : True
+    int : True,
+    colony.legacy.LONG : True
 }
 """ The map of int types """
 
 LIST_TYPES = {
-    types.ListType : True,
-    types.TupleType : True
+    list : True,
+    tuple : True
 }
 """ The map of list types """
 
@@ -106,14 +106,14 @@ def dumps(object):
     # returns the string value
     return string_value
 
-def _chunk(chunk, string_buffer):
+def _chunk(chunk, string_buffer, instances = True):
     # retrieves the chunk type
     chunk_type = type(chunk)
 
     if chunk_type in INT_TYPES:
         # writes the integer chunk into the string buffer
         string_buffer.write("i" + str(chunk) + "e")
-    elif chunk_type in types.StringTypes:
+    elif chunk_type in colony.legacy.STRINGS:
         # retrieves the chunk length
         chunk_length = len(chunk)
 
@@ -132,7 +132,7 @@ def _chunk(chunk, string_buffer):
         # writes the end token in the
         # string buffer
         string_buffer.write("e")
-    elif chunk_type == types.DictType:
+    elif chunk_type == dict:
         # writes the start token in the
         # string buffer
         string_buffer.write("d")
@@ -167,13 +167,14 @@ def _chunk(chunk, string_buffer):
 
         # writes the chunk timestamp into the string buffer
         string_buffer.write("i" + str(chunk_timestamp) + "e")
-    elif chunk_type == types.InstanceType or hasattr(object, "__class__"):
+    elif instances and hasattr(object, "__class__"):
         # writes the start token in the
         # string buffer
         string_buffer.write("d")
 
         # retrieves all the chunk keys
-        chunk_keys = [value for value in dir(chunk) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(chunk, value)) in EXCLUSION_TYPES]
+        chunk_keys = [value for value in dir(chunk) if not value.startswith("_") and\
+            not value in EXCLUSION_MAP and not type(getattr(chunk, value)) in EXCLUSION_TYPES]
 
         # sorts the chunk keys
         chunk_keys.sort()
