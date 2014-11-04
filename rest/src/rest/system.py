@@ -47,7 +47,7 @@ import threading
 
 import colony
 
-import exceptions
+from rest import exceptions
 
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
