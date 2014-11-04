@@ -44,8 +44,8 @@ import threading
 
 import colony
 
-import threads
-import exceptions
+from service_utils import threads
+from service_utils import exceptions
 
 BIND_HOST = ""
 """ The bind host """

@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 import errno
-import types
 import heapq
 import select
 import socket
@@ -47,8 +46,8 @@ import threading
 
 import colony
 
-import threads
-import exceptions
+from service_utils import threads
+from service_utils import exceptions
 
 _EPOLLIN = 0x001
 _EPOLLPRI = 0x002
@@ -110,7 +109,7 @@ PENDING_TIMEOUT = 5.0
 """ The timeout to be used to cancel connection in the
 handshake pending state (not possible to accept) """
 
-class AbstractService:
+class AbstractService(object):
     """
     Top level abstract class for a service that is considered
     to be asynchronous in terms of usage.
@@ -314,12 +313,12 @@ class AbstractService:
                 # calls the handler with the socket, this will handle
                 # the new event that has been received
                 handler(socket)
-            except BaseException, exception:
+            except BaseException as exception:
                 # prints a warning message message using the service
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
                     "Runtime problem: %s, while handling event" %
-                    unicode(exception)
+                    colony.legacy.unichr(exception)
                 )
 
                 # retrieves the client connection from the client
@@ -353,12 +352,12 @@ class AbstractService:
             # runs the main loop, this is the blocking call
             # and will last until the stop flag is set
             self._loop()
-        except BaseException, exception:
+        except BaseException as exception:
             # prints a warning message message using the service
             # plugin (this message is considered important)
             self.service_plugin.warning(
                 "Runtime problem: %s, while starting the service" %
-                unicode(exception)
+                colony.legacy.UNICODE(exception)
             )
 
             # sets the service connection active flag as false
@@ -568,7 +567,7 @@ class AbstractService:
 
             # pops the processes elements from the time events
             # list (deferred popping, avoids list corruption)
-            for _index in xrange(expired_count): heapq.heappop(self.time_events)
+            for _index in range(expired_count): heapq.heappop(self.time_events)
 
     def _disable_service_sockets(self):
         """
@@ -623,7 +622,7 @@ class AbstractService:
         # (background) thread
         self.service_execution_thread.join()
 
-class SelectPolling:
+class SelectPolling(object):
 
     readable_socket_list = None
     writeable_socket_list = None
@@ -688,7 +687,7 @@ class SelectPolling:
         # returns the events list
         return events_list
 
-class EpollPolling:
+class EpollPolling(object):
 
     def __init__(self):
         pass
@@ -702,7 +701,7 @@ class EpollPolling:
     def poll(self):
         pass
 
-class KqueuePolling:
+class KqueuePolling(object):
 
     def __init__(self):
         pass
@@ -716,7 +715,7 @@ class KqueuePolling:
     def poll(self):
         pass
 
-class Connection:
+class Connection(object):
 
     service = None
     """ The reference to the service implementation
@@ -839,7 +838,7 @@ class ServiceConnection(Connection):
                 else: service_connection.close()
                 return
 
-            except socket.error, exception:
+            except socket.error as exception:
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
@@ -1004,7 +1003,7 @@ class ClientConnection(Connection):
             try:
                 # receives the data from the socket
                 data = _socket.recv(self.chunk_size)
-            except socket.error, exception:
+            except socket.error as exception:
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
@@ -1051,7 +1050,7 @@ class ClientConnection(Connection):
 
             # in case the type is a tuple (callback
             # exists)
-            if data_type == types.TupleType:
+            if data_type == tuple:
                 # unpacks the data into data and
                 # callback information
                 data, callback = data
@@ -1066,7 +1065,7 @@ class ClientConnection(Connection):
 
                 # tries to send the data through the socket
                 sent_bytes = _socket.send(data)
-            except socket.error, exception:
+            except socket.error as exception:
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data

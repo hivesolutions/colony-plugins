@@ -34,14 +34,17 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import async
-import exceptions
-import sync
-import system
-import threads
+from . import async
+from . import exceptions
+from . import sync
+from . import system
+from . import threads
 
-from async import *
-from exceptions import *
-from sync import *
-from system import *
-from threads import *
+from .async import AbstractService, SelectPolling, EpollPolling, KqueuePolling, Connection,\
+    ServiceConnection, ClientConnection
+from .exceptions import ServiceUtilsException, SocketProviderNotFound, SocketUpgraderNotFound,\
+    ServerRequestTimeout, ClientRequestTimeout, ServerResponseTimeout, ClientResponseTimeout,\
+    RequestClosed, PortStarvationReached, ConnectionChangeFailure
+from .sync import *
+from .system import *
+from .threads import *
