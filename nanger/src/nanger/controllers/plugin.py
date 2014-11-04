@@ -39,11 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import base
+from .base import BaseController
 
 mvc_utils = colony.__import__("mvc_utils")
 
-class PluginController(base.BaseController):
+class PluginController(BaseController):
 
     def list(self, request):
         # retrieves the reference to the plugin manager running

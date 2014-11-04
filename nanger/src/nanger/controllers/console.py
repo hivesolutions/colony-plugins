@@ -41,11 +41,10 @@ import sys
 import code
 import uuid
 import types
-import cStringIO
 
 import colony
 
-import base
+from .base import BaseController
 
 mvc_utils = colony.__import__("mvc_utils")
 
@@ -70,7 +69,7 @@ DOT_KEYWORDS = ("else", "finally", "try")
 """ The set of python keywords that are meant to
 be suffixed with a dot character """
 
-class ConsoleController(base.BaseController):
+class ConsoleController(BaseController):
     """
     The nanger console controller.
     """
@@ -80,7 +79,7 @@ class ConsoleController(base.BaseController):
     with the concrete instance containing the interpreter """
 
     def __init__(self, plugin, system):
-        base.BaseController.__init__(self, plugin, system)
+        BaseController.__init__(self, plugin, system)
         self.interpreters = {}
 
     def init(self, request):
@@ -111,8 +110,8 @@ class ConsoleController(base.BaseController):
 
         # creates the memory buffer that will hold the contents
         # resulting from the execution of the python code
-        buffer_out = cStringIO.StringIO()
-        buffer_err = cStringIO.StringIO()
+        buffer_out = colony.legacy.StringIO()
+        buffer_err = colony.legacy.StringIO()
 
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
@@ -221,8 +220,8 @@ class ConsoleController(base.BaseController):
 
         # creates the memory buffer that will hold the contents
         # resulting from the execution of the python code
-        buffer_out = cStringIO.StringIO()
-        buffer_err = cStringIO.StringIO()
+        buffer_out = colony.legacy.StringIO()
+        buffer_err = colony.legacy.StringIO()
 
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
@@ -371,7 +370,7 @@ class ConsoleController(base.BaseController):
             # retrieves the object associated with the current value (name)
             # taking into account the type of the container object (different
             # strategies apply for different container types)
-            if type(container) == types.DictType: object = container[value]
+            if type(container) == dict: object = container[value]
             else: object = getattr(container, value)
 
             # retrieves the (python) object type and then uses it to convert
@@ -462,7 +461,7 @@ class ConsoleController(base.BaseController):
         # final values sequence must be returned, note that an
         # appropriate conversion is done in case no map type is
         # present (object value)
-        if not partials: return type(names) == types.DictType and (names, names) or (dir(names), names)
+        if not partials: return type(names) == dict and (names, names) or (dir(names), names)
 
         # retrieves the first partial values, this value
         # is going to be used as the reference value for
@@ -472,7 +471,7 @@ class ConsoleController(base.BaseController):
 
         # uses the appropriate strategy to retrieve the value taking
         # into account the appropriate type
-        if names_type == types.DictType: value = names.get(partial, None)
+        if names_type == dict: value = names.get(partial, None)
         else: value = hasattr(names, partial) and getattr(names, partial) or None
 
         # returns the result of the recursion step on top of the

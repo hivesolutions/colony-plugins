@@ -42,7 +42,7 @@ import time
 
 import colony
 
-import base
+from .base import BaseController
 
 SIZE_LIMIT = 20000
 """ The limit in size of an array of the sub set of
@@ -57,7 +57,7 @@ with the proper color string to be used in display """
 
 mvc_utils = colony.__import__("mvc_utils")
 
-class DiagnosticsController(base.BaseController):
+class DiagnosticsController(BaseController):
 
     def requests(self, request):
         # generates and processes the template with the provided values
