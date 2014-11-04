@@ -1264,7 +1264,7 @@ class ResourcesManager(colony.System):
                 # in case the resource is of a type that may be visually
                 # representable
                 if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
-                    resource_value = unicode(resource.data)
+                    resource_value = colony.legacy.UNICODE(resource.data)
                 # otherwise it's not possible to represent the resource
                 # visually
                 else:
@@ -1328,7 +1328,7 @@ class ResourcesManager(colony.System):
                 # in case the resource is of a type that may be visually
                 # representable
                 if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
-                    resource_value = unicode(resource.data)
+                    resource_value = colony.legacy.UNICODE(resource.data)
                 # otherwise it's not possible to represent the resource
                 # visually
                 else:

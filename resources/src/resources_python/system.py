@@ -77,7 +77,7 @@ class ResourcesPython(colony.System):
         symbols_map = {}
 
         # interprets the python file path with the symbols map
-        execfile(full_python_file_path, symbols_map, symbols_map)
+        colony.legacy.execfile(full_python_file_path, symbols_map, symbols_map)
 
         # tries to retrieve the configuration
         configuration = symbols_map.get(CONFIGURATION_VALUE, {})
