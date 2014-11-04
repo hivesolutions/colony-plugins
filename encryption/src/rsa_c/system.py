@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import math
-import types
 import random
 
 import colony
@@ -399,10 +398,10 @@ class RsaStructure:
         @return: The encrypted message as an integer.
         """
 
-        if type(message) == types.IntType:
-            return self._encrypt_integer(long(message), e_value, n_value)
+        if type(message) == int:
+            return self._encrypt_integer(colony.legacy.LONG(message), e_value, n_value)
 
-        if not type(message) == types.LongType:
+        if not type(message) == colony.legacy.LONG:
             raise TypeError("you must pass a long or an int")
 
         if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n_value, 2)):
@@ -719,7 +718,7 @@ class RsaStructure:
         q_value = abs(a_value % b_value)
 
         # calculates the r value
-        r_value = long(a_value / b_value)
+        r_value = colony.legacy.LONG(a_value / b_value)
 
         # retrieves the extended euclid greatest common divisor for b value and q value
         d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(b_value, q_value)
