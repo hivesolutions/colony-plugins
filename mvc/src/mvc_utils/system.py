@@ -838,18 +838,21 @@ class MvcUtils(colony.System):
         # to create the appropriate controller instances
         for controllers_module_item in controllers_module_items:
             # checks if the controller module item name is a valid
-            # controller name
+            # controller name meaning that it ends with the proper
+            # suffix value and the module is the one imported
             valid_controller_name = controllers_module_item.endswith("Controller")
-
-            # in case the controller module item does
-            # not represent a valid controller name
-            if not valid_controller_name:
-                # continues the loop
-                continue
+            if not valid_controller_name : continue
 
             # retrieves the controller class and the controller class name
+            # these values are going to be used for both validation and processing
             controller_class = getattr(controllers_module, controllers_module_item)
             controller_class_name = controller_class.__name__
+
+            # verifies that the item in validation is a member of the current
+            # module being imported (not an imported symbol) this avoids the
+            # multiple registration of modules that are imported inside another
+            valid_controller_module = controller_class.__module__ == controllers_module.__name__
+            if not valid_controller_module: continue
 
             # converts the controller class name into the normalized
             # controller base name according to the prefix value
