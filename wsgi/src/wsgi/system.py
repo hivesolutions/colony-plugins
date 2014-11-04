@@ -37,13 +37,12 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
 import datetime
 import threading
 
 import colony
 
-import exceptions
+from wsgi import exceptions
 
 POWERED_BY_STRING = "colony/%s (%s)"
 """ The string to be used in the powered by http
@@ -107,7 +106,7 @@ class Wsgi(colony.System):
         # data or setting the exception values
         request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
         try: rest_plugin.handle_request(request); request.finish()
-        except BaseException, exception:
+        except BaseException as exception:
             has_code = hasattr(exception, "status_code")
             code = exception.status_code if has_code else 500
             try: code = int(code)
@@ -407,7 +406,7 @@ class WsgiRequest:
 
             # in case the attribute value reference type is (already)
             # a list
-            if attribute_value_reference_type == types.ListType:
+            if attribute_value_reference_type == list:
                 # adds the attribute value to the attribute value reference
                 attribute_value_reference.append(attribute_value)
             # otherwise the attributes is not a list and it must be created
@@ -639,7 +638,7 @@ class WsgiRequest:
         # in case the header value type is unicode
         # and the encode flag is set must encode the
         # header value using the current encoding
-        if header_value_type == types.UnicodeType and encode:
+        if header_value_type == colony.legacy.UNICODE and encode:
             header_value = header_value.encode(self.content_type_charset)
 
         # sets the header value in the headers map so that
@@ -692,7 +691,7 @@ class WsgiRequest:
         # then adds the resulting message into the message
         # buffer to be flushed into the connection
         message_type = type(message)
-        if message_type == types.UnicodeType and encode:
+        if message_type == colony.legacy.UNICODE and encode:
             message = message.encode(self.content_type_charset)
         self.message_buffer.append(message)
 
