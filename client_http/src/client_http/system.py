@@ -38,13 +38,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import types
 import base64
 import threading
 
 import colony
 
-import exceptions
+from client_http import exceptions
 
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
@@ -1565,7 +1564,7 @@ class HttpRequest(object):
         message_type = type(message)
 
         # in case the message type is unicode
-        if message_type == types.UnicodeType and encode:
+        if message_type == colony.legacy.UNICODE and encode:
             # encodes the message with the defined content type charset
             message = message.encode(self.content_type_charset)
 
@@ -1826,7 +1825,7 @@ class HttpRequest(object):
             return string_value
 
         # converts the string value to unicode
-        unicode_value = unicode(string_value)
+        unicode_value = colony.legacy.UNICODE(string_value)
 
         # encodes the unicode value
         unicode_value_encoded = unicode_value.encode(self.content_type_charset)
