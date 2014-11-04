@@ -41,12 +41,12 @@ import types
 
 import xml.dom.minidom
 
-import ast
+from printing_manager import ast
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
-class Parser:
+class Parser(object):
     """
     The abstract parser class
     """

@@ -44,8 +44,9 @@ import PIL.Image
 
 import colony
 
-import exceptions
 import printing_manager
+
+from printing_binie import exceptions
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import visitor
+from printing_binie import visitor
 
 PRINTING_NAME = "binie"
 """ The printing name """
