@@ -41,7 +41,7 @@ import types
 
 import colony
 
-import exceptions
+from csv_c import exceptions
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding for csv files """
@@ -52,7 +52,7 @@ NEWLINE_CHARACTER = "\n"
 SEPARATOR_CHARACTER = ";"
 """ The separator character """
 
-LIST_TYPES = (types.ListType, types.TupleType, types.GeneratorType)
+LIST_TYPES = (list, tuple, types.GeneratorType)
 """ A tuple with the various list types """
 
 def dumps(object):
@@ -73,11 +73,10 @@ def _chunk(object, string_buffer):
     # retrieves the object type
     object_type = type(object)
 
-    # in case the object type is an instance
-    # or a map (dictionary) must convert the
+    # in case the object type is key to value
+    # based (map or dictionary) must convert the
     # object into a list for processing
-    if object_type in (types.InstanceType, types.DictionaryType):
-        object = [object]
+    if object_type == dict: object = [object]
 
     # in case the object type is neither an
     # instance nor a list it's considered not
@@ -167,8 +166,8 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
         # in case the attribute value is not of string types uses the default
         # system conversion to convert then if the attribute value is of type
         # unicode encodes the attribute value using the default encoding
-        if not attribute_value_type in types.StringTypes: attribute_value = str(attribute_value)
-        attribute_value_encoded = attribute_value_type == types.UnicodeType and\
+        if not attribute_value_type in colony.legacy.STRINGS: attribute_value = str(attribute_value)
+        attribute_value_encoded = attribute_value_type == colony.legacy.UNICODE and\
             attribute_value.encode(DEFAULT_ENCODING) or\
             (attribute_value and str(attribute_value))
 
