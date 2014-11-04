@@ -88,11 +88,11 @@ class Guid(colony.System):
             parts = []
 
             # do we need to wait for the next millisecond (are we out of counters?)
-            now = long(time.time() * 1000)
+            now = colony.legacy.LONG(time.time() * 1000)
 
             while self.last_time == now and self.counter == self.first_counter:
                 time.sleep(.01)
-                now = long(time.time() * 1000)
+                now = colony.legacy.LONG(time.time() * 1000)
 
             # appends time part
             parts.append("%016x" % now)
@@ -100,7 +100,7 @@ class Guid(colony.System):
             # time to start counter over since we have a different millisecond
             if self.last_time != now:
                 # start at random position
-                self.first_counter = long(random.uniform(1, MAX_COUNTER))
+                self.first_counter = colony.legacy.LONG(random.uniform(1, MAX_COUNTER))
 
                 self.counter = self.first_counter
             self.counter += 1
@@ -120,5 +120,5 @@ class Guid(colony.System):
             # releases the lock, more guid can be generated now
             self.lock.release()
 
-make_hexadecimal_ip = lambda ip: "".join(["%04x" % long(index) for index in ip.split(".")])
+make_hexadecimal_ip = lambda ip: "".join(["%04x" % colony.legacy.LONG(index) for index in ip.split(".")])
 """ Makes an hexadecimal IP from a decimal dot-separated ip (eg: 127.0.0.1) """
