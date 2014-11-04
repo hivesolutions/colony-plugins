@@ -46,8 +46,9 @@ import PIL.ImageWin
 
 import colony
 
-import exceptions
 import printing_manager
+
+from printing_win32 import exceptions
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """
@@ -99,7 +100,7 @@ BOLD_TEXT_WEIGHT = 800
 DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
 """ The default text weight """
 
-class Visitor:
+class Visitor(object):
     """
     The visitor class.
     """

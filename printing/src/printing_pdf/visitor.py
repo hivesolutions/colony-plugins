@@ -50,8 +50,9 @@ import reportlab.pdfbase.pdfmetrics
 
 import colony
 
-import exceptions
 import printing_manager
+
+from printing_pdf import exceptions
 
 FONT_SCALE_FACTOR = 1
 """ The font scale factor """
@@ -126,7 +127,7 @@ FONT_PATHS = ("", "~/.fonts/", "/usr/share/fonts/truetype/")
 """ The set of base paths to be used for searching
 for fonts on the current system """
 
-class Visitor:
+class Visitor(object):
     """
     The visitor class.
     """

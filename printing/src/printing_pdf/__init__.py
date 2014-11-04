@@ -34,10 +34,10 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import exceptions
-import system
-import visitor
+from . import exceptions
+from . import system
+from . import visitor
 
-from exceptions import *
-from system import *
-from visitor import *
+from .exceptions import PrintingPdfException, InvalidContextInformationName, InvalidFont
+from .system import PrintingPdf
+from .visitor import Visitor

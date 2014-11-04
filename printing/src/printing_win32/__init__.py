@@ -34,12 +34,14 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import constants
-import exceptions
-import system
-import visitor
+from . import constants
+from . import exceptions
+from . import system
+from . import visitor
 
-from constants import *
-from exceptions import *
-from system import *
-from visitor import *
+from .constants import HORIZONTAL_RESOLUTION, VERTICAL_RESOLUTION, LOG_PIXELS_X,\
+    LOG_PIXELS_Y, PHYSICAL_WIDTH, PHYSICAL_HEIGHT, PHYSICAL_OFFSET_X, PHYSICAL_OFFSET_Y,\
+    INCH
+from .exceptions import PrintingBinieException, InvalidContextInformationName
+from .system import PrintingWin32
+from .visitor import Visitor
