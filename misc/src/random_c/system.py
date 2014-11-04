@@ -40,8 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 import random
-import thread
 import hashlib
+import threading
 
 import colony
 
@@ -94,7 +94,7 @@ class Random(colony.System):
         process_id_absolute = abs(process_id)
 
         # retrieves the thread id
-        thread_id = thread.get_ident()
+        thread_id = threading.current_thread().ident
 
         # retrieves the thread id in absolute
         thread_id_absolute = abs(thread_id)

@@ -41,7 +41,7 @@ import re
 
 import colony
 
-import exceptions
+from url_parser_c import exceptions
 
 URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The url regex value """
@@ -88,7 +88,7 @@ class UrlParser(colony.System):
         # returns the url
         return url
 
-class Url:
+class Url(object):
     """
     The url class.
     """
@@ -126,7 +126,18 @@ class Url:
     base_url = None
     """ The base url """
 
-    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, username = None, password = None, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None, base_url = None):
+    def __init__(
+        self,
+        protocol = DEFAULT_PROTOCOL_VALUE,
+        username = None,
+        password = None,
+        base_name = None,
+        port = DEFAULT_PORT_VALUE,
+        resource_reference = None,
+        options = None,
+        location = None,
+        base_url = None
+    ):
         """
         Constructor of the class.
 

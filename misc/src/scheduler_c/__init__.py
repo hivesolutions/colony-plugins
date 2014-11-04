@@ -38,6 +38,6 @@ from . import console
 from . import exceptions
 from . import system
 
-from .console import *
-from .exceptions import *
-from .system import *
+from .console import ConsoleScheduler
+from .exceptions import SchedulerException, SchedulerCancel
+from .system import Scheduler

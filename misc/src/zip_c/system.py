@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import stat
-import types
 import zipfile
 
 import colony
@@ -388,7 +387,7 @@ class Zip(colony.System):
                 output_file_path_type = type(output_file_path)
 
                 # in case the output file path type is unicode
-                if output_file_path_type == types.UnicodeType:
+                if output_file_path_type == colony.legacy.UNICODE:
                     # encodes the output file path with the default encoding
                     output_file_path_encoded = output_file_path.encode(DEFAULT_ENCODING)
 
