@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import time
-import thread
 import sqlite3
 import tempfile
+import threading
 
 import colony
 
@@ -525,7 +525,7 @@ class SqliteConnection(object):
         # retrieves the thread identifier for the
         # current executing thread, then uses it
         # to retrieve the corresponding connection
-        thread_id = thread.get_ident()
+        thread_id = threading.current_thread().ident
         connection = self.connections_map.get(thread_id, None)
 
         # in case a connection is not available for the

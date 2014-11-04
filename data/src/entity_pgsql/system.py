@@ -321,7 +321,7 @@ class PgsqlEngine(object):
                 # creates the (integrity) exception from the exception
                 # message extracted from the exception and raises it
                 # to the top level handlers
-                exception_message = unicode(exception)
+                exception_message = colony.legacy.UNICODE(exception)
                 exception = IntegrityError(exception_message)
                 raise exception
 
