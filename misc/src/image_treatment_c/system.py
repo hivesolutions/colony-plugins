@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 import PIL.Image
 
 import colony
@@ -217,7 +215,8 @@ class ImageTreatment(colony.System):
         image_path_type = type(image_path)
 
         # in case the image path is of type string
-        if image_path_type == types.StringType:
+        # (also known as bytes for buffer parsing)
+        if image_path_type == colony.legacy.BYTES:
             # returns immediately (nothing
             # to do)
             return

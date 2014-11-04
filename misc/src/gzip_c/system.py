@@ -79,7 +79,7 @@ class Gzip(colony.System):
         file_name and string_buffer.write("\x08") or string_buffer.write("\x00")
 
         # writes the timestamp value
-        string_buffer.write(struct.pack("<L", long(time.time())))
+        string_buffer.write(struct.pack("<L", colony.legacy.LONG(time.time())))
 
         # writes some extra heading values
         # (includes operating system)
