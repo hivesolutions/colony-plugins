@@ -98,7 +98,7 @@ class RootEntityAbstract(structures.EntityClass):
         self.object_id = None
         self.status = 1
 
-class Logable(structures.EntityClass):
+class Loggable(structures.EntityClass):
     """
     The (interface) class that decorates an entity with
     the "loggable" attribute for polymorphic retrieval.
@@ -257,7 +257,7 @@ class Person(RootEntity):
     def _attr_double_age(cls, instance):
         return cls._attr(instance, "age") * 2
 
-class Employee(Person, Logable, Taxable):
+class Employee(Person, Loggable, Taxable):
     """
     The employee entity class, the set of attributes
     contained in this class should be able to represent
@@ -280,7 +280,7 @@ class Employee(Person, Logable, Taxable):
         """
 
         Person.__init__(self)
-        Logable.__init__(self)
+        Loggable.__init__(self)
         Taxable.__init__(self)
         self.salary = 200
 
@@ -515,7 +515,7 @@ class Supplier(RootEntity):
 
         pass
 
-class Operation(Logable):
+class Operation(Loggable):
     """
     The operation entity class, representing a logical
     operation and attributes.

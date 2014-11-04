@@ -96,7 +96,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # creates the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
         self.entity_manager.create(test_mocks.RootEntity)
-        self.entity_manager.create(test_mocks.Logable)
+        self.entity_manager.create(test_mocks.Loggable)
         self.entity_manager.create(test_mocks.Taxable)
         self.entity_manager.create(test_mocks.Person)
         self.entity_manager.create(test_mocks.Employee)
@@ -110,7 +110,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that all the data source references for the entity classes
         # have been created successfully
         self.assertTrue(self.entity_manager.exists(test_mocks.RootEntity))
-        self.assertTrue(self.entity_manager.exists(test_mocks.Logable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Loggable))
         self.assertTrue(self.entity_manager.exists(test_mocks.Taxable))
         self.assertTrue(self.entity_manager.exists(test_mocks.Person))
         self.assertTrue(self.entity_manager.exists(test_mocks.Employee))
@@ -125,7 +125,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # creates the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
         self.entity_manager.create(test_mocks.RootEntity)
-        self.entity_manager.create(test_mocks.Logable)
+        self.entity_manager.create(test_mocks.Loggable)
         self.entity_manager.create(test_mocks.Taxable)
         self.entity_manager.create(test_mocks.Person)
         self.entity_manager.create(test_mocks.Employee)
@@ -139,7 +139,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that all the data source references for the entity classes
         # have been created successfully
         self.assertTrue(self.entity_manager.exists(test_mocks.RootEntity))
-        self.assertTrue(self.entity_manager.exists(test_mocks.Logable))
+        self.assertTrue(self.entity_manager.exists(test_mocks.Loggable))
         self.assertTrue(self.entity_manager.exists(test_mocks.Taxable))
         self.assertTrue(self.entity_manager.exists(test_mocks.Person))
         self.assertTrue(self.entity_manager.exists(test_mocks.Employee))
@@ -153,7 +153,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # deletes the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
         self.entity_manager.delete(test_mocks.RootEntity)
-        self.entity_manager.delete(test_mocks.Logable)
+        self.entity_manager.delete(test_mocks.Loggable)
         self.entity_manager.delete(test_mocks.Taxable)
         self.entity_manager.delete(test_mocks.Person)
         self.entity_manager.delete(test_mocks.Employee)
@@ -167,7 +167,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that all the data source references for the entity classes
         # have been deleted successfully
         self.assertFalse(self.entity_manager.exists(test_mocks.RootEntity))
-        self.assertFalse(self.entity_manager.exists(test_mocks.Logable))
+        self.assertFalse(self.entity_manager.exists(test_mocks.Loggable))
         self.assertFalse(self.entity_manager.exists(test_mocks.Taxable))
         self.assertFalse(self.entity_manager.exists(test_mocks.Person))
         self.assertFalse(self.entity_manager.exists(test_mocks.Employee))

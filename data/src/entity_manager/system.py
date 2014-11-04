@@ -41,7 +41,6 @@ import os
 import copy
 import uuid
 import time
-import types
 import zipfile
 import calendar
 import datetime
@@ -49,9 +48,9 @@ import tempfile
 
 import colony
 
-import exceptions
-import structures
-import test_mocks
+from entity_manager import exceptions
+from entity_manager import structures
+from entity_manager import test_mocks
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
@@ -81,7 +80,7 @@ RESERVED_NAMES = ("_class", "_mtime")
 """ The tuple containing the names that are considered to be
 reserved (special cases) for the queries """
 
-SEQUENCE_TYPES = (types.ListType, types.TupleType)
+SEQUENCE_TYPES = (list, tuple)
 """ The tuple containing the various sequence types """
 
 OPTIONS_KEYS = (
@@ -2393,7 +2392,7 @@ class EntityManager(object):
         # in case the query is a list (sequence)
         # a set of queries must be executed, in this
         # case only the last cursor is returned
-        if query_type == types.ListType:
+        if query_type == list:
             # iterates over all the queries to be executed
             # to execute them in the underlying engine
             for _query in query:
@@ -3505,7 +3504,7 @@ class EntityManager(object):
 
         # in case the id value is a tuple (sequence)
         # an "in" operator must be used in the query
-        if id_value_type == types.TupleType:
+        if id_value_type == tuple:
             # adds the appropriate "in" operator to
             # the verify query
             query_buffer.write(" in (")
@@ -3561,8 +3560,8 @@ class EntityManager(object):
         # the length is calculated otherwise a tuple must created from the
         # single value
         id_value_type = type(id_value)
-        id_length = id_value_type == types.TupleType and len(id_value) or 1
-        id_value = id_value_type == types.TupleType and id_value or (id_value,)
+        id_length = id_value_type == tuple and len(id_value) or 1
+        id_value = id_value_type == tuple and id_value or (id_value,)
 
         # creates the initial verifications bit list as a list of
         # false bits for all elements (by default they're not found)
@@ -3592,7 +3591,7 @@ class EntityManager(object):
         # creates the final verified structure, in case the provided
         # id value is a tuple a tuple should be creates from the verifications
         # list otherwise the first result should be used (single value)
-        verified = id_value_type == types.TupleType and tuple(verifications) or verifications[0]
+        verified = id_value_type == tuple and tuple(verifications) or verifications[0]
 
         # returns the final verified value according
         # to the provided id value
@@ -5138,7 +5137,7 @@ class EntityManager(object):
 
             # in case the attribute value type is an integer
             # or float (must be a timestamp value)
-            if value_type in (types.IntType, types.FloatType):
+            if value_type in (int, float):
                 # converts the attribute value (integer)
                 # into a float value and then converts it
                 # into a string representation
@@ -6541,7 +6540,7 @@ class EntityManager(object):
         # tries to retrieve the normalized flag from
         # the options map (for lazy loading) only in case the
         # options is a dictionary
-        is_normalized = type(options) == types.DictionaryType and\
+        is_normalized = type(options) == dict and\
             options.get("_normalized", False) or False
 
         # in case the options are already normalized
@@ -6753,7 +6752,7 @@ class EntityManager(object):
                     # in case the filter field is of type dictionary
                     # (key value association) it must be converted to a list
                     # of map of name and value association (field normalization)
-                    if filter_fields_type == types.DictionaryType:
+                    if filter_fields_type == dict:
                         # converts the map of name value association to a list of
                         # maps for each attribute (normalized value)
                         filter["fields"] = [{"name" : key, "value" : value} for key, value\
@@ -6775,7 +6774,7 @@ class EntityManager(object):
                             # in case the filter field is not of type dictionary
                             # assumes it's a simple field and creates the complete
                             # filter field value
-                            if not filter_field_type == types.DictionaryType:
+                            if not filter_field_type == dict:
                                 # creates the complete filter field using the
                                 # invalid value as the value and the filter field
                                 # as the name of the filter field
@@ -6863,7 +6862,7 @@ class EntityManager(object):
         # tries to retrieve the filters list from the provided options
         # defaulting to an empty list in case no filters already exist
         filters = options.get("filters", [])
-        is_tuple = type(filters) == types.TupleType
+        is_tuple = type(filters) == tuple
         if is_tuple: filters = list(filters)
 
         # iterates over the complete set of keyword based arguments
@@ -6909,7 +6908,7 @@ class EntityManager(object):
 
         # in case the options map is not of
         # type dictionary it must be a filter
-        if not options_type == types.DictionaryType:
+        if not options_type == dict:
             # returns true (it's a filter)
             return True
 
@@ -7045,7 +7044,7 @@ class EntityManager(object):
             # or the module item is not a sub class of the top level
             # entity class, this is not a proper entity class item,
             # must continue the loop
-            if not module_item_type == types.TypeType or not issubclass(module_item, structures.EntityClass):
+            if not module_item_type == type or not issubclass(module_item, structures.EntityClass):
                 # continues the loop, trying to find valid
                 # entity classes for registration
                 continue
@@ -7285,7 +7284,7 @@ class EntityManager(object):
                 # encoding for the database then inserts the item into
                 # the current line in construction
                 _type = type(item)
-                if _type == types.StringType:
+                if _type == colony.legacy.BYTES:
                     item = item.decode(database_encoding)
                 _line.append(item)
 

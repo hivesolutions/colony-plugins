@@ -43,9 +43,9 @@ import calendar
 import datetime
 import threading
 
-import exceptions
-
 import colony
+
+from entity_manager import exceptions
 
 SERIALIZERS = (
     "json",
@@ -69,55 +69,55 @@ reserved (special cases) for the queries """
 
 PYTHON_TYPES_MAP = dict(
     text = (
-        types.StringType,
-        types.UnicodeType,
-        types.NoneType
+        str,
+        colony.legacy.UNICODE,
+        type(None)
     ),
     string = (
-        types.StringType,
-        types.UnicodeType,
-        types.NoneType
+        str,
+        colony.legacy.UNICODE,
+        type(None)
     ),
     integer = (
-        types.IntType,
-        types.LongType,
-        types.NoneType
+        int,
+        colony.legacy.LONG,
+        type(None)
     ),
     float = (
-        types.IntType,
-        types.LongType,
-        types.FloatType,
-        types.NoneType
+        int,
+        colony.legacy.LONG,
+        float,
+        type(None)
     ),
     date = (
         datetime.datetime,
-        types.IntType,
-        types.LongType,
-        types.FloatType,
-        types.NoneType
+        int,
+        colony.legacy.LONG,
+        float,
+        type(None)
     ),
     data = (
-        types.StringType,
-        types.UnicodeType,
-        types.NoneType
+        str,
+        colony.legacy.UNICODE,
+        type(None)
     ),
     metadata = (
-        types.DictType,
-        types.StringType,
-        types.UnicodeType,
-        types.NoneType
+        dict,
+        str,
+        colony.legacy.UNICODE,
+        type(None)
     )
 )
 """ The map containing the association between the entity
 types and the valid values for python types """
 
 PYTHON_CAST_MAP = dict(
-    text = unicode,
-    string = unicode,
+    text = colony.legacy.UNICODE,
+    string = colony.legacy.UNICODE,
     integer = int,
     float = float,
     date = float,
-    data = unicode,
+    data = colony.legacy.UNICODE,
     metadata = dict,
     relation = None
 )
@@ -473,7 +473,7 @@ class EntityClass(object):
 
         # in case the value is not a dictionary, it's not
         # a lazy loaded relation description (that's for sure)
-        if not value_type == types.DictType: return value
+        if not value_type == dict: return value
 
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
@@ -2346,7 +2346,7 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == types.DictType: return False
+        if not attribute_type == dict: return False
         is_generated = attribute.get("generated", False)
 
         # returns the value of the generated checking
@@ -2369,7 +2369,7 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == types.DictType: return False
+        if not attribute_type == dict: return False
         is_indexed = attribute.get("indexed", False)
 
         # returns the value of the indexed checking
@@ -2392,7 +2392,7 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == types.DictType: return False
+        if not attribute_type == dict: return False
         is_mandatory = attribute.get("mandatory", False)
 
         # returns the value of the mandatory checking
@@ -2415,7 +2415,7 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == types.DictType: return False
+        if not attribute_type == dict: return False
         is_immutable = attribute.get("immutable", False)
 
         # returns the value of the immutable checking
@@ -2454,7 +2454,7 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == types.DictType: return False
+        if not attribute_type == dict: return False
         data_type = attribute.get("type", None)
 
         # checks the value of the data type to "see"
@@ -2759,7 +2759,7 @@ class EntityClass(object):
         # in case the provided instance is a map the value
         # is retrieve using the normal map accessor otherwise
         # reflection is used to retrieve the instance attribute
-        if instance_type == types.DictType: return instance.get(name, default)
+        if instance_type == dict: return instance.get(name, default)
         else: return instance.get_value(name, default = default, load_lazy = True)
 
     @classmethod
@@ -3951,7 +3951,7 @@ class EntityClass(object):
                 return date_time_timestamp_string
             # in case the attribute value type is an integer
             # or float (must be a timestamp value)
-            elif value_type in (types.IntType, types.FloatType):
+            elif value_type in (int, float):
                 # converts the attribute value (integer)
                 # into a float value and then converts it
                 # into a string representation
@@ -3978,7 +3978,7 @@ class EntityClass(object):
 
             # in case the value is of type string direct
             # insertion is made into the data source
-            if value_type in types.StringTypes:
+            if value_type in colony.legacy.STRINGS:
                 # escapes the (already string) value and
                 # returns it with the string separators
                 value_string = cls._escape_text(value)
@@ -3986,7 +3986,7 @@ class EntityClass(object):
 
             # in case the value is of type dictionary the
             # default dump operation must be performed
-            elif value_type == types.DictType:
+            elif value_type == dict:
                 # dumps the value using the currently selected
                 # serialized, then escapes the text and returns
                 # the string value with the string separators
@@ -4044,7 +4044,7 @@ class EntityClass(object):
             # string and the encoding value is present decode
             # the value creating an unicode representation of it
             value_type = type(value)
-            string_value = encoding and value_type == types.StringType and\
+            string_value = encoding and value_type == colony.legacy.BYTES and\
                 value.decode(encoding) or value
 
             # returns the "just" converted string representation

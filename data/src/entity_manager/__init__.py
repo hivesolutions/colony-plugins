@@ -34,16 +34,18 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import decorators
-import exceptions
-import structures
-import system
-import test_mocks
-import test
+from . import decorators
+from . import exceptions
+from . import structures
+from . import system
+from . import test_mocks
+from . import test
 
-from decorators import *
-from exceptions import *
-from structures import *
-from system import *
-from test_mocks import *
-from test import *
+from decorators import transaction, lock_table
+from exceptions import EntityManagerException, RuntimeError, EntityManagerEngineNotFound,\
+    MissingRelationMethod, ValidationError, RelationValidationError, InvalidSerializerError
+from structures import Connection, EntityClass, rset, load_serializers
+from system import DataEntityManager
+from test_mocks import RootEntity, RootEntityAbstract, Loggable, Taxable, Person, Employee,\
+    Breeder, Address, Dog, BreedDog, Cat, Car, Supplier, Operation, Chair, File
+from test import EntityManagerTest, EntityManagerBaseTestCase
