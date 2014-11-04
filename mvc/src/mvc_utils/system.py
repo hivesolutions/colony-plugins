@@ -1189,15 +1189,23 @@ class MvcUtils(colony.System):
             module_item = getattr(module, module_item_name)
             module_item_type = type(module_item)
 
-            # in case the module item type is type,
-            # the module item is subclass of the entity class and
-            # the entity class is not a data reference (virtual)
-            if module_item_type == types.TypeType and issubclass(module_item, entity_class) and\
-                (not hasattr(module_item, "data_reference") or module_item.data_reference == False):
-                # adds the module item to the entity classes
-                entity_classes.append(module_item)
+            # verifies the complete set of pre-conditions on the current
+            # module item meaning that it must be a valid type object, then
+            # a subclass of the base entity class, must not be a data reference
+            # and the module associated with it must be the same as the one
+            # from which the entity models are being extracted (avoids multiple
+            # inclusion of referred/external models
+            is_valid = module_item_type == types.TypeType and issubclass(module_item, entity_class) and\
+                (not hasattr(module_item, "data_reference") or module_item.data_reference == False) and\
+                 module_item.__module__ == module.__name__
+            if not is_valid: continue
 
-        # returns the entity classes
+            # adds the module item to the list of (valid) entity classes as the
+            # complete set of pre-validations have been executed on it
+            entity_classes.append(module_item)
+
+        # returns the loaded entity classes that have passed the
+        # complete set of validation associated with the import
         return entity_classes
 
     def _get_classes(self, module, base_class):
