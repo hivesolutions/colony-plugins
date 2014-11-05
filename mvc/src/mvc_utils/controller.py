@@ -2877,12 +2877,12 @@ def retrieve_template_file(
     # iterates over the complete set of extra arguments provided in the
     # proper dictionary and assigns each of these values to the proper
     # template file so that they may be used inside the template context
-    for key, value in extra.iteritems(): template_file.assign(key, value)
+    for key, value in colony.legacy.iteritems(extra): template_file.assign(key, value)
 
     # iterates over all the named arguments provided as these are considered
     # to be values to be assigned to the template file, then assigns each of
     # these values to the template file (variable export)
-    for key, value in kwargs.iteritems(): template_file.assign(key, value)
+    for key, value in colony.legacy.iteritems(kwargs): template_file.assign(key, value)
 
     # returns the "generated" template file structure to the calling
     # method as requested by the method call

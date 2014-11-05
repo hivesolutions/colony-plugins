@@ -640,7 +640,7 @@ class Mvc(colony.System):
         # iterates over all the keyword based arguments to try to either
         # populate the various parts of the url with arguments or the
         # parameters part of the query sequence with key based values
-        for key, value in kwargs.iteritems():
+        for key, value in colony.legacy.iteritems(kwargs):
             value_t = type(value)
             is_string = value_t in colony.legacy.STRINGS
             if not is_string: value = str(value)
@@ -793,7 +793,7 @@ class Mvc(colony.System):
         # iterates over the complete set of values in the names
         # map to converts the various patterns into the defined
         # target type as defined in pattern expression
-        for name, type_r in names.iteritems():
+        for name, type_r in colony.legacy.iteritems(names):
             value = pattern_names.get(name, None)
             try: value = type_r(value)
             except: value = value
