@@ -708,7 +708,7 @@ class EntityManager(object):
         # for export, then ensures that the parents are in the list in
         # case the include parents flag is set (this allows the class
         # hierarchy to be exported avoiding data corruption problems)
-        entity_classes = entity_classes or self.entities_map.values()
+        entity_classes = entity_classes or colony.legacy.values(self.entities_map)
         entity_classes = include_parents and self._ensure_parents(entity_classes) or entity_classes
 
         # iterates over the complete set of entity classes to try to
@@ -824,7 +824,7 @@ class EntityManager(object):
         # for export, then ensures that the parents are in the list in
         # case the include parents flag is set (this allows the class
         # hierarchy to be exported avoiding data corruption problems)
-        entity_classes = entity_classes or self.entities_map.values()
+        entity_classes = entity_classes or colony.legacy.values(self.entities_map)
         entity_classes = include_parents and self._ensure_parents(entity_classes) or entity_classes
 
         # creates the set of filters that may be used to limit
@@ -6717,7 +6717,7 @@ class EntityManager(object):
                     # retrieves the type of the filter value
                     # to be able to check if it's an in filter
                     # or an equals filter
-                    filter_value = filter.values()[0]
+                    filter_value = colony.legacy.values(filter)[0]
                     filter_value_type = type(filter_value)
 
                     # in case the "first" filter value is of type
