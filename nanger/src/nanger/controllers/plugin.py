@@ -93,7 +93,7 @@ class PluginController(BaseController):
 
         # sorts the plugins list using the default alphabetic order and
         # then serializes the same plugin list using the defined plugin
-        plugins.sort()
+        plugins.sort(key = lambda item: item["id"])
         plugins = plugins[start_record:start_record + number_records]
         self.serialize(request, plugins, serializer = json_plugin)
 
