@@ -1230,7 +1230,7 @@ class Mvc(colony.System):
         # iterates over the complete set of constraints to be able to
         # ensure that they are valid for the current execution and if
         # the're not the return value is invalid (validation failed)
-        for contraint_name, contraint_value in contraints.items():
+        for contraint_name, contraint_value in colony.legacy.items(contraints):
             # retrieves the handler constraint value type
             contraint_value_t = type(contraint_value)
 

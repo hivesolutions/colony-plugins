@@ -512,7 +512,7 @@ def get_entity_model(
         return None
 
     # iterates over all the update values items
-    for update_value_key, update_value_value in update_values_map.items():
+    for update_value_key, update_value_value in colony.legacy.items(update_values_map):
         # in case the secure value keys list is valid and the update
         # value key does not exist in the secure value keys list
         if secure_value_keys_list and not update_value_key in secure_value_keys_list:
@@ -531,7 +531,7 @@ def get_entity_model(
     # (they take priority over the update values)
     if created_entity:
         # iterates over all the create values items
-        for create_value_key, create_value_value in create_values_map.items():
+        for create_value_key, create_value_value in colony.legacy.items(create_values_map):
             # checks if the create value value is "callable" (and calls it) or
             # uses the "raw" value in case it's not
             create_value_value = callable(create_value_value) and create_value_value() or create_value_value
@@ -615,7 +615,7 @@ def save_entity_relations(
     if not entity_map_type == dict: entity_map = self._convert_entity_map(entity_map)
 
     # iterates over all the relations
-    for relation_name, relation_item in relations_map.items():
+    for relation_name, relation_item in colony.legacy.items(relations_map):
         # skips the relation in case it's
         # not defined in the relation map
         if not relation_name in entity_map: continue
@@ -1282,7 +1282,7 @@ def create_form_data_string(self, request, data_map):
         remaining_form_data_map = {}
 
         # for each item in the form data map
-        for attribute_name, attribute_value in form_data_map.items():
+        for attribute_name, attribute_value in colony.legacy.items(form_data_map):
             # retrieves the attribute value type
             attribute_value_type = type(attribute_value)
 
@@ -3548,7 +3548,7 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
 
         # iterates over all the attribute value
         # items in the attribute value
-        for attribute_value_key, attribute_value_value in attribute_value.items():
+        for attribute_value_key, attribute_value_value in colony.legacy.items(attribute_value):
             # "casts" the attribute value value and retrieves
             # the attribute value value type
             attribute_value_value = self._cast_attribute_value(attribute_value_value)
@@ -5043,7 +5043,7 @@ def _convert_entity_map(self, entity):
 
     # iterates over all the keys and values from the
     # entity (object) to set the value in the map
-    for key, value in entity.__dict__.items():
+    for key, value in colony.legacy.items(entity.__dict__):
         # in case the key refers an excluded attribute
         # (no need to persist it in the values map)
         if key in ATTRIBUTE_EXCLUSION_LIST:

@@ -373,7 +373,7 @@ def apply(self, map, permissive = False):
 
         # iterates over all the items in the map to
         # apply the to the current model
-        for item_name, item_value in map.items():
+        for item_name, item_value in colony.legacy.items(map):
             # in case the class or the parameters (reserved values)
             # item are found, special handling is required so that the
             # value is immediately set in the instance (no validation)
@@ -589,7 +589,7 @@ def loads(self, serializer, data):
 
     # iterates over all the dictionary items
     # to load the values (from the model)
-    for key, value in model.items():
+    for key, value in colony.legacy.items(model):
         # loads the given value in the current object
         self._load_value(key, value)
 
@@ -1163,7 +1163,7 @@ def validate(self, checker = None):
     context_validation_map = self.validation_map.get(self.validation_context, {})
 
     # iterates over all the items in the context validation map
-    for attribute_name, validation_tuple_list in context_validation_map.items():
+    for attribute_name, validation_tuple_list in colony.legacy.items(context_validation_map):
         # in case the current model is already stored no need to
         # to validate a non existent attribute (it's not going to be
         # persisted and the value in the data source was already validated)

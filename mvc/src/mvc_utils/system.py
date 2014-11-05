@@ -150,7 +150,7 @@ class MvcUtils(colony.System):
         # iterates over the complete set of keyword based arguments provided
         # to the method and sets the values in the globals map to be included
         # and accessible under the controllers module to be imported
-        for key, value in kwargs.items(): globals_map[key] = value
+        for key, value in colony.legacy.items(kwargs): globals_map[key] = value
 
         # creates the complete module name from the package name, avoiding the
         # usage of the package name in case it does not exists
@@ -183,7 +183,7 @@ class MvcUtils(colony.System):
         # iterates over all the dictionary values in the system
         # instance, in these values should be present the models
         # reference values
-        for symbol_name, symbol in system_instance_symbols.items():
+        for symbol_name, symbol in colony.legacy.items(system_instance_symbols):
             # in case the symbol name ends with the models
             # suffix it must be a models reference, continues
             if not symbol_name.endswith("models"): continue
@@ -915,7 +915,7 @@ class MvcUtils(colony.System):
         if exception_controller:
             # iterates over all the imported controllers to set the "additional"
             # exception handler default parameter
-            for _controller_reference_name, controller in controllers_map.items():
+            for _controller_reference_name, controller in colony.legacy.items(controllers_map):
                 # sets the exception handler default parameter as the exception controller
                 controller.set_default_parameter("exception_handler", exception_controller)
 

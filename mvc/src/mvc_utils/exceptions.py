@@ -248,7 +248,7 @@ class ModelValidationError(ValidationError):
         # iteration then starts the iteration to create the
         # validation string from the various components of it
         is_first = True
-        for key, errors in map.items():
+        for key, errors in colony.legacy.items(map):
             for error in errors:
                 if is_first: is_first = False
                 else: validation_b.append(", ")

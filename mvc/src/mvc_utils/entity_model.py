@@ -961,7 +961,7 @@ def _class_apply_context(
 
     # iterates over all the context items to create the various
     # fields for filtering (logic and operation between them)
-    for context_name, context_value in context.items():
+    for context_name, context_value in colony.legacy.items(context):
         # adds the context value filtering part to the initial
         # options map provided, this is an extension to the
         # existing filters
@@ -2263,7 +2263,7 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     # iterates over all the items in the current context items
     # to set the attributes in the model (only in case the name
     # exists in the definition)
-    for context_name, context_value in context.items():
+    for context_name, context_value in colony.legacy.items(context):
         # in case the current context item name does not exists
         # in the model definition, continues the loop
         if not entity_class.has_name(context_name): continue
@@ -2444,7 +2444,7 @@ def _load_value(self, key, value):
 
                 # iterates over all the value items
                 # to set the target entity instance values
-                for value_key, value_value in value.items():
+                for value_key, value_value in colony.legacy.items(value):
                     # loads the value in the target entity instance
                     target_entity_instance._load_value(value_key, value_value)
             else:
@@ -2477,7 +2477,7 @@ def _load_value(self, key, value):
 
                     # iterates over all the value items
                     # to set the target entity instance values
-                    for value_key, value_value in value_item.items():
+                    for value_key, value_value in colony.legacy.items(value_item):
                         # loads the value in the target entity instance
                         target_entity_instance._load_value(value_key, value_value)
 
