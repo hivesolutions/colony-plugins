@@ -318,7 +318,7 @@ class AbstractService(object):
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
                     "Runtime problem: %s, while handling event" %
-                    colony.legacy.unichr(exception)
+                    colony.legacy.UNICODE(exception)
                 )
 
                 # retrieves the client connection from the client
