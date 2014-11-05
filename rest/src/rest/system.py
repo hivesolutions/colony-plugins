@@ -41,7 +41,6 @@ import re
 import os
 import time
 import shelve
-import cPickle
 import datetime
 import threading
 
@@ -2742,7 +2741,7 @@ class RedisSession(RestSession):
         if not cls.REDIS: cls.load()
         session = cls(*args, **kwargs)
         remaining = session.get_remaining()
-        session_s = cPickle.dumps(session, protocol = 2)
+        session_s = colony.legacy.cPickle.dumps(session, protocol = 2)
         cls.REDIS.setex(session.session_id, session_s, int(remaining))
         return session
 
@@ -2751,7 +2750,7 @@ class RedisSession(RestSession):
         if not cls.REDIS: cls.load()
         session_s = cls.REDIS.get(sid)
         if not session_s: return session_s
-        session = cPickle.loads(session_s)
+        session = colony.legacy.cPickle.loads(session_s)
         is_expired = session.is_expired()
         if is_expired: cls.expire(sid)
         session = None if is_expired else session
@@ -2766,7 +2765,7 @@ class RedisSession(RestSession):
         cls = self.__class__
         self.mark(dirty = False)
         remaining = self.get_remaining()
-        session_s = cPickle.dumps(self, protocol = 2)
+        session_s = colony.legacy.cPickle.dumps(self, protocol = 2)
         cls.REDIS.setex(self.session_id, session_s, int(remaining))
         if not cls.BGSAVE: return
         try: cls.REDIS.bgsave()
