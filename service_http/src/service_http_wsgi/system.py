@@ -164,40 +164,27 @@ class ServiceHttpWsgi(colony.System):
         @param request: The http request to be handled.
         """
 
-        def start_response(status, response_headers, exception_info = None):
+        def start_response(status, response_headers):
             """
             Method used to start the response value.
 
             @type status: String
             @param status: The status string value, containing the code and the
-            status message.
+            status message, should be properly parsed for the request.
             @type response_headers: List
             @param response_headers: A list containing tuples for the header
-            values.
-            @type exception_info: ExceptionInfo
-            @param exception_info: Map containing the information about the
-            exception thrown.
+            values, should be properly serialized for the handling.
             @rtype: Method
             @return: The method for the writing.
             """
-
-            # in case the exception info is set
-            if exception_info:
-                try:
-                    # re-raises original exception
-                    raise exception_info[0], exception_info[1], exception_info[2]
-                finally:
-                    # unsets the exception info
-                    exception_info = None
 
             # retrieves the status code string and the status message
             # splitting the status value
             status_code_string, _status_message = status.split(" ", 1)
 
-            # converts the status code string to integer
+            # converts the status code string to integer and then sets
+            # the status code value in the current request object
             status_code = int(status_code_string)
-
-            # sets the request status code
             request.status_code = status_code
 
             # converts the response headers map
@@ -208,10 +195,10 @@ class ServiceHttpWsgi(colony.System):
                 # sets the header in the request
                 request.set_header(response_header_name, response_header_value)
 
-            # retrieves the content type
+            # retrieves the content type and then sets it under
+            # the current request object in usage, note that the
+            # default content type is used in case it's not defined
             content_type = response_headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
-
-            # sets the request content type
             request.content_type = content_type
 
             # returns the default write method
