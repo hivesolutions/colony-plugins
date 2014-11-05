@@ -1277,7 +1277,7 @@ class CommunicationConnection(object):
         This method is mainly used for easy debugging purposes.
         """
 
-        print message
+        print(message)
 
     def add_message_queue(self, message):
         """

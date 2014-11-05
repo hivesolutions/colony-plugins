@@ -703,7 +703,7 @@ def save_entity_relations(
                     relation_value,
                     persist_type = _relation_persist_type
                 ) or None
-            except exceptions.ModelValidationError, exception:
+            except exceptions.ModelValidationError as exception:
                 # updates the relation entity with the model
                 # in the model validation error
                 relation_entity = exception.model
@@ -2924,7 +2924,7 @@ def assign_instance_template_file(self, request, template_file):
     """
 
     def _copy(value, all = True):
-        print "_copy -> all = %s" % str(all)
+        print("_copy -> all = %s" % str(all))
         value = "Copy right by: " + value
         return value
 
