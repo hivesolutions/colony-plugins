@@ -252,10 +252,10 @@ class SslSocketUpgrader(colony.System):
 
 def wrap_socket(ssl_socket):
     # creates the bound accept method for the ssl socket
-    _accept = types.MethodType(accept, ssl_socket, ssl.SSLSocket)
+    _accept = types.MethodType(accept, ssl_socket)
 
     # creates the bound process exception method for the ssl socket
-    _process_exception = types.MethodType(process_exception, ssl_socket, ssl.SSLSocket)
+    _process_exception = types.MethodType(process_exception, ssl_socket)
 
     # sets the old accept method in the ssl socket with
     # a different name

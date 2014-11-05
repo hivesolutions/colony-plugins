@@ -226,12 +226,12 @@ class SslSocket(colony.System):
 def wrap_socket(ssl_socket):
     # creates the bound accept and handshake methods for
     # the ssl socket
-    _accept = types.MethodType(accept, ssl_socket, ssl.SSLSocket)
-    _handshake = types.MethodType(handshake, ssl_socket, ssl.SSLSocket)
-    _set_option = types.MethodType(set_option, ssl_socket, ssl.SSLSocket)
+    _accept = types.MethodType(accept, ssl_socket)
+    _handshake = types.MethodType(handshake, ssl_socket)
+    _set_option = types.MethodType(set_option, ssl_socket)
 
     # creates the bound process exception method for the ssl socket
-    _process_exception = types.MethodType(process_exception, ssl_socket, ssl.SSLSocket)
+    _process_exception = types.MethodType(process_exception, ssl_socket)
 
     # sets the old accept method in the ssl socket with
     # a different name
