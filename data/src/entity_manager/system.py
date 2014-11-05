@@ -5947,15 +5947,10 @@ class EntityManager(object):
                 target_class = entity_class.get_target(relation)
                 target_id = target_class.get_id()
 
-                # creates the comparator lambda function used to sort
-                # the various sequence values to the relation, this is
-                # a simple comparator on the relation class identifier
-                comparator = lambda x, y: cmp(x.get_value(target_id), y.get_value(target_id))
-
                 # sorts the various to many relation values using the
                 # the comparator, this ensures that the relation values
                 # are at least ordered by their identifier value (some order)
-                value.sort(comparator)
+                value.sort(key = lambda item: item.get_value(target_id))
 
     def _sort_to_many_m(self, entity, entity_class, options, visited = None):
         # retrieves the reference to the eager loaded relations
@@ -6031,15 +6026,10 @@ class EntityManager(object):
                 target_class = entity_class.get_target(relation)
                 target_id = target_class.get_id()
 
-                # creates the comparator lambda function used to sort
-                # the various sequence values to the relation, this is
-                # a simple comparator on the relation class identifier
-                comparator = lambda x, y: cmp(x.get(target_id, None), y.get(target_id, None))
-
                 # sorts the various to many relation values using the
                 # the comparator, this ensures that the relation values
                 # are at least ordered by their identifier value (some order)
-                value.sort(comparator)
+                value.sort(key = lambda item: item.get(target_id, None))
 
     def _import_class(self, entity_class, serializer, data, full_mode, depth = 1):
         # loads the various entity maps from the data
