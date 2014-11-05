@@ -41,14 +41,13 @@ import re
 import sys
 import time
 import copy
-import types
 import base64
 import datetime
 import traceback
 
 import colony
 
-import exceptions
+from service_http import exceptions
 
 RESOLUTION_ORDER_ITEMS = (
     "virtual_servers",
@@ -823,7 +822,7 @@ class HttpClientServiceHandler:
                 # processes the request normally, retrieving the return
                 # value (connection closed value)
                 return_value = self.process_request(request, service_connection)
-        except Exception, exception:
+        except Exception as exception:
             # processes the exception, retrieving the return
             # value (connection closed value)
             return_value = self.process_exception(request, service_connection, exception)
@@ -863,9 +862,9 @@ class HttpClientServiceHandler:
         try:
             # sends the request to the client (response)
             self.send_request(service_connection, request)
-        except exceptions.HttpRuntimeException, exception:
+        except exceptions.HttpRuntimeException as exception:
             # prints a warning message message
-            self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+            self.service_plugin.warning("Runtime problem: %s, while sending request" % colony.legacy.UNICODE(exception))
 
             # returns false (connection closed)
             return False
@@ -900,7 +899,7 @@ class HttpClientServiceHandler:
         # prints info message about exception so that an easy diagnostic
         # operation is possible at runtime (for debugging)
         self.service_plugin.info("There was an exception handling the request (%s): " %\
-            exception.__class__.__name__ + unicode(exception)
+            exception.__class__.__name__ + colony.legacy.UNICODE(exception)
         )
         try:
             # sends the exception
@@ -911,11 +910,11 @@ class HttpClientServiceHandler:
 
             # returns false (connection closed)
             return False
-        except Exception, exception:
+        except Exception as exception:
             # prints an error message about the raised exception so that it's
             # possible to properly act on it at a runtime level
             self.service_plugin.debug("There was an exception handling the exception: " %\
-                exception.__class__.__name__ + unicode(exception)
+                exception.__class__.__name__ + colony.legacy.UNICODE(exception)
             )
 
         # returns true (connection meant to be kept alive)
@@ -1416,9 +1415,9 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except self.service_utils_exception_class, exception:
+        except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request simple: " + unicode(exception))
+            self.service_plugin.error("Problem sending request simple: " + colony.legacy.UNICODE(exception))
 
             # raises the http data sending exception
             raise exceptions.HttpDataSendingException("problem sending data")
@@ -1468,9 +1467,9 @@ class HttpClientServiceHandler:
                     # sends the mediated value to the client (writes in front of the others)
                     # and sets the callback as the current writer
                     service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
-                except self.service_utils_exception_class, exception:
+                except self.service_utils_exception_class as exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+                    self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
 
                     # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
@@ -1488,9 +1487,9 @@ class HttpClientServiceHandler:
             # sends the result value to the client and sets the request
             # mediated writer as the callback handler
             service_connection.send_callback(result_value, request_mediated_writer)
-        except self.service_utils_exception_class, exception:
+        except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+            self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
 
             # closes the mediated handler
             request.mediated_handler.close()
@@ -1505,9 +1504,9 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except self.service_utils_exception_class, exception:
+        except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+            self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
 
             # closes the mediated handler
             request.mediated_handler.close()
@@ -1536,9 +1535,9 @@ class HttpClientServiceHandler:
                 try:
                     # sends the mediated value to the client
                     service_connection.send(mediated_value)
-                except self.service_utils_exception_class, exception:
+                except self.service_utils_exception_class as exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+                    self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
 
                     # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
@@ -1587,9 +1586,9 @@ class HttpClientServiceHandler:
                     try:
                         # sends the final empty chunk
                         service_connection.send("0\r\n\r\n")
-                    except self.service_utils_exception_class, exception:
+                    except self.service_utils_exception_class as exception:
                         # error in the client side
-                        self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
+                        self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
 
                         # raises the http data sending exception
                         raise exceptions.HttpDataSendingException("problem sending data")
@@ -1610,9 +1609,9 @@ class HttpClientServiceHandler:
                     # sends the message value to the client (writes in front of the others)
                     # and sets the callback as the current writer
                     service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
-                except self.service_utils_exception_class, exception:
+                except self.service_utils_exception_class as exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+                    self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
 
                     # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
@@ -1630,9 +1629,9 @@ class HttpClientServiceHandler:
             # sends the result value to the client and sets the request
             # chunked writer as the callback handler
             service_connection.send_callback(result_value, request_chunked_writer)
-        except self.service_utils_exception_class, exception:
+        except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+            self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
 
             # closes the chunk handler
             request.chunk_handler.close()
@@ -1651,9 +1650,9 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except self.service_utils_exception_class, exception:
+        except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+            self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
 
             # closes the chunk handler
             request.chunk_handler.close()
@@ -1676,9 +1675,9 @@ class HttpClientServiceHandler:
                     try:
                         # sends the final empty chunk
                         service_connection.send("0\r\n\r\n")
-                    except self.service_utils_exception_class, exception:
+                    except self.service_utils_exception_class as exception:
                         # error in the client side
-                        self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
+                        self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
 
                         # raises the http data sending exception
                         raise exceptions.HttpDataSendingException("problem sending data")
@@ -1698,9 +1697,9 @@ class HttpClientServiceHandler:
 
                     # sends the message value to the client
                     service_connection.send(message_value)
-                except self.service_utils_exception_class, exception:
+                except self.service_utils_exception_class as exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+                    self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
 
                     # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
@@ -1770,7 +1769,7 @@ class HttpClientServiceHandler:
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
 
         # writes the error message
-        request.write("error: '" + unicode(error) + "'\n")
+        request.write("error: '" + colony.legacy.UNICODE(error) + "'\n")
 
         # writes the traceback message in the request
         request.write("traceback:\n")
@@ -2353,11 +2352,11 @@ class HttpClientServiceHandler:
         # in case both types are the same (no conflict)
         if target_value_type == source_value_type:
             # in case the type is dictionary
-            if target_value_type == types.DictType:
+            if target_value_type == dict:
                 # merges both maps
                 return self._merge_maps(target_value, source_value)
             # in case the type is list
-            elif target_value_type == types.ListType or target_value_type == types.TupleType:
+            elif target_value_type == list or target_value_type == tuple:
                 # merges both list
                 return self._merge_lists(target_value, source_value)
             # in case it's a different type
@@ -2639,7 +2638,7 @@ class HttpRequest:
 
             # in case the attribute value reference type is (already)
             # a list
-            if attribute_value_reference_type == types.ListType:
+            if attribute_value_reference_type == list:
                 # adds the attribute value to the attribute value reference
                 attribute_value_reference.append(attribute_value)
             # otherwise the attributes is not a list and it must be created
@@ -2862,7 +2861,7 @@ class HttpRequest:
 
         # in case the message type is unicode it must be encoded
         # into a plain string using the defined content type value
-        if message_type == types.UnicodeType and encode:
+        if message_type == colony.legacy.UNICODE and encode:
             message = message.encode(self.content_type_charset)
 
         # writes the message to the message stream so that it's
@@ -2930,7 +2929,7 @@ class HttpRequest:
 
         # in case the header value type is unicode
         # and the encode flag is set
-        if header_value_type == types.UnicodeType and encode:
+        if header_value_type == colony.legacy.UNICODE and encode:
             # encodes the header value with the content type charset
             header_value = header_value.encode(self.content_type_charset)
 
@@ -3066,7 +3065,7 @@ class HttpRequest:
             # and if that the case encodes the value using the default
             # encoding so that the value that is written to the result
             # is always a normalized string value
-            is_unicode = type(header_value) == types.UnicodeType
+            is_unicode = type(header_value) == colony.legacy.UNICODE
             if is_unicode: header_value = header_value.encode(DEFAULT_CHARSET)
             result.write(header_name + ": " + header_value + "\r\n")
 
