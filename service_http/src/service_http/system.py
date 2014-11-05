@@ -1091,15 +1091,16 @@ class HttpClientServiceHandler:
         # in case the start line is not loaded
         if process_flag and not start_line_loaded:
             # finds the first new line value
-            start_line_index = message_value.find("\r\n")
+            start_line_index = message_value.find(colony.legacy.bytes("\r\n"))
 
             # in case there is a new line value found
             if not start_line_index == -1:
-                # retrieves the start line
+                # retrieves the start line, ensures that it's represented as a
+                # string value (default encoding applies) and then splits it
+                # around the complete set of components (should be three)
                 start_line = message_value[:start_line_index]
-
-                # splits the start line in spaces
-                start_line_splitted = start_line.split(" ")
+                start_line = colony.legacy.str(start_line)
+                start_line_splitted = start_line.split(" ", 2)
 
                 # retrieves the start line splitted length
                 start_line_splitted_length = len(start_line_splitted)
@@ -1123,7 +1124,7 @@ class HttpClientServiceHandler:
         # in case the header is not loaded
         if process_flag and not header_loaded:
             # retrieves the end header index (two new lines)
-            end_header_index = message_value.find("\r\n\r\n")
+            end_header_index = message_value.find(colony.legacy.bytes("\r\n\r\n"))
 
             # in case the end header index is found
             if not end_header_index == -1:
@@ -1141,12 +1142,12 @@ class HttpClientServiceHandler:
                 headers = message_value[start_header_index:end_header_index]
 
                 # splits the headers by line
-                headers_splitted = headers.split("\r\n")
+                headers_splitted = headers.split(colony.legacy.bytes("\r\n"))
 
                 # iterates over the headers lines
                 for header_splitted in headers_splitted:
                     # finds the header separator
-                    division_index = header_splitted.find(":")
+                    division_index = header_splitted.find(colony.legacy.bytes(":"))
 
                     # retrieves the header name
                     header_name = header_splitted[:division_index].strip()
@@ -1232,7 +1233,7 @@ class HttpClientServiceHandler:
                 process_flag = False
                 message_loaded = True
 
-        # in case the message is not yet loaded (not enought data)
+        # in case the message is not yet loaded (not enough data)
         if not message_loaded:
             # saves the various state values representing the current
             # request parsing state
@@ -2866,6 +2867,7 @@ class HttpRequest(object):
 
         # writes the message to the message stream so that it's
         # properly sent to the client side of the connection
+        message = colony.legacy.bytes(message)
         self.message_stream.write(message)
 
     def flush(self):
@@ -3007,7 +3009,9 @@ class HttpRequest(object):
         status_code_value = self.get_status_code_value()
 
         # writes the http command in the string buffer (version, status code and status value)
-        result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
+        command = self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n"
+        command = colony.legacy.bytes(command)
+        result.write(command)
 
         # retrieves the current date time
         current_date_time = datetime.datetime.utcnow()
@@ -3065,13 +3069,15 @@ class HttpRequest(object):
             # and if that the case encodes the value using the default
             # encoding so that the value that is written to the result
             # is always a normalized string value
+            is_unicode = type(header_name) == colony.legacy.UNICODE
+            if is_unicode: header_name = header_name.encode(DEFAULT_CHARSET)
             is_unicode = type(header_value) == colony.legacy.UNICODE
             if is_unicode: header_value = header_value.encode(DEFAULT_CHARSET)
-            result.write(header_name + ": " + header_value + "\r\n")
+            result.write(header_name + colony.legacy.bytes(": ") + header_value + colony.legacy.bytes("\r\n"))
 
         # writes the end of the headers and the message
         # values into the result
-        result.write("\r\n")
+        result.write(colony.legacy.bytes("\r\n"))
         result.write(message)
 
         # retrieves the value from the result buffer
@@ -3260,9 +3266,15 @@ class HttpRequest(object):
         @return: The resource path in decoded format.
         """
 
-        # decodes the resources path
-        resource_path_decoded = self.resource_path.decode(DEFAULT_CHARSET)
+        # verifies if the data type of the resource path
+        # is already unicode if that's the case returns
+        # the original value as it's already decoded
+        is_unicode = type(self.resource_path) == colony.legacy.UNICODE
+        if is_unicode: return self.resource_path
 
+        # decodes the resources path using the default
+        # charset value and return the value to the caller
+        resource_path_decoded = self.resource_path.decode(DEFAULT_CHARSET)
         return resource_path_decoded
 
     def get_resource_base_path_decoded(self):
