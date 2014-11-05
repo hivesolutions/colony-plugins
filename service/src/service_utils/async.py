@@ -815,7 +815,7 @@ class ServiceConnection(Connection):
             try:
                 # accepts the connection retrieving the service connection object and the address
                 service_connection, service_address = _socket.accept()
-            except colony.OperationNotComplete, error:
+            except colony.OperationNotComplete as error:
                 # unpacks the various components of the error, so
                 # that is possible to retrieve the connection and
                 # the address of the (still) pending connection
@@ -861,7 +861,7 @@ class ServiceConnection(Connection):
                 # tries to run the handshake in the service connection
                 # on more time (see if it's already possible to do it)
                 service_connection.handshake()
-            except socket.error, error:
+            except socket.error as error:
                 # in case the exception is normal, the operation did not
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
