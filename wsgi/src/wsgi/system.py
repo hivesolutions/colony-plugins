@@ -370,7 +370,7 @@ class WsgiRequest(object):
         elif content_type.startswith("multipart/form-data"):
             self.parse_post_multipart()
 
-    def __getattribute__(self, attribute_name):
+    def __getattr__(self, attribute_name):
         """
         Retrieves the attribute from the attributes map.
 
