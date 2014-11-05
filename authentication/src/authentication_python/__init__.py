@@ -38,6 +38,6 @@ from . import configuration
 from . import exceptions
 from . import system
 
-from configuration import *
-from exceptions import AuthenticationPythonHandlerException, MissingArgument, AuthenticationError
-from system import AuthenticationPython
+from .configuration import *
+from .exceptions import AuthenticationPythonHandlerException, MissingArgument, AuthenticationError
+from .system import AuthenticationPython
