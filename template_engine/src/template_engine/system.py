@@ -230,7 +230,8 @@ class TemplateEngine(colony.System):
         # encoding is defined decodes the provided file contents
         # using the encoding value (may raise exception)
         file_contents = file.read()
-        if encoding: file_contents = file_contents.decode(encoding)
+        is_bytes = type(file_contents) == colony.legacy.BYTES
+        if encoding and is_bytes: file_contents = file_contents.decode(encoding)
 
         # creates the match orderer list, this list will hold the various
         # definitions of matched tokens for the current template, and is
@@ -407,15 +408,15 @@ class TemplateEngine(colony.System):
             # retrieves the match orderer type for the
             # current iteration, this value will condition
             # the way the nodes are going to be created
-            type = match_orderer.get_type()
+            mtype = match_orderer.get_type()
 
-            if type == OUTPUT_VALUE:
+            if mtype == OUTPUT_VALUE:
                 value = match_orderer.get_value()
                 node = ast.OutputNode(value)
                 parent_node = stack[-1]
                 parent_node.add_child(node)
 
-            elif type == EVAL_VALUE:
+            elif mtype == EVAL_VALUE:
                 value = match_orderer.get_value()
                 node = ast.EvalNode(value)
                 parent_node = stack[-1]
@@ -428,7 +429,7 @@ class TemplateEngine(colony.System):
                     parent_node.add_child(node)
                     if is_open: stack.append(node)
 
-            elif type == START_VALUE:
+            elif mtype == START_VALUE:
                 node = ast.CompositeNode(
                     [match_orderer],
                     regex = ATTRIBUTE_REGEX,
@@ -438,11 +439,11 @@ class TemplateEngine(colony.System):
                 parent_node.add_child(node)
                 stack.append(node)
 
-            elif type == END_VALUE:
+            elif mtype == END_VALUE:
                 node = stack.pop()
                 node.value.append(match_orderer)
 
-            elif type == SINGLE_VALUE:
+            elif mtype == SINGLE_VALUE:
                 node = ast.SingleNode(
                     match_orderer,
                     regex = ATTRIBUTE_REGEX,
@@ -451,7 +452,7 @@ class TemplateEngine(colony.System):
                 parent_node = stack[-1]
                 parent_node.add_child(node)
 
-            elif type == LITERAL_VALUE:
+            elif mtype == LITERAL_VALUE:
                 node = ast.LiteralNode(match_orderer)
                 parent_node = stack[-1]
                 parent_node.add_child(node)
@@ -510,6 +511,9 @@ class MatchOrderer(object):
 
     def __cmp__(self, other):
         return other.match.start() - self.match.start()
+
+    def __lt__(self, other):
+        return self.match.start() > other.match.start()
 
     def get_type(self):
         return self.type
