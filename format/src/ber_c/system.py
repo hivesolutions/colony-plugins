@@ -819,7 +819,7 @@ class BerStructure:
                 # adds the sub identifier character to the octets
                 octets.append(sub_identifier_character)
             # in case the value overflows
-            elif sub_identifier < 0 or sub_identifier > 0xffffffffL:
+            elif sub_identifier < 0 or sub_identifier > 0xffffffff:
                 # raises the packing error exception
                 raise exceptions.PackingError("sub identifier overflow: %s" % sub_identifier)
             # otherwise a multiple byte encoding must be used
