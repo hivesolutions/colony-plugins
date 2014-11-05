@@ -2427,7 +2427,7 @@ class HttpClientServiceHandler:
         # returns the final map
         return final_map
 
-class HttpRequest:
+class HttpRequest(object):
     """
     The http request class.
     """
@@ -2602,7 +2602,7 @@ class HttpRequest:
     def __repr__(self):
         return "(%s, %s)" % (self.operation_type, self.path)
 
-    def __getattribute__(self, attribute_name):
+    def __getattributes__(self, attribute_name):
         """
         Retrieves the attribute from the attributes map.
 
@@ -2614,7 +2614,7 @@ class HttpRequest:
 
         return self.attributes_map.get(attribute_name, None)
 
-    def __setattribute__(self, attribute_name, attribute_value):
+    def __setattributes__(self, attribute_name, attribute_value):
         """
         Sets the given attribute in the request. The referenced
         attribute is the http request attribute and the setting takes
@@ -2744,7 +2744,7 @@ class HttpRequest:
             attribute_name = colony.unquote_plus(attribute_name)
 
             # sets the attribute value
-            self.__setattribute__(attribute_name, attribute_value)
+            self.__setattributes__(attribute_name, attribute_value)
 
     def parse_multipart(self):
         """
@@ -2819,7 +2819,7 @@ class HttpRequest:
             name = content_disposition_map[NAME_VALUE]
 
             # sets the attribute
-            self.__setattribute__(name, content_disposition_map)
+            self.__setattributes__(name, content_disposition_map)
 
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
@@ -3137,10 +3137,10 @@ class HttpRequest:
         return self.attributes_map.keys()
 
     def get_attribute(self, attribute_name):
-        return self.__getattribute__(attribute_name)
+        return self.__getattributes__(attribute_name)
 
     def set_attribute(self, attribute_name, attribute_value):
-        self.__setattribute__(attribute_name, attribute_value)
+        self.__setattributes__(attribute_name, attribute_value)
 
     def get_message(self):
         return self.message_stream.get_value()
