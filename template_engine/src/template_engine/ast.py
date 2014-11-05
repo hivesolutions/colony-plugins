@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import exceptions
+from template_engine import exceptions
 
 QUOTED_SINGLE = 1
 QUOTED_DOUBLE = 2

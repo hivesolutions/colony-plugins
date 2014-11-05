@@ -39,13 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import re
-import types
 
 import colony
 
-import ast
-import visitor
-import exceptions
+from template_engine import ast
+from template_engine import visitor
+from template_engine import exceptions
 
 OUTPUT_REGEX_VALUE = "\{\{[^\}]*\}\}"
 """ The regular expression value for the matching of the
@@ -822,7 +821,7 @@ class TemplateFile(object):
         # in case the returned value from the string buffer is not
         # a valid unicode string it must be decoded using the currently
         # defined encoding or the default one in case it's not defined
-        is_bytes = type(value) == types.StringType
+        is_bytes = type(value) == colony.legacy.BYTES
         if is_bytes: value = value.decode(self.encoding or "utf-8")
 
         # returns the final value to the caller method, this may

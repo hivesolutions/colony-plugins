@@ -34,14 +34,16 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import ast
-import exceptions
-import system
-import util
-import visitor
+from . import ast
+from . import exceptions
+from . import system
+from . import util
+from . import visitor
 
-from ast import *
-from exceptions import *
-from system import *
-from util import *
-from visitor import *
+from .ast import AstNode, RootNode, LiteralNode, SimpleNode, OutputNode, EvalNode, MatchNode,\
+    SingleNode, CompositeNode
+from .exceptions import TemplateEngineException, RuntimeError, UndefinedVariable, UndefinedReference,\
+    VariableNotIterable, InvalidNumberAttributes, InvalidBooleanValue, InvalidSerializer
+from .system import TemplateEngine
+from .util import Accessor, accessor
+from .visitor import Visitor, EvalVisitor

@@ -48,9 +48,9 @@ import xml.sax.saxutils
 
 import colony
 
-import ast
-import util
-import exceptions
+from template_engine import ast
+from template_engine import util
+from template_engine import exceptions
 
 FUNCTION_TYPES = (
     types.MethodType,
@@ -103,14 +103,14 @@ DEFAULT_TIME_FORMAT = "%H:%M:%S"
 DEFAULT_DATE_TIME_FORMAT = "%d/%m/%y %H:%M:%S"
 """ The default date time format """
 
-SEQUENCE_TYPES = (types.ListType, types.TupleType)
+SEQUENCE_TYPES = (list, tuple)
 """ The tuple containing the types considered to be sequences """
 
-SERIALIZABLE_TYPES = (types.ListType, types.TupleType)
+SERIALIZABLE_TYPES = (list, tuple)
 """ The tuple containing the set of types that can be
 "serializable" in a custom manner """
 
-RESOLVABLE_TYPES = (types.StringType, types.UnicodeType, colony.FormatTuple)
+RESOLVABLE_TYPES = (str, colony.legacy.UNICODE, colony.FormatTuple)
 """ The tuple containing the set of types that can be
 "resolved" in the localization context """
 
@@ -147,7 +147,7 @@ COMPARISION_FUNCTIONS = {
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic """
 
-class Visitor:
+class Visitor(object):
     """
     The visitor class for the template engine. This is the abstract
     implementation and more concrete implementations may exists if
@@ -282,7 +282,7 @@ class Visitor:
 
     def write(self, data, *args, **kwargs):
         if not self.string_buffer: return
-        is_unicode = type(data) == types.UnicodeType
+        is_unicode = type(data) == colony.legacy.UNICODE
         if is_unicode and self.encoding: data = data.encode(self.encoding)
         self.string_buffer.write(data, *args, **kwargs)
 
@@ -473,8 +473,8 @@ class Visitor:
 
         # checks if the attribute value contains a unicode string
         # in such case there's no need to re-decode it
-        is_unicode = type(value) == types.UnicodeType
-        value = is_unicode and value or unicode(value)
+        is_unicode = type(value) == colony.legacy.UNICODE
+        value = is_unicode and value or colony.legacy.UNICODE(value)
 
         # in case the attribute convert value is set
         if convert:
@@ -683,8 +683,8 @@ class Visitor:
 
         # checks if the attribute value length contains a unicode string
         # in such case there's no need to re-decode it
-        is_unicode = type(value_length) == types.UnicodeType
-        value_length = is_unicode and value_length or unicode(value_length)
+        is_unicode = type(value_length) == colony.legacy.UNICODE
+        value_length = is_unicode and value_length or colony.legacy.UNICODE(value_length)
 
         # in case the variable encoding value is defined encodes the string
         # value using the currently defined encoding (as expected) and then
@@ -990,7 +990,7 @@ class Visitor:
         # in case the "literal" value is a boolean returns the same
         # value as the result, otherwise raises an exception indicating
         # the problem with the processing of the boolean value
-        if value_type == types.BooleanType: return value
+        if value_type == bool: return value
         raise exceptions.InvalidBooleanValue("invalid boolean " + value)
 
     def resolve_many(self, name, *args, **kwargs):
@@ -1445,8 +1445,8 @@ class Visitor:
 
             # checks if the value contains a unicode string
             # in such case there's no need to re-decode it
-            is_unicode = _value_type == types.UnicodeType
-            _value = is_unicode and _value or unicode(_value)
+            is_unicode = _value_type == colony.legacy.UNICODE
+            _value = is_unicode and _value or colony.legacy.UNICODE(_value)
 
             # in case the type of the current value is resolvable the
             # value must be written as an escaped string otherwise
