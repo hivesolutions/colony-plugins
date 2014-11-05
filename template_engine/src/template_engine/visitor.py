@@ -267,7 +267,7 @@ class Visitor(object):
     def attach_process_method(self, method_name, method):
         # creates the process method instance, that is attached to
         # the general visitor class and sets it the current instance
-        method_instance = types.MethodType(method, self, Visitor)
+        method_instance = types.MethodType(method, self)
         setattr(self, method_name, method_instance)
 
         # creates the process method tuple that contains both the
