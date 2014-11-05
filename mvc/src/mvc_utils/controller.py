@@ -285,7 +285,8 @@ def get_exception_map(self, exception, request = None):
         # lines to re-encode it using the system encoding
         file_system_encoding = sys.getfilesystemencoding()
         formatted_traceback = traceback.format_tb(traceback_list)
-        formatted_traceback = [value.decode(file_system_encoding) for value in formatted_traceback]
+        formatted_traceback = [value.decode(file_system_encoding) if\
+            type(value) == colony.legacy.BYTES else value for value in formatted_traceback]
 
     # retrieves the exception class and the name of it and then retrieves
     # the message currently set in the exception as the exception message
