@@ -497,7 +497,7 @@ class WsgiRequest(object):
 
         # sets the arguments as the received message
         # and then uses this attribute to parse them
-        self.arguments = self.received_message
+        self.arguments = colony.legacy.str(self.received_message)
         self.parse_arguments()
 
     def parse_post_multipart(self):
