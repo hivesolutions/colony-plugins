@@ -7344,4 +7344,4 @@ class EntityManager(object):
         # in difference) for both of them
         first_name = first_class.get_name()
         second_name = second_class.get_name()
-        return cmp(first_name, second_name)
+        return cmp(first_name, second_name) #@UndefinedVariable
