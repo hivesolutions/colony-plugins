@@ -42,7 +42,7 @@ import time
 
 import colony
 
-import exceptions
+from downloader_c import exceptions
 
 VALID_STATUS_CODES = (
     200,
