@@ -144,6 +144,7 @@ class ConsoleController(BaseController):
 
         # replaces the windows styled newlines with the normalized unix like
         # newline styled values (compatibility issues)
+        contents = colony.legacy.str(contents)
         contents = contents.replace("\r\n", "\n")
 
         # updates the standard output and error buffer files to the new buffer
