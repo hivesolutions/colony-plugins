@@ -186,8 +186,10 @@ class Diagnostics(colony.System):
         self.try_operation("orm", ("orm", "template", "request"), data)
 
     def sql_executed(self, query, engine, time):
+        is_bytes = type(query) == colony.legacy.BYTES
+        query = query.decode("utf-8") if is_bytes else query
         data = dict(
-            query = query.decode("utf-8"),
+            query = query,
             engine = engine,
             time = time
         )
