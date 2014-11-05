@@ -1093,7 +1093,7 @@ class HttpClientServiceHandler:
         # in case the start line is not loaded
         if process_flag and not start_line_loaded:
             # finds the first new line value
-            start_line_index = message_value.find(colony.legacy.bytes("\r\n"))
+            start_line_index = message_value.find(b"\r\n")
 
             # in case there is a new line value found
             if not start_line_index == -1:
@@ -1126,7 +1126,7 @@ class HttpClientServiceHandler:
         # in case the header is not loaded
         if process_flag and not header_loaded:
             # retrieves the end header index (two new lines)
-            end_header_index = message_value.find(colony.legacy.bytes("\r\n\r\n"))
+            end_header_index = message_value.find(b"\r\n\r\n")
 
             # in case the end header index is found
             if not end_header_index == -1:
@@ -1144,12 +1144,12 @@ class HttpClientServiceHandler:
                 headers = message_value[start_header_index:end_header_index]
 
                 # splits the headers by line
-                headers_splitted = headers.split(colony.legacy.bytes("\r\n"))
+                headers_splitted = headers.split(b"\r\n")
 
                 # iterates over the headers lines
                 for header_splitted in headers_splitted:
                     # finds the header separator
-                    division_index = header_splitted.find(colony.legacy.bytes(":"))
+                    division_index = header_splitted.find(b":")
 
                     # retrieves the header name and the value for it and then
                     # converts both of the values to plain based unicode values
@@ -3077,11 +3077,11 @@ class HttpRequest(object):
             if is_unicode: header_name = header_name.encode(DEFAULT_CHARSET)
             is_unicode = type(header_value) == colony.legacy.UNICODE
             if is_unicode: header_value = header_value.encode(DEFAULT_CHARSET)
-            result.write(header_name + colony.legacy.bytes(": ") + header_value + colony.legacy.bytes("\r\n"))
+            result.write(header_name + b": " + header_value + b"\r\n")
 
         # writes the end of the headers and the message
         # values into the result
-        result.write(colony.legacy.bytes("\r\n"))
+        result.write(b"\r\n")
         result.write(message)
 
         # retrieves the value from the result buffer
