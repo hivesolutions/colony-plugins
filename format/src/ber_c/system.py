@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
 import colony
 
 from ber_c import exceptions
@@ -187,7 +189,7 @@ class BerStructure:
 
     def to_hex(self, string_value):
         for index in string_value:
-            print "0x%02x" % ord(index),
+            sys.stdout.write("0x%02x" % ord(index))
 
     def pack(self, value):
         # retrieves the type number for the value
