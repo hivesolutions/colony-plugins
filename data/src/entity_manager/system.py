@@ -3724,7 +3724,7 @@ class EntityManager(object):
         # the order names flag is set sorts them according to
         # the default sorting order
         items_items = items_map.items()
-        if order_names: items_items.sort(cmp = self.cmp_items)
+        if order_names: items_items.sort(key = self.key_items)
 
         # iterates over all the entity classes and table fields
         # in the items map to create the associated update queries
@@ -3802,7 +3802,7 @@ class EntityManager(object):
             # the order names flag is set sorts them according to
             # the default sorting order
             relations_items = relations_map.items()
-            if order_names: relations_items.sort(cmp = self.cmp_items)
+            if order_names: relations_items.sort(key = self.key_items)
 
             # iterates over each of the various parent classes relations
             # to create the names for the various relation fields in
@@ -7290,6 +7290,28 @@ class EntityManager(object):
         # returns the constructed result set with the new lines
         # containing unicode values instead of strings
         return _result_set
+
+    def key_items(self, item):
+        """
+        Key based comparator method that may be used to sort a
+        series of items that are tuples corresponding to class
+        and fields association.
+
+        The sorting is performed using the class name as the
+        pivot value for the comparison.
+
+        @type item: Tuple
+        @param item: The item tuple value consisting of the
+        item class and the fields map.
+        @rtype: String
+        @return: The name of the table associated with the class
+        for the current item under evaluation.
+        """
+
+        # unpacks the item tuple into the class and the fields
+        # values and returns the key value as the item class name
+        item_class, _fields = item
+        return item_class.get_name()
 
     def cmp_items(self, first, second):
         """
