@@ -48,10 +48,10 @@ import colony
 TIME_FACTOR = 1000
 """ The time factor """
 
-MAXIMUM_KEY = 18446744073709551616L
+MAXIMUM_KEY = colony.legacy.LONG(18446744073709551616)
 """ The maximum key"""
 
-SECRET_KEY = 123123123L
+SECRET_KEY = colony.legacy.LONG(123123123)
 """ The pseudo secret key """
 
 SYSTEM_RANDOM_VALUE = "SystemRandom"

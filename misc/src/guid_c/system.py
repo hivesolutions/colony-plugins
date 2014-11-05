@@ -55,7 +55,7 @@ class Guid(colony.System):
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
 
-        self.counter = 0L
+        self.counter = colony.legacy.LONG(0)
         self.first_counter = MAX_COUNTER
         self.last_time = 0
         self.ip = ""
