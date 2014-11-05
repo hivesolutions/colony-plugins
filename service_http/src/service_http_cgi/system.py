@@ -301,7 +301,7 @@ class ServiceHttpCgi(colony.System):
             return_code = process.returncode
 
             # in case there is a return code different than zero and contents in the standard error data
-            if return_code and not stderr_data == "":
+            if return_code and stderr_data:
                 # raises the cgi script error exception
                 raise exceptions.CgiScriptError(stderr_data)
 
