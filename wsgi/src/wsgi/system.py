@@ -186,7 +186,7 @@ class Wsgi(colony.System):
         message = "[%d] %s\n%s" % (code, error_s, identifier_s)
         return message
 
-class WsgiRequest:
+class WsgiRequest(object):
     """
     Represents an http request to be handled
     in the wsgi context, this value may be
