@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import random
 import threading
 
-class WorkPoolAlgorithm:
+class WorkPoolAlgorithm(object):
     """
     The generic work pool algorithm.
     """

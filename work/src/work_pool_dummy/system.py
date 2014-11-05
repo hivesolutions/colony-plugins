@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import thread
+import threading
 
 import colony
 
@@ -116,7 +116,7 @@ class ProcessingClass:
         # iterates over the list of work
         for work in self.work_list:
             # retrieves the current thread id
-            thread_id = thread.get_ident()
+            thread_id = threading.current_thread().ident
 
             # prints the current work string
             work_pool_dummy_plugin.debug(str(work) + " " + str(thread_id))

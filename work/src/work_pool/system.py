@@ -41,8 +41,8 @@ import threading
 
 import colony
 
-import algorithms
-import exceptions
+from work_pool import algorithms
+from work_pool import exceptions
 
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """
@@ -104,7 +104,18 @@ class WorkPool(colony.System):
             # stops the work pool
             work_pool.stop_pool()
 
-    def create_new_work_pool(self, name, description, work_processing_task_class = None, work_processing_task_arguments = [], number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM):
+    def create_new_work_pool(
+        self,
+        name,
+        description,
+        work_processing_task_class = None,
+        work_processing_task_arguments = [],
+        number_threads = DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
+        maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
+        work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM
+    ):
         """
         Creates a new work pool with the given name, description and number of works.
 
@@ -140,7 +151,20 @@ class WorkPool(colony.System):
         task_descriptor_class = thread_pool_plugin.get_thread_task_descriptor_class()
 
         # creates a new work pool
-        work_pool = WorkPoolImplementation(thread_pool_plugin, name, description, work_processing_task_class, work_processing_task_arguments, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
+        work_pool = WorkPoolImplementation(
+            thread_pool_plugin,
+            name = name,
+            description = description,
+            work_processing_task_class = work_processing_task_class,
+            work_processing_task_arguments = work_processing_task_arguments,
+            task_descriptor_class = task_descriptor_class,
+            number_threads = number_threads,
+            scheduling_algorithm = scheduling_algorithm,
+            maximum_number_threads = maximum_number_threads,
+            maximum_number_works_thread = maximum_number_works_thread,
+            work_scheduling_algorithm = work_scheduling_algorithm,
+            logger = logger
+        )
 
         # adds the new thread pool to the list of work pools
         self.work_pools_list.append(work_pool)
@@ -237,7 +261,7 @@ class WorkPool(colony.System):
         # returns the system information
         return system_information
 
-class WorkPoolImplementation:
+class WorkPoolImplementation(object):
     """
     The work pool implementation class.
     """
@@ -287,7 +311,21 @@ class WorkPoolImplementation:
     algorithm_manager = None
     """ The algorithm manager object reference """
 
-    def __init__(self, thread_pool, name = "none", description = "none", work_processing_task_class = None, work_processing_task_arguments = [], task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
+    def __init__(
+        self,
+        thread_pool,
+        name = "none",
+        description = "none",
+        work_processing_task_class = None,
+        work_processing_task_arguments = [],
+        task_descriptor_class = None,
+        number_threads = DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
+        maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
+        work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM,
+        logger = None
+    ):
         """
         Constructor of the class
 
@@ -474,7 +512,7 @@ class WorkPoolImplementation:
     def _work_removed(self, work_task, work_reference):
         self.algorithm_manager.work_removed(work_task, work_reference)
 
-class WorkTask:
+class WorkTask(object):
     """
     The generic task to process the work.
     """
