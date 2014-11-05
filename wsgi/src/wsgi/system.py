@@ -84,7 +84,8 @@ class Wsgi(colony.System):
         plugin_manager = self.plugin.manager
 
         # retrieves the reference to the rest plugin from the
-        # upper level wsgi plugin
+        # upper level wsgi plugin, this value may not be set
+        # in case there was a problem in the manager loading
         rest_plugin = self.plugin.rest_plugin
 
         # retrieves the string based version of the currently
