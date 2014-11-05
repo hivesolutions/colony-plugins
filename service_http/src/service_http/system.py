@@ -1151,13 +1151,15 @@ class HttpClientServiceHandler:
                     # finds the header separator
                     division_index = header_splitted.find(colony.legacy.bytes(":"))
 
-                    # retrieves the header name
+                    # retrieves the header name and the value for it and then
+                    # converts both of the values to plain based unicode values
                     header_name = header_splitted[:division_index].strip()
-
-                    # retrieves the header value
                     header_value = header_splitted[division_index + 1:].strip()
+                    header_name = colony.legacy.str(header_name)
+                    header_value = colony.legacy.str(header_value)
 
-                    # sets the header in the headers map
+                    # sets the header in the headers map so that it may be used
+                    # latter for further reference operations (as required)
                     request.headers_map[header_name] = header_value
                     request.headers_in[header_name] = header_value
 
@@ -2685,10 +2687,10 @@ class HttpRequest(object):
         syntax.
         """
 
-        # sets the arguments as the received message
-        self.arguments = self.received_message
-
-        # parses the arguments
+        # sets the arguments as the received message, note that
+        # the received message is converted into a string value
+        # and then parses the arguments that were just set
+        self.arguments = colony.legacy.str(self.received_message)
         self.parse_arguments()
 
     def parse_post_multipart(self):
