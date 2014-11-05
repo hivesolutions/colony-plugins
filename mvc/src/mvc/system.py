@@ -585,8 +585,8 @@ class Mvc(colony.System):
         method = pattern[1]
         is_method = hasattr(method, "im_class")
         if is_method:
-            cls = method.im_class
-            self = method.im_self
+            cls = method.__class__
+            self = method.__self__
             name = method.__name__
             cls_name = cls.__name__
             cls_name = colony.to_underscore(cls_name)
@@ -806,8 +806,8 @@ class Mvc(colony.System):
         # context based diffusion (may be used to retrieve controller
         # inside a model context) as defined in specification, this
         # operation is considered to be the controller injection
-        has_self = hasattr(handler_method, "im_self")
-        controller = handler_method.im_self if has_self else None
+        has_self = hasattr(handler_method, "__self__")
+        controller = handler_method.__self__ if has_self else None
         rest_request.controller = controller
 
         # injects the parameters in the rest request so that any
@@ -844,7 +844,7 @@ class Mvc(colony.System):
         # and then uses it to retrieve its default parameters
         # after that uses the default parameters to extend the
         # parameters map of the handler tuple
-        controller = type(handler_method) == types.MethodType and handler_method.im_self
+        controller = type(handler_method) == types.MethodType and handler_method.__self__
         default_parameters = controller and\
             hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE) and\
             controller.get_default_parameters() or {}
