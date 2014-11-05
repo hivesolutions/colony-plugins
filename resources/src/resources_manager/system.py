@@ -287,7 +287,7 @@ class ResourcesManager(colony.System):
         """
 
         # iterates over all the resources through their file paths
-        for resource_file_path, resources_list in self.file_path_resources_list_map.items():
+        for resource_file_path, resources_list in colony.legacy.items(self.file_path_resources_list_map):
             # retrieves the file path and the full resource path and then
             # uses them to unregister the resources
             file_path, full_resources_path = self.file_path_file_information_map[resource_file_path]
@@ -339,7 +339,7 @@ class ResourcesManager(colony.System):
         pending_plugin_resources_map = {}
 
         # iterates over all the (plugin) resources and associated plugin ids
-        for resource, plugin_id in self.pending_plugin_resources_map.items():
+        for resource, plugin_id in colony.legacy.items(self.pending_plugin_resources_map):
             # tries to retrieve the configuration plugin using the plugin id
             configuration_plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
@@ -1245,7 +1245,7 @@ class ResourcesManager(colony.System):
 
         # retrieves the resource namespace resources list map and sorts
         # the items (allows a better view)
-        resource_namespace_resources_list_map_items = self.resource_namespace_resources_list_map.items()
+        resource_namespace_resources_list_map_items = colony.legacy.items(self.resource_namespace_resources_list_map)
         resource_namespace_resources_list_map_items.sort()
 
         # iterates over all the resources lists in the resource namespace
@@ -1308,7 +1308,7 @@ class ResourcesManager(colony.System):
 
         # retrieves the plugin id configuration resources list map and sorts
         # the items (allows a better view)
-        plugin_id_configuration_resources_list_map_items = self.plugin_id_configuration_resources_list_map.items()
+        plugin_id_configuration_resources_list_map_items = colony.legacy.items(self.plugin_id_configuration_resources_list_map)
         plugin_id_configuration_resources_list_map_items.sort()
 
         # iterates over all the resources lists in the resource namespace
