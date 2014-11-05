@@ -38,12 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import types
 import subprocess
 
 import colony
 
-import exceptions
+from service_http_cgi import exceptions
 
 HANDLER_NAME = "cgi"
 """ The handler name """
@@ -278,7 +277,7 @@ class ServiceHttpCgi(colony.System):
                 environment_value_type = type(environment_value)
 
                 # in case the environment value type is not string
-                if not environment_value_type == types.StringType:
+                if not environment_value_type == str:
                     # sets the string value in the environment map
                     environment_map[environment_key] = str(environment_value)
 
