@@ -38,7 +38,6 @@ from . import decorators
 from . import exceptions
 from . import structures
 from . import system
-from . import test_mocks
 from . import test
 
 from .decorators import transaction, lock_table
@@ -46,6 +45,4 @@ from .exceptions import EntityManagerException, RuntimeError, EntityManagerEngin
     MissingRelationMethod, ValidationError, RelationValidationError, InvalidSerializerError
 from .structures import Connection, EntityClass, rset, load_serializers
 from .system import DataEntityManager
-from .test_mocks import RootEntity, RootEntityAbstract, Loggable, Taxable, Person, Employee,\
-    Breeder, Address, Dog, BreedDog, Cat, Car, Supplier, Operation, Chair, File
 from .test import EntityManagerTest, EntityManagerBaseTestCase
