@@ -1009,7 +1009,7 @@ class HttpClientServiceHandler:
                 raise exceptions.HttpDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
-            if data == "":
+            if not data:
                 # raises the http invalid data exception
                 raise exceptions.HttpInvalidDataException("empty data received")
 
