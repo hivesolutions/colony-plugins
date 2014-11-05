@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-import exceptions
-import test_mocks
+from entity_manager import exceptions
+from entity_manager import test_mocks
 
 class EntityManagerTest(colony.Test):
     """
