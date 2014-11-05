@@ -89,7 +89,7 @@ class Visitor(object):
 
     @colony.dispatch_visit()
     def visit(self, node):
-        print "unrecognized element node of type " + node.__class__.__name__
+        print("unrecognized element node of type " + node.__class__.__name__)
 
     def before_visit(self, node):
         self.visit_childs = True
@@ -100,32 +100,32 @@ class Visitor(object):
 
     @colony.visit(ast.AstNode)
     def visit_ast_node(self, node):
-        print "AstNode: " + str(node)
+        print("AstNode: " + str(node))
 
     @colony.visit(ast.GenericElement)
     def visit_generic_element(self, node):
-        print "GenericElement: " + str(node)
+        print("GenericElement: " + str(node))
 
     @colony.visit(ast.PrintingDocument)
     def visit_printing_document(self, node):
-        print "PrintingDocument: " + str(node)
+        print("PrintingDocument: " + str(node))
 
     @colony.visit(ast.Block)
     def visit_block(self, node):
-        print "Block: " + str(node)
+        print("Block: " + str(node))
 
     @colony.visit(ast.Paragraph)
     def visit_paragraph(self, node):
-        print "Paragraph: " + str(node)
+        print("Paragraph: " + str(node))
 
     @colony.visit(ast.Line)
     def visit_line(self, node):
-        print "Line: " + str(node)
+        print("Line: " + str(node))
 
     @colony.visit(ast.Text)
     def visit_text(self, node):
-        print "Text: " + str(node)
+        print("Text: " + str(node))
 
     @colony.visit(ast.Image)
     def visit_image(self, node):
-        print "Image: " + str(node)
+        print("Image: " + str(node))

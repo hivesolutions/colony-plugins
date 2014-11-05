@@ -173,7 +173,7 @@ class Visitor:
 
     @colony.dispatch_visit()
     def visit(self, node):
-        print "unrecognized element node of type " + node.__class__.__name__
+        print("unrecognized element node of type " + node.__class__.__name__)
 
     def before_visit(self, node):
         self.visit_childs = True
