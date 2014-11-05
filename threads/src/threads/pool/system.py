@@ -109,7 +109,14 @@ class ThreadPool(colony.System):
             # stops the thread pool
             thread_pool.stop_pool()
 
-    def create_new_thread_pool(self, name, description, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS):
+    def create_new_thread_pool(
+        self,
+        name,
+        description,
+        number_threads = DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS
+    ):
         """
         Creates a new thread pool with the given name, description
         and number of threads.
@@ -132,7 +139,14 @@ class ThreadPool(colony.System):
         logger = self.plugin.logger
 
         # creates a new thread pool
-        thread_pool = ThreadPoolImplementation(name, description, number_threads, scheduling_algorithm, maximum_number_threads, logger)
+        thread_pool = ThreadPoolImplementation(
+            name = name,
+            description = description,
+            number_threads = number_threads,
+            scheduling_algorithm = scheduling_algorithm,
+            maximum_number_threads = maximum_number_threads,
+            logger = logger
+        )
 
         # adds the new thread pool to the list of thread pools
         self.thread_pools_list.append(thread_pool)
@@ -218,7 +232,7 @@ class ThreadPool(colony.System):
         # returns the system information
         return system_information
 
-class ThreadPoolImplementation:
+class ThreadPoolImplementation(object):
     """
     The thread pool implementation class.
     """
@@ -262,7 +276,15 @@ class ThreadPoolImplementation:
     thread_size_modification_semaphore = None
     """ The thread pool thread size modification semaphore """
 
-    def __init__(self, name = "none", description = "none", number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, logger = None):
+    def __init__(
+        self,
+        name = "none",
+        description = "none",
+        number_threads = DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
+        logger = None
+    ):
         """
         Constructor of the class.
 
@@ -740,7 +762,7 @@ class WorkerThread(threading.Thread):
             # refreshes the thread pool size shrinking it if necessary
             thread_pool.refresh_thread_pool_size(False)
 
-class WorkerThreadTask:
+class WorkerThreadTask(object):
     """
     The worker thread task class.
     """
@@ -764,7 +786,7 @@ class WorkerThreadTask:
         self.task_type = task_type
         self.task_arguments = task_arguments
 
-class TaskDescriptor:
+class TaskDescriptor(object):
     """
     Class that describes a single task for a thread pool.
     """
