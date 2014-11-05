@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import datetime
 import threading
+import traceback
 
 import colony
 
@@ -178,13 +179,39 @@ class Wsgi(colony.System):
         version = plugin_manager.get_version()
         manager_environment = plugin_manager.get_environment()
         identifier_s = IDENTIFIER_STRING % (version, manager_environment)
+        
+        # verifies if the current (plugin) manager instance is
+        # running under the development mode
+        is_development = plugin_manager.is_development()
 
         # converts the error into a string bases and then creates the
         # complete error message string from the various components,
         # returning the resulting value as the result
         error_s = str(error)
-        message = "[%d] %s\n%s" % (code, error_s, identifier_s)
+        message = "[%d] %s\n%s\n" % (code, error_s, identifier_s)
+        if not is_development: return message
+        trace = "\n".join(self.stacktrace_message())
+        message += "\n%s\n" % trace
         return message
+
+    def stacktrace_message(self):
+        """
+        Retrieves/yields the contents of the stack trace associated with
+        an exception raised under the current context.
+
+        This method returns a generator and proper usage methods should
+        be used to avoid miss-usage.
+
+        @rtype: Generator
+        @return: The sequence containing the the various values/lines of
+        the stack trace associated with the current context.
+        """
+
+        # retrieves the complete set of lines for the exception stack trace
+        # and iterates over them to yield the value of them to the caller
+        # method (a lazy loaded approach is used to reduce usage)
+        lines = traceback.format_exc().splitlines()
+        for line in lines: yield line
 
 class WsgiRequest(object):
     """
