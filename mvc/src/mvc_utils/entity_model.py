@@ -1021,7 +1021,7 @@ def delete(
         # the provided entity manager, this is a non reversible and
         # final operation from the data source point of view
         self.remove(entity_manager = entity_manager)
-    except BaseException, exception:
+    except BaseException as exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
         if hasattr(self, "fail_delete"): self.fail_delete(persist_type, exception)
@@ -1144,7 +1144,7 @@ def store(
             # enabling it to communicate with the data
             # source for loading of relations
             self.attach_l(force = False)
-    except BaseException, exception:
+    except BaseException as exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
         if hasattr(self, "fail_store"): self.fail_store(persist_type, exception)
