@@ -188,7 +188,9 @@ class MvcFileHandler(object):
         modification_size_string = str(modified_timestamp + size)
 
         # updates the md5 hash with the modification
-        # plus size string
+        # plus size string, note that the value that
+        # is provided is ensured to be a bytes buffer
+        modification_size_string = colony.legacy.bytes(modification_size_string)
         md5.update(modification_size_string)
 
         # retrieves the md5 hex digest as the etag value
