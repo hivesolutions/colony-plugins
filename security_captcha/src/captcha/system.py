@@ -197,11 +197,12 @@ class Captcha(colony.System):
         # unpacks the text size retrieving the text width and height
         text_width, text_height = text_size
 
-        # calculates the initial text x position
+        # calculates the initial text position values and then
+        # converts this same values into integer values
         initial_text_x = (image_width / 2) - (text_width / 2)
-
-        # calculates the initial text y position
         initial_text_y = (image_height / 2) - (text_height / 2)
+        initial_text_x = int(initial_text_x)
+        initial_text_y = int(initial_text_y)
 
         # paste text image with the mask into the image
         image.paste(text_image, (initial_text_x, initial_text_y), text_image)
