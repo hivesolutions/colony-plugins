@@ -93,7 +93,7 @@ class Accessor(dict):
 
     def __cmp__(self, value, *args, **kwargs):
         ref = dict.__getattribute__(self, "__ref__")()
-        return cmp(ref, value)
+        return cmp(ref, value) #@UndefinedVariable
 
     def __hash__(self):
         ref = dict.__getattribute__(self, "__ref__")()
