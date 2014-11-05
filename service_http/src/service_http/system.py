@@ -974,7 +974,9 @@ class HttpClientServiceHandler:
             content_length
         )
 
-        # writes the log line value to the log file
+        # writes the log line value to the log file, note that the
+        # log line value/message may be encoded before written to
+        # the file, this will use the default encoding process
         self.log_file.write(log_line_value)
 
     def retrieve_request(self, service_connection):
