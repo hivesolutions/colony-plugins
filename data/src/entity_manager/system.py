@@ -2955,7 +2955,7 @@ class EntityManager(object):
 
             # iterates over all the field values in the "filtered"
             # entity fields to populate the insert query
-            for field_name, field_value in colony.legacy.iteritems(entity_fields):
+            for field_name, field_value in colony.legacy.iteritems(_entity_fields):
                 # checks if the current field is a relation
                 # (in that it is additional processing is required)
                 if entity_class.is_relation(field_name):
