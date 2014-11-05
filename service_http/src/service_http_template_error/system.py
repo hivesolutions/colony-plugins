@@ -184,7 +184,7 @@ class ServiceHttpTemplateError(colony.System):
         delta_time_rounded = round(delta_time, 2)
 
         # retrieves the error string
-        error_string = unicode(error) + " (" + error.__class__.__name__ + ")"
+        error_string = colony.legacy.UNICODE(error) + " (" + error.__class__.__name__ + ")"
 
         # retrieves the execution information
         _type, _value, traceback_list = sys.exc_info()

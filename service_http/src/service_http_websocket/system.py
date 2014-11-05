@@ -43,7 +43,7 @@ import hashlib
 
 import colony
 
-import exceptions
+from service_http_websocket import exceptions
 
 HANDLER_NAME = "websocket"
 """ The handler name """
@@ -92,7 +92,7 @@ SPACE_REGEX = re.compile(SPACE_REGEX_VALUE)
 
 class ServiceHttpWebsocket(colony.System):
     """
-    The service http webdav (handler) class.
+    The service http websocket (handler) class.
     """
 
     websocket_handler_plugins_map = {}
