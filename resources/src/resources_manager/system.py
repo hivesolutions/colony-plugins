@@ -1270,7 +1270,7 @@ class ResourcesManager(colony.System):
                 else:
                     # sets the resource value with the not available
                     # string value
-                    resource_value = u"N/A"
+                    resource_value = colony.legacy.u("N/A")
 
                 # sets the instance value for the resources manager
                 # base information
@@ -1334,7 +1334,7 @@ class ResourcesManager(colony.System):
                 else:
                     # sets the resource value with the not available
                     # string value
-                    resource_value = u"N/A"
+                    resource_value = colony.legacy.u("N/A")
 
                 # sets the instance value for the resources manager
                 # plugins information

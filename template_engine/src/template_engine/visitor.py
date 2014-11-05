@@ -1423,7 +1423,7 @@ class Visitor(object):
         # creates the string buffer to hold the serialization values
         # and writes the initial list open token into it
         string_buffer = colony.StringBuffer()
-        string_buffer.write(u"[")
+        string_buffer.write(colony.legacy.u("["))
 
         # unsets the is first flag so that the comma separator
         # is not written in the first iteration
@@ -1435,7 +1435,7 @@ class Visitor(object):
             # checks if this is the first iteration in case it's
             # not the comma separator is written to the string buffer
             if is_first: is_first = False
-            else: string_buffer.write(u", ")
+            else: string_buffer.write(colony.legacy.u(", "))
 
             # serializes the current value and retrieves the type
             # of the value that will condition the writing into
@@ -1451,13 +1451,15 @@ class Visitor(object):
             # in case the type of the current value is resolvable the
             # value must be written as an escaped string otherwise
             # the value is written literally
-            if _value_type in RESOLVABLE_TYPES: string_buffer.write(u"'" + _value + u"'")
+            if _value_type in RESOLVABLE_TYPES: string_buffer.write(
+                colony.legacy.u("'") + _value + colony.legacy.u("'")
+            )
             else: string_buffer.write(_value)
 
         # writes the "final" end of list token into the string buffer
         # that holds the serialization of the sequence and then retrieves
         # the final value of the serialization from the string buffer
-        string_buffer.write(u"]")
+        string_buffer.write(colony.legacy.u("]"))
         value = string_buffer.get_value()
 
         # returns the final serialized value of the sequence
