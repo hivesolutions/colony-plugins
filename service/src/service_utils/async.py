@@ -1016,29 +1016,29 @@ class ClientConnection(Connection):
                     # re-raises the exception
                     raise
 
-            # in case the data is empty (connection closed)
-            if data == "":
+            # in case the data is empty, the connection is considered
+            # closed and the final operations must be performed
+            if not data:
                 # closes the client connection
                 self.close()
 
                 # returns immediately (no more
                 # data to be processed)
                 return
-            # otherwise a try for parsing should be made
-            else:
-                # iterates while there is data available to
-                # be processed
-                while data:
-                    # tries to retrieve the request from the given data (only a successful
-                    # parse is valid for request handling)
-                    request = self.service.client_service.retrieve_request_data(self, data)
 
-                    # handles the request using the client service (in case the request is valid)
-                    request and self.service.client_service.handle_request(self, request)
+            # iterates while there is data available to
+            # be processed
+            while data:
+                # tries to retrieve the request from the given data (only a successful
+                # parse is valid for request handling)
+                request = self.service.client_service.retrieve_request_data(self, data)
 
-                    # pops the pending data from the client service and sets it
-                    # as the current data
-                    data = self.pop_pending_data()
+                # handles the request using the client service (in case the request is valid)
+                request and self.service.client_service.handle_request(self, request)
+
+                # pops the pending data from the client service and sets it
+                # as the current data
+                data = self.pop_pending_data()
 
     def write_handler(self, _socket):
         # iterates over the write data buffer
