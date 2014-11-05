@@ -445,7 +445,7 @@ class EasypayClient(object):
         # if a credential failure is in the exception message,
         # to determine if the credentials are valid
         try: self.get_payment_details(None, None)
-        except Exception, exception: valid = not "ep_cin not ok" in exception.message
+        except Exception as exception: valid = not "ep_cin not ok" in exception.message
 
         # returns the valid flag
         return valid

@@ -383,7 +383,7 @@ class MysqlEngine(object):
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
             colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
-        except MySQLdb.OperationalError, exception:
+        except MySQLdb.OperationalError as exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification
             # and then checks if the transaction empty (no pending
@@ -403,7 +403,7 @@ class MysqlEngine(object):
                 retries = retries - 1
             )
             else: cursor.close(); raise
-        except MySQLdb.ProgrammingError, exception:
+        except MySQLdb.ProgrammingError as exception:
             # unpacks the message and the code from the exception and
             # then verifies if this error is meant to be ignored and in
             # case it's prints a warning message but does not fails, otherwise
