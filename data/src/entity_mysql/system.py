@@ -761,7 +761,7 @@ class MysqlConnection(object):
     def close(self):
         # iterates over all the connection in the connections
         # map to closes them (will close all the connections)
-        for _thread_id, connection in self.connections_map.iteritems():
+        for _thread_id, connection in colony.legacy.iteritems(self.connections_map):
             # closes the current connection, disables
             # all the pending operations in the connection
             # with the remote database
