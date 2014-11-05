@@ -1815,7 +1815,9 @@
             // registers for the post async event so that it's possible
             // to scroll the log down again as the inital position
             _body.bind("post_async", onPostAsync = function() {
-                        var scrollHeight = matchedObject[0].scrollHeight;
+                        var scrollHeight = matchedObject.length > 0
+                                ? matchedObject[0].scrollHeight
+                                : 0;
                         matchedObject.scrollTop(scrollHeight);
                     });
             matchedObject.bind("destroyed", function() {
