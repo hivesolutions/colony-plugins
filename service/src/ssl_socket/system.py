@@ -270,7 +270,7 @@ def accept(self):
         # tries to archive the proper handshake on the ssl
         # connection, asynchronous handshake
         connection.do_handshake()
-    except socket.error, error:
+    except socket.error as error:
         # in case the exception is normal, the operation did not
         # complete or the socket would block nothing should be done
         # and the handshake operation must be deferred to the next data

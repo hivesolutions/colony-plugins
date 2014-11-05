@@ -233,7 +233,7 @@ class SslSocketUpgrader(colony.System):
 
                 # breaks the loop
                 break
-            except ssl.SSLError, exception:
+            except ssl.SSLError as exception:
                 # retrieves the exception value
                 exception_value = exception[0]
 
