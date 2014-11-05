@@ -37,11 +37,9 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import types
-
 import colony
 
-import exceptions
+from service_http_proxy import exceptions
 
 HANDLER_NAME = "proxy"
 """ The handler name """
@@ -925,29 +923,23 @@ class ChunkHandler:
                 return None
 
             # in case an invalid value
-            # was retrieved
-            if not value:
-                # returns the value
-                return value
+            # was retrieved must return it
+            if not value: return value
 
             # retrieves the type of the value
             # in order to check if it's valid
             value_type = type(value)
 
             # in case the value is not of type tuple
-            # (not important for now)
-            if not value_type == types.TupleType:
-                # continues the loop
-                continue
+            # (not important for now) continues loop
+            if not value_type == tuple: continue
 
             # retrieves the value type
             _type = value[0]
 
             # in case the type is message
-            # data
-            if _type == MESSAGE_DATA_VALUE:
-                # breaks the loop (found data)
-                break
+            # data must break the loop
+            if _type == MESSAGE_DATA_VALUE: break
 
         # retrieves the message data
         # value (buffer)

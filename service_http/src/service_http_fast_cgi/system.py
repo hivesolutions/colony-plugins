@@ -43,7 +43,7 @@ import threading
 
 import colony
 
-import exceptions
+from service_http_fast_cgi import exceptions
 
 HANDLER_NAME = "fast_cgi"
 """ The handler name """

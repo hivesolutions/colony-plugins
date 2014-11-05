@@ -45,7 +45,7 @@ import datetime
 
 import colony
 
-import exceptions
+from service_http_file import exceptions
 
 HANDLER_NAME = "file"
 """ The handler name """
@@ -718,7 +718,7 @@ class ServiceHttpFile(colony.System):
         Generates a method that can be used as a comparator.
 
         @type reference: String
-        @param reference: The refernce value to the comparison.
+        @param reference: The reference value to the comparison.
         """
 
         def comparator(first_item, second_item):
