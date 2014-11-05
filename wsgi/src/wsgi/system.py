@@ -179,7 +179,7 @@ class Wsgi(colony.System):
         version = plugin_manager.get_version()
         manager_environment = plugin_manager.get_environment()
         identifier_s = IDENTIFIER_STRING % (version, manager_environment)
-        
+
         # verifies if the current (plugin) manager instance is
         # running under the development mode
         is_development = plugin_manager.is_development()
@@ -323,7 +323,14 @@ class WsgiRequest(object):
     associated with this request, this value is not
     used in case the response is mediated"""
 
-    def __init__(self, service, environ, content_type_charset = DEFAULT_CHARSET, prefix = None, alias = None):
+    def __init__(
+        self,
+        service,
+        environ,
+        content_type_charset = DEFAULT_CHARSET,
+        prefix = None,
+        alias = None
+    ):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
         # to access external resources
@@ -397,7 +404,7 @@ class WsgiRequest(object):
         elif content_type.startswith("multipart/form-data"):
             self.parse_post_multipart()
 
-    def __getattr__(self, attribute_name):
+    def __getattributes__(self, attribute_name):
         """
         Retrieves the attribute from the attributes map.
 
@@ -409,7 +416,7 @@ class WsgiRequest(object):
 
         return self.attributes_map.get(attribute_name, None)
 
-    def __setattribute__(self, attribute_name, attribute_value):
+    def __setattributes__(self, attribute_name, attribute_value):
         """
         Sets the given attribute in the request. The referenced
         attribute is the http request attribute and the setting takes
@@ -446,7 +453,7 @@ class WsgiRequest(object):
                     attribute_value
                 ]
         # otherwise the attribute is not defined and a normal
-        # set must be done
+        # set must be performed (single and simple set)
         else:
             # sets the attribute value in the attributes map
             self.attributes_map[attribute_name] = attribute_value
@@ -548,7 +555,7 @@ class WsgiRequest(object):
             # "unquotes" the attribute name from the url encoding and sets
             # the attribute for the current name in the current instance
             attribute_name = colony.unquote_plus(attribute_name)
-            self.__setattribute__(attribute_name, attribute_value)
+            self.__setattributes__(attribute_name, attribute_value)
 
     def parse_multipart(self):
         """
@@ -628,7 +635,7 @@ class WsgiRequest(object):
 
             # sets the attribute attribute in the current request and
             # then sets the current index as the end index
-            self.__setattribute__(name, content_disposition_map)
+            self.__setattributes__(name, content_disposition_map)
             current_index = end_index + boundary_value_length
 
     def get_header(self, header_name):
@@ -793,10 +800,10 @@ class WsgiRequest(object):
         return self.attributes_map.keys()
 
     def get_attribute(self, attribute_name):
-        return self.__getattribute__(attribute_name)
+        return self.__getattributes__(attribute_name)
 
     def set_attribute(self, attribute_name, attribute_value):
-        self.__setattribute__(attribute_name, attribute_value)
+        self.__setattributes__(attribute_name, attribute_value)
 
     def get_operation_type(self):
         return self.operation_type
