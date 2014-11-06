@@ -168,7 +168,7 @@ class TemplateEngine(colony.System):
 
         # opens the file for the reading of its contents
         # the complete data will be read
-        file = open(file_path, "r")
+        file = open(file_path, "rb")
 
         try:
             # parses the file, retrieving the template file structure
