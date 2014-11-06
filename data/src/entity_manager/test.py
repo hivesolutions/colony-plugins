@@ -82,16 +82,6 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Entity Manager Base Plugin test case"
 
-    def setUp(self):
-        # retrieves the entity manager test and then
-        # performs the set up of it (as expected)
-        self.test = self.plugin.test
-        self.test.set_up(self)
-
-    def tearDown(self):
-        # performs the tear down
-        self.test.tear_down(self)
-
     def test_create(self):
         # creates the complete set of entities existent in the current
         # mocks bundle set (this should take a while)
