@@ -2788,10 +2788,10 @@ class HttpRequest(object):
             # raises the http invalid multipart request exception
             raise exceptions.HttpInvalidMultipartRequestException("invalid boundary value: " + boundary)
 
-        # retrieves the boundary reference and the boundary value
+        # retrieves the boundary reference and the boundary value, 
+        # ensures byte compatibility and calculates it's length
         _boundary, boundary_value = boundary_splitted
-
-        # retrieves the boundary value length
+        boundary_value = colony.legacy.bytes(boundary_value)
         boundary_value_length = len(boundary_value)
 
         # sets the initial index as the as the boundary value length
@@ -2804,9 +2804,8 @@ class HttpRequest(object):
             end_index = self.multipart.find(boundary_value, current_index)
 
             # in case the end index is invalid (end of multipart)
-            if end_index == -1:
-                # breaks the cycle
-                break
+            # must break the current loop (no more parsing) 
+            if end_index == -1: break
 
             # parses the multipart part retrieving the headers map and the contents
             # the sent indexes avoid the extra newline values incrementing and decrementing
@@ -3452,24 +3451,25 @@ class HttpRequest(object):
         headers_map = {}
 
         # retrieves the end header index
-        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
+        end_header_index = self.multipart.find(b"\r\n\r\n", start_index, end_index)
 
         # retrieves the headers from the multipart
         headers = self.multipart[start_index:end_header_index]
 
         # splits the headers by line
-        headers_splitted = headers.split("\r\n")
+        headers_splitted = headers.split(b"\r\n")
 
         # iterates over the headers lines
         for header_splitted in headers_splitted:
             # finds the header separator
-            division_index = header_splitted.find(":")
+            division_index = header_splitted.find(b":")
 
-            # retrieves the header name
+            # retrieves the header name and the value for it and then
+            # converts both of the values to plain based unicode values
             header_name = header_splitted[:division_index].strip()
-
-            # retrieves the header value
             header_value = header_splitted[division_index + 1:].strip()
+            header_name = colony.legacy.str(header_name)
+            header_value = colony.legacy.str(header_value)
 
             # sets the header in the headers map
             headers_map[header_name] = header_value
