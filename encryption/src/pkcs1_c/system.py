@@ -212,6 +212,7 @@ class Pkcs1Structure:
         # reads the file, retrieving the private key pem
         # and constructs and loads the return tuple
         private_key_pem = self._read_file(private_key_file_path)
+        private_key_pem = colony.legacy.str(private_key_pem)
         return_tuple = self.load_private_key_pem(private_key_pem)
 
         # returns the return tuple
@@ -221,6 +222,7 @@ class Pkcs1Structure:
         # reads the file, retrieving the public key pem
         # and constructs and loads the keys tuple
         public_key_pem = self._read_file(public_key_file_path)
+        public_key_pem = colony.legacy.str(public_key_pem)
         keys = self.load_public_key_pem(public_key_pem)
 
         # returns the keys tuple
@@ -901,17 +903,17 @@ class Pkcs1Structure:
         padding_size = modulus_size_bytes - (signature_value_packed_length + 3)
 
         # writes the beginning of the padding value to the signature buffer
-        signature_buffer.write("\x00")
-        signature_buffer.write("\x01")
+        signature_buffer.write(b"\x00")
+        signature_buffer.write(b"\x01")
 
         # creates the padding string value
-        padding = "\xff" * padding_size
+        padding = b"\xff" * padding_size
 
         # writes the padding to the signature buffer
         signature_buffer.write(padding)
 
         # writes the end of padding value to the signature buffer
-        signature_buffer.write("\x00")
+        signature_buffer.write(b"\x00")
 
         # writes the signature value packed in the string buffer
         signature_buffer.write(signature_value_packed)
@@ -1059,7 +1061,8 @@ class Pkcs1Structure:
         in the file.
         """
 
-        # opens the file
+        # opens the file from the provided file path
+        # this is going to be used to write the buffer
         file = open(file_path, "wb")
 
         # writes the string value to the file and then
@@ -1079,7 +1082,8 @@ class Pkcs1Structure:
         @return: The string value read from the file.
         """
 
-        # opens the file
+        # opens the file using the provided file path,
+        # note that the file is read in binary mode
         file = open(file_path, "rb")
 
         # reads the string value from the file and then
@@ -1089,5 +1093,5 @@ class Pkcs1Structure:
         finally: file.close()
 
         # returns the string value that was read from
-        # the file
+        # the file, this should be byte buffer compliant
         return string_value

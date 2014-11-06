@@ -116,7 +116,9 @@ class SslStructure:
 
         # encodes the encrypted message into base 64
         # and splits the various components from it
+        message_e = colony.legacy.bytes(message_e)
         message_e_base_64 = base64.b64encode(message_e)
+        message_e_base_64 = colony.legacy.str(message_e_base_64)
         message_e_base_64 = self._split_base_64(message_e_base_64)
 
         # returns the encrypted message in base 64
@@ -129,7 +131,9 @@ class SslStructure:
 
         # encodes the message into base 64 and splits
         # the various components from it
+        message = colony.legacy.bytes(message)
         message_base_64 = base64.b64encode(message)
+        message_base_64 = colony.legacy.str(message_base_64)
         message_base_64 = self._split_base_64(message_base_64)
 
         # returns the decrypted message in base 64
@@ -142,7 +146,9 @@ class SslStructure:
 
         # encodes the signature into base 64 and splits
         # the various components from it
+        signature = colony.legacy.bytes(signature)
         signature_base_64 = base64.b64encode(signature)
+        signature_base_64 = colony.legacy.str(signature_base_64)
         signature_base_64 = self._split_base_64(signature_base_64)
 
         # returns the signature base 64
