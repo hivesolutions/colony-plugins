@@ -5419,7 +5419,7 @@ def get_process_method(controller, request, process_method_name):
             if not item_extension == ".css": continue
 
             # adds the stylesheet reference to the string buffer
-            self.string_buffer.write("<link rel=\"stylesheet\" href=\"resources/css/%s\" type=\"text/css\" />\n" % css_path_item)
+            self.write("<link rel=\"stylesheet\" href=\"resources/css/%s\" type=\"text/css\" />\n" % css_path_item)
 
     def __process_javascript_include(self, node):
         # retrieves the extras path from the controller
@@ -5442,7 +5442,7 @@ def get_process_method(controller, request, process_method_name):
                 continue
 
             # adds the javascript reference to the string buffer
-            self.string_buffer.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
+            self.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
 
     def __process_ifacl(self, node):
         # retrieves the attributes map
@@ -5624,7 +5624,7 @@ def get_process_method(controller, request, process_method_name):
 
         # writes the request time (in milliseconds) to the
         # string buffer (output operation)
-        self.string_buffer.write("%i" % delta_time)
+        self.write("%i" % delta_time)
 
     # creates the complete process method name
     complete_process_method_name = "__" + process_method_name
