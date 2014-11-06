@@ -189,7 +189,7 @@ class BerStructure:
 
     def to_hex(self, string_value):
         for index in string_value:
-            sys.stdout.write("0x%02x" % ord(index))
+            sys.stdout.write("0x%02x" % colony.legacy.ord(index))
 
     def pack(self, value):
         # retrieves the type number for the value
@@ -400,7 +400,7 @@ class BerStructure:
 
         # creates the packed base value concatenating the type the length
         # and the value of the base value
-        packed_base_value = chr(type) + packed_base_value_length_packed + packed_base_value
+        packed_base_value = colony.legacy.chr(type) + packed_base_value_length_packed + packed_base_value
 
         # returns the packed base value
         return packed_base_value
@@ -637,16 +637,16 @@ class BerStructure:
     def _pack_length(self, length):
         # in case the length is less than 0x80
         if length < 0x80:
-            return chr(length)
+            return colony.legacy.chr(length)
         else:
             # creates the substrate string
-            substrate = str()
+            substrate = colony.legacy.BYTES()
 
             # iterates while there is length available
             while length:
                 # calculates the substrate from the previous
                 # substrate
-                substrate = chr(length & 0xff) + substrate
+                substrate = colony.legacy.chr(length & 0xff) + substrate
 
                 # shifts the length eight bits
                 # to the right
@@ -660,14 +660,14 @@ class BerStructure:
                 # raises the packing error
                 raise exceptions.PackingError("length octets overflow: %d" % substrate_length)
 
-            return chr(0x80 | len(substrate)) + substrate
+            return colony.legacy.chr(0x80 | len(substrate)) + substrate
 
     def _unpack_length(self, packed_length):
         # sets the packed value as the substrate
         substrate = packed_length
 
         # retrieves the first octet
-        first_octet = ord(substrate[0])
+        first_octet = colony.legacy.ord(substrate[0])
 
         if first_octet == 0x80:
             size = 1
@@ -700,7 +700,7 @@ class BerStructure:
             for length_character in length_string:
                 # increments the length with the current
                 # length character value
-                length = (length << 8) | ord(length_character)
+                length = (length << 8) | colony.legacy.ord(length_character)
 
             # increments the size for the extra value
             size += 1
@@ -739,10 +739,10 @@ class BerStructure:
             del octets[0]
 
         # creates the octets list from the list of values
-        chracter_octets = [chr(value) for value in octets]
+        chracter_octets = [colony.legacy.chr(value) for value in octets]
 
         # creates the octets string joining the octet characters
-        octets_string = "".join(chracter_octets)
+        octets_string = b"".join(chracter_octets)
 
         # returns the octets string
         return octets_string
@@ -750,7 +750,7 @@ class BerStructure:
     def _pack_bit_string(self, value):
         # creates the bit string from the value and
         # and initial padding bits value of zero
-        bit_string = "\x00" + value
+        bit_string = b"\x00" + value
 
         # returns the octets string
         return bit_string
@@ -769,7 +769,7 @@ class BerStructure:
 
     def _pack_null(self, value):
         # sets the null as empty (null)
-        null = ""
+        null = b""
 
         # returns the null
         return null
@@ -793,7 +793,7 @@ class BerStructure:
             raise exceptions.PackingError("Initial sub identifier overflow: %s" % sub_identifier)
 
         # convert the sub identifier to character
-        sub_identifier_character = chr(sub_identifier)
+        sub_identifier_character = colony.legacy.chr(sub_identifier)
 
         # adds the sub identifier character to the octets
         octets.append(sub_identifier_character)
@@ -814,7 +814,7 @@ class BerStructure:
                 sub_identifier = sub_identifier & 0x7f
 
                 # convert the sub identifier to character
-                sub_identifier_character = chr(sub_identifier)
+                sub_identifier_character = colony.legacy.chr(sub_identifier)
 
                 # adds the sub identifier character to the octets
                 octets.append(sub_identifier_character)
@@ -831,7 +831,7 @@ class BerStructure:
                 first_sub_identifier = sub_identifier & 0x7f
 
                 # convert the first sub identifier to character
-                first_sub_identifier_character = chr(first_sub_identifier)
+                first_sub_identifier_character = colony.legacy.chr(first_sub_identifier)
 
                 # adds the first sub identifier value to the result
                 result.append(first_sub_identifier_character)
@@ -846,7 +846,7 @@ class BerStructure:
                     current_sub_identifier = 0x80 | (sub_identifier & 0x7f)
 
                     # converts the current sub identifier to character
-                    current_sub_identifier_character = chr(current_sub_identifier)
+                    current_sub_identifier_character = colony.legacy.chr(current_sub_identifier)
 
                     # insets the current sub identifier character in the result (list)
                     result.insert(0, current_sub_identifier_character)
@@ -856,13 +856,13 @@ class BerStructure:
 
                 # joins the result to obtain the sub
                 # identifier in character
-                sub_identifier_character = "".join(result)
+                sub_identifier_character = b"".join(result)
 
                 # adds the sub identifier character to the octets
                 octets.append(sub_identifier_character)
 
         # joins the octets to form the octets string
-        octets_string = "".join(octets)
+        octets_string = b"".join(octets)
 
         # sets the object identifier as the octets string
         object_identifier = octets_string
@@ -887,13 +887,13 @@ class BerStructure:
             sequence_list.append(packed_value)
 
         # joins the sequence list to retrieve the octets string
-        octets_string = "".join(sequence_list)
+        octets_string = b"".join(sequence_list)
 
         # returns the octets string
         return octets_string
 
     def _unpack_integer(self, packed_value):
-        octets = map(ord, packed_value)
+        octets = colony.legacy.eager(map(colony.legacy.ord, packed_value))
 
         if octets[0] & 0x80:
             integer = -1
@@ -908,7 +908,7 @@ class BerStructure:
 
     def _unpack_bit_string(self, packed_value):
         # retrieves the number of padding bits
-        number_padding_bits = ord(packed_value[0])
+        number_padding_bits = colony.legacy.ord(packed_value[0])
 
         # in case the number of padding bits is
         # not zero
@@ -943,7 +943,7 @@ class BerStructure:
         current_packed_value = packed_value[index]
 
         # retrieves the sub identifier
-        sub_identifier = ord(current_packed_value)
+        sub_identifier = colony.legacy.ord(current_packed_value)
 
         # retrieves the first value
         first_value = int(sub_identifier / 40)
@@ -968,7 +968,7 @@ class BerStructure:
             current_packed_value = packed_value[index]
 
             # retrieves the sub identifier
-            sub_identifier = ord(current_packed_value)
+            sub_identifier = colony.legacy.ord(current_packed_value)
 
             # in case the sub identifier is encoded
             # in only one byte
@@ -1000,7 +1000,7 @@ class BerStructure:
                     current_packed_value = packed_value[index]
 
                     # retrieves the next sub identifier
-                    next_sub_identifier = ord(current_packed_value)
+                    next_sub_identifier = colony.legacy.ord(current_packed_value)
 
                 # in case the index and the packed value
                 # length match
@@ -1205,7 +1205,7 @@ class BerStructure:
         extra_type_octet = packed_value[0]
 
         # converts the extra type octet to ordinal
-        extra_type = ord(extra_type_octet)
+        extra_type = colony.legacy.ord(extra_type_octet)
 
         # in case the extra type and the base
         # type are the same
