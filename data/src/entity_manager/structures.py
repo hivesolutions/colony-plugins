@@ -3095,7 +3095,7 @@ class EntityClass(object):
         # sets the entity class name as the class attribute for
         # the current map structure level, note that conversion
         # is made into unicode for compatibility reasons
-        map["_class"] = entity_class.__name__.decode("utf-8")
+        map["_class"] = colony.legacy.UNICODE(entity_class.__name__)
 
         # iterates over all the set of reserved names to update
         # the map value with their values
