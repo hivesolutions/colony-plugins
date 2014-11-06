@@ -177,6 +177,9 @@ class Random(colony.System):
         random = self.generate_random()
 
         # generates an md5 hash of the random value
+        # note that the random value is first encoded
+        # into a bytes value before the hash
+        random = colony.legacy.bytes(random)
         random_md5 = hashlib.md5(random)
 
         # returns the md5 hash of the random value

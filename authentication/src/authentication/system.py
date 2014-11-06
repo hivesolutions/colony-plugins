@@ -178,7 +178,8 @@ class Authentication(colony.System):
             file_system_encoding = sys.getfilesystemencoding()
 
             # decodes the traceback values using the file system encoding
-            formatted_traceback = [value.decode(file_system_encoding) for value in formatted_traceback]
+            formatted_traceback = [value.decode(file_system_encoding) if\
+                type(value) == colony.legacy.BYTES else value for value in formatted_traceback]
 
         # retrieves the exception class
         exception_class = exception.__class__
