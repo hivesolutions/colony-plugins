@@ -822,7 +822,7 @@ class ServiceHttpProxy(colony.System):
             try:
                 # retrieves the "next" value from
                 # the generator
-                value = generator.next()
+                value = next(generator)
             except StopIteration:
                 # returns none (nothing found)
                 return None
@@ -914,7 +914,7 @@ class ChunkHandler:
             try:
                 # retrieves the "next" value from
                 # the response generator
-                value = self.http_response_generator.next()
+                value = next(self.http_response_generator)
             except StopIteration:
                 # set the empty connection flag
                 self._empty_connection = True
