@@ -4756,7 +4756,8 @@ class EntityManager(object):
             field_name = _table_name + "." + filter_field_name
 
             # creates a new buffer for the filter field value
-            filter_field_value_buffer = colony.StringBuffer()
+            # note that the string buffer is string oriented
+            filter_field_value_buffer = colony.StringBuffer(btype = str)
 
             # sets the is first filter field
             # value flag
@@ -5655,7 +5656,7 @@ class EntityManager(object):
                 # with the entities "cache" map, note that the class
                 # attribute is set in the new map (properly decoded)
                 entities[current_class][id] = dict(
-                    _class = current_class_name.decode("utf-8"),
+                    _class = colony.legacy.UNICODE(current_class_name),
                     _mtime = current_modified_time,
                     mtime = current_modified_time
                 )
@@ -5778,7 +5779,7 @@ class EntityManager(object):
                             # class attribute is set in the new map, with
                             # the proper decoding action performed
                             entities[target_class][target_id_value] = dict(
-                                _class = target_class_name.decode("utf-8"),
+                                _class = colony.legacy.UNICODE(target_class_name),
                                 _mtime = target_modified_time,
                                 mtime = target_modified_time
                             )
