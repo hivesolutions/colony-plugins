@@ -187,7 +187,13 @@ class ImageTreatment(colony.System):
         new_image = PIL.Image.new(RGBA_VALUE, (width, height))
 
         # pastes the resized image into the new image
-        new_image.paste(resized_image, ((width - resized_image_width) / 2, (height - resized_image_height) / 2))
+        new_image.paste(
+            resized_image,
+            (
+                int((width - resized_image_width) / 2),
+                int((height - resized_image_height) / 2)
+            )
+        )
 
         # creates a new string buffer for the image
         string_buffer = colony.StringBuffer(False)
