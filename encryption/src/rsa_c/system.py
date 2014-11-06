@@ -398,7 +398,7 @@ class RsaStructure:
         @return: The encrypted message as an integer.
         """
 
-        if type(message) == int:
+        if type(message) == int and not type(message) == colony.legacy.LONG:
             return self._encrypt_integer(colony.legacy.LONG(message), e_value, n_value)
 
         if not type(message) == colony.legacy.LONG:
@@ -753,7 +753,7 @@ class RsaStructure:
                 integer_value <<= 8
 
             # retrieves the character original value
-            character_ordinal_value = ord(character_value)
+            character_ordinal_value = colony.legacy.ord(character_value)
 
             # increments the integer value with
             # the character ordinal value
