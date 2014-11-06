@@ -54,6 +54,7 @@ class SslPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "test",
         "encryption.ssl"
     ]
     dependencies = [
@@ -68,6 +69,7 @@ class SslPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import ssl_c
         self.system = ssl_c.Ssl(self)
+        self.test = ssl_c.SslTest(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

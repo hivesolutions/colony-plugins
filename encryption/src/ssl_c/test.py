@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,8 +37,25 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-from . import system
-from . import test
+import colony
 
-from .system import Ssl
-from .test import SslTest, SslBaseTestCase
+class SslTest(colony.Test):
+    """
+    The ssl infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
+    def get_bundle(self):
+        return (
+            SslBaseTestCase,
+        )
+
+class SslBaseTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "Ssl Plugin test case"
+
+    def test_sign(self):
+        print(self.system)
+        
