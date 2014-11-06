@@ -99,7 +99,7 @@ def _chunk(object, string_buffer):
 
     # retrieves the first object item to try to detect the kind
     # of mode for serialization that must be used
-    _object_item = object.next() if is_generator else object[0]
+    _object_item = next(object) if is_generator else object[0]
     _object_item_type = type(_object_item)
 
     # in case the type of the first object item is a list or a tuple

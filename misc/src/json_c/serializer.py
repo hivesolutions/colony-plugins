@@ -846,12 +846,12 @@ def loads(data):
             # the next one
             if not current_character_is_next:
                 # retrieves the next character
-                character = characters.next()
+                character = next(characters)
 
             # iterates while the character is a space character
             while character in (" ", "\t", "\r", "\n"):
                 # retrieves the next character
-                character = characters.next()
+                character = next(characters)
 
             # unsets the current character is next flag
             current_character_is_next = False
@@ -861,19 +861,19 @@ def loads(data):
                 value = ""
                 try:
                     # retrieves the next character
-                    character = characters.next()
+                    character = next(characters)
 
                     # iterates while the string is not finished
                     while not character == "\"":
                         if character == "\\":
                             # retrieves the next character
-                            character = characters.next()
+                            character = next(characters)
 
                             try:
                                 value += escape_char_to_char[character]
                             except KeyError:
                                 if character == "u":
-                                    hex_code = characters.next() + characters.next() + characters.next() + characters.next()
+                                    hex_code = next(characters) + next(characters) + next(characters) + next(characters)
                                     value += colony.legacy.unichr(int(hex_code, 16))
                                 else:
                                     # raises the json decode exception
@@ -882,7 +882,7 @@ def loads(data):
                             value += character
 
                         # retrieves the next character
-                        character = characters.next()
+                        character = next(characters)
                 except StopIteration:
                     # raises the json decode exception
                     raise exceptions.JsonDecodeException("Expected end of String")
@@ -940,28 +940,28 @@ def loads(data):
                     character
                 ]
 
-                character = characters.next()
+                character = next(characters)
                 num_conv = int
                 try:
                     while character in digits_list:
                         digits.append(character)
-                        character = characters.next()
+                        character = next(characters)
                     if character == ".":
                         num_conv = float
                         digits.append(character)
-                        character = characters.next()
+                        character = next(characters)
                         while character in digits_list:
                             digits.append(character)
-                            character = characters.next()
+                            character = next(characters)
                         if character.upper() == "E":
                             digits.append(character)
-                            character = characters.next()
+                            character = next(characters)
                             if character in ["+", "-"]:
                                 digits.append(character)
-                                character = characters.next()
+                                character = next(characters)
                                 while character in digits_list:
                                     digits.append(character)
-                                    character = characters.next()
+                                    character = next(characters)
                             else:
                                 raise exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
@@ -973,12 +973,12 @@ def loads(data):
                 current_character_is_next = True
 
             elif character in ("t", "f", "n"):
-                kw = character + characters.next() + characters.next() + characters.next()
+                kw = character + next(characters) + next(characters) + next(characters)
                 if kw == "null":
                     value = None
                 elif kw == "true":
                     value = True
-                elif kw == "fals" and characters.next() == "e":
+                elif kw == "fals" and next(characters) == "e":
                     value = False
                 else:
                     # raises the json decode exception
