@@ -58,4 +58,3 @@ class SslBaseTestCase(colony.ColonyTestCase):
 
     def test_sign(self):
         print(self.system)
-        
