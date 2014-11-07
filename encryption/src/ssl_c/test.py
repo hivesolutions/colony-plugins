@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import shutil
+import tempfile
+
 import colony
 
 class SslTest(colony.Test):
@@ -50,11 +54,31 @@ class SslTest(colony.Test):
             SslBaseTestCase,
         )
 
+    def set_up(self, test_case):
+        colony.Test.set_up(self, test_case)
+
+        test_case.dir_path = tempfile.mkdtemp()
+        test_case.private_path = os.path.join(test_case.dir_path, "private.key")
+        test_case.public_path = os.path.join(test_case.dir_path, "public.key")
+
+        system = self.plugin.system
+        ssl = system.create_structure({})
+        ssl.generate_keys(
+            test_case.private_path,
+            test_case.public_path,
+            number_bits = 32
+        )
+
+    def tear_down(self, test_case):
+        colony.Test.tear_down(self, test_case)
+
+        if os.path.isdir(test_case.dir_path): shutil.rmtree(test_case.dir_path)
+
 class SslBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
         return "Ssl Plugin test case"
 
-    def test_sign(self):
-        print(self.system)
+    def test_encrypt_base_64(self):
+        pass
