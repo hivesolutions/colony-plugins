@@ -46,10 +46,10 @@ from csv_c import exceptions
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding for csv files """
 
-NEWLINE_CHARACTER = "\n"
+NEWLINE_CHARACTER = b"\n"
 """ The newline character """
 
-SEPARATOR_CHARACTER = ";"
+SEPARATOR_CHARACTER = b";"
 """ The separator character """
 
 LIST_TYPES = (list, tuple, types.GeneratorType)
@@ -117,6 +117,12 @@ def _chunk(object, string_buffer):
         attribute_names = _attribute_names(_object_item, object = [] if is_generator else object)
         header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
+        # verifies if the header is encoded as an unicode string
+        # if that's the case it must be converted into a raw
+        # bytes string using the default encoding for writing
+        is_unicode = type(header_value) == colony.legacy.UNICODE
+        if is_unicode: header_value = header_value.encode(DEFAULT_ENCODING)
+
         # writes the header value to the string buffer
         string_buffer.write(header_value)
 
@@ -170,6 +176,12 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
         attribute_value_encoded = attribute_value_type == colony.legacy.UNICODE and\
             attribute_value.encode(DEFAULT_ENCODING) or\
             (attribute_value and str(attribute_value))
+
+        # re-evaluates the attribute value (encoded) so that if it is still
+        # decoded (possible for python 3 and integers, etc) it re-encodes
+        # the values using the default encoding (as supposed)
+        is_unicode = type(attribute_value_encoded) == colony.legacy.UNICODE
+        if is_unicode: attribute_value_encoded = attribute_value_encoded.encode(DEFAULT_ENCODING)
 
         # writes the encoded attribute value (in case
         # the value is valid)
