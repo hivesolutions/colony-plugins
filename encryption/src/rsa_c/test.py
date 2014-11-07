@@ -87,3 +87,7 @@ class RsaBaseTestCase(colony.ColonyTestCase):
 
         result = self.rsa._extended_euclid_greatest_common_divisor(35713992551911994100259367902610573100, 1585944697)
         self.assertEqual(result, (1, -157708412, 3551446063785330185006617352461492633))
+
+    def test__string_to_integer(self):
+        result = self.rsa._string_to_integer("\x18\x1e\xf2&\xbf\xec\xe0\x94")
+        self.assertEqual(result, 1738092754454241428)
