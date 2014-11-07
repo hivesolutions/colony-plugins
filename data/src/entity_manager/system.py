@@ -3723,7 +3723,7 @@ class EntityManager(object):
         # retrieves the items map items and then in case the
         # the order names flag is set sorts them according to
         # the default sorting order
-        items_items = items_map.items()
+        items_items = colony.legacy.items(items_map)
         if order_names: items_items.sort(key = self.key_items)
 
         # iterates over all the entity classes and table fields
@@ -3801,7 +3801,7 @@ class EntityManager(object):
             # retrieves the relations map items and then in case the
             # the order names flag is set sorts them according to
             # the default sorting order
-            relations_items = relations_map.items()
+            relations_items = colony.legacy.items(relations_map)
             if order_names: relations_items.sort(key = self.key_items)
 
             # iterates over each of the various parent classes relations
@@ -3874,7 +3874,7 @@ class EntityManager(object):
                     # items list of tuples and then in case the order names
                     # flag is set sorts the target items accordingly
                     target_items = colony.legacy.items(target_items_map)
-                    if order_names: target_items.sort()
+                    if order_names: target_items.sort(key = lambda item: item[0].__name__)
 
                     # iterates over all the table fields of the current
                     # entity to put them into the select query
