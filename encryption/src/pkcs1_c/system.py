@@ -188,6 +188,11 @@ class Pkcs1Structure:
         # generates the public and private key pem values
         private_key_pem, public_key_pem = self.generate_keys_pem(keys, version)
 
+        # converts both of the keys into a byte compatible stream
+        # so that it's possible to properly write them to the files
+        private_key_pem = colony.legacy.bytes(private_key_pem)
+        public_key_pem = colony.legacy.bytes(public_key_pem)
+
         # writes the private and public key files
         self._write_file(private_key_file_path, private_key_pem)
         self._write_file(public_key_file_path, public_key_pem)
@@ -286,7 +291,9 @@ class Pkcs1Structure:
         private_key_der = self.generate_private_key_der(keys, version)
 
         # encodes the private key der in base 64
+        private_key_der = colony.legacy.bytes(private_key_der)
         private_key_der_encoded = base64.b64encode(private_key_der)
+        private_key_der_encoded = colony.legacy.str(private_key_der_encoded)
 
         # creates the string value list
         string_value_list = []
@@ -326,7 +333,9 @@ class Pkcs1Structure:
         public_key_der = self.generate_public_key_der(keys)
 
         # encodes the public key der in base 64
+        public_key_der = colony.legacy.bytes(public_key_der)
         public_key_der_encoded = base64.b64encode(public_key_der)
+        public_key_der_encoded = colony.legacy.str(public_key_der_encoded)
 
         # creates the string value list
         string_value_list = []
