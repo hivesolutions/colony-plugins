@@ -57,16 +57,17 @@ class SslTest(colony.Test):
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
 
+        system = self.plugin.system
+
         test_case.dir_path = tempfile.mkdtemp()
         test_case.private_path = os.path.join(test_case.dir_path, "private.key")
         test_case.public_path = os.path.join(test_case.dir_path, "public.key")
 
-        system = self.plugin.system
-        ssl = system.create_structure({})
-        ssl.generate_keys(
+        test_case.ssl = system.create_structure({})
+        test_case.ssl.generate_keys(
             test_case.private_path,
             test_case.public_path,
-            number_bits = 32
+            number_bits = 128
         )
 
     def tear_down(self, test_case):
@@ -74,11 +75,17 @@ class SslTest(colony.Test):
 
         if os.path.isdir(test_case.dir_path): shutil.rmtree(test_case.dir_path)
 
+        test_case.dir_path = None
+        test_case.private_path = None
+        test_case.public_path = None
+        test_case.ssl = None
+
 class SslBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
         return "Ssl Plugin test case"
 
-    def test_encrypt_base_64(self):
-        pass
+    def test__relatively_prime(self):
+        result = self.ssl.encrypt_base_64(self.public_path, "Hello World")
+        #self.assertEqual(result, "AG0XpKTXRpbnC/0Dp0E9PQ==\n")
