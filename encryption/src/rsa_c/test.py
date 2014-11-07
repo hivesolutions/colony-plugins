@@ -65,3 +65,15 @@ class RsaBaseTestCase(colony.ColonyTestCase):
     def test__relatively_prime(self):
         result = self.rsa._relatively_prime(3, 1)
         self.assertEqual(result, True)
+
+        result = self.rsa._relatively_prime(
+            1303455847,
+            80677199572618450341522439921473626971
+        )
+        self.assertEqual(result, True)
+
+        result = self.rsa._relatively_prime(
+            130347,
+            80677199572618450341522439921472697123
+        )
+        self.assertEqual(result, False)
