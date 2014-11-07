@@ -69,3 +69,4 @@ Colony is an open-source project licensed under the [GNU General Public License 
 ## Build Automation
 
 [![Build Status](https://travis-ci.org/hivesolutions/colony_plugins.png?branch=master)](https://travis-ci.org/hivesolutions/colony_plugins)
+[![Coverage Status](https://coveralls.io/repos/hivesolutions/colony_plugins/badge.png?branch=master)](https://coveralls.io/r/hivesolutions/colony_plugins?branch=master)
