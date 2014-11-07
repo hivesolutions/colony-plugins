@@ -95,7 +95,7 @@ class SslBaseTestCase(colony.ColonyTestCase):
         result = self.ssl.encrypt_base_64(self.public_path, self._pad("Hello World"))
         self.assertEqual(result, "Ar8fujgbooIjkjBLqqmb5lDkVoLKd/7kOFp0foQTVew=\n")
 
-        result = self.ssl.decrypt_base_64(self.private_path, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
+        result = self.ssl.decrypt_base_64(self.private_path, "Ar8fujgbooIjkjBLqqmb5lDkVoLKd/7kOFp0foQTVew=\n")
         self.assertEqual(result, "Hello World")
 
     def _pad(self, message, size = 256):
