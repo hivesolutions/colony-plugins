@@ -374,7 +374,9 @@ class Pkcs1Structure:
         # decodes the private key pem from base 64, obtaining
         # private key der in binary format, then loads it retrieving
         # the return tuple to be returned to the caller method
+        private_key_pem_contents_joined = colony.legacy.bytes(private_key_pem_contents_joined)
         private_key_der = base64.b64decode(private_key_pem_contents_joined)
+        private_key_der = colony.legacy.str(private_key_der)
         return_tuple = self.load_private_key_der(private_key_der)
 
         # returns the return tuple
@@ -395,7 +397,9 @@ class Pkcs1Structure:
         # decodes the public key pem from base 64, obtaining
         # public key der in binary format the loads it retrieving
         # the keys tuple to be returned to the caller method
+        public_key_pem_match_contents_joined = colony.legacy.bytes(public_key_pem_match_contents_joined)
         public_key_der = base64.b64decode(public_key_pem_match_contents_joined)
+        public_key_der = colony.legacy.str(public_key_der)
 
         # loads the public key der, retrieving the keys tuple
         keys = self.load_public_key_der(public_key_der)
