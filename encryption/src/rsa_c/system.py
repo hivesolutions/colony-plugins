@@ -629,7 +629,7 @@ class RsaStructure:
         j_value = self._jacobi(x_value, n_value) % n_value
 
         # calculates the f value
-        f_value = pow(x_value, (n_value - 1) / 2, n_value)
+        f_value = pow(x_value, (n_value - 1) // 2, n_value)
 
         # in case the j value and the f value are the same,
         # returns invalid as it is not considered to be a valid
