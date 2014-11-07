@@ -38,6 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import string
+import random
 import tempfile
 
 import colony
@@ -91,12 +93,19 @@ class SslBaseTestCase(colony.ColonyTestCase):
         result = self.ssl.decrypt_base_64(private_path, result_encrypt)
         self.assertEqual(result, "Hello World")
 
+        for _index in range(0, 128):
+            print(_index)
+            value = "".join(random.choice(string.ascii_lowercase) for _index in range(12))
+            result_encrypt = self.ssl.encrypt_base_64(public_path, value)
+            result = self.ssl.decrypt_base_64(private_path, result_encrypt)
+            self.assertEqual(result, value)
+
     def test_encrypt_base_64(self):
         result = self.ssl.encrypt_base_64(self.public_path, self._pad("Hello World"))
         self.assertEqual(result, "Ar8fujgbooIjkjBLqqmb5lDkVoLKd/7kOFp0foQTVew=\n")
 
         result = self.ssl.decrypt_base_64(self.private_path, "Ar8fujgbooIjkjBLqqmb5lDkVoLKd/7kOFp0foQTVew=\n")
-        self.assertEqual(result, "Hello World")
+        self.assertEqual(result, self._pad("Hello World"))
 
     def _pad(self, message, size = 256):
         size_b = size // 8
