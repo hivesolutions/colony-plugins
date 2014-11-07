@@ -325,7 +325,7 @@ class Visitor:
             position_y = int(self.get_context("y", "0"))
             block_width = int(self.get_context("width", "0"))
             block_height = int(self.get_context("height", "0"))
-            
+
             # endures that the font name is properly encoded
             # as a byte string to avoid packing problems
             font_name = colony.legacy.bytes(font_name)
