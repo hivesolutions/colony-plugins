@@ -49,20 +49,19 @@ DEFAULT_NUMBER_BITS = 1024
 
 class Ssl(colony.System):
     """
-    The ssl class.
+    The ssl class, responsible for the creation of
+    the associated structure for manipulation.
     """
 
     def create_structure(self, parameters):
-        # retrieves the rsa plugin
+        # retrieves the required plugins for the creation
+        # of the associated (ssl) structure
         rsa_plugin = self.plugin.rsa_plugin
-
-        # retrieves the pkcs1 plugin
         pkcs1_plugin = self.plugin.pkcs1_plugin
 
-        # creates the ssl structure
+        # creates the ssl structure with the provided plugins
+        # and then returns it to the caller method
         ssl_structure = SslStructure(rsa_plugin, pkcs1_plugin)
-
-        # returns the ssl structure
         return ssl_structure
 
 class SslStructure:
