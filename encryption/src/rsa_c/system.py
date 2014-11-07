@@ -721,7 +721,7 @@ class RsaStructure:
         q_value = abs(a_value % b_value)
 
         # calculates the r value
-        r_value = colony.legacy.LONG(a_value / b_value)
+        r_value = colony.legacy.LONG(a_value // b_value)
 
         # retrieves the extended euclid greatest common divisor for b value and q value
         d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(b_value, q_value)
