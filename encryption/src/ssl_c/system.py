@@ -122,20 +122,21 @@ class SslStructure:
         # returns the encrypted message in base 64
         return message_e_base_64
 
-    def decrypt_base_64(self, private_key_path, message_e):
+    def decrypt_base_64(self, private_key_path, message_e_base_64):
+        # decodes the encoded message from the original base 64
+        # version so that it may be decrypted correctly
+        message_e_base_64 = colony.legacy.bytes(message_e_base_64)
+        message_e = base64.b64decode(message_e_base_64)
+        message_e = colony.legacy.str(message_e)
+        message_e = self._join_base_64(message_e)
+
         # decrypts the encrypted message, retrieving the original
         # message, according to the rsa and pkcs specification
         message = self.decrypt(private_key_path, message_e)
 
-        # encodes the message into base 64 and splits
-        # the various components from it
-        message = colony.legacy.bytes(message)
-        message_base_64 = base64.b64encode(message)
-        message_base_64 = colony.legacy.str(message_base_64)
-        message_base_64 = self._split_base_64(message_base_64)
-
-        # returns the decrypted message in base 64
-        return message_base_64
+        # returns the decrypted message as plain text as
+        # in the original version of the buffer
+        return message
 
     def sign_base_64(self, private_key_path, hash_algorithm_name, base_string_value):
         # signs the base string value using the hash algorithm
