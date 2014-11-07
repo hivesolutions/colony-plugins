@@ -3743,7 +3743,7 @@ class EntityManager(object):
             # iterates over all the table fields of the current
             # entity to put them into the select query
             for field_name in table_fields:
-                # in case the (required) field names are defined and the
+                # in case the (required) field names is defined and the
                 # current field name is not contained in the set no need
                 # to continue (unwanted field name)
                 if names and not field_name in names: continue
@@ -3752,8 +3752,8 @@ class EntityManager(object):
                 # name is not present in it continues the iteration
                 # otherwise in case the names list is defined adds
                 # the field name to the already visited names
-                if names and field_name in _names: continue
-                elif names: _names.append(field_name)
+                if order_names and field_name in _names: continue
+                elif order_names: _names.append(field_name)
 
                 # in case the is minimal flag is set and the current
                 # field is not the id field (must avoid retrieval)
@@ -3900,8 +3900,8 @@ class EntityManager(object):
                             # name is not present in it continues the iteration
                             # otherwise in case the names list is defined adds
                             # the field name to the already visited names
-                            if names and field_name in _names: continue
-                            elif names: _names.append(field_name)
+                            if order_names and field_name in _names: continue
+                            elif order_names: _names.append(field_name)
 
                             # in case the current field name refers a relation
                             # it cannot be included in the query collision of
