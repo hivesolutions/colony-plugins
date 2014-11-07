@@ -86,6 +86,6 @@ class SslBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Ssl Plugin test case"
 
-    def test__relatively_prime(self):
+    def test_encrypt_base_64(self):
         result = self.ssl.encrypt_base_64(self.public_path, "Hello World")
         #self.assertEqual(result, "AG0XpKTXRpbnC/0Dp0E9PQ==\n")
