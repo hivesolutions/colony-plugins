@@ -64,6 +64,7 @@ class RsaPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import rsa_c
         self.system = rsa_c.Rsa(self)
+        self.test = rsa_c.RsaTest(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

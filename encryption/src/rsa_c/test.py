@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,10 +37,31 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-from . import exceptions
-from . import system
-from . import test
+import colony
 
-from .exceptions import RsaException, KeyGenerationError
-from .system import Rsa
-from .test import RsaTest, RsaBaseTestCase
+class RsaTest(colony.Test):
+    """
+    The rsa infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
+    def get_bundle(self):
+        return (
+            RsaBaseTestCase,
+        )
+
+    def set_up(self, test_case):
+        colony.Test.set_up(self, test_case)
+
+        system = self.plugin.system
+        test_case.rsa = system.create_structure({})
+
+class RsaBaseTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "Rsa Plugin test case"
+
+    def test_encrypt_base_64(self):
+        result = self.rsa._relatively_prime(3, 1)
+        self.assertEqual(result, True)

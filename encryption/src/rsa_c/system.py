@@ -310,13 +310,13 @@ class RsaStructure:
         modulus_number_bits_integer = int(modulus_number_bits)
 
         # converts the modulus number of bits to bytes
-        modulus_number_bytes = modulus_number_bits_integer / 8
+        modulus_number_bytes = modulus_number_bits_integer // 8
 
         # retrieves the message length
         message_length = len(message)
 
         # calculates the message block count (number of message blocks)
-        message_block_count = message_length / modulus_number_bytes
+        message_block_count = message_length // modulus_number_bytes
 
         # in case the modulus of the message length
         # and the modulus number bytes is greater than zero
@@ -468,34 +468,40 @@ class RsaStructure:
         # calculates the phi modulus
         phi_n_value = (p_value - 1) * (q_value - 1)
 
-        # iterates continuously to find
-        # a valid exponent
+        # iterates continuously to find a valid exponent as requested
+        # by the calling of the method (base activity)
         while True:
             # make sure e has enough bits so we ensure "wrapping" through
             # modulus (n value)
-            e_value = self._generate_prime_number(max(8, number_bits / 2))
+            e_value = self._generate_prime_number(max(8, number_bits // 2))
 
             # checks if the exponent and the modulus are relative primes
             # and also checks if the exponent and the phi modulus are relative
-            # primes
+            # primes if they are a valid exponent is found (breaks loop)
             if self._relatively_prime(e_value, n_value) and self._relatively_prime(e_value, phi_n_value):
-                # breaks the loop
                 break
 
         # retrieves the result of the extended euclid greatest common divisor
         d_value, i_value, _j_value = self._extended_euclid_greatest_common_divisor(e_value, phi_n_value)
 
-        # in case the greatest common divisor between both
-        # is not one (not relative primes)
+        # in case the greatest common divisor between both is not one
+        # (not relative primes), raises the key generation error
         if not d_value == 1:
-            # raises the key generation error
-            raise exceptions.KeyGenerationError("The public exponent '%d' and the phi modulus '%d' are not relative primes" % (e_value, phi_n_value))
+            raise exceptions.KeyGenerationError(
+                "The public exponent '%d' and the phi modulus '%d'"
+                "are not relative primes" % (e_value, phi_n_value)
+            )
+
+        print((e_value * i_value) % phi_n_value)
 
         # in case the test for multiplicative inverse
-        # modulo fails
+        # modulo fails, raises the key generation error
         if not (e_value * i_value) % phi_n_value == 1:
-            # raises the key generation error
-            raise exceptions.KeyGenerationError("The public exponent '%d' and private exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value))
+            raise exceptions.KeyGenerationError(
+                "The public exponent '%d' and private exponent '%d' are not multiplicative"
+                "inverse modulo of phi modulus '%d'" %\
+                (e_value, i_value, phi_n_value)
+            )
 
         # creates a tuple with the keys
         keys_tuple = (
@@ -695,10 +701,9 @@ class RsaStructure:
         """
 
         # retrieves the greatest common divisor between the
-        # two values
+        # two values and then returns if such value is one
+        # if that's the case the values are relative primes
         divisor = colony.greatest_common_divisor(first_value, second_value)
-
-        # returns if the divisor is one (relatively prime)
         return divisor == 1
 
     def _extended_euclid_greatest_common_divisor(self, a_value, b_value):
