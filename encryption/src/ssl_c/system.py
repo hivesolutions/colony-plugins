@@ -93,19 +93,18 @@ class SslStructure:
         self.pkcs1_plugin = pkcs1_plugin
 
     def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
-        # creates the rsa structure
+        # creates both structures that are required for
+        # the generation of the keys an packing of them
         rsa_structure = self.rsa_plugin.create_structure({})
-
-        # creates the pkcs1 structure
         pkcs1_structure = self.pkcs1_plugin.create_structure({})
 
-        # generates the keys in the rsa structure
+        # generates the keys in the rsa structure and then
+        # retrieves them as plain strings, to be encoded
         rsa_structure.generate_keys(number_bits)
-
-        # retrieves the keys from the rsa structure
         keys = rsa_structure.get_keys()
 
-        # writes the keys in pem format
+        # writes the keys in pem format to the target file
+        # paths, so that they may be used latter
         pkcs1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
     def encrypt_base_64(self, public_key_path, message):
