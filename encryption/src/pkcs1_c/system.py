@@ -242,6 +242,10 @@ class Pkcs1Structure:
         return message
 
     def sign(self, keys, hash_algorithm_name, string_value):
+        # ensures that the provided string value is encoded
+        # as a byte based string (may be a void execution)
+        string_value = colony.legacy.bytes(string_value)
+
         # creates a new hash using the given hash algorithm name
         # updates it with the provided string value and retrieves
         # the digest from it
@@ -260,6 +264,10 @@ class Pkcs1Structure:
         # this is considered the unpack operation and
         # should be compliant with the pkcs1 specification
         hash_algorithm_name, digest_value = self._verify(signature_verified)
+
+        # ensures that the provided string value is encoded
+        # as a byte based string (may be a void execution)
+        string_value = colony.legacy.bytes(string_value)
 
         # creates a new hash using the given hash algorithm name
         # updates it with the provided string value to be verified
@@ -993,8 +1001,10 @@ class Pkcs1Structure:
         arguments_value = arguments[VALUE_VALUE]
 
         # retrieves the digest and the digest value
+        # note that this value is ensured to be bytes oriented
         digest = signature_value_value[1]
         digest_value = digest[VALUE_VALUE]
+        digest_value = colony.legacy.bytes(digest_value)
 
         # in case the arguments value is not none
         # must raise an invalid format exception
@@ -1005,11 +1015,8 @@ class Pkcs1Structure:
         hash_algorithm_name = TUPLES_HASH_OBJECT_IDENTIFIERS_MAP[algorithm_value]
 
         # creates the return tuple with the hash algorithm name
-        # and the digest value
-        return_tuple = (
-            hash_algorithm_name,
-            digest_value
-        )
+        # and the digest value, this is considered the verify result
+        return_tuple = (hash_algorithm_name, digest_value)
 
         # returns the return value
         return return_tuple
