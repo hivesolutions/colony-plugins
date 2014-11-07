@@ -158,7 +158,9 @@ class SslStructure:
         # characters and then decodes the signature from base 64
         # back to plain text
         signature_base_64 = self._join_base_64(signature_base_64)
+        signature_base_64 = colony.legacy.bytes(signature_base_64)
         signature = base64.b64decode(signature_base_64)
+        signature = colony.legacy.str(signature)
 
         # verifies the signature against the base string value,
         # and returns the return value
