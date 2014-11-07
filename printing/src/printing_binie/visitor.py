@@ -215,10 +215,15 @@ class Visitor:
             printing_document_width = hasattr(node, "width") and int(node.width) or 0
             printing_document_height = hasattr(node, "height") and int(node.height) or 0
 
+            # makes sure that the format of the document name
+            # is appropriate for the packing to be performed
+            printing_document_name = str(printing_document_name)
+            printing_document_name = colony.legacy.bytes(printing_document_name)
+
             # packs the header value as a binary string
             header = struct.pack(
                 "<256sIII",
-                str(printing_document_name),
+                printing_document_name,
                 printing_document_width,
                 printing_document_height,
                 len(self.elements_list)
@@ -320,6 +325,10 @@ class Visitor:
             position_y = int(self.get_context("y", "0"))
             block_width = int(self.get_context("width", "0"))
             block_height = int(self.get_context("height", "0"))
+            
+            # endures that the font name is properly encoded
+            # as a byte string to avoid packing problems
+            font_name = colony.legacy.bytes(font_name)
 
             # sets the default values for the text weight and for
             # the italic enumeration
@@ -365,7 +374,7 @@ class Visitor:
                 len(text_encoded) + 1
             )
             element += text_encoded
-            element += "\0"
+            element += b"\0"
             self.elements_list.append((1, element))
 
             # in case the current text height is bigger than the current
