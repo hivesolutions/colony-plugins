@@ -492,8 +492,6 @@ class RsaStructure:
                 "are not relative primes" % (e_value, phi_n_value)
             )
 
-        print((e_value * i_value) % phi_n_value)
-
         # in case the test for multiplicative inverse
         # modulo fails, raises the key generation error
         if not (e_value * i_value) % phi_n_value == 1:
