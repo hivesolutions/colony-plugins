@@ -3738,7 +3738,7 @@ class EntityManager(object):
             # in case the names should be ordered retrieves the
             # table fields keys and then sorts them according to
             # the default order (expensive operation)
-            if order_names: table_fields = table_fields.keys(); table_fields.sort()
+            if order_names: table_fields = colony.legacy.keys(table_fields); table_fields.sort()
 
             # iterates over all the table fields of the current
             # entity to put them into the select query
@@ -3815,7 +3815,7 @@ class EntityManager(object):
                 # in case the names should be ordered retrieves the
                 # table relations keys and then sorts them according to
                 # the default order (expensive operation)
-                if order_names: table_relations = table_relations.keys(); table_relations.sort()
+                if order_names: table_relations = colony.legacy.keys(table_relations); table_relations.sort()
 
                 # iterates over all the table fields of the current
                 # entity to put them into the select query
@@ -3873,7 +3873,7 @@ class EntityManager(object):
                     # retrieves the items from the target items as the target
                     # items list of tuples and then in case the order names
                     # flag is set sorts the target items accordingly
-                    target_items = target_items_map.items()
+                    target_items = colony.legacy.items(target_items_map)
                     if order_names: target_items.sort()
 
                     # iterates over all the table fields of the current
@@ -3886,7 +3886,7 @@ class EntityManager(object):
                         # in case the names should be ordered retrieves the
                         # table fields keys and then sorts them according to
                         # the default order (expensive operation)
-                        if order_names: table_fields = table_fields.keys(); table_fields.sort()
+                        if order_names: table_fields = colony.legacy.keys(table_fields); table_fields.sort()
 
                         # iterates over all the table fields of the current
                         # entity to put them into the select query
@@ -6333,7 +6333,7 @@ class EntityManager(object):
         # relations to be loaded in an eager fashion
         # as the complete set of to many relations in
         # in the entity class
-        eager = entity_class.get_to_many().keys()
+        eager = colony.legacy.eager(entity_class.get_to_many())
 
         # retrieves the name of the id attribute for the entity class
         # and then retrieves the value of it from the various entity
