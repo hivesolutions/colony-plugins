@@ -292,7 +292,7 @@ class SslStructure:
 
     def _join_base_64(self, string_value):
         # removes the newline characters to obtain
-        # the plain base 64 value (onw line only)
+        # the plain base 64 value (one line only)
         string_value_joined = string_value.replace("\n", "")
 
         # returns the string value joined
