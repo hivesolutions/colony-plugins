@@ -4694,15 +4694,11 @@ class rset(list):
         if index == -1:
             raise RuntimeError("Attribute '%s' not found for result set header" % name)
 
-        # creates the sort operation lambda function creating
-        # a clojure on the index of the attribute
-        sorter = lambda x, y: int(x[index] - y[index])
-
         # retrieves the complete set of data and sorts it using
         # the just created sorter operation then sets the data
         # for the current instance with the result of it
         data = self.data()
-        data.sort(sorter, reverse = not ascending)
+        data.sort(key = lambda item: item[index], reverse = not ascending)
         self.data_s(data)
 
     def data(self):
