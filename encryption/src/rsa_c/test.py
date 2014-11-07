@@ -91,3 +91,9 @@ class RsaBaseTestCase(colony.ColonyTestCase):
     def test__string_to_integer(self):
         result = self.rsa._string_to_integer("\x18\x1e\xf2&\xbf\xec\xe0\x94")
         self.assertEqual(result, 1738092754454241428)
+        
+        result = self.rsa._string_to_integer("\xf0\x95\xabR\xde\x9b_\xd7")
+        self.assertEqual(result, 17335950713042984919)
+
+        result = self.rsa._string_to_integer("O\xe2\x9au\xe1")
+        self.assertEqual(result, 343104189921)
