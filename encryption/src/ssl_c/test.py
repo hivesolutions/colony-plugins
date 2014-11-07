@@ -57,18 +57,16 @@ class SslTest(colony.Test):
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
 
+        manager = self.plugin.manager
         system = self.plugin.system
 
-        test_case.dir_path = tempfile.mkdtemp()
-        test_case.private_path = os.path.join(test_case.dir_path, "private.key")
-        test_case.public_path = os.path.join(test_case.dir_path, "public.key")
+        plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
+        resources_path = os.path.join(plugin_path, "ssl_c", "resources")
+
+        test_case.private_path = os.path.join(resources_path, "private.key")
+        test_case.public_path = os.path.join(resources_path, "public.key")
 
         test_case.ssl = system.create_structure({})
-        test_case.ssl.generate_keys(
-            test_case.private_path,
-            test_case.public_path,
-            number_bits = 128
-        )
 
     def tear_down(self, test_case):
         colony.Test.tear_down(self, test_case)
@@ -86,6 +84,20 @@ class SslBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Ssl Plugin test case"
 
+    def test_generate_keys(self):
+        dir_path = tempfile.mkdtemp()
+        private_path = os.path.join(dir_path, "private.key")
+        public_path = os.path.join(dir_path, "public.key")
+
+        self.ssl.generate_keys(private_path, public_path, number_bits = 256)
+
+        result_encrypt = self.ssl.encrypt_base_64(public_path, "Hello World")
+        result = self.ssl.decrypt_base_64(private_path, result_encrypt)
+        self.assertEqual(result, "Hello World")
+
     def test_encrypt_base_64(self):
         result = self.ssl.encrypt_base_64(self.public_path, "Hello World")
-        #self.assertEqual(result, "AG0XpKTXRpbnC/0Dp0E9PQ==\n")
+        self.assertEqual(result, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
+
+        result = self.ssl.decrypt_base_64(self.public_path, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
+        self.assertEqual(result, "Hello World")
