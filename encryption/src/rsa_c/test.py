@@ -62,6 +62,6 @@ class RsaBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Rsa Plugin test case"
 
-    def test_encrypt_base_64(self):
+    def test__relatively_prime(self):
         result = self.rsa._relatively_prime(3, 1)
         self.assertEqual(result, True)
