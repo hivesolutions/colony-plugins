@@ -86,15 +86,21 @@ class SslBaseTestCase(colony.ColonyTestCase):
         private_path = os.path.join(dir_path, "private.key")
         public_path = os.path.join(dir_path, "public.key")
 
-        self.ssl.generate_keys(private_path, public_path, number_bits = 256)
+        self.ssl.generate_keys(private_path, public_path, number_bits = 128)
 
         result_encrypt = self.ssl.encrypt_base_64(public_path, "Hello World")
         result = self.ssl.decrypt_base_64(private_path, result_encrypt)
         self.assertEqual(result, "Hello World")
 
     def test_encrypt_base_64(self):
-        result = self.ssl.encrypt_base_64(self.public_path, "Hello World")
-        self.assertEqual(result, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
+        result = self.ssl.encrypt_base_64(self.public_path, self._pad("Hello World"))
+        self.assertEqual(result, "Ar8fujgbooIjkjBLqqmb5lDkVoLKd/7kOFp0foQTVew=\n")
 
         result = self.ssl.decrypt_base_64(self.private_path, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
         self.assertEqual(result, "Hello World")
+
+    def _pad(self, message, size = 256):
+        size_b = size // 8
+        message_s = len(message)
+        pad_size = size_b - message_s - 3
+        return message + "\x00" * pad_size
