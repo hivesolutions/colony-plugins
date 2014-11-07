@@ -10,5 +10,5 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
-script: coverage run PLUGIN_PATH="./*/src;./*/*src" colony test
+script: PLUGIN_PATH="./*/src;./*/*src" coverage run colony test
 after_success: coveralls
