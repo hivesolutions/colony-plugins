@@ -77,3 +77,13 @@ class RsaBaseTestCase(colony.ColonyTestCase):
             80677199572618450341522439921472697123
         )
         self.assertEqual(result, False)
+
+    def test__extended_euclid_greatest_common_divisor(self):
+        result = self.rsa._extended_euclid_greatest_common_divisor(171, 10)
+        self.assertEqual(result, (1, 1, -17))
+
+        result = self.rsa._extended_euclid_greatest_common_divisor(418297, 225168)
+        self.assertEqual(result, (1, -22391, 41596))
+
+        result = self.rsa._extended_euclid_greatest_common_divisor(35713992551911994100259367902610573100, 1585944697)
+        self.assertEqual(result, (1, -157708412, 3551446063785330185006617352461492633))
