@@ -94,7 +94,6 @@ class SslBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, "Hello World")
 
         for _index in range(0, 128):
-            print(_index)
             value = "".join(random.choice(string.ascii_lowercase) for _index in range(12))
             result_encrypt = self.ssl.encrypt_base_64(public_path, value)
             result = self.ssl.decrypt_base_64(private_path, result_encrypt)

@@ -828,8 +828,7 @@ class Pkcs1Structure:
         # indicating the invalid padding
         message_pad = message_pad[2:]
         start_index = message_pad.find("\x00")
-        if start_index == -1:
-            raise exceptions.InvalidFormatException("invalid padding")
+        if start_index == -1: raise exceptions.InvalidFormatException("invalid padding")
 
         # retrieve the message itself from the "discovered"
         # start index, this is the message without padding

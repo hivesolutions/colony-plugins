@@ -125,10 +125,10 @@ class SslStructure:
     def decrypt_base_64(self, private_key_path, message_e_base_64):
         # decodes the encoded message from the original base 64
         # version so that it may be decrypted correctly
+        message_e_base_64 = self._join_base_64(message_e_base_64)
         message_e_base_64 = colony.legacy.bytes(message_e_base_64)
         message_e = base64.b64decode(message_e_base_64)
         message_e = colony.legacy.str(message_e)
-        message_e = self._join_base_64(message_e)
 
         # decrypts the encrypted message, retrieving the original
         # message, according to the rsa and pkcs specification
@@ -292,7 +292,7 @@ class SslStructure:
 
     def _join_base_64(self, string_value):
         # removes the newline characters to obtain
-        # the plain base 64 value
+        # the plain base 64 value (onw line only)
         string_value_joined = string_value.replace("\n", "")
 
         # returns the string value joined
