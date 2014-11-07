@@ -71,9 +71,6 @@ class SslTest(colony.Test):
     def tear_down(self, test_case):
         colony.Test.tear_down(self, test_case)
 
-        if os.path.isdir(test_case.dir_path): shutil.rmtree(test_case.dir_path)
-
-        test_case.dir_path = None
         test_case.private_path = None
         test_case.public_path = None
         test_case.ssl = None
@@ -99,5 +96,5 @@ class SslBaseTestCase(colony.ColonyTestCase):
         result = self.ssl.encrypt_base_64(self.public_path, "Hello World")
         self.assertEqual(result, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
 
-        result = self.ssl.decrypt_base_64(self.public_path, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
+        result = self.ssl.decrypt_base_64(self.private_path, "DMD1ek1EueXwZosk1OI+Sf0+/tfrT8F1b23k1pDCqqQ=\n")
         self.assertEqual(result, "Hello World")
