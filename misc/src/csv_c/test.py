@@ -58,8 +58,6 @@ class CsvBaseTestCase(colony.ColonyTestCase):
 
     def test_dumps(self):
         pass
-    
+
     def test_loads(self):
         pass
-
-    
