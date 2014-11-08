@@ -70,7 +70,7 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     # string buffer and then in case there's
     # and encoding defined encodes the data
     string_value = string_buffer.get_value()
-    #if encoding: string_value = string_value.encode(encoding)
+    if encoding: string_value = string_value.encode(encoding)
 
     # returns the string value as an unicode
     # or a raw/bytes string in case it was

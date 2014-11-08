@@ -57,7 +57,7 @@ class Csv(colony.System):
     """
 
     def dumps(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps(object, encoding = DEFAULT_ENCODING)
+        return serializer.dumps(object, encoding = encoding)
 
     def loads(self, csv_string, header = True):
         return serializer.loads(csv_string, header)
