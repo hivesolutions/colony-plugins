@@ -45,7 +45,20 @@ SIMPLE_OBJECT = [
     ["Michael", 12, "Ireland"]
 ]
 
-SIMPLE_RESULT = colony.legacy.u("""name;age;country
+SIMPLE_CSV = colony.legacy.u("""name;age;country
 João;24;Portugal
 Michael;12;Ireland
 """)
+
+SIMPLE_RAW = [
+    dict(
+        name = colony.legacy.u("João"),
+        age = colony.legacy.u("24"),
+        country = colony.legacy.u("Portugal")
+    ),
+    dict(
+        name = colony.legacy.u("Michael"),
+        age = colony.legacy.u("12"),
+        country = colony.legacy.u("Ireland")
+    )
+]

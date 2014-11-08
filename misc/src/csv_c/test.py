@@ -60,7 +60,8 @@ class CsvBaseTestCase(colony.ColonyTestCase):
 
     def test_dumps(self):
         result = self.system.dumps(test_mocks.SIMPLE_OBJECT, encoding = None)
-        self.assertEqual(result, test_mocks.SIMPLE_RESULT)
+        self.assertEqual(result, test_mocks.SIMPLE_CSV)
 
     def test_loads(self):
-        pass
+        result = self.system.loads(test_mocks.SIMPLE_CSV)
+        self.assertEqual(result, test_mocks.SIMPLE_RAW)
