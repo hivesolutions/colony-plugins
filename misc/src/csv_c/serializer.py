@@ -44,18 +44,22 @@ import colony
 from csv_c import exceptions
 
 DEFAULT_ENCODING = "Cp1252"
-""" The default encoding for csv files """
+""" The default encoding for csv files, this
+is defined according to the mostly used version
+of the csv in the computer industry """
 
-NEWLINE_CHARACTER = b"\n"
-""" The newline character """
+NEWLINE_CHARACTER = "\n"
+""" The newline character, that should
+be present at the end of each csv row """
 
-SEPARATOR_CHARACTER = b";"
-""" The separator character """
+SEPARATOR_CHARACTER = ";"
+""" The separator character separating
+each of the item columns in a csv file """
 
 LIST_TYPES = (list, tuple, types.GeneratorType)
 """ A tuple with the various list types """
 
-def dumps(object):
+def dumps(object, encoding = DEFAULT_ENCODING):
     # creates a new string buffer
     string_buffer = colony.StringBuffer()
 
@@ -63,10 +67,14 @@ def dumps(object):
     _chunk(object, string_buffer)
 
     # retrieves the string value from the
-    # string buffer
+    # string buffer and then in case there's
+    # and encoding defined encodes the data
     string_value = string_buffer.get_value()
+    #if encoding: string_value = string_value.encode(encoding)
 
-    # returns the string value
+    # returns the string value as an unicode
+    # or a raw/bytes string in case it was
+    # properly decoded (using provided encoding)
     return string_value
 
 def _chunk(object, string_buffer):
@@ -169,23 +177,19 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
         # retrieves the attribute value type
         attribute_value_type = type(attribute_value)
 
-        # in case the attribute value is not of string types uses the default
-        # system conversion to convert then if the attribute value is of type
-        # unicode encodes the attribute value using the default encoding
-        if not attribute_value_type in colony.legacy.STRINGS: attribute_value = str(attribute_value)
-        attribute_value_encoded = attribute_value_type == colony.legacy.UNICODE and\
-            attribute_value.encode(DEFAULT_ENCODING) or\
-            (attribute_value and str(attribute_value))
+        # verifies the proper attribute type and according
+        # to that creates the proper unicode based string
+        # to be added to the string buffer, note that for
+        # byte based strings the default encoding for the
+        # system is used as a fallback (possible to fail)
+        if attribute_value_type == colony.legacy.BYTES:
+            attribute_value = attribute_value.decode("utf-8")
+        elif not attribute_value_type in colony.legacy.STRINGS:
+            attribute_value = colony.legacy.UNICODE(attribute_value)
 
-        # re-evaluates the attribute value (encoded) so that if it is still
-        # decoded (possible for python 3 and integers, etc) it re-encodes
-        # the values using the default encoding (as supposed)
-        is_unicode = type(attribute_value_encoded) == colony.legacy.UNICODE
-        if is_unicode: attribute_value_encoded = attribute_value_encoded.encode(DEFAULT_ENCODING)
-
-        # writes the encoded attribute value (in case
-        # the value is valid)
-        attribute_value_encoded and string_buffer.write(attribute_value_encoded)
+        # writes the (decoded) attribute value, in case
+        # the value is valid (avoiding invalid values)
+        attribute_value and string_buffer.write(attribute_value)
 
         # in case the current index represents the last
         # attribute must continue the loop as the the

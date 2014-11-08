@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
+from csv_c import test_mocks
+
 class CsvTest(colony.Test):
     """
     The csv serializer class, responsible for the
@@ -57,7 +59,8 @@ class CsvBaseTestCase(colony.ColonyTestCase):
         return "Csv Plugin test case"
 
     def test_dumps(self):
-        pass
+        result = self.system.dumps(test_mocks.SIMPLE_OBJECT, encoding = None)
+        self.assertEqual(result, test_mocks.SIMPLE_RESULT)
 
     def test_loads(self):
         pass

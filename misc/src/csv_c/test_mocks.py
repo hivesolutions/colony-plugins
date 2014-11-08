@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -39,37 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from csv_c import serializer
+SIMPLE_OBJECT = [
+    ["name", "age", "country"],
+    ["João", 24, "Portugal"],
+    ["Michael", 12, "Ireland"]
+]
 
-DEFAULT_ENCODING = "Cp1252"
-""" The default encoding, defined according
-to the most used case """
-
-MIME_TYPE = "text/csv"
-""" The mime type for the csv format as defined
-by the proper iso organizations  """
-
-class Csv(colony.System):
-    """
-    Provides functions to interact with csv.
-    These operations should include at least
-    the dumping and loading of csv.
-    """
-
-    def dumps(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps(object, encoding = DEFAULT_ENCODING)
-
-    def loads(self, csv_string, header = True):
-        return serializer.loads(csv_string, header)
-
-    def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
-        # reads the csv file and decodes the file using
-        # the defined (by parameter encoding) then runs
-        # the load process for the csv bytes buffer,
-        # returning the resulting value to the caller
-        csv_file_contents = csv_file.read()
-        csv_file_contents_decoded = csv_file_contents.decode(encoding)
-        return self.loads(csv_file_contents_decoded)
-
-    def get_mime_type(self):
-        return MIME_TYPE
+SIMPLE_RESULT = colony.legacy.u("""name;age;country
+João;24;Portugal
+Michael;12;Ireland
+""")
