@@ -277,13 +277,11 @@ def _dechunk(chunks, header):
         # to set them in the object
         for attribute in object_attributes:
             # retrieves the (current) attribute name
-            # from the header names
+            # from the header names and then sets the
+            # the attribute in the object, incrementing
+            # then the index value (new iteration)
             attribute_name = header_names[index]
-
-            # set the attribute in the object
             object[attribute_name] = attribute
-
-            # increments the index value
             index += 1
 
         # adds the object to the object list
