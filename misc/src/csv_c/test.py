@@ -56,5 +56,10 @@ class CsvBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Csv Plugin test case"
 
-    def test_create(self):
+    def test_dumps(self):
         pass
+    
+    def test_loads(self):
+        pass
+
+    
