@@ -54,6 +54,7 @@ class CsvPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "test",
         "serializer.csv"
     ]
     main_modules = [
@@ -64,6 +65,7 @@ class CsvPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import csv_c
         self.system = csv_c.Csv(self)
+        self.test = csv_c.CsvTest(self)
 
     def dumps(self, object):
         return self.system.dumps(object)
