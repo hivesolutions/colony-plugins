@@ -54,7 +54,7 @@ class EntityManagerTest(colony.Test):
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
-        
+
         # retrieves the entity manager (system)
         system = self.plugin.system
 
@@ -70,7 +70,7 @@ class EntityManagerTest(colony.Test):
 
     def tear_down(self, test_case):
         colony.Test.tear_down(self, test_case)
-        
+
         # rolls back the current transaction in the
         # entity manager
         test_case.entity_manager.rollback()
