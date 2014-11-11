@@ -2788,7 +2788,7 @@ class HttpRequest(object):
             # raises the http invalid multipart request exception
             raise exceptions.HttpInvalidMultipartRequestException("invalid boundary value: " + boundary)
 
-        # retrieves the boundary reference and the boundary value, 
+        # retrieves the boundary reference and the boundary value,
         # ensures byte compatibility and calculates it's length
         _boundary, boundary_value = boundary_splitted
         boundary_value = colony.legacy.bytes(boundary_value)
@@ -2804,7 +2804,7 @@ class HttpRequest(object):
             end_index = self.multipart.find(boundary_value, current_index)
 
             # in case the end index is invalid (end of multipart)
-            # must break the current loop (no more parsing) 
+            # must break the current loop (no more parsing)
             if end_index == -1: break
 
             # parses the multipart part retrieving the headers map and the contents
