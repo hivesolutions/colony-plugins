@@ -324,10 +324,9 @@ class ServiceHttpFile(colony.System):
         # iterates over all the directory entries in the directory
         # entries (list) to write their values in the request
         for directory_entry in directory_entries:
-            # retrieves the directory entry name
+            # retrieves the directory entry name and writes the
+            # value into the request as a newline for the entry
             directory_entry_name = directory_entry["name"]
-
-            # writes the directory entry name
             request.write(directory_entry_name + "\n")
 
     def _process_directory(self, request, complete_path):
