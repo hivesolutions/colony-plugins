@@ -43,7 +43,7 @@ import traceback
 
 import colony
 
-from wsgi import exceptions
+from . import exceptions
 
 POWERED_BY_STRING = "colony/%s (%s)"
 """ The string to be used in the powered by http
