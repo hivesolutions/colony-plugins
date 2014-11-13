@@ -437,7 +437,7 @@ class ServiceHttp(colony.System):
             if not resolution_order_item_value: continue
 
             # retrieves the resolution order values
-            resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, resolution_order_item_value.keys())
+            resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, colony.legacy.iterkeys(resolution_order_item_value))
 
             # creates the regex buffer
             regex_buffer = colony.StringBuffer()
@@ -1863,7 +1863,10 @@ class HttpClientServiceHandler:
         service_configuration_redirections = service_configuration.get("redirections", {})
 
         # retrieves the service configuration redirections resolution order
-        service_configuration_redirections_resolution_order = service_configuration_redirections.get(RESOLUTION_ORDER_VALUE, service_configuration_redirections.keys())
+        service_configuration_redirections_resolution_order = service_configuration_redirections.get(
+            RESOLUTION_ORDER_VALUE,
+            colony.legacy.iterkeys(service_configuration_redirections)
+        )
 
         # (saves) the old path as the base path
         request.set_base_path(request.path)
@@ -2054,7 +2057,10 @@ class HttpClientServiceHandler:
         service_configuration_contexts = service_configuration.get("contexts", {})
 
         # retrieves the service configuration contexts resolution order
-        service_configuration_contexts_resolution_order = service_configuration_contexts.get(RESOLUTION_ORDER_VALUE, service_configuration_contexts.keys())
+        service_configuration_contexts_resolution_order = service_configuration_contexts.get(
+            RESOLUTION_ORDER_VALUE,
+            colony.legacy.iterkeys(service_configuration_contexts)
+        )
 
         # retrieves the service configuration contexts resolution order regex
         service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, None)
@@ -2300,7 +2306,10 @@ class HttpClientServiceHandler:
             service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
 
             # retrieves the service configuration virtual servers resolution order
-            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get(RESOLUTION_ORDER_VALUE, service_configuration_virtual_servers.keys())
+            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get(
+                RESOLUTION_ORDER_VALUE,
+                colony.legacy.iterkeys(service_configuration_virtual_servers)
+            )
 
             # splits the host value (to try
             # to retrieve hostname and port)
@@ -3143,7 +3152,7 @@ class HttpRequest(object):
         current attributes map.
         """
 
-        return self.attributes_map.keys()
+        return colony.legacy.keys(self.attributes_map)
 
     def get_attribute(self, attribute_name):
         return self.__getattributes__(attribute_name)

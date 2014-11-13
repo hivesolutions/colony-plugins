@@ -741,7 +741,7 @@ class ConsoleBase(colony.System):
         plugin_manager = self.plugin.manager
 
         # retrieves the plugin id list
-        plugin_id_list = plugin_manager.plugin_instances_map.keys()
+        plugin_id_list = colony.legacy.keys(plugin_manager.plugin_instances_map)
 
         # returns the plugin id list
         return plugin_id_list

@@ -454,10 +454,9 @@ class FacebookClient(object):
         # creates the message string buffer
         message_string_buffer = colony.StringBuffer()
 
-        # retrieves the parameters keys
-        parameters_keys = parameters.keys()
-
-        # sorts the parameters keys
+        # retrieves the parameters keys and then runs
+        # the sorting operation in them
+        parameters_keys = colony.legacy.keys(parameters)
         parameters_keys.sort()
 
         # iterates over all the parameters keys (ordered)

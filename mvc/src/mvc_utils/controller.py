@@ -1344,7 +1344,7 @@ def create_form_data(self, request, data_map, encoding = "utf-8"):
     form_data_map = {}
 
     # retrieves the data map keys
-    data_map_keys = data_map.keys()
+    data_map_keys = colony.legacy.keys(data_map)
 
     # retrieves the root data map key
     form_data_map_key = data_map_keys[0]

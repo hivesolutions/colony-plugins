@@ -1174,8 +1174,8 @@ class ResourcesManager(colony.System):
 
         # in case none of the filters are defined
         if resource_namespace == None and resource_name == None and resource_type == None:
-            # returns all the values in the reource id resource map
-            return self.resource_id_resource_map.values()
+            # returns all the values in the resource id resource map
+            return colony.legacy.values(self.resource_id_resource_map)
         # in case the namespace and the name are defined
         elif not resource_namespace == None and not resource_name == None:
             # creates the resource complete name

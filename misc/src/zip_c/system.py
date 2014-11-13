@@ -127,7 +127,7 @@ class Zip(colony.System):
 
         # creates a dictionary from the keys
         # and retrieves the keys (directories list)
-        directories_list = dict.fromkeys(directories_list).keys()
+        directories_list = colony.legacy.keys(dict.fromkeys(directories_list))
 
         # sorts the directories list according to
         # the length sorter
@@ -204,7 +204,7 @@ class Zip(colony.System):
 
         # creates a dictionary from the keys
         # and retrieves the keys (files list)
-        files_list = dict.fromkeys(files_list).keys()
+        files_list = colony.legacy.keys(dict.fromkeys(files_list))
 
         # sorts the files list according to
         # the length sorter

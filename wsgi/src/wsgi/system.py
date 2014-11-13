@@ -798,7 +798,7 @@ class WsgiRequest(object):
         current attributes map.
         """
 
-        return self.attributes_map.keys()
+        return colony.legacy.keys(self.attributes_map)
 
     def get_attribute(self, attribute_name):
         return self.__getattributes__(attribute_name)

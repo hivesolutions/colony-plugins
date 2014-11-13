@@ -89,7 +89,7 @@ class ResourcesAutoloader(colony.System):
         # retrieve the file path resources list map from the resources manager
         # and then retrieves the keys from the map as the current used file paths
         file_path_resources_list_map = resources_manager_plugin.get_file_path_resources_list_map()
-        file_paths = file_path_resources_list_map.keys()
+        file_paths = colony.legacy.keys(file_path_resources_list_map)
 
         # iterates over all the (resource) file paths
         # to update the stored modified time values
@@ -225,7 +225,7 @@ class ResourcesAutoloader(colony.System):
         # the keys from the map as the current used (resource) file paths
         file_path_resources_list_map = resources_manager_plugin.get_file_path_resources_list_map()
         file_path_file_information_map = resources_manager_plugin.get_file_path_file_information_map()
-        resource_file_paths = file_path_resources_list_map.keys()
+        resource_file_paths = colony.legacy.keys(file_path_resources_list_map)
 
         # iterates over all the resource file path
         # to check if the associated resources shall be

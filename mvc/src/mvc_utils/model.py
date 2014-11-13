@@ -1955,7 +1955,7 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
 
     # retrieves the allocated entities lists that have more
     # than one model and are therefore invalid
-    allocated_entities_lists = [allocated_entities for allocated_entities in allocated_entities_map.values() if len(allocated_entities) > 1]
+    allocated_entities_lists = [allocated_entities for allocated_entities in colony.legacy.itervalues(allocated_entities_map) if len(allocated_entities) > 1]
 
     # removes the last target token since this
     # list is going to be used to retrieve the

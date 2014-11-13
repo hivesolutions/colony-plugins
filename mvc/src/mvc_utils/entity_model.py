@@ -1813,7 +1813,7 @@ def get_relation_names(self):
     # name with the definition of it, then it retrieves
     # just the keys of the map as the relation names
     relations = entity_model.get_all_relations()
-    relation_names = relations.keys()
+    relation_names = colony.legacy.keys(relations)
 
     # returns the relation names from the current instance
     # this may be used for relation access
