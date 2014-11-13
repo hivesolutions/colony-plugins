@@ -42,9 +42,9 @@ import types
 
 import colony
 
-from mvc import exceptions
-from mvc import file_handler
-from mvc import communication
+from . import exceptions
+from . import file_handler
+from . import communication
 
 NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value """

@@ -40,9 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import threading
 
-from mvc import handlers
-
-from mvc import exceptions
+from . import handlers
+from . import exceptions
 
 DEFAULT_UPDATE_POLL_TIMEOUT = 0.5
 """ The default update poll timeout, this value if

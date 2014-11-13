@@ -44,9 +44,9 @@ import types
 
 import colony
 
-from console import interfaces
-from console import exceptions
-from console import authentication
+from . import interfaces
+from . import exceptions
+from . import authentication
 
 VALID_VALUE = "valid"
 """ The valid value """

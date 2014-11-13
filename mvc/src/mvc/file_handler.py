@@ -44,7 +44,7 @@ import hashlib
 
 import colony
 
-from mvc import exceptions
+from . import exceptions
 
 CHUNK_FILE_SIZE_LIMIT = 4096
 """ The chunk file size limit """
