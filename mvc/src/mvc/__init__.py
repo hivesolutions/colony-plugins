@@ -47,4 +47,4 @@ from .exceptions import ServiceException, ServiceRequestNotTranslatable, BadServ
     InvalidTokenValue, RuntimeRequestException, MvcRequestNotHandled, FileNotFoundException,\
     InvalidCommunicationCommandException, CommunicationCommandException
 from .file_handler import MvcFileHandler, ChunkHandler
-from .system import *
+from .system import Mvc
