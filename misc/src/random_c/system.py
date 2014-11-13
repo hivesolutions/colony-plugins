@@ -68,7 +68,7 @@ class Random(colony.System):
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
 
-        # processes the randrange values
+        # processes the rand range of values
         self.process_randrange()
 
     def generate_random(self):
@@ -221,6 +221,9 @@ class Random(colony.System):
         random = self.generate_random()
 
         # generates an sha1 hash of the random value
+        # note that the random value is first encoded
+        # into a bytes value before the hash
+        random = colony.legacy.bytes(random)
         random_sha1 = hashlib.sha1(random)
 
         # returns the sha1 hash of the random value
@@ -258,12 +261,13 @@ class Random(colony.System):
         into an sha256 value.
         """
 
-        # generates a random value and then ensures that
-        # it's encoded as a bytes based string value
+        # generates a random value
         random = self.generate_random()
-        random = colony.legacy.bytes(random)
 
         # generates an sha256 hash of the random value
+        # note that the random value is first encoded
+        # into a bytes value before the hash
+        random = colony.legacy.bytes(random)
         random_sha256 = hashlib.sha256(random)
 
         # returns the sha256 hash of the random value
