@@ -162,7 +162,7 @@ class Captcha(colony.System):
         letters_list = []
 
         # iterates over the number of letters
-        for _index in range(number_letters):
+        for _index in colony.legacy.xrange(number_letters):
             # generates a random letter
             letter = random.randint(97, 122)
 

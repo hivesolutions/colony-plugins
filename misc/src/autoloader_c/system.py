@@ -545,7 +545,7 @@ class Autoloader(colony.System):
         extra_sleep_time = sleep_time % SLEEP_STEP_VALUE
 
         # iterates over the range of iterations
-        for _index in range(iterations):
+        for _index in colony.legacy.xrange(iterations):
             # sleep the sleep step
             time.sleep(SLEEP_STEP_VALUE)
 

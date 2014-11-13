@@ -70,7 +70,7 @@ class WorkPoolDummy(colony.System):
 
         # iterates over the range of pool
         # tasks to be inserted
-        for _index in range(10):
+        for _index in colony.legacy.xrange(10):
             # inserts the dummy work in the work pool
             self.work_pool.insert_work(_index)
 

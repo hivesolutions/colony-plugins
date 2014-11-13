@@ -137,10 +137,9 @@ def _chunk(chunk, string_buffer, instances = True):
         # string buffer
         string_buffer.write("d")
 
-        # retrieves the chunk items
-        chunk_items = chunk.items()
-
-        # sorts the chunk items
+        # retrieves the chunk items and then sorts them
+        # according to the pre-defined/default order
+        chunk_items = colony.legacy.items(chunk)
         chunk_items.sort()
 
         # iterates over all the chunk items
@@ -310,7 +309,7 @@ def _dechunk(chunks):
         string_value = ""
 
         # iterates over the string value size
-        for _index in range(1, int(number) + 1):
+        for _index in colony.legacy.xrange(1, int(number) + 1):
             # adds the character to the string value
             # and removes it from the chunks list
             string_value += chunks.pop()

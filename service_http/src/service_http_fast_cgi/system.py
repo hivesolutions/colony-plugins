@@ -327,7 +327,7 @@ class ServiceHttpFastCgi(colony.System):
         environment_map[CONTENT_LENGTH_VALUE] = request_content_length
 
         # iterates over all the request headers
-        for header_name, header_value in request.headers_map.items():
+        for header_name, header_value in colony.legacy.items(request.headers_map):
             # normalizes the header name to be in accordance with
             # the specification
             normalized_header_name = header_name.upper().replace("-", "_")
@@ -343,7 +343,7 @@ class ServiceHttpFastCgi(colony.System):
         params_record_data_buffer = colony.StringBuffer()
 
         # iterates over the environment map items
-        for header, header_value in environment_map.items():
+        for header, header_value in colony.legacy.items(environment_map):
             # retrieves the header length
             header_length = len(header)
 

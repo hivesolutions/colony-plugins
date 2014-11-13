@@ -259,7 +259,7 @@ class ServiceHttpCgi(colony.System):
             environment_map[PYTHONPATH_VALUE] = ""
 
             # iterates over all the request headers
-            for header_name, header_value in request.headers_map.items():
+            for header_name, header_value in colony.legacy.items(request.headers_map):
                 # normalizes the header name to be in accordance with
                 # the specification
                 normalized_header_name = header_name.upper().replace("-", "_")
@@ -272,7 +272,7 @@ class ServiceHttpCgi(colony.System):
                 environment_map[complete_header_name] = header_value
 
             # iterates over all the environment values and keys
-            for environment_key, environment_value in environment_map.items():
+            for environment_key, environment_value in colony.legacy.items(environment_map):
                 # retrieves the environment value type
                 environment_value_type = type(environment_value)
 

@@ -2412,7 +2412,7 @@ class HttpClientServiceHandler:
         final_map = copy.copy(target_map)
 
         # iterates over all the source map values
-        for source_key, source_value in source_map.items():
+        for source_key, source_value in colony.legacy.items(source_map):
             # in case the source key exists in the
             # final map, merge is required
             if source_key in final_map:
@@ -3067,7 +3067,7 @@ class HttpRequest(object):
 
         # iterates over all the header values to be sent so that they are
         # written to the target output buffer as string equivalence values
-        for header_name, header_value in headers_ordered_map.items():
+        for header_name, header_value in colony.legacy.items(headers_ordered_map):
             # verifies if the current type of the header value is unicode
             # and if that the case encodes the value using the default
             # encoding so that the value that is written to the result

@@ -115,13 +115,13 @@ class BusinessHelper(colony.System):
 
         # iterates over all the extra symbols (in map)
         # to set then "under" the base entity
-        for extra_symbol_name, extra_symbol_value in extra_symbols_map.items():
+        for extra_symbol_name, extra_symbol_value in colony.legacy.items(extra_symbols_map):
             # sets the extra symbol in the base entity module (for the class name)
             base_entity_module.__dict__[extra_symbol_name] = extra_symbol_value
 
         # iterates over all the extra globals (in map)
         # to set them as global symbols of the module
-        for extra_global_name, extra_global_value in extra_globals_map.items():
+        for extra_global_name, extra_global_value in colony.legacy.items(extra_globals_map):
             # sets the extra global value (symbol) in the globals
             # map for the module
             globals[extra_global_name] = extra_global_value
@@ -163,7 +163,7 @@ class BusinessHelper(colony.System):
         # creates the bundle module
         bundle_module = imp.new_module(bundle_module_name)
 
-        for bundle_key, bundle_value in bundle_map.items():
+        for bundle_key, bundle_value in colony.legacy.items(bundle_map):
             bundle_module.__dict__[bundle_key] = bundle_value
 
         # returns the bundle module

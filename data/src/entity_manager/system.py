@@ -867,7 +867,7 @@ class EntityManager(object):
 
             # iterates over the range of the partial files to be used
             # in the exporting of the complete class
-            for _index in range(total_file_count):
+            for _index in colony.legacy.xrange(total_file_count):
                 # creates the start record from the current index and the
                 # current file entity count (per block) the calculates the
                 # the number of records for the current range from the file
@@ -3128,7 +3128,7 @@ class EntityManager(object):
             # iterates over all the entity fields to be updated
             # in the current query, these values are going to be
             # set one by one in the query in an equality
-            for field_name, field_value in _entity_fields.items():
+            for field_name, field_value in colony.legacy.items(_entity_fields):
                 # checks if the current field is a relation
                 # (in that it is additional processing is required)
                 if entity_class.is_relation(field_name):
@@ -6571,7 +6571,7 @@ class EntityManager(object):
                 # creates a list of values for the various relation
                 # associating (all with an empty options map)
                 eager_loading_relations_length = len(eager_relations)
-                relation_values = [{} for _value in range(eager_loading_relations_length)]
+                relation_values = [{} for _value in colony.legacy.xrange(eager_loading_relations_length)]
 
                 # creates a dictionary of values from the tuple created by "zipping"
                 # the eager (loading) relations list (keys) and the relations value list (value)

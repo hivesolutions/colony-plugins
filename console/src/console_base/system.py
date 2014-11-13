@@ -273,7 +273,7 @@ class ConsoleBase(colony.System):
             plugin_instance_current_id_str = str(plugin_instance_current_id)
 
             output_method(plugin_instance_current_id_str, False)
-            for _index in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
+            for _index in colony.legacy.xrange(COLUMN_SPACING - len(plugin_instance_current_id_str)):
                 output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)

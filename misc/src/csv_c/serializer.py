@@ -256,7 +256,7 @@ def _dechunk(chunks, header):
 
     # retrieves the header names, using the
     # token indexes in case no header is defined
-    header_names = header and header_names or range(number_header_names)
+    header_names = header and header_names or colony.legacy.range(number_header_names)
 
     # retrieves the "various" content values
     content_values = header and chunks[1:] or chunks

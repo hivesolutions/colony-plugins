@@ -266,7 +266,7 @@ class ServiceHttpWsgi(colony.System):
 
         # sets the current environment items as the initial
         # environment map
-        environment_map = dict(os.environ.items())
+        environment_map = dict(colony.legacy.items(os.environ))
 
         # sets the colony attributes in the environment map
         environment_map[COLONY_PLUGIN_MANAGER_VALUE] = plugin_manager

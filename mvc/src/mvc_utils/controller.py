@@ -1679,7 +1679,7 @@ def get_mvc_path(self, request, delta_value = 1):
 
     # iterates over all the path list length without
     # the delta value
-    for _index in range(path_list_length - delta_value):
+    for _index in colony.legacy.xrange(path_list_length - delta_value):
         # adds the back path to the base path
         base_path += "../"
 

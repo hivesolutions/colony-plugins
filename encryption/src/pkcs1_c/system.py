@@ -819,7 +819,7 @@ class Pkcs1Structure:
         # creates the pad with the required size using just lower cased
         # characters to avoid the zero value and then constructs the final
         # padded message that includes the created padding
-        pad = "".join(random.choice(string.ascii_lowercase) for _value in range(pad_length))
+        pad = "".join(random.choice(string.ascii_lowercase) for _value in colony.legacy.xrange(pad_length))
         message_pad = "\x00\x02" + pad + "\x00" + message
         return message_pad
 
@@ -968,7 +968,7 @@ class Pkcs1Structure:
 
         # iterates over the range of the signature verified length
         # starting in the one value
-        for index in range(1, signature_verified_length):
+        for index in colony.legacy.xrange(1, signature_verified_length):
             # retrieves the current character
             current_character = signature_verified[index]
 

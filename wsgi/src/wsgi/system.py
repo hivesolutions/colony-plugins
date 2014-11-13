@@ -121,7 +121,7 @@ class Wsgi(colony.System):
             code = request.status_code
             content = request.message_buffer
             headers_out = request.headers_out
-            headers_out_l = headers_out.items()
+            headers_out_l = colony.legacy.items(headers_out)
 
         # sets the content type to be returned as the one provided
         # by the request or default to the basic one, then tries

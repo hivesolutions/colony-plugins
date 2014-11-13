@@ -387,7 +387,7 @@ class WorkPoolImplementation(object):
         # inserts the same amount of tasks
         # as the number of base threads to be used
         # in order to fulfill the work pool demands
-        for _index in range(self.number_threads):
+        for _index in colony.legacy.xrange(self.number_threads):
             # inserts the task into the thread pool
             self._insert_task()
 

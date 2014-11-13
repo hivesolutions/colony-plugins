@@ -916,7 +916,7 @@ class OpenidServer(object):
         @return: The key value encoded string.
         """
 
-        return "\n".join([key + ":" + value for key, value in values_map.items()])
+        return "\n".join([key + ":" + value for key, value in colony.legacy.items(values_map)])
 
 class OpenidClient(object):
     """

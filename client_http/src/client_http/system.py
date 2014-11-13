@@ -1657,7 +1657,7 @@ class HttpRequest(object):
         headers_ordered_map.extend(self.headers_map)
 
         # iterates over all the header values to be sent
-        for header_name, header_value in headers_ordered_map.items():
+        for header_name, header_value in colony.legacy.items(headers_ordered_map):
             # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
@@ -1778,7 +1778,7 @@ class HttpRequest(object):
         is_first = True
 
         # iterates over all the attribute keys and values
-        for attribute_key, attribute_value in self.attributes_map.items():
+        for attribute_key, attribute_value in colony.legacy.items(self.attributes_map):
             # encodes both the attribute key and value
             attribte_key_encoded = self._encode(attribute_key)
             attribte_value_encoded = self._encode(attribute_value)

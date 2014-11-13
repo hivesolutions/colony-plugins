@@ -518,7 +518,7 @@ class Url(object):
             # returns immediately
             return
 
-        self.options = "&".join([key + "=" + value for key, value in self.options_map.items()])
+        self.options = "&".join([key + "=" + value for key, value in colony.legacy.items(self.options_map)])
 
     def _generate_resource_reference_list(self):
         """

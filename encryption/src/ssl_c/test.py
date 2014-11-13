@@ -93,8 +93,8 @@ class SslBaseTestCase(colony.ColonyTestCase):
         result = self.ssl.decrypt_base_64(private_path, result_encrypt)
         self.assertEqual(result, "Hello World")
 
-        for _index in range(0, 128):
-            value = "".join(random.choice(string.ascii_lowercase) for _index in range(12))
+        for _index in colony.legacy.xrange(0, 128):
+            value = "".join(random.choice(string.ascii_lowercase) for _index in colony.legacy.xrange(12))
             result_encrypt = self.ssl.encrypt_base_64(public_path, value)
             result = self.ssl.decrypt_base_64(private_path, result_encrypt)
             self.assertEqual(result, value)
@@ -119,8 +119,8 @@ class SslBaseTestCase(colony.ColonyTestCase):
         result = self.ssl.verify_base_64(self.public_path, signature, "Hello World")
         self.assertEqual(result, True)
 
-        for _index in range(0, 128):
-            value = "".join(random.choice(string.ascii_lowercase) for _index in range(12))
+        for _index in colony.legacy.xrange(0, 128):
+            value = "".join(random.choice(string.ascii_lowercase) for _index in colony.legacy.xrange(12))
             signature = self.ssl.sign_base_64(self.private_path, "sha256", value)
             result = self.ssl.verify_base_64(self.public_path, signature, value)
             self.assertEqual(result, True)

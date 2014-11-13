@@ -328,7 +328,7 @@ class RsaStructure:
         block_values = []
 
         # iterate over the range of message block count
-        for index in range(message_block_count):
+        for index in colony.legacy.xrange(message_block_count):
             # calculates the offset value
             offset = index * modulus_number_bytes
 
@@ -602,7 +602,7 @@ class RsaStructure:
         t_value = colony.ceil_integer(k_value / math.log(1 / q_value, 2))
 
         # iterates over the range of t value plus one
-        for _index in range(t_value + 1):
+        for _index in colony.legacy.xrange(t_value + 1):
             # generates a random number in the interval
             random_number = self._generate_random_integer_interval(1, number - 1)
 
@@ -793,7 +793,7 @@ class RsaStructure:
         # so that the requested length is fulfilled
         extra = string_length - characters_list_length
         extra = 0 if extra < 0 else extra
-        for _index in range(extra): characters_list.append("\x00")
+        for _index in colony.legacy.xrange(extra): characters_list.append("\x00")
 
         # reverses the characters list, because the creation of
         # the string was made in the opposite order (big endian)

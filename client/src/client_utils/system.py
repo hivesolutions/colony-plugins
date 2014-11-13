@@ -246,7 +246,7 @@ class AbstractClient(object):
         """
 
         # iterates over all the client connections, to closes them
-        for _connection_tuple, client_connection in self.client_connections_map.items():
+        for _connection_tuple, client_connection in colony.legacy.items(self.client_connections_map):
             # closes the client connection
             client_connection.close()
 
@@ -391,7 +391,7 @@ class AbstractClient(object):
 
         # sets the last element of the connection tuple hashable as the
         # items tuple instead of the dictionary in order to avoid unhashable problems
-        connection_tuple_hashable[4] = tuple(connection_tuple_hashable[4].items())
+        connection_tuple_hashable[4] = tuple(colony.legacy.items(connection_tuple_hashable[4]))
 
         # converts the connection tuple hashable into a tuple
         # in order to hashable

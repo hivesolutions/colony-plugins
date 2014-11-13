@@ -110,7 +110,7 @@ def dump_parts(object, current_path):
     # in case the object is a dictionary
     elif object_type is dict:
         # iterates over all the object items
-        for key, value in object.items():
+        for key, value in colony.legacy.items(object):
             # creates the new current path
             new_current_path = current_path + "[" + colony.legacy.UNICODE(key) + "]"
 

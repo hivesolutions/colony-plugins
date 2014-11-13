@@ -286,7 +286,7 @@ def dump_parts(object, objects = None, cycles = False):
         is_first = True
 
         # iterates over all the object items
-        for key, value in object.items():
+        for key, value in colony.legacy.items(object):
             # in case the is first flag is set
             if is_first:
                 # unsets the is first flag
@@ -482,7 +482,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         is_first = True
 
         # iterates over all the object items
-        for key, value in object.items():
+        for key, value in colony.legacy.items(object):
             # in case the is first flag is set
             if is_first:
                 # unsets the is first flag
@@ -495,7 +495,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
             yield "\n"
 
             # iterates over the indentation range (plus one)
-            for _index in range(indentation + 1):
+            for _index in colony.legacy.xrange(indentation + 1):
                 # yields the indentation value
                 yield INDENTATION_VALUE
 
@@ -520,7 +520,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         yield "\n"
 
         # iterates over the indentation range
-        for _index in range(indentation):
+        for _index in colony.legacy.xrange(indentation):
             # yields the indentation value
             yield INDENTATION_VALUE
 
@@ -599,7 +599,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
             yield "\n"
 
             # iterates over the indentation range (plus one)
-            for _index in range(indentation + 1):
+            for _index in colony.legacy.xrange(indentation + 1):
                 # yields the indentation value
                 yield INDENTATION_VALUE
 
@@ -615,7 +615,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         yield "\n"
 
         # iterates over the indentation range
-        for _index in range(indentation):
+        for _index in colony.legacy.xrange(indentation):
             # yields the indentation value
             yield INDENTATION_VALUE
 
@@ -712,7 +712,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
 
         # iterates over the object items, retrieving the
         # key and the value
-        for key, value in object.items():
+        for key, value in colony.legacy.items(object):
             # in case the is first flag is set
             if is_first:
                 # unsets the is first flag

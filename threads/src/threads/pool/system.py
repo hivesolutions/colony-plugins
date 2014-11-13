@@ -326,7 +326,7 @@ class ThreadPoolImplementation(object):
         """
 
         # iterates over the number of threads for the thread pool
-        for _n_thread in range(self.number_threads):
+        for _n_thread in colony.legacy.xrange(self.number_threads):
             # creates a worker thread for the thread pool
             self.create_worker_thread()
 
@@ -472,7 +472,7 @@ class ThreadPoolImplementation(object):
                             number_threads_destroy = difference_threads
 
                         # destroys the defined number of threads
-                        for _n_thread_destroy in range(number_threads_destroy):
+                        for _n_thread_destroy in colony.legacy.xrange(number_threads_destroy):
                             # destroys a worker thread
                             self.destroy_worker_thread()
 
@@ -613,7 +613,7 @@ class ThreadPoolImplementation(object):
         """
 
         # iterates over the number of currently available threads
-        for _n_thread in range(self.number_threads):
+        for _n_thread in colony.legacy.xrange(self.number_threads):
             self.task_condition.acquire()
             if insert_at_end:
                 self.task_queue.append(worker_thread_task)

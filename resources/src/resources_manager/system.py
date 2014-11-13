@@ -1654,7 +1654,7 @@ class Namespace:
             return False
 
         # iterates over all the lists
-        for index in range(length_self):
+        for index in colony.legacy.xrange(length_self):
             # compares both values
             if list_value_self[index] != list_value_namespace[index]:
                 # returns false
@@ -1688,7 +1688,7 @@ class Namespace:
         if len_namespace <= len_self:
             return False
 
-        for index in range(len_self):
+        for index in colony.legacy.xrange(len_self):
             if list_value_self[index] != list_value_namespace[index]:
                 return False
 

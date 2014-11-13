@@ -358,7 +358,7 @@ class Console(colony.System):
         line_split_length = len(line_split)
 
         # iterates over the range of the line split length
-        for line_split_length_index in range(line_split_length):
+        for line_split_length_index in colony.legacy.xrange(line_split_length):
             # retrieves the current line
             line = line_split[line_split_length_index]
 
@@ -604,7 +604,7 @@ class Console(colony.System):
 
         # iterates over the range of the first
         # alternative length
-        for index in range(first_alternative_length):
+        for index in colony.legacy.xrange(first_alternative_length):
             # retrieves the base character from the first
             # alternative (for the current index)
             base_character = first_alternative[index]
@@ -1087,7 +1087,7 @@ class ConsoleContext(colony.Protected):
 
             # iterates over the remaining space to be filled
             # with space characters
-            for _index in range(biggest_length - item_length):
+            for _index in colony.legacy.xrange(biggest_length - item_length):
                 # adds a space to the line spacing string
                 # value (augments the line string)
                 line_spacing += " "

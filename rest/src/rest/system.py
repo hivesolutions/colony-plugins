@@ -736,7 +736,7 @@ class Rest(colony.System):
 
         # iterates over all the items in the rest service routes map in
         # order to populate and create the matching regex
-        for rest_service_plugin_id, routes_list in self.rest_service_routes_map.items():
+        for rest_service_plugin_id, routes_list in colony.legacy.items(self.rest_service_routes_map):
             # in case it's the first plugin to be used in
             # the creation of the matching regex unset the flag
             # otherwise adds the "or" character to the buffer
@@ -2870,7 +2870,7 @@ class Cookie(object):
 
         # iterates over all the attribute name and value in
         # the attributes map
-        for attribute_name, attribute_value in self.attributes_map.items():
+        for attribute_name, attribute_value in colony.legacy.items(self.attributes_map):
             # in case the attribute is not the main one
             if not attribute_name == self.main_attribute_name:
                 # serializes the attribute

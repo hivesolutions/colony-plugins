@@ -2265,6 +2265,6 @@ class ModelProxy(list):
         # over the map (list) object to create one
         # item for each of the elements
         self.models = []
-        for _index in range(self.count):
+        for _index in colony.legacy.xrange(self.count):
             model = self.class_reference()
             self.models.append(model)

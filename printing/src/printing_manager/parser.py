@@ -78,7 +78,7 @@ class Parser(object):
     def parse_element_attributes(self, node, element):
         attributes = node.attributes
 
-        for index in range(attributes.length):
+        for index in colony.legacy.xrange(attributes.length):
             attribute_node = attributes.item(index)
             attribute_node_name = attribute_node.name
             attribute_node_value = attribute_node.value

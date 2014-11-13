@@ -777,7 +777,7 @@ class Visitor(object):
         # iterates over the complete set of globally index nodes to try to find
         # the ones that are defined and switch them so that the most specific
         # (concrete templates) are defined and reference the most abstract ones
-        for name, node in nodes.items():
+        for name, node in colony.legacy.items(nodes):
             # tries to retrieve a super node for the current block name in
             # iteration and in case there's one switches the current node
             # with the previous one, otherwise adds the current node as a

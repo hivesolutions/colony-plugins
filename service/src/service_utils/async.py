@@ -567,7 +567,7 @@ class AbstractService(object):
 
             # pops the processes elements from the time events
             # list (deferred popping, avoids list corruption)
-            for _index in range(expired_count): heapq.heappop(self.time_events)
+            for _index in colony.legacy.xrange(expired_count): heapq.heappop(self.time_events)
 
     def _disable_service_sockets(self):
         """
@@ -682,7 +682,7 @@ class SelectPolling(object):
             events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
 
         # retrieves the list of event tuples
-        events_list = events_map.items()
+        events_list = colony.legacy.items(events_map)
 
         # returns the events list
         return events_list

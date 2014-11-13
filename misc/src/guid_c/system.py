@@ -68,7 +68,7 @@ class Guid(colony.System):
         except:
             self.ip = "10"
             rand = random.Random()
-            for _index in range(3):
+            for _index in colony.legacy.xrange(3):
                 # might as well use IPv6 range if we're making it up
                 self.ip += "." + str(rand.randrange(1, 0xffff))
             self.hexadecimal_ip = make_hexadecimal_ip(self.ip)

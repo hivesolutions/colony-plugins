@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2014 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony
+
 SPECIAL_CHARACTER_ORDINAL = 0xe0
 """ The special character ordinal """
 
@@ -377,7 +379,7 @@ class ConsoleInterfaceCharacter:
 
         # iterates over the range of the line
         # buffer length
-        for _index in range(line_buffer_length):
+        for _index in colony.legacy.xrange(line_buffer_length):
             # removes a character from the standard output
             self.console_handler._remove_character()
 

@@ -278,7 +278,7 @@ class MimeMessage:
         headers_ordered_map.extend(self.headers_map)
 
         # iterates over all the header values to be sent
-        for header_name, header_value in headers_ordered_map.items():
+        for header_name, header_value in colony.legacy.items(headers_ordered_map):
             # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
@@ -473,7 +473,7 @@ class MimeMessage:
         boundary_string_buffer = colony.StringBuffer()
 
         # iterates over the range to generate the random value
-        for _index in range(32):
+        for _index in colony.legacy.xrange(32):
             # generates a normalized random values
             random_value = random.random() * 63
 

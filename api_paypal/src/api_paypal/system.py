@@ -281,7 +281,7 @@ class PaypalClient(object):
         number_order_lines = len(order_lines)
 
         # sets the order line structure values in the parameters map
-        for order_line_index in range(number_order_lines):
+        for order_line_index in colony.legacy.xrange(number_order_lines):
             # retrieves the order line
             order_line = order_lines[order_line_index]
 
