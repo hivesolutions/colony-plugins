@@ -258,8 +258,10 @@ class Random(colony.System):
         into an sha256 value.
         """
 
-        # generates a random value
+        # generates a random value and then ensures that
+        # it's encoded as a bytes based string value
         random = self.generate_random()
+        random = colony.legacy.bytes(random)
 
         # generates an sha256 hash of the random value
         random_sha256 = hashlib.sha256(random)
