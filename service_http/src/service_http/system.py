@@ -3288,9 +3288,14 @@ class HttpRequest(object):
         @return: The resource base path in decoded format.
         """
 
-        # decodes the resources base path
-        resource_base_path_decoded = self.resource_base_path.decode(DEFAULT_CHARSET)
+        # verifies if the resource base path is unicode based
+        # already and if that's the case returns immediately
+        is_unicode = colony.legacy.is_unicode(self.resource_base_path)
+        if is_unicode: return self.resource_base_path
 
+        # decodes the resources base path using the currently defined
+        # charset/encoding value and returns the value
+        resource_base_path_decoded = self.resource_base_path.decode(DEFAULT_CHARSET)
         return resource_base_path_decoded
 
     def get_handler_path(self):

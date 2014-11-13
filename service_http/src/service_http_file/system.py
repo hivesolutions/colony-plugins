@@ -348,12 +348,10 @@ class ServiceHttpFile(colony.System):
         if not resource_base_path.endswith("/"):
             # adds the extra slash to the resource base path
             # in order to avoid file redirection problems
-            resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/"
-
-            # redirects the request to the resource path
+            # and then redirect the user agent to the new page,
+            # returning the control flow immediately to caller
+            resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/".encode(DEFAULT_CHARSET)
             self._redirect(request, resource_path)
-
-            # returns immediately
             return
 
         # retrieves the directory names for the complete path
@@ -407,11 +405,12 @@ class ServiceHttpFile(colony.System):
         comparator = request.get_attribute("comparator") or "name"
 
         # generates a new comparator method using the comparator string
+        # note that this is a key based comparator method
         comparator_method = self.generate_comparator(comparator)
 
         # sorts the directory entries
-        directory_entries.sort(comparator_method)
-        directory_entries.sort(self.type_comparator)
+        directory_entries.sort(key = comparator_method)
+        directory_entries.sort(key = self.type_comparator)
 
         # creates the directory list structure
         directory_list = {}
@@ -696,53 +695,47 @@ class ServiceHttpFile(colony.System):
         # returns the range string value
         return range_string_value
 
-    def type_comparator(self, first_item, second_item):
+    def type_comparator(self, item):
         """
-        Comparator based on the type of the items.
+        Key based comparator based that resolves the provided
+        item into the appropriate sorting value for it.
 
-        @type first_item: Object
-        @param first_item: The first item to be compared.
-        @type second_item: Object
-        @param second_item: The second item to be compared.
-        @rtype: int
-        @return: The result of the comparison.
+        @type item: Object
+        @param item: The item for which to retrieve the resolution
+        based value for comparison.
+        @rtype: Object
+        @return: The final resolved value that may be used by an
+        external algorithm to sort items.
         """
 
-        # retrieves the item types
-        first_item_type = first_item["type"]
-        second_item_type = second_item["type"]
-
-        # retrieves the difference between the item values
-        return ITEM_SORT_MAP[first_item_type] - ITEM_SORT_MAP[second_item_type]
+        item_type = item["type"]
+        return ITEM_SORT_MAP[item_type]
 
     def generate_comparator(self, reference):
         """
         Generates a method that can be used as a comparator.
+        The method that is going to be generated is meant to
+        be used as key provider comparator.
 
         @type reference: String
         @param reference: The reference value to the comparison.
         """
 
-        def comparator(first_item, second_item):
+        def comparator(item):
             """
-            Comparator function to that returns the result
-            of the comparison between two item.
+            Comparator (key) function to that resolves the provided
+            item into the proper value to be compared by an external
+            comparison algorithm/resolver.
 
-            @type first_item: Object
-            @param first_item: The first item to be compared.
-            @type second_item: Object
-            @param second_item: The second item to be compared.
-            @rtype: int
-            @return: The result of the comparison.
+            @type item: Object
+            @param item: The item to return the key value that is
+            going to be used form comparison.
+            @rtype: Object
+            @return: The key value that is going to be used for the
+            comparison operation.
             """
 
-            # retrieves the item values
-            first_item_value = first_item[reference]
-            second_item_value = second_item[reference]
-
-            # returns the result of the comparison of the
-            # first and second item values
-            return cmp(first_item_value, second_item_value)
+            return item[reference]
 
         # returns the comparator method
         return comparator
