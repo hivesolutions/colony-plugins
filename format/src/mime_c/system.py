@@ -231,7 +231,7 @@ class MimeMessage:
         self.message_stream.write(message)
 
     def write_base_64(self, message, flush = 1):
-        # encodes the mesage into base 64
+        # encodes the message into base 64
         message = base64.b64encode(message)
 
         # writes the message to the message stream
@@ -277,9 +277,9 @@ class MimeMessage:
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
 
-        # iterates over all the header values to be sent
+        # iterates over all the header values to be sent in order
+        # to write their tuple association to the current buffer
         for header_name, header_value in colony.legacy.items(headers_ordered_map):
-            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
@@ -325,9 +325,11 @@ class MimeMessage:
         header_value_type = type(header_value)
 
         # in case the header value type is unicode
-        # and the encode flag is set
+        # and the encode flag is set the value should
+        # be encoded using the current charset, this
+        # is not recommended as the value should be
+        # encoded at the input/output
         if encode and header_value_type == colony.legacy.UNICODE:
-            # encodes the header value with the content type charset
             header_value = header_value.encode(self.content_type_charset)
 
         # sets the header value in the headers map
@@ -511,10 +513,13 @@ class MimeMessage:
 
         # iterates over all the part values
         for part_value in part_values:
-            # in case the part value contains the boundary value
-            if not part_value.find(boundary) == -1:
-                # returns invalid
-                return False
+            # in case the part value does not contains the boundary value
+            # must skip the current iteration (nothing to be done)
+            if part_value.find(boundary) == -1: continue
+
+            # returns invalid as the boundary has been found in at least
+            # one of the parts, so the boundary is considered invalid
+            return False
 
         # returns valid
         return True
