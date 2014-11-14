@@ -240,7 +240,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person = test_mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        person.metadata = dict(ocupation = "student", salary = 100)
+        person.metadata = dict(occupation = "student", salary = 100)
         self.entity_manager.save(person)
 
         # retrieves the person from the data source and verifies that
@@ -250,7 +250,25 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertNotEqual(saved_person, None)
         self.assertEqual(saved_person.object_id, 1)
         self.assertEqual(saved_person.name, "name_person")
-        self.assertEqual(saved_person.metadata, dict(ocupation = "student", salary = 100))
+        self.assertEqual(saved_person.metadata, dict(occupation = "student", salary = 100))
+
+        # creates a new person and populates the information, this time
+        # the person's occupation is encoded with special characters in order
+        # to test the unicode encoding of metadata
+        person = test_mocks.Person()
+        person.object_id = 2
+        person.name = "name_person"
+        person.metadata = dict(occupation = colony.legacy.u("学生"), salary = 10)
+        self.entity_manager.save(person)
+
+        # retrieves the person from the data source and verifies that
+        # the complete information is correctly retrieved from the
+        # data source, including the metadata structure
+        saved_person = self.entity_manager.get(test_mocks.Person, 2)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.object_id, 2)
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertEqual(saved_person.metadata, dict(occupation = colony.legacy.u("学生"), salary = 10))
 
     def test_one_to_one(self):
         # creates the required entity classes in the data source
