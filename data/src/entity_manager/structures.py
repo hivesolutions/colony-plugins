@@ -4065,10 +4065,14 @@ class EntityClass(object):
         if data_type == "date":
             # converts the attribute value to float and then
             # loads a date time structure from the given float
-            # value (it must be a normalized timestamp)
+            # value (it must be a normalized timestamp), note
+            # that in case there's a problem with the casting the
+            # default zeroed value is used instead, providing a
+            # simple fallback process (required for os like windows)
             value = float(value)
             try: date_time_value = datetime.datetime.utcfromtimestamp(value)
-            except ValueError: date_time_value = 0
+            except ValueError: date_time_value = datetime.datetime.utcfromtimestamp(0)
+            except IOError: date_time_value = datetime.datetime.utcfromtimestamp(0)
 
             # returns the date time (converted) value it may
             # be used in a coherent
