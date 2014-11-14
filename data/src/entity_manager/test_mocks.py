@@ -57,6 +57,12 @@ class RootEntity(structures.EntityClass):
     )
     """ The status of the entity (1-enabled, 2-disabled) """
 
+    metadata = dict(
+        type = "metadata"
+    )
+    """ Simple metadata value that is going to be used
+    for storage of structured data (maps and lists) """
+
     def __init__(self):
         """
         Constructor of the class.

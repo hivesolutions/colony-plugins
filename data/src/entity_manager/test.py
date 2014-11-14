@@ -231,6 +231,27 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # should include many-to-many (problem)
         pass
 
+    def test_metadata(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(test_mocks.Person)
+
+        # creates the the person with a series of default information
+        # and with some metadata added to it (as expected)
+        person = test_mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.metadata = dict(ocupation = "student", salary = 100)
+        self.entity_manager.save(person)
+
+        # retrieves the person from the data source and verifies that
+        # the complete information is correctly retrieved from the
+        # data source, including the metadata structure
+        saved_person = self.entity_manager.get(test_mocks.Person, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.object_id, 1)
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertEqual(saved_person.metadata, dict(ocupation = "student", salary = 100))
+
     def test_one_to_one(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(test_mocks.Person)
