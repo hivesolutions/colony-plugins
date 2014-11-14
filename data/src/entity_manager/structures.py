@@ -4081,9 +4081,9 @@ class EntityClass(object):
             try:
                 # encodes the value using the serialization
                 # encoding and then unpacks the value into
-                # the serializer name and the value then uses
-                # it so load the value
-                value = value.encode("utf-8")
+                # the serializer name and the value using
+                # it so load the proper/final (meta) value
+                value = value if colony.legacy.PYTHON_3 else value.encode("utf-8")
                 name, value = value.split(":", 1)
                 serializer, _name = cls.get_serializer(name)
                 metadata_value = serializer.loads(value)
