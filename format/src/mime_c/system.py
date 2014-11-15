@@ -247,7 +247,8 @@ class MimeMessage:
         self.part_list.remove(part)
 
     def get_value(self):
-        # retrieves the result stream
+        # creates the buffer that is going to hold the
+        # final message stream value (to be joined latter)
         result = colony.StringBuffer()
 
         # in case this is a multi part message
