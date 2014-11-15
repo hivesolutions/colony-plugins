@@ -65,6 +65,7 @@ class MimePlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import mime_c
         self.sytem = mime_c.Mime(self)
+        self.test = mime_c.MimeTest(self)
 
     @colony.set_configuration_property
     def set_configuration_property(self, property_name, property):
