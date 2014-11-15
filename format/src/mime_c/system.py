@@ -128,7 +128,10 @@ class Mime(colony.System):
 
 class MimeMessage:
     """
-    Class representing a mime message.
+    Class representing a mime message, this is the
+    mains structure where the mime transforms will
+    occur. Should provide a simple interface for
+    interaction with the mime contents.
     """
 
     part = False
@@ -247,7 +250,7 @@ class MimeMessage:
         # retrieves the result stream
         result = colony.StringBuffer()
 
-        # in case this is multi part message
+        # in case this is a multi part message
         if self.multi_part:
             # in case this message is not a part
             if not self.part:
@@ -263,15 +266,15 @@ class MimeMessage:
         # creates the ordered map to hold the header values
         headers_ordered_map = colony.OrderedMap()
 
-        # in case this is multi part message
+        # in case this is multi part message, updates
+        # the content type value with the appropriate
+        # multipart value with the proper boundary
         if self.multi_part:
-            # sets the content type
             headers_ordered_map[CONTENT_TYPE_VALUE] = "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\""
 
         # in case this message is not a part, writes the
-        # main headers
+        # main headers, including the mime indication
         if not self.part:
-            # sets the mime version
             headers_ordered_map[MIME_VERSION_VALUE] = self.protocol_version
 
         # extends the headers ordered map with the headers map
