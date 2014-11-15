@@ -56,8 +56,14 @@ class MimeBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "Mime Plugin test case"
 
-    def test_simple(self):
+    def test_write(self):
         message = self.system.create_message({})
         message.write("Hello World")
+        result = message.get_value()
+        self.assertEqual(result, "MIME-Version: 1.0\r\n\r\nHello World")
+
+    def test_read(self):
+        message = self.system.create_message({})
+        message.read_simple(b"MIME-Version: 1.0\r\n\r\nHello World")
         result = message.get_value()
         self.assertEqual(result, "MIME-Version: 1.0\r\n\r\nHello World")

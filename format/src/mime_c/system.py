@@ -176,11 +176,20 @@ class MimeMessage(object):
         self.headers_map = {}
         self.message_stream = colony.StringBuffer()
 
-    def read_simple(self, message_contents):
-        # strips the message contents
-        message_contents = message_contents.lstrip()
+    def read_simple(self, message_contents, decode = True):
+        # retrieves the data type of the provided message contents
+        # string value to be used for encoding evaluation
+        message_type = type(message_contents)
 
-        # finds the index for the end of the headers
+        # in case the data type of the message to be read is bytes
+        # based and the decode flag is set the provided contents
+        # should be decoded so that an unicode string is used instead
+        if message_type == colony.legacy.BYTES and decode:
+            message_contents = message_contents.decode(self.content_type_charset)
+
+        # strips the message contents and then finds the index
+        # for the end of the headers section to be used in parsing
+        message_contents = message_contents.lstrip()
         end_headers_index = message_contents.find("\r\n\r\n")
 
         # in case there are no header values in the message
@@ -234,12 +243,15 @@ class MimeMessage(object):
         # retrieves the message type
         message_type = type(message)
 
-        # in case the message type is unicode and the encode
-        # flag is set the provided message is encoded
-        if message_type == colony.legacy.UNICODE and encode:
-            message = message.encode(self.content_type_charset)
+        # in case the data type of the provided message string
+        # is bytes based and the decoding flag is set the value
+        # is decoded according to the currently defined charset
+        if message_type == colony.legacy.BYTES and encode:
+            message = message.decode(self.content_type_charset)
 
-        # writes the message to the message stream
+        # writes the message to the message stream, note that the
+        # value should be unicode based to avoid possible join
+        # issues at the final part of the message assembling
         self.message_stream.write(message)
 
     def write_base_64(self, message, flush = 1):
@@ -248,6 +260,7 @@ class MimeMessage(object):
         # writes the encoded value to the stream
         message = colony.legacy.bytes(message)
         message = base64.b64encode(message)
+        message = colony.legacy.str(message)
         self.message_stream.write(message)
 
     def add_part(self, part):
@@ -259,7 +272,8 @@ class MimeMessage(object):
     def get_value(self):
         # creates the buffer that is going to hold the
         # final message stream value (to be joined latter)
-        result = colony.StringBuffer()
+        # note that the base type is enforced to be unicode
+        result = colony.StringBuffer(btype = colony.legacy.UNICODE)
 
         # in case this is a multi part message
         if self.multi_part:
@@ -323,32 +337,32 @@ class MimeMessage(object):
 
         return self.headers_map.get(header_name, None)
 
-    def set_header(self, header_name, header_value, encode = True):
+    def set_header(self, header_name, header_value, decode = True):
         """
-        Set a mime header value in the message.
+        Set a mime header value in the message, the operation
+        of this method will decode the header value if required.
 
         @type header_name: String
         @param header_name: The name of the header to be set.
         @type header_value: Object
         @param header_value: The value of the header to be sent
         in the response.
-        @type encode: bool
-        @param encode: If the header value should be encoded in
-        case the type is unicode.
+        @type decode: bool
+        @param decode: If the header value should be decoded in
+        case the type is byte string based.
         """
 
         # retrieves the header value type
         header_value_type = type(header_value)
 
-        # in case the header value type is unicode
-        # and the encode flag is set the value should
-        # be encoded using the current charset, this
-        # is not recommended as the value should be
-        # encoded at the input/output
-        if encode and header_value_type == colony.legacy.UNICODE:
-            header_value = header_value.encode(self.content_type_charset)
+        # in case the data type of the header value is byte string based
+        # and the decoding flag is set the value is decoded so that an
+        # unicode string is store in the header to value association
+        if header_value_type == colony.legacy.BYTES and decode:
+            header_value = header_value.decode(self.content_type_charset)
 
         # sets the header value in the headers map
+        # key to value association map
         self.headers_map[header_name] = header_value
 
     def get_multi_part(self):
