@@ -87,3 +87,9 @@ class MimeBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, colony.legacy.u("MIME-Version: 1.0\r\n\r\n你好世界").encode("utf-8"))
         result = message.get_value(encode = False)
         self.assertEqual(result, colony.legacy.u("MIME-Version: 1.0\r\n\r\n你好世界"))
+
+    def test_base_64(self):
+        message = self.system.create_message({})
+        message.write_base_64("Hello World")
+        result = message.get_value(encode = True)
+        self.assertEqual(result, b"MIME-Version: 1.0\r\n\r\nSGVsbG8gV29ybGQ=")
