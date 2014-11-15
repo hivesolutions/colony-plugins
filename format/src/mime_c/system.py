@@ -517,17 +517,14 @@ class MimeMessage(object):
         boundary_string_buffer = colony.StringBuffer()
 
         # iterates over the range to generate the random value
+        # with the pre-defined size as expected
         for _index in colony.legacy.xrange(32):
-            # generates a normalized random values
+            # generates a normalized random value according to the
+            # ascii specification and then converts it into a character,
+            # writing then the value into the boundary buffer
             random_value = random.random() * 63
-
-            # converts the random value to integer
-            random_value_integer = int(random_value)
-
-            # converts the random value to character
-            random_value_character = VALID_BOUNDARY_CHARACTERS[random_value_integer]
-
-            # writes the random value character to the boundary string buffer
+            random_value = int(random_value)
+            random_value_character = VALID_BOUNDARY_CHARACTERS[random_value]
             boundary_string_buffer.write(random_value_character)
 
         # retrieves the boundary string value
