@@ -122,4 +122,15 @@ class MimeBaseTestCase(colony.ColonyTestCase):
         message.add_part(part)
 
         result = message.get_value(encode = False)
-        print(result)
+        boundary = message.get_boundary()
+
+        expected = colony.legacy.u(
+            "Content-Type: multipart/mixed;boundary=\"%s\"\r\n" % boundary +\
+            "MIME-Version: 1.0\r\n\r\n" +\
+            "This is a multi-part message in MIME format\r\n" +\
+            "--" + boundary + "\r\n\r\n" +\
+            "Hello World" +\
+            "\r\n--" + boundary + "--\r\n"
+        )
+
+        self.assertEqual(result,expected)

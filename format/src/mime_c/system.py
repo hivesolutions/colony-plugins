@@ -550,7 +550,13 @@ class MimeMessage(object):
         @return: The result of the check.
         """
 
-        # iterates over all the part values
+        # ensures that the boundary value is encoded a a bytes
+        # string so that no problem arises with finding the value
+        boundary = colony.legacy.bytes(boundary)
+
+        # iterates over all the part values to try to find the
+        # boundary string in them if at least one of the parts
+        # contains the boundary it is considered to be invalid
         for part_value in part_values:
             # in case the part value does not contains the boundary value
             # must skip the current iteration (nothing to be done)
