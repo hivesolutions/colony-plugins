@@ -243,10 +243,9 @@ class MimeMessage(object):
         self.message_stream.write(message)
 
     def write_base_64(self, message, flush = 1):
-        # encodes the message into base 64
+        # encodes the message into base 64 and then
+        # writes the encoded value to the stream
         message = base64.b64encode(message)
-
-        # writes the message to the message stream
         self.message_stream.write(message)
 
     def add_part(self, part):
