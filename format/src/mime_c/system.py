@@ -541,7 +541,9 @@ class MimeMessage(object):
 
 class MimeMessagePart(MimeMessage):
     """
-    Class representing a part mime message.
+    Class representing a part mime message, this is a
+    specialized of the mime message that offers extra
+    operations for only message parts.
     """
 
     def __init__(self):
