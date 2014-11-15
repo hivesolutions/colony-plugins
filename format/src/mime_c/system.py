@@ -356,8 +356,16 @@ class MimeMessage(object):
         case the type is byte string based.
         """
 
-        # retrieves the header value type
+        # retrieves the data type for both the header name and
+        # value so that conditional encoding may be provided
+        header_name_type = type(header_name)
         header_value_type = type(header_value)
+
+        # verifies if the data type of the header name is byte string
+        # based and if that's the case decodes it using the encoding
+        # defined for the current mime message, only if decode is active
+        if header_name_type == colony.legacy.BYTES and decode:
+            header_name = header_name.decode(self.content_type_charset)
 
         # in case the data type of the header value is byte string based
         # and the decoding flag is set the value is decoded so that an
@@ -480,12 +488,12 @@ class MimeMessage(object):
             # regenerates the boundary value
             self.boundary = self._generate_boundary(self.boundary)
 
-        # iterates over all the part values
+        # iterates over all the part values to write their
+        # contents into the current buffer (as expected)
         for part_value in part_values:
-            # writes the initial boundary value
+            # writes the initial boundary value for the part and
+            # then writes the proper value for the part
             self.write("\r\n--" + self.boundary + "\r\n")
-
-            # writes the part value
             self.write(part_value)
 
         # writes the final boundary value
