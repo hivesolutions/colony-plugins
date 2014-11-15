@@ -59,11 +59,15 @@ class MimeBaseTestCase(colony.ColonyTestCase):
     def test_write(self):
         message = self.system.create_message({})
         message.write("Hello World")
-        result = message.get_value()
+        result = message.get_value(encode = True)
+        self.assertEqual(result, b"MIME-Version: 1.0\r\n\r\nHello World")
+        result = message.get_value(encode = False)
         self.assertEqual(result, "MIME-Version: 1.0\r\n\r\nHello World")
 
     def test_read(self):
         message = self.system.create_message({})
         message.read_simple(b"MIME-Version: 1.0\r\n\r\nHello World")
-        result = message.get_value()
+        result = message.get_value(encode = True)
+        self.assertEqual(result, b"MIME-Version: 1.0\r\n\r\nHello World")
+        result = message.get_value(encode = False)
         self.assertEqual(result, "MIME-Version: 1.0\r\n\r\nHello World")

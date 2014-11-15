@@ -269,7 +269,7 @@ class MimeMessage(object):
     def remove_part(self, part):
         self.part_list.remove(part)
 
-    def get_value(self):
+    def get_value(self, encode = True):
         # creates the buffer that is going to hold the
         # final message stream value (to be joined latter)
         # note that the base type is enforced to be unicode
@@ -318,9 +318,13 @@ class MimeMessage(object):
         result.write("\r\n")
         result.write(message)
 
-        # retrieves the value from the result buffer and returns
-        # it to the caller method as the final message string
+        # retrieves the value from the result buffer and then encodes
+        # the value if that's required by argument (using current charset)
         result_value = result.get_value()
+        if encode: result_value = result_value.encode(self.content_type_charset)
+
+        # returns the final result value that may be either a bytes
+        # string value or unicode one (depending on encode flag)
         return result_value
 
     def get_header(self, header_name):
