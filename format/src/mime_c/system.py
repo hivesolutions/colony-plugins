@@ -513,7 +513,8 @@ class MimeMessage(object):
         # creates a new boundary if necessary
         boundary = boundary or str()
 
-        # creates the boundary string buffer
+        # creates the boundary string buffer that will hold
+        # the various generated partial values for the boundary
         boundary_string_buffer = colony.StringBuffer()
 
         # iterates over the range to generate the random value
