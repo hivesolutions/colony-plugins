@@ -234,9 +234,9 @@ class MimeMessage(object):
         # retrieves the message type
         message_type = type(message)
 
-        # in case the message type is unicode
+        # in case the message type is unicode and the encode
+        # flag is set the provided message is encoded
         if message_type == colony.legacy.UNICODE and encode:
-            # encodes the message with the defined content type charset
             message = message.encode(self.content_type_charset)
 
         # writes the message to the message stream
