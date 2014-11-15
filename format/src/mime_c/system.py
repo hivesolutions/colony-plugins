@@ -243,8 +243,10 @@ class MimeMessage(object):
         self.message_stream.write(message)
 
     def write_base_64(self, message, flush = 1):
-        # encodes the message into base 64 and then
+        # makes sure that the message is a byte string
+        # and encodes the message into base 64 and then
         # writes the encoded value to the stream
+        message = colony.legacy.bytes(message)
         message = base64.b64encode(message)
         self.message_stream.write(message)
 
