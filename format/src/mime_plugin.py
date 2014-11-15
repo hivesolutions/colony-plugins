@@ -55,6 +55,7 @@ class MimePlugin(colony.Plugin):
         colony.IRON_PYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "test",
         "format.mime"
     ]
     main_modules = [

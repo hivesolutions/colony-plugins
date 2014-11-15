@@ -38,4 +38,4 @@ from . import system
 from . import test
 
 from .system import Mime
-from .test import MimeTest, MimeTestcase
+from .test import MimeTest, MimeBaseTestCase
