@@ -93,3 +93,16 @@ class MimeBaseTestCase(colony.ColonyTestCase):
         message.write_base_64("Hello World")
         result = message.get_value(encode = True)
         self.assertEqual(result, b"MIME-Version: 1.0\r\n\r\nSGVsbG8gV29ybGQ=")
+
+    def test_headers(self):
+        message = self.system.create_message({})
+        message.write("Hello World")
+        message.set_header("Test", "Hello World")
+        result = message.get_value(encode = True)
+        self.assertEqual(result, b"MIME-Version: 1.0\r\nTest: Hello World\r\n\r\nHello World")
+
+        message = self.system.create_message({})
+        message.write("你好世界")
+        message.set_header("Test", "你好世界")
+        result = message.get_value(encode = False)
+        self.assertEqual(result, colony.legacy.u("MIME-Version: 1.0\r\nTest: 你好世界\r\n\r\n你好世界"))
