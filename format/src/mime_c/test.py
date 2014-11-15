@@ -59,3 +59,5 @@ class MimeBaseTestCase(colony.ColonyTestCase):
     def test_simple(self):
         message = self.system.create_message({})
         message.write("Hello World")
+        result = message.get_value()
+        self.assertEqual(result, "MIME-Version: 1.0\r\n\r\nHello World")
