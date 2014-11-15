@@ -252,12 +252,14 @@ class MimeMessage:
 
         # in case this is a multi part message
         if self.multi_part:
-            # in case this message is not a part
+            # in case this message is not a part must
+            # write a simple multi part information message
             if not self.part:
-                # writes the multi part format message
                 self.message_stream.write(MULTI_PART_MESSAGE)
 
-            # encodes the multi part message
+            # encodes the multi part message, staring the
+            # logic of encoding the multiple parts that
+            # compose the current mime message (iterative)
             self._encode_multi_part()
 
         # retrieves the result string value
@@ -270,7 +272,8 @@ class MimeMessage:
         # the content type value with the appropriate
         # multipart value with the proper boundary
         if self.multi_part:
-            headers_ordered_map[CONTENT_TYPE_VALUE] = "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\""
+            headers_ordered_map[CONTENT_TYPE_VALUE] = "multipart/" + self.multi_part +\
+                ";" + "boundary=\"" + self.boundary + "\""
 
         # in case this message is not a part, writes the
         # main headers, including the mime indication
@@ -290,10 +293,9 @@ class MimeMessage:
         result.write("\r\n")
         result.write(message)
 
-        # retrieves the value from the result buffer
+        # retrieves the value from the result buffer and returns
+        # it to the caller method as the final message string
         result_value = result.get_value()
-
-        # returns the result value
         return result_value
 
     def get_header(self, header_name):
