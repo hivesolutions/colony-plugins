@@ -66,17 +66,17 @@ class ThreadPoolPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import threads.pool
-        self.sytem = threads.pool.ThreadPool(self)
+        self.system = threads.pool.ThreadPool(self)
 
     def unload_plugin(self):
         colony.Plugin.unload_plugin(self)
-        self.sytem.unload()
+        self.system.unload()
 
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
-        return self.sytem.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        return self.system.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
     def get_thread_task_descriptor_class(self):
-        return self.sytem.get_thread_task_descriptor_class()
+        return self.system.get_thread_task_descriptor_class()
 
     def get_system_information(self):
         """
@@ -87,4 +87,4 @@ class ThreadPoolPlugin(colony.Plugin):
         @return: The system information map.
         """
 
-        return self.sytem.get_system_information()
+        return self.system.get_system_information()

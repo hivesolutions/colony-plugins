@@ -65,7 +65,7 @@ class MimePlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mime_c
-        self.sytem = mime_c.Mime(self)
+        self.system = mime_c.Mime(self)
         self.test = mime_c.MimeTest(self)
 
     @colony.set_configuration_property
@@ -77,18 +77,18 @@ class MimePlugin(colony.Plugin):
         colony.Plugin.unset_configuration_property(self, property_name)
 
     def create_message(self, parameters):
-        return self.sytem.create_message(parameters)
+        return self.system.create_message(parameters)
 
     def create_message_part(self, parameters):
-        return self.sytem.create_message_part(parameters)
+        return self.system.create_message_part(parameters)
 
     def get_mime_type_file_name(self, file_name):
-        return self.sytem.get_mime_type_file_name(file_name)
+        return self.system.get_mime_type_file_name(file_name)
 
     @colony.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
-        self.sytem.set_configuration_property(property)
+        self.system.set_configuration_property(property)
 
     @colony.unset_configuration_property_method("configuration")
     def configuration_unset_configuration_property(self, property_name):
-        self.sytem.unset_configuration_property()
+        self.system.unset_configuration_property()

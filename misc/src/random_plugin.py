@@ -63,7 +63,7 @@ class RandomPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import random_c
-        self.sytem = random_c.Random(self)
+        self.system = random_c.Random(self)
 
     def generate_random(self):
         """
@@ -78,7 +78,7 @@ class RandomPlugin(colony.Plugin):
         usage (with high entropy).
         """
 
-        return self.sytem.generate_random()
+        return self.system.generate_random()
 
     def generate_random_int(self):
         """
@@ -91,7 +91,7 @@ class RandomPlugin(colony.Plugin):
         into integer.
         """
 
-        return self.sytem.generate_random_int()
+        return self.system.generate_random_int()
 
     def generate_random_int_number_digit(self, number_digits):
         """
@@ -107,7 +107,7 @@ class RandomPlugin(colony.Plugin):
         into integer.
         """
 
-        return self.sytem.generate_random_int(number_digits)
+        return self.system.generate_random_int(number_digits)
 
     def generate_random_value(self):
         """
@@ -121,7 +121,7 @@ class RandomPlugin(colony.Plugin):
         @return: The generated random value (with high entropy).
         """
 
-        return self.sytem.generate_random_value()
+        return self.system.generate_random_value()
 
     def generate_random_md5(self):
         """
@@ -134,7 +134,7 @@ class RandomPlugin(colony.Plugin):
         into an md5 value.
         """
 
-        return self.sytem.generate_random_md5()
+        return self.system.generate_random_md5()
 
     def generate_random_md5_string(self):
         """
@@ -147,7 +147,7 @@ class RandomPlugin(colony.Plugin):
         into an md5 string value.
         """
 
-        return self.sytem.generate_random_md5_string()
+        return self.system.generate_random_md5_string()
 
     def generate_random_sha1(self):
         """
@@ -160,7 +160,7 @@ class RandomPlugin(colony.Plugin):
         into an sha1 value.
         """
 
-        return self.sytem.generate_random_sha1()
+        return self.system.generate_random_sha1()
 
     def generate_random_sha1_string(self):
         """
@@ -173,7 +173,7 @@ class RandomPlugin(colony.Plugin):
         into an sha1 string value.
         """
 
-        return self.sytem.generate_random_sha1_string()
+        return self.system.generate_random_sha1_string()
 
     def generate_random_sha256(self):
         """
@@ -186,7 +186,7 @@ class RandomPlugin(colony.Plugin):
         into an sha256 value.
         """
 
-        return self.sytem.generate_random_sha256()
+        return self.system.generate_random_sha256()
 
     def generate_random_sha256_string(self):
         """
@@ -199,4 +199,4 @@ class RandomPlugin(colony.Plugin):
         into an sha256 string value.
         """
 
-        return self.sytem.generate_random_sha256_string()
+        return self.system.generate_random_sha256_string()
