@@ -126,7 +126,7 @@ class Mime(colony.System):
         # sets the extension map
         self.extension_map = {}
 
-class MimeMessage:
+class MimeMessage(object):
     """
     Class representing a mime message, this is the
     mains structure where the mime transforms will
@@ -135,28 +135,37 @@ class MimeMessage:
     """
 
     part = False
-    """ If the current message is part of an upper message """
+    """ If the current message is part of an upper message,
+    meaning that is some kind of child/part value """
 
     multi_part = False
-    """ Flag controlling if the message is of type multi part """
+    """ Flag controlling if the message is of type multi part,
+    meaning that it should contain child/part elements """
 
     boundary = None
-    """ The boundary value for multi part encoding """
+    """ The boundary value for multi part encoding, this
+    must be determined using a strategy that avoids any
+    kind of collisions with the part contents """
 
     protocol_version = DEFAULT_PROTOCOL_VERSION
-    """ The version of the "protocol" """
+    """ The version of the "protocol" that is going to be
+    used as the default fallback """
 
     content_type_charset = DEFAULT_CHARSET
-    """ The content type charset """
+    """ The content type charset, for which the current
+    message will follow and encode its data """
 
     part_list = []
-    """ The list of parts to be included in the multi part message """
+    """ The list of parts to be included in the multi part
+    message, these are considered to be the child parts """
 
     headers_map = {}
-    """ The map containing the header values """
+    """ The map containing the header values to be set in
+    the current mime container/message """
 
     message_stream = None
-    """ The message stream """
+    """ The message stream, containing the partial values for
+    the message contents associated  """
 
     def __init__(self):
         """
