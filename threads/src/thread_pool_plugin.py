@@ -60,13 +60,13 @@ class ThreadPoolPlugin(colony.Plugin):
         "system_information"
     ]
     main_modules = [
-        "threads.pool"
+        "thread_pool"
     ]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import threads.pool
-        self.system = threads.pool.ThreadPool(self)
+        import thread_pool
+        self.system = thread_pool.ThreadPool(self)
 
     def unload_plugin(self):
         colony.Plugin.unload_plugin(self)
