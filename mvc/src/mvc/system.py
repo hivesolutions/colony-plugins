@@ -583,11 +583,11 @@ class Mvc(colony.System):
 
     def pattern_name(self, pattern):
         method = pattern[1]
-        is_method = hasattr(method, "im_class")
+        is_method = type(method) == types.MethodType
         if is_method:
-            cls = method.__class__
-            self = method.__self__
             name = method.__name__
+            self = method.__self__
+            cls = self.__class__
             cls_name = cls.__name__
             cls_name = colony.to_underscore(cls_name)
             if cls_name.endswith("_controller"): cls_name = cls_name[:-11]
