@@ -42,23 +42,29 @@ import os
 import colony
 
 CONTENT_TYPE_VALUE = "Content-Type"
-""" The content type value """
+""" The content type value, to be used in the definition
+of the ender that contains the content type """
 
 CONTENT_TRANSFER_ENCODING_VALUE = "Content-Transfer-Encoding"
-""" The content transfer encoding value """
+""" The content transfer encoding value, the name
+of the header that defines the type of transfer encoding """
 
 CONTENT_ID_VALUE = "Content-ID"
-""" The content id value """
+""" The content id value, representing the header that identifies
+in an unique way the attachment to be inserted """
 
 BASE64_VALUE = "base64"
-""" The base64 value """
+""" The base 64 value representing the type of transfer encoding
+where the contents are encoded using the base 64 encoding """
 
 DEFAULT_MIME_TYPE = "application/octet-stream"
-""" The default mime type """
+""" The default mime type for an attachment based part, to be
+used in connection with the base 64 (transfer) encoding """
 
 class MimeUtils(colony.System):
     """
-    The mime utils class.
+    The mime utils class, responsible for the management
+    of extra functions related with the mime standard.
     """
 
     def add_mime_message_attachment_contents(self, mime_message, contents, file_name, mime_type = None):
