@@ -192,7 +192,8 @@ class MimeMessage(object):
         message_contents = message_contents.lstrip()
         end_headers_index = message_contents.find("\r\n\r\n")
 
-        # in case there are no header values in the message
+        # in case there are no header values in the message,
+        # as no separator was found (must set default values)
         if end_headers_index == -1:
             # sets the header lines as empty and the headers index
             # to a valid value for later message contents retrieval
