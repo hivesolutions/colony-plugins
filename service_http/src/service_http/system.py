@@ -1791,7 +1791,9 @@ class HttpClientServiceHandler:
             file_system_encoding = sys.getfilesystemencoding()
 
             # decodes the traceback values using the file system encoding
-            formated_traceback = [value.decode(file_system_encoding) for value in formated_traceback]
+            # in case that required (values encoded as byte strings)
+            formated_traceback = [value.decode(file_system_encoding) if colony.legacy.is_bytes(value) else\
+                value for value in formated_traceback]
         # otherwise there is no traceback list
         else:
             # sets an empty formated traceback
