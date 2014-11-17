@@ -913,7 +913,7 @@ class HttpClientServiceHandler:
         except Exception as exception:
             # prints an error message about the raised exception so that it's
             # possible to properly act on it at a runtime level
-            self.service_plugin.debug("There was an exception handling the exception: " %\
+            self.service_plugin.debug("There was an exception handling the exception (%s): " %\
                 exception.__class__.__name__ + colony.legacy.UNICODE(exception)
             )
 
