@@ -467,27 +467,23 @@ class MimeMessage(object):
         # creates the part values list
         part_values = []
 
-        # iterates over all the parts n the part list
+        # iterates over all the parts in the part list so
+        # that their value is correctly generated
         for part in self.part_list:
-            # retrieves the part value
+            # retrieves the part value and adds that value
+            # to the list that contains all the part values
             part_value = part.get_value()
-
-            # adds the part value to the part values
             part_values.append(part_value)
 
-        # generates the initial loop
-        self.boundary = self._generate_boundary()
-
-        # loops continuously
+        # loops continuously, trying to find a valid boundary
+        # (one that does not collide with part contents)
         while True:
-            # checks the part values for the boundary in case it succeeds
-            # the boundary is valid
-            if self._check_part_values_boundary(self.boundary, part_values):
-                # breaks the loop
-                break
-
-            # regenerates the boundary value
-            self.boundary = self._generate_boundary(self.boundary)
+            # generates a new boundary for the part separation
+            # and verifies/checks if it's valid (no part collision)
+            # if that's the case breaks the current loop
+            self.boundary = self._generate_boundary()
+            is_valid = self._check_part_values_boundary(self.boundary, part_values)
+            if is_valid: break
 
         # iterates over all the part values to write their
         # contents into the current buffer (as expected)
@@ -497,7 +493,8 @@ class MimeMessage(object):
             self.write("\r\n--" + self.boundary + "\r\n")
             self.write(part_value)
 
-        # writes the final boundary value
+        # writes the final boundary value to the current
+        # message stream (indicating end of parts section)
         self.write("\r\n--" + self.boundary + "--\r\n")
 
     def _generate_boundary(self, boundary = None):
