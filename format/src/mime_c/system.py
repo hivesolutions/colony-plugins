@@ -464,7 +464,8 @@ class MimeMessage(object):
         current buffer.
         """
 
-        # creates the part values list
+        # creates the part values list, that will hold the
+        # complete content for each of the parts
         part_values = []
 
         # iterates over all the parts in the part list so
