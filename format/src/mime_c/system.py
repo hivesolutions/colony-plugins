@@ -527,10 +527,9 @@ class MimeMessage(object):
             random_value_character = VALID_BOUNDARY_CHARACTERS[random_value]
             boundary_string_buffer.write(random_value_character)
 
-        # retrieves the boundary string value
+        # retrieves the boundary string value and then adds
+        # to the global boundary value string
         boundary_string_value = boundary_string_buffer.get_value()
-
-        # adds the boundary string value to the boundary
         boundary += boundary_string_value
 
         # returns the (new) boundary
