@@ -669,7 +669,7 @@ class ConsoleContext(colony.Protected):
     The console context class.
     This class defines the context for the current
     console execution.
-    It also contains some usefull functions for extra
+    It also contains some useful functions for extra
     information retrieval.
     """
 
