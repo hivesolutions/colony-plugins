@@ -198,7 +198,7 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     # retrieves the name of the model's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and
     # applies the data from the field to the model (apply operation)
-    name = model._get_entity_class_name()
+    name = model._get_model_class_name()
     data = controller.get_field(request, name, {})
     model.apply(data, permissive = permissive)
 
@@ -1955,7 +1955,8 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
 
     # retrieves the allocated entities lists that have more
     # than one model and are therefore invalid
-    allocated_entities_lists = [allocated_entities for allocated_entities in colony.legacy.itervalues(allocated_entities_map) if len(allocated_entities) > 1]
+    allocated_entities_lists = [allocated_entities for allocated_entities in\
+        colony.legacy.itervalues(allocated_entities_map) if len(allocated_entities) > 1]
 
     # removes the last target token since this
     # list is going to be used to retrieve the
@@ -2065,6 +2066,32 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
 
     # sets the attribute value casted in the model
     setattr(self, attribute_key, attribute_value_casted)
+
+def _get_model_class_name(self):
+    """
+    Retrieves the name of the current class associated
+    with the instance in the "standard" underscore based
+    form so that it may be used in routing.
+
+    This method is a utility for this common task.
+
+    @rtype: String
+    @return: The model class name in the "standard"
+    underscore based form.
+    """
+
+    # retrieves the class of the current object to be
+    # used for the retrieval of the class name
+    model_class = self.__class__
+
+    # retrieves the model class name, then converts it
+    # into the underscore notation
+    model_class_name = model_class.__name__
+    model_class_name = colony.to_underscore(model_class_name)
+
+    # returns the "just" created model class
+    # name value to the caller method
+    return model_class_name
 
 def _cast_safe(self, value, cast_type = str, default_value = None):
     """
