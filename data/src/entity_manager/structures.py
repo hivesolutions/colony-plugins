@@ -2751,6 +2751,10 @@ class EntityClass(object):
         @return: The value of the attribute to be retrieved.
         """
 
+        # verifies if the provided instance is not valid/unset,
+        # if that's the case the default value is returned
+        if instance == None: return default
+
         # retrieves the type of the provided instance
         # it can be both a map or a concrete object
         # from a defined model class
