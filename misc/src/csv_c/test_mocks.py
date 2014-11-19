@@ -40,25 +40,25 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony
 
 SIMPLE_OBJECT = [
-    ["name", "age", "country"],
-    ["João", 24, "Portugal"],
-    ["Michael", 12, "Ireland"]
+    ["age", "country", "name"],
+    [24, "Portugal", "João"],
+    [12, "Ireland", "Michael"]
 ]
 
-SIMPLE_CSV = colony.legacy.u("""name;age;country
-João;24;Portugal
-Michael;12;Ireland
+SIMPLE_CSV = colony.legacy.u("""age;country;name
+24;Portugal;João
+12;Ireland;Michael
 """)
 
 SIMPLE_RAW = [
     dict(
-        name = colony.legacy.u("João"),
         age = colony.legacy.u("24"),
-        country = colony.legacy.u("Portugal")
+        country = colony.legacy.u("Portugal"),
+        name = colony.legacy.u("João")
     ),
     dict(
-        name = colony.legacy.u("Michael"),
         age = colony.legacy.u("12"),
-        country = colony.legacy.u("Ireland")
+        country = colony.legacy.u("Ireland"),
+        name = colony.legacy.u("Michael")
     )
 ]

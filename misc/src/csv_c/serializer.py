@@ -126,12 +126,13 @@ def _chunk(object, string_buffer):
         header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
         # verifies if the header is encoded as an unicode string
-        # if that's the case it must be converted into a raw
-        # bytes string using the default encoding for writing
+        # if that's not the case it must be converted into an
+        # unicode string using the default encoding for writing
         is_unicode = type(header_value) == colony.legacy.UNICODE
-        if is_unicode: header_value = header_value.encode(DEFAULT_ENCODING)
+        if not is_unicode: header_value = header_value.decode("utf-8")
 
-        # writes the header value to the string buffer
+        # writes the header value to the string buffer, note that
+        # this value is defined as an unicode based string
         string_buffer.write(header_value)
 
     # in case the generator mode is defined we must run the proper
@@ -198,11 +199,11 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
 
         # writes the separator character and then increments
         # the current index so that it's possible to count values
-        string_buffer.write(SEPARATOR_CHARACTER)
+        string_buffer.write(colony.legacy.u(SEPARATOR_CHARACTER))
         index += 1
 
     # writes the new line in the string buffer
-    string_buffer.write(NEWLINE_CHARACTER)
+    string_buffer.write(colony.legacy.u(NEWLINE_CHARACTER))
 
 def _attribute_names(object_item, object = [], sort = True):
     # creates the first and initial set of attribute names
