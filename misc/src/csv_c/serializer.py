@@ -199,11 +199,14 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
 
         # writes the separator character and then increments
         # the current index so that it's possible to count values
-        string_buffer.write(colony.legacy.u(SEPARATOR_CHARACTER))
+        separator = colony.legacy.u(SEPARATOR_CHARACTER)
+        string_buffer.write(separator)
         index += 1
 
-    # writes the new line in the string buffer
-    string_buffer.write(colony.legacy.u(NEWLINE_CHARACTER))
+    # writes the new line in the string buffer, note that the value
+    # is first encoded as an unicode string (provides common ground)
+    newline = colony.legacy.u(NEWLINE_CHARACTER)
+    string_buffer.write(newline)
 
 def _attribute_names(object_item, object = [], sort = True):
     # creates the first and initial set of attribute names
