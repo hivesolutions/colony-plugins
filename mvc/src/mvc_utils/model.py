@@ -1163,6 +1163,8 @@ def validate(self, checker = None):
     context_validation_map = self.validation_map.get(self.validation_context, {})
 
     # iterates over all the items in the context validation map
+    # so that it's possible to validate all of the attributes
+    # for the current model instance (as requested)
     for attribute_name, validation_tuple_list in colony.legacy.items(context_validation_map):
         # in case the current model is already stored no need to
         # to validate a non existent attribute (it's not going to be

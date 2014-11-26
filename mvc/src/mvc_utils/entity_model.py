@@ -2558,7 +2558,7 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     if duplicate_entity and not duplicate_entity.object_id == self.object_id:
         self.add_error(attribute_name, "duplicate attribute")
 
-def _validate(self, persist_type):
+def _validate(self, persist_type, strict = True):
     # in case the current instance is already in the validating
     # procedure (cycle detected) it must return immediately to
     # avoid stack overflowing (returns as valid to avoid exception)
@@ -2633,7 +2633,7 @@ def _validate(self, persist_type):
         # validates the current entity model and also retrieves
         # the result of the validation
         relations_result_value = self._validate_relations(persist_type)
-        result_value = self.validate(checker = checker)
+        result_value = self.validate(checker = None if strict else checker)
     finally:
         # restores the validating variable to the original invalid
         # state (avoids possible misbehavior)
