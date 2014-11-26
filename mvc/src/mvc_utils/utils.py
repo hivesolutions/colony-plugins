@@ -41,7 +41,7 @@ import inspect
 
 import colony
 
-from mvc_utils import exceptions
+from . import exceptions
 
 ERROR_STATUS_CODE = 500
 """ The error status code, this is going to be

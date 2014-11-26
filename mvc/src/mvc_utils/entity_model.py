@@ -41,8 +41,8 @@ import datetime
 
 import colony
 
-from mvc_utils import utils
-from mvc_utils import exceptions
+from . import utils
+from . import exceptions
 
 PERSIST_UPDATE = 0x01
 """ The persist only on update (or save) persist type that only

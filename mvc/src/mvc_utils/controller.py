@@ -48,7 +48,7 @@ import traceback
 
 import colony
 
-from mvc_utils import exceptions
+from . import exceptions
 
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 """ The default content type, that is going to be used

@@ -43,8 +43,8 @@ import types
 
 import colony
 
-from mvc_utils import utils
-from mvc_utils import exceptions
+from . import utils
+from . import exceptions
 
 EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.\-]+$"
 """ The email regex value """
@@ -407,7 +407,7 @@ def apply(self, map, permissive = False):
             if not has_definition:
                 raise exceptions.ModelApplyException(
                     "item name '%s' not found in model class '%s'" %
-                        (item_name, cls.__name__)
+                    (item_name, cls.__name__)
                 )
 
             # retrieves the class value and retrieves
@@ -421,7 +421,7 @@ def apply(self, map, permissive = False):
             if not class_value_type == dict:
                 raise exceptions.ModelApplyException(
                     "item name '%s' not defined in model class '%s'" %
-                        (item_name, cls.__name__)
+                    (item_name, cls.__name__)
                 )
 
             # retrieves the value data type and secure

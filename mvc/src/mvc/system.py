@@ -905,7 +905,7 @@ class Mvc(colony.System):
         # their base indexes
         for pattern in self.patterns_list:
             # in case it's not the first iteration adds the
-            #or operand to the matching regex value buffer
+            # or operand to the matching regex value buffer
             if is_first: is_first = False
             else: matching_regex_buffer.write("|")
 
@@ -976,7 +976,7 @@ class Mvc(colony.System):
         # their base indexes
         for pattern in self.communication_patterns_list:
             # in case it's not the first iteration adds the
-            #or operand to the matching regex value buffer
+            # or operand to the matching regex value buffer
             if is_first: is_first = False
             else: communication_matching_regex_buffer.write("|")
 
@@ -1047,7 +1047,7 @@ class Mvc(colony.System):
         # their base indexes
         for pattern in self.resource_patterns_list:
             # in case it's not the first iteration adds the
-            #or operand to the matching regex value buffer
+            # or operand to the matching regex value buffer
             if is_first: is_first = False
             else: resource_matching_regex_buffer.write("|")
 

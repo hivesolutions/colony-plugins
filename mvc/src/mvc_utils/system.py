@@ -44,10 +44,10 @@ import types
 
 import colony
 
-from mvc_utils import utils
-from mvc_utils import model
-from mvc_utils import controller
-from mvc_utils import entity_model
+from . import utils
+from . import model
+from . import controller
+from . import entity_model
 
 NAME_REFERENCE_VALUE = "__name__"
 """ The name reference value """
@@ -1197,7 +1197,7 @@ class MvcUtils(colony.System):
             # inclusion of referred/external models
             is_valid = module_item_type == type and issubclass(module_item, entity_class) and\
                 (not hasattr(module_item, "data_reference") or module_item.data_reference == False) and\
-                 module_item.__module__ == module.__name__
+                module_item.__module__ == module.__name__
             if not is_valid: continue
 
             # adds the module item to the list of (valid) entity classes as the
@@ -1483,7 +1483,7 @@ class MvcUtils(colony.System):
         # in case the package path is not present
         # in the current environment globals (nothing
         # should be done for the situation)
-        if not package_path in globals_map:  return
+        if not package_path in globals_map: return
 
         # removes the package in the package
         # path from the globals map
