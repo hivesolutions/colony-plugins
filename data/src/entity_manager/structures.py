@@ -2001,7 +2001,7 @@ class EntityClass(object):
 
         # returns the (proper) class associated with the
         # provided name to the caller method
-        return  name_cls
+        return name_cls
 
     @classmethod
     def get_id(cls):
@@ -3706,7 +3706,7 @@ class EntityClass(object):
 
             # otherwise it must be a to one relation and only
             # one value must be converted into map and set
-            #in the current entity map
+            # in the current entity map
             else:
                 # retrieves the value of the relation and converts
                 # it into the map representation in case it's valid
