@@ -43,7 +43,7 @@ import hashlib
 
 import colony
 
-from authentication_ldap import exceptions
+from . import exceptions
 
 HANDLER_NAME = "ldap"
 """ The handler name """

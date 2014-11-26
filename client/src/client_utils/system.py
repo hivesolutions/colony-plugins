@@ -43,7 +43,7 @@ import threading
 
 import colony
 
-from client_utils import exceptions
+from . import exceptions
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """

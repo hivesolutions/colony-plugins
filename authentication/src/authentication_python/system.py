@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from authentication_python import exceptions
+from . import exceptions
 
 HANDLER_NAME = "python"
 """ The handler name """
