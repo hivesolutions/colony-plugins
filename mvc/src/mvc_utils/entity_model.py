@@ -2631,7 +2631,9 @@ def _validate(self, persist_type, strict = True):
         # validates the relations of the current entity model
         # and retrieves the result of such validation, then
         # validates the current entity model and also retrieves
-        # the result of the validation
+        # the result of the validation, note that the checker
+        # function is only used in non strict environment as it's
+        # considered dangerous to use it for defaulting storage
         relations_result_value = self._validate_relations(persist_type)
         result_value = self.validate(checker = None if strict else checker)
     finally:
