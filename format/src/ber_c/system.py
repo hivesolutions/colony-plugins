@@ -41,7 +41,7 @@ import sys
 
 import colony
 
-from ber_c import exceptions
+from . import exceptions
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -934,7 +934,7 @@ class BerStructure:
 
     def _unpack_object_identifier(self, packed_value):
         # creates the object identifier list
-        object_identifier_list = [];
+        object_identifier_list = []
 
         # starts the index value
         index = 0
