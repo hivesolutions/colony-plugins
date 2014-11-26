@@ -45,7 +45,7 @@ import threading
 
 import colony
 
-from entity_manager import exceptions
+from . import exceptions
 
 SERIALIZERS = (
     "json",

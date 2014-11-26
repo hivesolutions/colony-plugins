@@ -48,9 +48,9 @@ import tempfile
 
 import colony
 
-from entity_manager import exceptions
-from entity_manager import structures
-from entity_manager import test_mocks
+from . import exceptions
+from . import structures
+from . import test_mocks
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding

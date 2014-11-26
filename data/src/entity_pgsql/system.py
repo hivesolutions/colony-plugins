@@ -283,7 +283,7 @@ class PgsqlEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the pgsql engine (for debugging purposes)
-            self.pgsql_system.debug("[%s] %s" %  (ENGINE_NAME, query))
+            self.pgsql_system.debug("[%s] %s" % (ENGINE_NAME, query))
 
             # in case the current connections requests that the sql string
             # should be displayed it's printed to the logger properly

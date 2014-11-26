@@ -357,7 +357,7 @@ class MysqlEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the mysql engine (for debugging purposes)
-            self.mysql_system.debug("[%s] %s" %  (ENGINE_NAME, query))
+            self.mysql_system.debug("[%s] %s" % (ENGINE_NAME, query))
 
             # in case the current connections requests that the sql string
             # should be displayed it's printed to the logger properly
@@ -409,7 +409,7 @@ class MysqlEngine(object):
             # case it's prints a warning message but does not fails, otherwise
             # raises the exception as this should break the current code
             code, _message = exception.args
-            if code in IGNORE_ERRORS: self.mysql_system.warning(_message);
+            if code in IGNORE_ERRORS: self.mysql_system.warning(_message)
             else: raise
         except:
             # closes the cursor (safe closing) and re-raises
