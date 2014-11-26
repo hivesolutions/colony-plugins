@@ -47,7 +47,7 @@ import traceback
 
 import colony
 
-from service_http import exceptions
+from . import exceptions
 
 RESOLUTION_ORDER_ITEMS = (
     "virtual_servers",
@@ -519,7 +519,6 @@ class ServiceHttp(colony.System):
 
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
-
 
         # retrieves the various parameter values that are going to
         # be used as the basis for the (new) parameters creation

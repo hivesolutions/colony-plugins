@@ -42,9 +42,9 @@ import re
 
 import colony
 
-from template_engine import ast
-from template_engine import visitor
-from template_engine import exceptions
+from . import ast
+from . import visitor
+from . import exceptions
 
 OUTPUT_REGEX_VALUE = "\{\{[^\}]*\}\}"
 """ The regular expression value for the matching of the

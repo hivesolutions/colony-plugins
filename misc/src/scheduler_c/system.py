@@ -45,7 +45,7 @@ import threading
 
 import colony
 
-from scheduler_c import exceptions
+from . import exceptions
 
 METHOD_CALL_TYPE = "method_call"
 """ The method call type """

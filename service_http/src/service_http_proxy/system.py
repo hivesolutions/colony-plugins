@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from service_http_proxy import exceptions
+from . import exceptions
 
 HANDLER_NAME = "proxy"
 """ The handler name """

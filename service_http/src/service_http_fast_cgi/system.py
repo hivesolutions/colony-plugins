@@ -43,7 +43,7 @@ import threading
 
 import colony
 
-from service_http_fast_cgi import exceptions
+from . import exceptions
 
 HANDLER_NAME = "fast_cgi"
 """ The handler name """
@@ -446,7 +446,7 @@ class ServiceHttpFastCgi(colony.System):
         request.status_code = status
 
         # raises the request not handled exception
-        #raise service_http_fast_cgi_handler_exceptions.RequestNotHandled("no fast cgi handler could handle the request")
+        raise exceptions.RequestNotHandled("no fast cgi handler could handle the request")
 
     def _get_connection(self, connection_type, connection_arguments):
         """

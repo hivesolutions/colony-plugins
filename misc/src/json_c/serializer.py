@@ -48,7 +48,7 @@ import calendar
 
 import colony
 
-from json_c import exceptions
+from . import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,

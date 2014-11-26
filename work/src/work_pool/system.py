@@ -41,8 +41,8 @@ import threading
 
 import colony
 
-from work_pool import algorithms
-from work_pool import exceptions
+from . import algorithms
+from . import exceptions
 
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """

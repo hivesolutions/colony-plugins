@@ -45,7 +45,7 @@ import datetime
 
 import colony
 
-from service_http_file import exceptions
+from . import exceptions
 
 HANDLER_NAME = "file"
 """ The handler name """

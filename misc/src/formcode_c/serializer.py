@@ -42,7 +42,7 @@ import types
 
 import colony
 
-from formcode_c import exceptions
+from . import exceptions
 
 NAME_TYPE_VALUE = "name"
 """ The name type value """

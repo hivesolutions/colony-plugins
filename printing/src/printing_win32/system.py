@@ -46,8 +46,8 @@ import PIL.ImageWin
 
 import colony
 
-from printing_win32 import constants
-from printing_win32 import visitor
+from . import constants
+from . import visitor
 
 PRINTING_NAME = "win32"
 """ The printing name """

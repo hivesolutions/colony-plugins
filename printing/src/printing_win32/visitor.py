@@ -48,7 +48,7 @@ import colony
 
 import printing_manager
 
-from printing_win32 import exceptions
+from . import exceptions
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """

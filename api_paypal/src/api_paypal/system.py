@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from api_paypal import exceptions
+from . import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """

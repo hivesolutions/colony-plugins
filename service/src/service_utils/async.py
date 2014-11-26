@@ -46,8 +46,8 @@ import threading
 
 import colony
 
-from service_utils import threads
-from service_utils import exceptions
+from . import threads
+from . import exceptions
 
 _EPOLLIN = 0x001
 _EPOLLPRI = 0x002

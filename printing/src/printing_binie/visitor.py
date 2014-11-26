@@ -46,7 +46,7 @@ import colony
 
 import printing_manager
 
-from printing_binie import exceptions
+from . import exceptions
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """
@@ -351,7 +351,7 @@ class Visitor:
             elif text_align == "center": text_align_int = 3
 
             # calculates the text height from the font scale factor
-            text_height = font_size * FONT_SCALE_FACTOR;
+            text_height = font_size * FONT_SCALE_FACTOR
 
             # packs the element text element structure containing all the meta
             # information that makes part of it then adds the "just" created

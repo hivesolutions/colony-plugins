@@ -42,7 +42,7 @@ import subprocess
 
 import colony
 
-from service_http_cgi import exceptions
+from . import exceptions
 
 HANDLER_NAME = "cgi"
 """ The handler name """

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from printing_pdf import visitor
+from . import visitor
 
 PRINTING_NAME = "pdf"
 """ The printing name """

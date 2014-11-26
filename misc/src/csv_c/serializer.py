@@ -41,7 +41,7 @@ import types
 
 import colony
 
-from csv_c import exceptions
+from . import exceptions
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding for csv files, this

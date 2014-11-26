@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from csv_c import test_mocks
+from . import test_mocks
 
 class CsvTest(colony.Test):
     """

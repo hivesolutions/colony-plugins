@@ -44,7 +44,7 @@ import calendar
 
 import colony
 
-from bencode_c import exceptions
+from . import exceptions
 
 EXCLUSION_MAP = {
     "__class__" : True,

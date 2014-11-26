@@ -44,8 +44,8 @@ import datetime
 
 import colony
 
-from api_openid import parser
-from api_openid import exceptions
+from . import parser
+from . import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -465,7 +465,7 @@ class OpenidServer(object):
             self.set_openid_structure(openid_structure)
 
         # decodes the diffie hellman values in case they exist
-        prime_value = prime_value and self.api_openid._mklong(base64.b64decode(prime_value)) or  None
+        prime_value = prime_value and self.api_openid._mklong(base64.b64decode(prime_value)) or None
         base_value = base_value and self.api_openid._mklong(base64.b64decode(base_value)) or None
         consumer_public = consumer_public and self.api_openid._mklong(base64.b64decode(consumer_public)) or None
 

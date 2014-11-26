@@ -44,7 +44,7 @@ import hashlib
 
 import colony
 
-from api_twitter import exceptions
+from . import exceptions
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """

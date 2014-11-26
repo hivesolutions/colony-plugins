@@ -43,7 +43,7 @@ import hashlib
 
 import colony
 
-from service_http_websocket import exceptions
+from . import exceptions
 
 HANDLER_NAME = "websocket"
 """ The handler name """

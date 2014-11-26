@@ -45,7 +45,7 @@ import select
 import struct
 import termios
 
-from console_interface import exceptions
+from . import exceptions
 
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """

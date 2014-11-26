@@ -41,9 +41,9 @@ import threading
 
 import colony
 
-from service_utils import sync
-from service_utils import async
-from service_utils import exceptions
+from . import sync
+from . import async
+from . import exceptions
 
 PORT_RANGES = (
     (38001, 39999),

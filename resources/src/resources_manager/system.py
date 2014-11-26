@@ -44,7 +44,7 @@ import threading
 
 import colony
 
-from resources_manager import parser
+from . import parser
 
 BASE_RESOURCES_PATH = "resources_manager/resources"
 """ The base resources path """

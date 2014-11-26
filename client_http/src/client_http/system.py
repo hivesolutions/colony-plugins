@@ -43,7 +43,7 @@ import threading
 
 import colony
 
-from client_http import exceptions
+from . import exceptions
 
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """

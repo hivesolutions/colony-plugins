@@ -43,7 +43,7 @@ import random
 
 import colony
 
-from rsa_c import exceptions
+from . import exceptions
 
 class Rsa(colony.System):
     """

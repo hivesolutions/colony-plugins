@@ -41,7 +41,7 @@ import sys
 
 import colony
 
-from console_interface import exceptions
+from . import exceptions
 
 console_interface_class = None
 

@@ -46,7 +46,7 @@ import hashlib
 
 import colony
 
-from pkcs1_c import exceptions
+from . import exceptions
 
 TYPE_VALUE = "type"
 """ The type value """

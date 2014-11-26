@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from printing_manager import ast
+from . import ast
 
 class Visitor(object):
     """

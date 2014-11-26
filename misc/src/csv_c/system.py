@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from csv_c import serializer
+from . import serializer
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding, defined according

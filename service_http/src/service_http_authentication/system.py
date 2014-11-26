@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from service_http_authentication import exceptions
+from . import exceptions
 
 HANDLER_NAME = "main"
 """ The handler name """

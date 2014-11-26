@@ -48,9 +48,9 @@ import xml.sax.saxutils
 
 import colony
 
-from template_engine import ast
-from template_engine import util
-from template_engine import exceptions
+from . import ast
+from . import util
+from . import exceptions
 
 FUNCTION_TYPES = (
     types.MethodType,
@@ -131,7 +131,7 @@ CONVERSION_MAP = {
 function with the conversion function symbol reference """
 
 COMPARISION_FUNCTIONS = {
-    "not" : lambda  item, value: not item,
+    "not" : lambda item, value: not item,
     "eq" : lambda item, value: item == value,
     "neq" : lambda item, value: not item == value,
     "gte" : lambda item, value: item >= value,
@@ -251,7 +251,7 @@ class Visitor(object):
         # iterates over the complete set of elements (attributes)
         # defined for the current instance's class trying to find
         # the ones that are annotated with the ast node class value
-        for name  in cls_elements:
+        for name in cls_elements:
             # retrieves the current element in iteration and verifies
             # if the current element is annotated with the asr node class
             # value, if that's not the case continues the loop

@@ -41,7 +41,7 @@ import xml.dom.minidom
 
 import colony
 
-from printing_manager import ast
+from . import ast
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """

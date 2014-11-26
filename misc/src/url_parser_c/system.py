@@ -41,7 +41,7 @@ import re
 
 import colony
 
-from url_parser_c import exceptions
+from . import exceptions
 
 URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The url regex value """
