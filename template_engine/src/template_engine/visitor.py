@@ -417,13 +417,19 @@ class Visitor(object):
         # to be printed to the current context
         attributes = node.get_attributes()
 
+        # retrieves the localization value, this is going to be used
+        # for a lot of sub-operation in retrieval and must be gathered
+        # before the rest of the attributes for such purpose
+        localize = attributes.get("localize", None)
+        localize = self.get_boolean_value(localize, True)
+
         # retrieves the complete set of attributes from the attributes
         # defined for the current node, it's an extensive list and
         # the range of usage and data types are vast
         value = attributes["value"]
-        value = self.get_value(value, localize = True)
+        value = self.get_value(value, localize = localize)
         prefix = attributes.get("prefix", None)
-        prefix = self.get_value(prefix, localize = True, default = "")
+        prefix = self.get_value(prefix, localize = localize, default = "")
         format = attributes.get("format", None)
         format = self.get_value(format)
         quote = attributes.get("quote", None)
@@ -439,7 +445,7 @@ class Visitor(object):
         allow_empty = attributes.get("allow_empty", None)
         allow_empty = self.get_value(allow_empty, default = True)
         default = attributes.get("default", None)
-        default = self.get_value(default, localize = True)
+        default = self.get_value(default, localize = localize)
         serializer = attributes.get("serializer", None)
         serializer = self.get_literal_value(serializer)
 
@@ -886,10 +892,12 @@ class Visitor(object):
 
     def process_timestamp(self, node):
         attributes = node.get_attributes()
+        localize = attributes.get("localize", None)
+        localize = self.get_boolean_value(localize, True)
         value = attributes.get("value", None)
         value = self.get_value(value, default = datetime.datetime.now())
         default = attributes.get("default", None)
-        default = self.get_value(default, localize = True)
+        default = self.get_value(default, localize = localize)
 
         if value == None:
             value = default if default else value
