@@ -5110,6 +5110,9 @@ class rdict(dict):
         if not key in self.rset.header_h: self.rset.add_h(key, nullify = True)
         self.rset.set(self.line, key, value)
 
+    def get_value(self, name, default = None, load_lazy = False):
+        return self.get(name, default)
+
 def load_serializers():
     """
     Loads the various serializer objects according
