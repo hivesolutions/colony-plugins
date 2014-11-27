@@ -4632,6 +4632,9 @@ class rset(list):
     """
     Specialized list that provides a series of utilities
     to handle a result set oriented chunk of data.
+
+    It provides features such as order and header management
+    useful for ordered management of large chunks of data.
     """
 
     header_set = False
@@ -4894,7 +4897,7 @@ class rset(list):
     def map(self):
         """
         Converts the current result set structure into a list
-        o maps with key values represented by the header names.
+        of maps with key values represented by the header names.
 
         This is an expensive operation as all the lines composing
         the result set data will be replicated as maps.
@@ -4940,6 +4943,36 @@ class rset(list):
         # returns the list of map that represent the
         # result set structure to the caller method
         return map_set
+
+    def add_h(self, name, nullify = False):
+        """
+        Adds a new header to the current set, note that in case
+        the provided nullify parameter is provided the data is
+        changed so that such header is set to an invalid value.
+
+        Note that the "new" header is added to the end of the
+        current set of headers (default option).
+
+        @type name: String
+        @param name: The name of the header that is going to be
+        added (as a plain string).
+        @type nullify: bool
+        @param nullify: If the values in the data should be set
+        as invalid for the new header (avoid corruption).
+        """
+
+        # retrieves the current header value (as a sequence) and
+        # adds the name name into it, recomputing the new header
+        # hash value from the length of the current header sequence
+        header = self.header()
+        header.append(name)
+        self.header_h[name] = len(header) - 1
+
+        # in case the nullify value was not set returns immediately
+        # otherwise invalidates the last values of the complete set
+        # of data lines/items (as expected)
+        if not nullify: return
+        for item in self.data(): item.append(None)
 
     def rename_h(self, old, new):
         """
@@ -5029,6 +5062,21 @@ class rset(list):
         header.extend(names)
         self._hash_h()
 
+    def rdict_iter(self):
+        """
+        Returns a generator like object that is able to percolate
+        over the complete set of elements in the rset providing
+        object like interactions with the contained sequences.
+
+        @rtype: Generator
+        @return: The generator that may be used to percolate over
+        the rset with an associative interaction with the values.
+        """
+
+        # iterates over the complete set of lines of the current
+        # data yielding the created result dictionary for such line
+        for line in self.data(): yield rdict(self, line)
+
     def _hash_h(self):
         """
         Computes an hash map associating the index position
@@ -5043,6 +5091,24 @@ class rset(list):
         for name in header:
             self.header_h[name] = index
             index += 1
+
+class rdict(dict):
+    """
+    Specialized dictionary structure that provides a key
+    to value interaction on a line of a result set, this
+    allows for easy access at the cost of performance.
+    """
+
+    def __init__(self, rset, line):
+        self.rset = rset
+        self.line = line
+        header = rset.header()
+        for key, value in zip(header, line):
+            dict.__setitem__(self, key, value)
+
+    def __setitem__(self, key, value):
+        if not key in self.rset.header_h: self.rset.add_h(key, nullify = True)
+        self.rset.set(self.line, key, value)
 
 def load_serializers():
     """

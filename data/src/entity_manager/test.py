@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
+from . import structures
 from . import exceptions
 from . import test_mocks
 
@@ -50,6 +51,7 @@ class EntityManagerTest(colony.Test):
     def get_bundle(self):
         return (
             EntityManagerBaseTestCase,
+            EntityManagerRsetTestCase
         )
 
     def set_up(self, test_case):
@@ -1499,3 +1501,48 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             ),
             order_by = (("dogs.enemies.name", "descending"),)
         ))
+
+class EntityManagerRsetTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "Entity Manager Rset Plugin test case"
+
+    def test_simple(self):
+        first_set = structures.rset([["First", 30]])
+        first_set.set_h(["name", "age"])
+
+        result = first_set.header()
+        self.assertEqual(result, ["name", "age"])
+
+        result = first_set.data()
+        self.assertEqual(result, [["First", 30]])
+
+        second_set = structures.rset([["Second", 24]])
+        second_set.set_h(["name", "age"])
+
+        first_set.join(second_set)
+
+        first_set.sort_set("age")
+
+        result = first_set.data()
+        self.assertEqual(result, [["Second", 24], ["First", 30]])
+
+    def test_rdict(self):
+        set = structures.rset([["First", 30], ["Second", 30]])
+        set.set_h(["name", "age"])
+
+        iterator = set.rdict_iter()
+        iterator = list(iterator)
+
+        first = iterator[0]
+        self.assertEqual(first["name"], "First")
+        self.assertEqual(first["age"], 30)
+
+        for line in iterator: line["salary"] = 100
+
+        result = set.header()
+        self.assertEqual(result, ["name", "age", "salary"])
+
+        result = set.data()
+        self.assertEqual(result, [["First", 30, 100], ["Second", 30, 100]])
