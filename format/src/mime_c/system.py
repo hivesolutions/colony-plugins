@@ -134,7 +134,8 @@ class MimeMessage(object):
     Class representing a mime message, this is the
     mains structure where the mime transforms will
     occur. Should provide a simple interface for
-    interaction with the mime contents.
+    interaction with the mime contents allowing
+    the reading and writing of text based mime.
     """
 
     part = False
