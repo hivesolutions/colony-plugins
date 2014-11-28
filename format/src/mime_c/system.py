@@ -54,10 +54,12 @@ DEFAULT_PROTOCOL_VERSION = "1.0"
 """ The default protocol version """
 
 DEFAULT_CHARSET = "utf-8"
-""" The default charset """
+""" The default charset to be used for the generation
+of a text based mime part or message """
 
 MULTI_PART_MESSAGE = "This is a multi-part message in MIME format"
-""" The multi part message """
+""" The default multi part message, that will be used as
+the placeholder/info text for the main part of the message """
 
 VALID_BOUNDARY_CHARACTERS = (
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
@@ -67,7 +69,8 @@ VALID_BOUNDARY_CHARACTERS = (
     "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7",
     "8", "9", "+", "/"
 )
-""" The tuple containing the valid boundary characters """
+""" The tuple containing the valid boundary characters, meaning
+that a boundary string may only characters defined is this sequence """
 
 class Mime(colony.System):
     """
