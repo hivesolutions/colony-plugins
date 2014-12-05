@@ -690,46 +690,25 @@ class OpenidServer(object):
         # sets the retrieval url
         retrieval_url = self.openid_structure.return_to
 
-        # start the parameters map
+        # start the parameters map and sets the complete set of
+        # parameters associated with the return url, these values
+        # are taken from the current structure instance
         parameters = {}
-
-        # sets the namespace
         parameters["openid.ns"] = self.openid_structure.ns
-
-        # sets the mode
         parameters["openid.mode"] = self.openid_structure.mode
-
-        # sets the provider url
         parameters["openid.op_endpoint"] = self.openid_structure.provider_url
-
-        # sets the claimed id
         parameters["openid.claimed_id"] = self.openid_structure.claimed_id
-
-        # sets the identity
         parameters["openid.identity"] = self.openid_structure.identity
-
-        # sets the return to
         parameters["openid.return_to"] = self.openid_structure.return_to
-
-        # sets the response nonce
         parameters["openid.response_nonce"] = self.openid_structure.response_nonce
-
-        # sets the invalidate handle
         parameters["openid.invalidate_handle"] = self.openid_structure.invalidate_handle
-
-        # sets the association handle
         parameters["openid.assoc_handle"] = self.openid_structure.association_handle
-
-        # sets the signed
         parameters["openid.signed"] = self.openid_structure.signed
-
-        # sets the signature
         parameters["openid.sig"] = self.openid_structure.signature
 
-        # creates the request (get) url from the parameters
+        # creates the request (get) url from the parameters and returns
+        # the value to the caller method
         request_url = self._build_get_url(retrieval_url, parameters)
-
-        # returns the request url
         return request_url
 
     def get_openid_structure(self):
