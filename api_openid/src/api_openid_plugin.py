@@ -77,7 +77,7 @@ class ApiOpenidPlugin(colony.Plugin):
         @type api_attributes: Dictionary
         @param api_attributes: The api attributes to be used.
         @rtype: OpenidServer
-        @return: The created remote server.
+        @return: The created server.
         """
 
         return self.system.create_server(api_attributes)
