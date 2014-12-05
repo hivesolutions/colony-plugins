@@ -492,7 +492,7 @@ class DropboxClient(object):
         file path is used for the root directory.
 
         @type file_path: String
-        @param file_path: Tje (local) file path of the file to
+        @param file_path: The (local) file path of the file to
         be uploaded (the file must exist).
         @type target_path: String
         @param target_path: The target (remote) path for the
