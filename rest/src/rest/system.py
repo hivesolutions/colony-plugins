@@ -1747,7 +1747,7 @@ class RestRequest(object):
         @return: The normalized http verb/method for the request.
         """
 
-        return  self.request.operation_type
+        return self.request.operation_type
 
     def get_path(self):
         """
