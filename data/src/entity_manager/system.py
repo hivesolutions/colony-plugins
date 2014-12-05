@@ -1038,7 +1038,10 @@ class EntityManager(object):
             # runs garbage collection strategy
             if entity_exists:
                 # prints a warning message (for the duplicate entity loading)
-                self.entity_manager_plugin.warning("Duplicate entity class '%s' in '%s' possible overlapping" % (entity_name, self.id))
+                self.entity_manager_plugin.warning(
+                    "Duplicate entity class '%s' in '%s' possible overlapping" %\
+                    (entity_name, self.id)
+                )
 
             # adds the entity class for the current entity
             # name to the entities map (entity registering)
@@ -5542,16 +5545,9 @@ class EntityManager(object):
                     # the current item
                     continue
 
-                # in case the entity already contains a value
-                # for the current attribute (no overlap)
-                if _entity.has_value(attribute_name):
-                    # continues the loop, ignoring the
-                    # attribute (avoid overlap)
-                    continue
-
                 # sets the item value (sql value) in the entity, converting
-                # it into the correct representation before setting
-                # it into the entity, sql conversion
+                # it into the correct representation before setting it into
+                # the entity, sql conversion (this is proper setting of value)
                 _entity.set_sql_value(attribute_name, item_value, encoding = database_encoding)
 
         # in case the sort flag is not set no need to
