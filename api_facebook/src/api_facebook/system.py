@@ -202,7 +202,14 @@ class FacebookClient(object):
             # closes the http client
             self.http_client.close({})
 
-    def generate_facebook_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_facebook_structure(
+        self,
+        consumer_key,
+        consumer_secret,
+        next,
+        api_version = DEFAULT_API_VERSION,
+        set_structure = True
+    ):
         """
         Generates the facebook structure for the given arguments.
 
@@ -954,7 +961,7 @@ class FacebookClientOauth:
         # returns the http client
         return self.http_client
 
-class FacebookStructure:
+class FacebookStructure(object):
     """
     The facebook structure class.
     """
@@ -989,7 +996,15 @@ class FacebookStructure:
     username = None
     """ The username of the logged user """
 
-    def __init__(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, consumer_id = DEFAULT_CONSUMER_ID, scope = DEFAULT_SCOPE):
+    def __init__(
+        self,
+        consumer_key,
+        consumer_secret,
+        next,
+        api_version = DEFAULT_API_VERSION,
+        consumer_id = DEFAULT_CONSUMER_ID,
+        scope = DEFAULT_SCOPE
+    ):
         """
         Constructor of the class.
 

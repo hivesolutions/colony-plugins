@@ -321,7 +321,12 @@ class CryptonClient(object):
         http_client = self._get_http_client()
 
         # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url,
+            method,
+            parameters,
+            content_type_charset = DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the http response
         contents = http_response.received_message
@@ -370,7 +375,7 @@ class CryptonClient(object):
         # returns the http client
         return self.http_client
 
-class CryptonStructure:
+class CryptonStructure(object):
     """
     The crypton structure class.
     """

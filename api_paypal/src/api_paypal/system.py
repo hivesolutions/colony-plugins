@@ -345,7 +345,16 @@ class PaypalClient(object):
         # returns the response data
         return data
 
-    def refund_transaction(self, transaction_id, refund_type = REFUND_TYPE_FULL, refund_source = REFUND_SOURCE_INSTANT, amount = None, currency_code = None, refund_item_details = None, note = None):
+    def refund_transaction(
+        self,
+        transaction_id,
+        refund_type = REFUND_TYPE_FULL,
+        refund_source = REFUND_SOURCE_INSTANT,
+        amount = None,
+        currency_code = None,
+        refund_item_details = None,
+        note = None
+    ):
         """
         Refunds the specified transaction, with the specified amount and refund source.
 
@@ -769,7 +778,7 @@ class PaypalClient(object):
         # returns the http client
         return self.http_client
 
-class PaypalStructure:
+class PaypalStructure(object):
     """
     The paypal structure class used to store
     the various paypal dependent attributes

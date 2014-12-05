@@ -617,7 +617,7 @@ class EasypayClient(object):
         # returns the xml node text
         return xml_node_text
 
-class EasypayStructure:
+class EasypayStructure(object):
     """
     The easypay structure class.
     """

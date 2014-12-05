@@ -276,7 +276,7 @@ class YadisClient(object):
         # returns the http client
         return self.http_client
 
-class YadisStructure:
+class YadisStructure(object):
     """
     The yadis structure class.
     """
@@ -314,7 +314,7 @@ class YadisStructure:
 
         self.provider_url = provider_url
 
-class YadisResourceDescriptor:
+class YadisResourceDescriptor(object):
     """
     The yadis resource descriptor class.
     """

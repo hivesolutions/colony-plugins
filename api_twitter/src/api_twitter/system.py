@@ -1112,7 +1112,7 @@ class TwitterClient(object):
         # returns the http client
         return self.http_client
 
-class OauthStructure:
+class OauthStructure(object):
     """
     The oauth structure class.
     """
@@ -1148,7 +1148,7 @@ class OauthStructure:
     """ The token secret """
 
     oauth_verifier = None
-    """ The verififer """
+    """ The verifier """
 
     oauth_access_token = None
     """ The oauth access token """
@@ -1159,7 +1159,17 @@ class OauthStructure:
     screen_name = None
     """ The screen name """
 
-    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE):
+    def __init__(
+        self,
+        oauth_consumer_key,
+        oauth_consumer_secret,
+        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature = None,
+        oauth_timestamp = None,
+        oauth_nonce = None,
+        oauth_version = DEFAULT_OAUTH_VERSION,
+        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE
+    ):
         """
         Constructor of the class.
 

@@ -167,7 +167,13 @@ class DropboxClient(object):
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, client_http_plugin = None, encoding = None, oauth_structure = None):
+    def __init__(
+        self,
+        json_plugin = None,
+        client_http_plugin = None,
+        encoding = None,
+        oauth_structure = None
+    ):
         """
         Constructor of the class.
 
@@ -777,7 +783,7 @@ class DropboxClient(object):
         # returns the http client
         return self.http_client
 
-class OauthStructure:
+class OauthStructure(object):
     """
     The oauth structure class.
     """
