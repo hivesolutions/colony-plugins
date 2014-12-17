@@ -368,7 +368,9 @@ def dump_parts(object, objects = None, cycles = False):
 
         # retrieves the object items from the object, taking into
         # account the exclusion map and the value type
-        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        object_items = [value for value in dir(object) if\
+            not value.startswith("_") and not value in EXCLUSION_MAP and\
+            not type(getattr(object, value)) in EXCLUSION_TYPES]
 
         # iterates over all the object items
         for object_item in object_items:
