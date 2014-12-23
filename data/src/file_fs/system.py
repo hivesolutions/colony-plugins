@@ -117,6 +117,7 @@ class FileFs(colony.System):
         # creates the target file path from the base path
         # and then opens the target file for reading using it
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
         target_file = open(target_file_path, "rb")
 
         # returns the opened target file
@@ -135,6 +136,7 @@ class FileFs(colony.System):
         # creates the target file path from the base path
         # and removes it from the file system
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
         os.remove(target_file_path)
 
     def put(self, connection, file_path, file_name):
@@ -150,6 +152,7 @@ class FileFs(colony.System):
         # retrieves the (base) file name and constructs
         # the complete target file path based on it
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
 
         # retrieves the target directory path and creates
         # if if it does not already exists
@@ -196,6 +199,7 @@ class FileFs(colony.System):
         # retrieves the (base) file name and constructs
         # the complete target file path based on it
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
 
         # retrieves the target directory path and creates
         # if if it does not already exists
@@ -238,6 +242,7 @@ class FileFs(colony.System):
         # retrieves the (base) file name and constructs
         # the complete target file path based on it
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
 
         # retrieves the target directory path and creates
         # if if it does not already exists
@@ -288,6 +293,7 @@ class FileFs(colony.System):
         # creates the target file path from the base path
         # and uses it to retrieve the size of the file (in bytes)
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
         return os.path.getsize(target_file_path)
 
     def mtime(self, connection, file_name):
@@ -303,6 +309,7 @@ class FileFs(colony.System):
         # creates the target file path from the base path
         # and uses it to retrieve the modification timestamp
         target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
         return os.path.getmtime(target_file_path)
 
 class FsConnection(object):
