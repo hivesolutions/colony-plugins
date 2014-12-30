@@ -4709,7 +4709,16 @@ class EntityManager(object):
             # writes the in clause not in the query buffer
             query_buffer.write("not " + field_name + " in " + filter_field_sql_value)
 
-    def _process_filter_like(self, entity_class, table_name, filter, query_buffer, left = True, right = True):
+    def _process_filter_like(
+        self,
+        entity_class,
+        table_name,
+        filter,
+        query_buffer,
+        left = True,
+        right = True,
+        collate = True
+    ):
         # retrieves the filter fields and
         # like filter type
         filter_fields = filter["fields"]
@@ -4819,6 +4828,10 @@ class EntityManager(object):
                 # writes the final string to the
                 # query buffer
                 query_buffer.write("'")
+
+            # in case the collate flat is enable the case insensitive collation
+            # mode is enabled so that a more broad search is enabled
+            if collate: query_buffer.write(" collate utf8_general_ci")
 
     def _process_filter_rlike(self, entity_class, table_name, filter, query_buffer):
         self._process_filter_like(entity_class, table_name, filter, query_buffer, left = False)
