@@ -109,6 +109,9 @@ class SqliteEngine(object):
     def get_database_encoding(self):
         return "utf-8"
 
+    def get_insensitive_collate(self):
+        return "nocase"
+
     def connect(self, connection, parameters = {}):
         file_path = parameters.get("file_path", None)
         cache_size = parameters.get("cache_size", 200000)

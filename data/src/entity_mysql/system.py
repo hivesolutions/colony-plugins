@@ -131,6 +131,9 @@ class MysqlEngine(object):
         encoding = _connection.get_database_encoding()
         return encoding
 
+    def get_insensitive_collate(self):
+        return "utf8_general_ci"
+
     def apply_types(self, types_map):
         types_map["text"] = "longtext"
         types_map["data"] = "longtext"
@@ -515,6 +518,9 @@ class MysqlEngine(object):
         # returns the result of the retrieval of the database
         # size from the data source
         return datbase_size
+
+    def _collate_query(self):
+        return "collate utf8_general_ci"
 
     def _index_query(self, entity_class, attribute_name, index_type = "hash"):
         # retrieves the associated table name

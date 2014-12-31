@@ -4418,6 +4418,18 @@ class EntityManager(object):
         if allow_for_update: query_buffer.write(" for update")
         else: self.lock(entity_class)
 
+    def _process_collate(self, query_buffer):
+        # verifies if a valid provider of (case) insensitive collation
+        # exists for the current data source engine if that's not the
+        # case returns the control flow immediately (no collate)
+        if not hasattr(self.engine, "get_insensitive_collate"): return
+        collation = self.engine.get_insensitive_collate()
+        if not collation: return
+
+        # creates the extra collate operation for the current buffer
+        # taking into account the collation for the current engine
+        query_buffer.write(" collate %s" % collation)
+
     def _process_filter(self, entity_class, table_name, filter, query_buffer, is_first = True):
         # in case the is first flag
         # is set, need to write the initial
@@ -4829,9 +4841,9 @@ class EntityManager(object):
                 # query buffer
                 query_buffer.write("'")
 
-            # in case the collate flat is enable the case insensitive collation
+            # in case the collate flat is set, the case insensitive collation
             # mode is enabled so that a more broad search is enabled
-            if collate: query_buffer.write(" collate utf8_general_ci")
+            if collate: self._process_collate(query_buffer)
 
     def _process_filter_rlike(self, entity_class, table_name, filter, query_buffer):
         self._process_filter_like(entity_class, table_name, filter, query_buffer, left = False)
