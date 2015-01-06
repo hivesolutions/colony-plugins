@@ -2811,6 +2811,18 @@ class EntityClass(object):
         for relation in all_relations:
             setattr(self, relation, colony.Lazy)
 
+    def reset_cache(self):
+        """
+        Resets the entitie's cache for the current instance so that any
+        access to the data source will be used in "real mode" avoiding any
+        usage of an in memory view of objects.
+
+        This call may be required to avoid outdated and erroneous values
+        coming from data source access operations.
+        """
+
+        self._entities = {}
+
     def use_scope(self, scope_entity):
         """"
         Sets (uses) the scope and entities map attributes in the current
