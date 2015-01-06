@@ -2832,6 +2832,9 @@ class EntityClass(object):
         This operation is extremely useful for when propagation of scope
         is important for coherent persistence.
 
+        Note that as part of this operation the "hidden" entities map
+        will be propagated, meaning that the cache scope is propagated.
+
         @type scope_entity: Entity
         @param scope_entity: The entity to be used as the base for the
         diffusion scope. The new entity is going to use the scope entity
