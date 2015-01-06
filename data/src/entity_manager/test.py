@@ -1339,6 +1339,56 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(saved_chair.object_id, chair.object_id)
         self.assertEqual(saved_chair.legs, chair.legs)
 
+    def test_cache(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Address)
+
+        # creates the the person and address entities and populates
+        # them with some values, then sets the address relation
+        # in the person side and saves both entities
+        person = test_mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        address = test_mocks.Address()
+        address.object_id = 2
+        address.street = "street_address"
+        address.door = 1
+        address.country = "country_address"
+        person.address = address
+
+        # saves both entities in the data source so that they may be use
+        # in the next text operation
+        self.entity_manager.save(address)
+        self.entity_manager.save(person)
+
+        # retrieves the person from the data source and then retrieves
+        # the associated address instance
+        person = self.entity_manager.get(test_mocks.Person, 1)
+        address = person.address
+
+        # verifies that the "hidden" entities map is exactly the
+        # same instance for both the person and the address
+        self.assertEqual(id(person._entities), id(address._entities))
+
+        # verifies that if the typical cache based retrieval approach
+        # is used to retrieve the address the instance is the one that
+        # has been retrieved using eager loading relations
+        _address = person._entities[test_mocks.Address][2]
+        self.assertEqual(id(address), id(_address))
+
+        # runs the reloading operation for the person entity and then
+        # verifies that the entities cache map has changed (different
+        # instance) and that the size of the new map is one
+        self.entity_manager.reload(person)
+        self.assertNotEqual(id(person._entities), id(address._entities))
+        self.assertEqual(len(person._entities), 1)
+
+        # runs the cache reset operation in the address instance and then
+        # verifies/checks that the cache map associated with it is empty
+        address.reset_cache()
+        self.assertEqual(address._entities, {})
+
     def test_nullify(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(test_mocks.Person)
