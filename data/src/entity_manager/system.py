@@ -2084,6 +2084,10 @@ class EntityManager(object):
                 value = new_entity.get_value(name)
                 entity.set_value(name, value)
 
+            # resets the complete set of entity's cache mechanisms
+            # so that a new entity cache is created from this reload
+            entity.reset_cache()
+
             # enables the entity, providing the entity with the
             # mechanisms necessary for data source communication
             self.enable(entity)
