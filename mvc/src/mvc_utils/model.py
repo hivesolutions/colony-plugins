@@ -1785,6 +1785,9 @@ def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, p
 def is_url_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is an url.
+    
+    The validation is performed according to the general url/uri
+    regular expression.
 
     @type attribute_name: String
     @param attribute_name: The name of the attribute to be validated.
