@@ -1695,6 +1695,12 @@ class EntityManager(object):
     def synced_definition(self, entity_class):
         return self.engine.synced_definition(entity_class)
 
+    def has_migratore(self):
+        pass
+
+    def create_migratore(self):
+        pass
+
     def has_generator(self):
         return self.engine.has_table_definition(GENERATOR_VALUE)
 
@@ -1718,6 +1724,8 @@ class EntityManager(object):
             # a duplicated table generator
             return
 
+        # creates the generator query that creates both the base
+        # generator query and the proper index queries
         query, index_queries = self._create_generator_query()
         self.execute_query(query)
         self.execute_query(index_queries)
