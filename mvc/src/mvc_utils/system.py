@@ -1390,7 +1390,8 @@ class MvcUtils(colony.System):
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
         controller_base_name = colony.to_underscore(controller_base_name)
-        controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name + "_" + "controller" or controller_base_name + "_" + "controller"
+        controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name +\
+            "_" + "controller" or controller_base_name + "_" + "controller"
 
         # returns the reference (converted) controller name
         return controller_reference_name, controller_base_name
