@@ -4518,9 +4518,19 @@ class EntityClass(object):
         )
 
         # runs the "finding" the appropriate (place holder) entity
-        # then retrieves the relation attribute from it to set it
-        # in the current entity (attribute transfer)
+        # from which the the proper relation will be extracted, in
+        # case not entity is found (error situation)
         _entity = self._entity_manager.get(self.__class__, table_id_value, options)
+        if not _entity: raise RuntimeError("Not possible to load entity")
+
+        # in case the retrieved entity does not contain the requested
+        # (relation) name and exception should be raised indicating
+        # the error to the final/end user or developer
+        if not hasattr(_entity, name):
+            raise RuntimeError("Relation '%s' not present in entity", name)
+
+        # retrieves the proper relation attribute from the placeholder
+        # entity and then sets it under the current instance)
         attribute = getattr(_entity, name)
         setattr(self, name, attribute)
 
