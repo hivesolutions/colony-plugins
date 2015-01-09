@@ -2874,7 +2874,7 @@ def retrieve_template_file(
     # template file in case it's a valid bundle (successful retrieval)
     global_bundle = self._get_bundle(locale)
     global_bundle and template_file.add_bundle(global_bundle)
-    
+
     # tries to gather the countries locale bundle and in case it's found
     # adds it to the current template file (default operation)
     countries_bundle = self._get_bundle(locale, bundle_name = "countries")
