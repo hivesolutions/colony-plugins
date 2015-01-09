@@ -43,6 +43,7 @@ import types
 
 import colony
 
+from . import data
 from . import utils
 from . import exceptions
 
@@ -53,10 +54,12 @@ URL_REGEX_VALUE = "^\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?$
 """ The url regex value """
 
 EMAIL_REGEX = re.compile(EMAIL_REGEX_VALUE)
-""" The email regex """
+""" The email regex, that is going to be used in the
+email validation process """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)
-""" The url regex """
+""" The url regex to be used latter for the validation
+of proper url/uri values """
 
 TO_ONE_RELATION = "to-one"
 """ The string value of a "to-one" relation """
@@ -1824,6 +1827,29 @@ def is_email_validate(self, attribute_name, attribute_value, properties):
     if not match:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not an email")
+
+def is_country_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is a valid
+    country according to the local (english based) definition.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # checks if the attribute value is a valid country by verifying
+    # that its value is present in the current list of countries
+    match = attribute_value in data.COUNTRIES
+
+    # in case the value is not a valid country (in english) value
+    # an error should be added to the current's attribute error list
+    if not match:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not a country")
 
 def is_id_number_validate(self, attribute_name, attribute_value, properties):
     """
