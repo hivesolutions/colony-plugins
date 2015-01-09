@@ -43,7 +43,6 @@ import types
 
 import colony
 
-from . import data
 from . import utils
 from . import exceptions
 
@@ -1843,7 +1842,7 @@ def is_country_validate(self, attribute_name, attribute_value, properties):
 
     # checks if the attribute value is a valid country by verifying
     # that its value is present in the current list of countries
-    match = attribute_value in data.COUNTRIES
+    match = attribute_value in colony.COUNTRIES
 
     # in case the value is not a valid country (in english) value
     # an error should be added to the current's attribute error list
