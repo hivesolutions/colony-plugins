@@ -1695,12 +1695,6 @@ class EntityManager(object):
     def synced_definition(self, entity_class):
         return self.engine.synced_definition(entity_class)
 
-    def has_migratore(self):
-        pass
-
-    def create_migratore(self):
-        pass
-
     def has_generator(self):
         return self.engine.has_table_definition(GENERATOR_VALUE)
 
