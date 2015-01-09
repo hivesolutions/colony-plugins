@@ -2874,6 +2874,11 @@ def retrieve_template_file(
     # template file in case it's a valid bundle (successful retrieval)
     global_bundle = self._get_bundle(locale)
     global_bundle and template_file.add_bundle(global_bundle)
+    
+    # tries to gather the countries locale bundle and in case it's found
+    # adds it to the current template file (default operation)
+    countries_bundle = self._get_bundle(locale, bundle_name = "countries")
+    countries_bundle and template_file.add_bundle(countries_bundle)
 
     # iterates over the complete set of extra arguments provided in the
     # proper dictionary and assigns each of these values to the proper
@@ -3747,22 +3752,29 @@ def update_resources_path(self, parameters = {}):
     # creates the templates path from the extras path
     extras_path = os.path.join(self.resources_path, "extras")
     extras_path = os.path.join(extras_path, extra_extras_path)
+    extras_path = os.path.normpath(extras_path)
 
     # creates the templates path from the resources path
     templates_path = os.path.join(self.resources_path, "templates")
     templates_path = os.path.join(templates_path, extra_template_path)
+    templates_path = os.path.normpath(templates_path)
 
     # creates the locales path from the resources path
     locales_path = os.path.join(self.resources_path, "locales")
+    locales_path = os.path.normpath(locales_path)
 
-    # sets the extras path
+    # retrieves the current's directory path and uses that to "calculate"
+    # the global path from which to retrieve global values
+    directory_path = os.path.dirname(__file__)
+    global_path = os.path.join(directory_path, "resources")
+    global_path = os.path.normpath(global_path)
+
+    # sets the various path values that have just been calculated
+    # using typical relative directory calculus
     self.set_extras_path(extras_path)
-
-    # sets the templates path
     self.set_templates_path(templates_path)
-
-    # sets the locales path
     self.set_locales_path(locales_path)
+    self.set_global_path(global_path)
 
 def set_relative_resources_path(
     self,
@@ -3795,10 +3807,9 @@ def set_relative_resources_path(
     # retrieves the plugin id
     plugin_id = self.plugin.id
 
-    # retrieves the plugin path
+    # retrieves the plugin path and uses it to create the full
+    # absolute resources path from the plugin path
     plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
-
-    # creates the full absolute resources path from the plugin path
     resources_path = os.path.join(plugin_path, relative_resources_path)
 
     # creates the parameters map to be used
@@ -4044,6 +4055,28 @@ def set_locales_path(self, locales_path):
     """
 
     self.locales_path = locales_path
+
+def get_global_path(self):
+    """
+    Retrieves the global path, that should contain
+    information and data relative to the global
+    configuration and variables in mvc.
+
+    @rtype: String
+    @return: The global path.
+    """
+
+    return self.locales_path
+
+def set_global_path(self, global_path):
+    """
+    Sets the global path.
+
+    @type global_path: String
+    @param global_path: The global path.
+    """
+
+    self.global_path = global_path
 
 def get_default_parameters(self):
     """
@@ -5342,10 +5375,24 @@ def _get_bundle(self, locale, bundle_name = "global"):
     # the function returns immediately (fails silently)
     if not locale: return
 
+    # constructs the complete file name from the base bundle name
+    # and the requested locale's value this value is going to be
+    # used to verify the bundle path presence and loading
+    bundle_file = bundle_name + "." + locale + ".json"
+
+    # builds the base locales path from which to try to load the
+    # underlying base resources (from mvc) then uses it to construct
+    # the inner loading path value for base resources, this is going
+    # to be used in case a project wide value is not "loadable"
+    locales_path = os.path.join(self.global_path, "locales")
+    base_path = os.path.join(locales_path, bundle_file)
+
     # constructs the bundle path from the locales path and
-    # the expected bundle name (assumes json type), in such
-    # path does not exists returns immediately
-    bundle_path = os.path.join(self.locales_path, bundle_name + "." + locale + ".json")
+    # the expected bundle name (assumes json type), in case
+    # such path does not exists returns immediately, note that
+    # the base resource is used first as fallback process
+    bundle_path = os.path.join(self.locales_path, bundle_file)
+    bundle_path = bundle_path if os.path.exists(bundle_path) else base_path
     if not os.path.exists(bundle_path): return
 
     # retrieves the last modified timestamp from the bundle path
