@@ -5332,7 +5332,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
     pt_pt or en_us).
     @type bundle_name: String
     @param bundle_name: The name of the bundle to be retrieved this
-    is goind to be used in the creation of the bundle file path.
+    is going to be used in the creation of the bundle file path.
     @rtype: Dictionary
     @return: The map containing the bundle with the loaded values
     from the bundle file.
@@ -5345,7 +5345,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
     # constructs the bundle path from the locales path and
     # the expected bundle name (assumes json type), in such
     # path does not exists returns immediately
-    bundle_path = os.path.join(self.locales_path, bundle_name + "_" + locale + ".json")
+    bundle_path = os.path.join(self.locales_path, bundle_name + "." + locale + ".json")
     if not os.path.exists(bundle_path): return
 
     # retrieves the last modified timestamp from the bundle path
