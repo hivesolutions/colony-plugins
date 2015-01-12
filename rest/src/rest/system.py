@@ -170,14 +170,23 @@ class Rest(colony.System):
         self.service_methods = []
         self.service_methods_map = {}
 
+        # prints a debug message about the starting of the loading
+        # of the session infra-structure (may block)
+        self.debug("Loading %s session into system", self.session_c.__name__)
+
         # tries to run the loading process for the currently
         # assigned session class in case it fails the session
         # class is changed to the fallback value and the proper
         # loading strategy is re-started for that session
         try: self.session_c.load()
         except:
+            self.debug("Falling back to %s session" % RestSession.__name__)
             self.session_c = RestSession
             self.session_c.load()
+
+        # prints a message about the success in the loading of the session
+        # infra-structure into the current system (as expected)
+        self.debug("Successfully loaded %s session", self.session_c.__name__)
 
     def get_handler_filename(self):
         """
@@ -302,6 +311,8 @@ class Rest(colony.System):
         # otherwise it's a "general" request and the typical handling
         # strategy is going to be performed (as usual)
         else:
+
+            print("tobias1")
             # iterates over all the matching regex in the matching regex list
             for matching_regex in self.matching_regex_list:
                 # retrieves the resource path match and in case there is
