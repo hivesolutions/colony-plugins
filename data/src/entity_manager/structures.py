@@ -2055,15 +2055,20 @@ class EntityClass(object):
             # and then breaks the cycle
             id = key
             break
-
+        
         # in case the id is not defined in the current
         # class need to find elsewhere in the upper (parent)
         # class chain
         if not id:
-            # retrieves the (primary) parent
-            # and tries to retrieve the id from
-            # it (recursion step)
+            # tries to retrieve the parent class of the
+            # current model to retrieve the id from it,
+            # in case there's no parent returns an invalid
+            # value meaning that no id value exists for it
             parent = cls.get_parent()
+            if not parent: return None
+            
+            # runs the recursive step of retrieving the id
+            # value from the parent class (default behavior)
             id = parent.get_id()
 
         # caches the id element in the class
@@ -2313,6 +2318,12 @@ class EntityClass(object):
         # available
         cls._has_parents = True
         return True
+    
+    @classmethod
+    def is_valid(cls):
+        table_id = cls.get_id()
+        if table_id == None: return False
+        return True        
 
     @classmethod
     def is_abstract(cls):
