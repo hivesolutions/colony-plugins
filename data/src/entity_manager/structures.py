@@ -2055,7 +2055,7 @@ class EntityClass(object):
             # and then breaks the cycle
             id = key
             break
-        
+
         # in case the id is not defined in the current
         # class need to find elsewhere in the upper (parent)
         # class chain
@@ -2066,7 +2066,7 @@ class EntityClass(object):
             # value meaning that no id value exists for it
             parent = cls.get_parent()
             if not parent: return None
-            
+
             # runs the recursive step of retrieving the id
             # value from the parent class (default behavior)
             id = parent.get_id()
@@ -2318,12 +2318,23 @@ class EntityClass(object):
         # available
         cls._has_parents = True
         return True
-    
+
     @classmethod
-    def is_valid(cls):
+    def is_ready(cls):
+        """
+        Verifies if the current entity class is ready to be used
+        in a persistent context. Some entity classes may not comply
+        with all the requirements for the persistence and are considered
+        not ready/available for the persistence context.
+
+        @rtype: bool
+        @return: If the current entity class is ready and available
+        for the current persistence context.
+        """
+
         table_id = cls.get_id()
         if table_id == None: return False
-        return True        
+        return True
 
     @classmethod
     def is_abstract(cls):

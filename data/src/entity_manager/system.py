@@ -1256,10 +1256,10 @@ class EntityManager(object):
             # returns immediately no need to
             # create the definition
             return
-        
-        # in case the provided entity class is not valid, missing
+
+        # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
-        if not entity_class.is_valid():
+        if not entity_class.is_ready():
             # returns immediately no need to
             # create the definition
             return
@@ -1284,10 +1284,10 @@ class EntityManager(object):
         @param entity_class: The entity class to be used in he creation
         of the indirect relations associative tables.
         """
-        
-        # in case the provided entity class is not valid, missing
+
+        # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
-        if not entity_class.is_valid(): return
+        if not entity_class.is_ready(): return
 
         # retrieves the ensure integrity option that should "request"
         # if a data source level integrity must be done or if the data
@@ -1757,9 +1757,9 @@ class EntityManager(object):
         return next_id
 
     def create_definition(self, entity_class):
-        # in case the provided entity class is not valid, missing
+        # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
-        if not entity_class.is_valid(): return
+        if not entity_class.is_ready(): return
 
         # generates the create definition query, general
         # sql query for the current context and then
@@ -1771,10 +1771,10 @@ class EntityManager(object):
         self.execute_query(index_queries)
 
     def delete_definition(self, entity_class):
-        # in case the provided entity class is not valid, missing
+        # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
-        if not entity_class.is_valid(): return
-        
+        if not entity_class.is_ready(): return
+
         # generates the delete definition query, general
         # sql query for the current context and then
         # executes it in the appropriate engine
@@ -1782,9 +1782,9 @@ class EntityManager(object):
         self.execute_query(query)
 
     def sync_entity_definition(self, entity_class):
-        # in case the provided entity class is not valid, missing
+        # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
-        if not entity_class.is_valid(): return
+        if not entity_class.is_ready(): return
 
     def enable(self, entity):
         # retrieves the entity class associated with the
