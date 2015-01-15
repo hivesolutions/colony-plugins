@@ -109,6 +109,10 @@ SCALE = reportlab.lib.units.cm
 """ The scale value to be used in the conversion
 of the centimeter value into the pdf point """
 
+TWIP_SCALE = 0.001763889
+""" The scale factor to convert a twip value into
+a centimeter base value """
+
 A4_PAPER = (21.0 * SCALE, 29.7 * SCALE)
 """ The default size (dimensions) for an a4 paper
 based structure, this includes the additional
@@ -365,6 +369,36 @@ class Visitor(object):
             font_style = self.get_context("font_style", "regular")
             margin_left = int(self.get_context("margin_left", "0"))
             margin_right = int(self.get_context("margin_right", "0"))
+            position_x = int(self.get_context("x", "0"))
+            position_y = int(self.get_context("y", "0"))
+            block_width = int(self.get_context("width", "0"))
+            block_height = int(self.get_context("height", "0"))
+
+            # converts the various block related values from their original
+            # twip based value into the pdf point value to be used in print
+            position_x = int(position_x * TWIP_SCALE * SCALE)
+            position_y = int(position_y * TWIP_SCALE * SCALE)
+            block_width = int(block_width * TWIP_SCALE * SCALE)
+            block_height = int(block_height * TWIP_SCALE * SCALE)
+
+            # verifies if the current context is of type block, so that
+            # the proper absolute positions are going to be used instead
+            is_block = not block_width == 0 and not block_height == 0
+
+            # sets the initial clip (box) value that will be applied in
+            # case the current execution mode is not block based
+            clip_left = 0
+            clip_top = 0
+            clip_right = self.width
+            _clip_bottom = self.height
+
+            # verifies if the current mode is block and if that's the case
+            # re-calculates the new clip (box) value taking that into account
+            if is_block:
+                clip_left = position_x
+                clip_top = position_y * -1
+                clip_right = position_x + block_width
+                _clip_bottom = (position_y + block_height) * -1
 
             # calculates the resized font size so that it's normalized
             # according to the printing language specification, the value
@@ -387,7 +421,7 @@ class Visitor(object):
             self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
 
             # retrieves the current position in x and y unpacking the values
-            # from the current position tuple
+            # from the current position tuple (as expected)
             _current_position_x, current_position_y = self.current_position
 
             # calculates the text height from the font scale factor
@@ -402,15 +436,33 @@ class Visitor(object):
 
             # calculates the appropriate text position according to the
             # "requested" horizontal text alignment
-            if text_align == "left": text_x += 0
-            elif text_align == "right": text_x += self.width - text_width
+            if text_align == "left": text_x += clip_left
+            elif text_align == "right": text_x += clip_right - text_width
             elif text_align == "center":
-                text_x += int(self.width / 2) - int(text_width / 2)
+                text_x += clip_left + int((clip_right - clip_left) / 2) - int(text_width / 2)
 
             # sets the text y as the current position context y
             # default position for the text is the current position
-            text_y = current_position_y - text_height
+            text_y = clip_top + current_position_y - text_height
             text_y = self.ensure_y(text_y, offset = text_height)
+
+            # updates the fill color to a white color and then uses
+            # this color to draw a white (background) rectangle around
+            # the area that is going to be filled with the text
+            self.canvas.setFillColorRGB(1.0, 1.0, 1.0)
+            self.canvas.rect(
+                text_x,
+                text_y - (font_size - font_size_r),
+                text_width,
+                text_height,
+                stroke = 0,
+                fill = 1
+            )
+
+            # "resets" the fill color of the current canvas context to
+            # the black color so that it's possible to draw the text with
+            # the expected color values as defined in specification
+            self.canvas.setFillColorRGB(0, 0, 0)
 
             # sets the complete computed font in the current canvas context
             # note that the leading value is overriden to avoid font sizing
@@ -421,7 +473,7 @@ class Visitor(object):
 
             # draws the text string at the calculated position the text
             # is encoded in the expected encoding so that no encoding
-            # problems occur
+            # problems occur (as expected)
             self.canvas.drawString(text_x, text_y, text_encoded)
 
             # in case the current text height is bigger than the current
