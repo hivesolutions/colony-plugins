@@ -167,6 +167,11 @@ class Visitor(object):
     """ The height of the document to be printed, this
     is the height measured in pdf points """
 
+    single = False
+    """ If the document to be parsed is considered to be
+    single page only or multi page, this is relevant for
+    the fixed/absolute positioning using blocks  """
+
     current_position = None
     """ The current position in the document measured
     as pdf points """
@@ -188,6 +193,7 @@ class Visitor(object):
         self.canvas = None
         self.width = 0
         self.height = 0
+        self.single = False
         self.current_position = None
         self.fonts = {}
         self.context_map = {}
@@ -266,6 +272,22 @@ class Visitor(object):
             # document, in case no size is provided a default one is used
             file = self.printing_options["file"]
             size = self.printing_options.get("size", PAPER_SIZE)
+
+            # tries to retrieve the document width and height values and
+            # converts them into the proper integer values, these values
+            # are mostly available for single page operations
+            printing_document_width = hasattr(node, "width") and int(node.width) or 0
+            printing_document_height = hasattr(node, "height") and int(node.height) or 0
+
+            # in case both the printing document with and height values are
+            # available the size tuple for the current document is defined
+            # using their values, note that these values are defined as tenth
+            # of the millimeter values (100 units equals 1 centimeter)
+            if not printing_document_width == 0 and not printing_document_height == 0:
+                size = (
+                    printing_document_width / 100 * SCALE,
+                    printing_document_height / 100 * SCALE
+                )
 
             # unpacks the size tuple into the width and height
             # components and sets the tuple containing both values
@@ -395,6 +417,7 @@ class Visitor(object):
             # verifies if the current mode is block and if that's the case
             # re-calculates the new clip (box) value taking that into account
             if is_block:
+                self.single = True
                 clip_left = position_x
                 clip_top = position_y * -1
                 clip_right = position_x + block_width
@@ -428,6 +451,7 @@ class Visitor(object):
             # and measures the text width using the underlying rendering
             # infra-structure (avoids possible problems)
             text_height = font_size * FONT_SCALE_FACTOR
+            text_height_r = font_size_r * FONT_SCALE_FACTOR
             text_width = self.canvas.stringWidth(text_encoded)
 
             # initializes the text x coordinate with the margin defined
@@ -443,7 +467,7 @@ class Visitor(object):
 
             # sets the text y as the current position context y
             # default position for the text is the current position
-            text_y = clip_top + current_position_y - text_height
+            text_y = clip_top + current_position_y - text_height_r
             text_y = self.ensure_y(text_y, offset = text_height)
 
             # updates the fill color to a white color and then uses
@@ -602,6 +626,11 @@ class Visitor(object):
         @return: The resulting vertical position taking into account
         creation of new pages.
         """
+
+        # in case the current document in parsing has been marked
+        # as single page oriented (absolute positioning), there's
+        # no need to verify for new page creation
+        if self.single: return y_position
 
         # verifies if the current vertical position "overflows"
         # the page value (lower than zero) in case it does not
