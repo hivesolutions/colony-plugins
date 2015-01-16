@@ -731,7 +731,7 @@ class Visitor(object):
                 # creates the complete font path with the current
                 # base path in iteration and the font name in case
                 # the font path is empty the default system wide
-                # search will be used
+                # search will be used (varies from system to system)
                 file_path_f = font_path + file_path
                 file_path_f = os.path.expanduser(file_path_f)
 
