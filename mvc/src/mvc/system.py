@@ -242,8 +242,11 @@ class Mvc(colony.System):
 
         # in case the clear pending flag is set must remove
         # (clear) all the current sessions from the rest manager
-        # this is a global reset (side problems may occur)
-        if self.clear_pending: rest_request.clear_sessions(); self.clear_pending = False
+        # this is a global reset (side problems may occur with
+        # different structures for the same class colliding)
+        if self.clear_pending:
+            rest_request.clear_sessions()
+            self.clear_pending = False
 
         # retrieves the path list, then joins the path list
         # to create the resource path
@@ -446,9 +449,13 @@ class Mvc(colony.System):
         @param mvc_service_plugin: The mvc service plugin to be unloaded.
         """
 
-        # sets the clear (session) pending flag so that the sessions
-        # are cleared for the next handling tick
-        self.clear_pending = True
+        # retrieves the reference to the plugin manager and verifies
+        # if the current environment is development oriented if that's
+        # the environment should be cleared to avoid incompatibilities,
+        # this is done by setting the clear (session) pending flag so
+        # that the sessions are cleared for the next handling tick
+        plugin_manager = self.plugin.manager
+        self.clear_pending = plugin_manager.is_development()
 
         # verifies the existence of all the method in the facade of the plugin
         # that are going to be used fore retrieval of patterns so that only the
