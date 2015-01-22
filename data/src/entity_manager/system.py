@@ -3055,7 +3055,7 @@ class EntityManager(object):
             # retrieves the proper modification time either from
             # the entity or from the current system time, this allows
             # the forced setting of an mtime (useful for bulk import)
-            _mtime = hasattr(entity, "_mtime") and entity._mtime or time.time()
+            _mtime = entity._mtime if hasattr(entity, "_mtime") else time.time()
 
             # writes the comma to the query buffer only in case the
             # is first flag is not set, then writes the modified time
@@ -3076,7 +3076,7 @@ class EntityManager(object):
         # queries (multiple inserts)
         return queries
 
-    def _update_query(self, entity, immutable = True):
+    def _update_query(self, entity, immutable = True, safe = True):
         # retrieves the entity class associated with
         # the entity
         entity_class = entity.__class__
@@ -3145,8 +3145,11 @@ class EntityManager(object):
             # update query (no need to update it), note that the
             # unmapped relations are taken into account because if
             # there are unmapped relations the modified time must be
-            # updated for the current entity class level
-            if not _entity_fields and not has_unmapped_relations:
+            # updated for the current entity class level, this is only
+            # applied in case the safe mode is not active, otherwise the
+            # update query is performed so that the modified time is
+            # changed to the most up-to-date value (performance penalty)
+            if not _entity_fields and not has_unmapped_relations and not safe:
                 # continues the loop, not going to create
                 # the query for update
                 continue
@@ -3211,7 +3214,7 @@ class EntityManager(object):
             # retrieves the proper modification time either from
             # the entity or from the current system time, this allows
             # the forced setting of an mtime (useful for bulk import)
-            _mtime = hasattr(entity, "_mtime") and entity._mtime or time.time()
+            _mtime = entity._mtime if hasattr(entity, "_mtime") else time.time()
 
             # writes the comma to the query buffer only in case the
             # is first flag is not set, then writes the modified time
