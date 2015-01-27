@@ -866,9 +866,14 @@ class ServiceConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # receiving "event"
-                if error.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
-                    # returns immediately (no error)
-                    return
+                error_v = error.args[0] if error.args else None
+                if error_v in (
+                    errno.EWOULDBLOCK,
+                    errno.EAGAIN,
+                    errno.EPERM,
+                    errno.ENOENT,
+                    WSAEWOULDBLOCK
+                ): return
                 # otherwise it's a major error and the connection is considered
                 # to be in an erroneous state (meant to be discarded)
                 else:

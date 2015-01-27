@@ -275,7 +275,14 @@ def accept(self):
         # complete or the socket would block nothing should be done
         # and the handshake operation must be deferred to the next data
         # receiving "event"
-        if error.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+        error_v = error.args[0] if error.args else None
+        if error_v in (
+            errno.EWOULDBLOCK,
+            errno.EAGAIN,
+            errno.EPERM,
+            errno.ENOENT,
+            WSAEWOULDBLOCK
+        ):
             # creates the error and populates it with the connection and the address
             # then raises it to the upper levels
             error = colony.OperationNotComplete("no handshake was possible")
