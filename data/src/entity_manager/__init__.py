@@ -34,12 +34,14 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+from . import analysis
 from . import decorators
 from . import exceptions
 from . import structures
 from . import system
 from . import test
 
+from .analysis import EntityManagerAnalyser
 from .decorators import transaction, lock_table
 from .exceptions import EntityManagerException, RuntimeError, EntityManagerEngineNotFound,\
     MissingRelationMethod, ValidationError, RelationValidationError, InvalidSerializerError
