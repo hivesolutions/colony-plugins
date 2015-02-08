@@ -68,8 +68,7 @@ class EntityManagerAnalyser(object):
         self.analyse_definition(entity_class)
 
     def analyse_definition(self, entity_class):
-        # in case the entity class to be created is abstract there is
-        # no need to create it (no data source definition required)
         if entity_class.is_abstract(): return
+        if not entity_class.is_ready(): return
         if self.entity_manager.exists(entity_class): return
         self.plugin.warning("No definition for class '%s' exists" % entity_class.__name__)
