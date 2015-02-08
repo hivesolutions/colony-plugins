@@ -48,6 +48,7 @@ import tempfile
 
 import colony
 
+from . import analysis
 from . import exceptions
 from . import structures
 from . import test_mocks
@@ -201,7 +202,8 @@ class DataEntityManager(colony.System):
             # returns the entity manager (immediately)
             return entity_manager
 
-        # prints a debug message
+        # prints a debug message about the loading of the entity manger
+        # so that the end user/developer is notified on the loading
         self.plugin.debug("Loading new entity manager with engine: %s" % engine_name)
 
         # retrieves the entity engine plugin
@@ -215,9 +217,7 @@ class DataEntityManager(colony.System):
 
         # in case the id of the entity manager is defined
         # (need to set the entity manager in the map)
-        if id:
-            # sets the entity manager in the loaded entity manager(s) map
-            self.loaded_entity_manager_map[id] = entity_manager
+        if id: self.loaded_entity_manager_map[id] = entity_manager
 
         # returns the entity manager
         return entity_manager
@@ -278,7 +278,8 @@ class EntityManager(object):
     """
 
     entity_manager_plugin = None
-    """ The entity manager plugin """
+    """ The entity manager plugin, this is the upper reference
+    to the origin/owner plugin to be used for global operations """
 
     engine = None
     """ The engine to be used in the underlying logic, this
@@ -977,8 +978,9 @@ class EntityManager(object):
 
     def start(self):
         # verifies if the global configuration value for the
-        # schema building is set, this value will affect the
-        # way some of the creation operations will execute
+        # schema analyse/building is set, this value will affect
+        # the way some of the creation/analysis operations will execute
+        analyse_schema = colony.conf("ANALYSE_SCHEMA", True, cast = bool)
         build_schema = colony.conf("BUILD_SCHEMA", True, cast = bool)
 
         # begins the transaction that will start
@@ -993,6 +995,10 @@ class EntityManager(object):
             # after it creates the generator table
             if build_schema: self.create_definitions()
             if build_schema: self.create_generator()
+
+            # runs the analysis on the current entity manager
+            # rules so that a proper structure is promoted
+            if analyse_schema: self.analyse()
         except:
             # "rollsback" the current transaction (something failed)
             # and re-raises the exception for upper except
@@ -1211,6 +1217,21 @@ class EntityManager(object):
         # returns the boolean (flag) result for the relation validation
         # (in case the relation is valid extra security is present)
         return valid_relation
+
+    def analyse(self):
+        """
+        Runs the analysis system for the current entity
+        manager instance, this is done using the proper
+        analyser class for the entity manager.
+
+        Be aware that this may be an expensive operation
+        and its running should be used with proper care.
+        """
+
+        # creates an instance of the entity manager analyser
+        # and then runs the (complete) analysis operations
+        analyser = analysis.EntityManagerAnalyser(self)
+        analyser.analyse_all()
 
     def create_definitions(self):
         """
