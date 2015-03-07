@@ -2664,14 +2664,14 @@ class ShelveSession(RestSession):
 
     @classmethod
     def new(cls, *args, **kwargs):
-        if not cls.SHELVE: cls.load()
+        if cls.SHELVE == None: cls.load()
         session = cls(*args, **kwargs)
         cls.SHELVE[session.session_id] = session
         return session
 
     @classmethod
     def get_s(cls, sid):
-        if not cls.SHELVE: cls.load()
+        if cls.SHELVE == None: cls.load()
         if cls.GC_PENDING: cls.gc()
         session = cls.SHELVE.get(sid, None)
         if not session: return session
