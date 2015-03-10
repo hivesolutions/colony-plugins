@@ -162,9 +162,13 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     @type permissive: bool
     @param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
+    @type apply: bool
+    @param apply: If the current data in the request should be
+    "automatically" applied to the current model using the various
+    strategies defined in the model associated with the current request.
     @rtype: Model
-    @return: The newly created model with the attributes
-    already "populated" with the map contents.
+    @return: The newly created model with the attributes already
+    "populated" with the map contents.
     """
 
     # checks if the provided map (reference) is in fact a sequence
@@ -182,9 +186,10 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     # session variables information
     model.set_request(request)
 
-    # in case a map is provided, must apply
-    # the contents of it to the model
-    map and model.apply(map, permissive = permissive)
+    # in case a map is provided, must apply the contents of it
+    # to the model, note that this is performed event if the (auto)
+    # apply flag is not set (required operation if defined)
+    if map: model.apply(map, permissive = permissive)
 
     # in case the apply flag is currently not set, nothing
     # else should be done in the new model and it should be
@@ -207,6 +212,30 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     # returns the newly created model with the data from the associated
     # field from the request applied to it
     return model
+
+def _class_niw(cls, request = None, map = None, permissive = False):
+    """
+    Utility method to be used instead of the typical new method for
+    situations where the apply operation is not required/needed/wanted.
+
+    This ensures a direct usage without the explicit setting of the apply
+    flag, so that a minimal usage is allowed (less coder).
+
+    @type request: Request
+    @param request: The request to be used in the context
+    of the current model, it should enable access to session attributes.
+    @type map: Dictionary
+    @param map: The map of "form" options to be used to create
+    the new model instance.
+    @type permissive: bool
+    @param permissive: If the apply operation should be done using
+    a permissive approach ignoring the undefined values.
+    @rtype: Model
+    @return: The newly created model with the attributes already
+    "populated" with the map contents.
+    """
+
+    return cls.new(request = request, map = map, permissive = permissive, apply = False)
 
 def _class_get_system(cls):
     """
