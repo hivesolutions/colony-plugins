@@ -3653,7 +3653,9 @@ class EntityClass(object):
         entity_class = entity_class or self.__class__
 
         # in case the special flag is set the special attributes
-        # of the current instance should also be serialized
+        # of the current instance should also be serialized, so
+        # that even information like the class type is included
+        if special: map["_class"] = self.__class__.__name__
         if special and hasattr(self, "mtime"): map["_mtime"] = self.mtime
 
         # retrieves the id name and values and sets the id
