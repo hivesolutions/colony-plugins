@@ -402,6 +402,12 @@ def apply(self, map, permissive = False):
         has_attr_method = hasattr(cls, "get_all_attr_methods")
         attr_methods = cls.get_all_attr_methods() if has_attr_method else ()
 
+        # retrieves the map that contains the association between the
+        # various names of the class and their structure, this value
+        # will be used to determine if the map name in iteration should
+        # be used, as it is contained in the current model definition
+        names_map = cls.get_names_map()
+
         # iterates over all the items in the map to
         # apply the to the current model
         for item_name, item_value in colony.legacy.items(map):
@@ -419,8 +425,10 @@ def apply(self, map, permissive = False):
 
             # in case the item name is set in the attribute methods
             # map it refers a "calculated" attribute and as such must
-            # be ignored as it's just a stub value
-            if item_name in attr_methods: continue
+            # be ignored as it's just a stub value, note that if a
+            # calculate attribute is also a "regular" attribute it's
+            # considered as a non attr method and proper setting done
+            if item_name in attr_methods and not item_name in names_map: continue
 
             # verifies if the current item name in iteration is defined
             # in the current class (definition present)
