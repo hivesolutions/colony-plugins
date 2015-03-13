@@ -1389,6 +1389,70 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         address.reset_cache()
         self.assertEqual(address._entities, {})
 
+    def test_cache_usage(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(test_mocks.Person)
+        self.entity_manager.create(test_mocks.Address)
+
+        # creates the the person and address entities and populates
+        # them with some values, then sets the address relation
+        # in the person side and saves both entities
+        person = test_mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        address = test_mocks.Address()
+        address.object_id = 2
+        address.street = "street_address"
+        address.door = 1
+        address.country = "country_address"
+        person.address = address
+
+        # saves both entities in the data source so that they may be use
+        # in the next text operation
+        self.entity_manager.save(address)
+        self.entity_manager.save(person)
+
+        # retrieves the person from the data source and then retrieves
+        # the associated address instance
+        person = self.entity_manager.get(test_mocks.Person, 1)
+        address = person.address
+
+        # changes the name of the person, without persisting it to the
+        # data source (this is only a local reference change)
+        person.name = "name_person_changed"
+
+        # verifies that even without persisting the value to the data
+        # source the name value of the person associated with the address
+        # is the same as the person's name, this should have triggered
+        # a lazy loading relation (uses cache based retrieval)
+        self.assertEqual(person.name, person.address.person.name)
+        self.assertEqual(person.address.person.name, "name_person_changed")
+
+        # tries to retrieve the person from the data source using a different
+        # set of entities cache and then verifies that the name is the old
+        # one as the value is yet to be persisted (as expected)
+        person_out = self.entity_manager.get(test_mocks.Person, 1)
+        self.assertNotEqual(person.name, person_out.name)
+        self.assertEqual(person_out.name, "name_person")
+
+        # re-tries to retrieve the same person value from the data source but
+        # now with the same set of entities cache as the base person and using
+        # the cache based strategy, this strategy avoids the access to the data
+        # source value as re-uses the cached one, so that the name that is access
+        # is the same as the one changed locally by the test
+        options = dict(entities = person._entities, cache = True)
+        person_out = self.entity_manager.get(test_mocks.Person, 1, options = options)
+        self.assertEqual(person.name, person_out.name)
+        self.assertEqual(person_out.name, "name_person_changed")
+
+        # re-uses the previous test, using the same dictionary of entities cache
+        # but disables the cache usage so that value is retrieved from the data
+        # source changing/reverting the name of the person to the original value
+        options = dict(entities = person._entities, cache = False)
+        person_out = self.entity_manager.get(test_mocks.Person, 1, options = options)
+        self.assertEqual(person.name, person_out.name)
+        self.assertEqual(person_out.name, "name_person")
+
     def test_nullify(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(test_mocks.Person)
