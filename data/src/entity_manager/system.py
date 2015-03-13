@@ -5444,8 +5444,7 @@ class EntityManager(object):
             # class in the entities map a new entity instance must be
             # creates and set in the proper place "inside" the entities
             # map (for latter possible re-usage)
-            cache_miss = not id in entities[current_class]
-            if cache_miss:
+            if not id in entities[current_class]:
                 # creates a new entity instance and associates it
                 # with the entities "cache" map, note that the created
                 # instance will be properly set with the time value
@@ -5459,14 +5458,6 @@ class EntityManager(object):
             entity = entities[current_class][id]
             if not entity in _visited_map:
                 _visited_map[entity] = (entity, current_class)
-
-            # calculates the is cached (entity) value taking into
-            # account if there was a cache miss and the cache mode
-            # is currently enabled, this value will be used to update
-            # the entity cached value (only for first time retrieval)
-            is_cached = not cache_miss and cache
-            has_cached = hasattr(entity, "_cached")
-            if not has_cached: entity._cached = is_cached
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -5567,8 +5558,7 @@ class EntityManager(object):
                         # class in the entities map a new entity instance must be
                         # creates and set in the proper place "inside" the entities
                         # map (for latter possible re-usage)
-                        cache_miss = not target_id_value in entities[target_class]
-                        if cache_miss:
+                        if not target_id_value in entities[target_class]:
                             # creates a new entity class and associates it
                             # with the entities "cache" map
                             instance = target_class.build(self, entities, scope)
@@ -5583,14 +5573,6 @@ class EntityManager(object):
                         _new_entity = entities[target_class][target_id_value]
                         if not _new_entity in _visited_map:
                             _visited_map[_new_entity] = (_new_entity, target_class)
-
-                        # calculates the is cached (entity) value taking into
-                        # account if there was a cache miss and the cache mode
-                        # is currently enabled, this value will be used to update
-                        # the entity cached value (only for first time retrieval)
-                        is_cached = not cache_miss and cache
-                        has_cached = hasattr(_new_entity, "_cached")
-                        if not has_cached: _new_entity._cached = is_cached
 
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
@@ -5649,8 +5631,8 @@ class EntityManager(object):
                 # in case the current entity in iteration is considered cached
                 # (cache mode enabled and entity is cached) and the value is
                 # already been set the current entity, there's no need to re-set
-                # it again the already set value should prevail (not data source)
-                if _entity._cached and _entity.has_value(attribute_name):
+                # it again, the already set value should prevail (not data source)
+                if cache and _entity.has_value(attribute_name):
                     # continues the loop, ignoring
                     # the current item
                     continue
@@ -5659,14 +5641,6 @@ class EntityManager(object):
                 # it into the correct representation before setting it into
                 # the entity, sql conversion (this is proper setting of value)
                 _entity.set_sql_value(attribute_name, item_value, encoding = database_encoding)
-
-        # iterates over the complete set of entity tuples defined in
-        # the map of visited entities to be able to removed the extra
-        # cached flag from each of the entities, as the value is an
-        # internal (and ephemeral) value used to control the value setting
-        for entity_tuple in colony.legacy.itervalues(_visited_map):
-            entity = entity_tuple[0]
-            delattr(entity, "_cached")
 
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
@@ -5766,8 +5740,7 @@ class EntityManager(object):
             # class in the entities map a new entity instance must be
             # creates and set in the proper place "inside" the entities
             # map (for latter possible re-usage)
-            cache_miss = not id in entities[current_class]
-            if cache_miss:
+            if not id in entities[current_class]:
                 # creates a new entity instance and associates it
                 # with the entities "cache" map, note that the class
                 # attribute is set in the new map (properly decoded)
@@ -5787,14 +5760,6 @@ class EntityManager(object):
             _id = id_f(entity)
             if not _id in _visited_map:
                 _visited_map[_id] = (entity, current_class)
-
-            # calculates the is cached (entity) value taking into
-            # account if there was a cache miss and the cache mode
-            # is currently enabled, this value will be used to update
-            # the entity cached value (only for first time retrieval)
-            is_cached = not cache_miss and cache
-            has_cached = "_cached" in entity
-            if not has_cached: entity["_cached"] = is_cached
 
             # checks if the current entity is not yet present
             # in the map containing the entities in case it's
@@ -5897,8 +5862,7 @@ class EntityManager(object):
                         # class in the entities map a new entity instance must be
                         # creates and set in the proper place "inside" the entities
                         # map (for latter possible re-usage)
-                        cache_miss = not target_id_value in entities[target_class]
-                        if cache_miss:
+                        if not target_id_value in entities[target_class]:
                             # creates a new entity class and associates it
                             # with the entities "cache" map, note that the
                             # class attribute is set in the new map, with
@@ -5921,14 +5885,6 @@ class EntityManager(object):
                         _id = id_f(_new_entity)
                         if not _id in _visited_map:
                             _visited_map[_id] = (_new_entity, target_class)
-
-                        # calculates the is cached (entity) value taking into
-                        # account if there was a cache miss and the cache mode
-                        # is currently enabled, this value will be used to update
-                        # the entity cached value (only for first time retrieval)
-                        is_cached = not cache_miss and cache
-                        has_cached = "_cached" in _new_entity
-                        if not has_cached: _new_entity["_cached"] = is_cached
 
                     # retrieves the type of the current relation, this will
                     # provide information about how to handle the "new" entity
@@ -5986,8 +5942,8 @@ class EntityManager(object):
                 # in case the current entity in iteration is considered cached
                 # (cache mode enabled and entity is cached) and the value is
                 # already been set the current entity, there's no need to re-set
-                # it again the already set value should prevail (not data source)
-                if _entity["_cached"] and attribute_name in _entity:
+                # it again, the already set value should prevail (not data source)
+                if cache and attribute_name in _entity:
                     # continues the loop, ignoring
                     # the current item
                     continue
@@ -6000,14 +5956,6 @@ class EntityManager(object):
                     item_value,
                     encoding = database_encoding
                 )
-
-        # iterates over the complete set of entity tuples defined in
-        # the map of visited entities to be able to removed the extra
-        # cached flag from each of the entities, as the value is an
-        # internal (and ephemeral) value used to control the value setting
-        for entity_tuple in colony.legacy.itervalues(_visited_map):
-            entity = entity_tuple[0]
-            del entity["_cached"]
 
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
