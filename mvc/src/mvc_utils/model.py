@@ -1177,7 +1177,7 @@ def clear_errors(self):
     # a new map to hold the values (clear process)
     self.validation_errors_map = {}
 
-def validate(self, checker = None):
+def validate(self, checker = None, context = None):
     """
     Validates all the attributes in the current object.
     This method returns if the validation was successful or not.
@@ -1189,6 +1189,10 @@ def validate(self, checker = None):
     @param checker: Checker function that if existent will be
     run for each of the model's attribute so that it's possible
     to infer if a validation should be performed for that attribute.
+    @type context: String
+    @param context: The context (a string) for which the current
+    validation is going to be run. Note that the default validation
+    context is always used/executed/inherited.
     @rtype: bool
     @return: If the model validation was successful or not.
     """
@@ -1198,13 +1202,71 @@ def validate(self, checker = None):
     # the start of the validation process
     if hasattr(self, "pre_validate"): self.pre_validate()
 
-    # retrieves the context validation map for the current validation context
-    context_validation_map = self.validation_map.get(self.validation_context, {})
+    # tries to retrieve the proper (validation) context for the
+    # current validation process, defaulting to the validation
+    # context set in the current context, then verifies if the
+    # resulting context is considered to be the default one
+    context = context if context else self.validation_context
+    is_default = context == "default"
+
+    # retrieves the references for both the default and the selected
+    # contexts validation maps (to be used in the validation process)
+    default_validation_map = self.validation_map.get("default", {})
+    context_validation_map = self.validation_map.get(context, {})
+
+    # verifies if the current context is the default one and in case
+    # it's not runs the default context validation (as an extra) then
+    # runs the validation for the selected context
+    if not is_default: self.validate_run(
+        checker = checker,
+        context_validation_map = default_validation_map
+    )
+    self.validate_run(
+        checker = checker,
+        context_validation_map = context_validation_map
+    )
+
+    # checks if the current validation process has success
+    # running (all the validation tests passed)
+    is_valid = self.is_valid(recursive = True)
+
+    # in case the validation was not successful and the current
+    # model contains the fail validate method defined it's called
+    # to signal the failure of the validation process
+    if not is_valid and hasattr(self, "fail_validate"): self.fail_validate()
+
+    # checks if the current model contains the post validate
+    # method, in such case the method is called to signal
+    # the end of the validation process
+    if hasattr(self, "post_validate"): self.post_validate()
+
+    # returns if the structure is valid, all tests passed
+    # with expected success
+    return is_valid
+
+def validate_run(self, checker = None, context_validation_map = {}):
+    """
+    Underlying method that runs the sequence of validation methods
+    defined in the provided context validation map.
+
+    The results from the validation should update the current entity
+    error structure so that it becomes invalidation in case there's
+    an error or valid otherwise.
+
+    @type checker: Function
+    @param checker: Checker function that if existent will be
+    run for each of the model's attribute so that it's possible
+    to infer if a validation should be performed for that attribute.
+    @type context_validation_map: Dictionary
+    @param context_validation_map: Map containing the associations
+    between the attribute names and the sequence containing the
+    various validation functions to be run for that attribute.
+    """
 
     # iterates over all the items in the context validation map
     # so that it's possible to validate all of the attributes
     # for the current model instance (as requested)
-    for attribute_name, validation_tuple_list in colony.legacy.items(context_validation_map):
+    for attribute_name, validation_tuple_list in colony.legacy.iteritems(context_validation_map):
         # in case the current model is already stored no need to
         # to validate a non existent attribute (it's not going to be
         # persisted and the value in the data source was already validated)
@@ -1235,24 +1297,6 @@ def validate(self, checker = None):
             # calls the validation method for validation on the
             # given attribute from the model (performs the validation)
             validation_method(attribute_name, attribute_value, properties)
-
-    # checks if the current validation process has success
-    # running (all the validation tests passed)
-    is_valid = self.is_valid(recursive = True)
-
-    # in case the validation was not successful and the current
-    # model contains the fail validate method defined it's called
-    # to signal the failure of the validation process
-    if not is_valid and hasattr(self, "fail_validate"): self.fail_validate()
-
-    # checks if the current model contains the post validate
-    # method, in such case the method is called to signal
-    # the end of the validation process
-    if hasattr(self, "post_validate"): self.post_validate()
-
-    # returns if the structure is valid, all tests passed
-    # with expected success
-    return is_valid
 
 def validate_exception(self, exception_message = "validation failed", error_description = True):
     """
