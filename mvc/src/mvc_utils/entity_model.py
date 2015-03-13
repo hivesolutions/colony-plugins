@@ -177,7 +177,7 @@ def _class_get(
     cls,
     id_value,
     options = {},
-    apply = True,
+    apply = False,
     apply_name = None,
     context = None,
     namespace = None,
@@ -207,7 +207,7 @@ def _class_get(
     of the entity model to be retrieved.
     @type apply: boolean
     @param apply: If the model definition should be retrieved
-    from the provided context and the applied in the current
+    from the provided context and then applied in the current
     model. Note that this is a fallback operation meaning that
     if it fails nothing will happen (no exception raised).
     @type apply_name: String
