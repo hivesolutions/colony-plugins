@@ -5628,9 +5628,8 @@ class EntityManager(object):
                     # the current item
                     continue
 
-                # in case the current entity in iteration is considered cached
-                # (cache mode enabled and entity is cached) and the value is
-                # already been set the current entity, there's no need to re-set
+                # in case the cache mode is currently enabled and the attribute has
+                # already been set in the current entity, there's no need to re-set
                 # it again, the already set value should prevail (not data source)
                 if cache and _entity.has_value(attribute_name):
                     # continues the loop, ignoring
@@ -5939,9 +5938,8 @@ class EntityManager(object):
                     # the current item
                     continue
 
-                # in case the current entity in iteration is considered cached
-                # (cache mode enabled and entity is cached) and the value is
-                # already been set the current entity, there's no need to re-set
+                # in case the cache mode is currently enabled and the attribute has
+                # already been set in the current entity, there's no need to re-set
                 # it again, the already set value should prevail (not data source)
                 if cache and attribute_name in _entity:
                     # continues the loop, ignoring
