@@ -1431,9 +1431,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # tries to retrieve the person from the data source using a different
         # set of entities cache and then verifies that the name is the old
         # one as the value is yet to be persisted (as expected)
-        person_out = self.entity_manager.get(test_mocks.Person, 1)
-        self.assertNotEqual(person.name, person_out.name)
-        self.assertEqual(person_out.name, "name_person")
+        cached_person = self.entity_manager.get(test_mocks.Person, 1)
+        self.assertNotEqual(person.name, cached_person.name)
+        self.assertEqual(cached_person.name, "name_person")
 
         # re-tries to retrieve the same person value from the data source but
         # now with the same set of entities cache as the base person and using
@@ -1441,17 +1441,17 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # source value as re-uses the cached one, so that the name that is access
         # is the same as the one changed locally by the test
         options = dict(entities = person._entities, cache = True)
-        person_out = self.entity_manager.get(test_mocks.Person, 1, options = options)
-        self.assertEqual(person.name, person_out.name)
-        self.assertEqual(person_out.name, "name_person_changed")
+        cached_person = self.entity_manager.get(test_mocks.Person, 1, options = options)
+        self.assertEqual(person.name, cached_person.name)
+        self.assertEqual(cached_person.name, "name_person_changed")
 
         # re-uses the previous test, using the same dictionary of entities cache
         # but disables the cache usage so that value is retrieved from the data
         # source changing/reverting the name of the person to the original value
         options = dict(entities = person._entities, cache = False)
-        person_out = self.entity_manager.get(test_mocks.Person, 1, options = options)
-        self.assertEqual(person.name, person_out.name)
-        self.assertEqual(person_out.name, "name_person")
+        cached_person = self.entity_manager.get(test_mocks.Person, 1, options = options)
+        self.assertEqual(person.name, cached_person.name)
+        self.assertEqual(cached_person.name, "name_person")
 
     def test_nullify(self):
         # creates the required entity classes in the data source
