@@ -4538,7 +4538,8 @@ class EntityClass(object):
             ),
             entities = self._entities,
             scope = self._scope,
-            minimal = True
+            minimal = True,
+            cache = True
         )
 
         # runs the "finding" the appropriate (place holder) entity
