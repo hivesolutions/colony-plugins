@@ -833,6 +833,11 @@ class RestRequest(object):
     layer, meaning that data has already been sent to the
     underlying stream """
 
+    redirected = False
+    """ Flags that controls if the current (rest) request has
+    been redirected, meaning that a proper code has been set
+    and a location value has been defined (as expected) """
+
     resource_name = None
     """ The resource name, considered to be the "driver" for the
     proper rest plugin handler (eg: mvc) """
@@ -868,7 +873,7 @@ class RestRequest(object):
     is considered a legacy item an should not be used anymore """
 
     _session = None
-    """ The associated session object, should allays be access
+    """ The associated session object, should always be access
     indirectly through the proper accessor method, this is a
     private object and should be used with proper care """
 
@@ -1223,6 +1228,22 @@ class RestRequest(object):
 
         return self.flushed
 
+    def is_redirected(self):
+        """
+        Verifies if the current rest request represented a response
+        that is a redirect (to other location).
+
+        Only normal (through interface) redirect operations will be
+        detected, meaning that direct changes to headers and status
+        codes may not be detect thought this call.
+
+        @rtype: bool
+        @return: If the current request represents a redirect based
+        response, and not a typical payload/data one.
+        """
+
+        return self.redirected
+
     def flush(self):
         """
         Flushes the rest request buffer, this operation should
@@ -1346,6 +1367,11 @@ class RestRequest(object):
         # sets the location header (using the quoted target path)
         self.request.set_header("Location", target_path_quoted)
 
+        # sets the redirected flag so that any external call to the
+        # request is able to determine that it represents a proper
+        # redirection operation asn not a "normal" response
+        self.redirected = True
+
     def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
         """
         Executes the given callable object in a background
@@ -1397,9 +1423,8 @@ class RestRequest(object):
 
     def get_header(self, header_name):
         """
-        Retrieves an header value of the request,
-        or none if no header is defined for the given
-        header name.
+        Retrieves an header value of the request, or none if no
+        header is defined for the given header name.
 
         @type header_name: String
         @param header_name: The name of the header to be retrieved.
@@ -1411,7 +1436,8 @@ class RestRequest(object):
 
     def set_header(self, header_name, header_value):
         """
-        Set a response header value on the request.
+        Set a response header value on the request, this will
+        set a value for the output headers.
 
         @type header_name: String
         @param header_name: The name of the header to be set.
