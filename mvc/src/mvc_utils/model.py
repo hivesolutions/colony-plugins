@@ -2163,11 +2163,9 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
     data_type = model_class_attribute_value["type"]
     cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)
 
-    # in case no cast type is defined
-    # it's impossible to convert the data
-    if not cast_type:
-        # returns immediately (no set is made)
-        return
+    # in case no cast type is defined it's impossible to convert the data
+    # and so must return immediately (without proper value setting)
+    if not cast_type: return
 
     # in case the nullify option is set and the attribute value
     # is an empty string sets the attribute value to none (null)
@@ -2223,11 +2221,9 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     @return: The value casted to the defined type.
     """
 
-    # in case the value is none
-    # it's a special case (type)
-    if value == None:
-        # returns the value immediately
-        return value
+    # in case the value is none it's a considered special case
+    # and the value should be returned immediately to caller
+    if value == None: return value
 
     try:
         # retrieves the value type
