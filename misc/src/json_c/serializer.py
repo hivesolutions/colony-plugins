@@ -82,6 +82,7 @@ NUMBER_TYPES = {
     int : True,
     colony.legacy.LONG: True,
     float : True,
+    colony.Decimal : True,
     decimal.Decimal : True,
 }
 """ The map used to check number types """
