@@ -170,6 +170,11 @@ class Person(RootEntity):
     )
     """ The age of the person """
 
+    weight = dict(
+        type = "decimal"
+    )
+    """ The weight of the person """
+
     parent = dict(
         type = "relation"
     )
