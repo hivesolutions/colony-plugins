@@ -1567,6 +1567,31 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(person.dogs[1].object_id, 3)
         self.assertEqual(person.dogs[2].object_id, 2)
 
+    def test_decimal(self):
+        # makes sure that the proper entity classes are registered
+        # and created in the data source
+        self.entity_manager.create(test_mocks.Person)
+
+        # creates a person entity with the proper weight value set to
+        # a complicated float value (extra decimal places)
+        person = test_mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.weight = 88.151 - 88.15
+        self.entity_manager.save(person)
+
+        # verifies that no exact decimal value exists for the weight value
+        # and that it's currently being represented by a float type
+        self.assertNotEqual(person.weight, 0.001)
+        self.assertEqual(type(person.weight), float)
+
+        # tries to retrieve the person from the data source and verifies that
+        # the weight value is now an "exact" (fixed point) value and that proper
+        # comparisons are permitted/allowed by the "new" data type
+        person = self.entity_manager.get(test_mocks.Person, 1)
+        self.assertEqual(person.weight, 0.001)
+        self.assertEqual(type(person.weight), colony.Decimal)
+
     def test_normalize_options(self):
         # creates a simple filter for name base selection and runs
         # the normalization process, creating the full complex based
