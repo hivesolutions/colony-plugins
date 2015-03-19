@@ -118,6 +118,15 @@ PYTHON_TYPES_MAP = dict(
 """ The map containing the association between the entity
 types and the valid values for python types """
 
+PYTHON_WARN_MAP = dict(
+    decimal = (
+        float,
+    )
+)
+""" Map that associates the various entity based types with
+the types that should trigger a warning because although
+compatible may create serious compatibility/integrity issues """
+
 PYTHON_CAST_MAP = dict(
     text = colony.legacy.UNICODE,
     string = colony.legacy.UNICODE,
@@ -4234,7 +4243,7 @@ class EntityClass(object):
         )
 
     @classmethod
-    def _validate_value(cls, name, value):
+    def _validate_value(cls, name, value, strict = True):
         """
         Validates that the value for the attribute with the given
         contains a valid type, according to the entity specification.
@@ -4242,6 +4251,9 @@ class EntityClass(object):
         In case the attribute value is not valid a validation error
         is raised to avoid any security breach while using the
         entity manager.
+
+        If the strict mode is enabled the warning level data types
+        will raise an exception, blocking the loading.
 
         This is a helpful method for assertions of security in
         the entity classes.
@@ -4252,6 +4264,9 @@ class EntityClass(object):
         @type value: String
         @param value: The value of the attribute to be validated
         for correct type in the current entity class.
+        @type strict: bool
+        @param stroct: If the strict mode of validation should be
+        applied meaning more validations.
         """
 
         # in case the name is a reserved one, it's considered
@@ -4262,14 +4277,26 @@ class EntityClass(object):
         # the attribute with the given name for
         # the current entity class and uses it to
         # retrieve the set of valid python types for
-        # the attribute with the current name
+        # the attribute with the current name, note
+        # that a waning set of types is also retrieved
         attribute_data_type = cls._get_data_type(name)
         valid_types = PYTHON_TYPES_MAP.get(attribute_data_type, ())
+        warn_types = PYTHON_WARN_MAP.get(attribute_data_type, ())
 
         # retrieves the type of the given value
         # to check it against the list of valid types
         # for the current attribute
         value_type = type(value)
+
+        # verifies if the data type for the value is present
+        # in the list of warning data types for the attribute
+        # data type, if that's the case and the strict mode
+        # is enabled a validation error is raised (cautious)
+        if strict and value_type in warn_types:
+            raise exceptions.ValidationError(
+                "data type '%s' is not perfect for '%s' in '%s'" %\
+                (value_type, name, cls.__name__)
+            )
 
         # checks if the current value is not set (considered
         # to be universally valid) in such case the control
