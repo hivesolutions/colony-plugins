@@ -71,6 +71,7 @@ DATA_TYPE_CAST_TYPES_MAP = dict(
     string = colony.legacy.UNICODE,
     integer = int,
     float = float,
+    decimal = colony.Decimal,
     date = colony.timestamp_datetime,
     data = colony.legacy.UNICODE,
     metadata = dict,
