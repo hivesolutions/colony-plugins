@@ -112,6 +112,7 @@ SQL_TYPES_MAP = dict(
     integer = "integer",
     long = "bigint",
     float = "double precision",
+    decimal = "double precision",
     date = "double precision",
     data = "text",
     metadata = "text"

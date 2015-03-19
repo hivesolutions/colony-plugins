@@ -89,6 +89,13 @@ PYTHON_TYPES_MAP = dict(
         float,
         type(None)
     ),
+    decimal = (
+        int,
+        colony.legacy.LONG,
+        float,
+        colony.Decimal,
+        type(None)
+    ),
     date = (
         datetime.datetime,
         int,
@@ -116,6 +123,7 @@ PYTHON_CAST_MAP = dict(
     string = colony.legacy.UNICODE,
     integer = int,
     float = float,
+    decimal = colony.Decimal,
     date = float,
     data = colony.legacy.UNICODE,
     metadata = dict,
@@ -192,7 +200,8 @@ class Connection(object):
     """
 
     closed = False
-    """ The flag controlling the status (closing) of the connection """
+    """ The flag controlling the status (closing) of the connection,
+    meaning that if it's set the connection is considered closed """
 
     connection_parameters = {}
     """ The general parameters to be used in the connection,
@@ -4100,6 +4109,13 @@ class EntityClass(object):
         if data_type == "integer":
             integer_value = int(value)
             return integer_value
+
+        # in case the attribute data type is decimal (fixed point)
+        # it must be casted into a valid decimal (simple casting)
+        # so that unexpected data types exist for the current value
+        if data_type == "decimal":
+            decimal_value = colony.Decimal(value)
+            return decimal_value
 
         # in case the attribute date type is date
         # it must be converted back from the data
