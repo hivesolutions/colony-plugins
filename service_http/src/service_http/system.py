@@ -897,7 +897,8 @@ class HttpClientServiceHandler:
     def process_exception(self, request, service_connection, exception):
         # prints info message about exception so that an easy diagnostic
         # operation is possible at runtime (for debugging)
-        self.service_plugin.info("There was an exception handling the request (%s): " %\
+        self.service_plugin.info(
+            "There was an exception handling the request (%s): " %\
             exception.__class__.__name__ + colony.legacy.UNICODE(exception)
         )
         try:
@@ -912,7 +913,8 @@ class HttpClientServiceHandler:
         except Exception as exception:
             # prints an error message about the raised exception so that it's
             # possible to properly act on it at a runtime level
-            self.service_plugin.debug("There was an exception handling the exception (%s): " %\
+            self.service_plugin.debug(
+                "There was an exception handling the exception (%s): " %\
                 exception.__class__.__name__ + colony.legacy.UNICODE(exception)
             )
 
