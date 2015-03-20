@@ -87,7 +87,7 @@ class BusinessHelper(colony.System):
         @type extra_globals_map: Dictionary
         @param extra_globals_map: A map containing a set of (extra) global symbols to be set in
         the imported module under as global variables.
-        @rtype: Module
+        @rtype: module
         @return: The created target module.
         """
 
