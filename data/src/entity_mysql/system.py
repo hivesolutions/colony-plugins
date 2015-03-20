@@ -535,10 +535,16 @@ class MysqlEngine(object):
         return query
 
     def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
+        # constructs the index name from the various components of it, note
+        # that the value is truncated to the maximum length possible, this
+        # may create problem with duplicated index naming (requires caution)
+        index_name = "%s_%s_%s" % (table_name, attribute_name, index_type)
+        index_name = index_name[-64:]
+
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("create index %s_%s_%s_idx on %s(%s) using %s" % (table_name, attribute_name, index_type, table_name, attribute_name, index_type))
+        query_buffer.write("create index %s on %s(%s) using %s" % (index_name, table_name, attribute_name, index_type))
 
         # retrieves the "final" query value from
         # the query (string) buffer

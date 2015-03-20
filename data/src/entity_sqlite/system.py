@@ -369,10 +369,15 @@ class SqliteEngine(object):
         return query
 
     def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
+        # constructs the index name from the various components of it, the value
+        # for the identifier is not truncated and it's assumed to be possible to
+        # have a variable length value on the naming o the index
+        index_name = "%s_%s_%s" % (table_name, attribute_name, index_type)
+
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("create index %s_%s_%s_idx on %s(%s)" % (table_name, attribute_name, index_type, table_name, attribute_name))
+        query_buffer.write("create index %s on %s(%s)" % (index_name, table_name, attribute_name))
 
         # retrieves the "final" query value from
         # the query (string) buffer
