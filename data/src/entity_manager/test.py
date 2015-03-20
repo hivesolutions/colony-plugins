@@ -1569,7 +1569,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
     def test_decimal(self):
         # makes sure that the proper entity classes are registered
-        # and created in the data source
+        # and created in the data source (going to be used)
         self.entity_manager.create(test_mocks.Person)
 
         # creates a person entity with the proper weight value set to
