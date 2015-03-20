@@ -1578,12 +1578,16 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.object_id = 1
         person.name = "name_person"
         person.weight = 88.151 - 88.15
-        self.entity_manager.save(person)
 
         # verifies that no exact decimal value exists for the weight value
         # and that it's currently being represented by a float type
         self.assertNotEqual(person.weight, 0.001)
         self.assertEqual(type(person.weight), float)
+
+        # converts the person's weight value to a decimal value (required to
+        # be able to pass strict validation) and then saves the entity
+        person.weight = colony.Decimal(person.weight)
+        self.entity_manager.save(person)
 
         # tries to retrieve the person from the data source and verifies that
         # the weight value is now an "exact" (fixed point) value and that proper
