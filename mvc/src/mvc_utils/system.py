@@ -991,7 +991,7 @@ class MvcUtils(colony.System):
 
         # retrieves the entity models and the models from the package
         # path models map (one package path may contain various models)
-        entity_models, models = self.package_path_models_map.get(package_path, [])
+        entity_models, models = self.package_path_models_map.get(package_path, ([], []))
 
         # destroys the retrieved models (and entity models) for the
         # current entity manager arguments
