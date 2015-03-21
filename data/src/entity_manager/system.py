@@ -48,10 +48,10 @@ import tempfile
 
 import colony
 
+from . import mocks
 from . import analysis
 from . import exceptions
 from . import structures
-from . import test_mocks
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
@@ -374,7 +374,7 @@ class EntityManager(object):
         that may be used for testing.
         """
 
-        return test_mocks
+        return mocks
 
     def get_entity(self, entity_name):
         """

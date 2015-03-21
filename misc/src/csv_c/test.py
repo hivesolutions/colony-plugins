@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony
 
-from . import test_mocks
+from . import mocks
 
 class CsvTest(colony.Test):
     """
@@ -59,21 +59,21 @@ class CsvBaseTestCase(colony.ColonyTestCase):
         return "Csv Plugin test case"
 
     def test_dumps(self):
-        result = self.system.dumps(test_mocks.SIMPLE_OBJECT, encoding = None)
-        self.assertEqual(result, test_mocks.SIMPLE_CSV)
+        result = self.system.dumps(mocks.SIMPLE_OBJECT, encoding = None)
+        self.assertEqual(result, mocks.SIMPLE_CSV)
 
-        result = self.system.dumps(test_mocks.SIMPLE_RAW, encoding = None)
-        self.assertEqual(result, test_mocks.SIMPLE_CSV)
+        result = self.system.dumps(mocks.SIMPLE_RAW, encoding = None)
+        self.assertEqual(result, mocks.SIMPLE_CSV)
 
-        result = self.system.dumps(test_mocks.COMPLEX_OBJECT, encoding = None)
-        self.assertEqual(result, test_mocks.COMPLEX_CSV)
+        result = self.system.dumps(mocks.COMPLEX_OBJECT, encoding = None)
+        self.assertEqual(result, mocks.COMPLEX_CSV)
 
-        result = self.system.dumps(test_mocks.COMPLEX_RAW, encoding = None)
-        self.assertEqual(result, test_mocks.COMPLEX_CSV)
+        result = self.system.dumps(mocks.COMPLEX_RAW, encoding = None)
+        self.assertEqual(result, mocks.COMPLEX_CSV)
 
     def test_loads(self):
-        result = self.system.loads(test_mocks.SIMPLE_CSV)
-        self.assertEqual(result, test_mocks.SIMPLE_RAW)
+        result = self.system.loads(mocks.SIMPLE_CSV)
+        self.assertEqual(result, mocks.SIMPLE_RAW)
 
-        result = self.system.loads(test_mocks.COMPLEX_CSV)
-        self.assertEqual(result, test_mocks.COMPLEX_RAW)
+        result = self.system.loads(mocks.COMPLEX_CSV)
+        self.assertEqual(result, mocks.COMPLEX_RAW)
