@@ -755,9 +755,11 @@ class MysqlConnection(object):
 
             # retrieves the encoding in use by the database and then
             # uses it as the character set to be used in the communication
-            # with the database server
+            # with the database server, note that a verification is
+            # previously done to ensure that the method exists
+            has_charset = hasattr(connection, "set_character_set")
             encoding = self.get_database_encoding()
-            connection.set_character_set(encoding)
+            if has_charset: connection.set_character_set(encoding)
 
             # sets the isolation level for the connection as the one defined
             # to be the default one by the "driver"
