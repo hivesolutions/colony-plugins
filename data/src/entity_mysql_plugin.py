@@ -56,7 +56,7 @@ class EntityMysqlPlugin(colony.Plugin):
         "entity_engine"
     ]
     dependencies = [
-        colony.PackageDependency("MySQL-Python extension module", "MySQLdb")
+        colony.PackageDependency("MySQL-Python extension module", (("MySQLdb", "pymysql"),))
     ]
     main_modules = [
         "entity_mysql"
