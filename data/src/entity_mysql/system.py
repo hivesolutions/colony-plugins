@@ -687,6 +687,10 @@ class MysqlEngine(object):
     def _resolve_operator(self, operator):
         return operator
 
+    def _is_serializable(self):
+        connection = self.entity_manager.get_connection()
+        return connection._isolation == "serializable"
+
     def _escape_slash(self):
         return True
 
@@ -698,9 +702,6 @@ class MysqlEngine(object):
 
     def _allow_for_update(self):
         return True
-
-    def _allow_serializable(self):
-        return False
 
 class MysqlConnection(object):
     """

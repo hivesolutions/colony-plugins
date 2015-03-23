@@ -4466,6 +4466,12 @@ class EntityManager(object):
         lock = options.get("lock", False)
         if not lock: return
 
+        # verifies if the current engine operation is running under
+        # a serializable transaction isolation mode, if that's the
+        # case there's no need for lock (isolation is enought)
+        is_serializable = self.engine._is_serializable()
+        if is_serializable: return
+
         # checks if the current engine allows (contains support)
         # for the for update part of the query
         allow_for_update = self.engine._allow_for_update()

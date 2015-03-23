@@ -159,6 +159,7 @@ class PgsqlEngine(object):
         connection._user = user
         connection._host = host
         connection._database = database
+        connection._isolation = isolation
         connection._show_sql = show_sql
         connection.open()
         self._execute_query_t(
@@ -598,6 +599,10 @@ class PgsqlEngine(object):
     def _resolve_operator(self, operator):
         return OPERATORS_MAP.get(operator, operator)
 
+    def _is_serializable(self):
+        connection = self.entity_manager.get_connection()
+        return connection._isolation == "serializable"
+
     def _escape_slash(self):
         return False
 
@@ -614,9 +619,6 @@ class PgsqlEngine(object):
         # the selected rows, making the for update support not reliable
         # this is considered a major drawback towards pgsql usage
         return False
-
-    def _allow_serializable(self):
-        return True
 
 class IntegrityError(RuntimeError):
     pass

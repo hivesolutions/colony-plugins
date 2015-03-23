@@ -482,6 +482,9 @@ class SqliteEngine(object):
     def _resolve_operator(self, operator):
         return operator
 
+    def _is_serializable(self):
+        return False
+
     def _escape_slash(self):
         return False
 
@@ -492,9 +495,6 @@ class SqliteEngine(object):
         return False
 
     def _allow_for_update(self):
-        return False
-
-    def _allow_serializable(self):
         return False
 
 class SqliteConnection(object):
