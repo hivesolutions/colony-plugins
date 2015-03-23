@@ -724,6 +724,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     type_s = defaults.get("type", "both")
     order_by = defaults.get("order_by", None)
     eager = defaults.get("eager", ())
+    allowed = defaults.get("allowed", ())
     filters = defaults.get("filters", [])
     map = defaults.get("map", False)
 
@@ -731,6 +732,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     # defaulting to the pre-defined default values
     filter_string = data.get("filter_string", "")
     sort = data.get("sort", None)
+    eager_s = data.get("eager", [])
     filters_s = data.get("filters", [])
     start_record = data.get("start_record", 0)
     number_records = data.get("number_records", 5)
@@ -750,6 +752,36 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     # sort value is the default
     sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
     order_by = not sort_value == "default" and ((sort_value, sort_order),) or order_by
+
+    def eager_r(eager_s):
+        # in case the eager sequence is not valid or empty
+        # or if the data type of the eager structure is not
+        # dictionary/map based returns immediately
+        if not eager_s: return
+        if not type(eager) == dict: return
+
+        # re-calculates the eager sequence, filtering the values
+        # that are not allowed (security validation)
+        eager_s = list(set(eager_s) & set(allowed))
+
+        # iterates over the complete set of eager loading
+        # relations defined in the eager sequence
+        for relation in eager_s:
+            # splits the fully qualified relation name around
+            # its partial names so that iteration is possible,
+            # then initializes the partial eager value with the
+            # top level eager map (initial value)
+            names = relation.split(".")
+            _eager = eager
+
+            # iterates over the complete set of "partial"
+            # relation names to update the map structure
+            for _name in names:
+                is_new = not _name in _eager
+                if is_new: _eager[_name] = dict(eager = dict())
+                _partial = _eager[_name]
+                if not "eager" in _partial: _partial["eager"] = dict()
+                _eager = _partial["eager"]
 
     def resolve(cls, eager, path):
         # retrieves the base value from the path and
@@ -807,6 +839,10 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # returns the tuple containing the target filters map
         # the target (class) and the top level name of the attribute
         return _filters, target, name
+
+    # runs the resolution process for the eager sequence, meaning
+    # that allowed relations will be set of the eager structure
+    if eager_s: eager_r(eager_s)
 
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query
