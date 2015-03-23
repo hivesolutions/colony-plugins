@@ -55,9 +55,9 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
-OPERATORS_MAP = {
-    "length" : "char_length"
-}
+OPERATORS_MAP = dict(
+    length = "char_length"
+)
 """ The map that resolves the various specific operator
 for the pgsql implementation from the generic ones """
 
