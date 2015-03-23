@@ -50,6 +50,13 @@ ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution
 it's going to be used to identify the system """
 
+ISOLATION_LEVEL = "serializable"
+""" The isolation level to be used in the connections
+created by the driver, this isolation level is considered
+to be very restrictive (most isolated) and ensures that
+something that is read on a transaction is not read by
+another until the transaction is finished """
+
 SLOW_QUERY_TIME = 25
 """ The minimum time in milliseconds before a query is
 considered to be slow and a warning message should be logger
@@ -135,10 +142,12 @@ class PgsqlEngine(object):
         user = parameters.get("user", "postgres")
         password = parameters.get("password", "postgres")
         database = parameters.get("database", "default")
+        isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
+        isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
         connection._connection = pgdb.connect(
             host = host,
@@ -152,6 +161,9 @@ class PgsqlEngine(object):
         connection._database = database
         connection._show_sql = show_sql
         connection.open()
+        self._execute_query_t(
+            "set session characteristics as transaction isolation level %s" % isolation
+        ).close()
 
     def disconnect(self, connection):
         _connection = connection._connection
