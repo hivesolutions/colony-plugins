@@ -302,7 +302,7 @@ class PgsqlEngine(object):
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
             try: cursor.execute(query)
-            except: self.pgsql_system.info("%s" % query); raise
+            except: self.pgsql_system.info("[%s] %s" % (ENGINE_NAME, query)); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
