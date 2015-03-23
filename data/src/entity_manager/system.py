@@ -4468,7 +4468,7 @@ class EntityManager(object):
 
         # verifies if the current engine operation is running under
         # a serializable transaction isolation mode, if that's the
-        # case there's no need for lock (isolation is enought)
+        # case there's no need for lock (isolation is enough)
         is_serializable = self.engine._is_serializable()
         if is_serializable: return
 
