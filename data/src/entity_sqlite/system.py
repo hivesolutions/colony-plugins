@@ -264,9 +264,11 @@ class SqliteEngine(object):
             # the queries that are considered slow
             initial = time.time()
 
-            # executes the query in the current cursor
-            # context for the engine
-            cursor.execute(query)
+            # executes the query in the current cursor context
+            # for the engine, in case there's an exception during
+            # the execution of the query the query is logged
+            try: cursor.execute(query)
+            except: self.sqlite_system.info("%s" % query); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
