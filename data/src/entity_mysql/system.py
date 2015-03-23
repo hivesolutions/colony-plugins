@@ -146,16 +146,25 @@ class MysqlEngine(object):
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
         database = parameters.get("database", "default")
+        isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
+        isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
-        connection._connection = MysqlConnection(host, user, password, database)
+        connection._connection = MysqlConnection(
+            host = host,
+            user = user,
+            password = password,
+            database = database,
+            isolation = isolation
+        )
         connection._transaction_level = 0
         connection._user = user
         connection._host = host
         connection._database = database
+        connection._isolation = isolation
         connection._show_sql = show_sql
         connection.open()
 
@@ -722,11 +731,19 @@ class MysqlConnection(object):
     """ The map associating the thread identifier with the
     connection """
 
-    def __init__(self, host, user, password, database):
+    def __init__(
+        self,
+        host = "localhost",
+        user = "root",
+        password = "root",
+        database = "default",
+        isolation = ISOLATION_LEVEL
+    ):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
+        self.isolation = isolation
 
         self.transaction_level_map = {}
         self.connections_map = {}
@@ -769,7 +786,7 @@ class MysqlConnection(object):
             # sets the isolation level for the connection as the one defined
             # to be the default one by the "driver"
             self._execute_query(
-                "set session transaction isolation level %s" % ISOLATION_LEVEL,
+                "set session transaction isolation level %s" % self.isolation,
                 connection = connection
             ).close()
 
