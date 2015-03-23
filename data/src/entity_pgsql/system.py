@@ -38,9 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import time
-import pgdb
 
 import colony
+
+try: import pgdb
+except: import psycopg2; pgdb = psycopg2
 
 ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution

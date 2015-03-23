@@ -56,7 +56,7 @@ class EntityPgsqlPlugin(colony.Plugin):
         "entity_engine"
     ]
     dependencies = [
-        colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", "pgdb")
+        colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", (("pgdb", "psycopg2"),))
     ]
     main_modules = [
         "entity_pgsql"
