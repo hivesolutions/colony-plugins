@@ -589,7 +589,12 @@ class PgsqlEngine(object):
         return False
 
     def _allow_for_update(self):
-        return True
+        # currently pgsql does not support the row level locking
+        # for outer joins, meaning that queries that for queries
+        # contain relations loading it would be impossible to lock
+        # the selected rows, making the for update support not reliable
+        # this is considered a major drawback towards pgsql usage
+        return False
 
 class IntegrityError(RuntimeError):
     pass
