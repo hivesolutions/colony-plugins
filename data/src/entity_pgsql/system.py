@@ -162,7 +162,8 @@ class PgsqlEngine(object):
         pass
 
     def destroy(self):
-        # @TODO: put this is the correct way
+        # runs the proper queries that will drop the complete set of
+        # tables in the currently selected schema
         self._execute_query_t("drop schema public cascade").close()
         self._execute_query_t("create schema public").close()
 
