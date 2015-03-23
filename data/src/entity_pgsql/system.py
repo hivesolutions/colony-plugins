@@ -42,7 +42,9 @@ import time
 import colony
 
 try: import pgdb
-except: import psycopg2; pgdb = psycopg2
+except: 
+    try: import psycopg2; pgdb = psycopg2
+    except: import psycopg2cffi; pgdb = psycopg2cffi
 
 ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution
