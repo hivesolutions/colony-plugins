@@ -494,6 +494,9 @@ class SqliteEngine(object):
     def _allow_for_update(self):
         return False
 
+    def _allow_serializable(self):
+        return False
+
 class SqliteConnection(object):
     """
     Class representing an abstraction on top of

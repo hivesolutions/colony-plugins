@@ -353,6 +353,12 @@ class PgsqlEngine(object):
         # the resulting values from the query execution
         return cursor
 
+    def serializable(self):
+        self.isolation_level("serializable")
+
+    def isolation_level(self, isolation):
+        self.execute_query("set transaction isolation level %s" % isolation)
+
     def _commit(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -608,6 +614,9 @@ class PgsqlEngine(object):
         # the selected rows, making the for update support not reliable
         # this is considered a major drawback towards pgsql usage
         return False
+
+    def _allow_serializable(self):
+        return True
 
 class IntegrityError(RuntimeError):
     pass

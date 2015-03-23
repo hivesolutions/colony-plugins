@@ -699,6 +699,9 @@ class MysqlEngine(object):
     def _allow_for_update(self):
         return True
 
+    def _allow_serializable(self):
+        return False
+
 class MysqlConnection(object):
     """
     Class representing an abstraction on top of
