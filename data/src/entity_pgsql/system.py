@@ -91,7 +91,9 @@ class PgsqlEngine(object):
         return ENGINE_NAME
 
     def get_internal_version(self):
-        return pgdb.version
+        if hasattr(pgdb, "version"): return pgdb.version
+        if hasattr(pgdb, "__version__"): return pgdb.__version__
+        return None
 
     def get_host(self):
         connection = self.entity_manager.get_connection()
