@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import copy
 import uuid
+import math
 import time
 import zipfile
 import calendar
@@ -64,6 +65,11 @@ the generator table (table name) """
 FILE_ENTITY_COUNT = 8192
 """ The default number of entities to be exported into a single
 file using the entity manager exporting feature """
+
+PAGE_SIZE = 4096
+""" The size of a page for the paging mode based loading of
+entities where a queries is splitted in multiple queries for
+the yield based loading of entities (spares memory) """
 
 SAVED_STATE_VALUE = 1
 """ The saved state value, set in the entity after the save
@@ -2331,7 +2337,55 @@ class EntityManager(object):
         # in the data source for the query
         return result
 
+    def page(self, entity_class, options = {}, lock = False, **kwargs):
+        start_record = options.get("start_record", 0)
+        number_records = options.get("number_records", 0)
+
+        record_count = number_records - start_record
+        page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
+
+        _options = dict(options)
+
+        current_record = start_record
+
+        for index in colony.legacy.xrange(page_count):
+            is_last = index == page_count - 1
+            if is_last: number_records = record_count % PAGE_SIZE
+            else: number_records = PAGE_SIZE
+
+            _options["start_record"] = current_record
+            _options["number_records"] = number_records
+
+            result = self.find(entity_class, options = _options, lock = lock, **kwargs)
+            for item in result: yield item
+
+            current_record += PAGE_SIZE
+
     def find(self, entity_class, options = {}, lock = False, **kwargs):
+        # retrieves the start record and the number of records so that
+        # it's possible to infer if the current request is going to be
+        # paged or if a typical (eager) retrieval should be performed
+        start_record = options.get("start_record", 0)
+        number_records = options.get("number_records", 0)
+        allow_paged = options.get("paged", True)
+
+        # calculates the total number of records to be retrieved and
+        # then used the target page size calculates the number of pages
+        # and verifies if the requested should be paged or not
+        record_count = number_records - start_record
+        page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
+        is_paged = page_count > 1 and allow_paged
+
+        # in case this is a paging situation the proper paging handler
+        # must be used so that the values are properly yielded allowing
+        # a lazy base evaluation of the values from the entity manager
+        if is_paged: return self.page(
+            entity_class,
+            options = options,
+            lock = lock,
+            **kwargs
+        )
+
         # sets the default count value (number of result) so that even
         # for exception situations there's a proper handling
         count = 0
@@ -2357,6 +2411,9 @@ class EntityManager(object):
             # the provided keyword arguments (options expansion)
             options = options and self.normalize_options(options) or {}
             self.process_kwargs(options, kwargs)
+
+            ####options.get()
+            #### se isto acontecer tenho de partir a query
 
             # creates the proper find query for the entity class and
             # the provided options, the executes the query (avoiding the
