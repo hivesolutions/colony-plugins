@@ -2343,7 +2343,7 @@ class EntityManager(object):
         # paged or if a typical (eager) retrieval should be performed
         start_record = options.get("start_record", 0)
         number_records = options.get("number_records", 0)
-        allow_paged = options.get("paged", True)
+        allow_paged = options.get("paged", False)
 
         # calculates the total number of records to be retrieved and
         # then used the target page size calculates the number of pages
