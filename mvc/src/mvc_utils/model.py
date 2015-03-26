@@ -407,7 +407,8 @@ def apply(self, map, permissive = False):
         # various names of the class and their structure, this value
         # will be used to determine if the map name in iteration should
         # be used, as it is contained in the current model definition
-        names_map = cls.get_names_map()
+        has_names_method = hasattr(cls, "get_names_map")
+        names_map = cls.get_names_map() if has_names_method else {}
 
         # iterates over all the items in the map to
         # apply the to the current model
