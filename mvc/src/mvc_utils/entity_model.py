@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import datetime
+import itertools
 
 import colony
 
@@ -408,13 +410,27 @@ def _class_find(
     if not cls.valid(): return []
 
     # finds the entity models for the given class and using
-    # the given options then applies the context to the complete
-    # set of retrieved entity models (only applies the request
-    # to the first element because their share the diffusion scope)
+    # the given options, returning the values immediately in
+    # case they are considered to be invalid (or empty)
     entity_models = entity_manager.find(cls, options, **kwargs)
-    entity_models and hasattr(entity_models[0], "set_request") and entity_models[0].set_request(context)
+    if not entity_models: return entity_models
 
-    # returns the retrieved entity models
+    # verifies the data type of the entity models sequence and
+    # taking that into account determines the proper strategy
+    # to retrieve the first element of the sequence for operations
+    is_generator = type(entity_models) == types.GeneratorType
+    if is_generator: entity_model = entity_models.next()
+    else: entity_model = entity_models[0]
+
+    # runs the proper set request method in the first entity model
+    # in case that's applicable and then in case the data structure
+    # is generator based recreates a sequence where the first element
+    # of it is the originally peaked entity model (generation re-creation)
+    if hasattr(entity_model, "set_request"): entity_model.set_request(context)
+    if is_generator: entity_models = list(itertools.chain([entity_model], entity_models))
+
+    # returns the retrieved/recreated entity models to the caller
+    # method so that they may be used for data model operations
     return entity_models
 
 def _class_find_one(
