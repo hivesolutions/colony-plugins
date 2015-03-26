@@ -2411,17 +2411,26 @@ class EntityManager(object):
         return result
 
     def page(self, entity_class, options = {}, lock = False, **kwargs):
+        # retrieves the start record and the number of records so that
+        # it's possible to calculate both the record and page count
         start_record = options.get("start_record", 0)
         number_records = options.get("number_records", 0)
-
         record_count = number_records - start_record
         page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
 
+        # duplicates/copies the current options map into a new map
+        # that is going to be changed for each iteration and then
+        # initializes the current record value with the start record
         _options = dict(options)
-
         current_record = start_record
 
+        # iterates over the complete set of pages for the data set
+        # to be retrieved so that partial chunks are yield into the
+        # generator that is going to be returned (lazy evaluation)
         for index in colony.legacy.xrange(page_count):
+            # verifies if the current page iteration is the last one
+            # and using that value calculates the (max) number of
+            # records that are going to be retrieved from data source
             is_last = index == page_count - 1
             if is_last: number_records = record_count % PAGE_SIZE
             else: number_records = PAGE_SIZE
