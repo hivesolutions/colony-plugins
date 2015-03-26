@@ -2337,30 +2337,6 @@ class EntityManager(object):
         # in the data source for the query
         return result
 
-    def page(self, entity_class, options = {}, lock = False, **kwargs):
-        start_record = options.get("start_record", 0)
-        number_records = options.get("number_records", 0)
-
-        record_count = number_records - start_record
-        page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
-
-        _options = dict(options)
-
-        current_record = start_record
-
-        for index in colony.legacy.xrange(page_count):
-            is_last = index == page_count - 1
-            if is_last: number_records = record_count % PAGE_SIZE
-            else: number_records = PAGE_SIZE
-
-            _options["start_record"] = current_record
-            _options["number_records"] = number_records
-
-            result = self.find(entity_class, options = _options, lock = lock, **kwargs)
-            for item in result: yield item
-
-            current_record += PAGE_SIZE
-
     def find(self, entity_class, options = {}, lock = False, **kwargs):
         # retrieves the start record and the number of records so that
         # it's possible to infer if the current request is going to be
@@ -2412,9 +2388,6 @@ class EntityManager(object):
             options = options and self.normalize_options(options) or {}
             self.process_kwargs(options, kwargs)
 
-            ####options.get()
-            #### se isto acontecer tenho de partir a query
-
             # creates the proper find query for the entity class and
             # the provided options, the executes the query (avoiding the
             # closing of the cursor) and runs the find result operation
@@ -2436,6 +2409,49 @@ class EntityManager(object):
         # should contain a sequence of model based objects or in case
         # the count flag was set a single value (simple result)
         return result
+
+    def page(self, entity_class, options = {}, lock = False, **kwargs):
+        start_record = options.get("start_record", 0)
+        number_records = options.get("number_records", 0)
+
+        record_count = number_records - start_record
+        page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
+
+        _options = dict(options)
+
+        current_record = start_record
+
+        for index in colony.legacy.xrange(page_count):
+            is_last = index == page_count - 1
+            if is_last: number_records = record_count % PAGE_SIZE
+            else: number_records = PAGE_SIZE
+
+            # updates the temporary options map with the records
+            # offset and the new total number of records, so that
+            # the new find operation will use these new offset values
+            _options["start_record"] = current_record
+            _options["number_records"] = number_records
+
+            # runs the proper find operation for the current
+            # values in iteration and in case the data source
+            # returns no results breaks the current loop, as
+            # there's no more that to be retrieved from source
+            result = self.find(
+                entity_class,
+                options = _options,
+                lock = lock,
+                **kwargs
+            )
+            if not result: break
+
+            # iterates over each of the items in the result
+            # so that each of the values is yielding to the
+            # current generator (lay evaluation model)
+            for item in result: yield item
+
+            # increments the current record index by the size
+            # of the pre-defined page size
+            current_record += PAGE_SIZE
 
     def execute(self, query):
         # executes the query in the current data source and
