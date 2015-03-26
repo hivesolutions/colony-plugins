@@ -739,6 +739,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     name = defaults.get("name", None)
     type_s = defaults.get("type", "both")
     order_by = defaults.get("order_by", None)
+    paged = defaults.get("paged", False)
     eager = defaults.get("eager", ())
     allowed = defaults.get("allowed", ())
     filters = defaults.get("filters", [])
@@ -748,6 +749,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     # defaulting to the pre-defined default values
     filter_string = data.get("filter_string", "")
     sort = data.get("sort", None)
+    paged_s = data.get("paged", "0")
     eager_s = data.get("eager", [])
     filters_s = data.get("filters", [])
     start_record = data.get("start_record", 0)
@@ -768,6 +770,10 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     # sort value is the default
     sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
     order_by = not sort_value == "default" and ((sort_value, sort_order),) or order_by
+
+    # tries to retrieve the proper value for the paged element
+    # taking into account a possible boolean approach
+    paged = True if paged_s == "1" else False
 
     def eager_r(eager_s):
         # in case the eager sequence is not valid or empty
@@ -933,6 +939,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     filter = dict(
         range = (start_record, number_records),
         order_by = order_by or (),
+        paged = paged,
         eager = eager,
         filters = filters,
         map = map

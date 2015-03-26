@@ -2338,24 +2338,12 @@ class EntityManager(object):
         return result
 
     def find(self, entity_class, options = {}, lock = False, **kwargs):
-        # retrieves the start record and the number of records so that
-        # it's possible to infer if the current request is going to be
-        # paged or if a typical (eager) retrieval should be performed
-        start_record = options.get("start_record", 0)
-        number_records = options.get("number_records", 0)
-        allow_paged = options.get("paged", False)
-
-        # calculates the total number of records to be retrieved and
-        # then used the target page size calculates the number of pages
-        # and verifies if the requested should be paged or not
-        record_count = number_records - start_record
-        page_count = int(math.ceil(record_count / float(PAGE_SIZE)))
-        is_paged = page_count > 1 and allow_paged
-
-        # in case this is a paging situation the proper paging handler
+        # verifies if the current find operation is meant to be paged
+        # in case that's the request approach the proper paging handler
         # must be used so that the values are properly yielded allowing
         # a lazy base evaluation of the values from the entity manager
-        if is_paged: return self.page(
+        paged = options.get("paged", False)
+        if paged: return self.page(
             entity_class,
             options = options,
             lock = lock,
@@ -2422,6 +2410,7 @@ class EntityManager(object):
         # that is going to be changed for each iteration and then
         # initializes the current record value with the start record
         _options = dict(options)
+        _options["paged"] = False
         current_record = start_record
 
         # iterates over the complete set of pages for the data set
