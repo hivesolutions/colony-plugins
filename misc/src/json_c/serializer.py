@@ -159,18 +159,25 @@ def escape_character(match):
             # returns the character
             return character
 
-def dumps(object):
+def dumps(object, eager = True):
     """
     Dumps (converts to json) the given object using the "normal"
-    approach.
+    approach. It's possible to control if the generator should
+    be returned or if it should be joined for string return.
 
     @type object: Object
     @param object: The object to be dumped.
-    @rtype: String
-    @return: The dumped json string.
+    @type eager: bool
+    @param eager: If the returned generator object should
+    be eager evaluated to created the final json string.
+    @rtype: Generator/String
+    @return: The dumped json string or a generator from which
+    lazy evaluation may be performed for generation.
     """
 
-    return "".join([part for part in dump_parts(object)])
+    parts = dump_parts(object)
+    if not eager: return parts
+    return "".join([part for part in parts])
 
 def dumps_pretty(object):
     """
