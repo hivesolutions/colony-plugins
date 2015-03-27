@@ -2343,7 +2343,7 @@ class EntityManager(object):
         # must be used so that the values are properly yielded allowing
         # a lazy base evaluation of the values from the entity manager
         paged = options.get("paged", False)
-        if paged: return self.page(
+        if paged: return self.paged(
             entity_class,
             options = options,
             lock = lock,
@@ -2398,7 +2398,7 @@ class EntityManager(object):
         # the count flag was set a single value (simple result)
         return result
 
-    def page(self, entity_class, options = {}, lock = False, **kwargs):
+    def paged(self, entity_class, options = {}, lock = False, **kwargs):
         # retrieves the start record and the number of records so that
         # it's possible to calculate both the record and page count
         start_record = options.get("start_record", 0)
