@@ -159,11 +159,14 @@ def escape_character(match):
             # returns the character
             return character
 
-def dumps(object, eager = True):
+def dumps(object, eager = None):
     """
     Dumps (converts to json) the given object using the "normal"
     approach. It's possible to control if the generator should
     be returned or if it should be joined for string return.
+
+    By default the eager loading of the value is set for every
+    situation unless the provided object is a generator.
 
     @type object: Object
     @param object: The object to be dumped.
@@ -175,6 +178,7 @@ def dumps(object, eager = True):
     lazy evaluation may be performed for generation.
     """
 
+    if eager == None: eager = not type(object) == types.GeneratorType
     parts = dump_parts(object)
     if not eager: return parts
     return "".join([part for part in parts])
