@@ -212,7 +212,8 @@ def dumps_buffer(object):
 def dump_parts(object, objects = None, cycles = False):
     """
     Dumps (converts to json) the given object parts using the "normal"
-    approach.
+    approach, note that the construction of the final string must be
+    performed using a generator based strategy.
 
     @type object: Object
     @param object: The object to have the parts dumped.
@@ -222,8 +223,9 @@ def dump_parts(object, objects = None, cycles = False):
     @type cycles: bool
     @param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
-    @rtype: String
-    @return: The dumped json string.
+    @rtype: Generator
+    @return: The generator from which a proper json string
+    may be constructed using a lazy approach.
     """
 
     # in case the current object contains the json value
