@@ -427,7 +427,7 @@ def _class_find(
     # is generator based recreates a sequence where the first element
     # of it is the originally peaked entity model (generation re-creation)
     if hasattr(entity_model, "set_request"): entity_model.set_request(context)
-    if is_generator: entity_models = list(itertools.chain([entity_model], entity_models))
+    if is_generator: entity_models = itertools.chain([entity_model], entity_models)
 
     # returns the retrieved/recreated entity models to the caller
     # method so that they may be used for data model operations
