@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import types
+import itertools
 
 import colony
 
@@ -69,7 +70,8 @@ NUMBER_TYPES = {
 SEQUENCE_TYPES = {
     tuple : True,
     list : True,
-    types.GeneratorType : True
+    types.GeneratorType : True,
+    itertools.chain : True
 }
 """ The map used to check sequence types """
 

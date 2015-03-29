@@ -43,8 +43,9 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 import re
 import types
 import decimal
-import datetime
 import calendar
+import datetime
+import itertools
 
 import colony
 
@@ -90,7 +91,8 @@ NUMBER_TYPES = {
 SEQUENCE_TYPES = {
     tuple : True,
     list : True,
-    types.GeneratorType : True
+    types.GeneratorType : True,
+    itertools.chain : True
 }
 """ The map used to check sequence types """
 
@@ -178,7 +180,7 @@ def dumps(object, eager = None):
     lazy evaluation may be performed for generation.
     """
 
-    if eager == None: eager = not type(object) == types.GeneratorType
+    if eager == None: eager = not colony.legacy.is_generator(object)
     parts = dump_parts(object)
     if not eager: return parts
     return "".join([part for part in parts])
