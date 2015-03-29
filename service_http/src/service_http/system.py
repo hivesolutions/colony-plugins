@@ -1393,15 +1393,13 @@ class HttpClientServiceHandler:
         self.send_request(service_connection, request)
 
     def send_request(self, service_connection, request):
-        # in case the encoding is defined
+        # in case the encoding is defined for the current request
+        # meaning that the default one is not going to be used
         if self.encoding:
-            # sets the encoded flag
+            # sets the encoded flag, handler and the name of
+            # the encoding that has been chosen for the message
             request.encoded = True
-
-            # sets the encoding handler
             request.set_encoding_handler(self.encoding_handler)
-
-            # sets the encoding name
             request.set_encoding_name(self.encoding)
 
         # in case the request is mediated
@@ -1415,17 +1413,19 @@ class HttpClientServiceHandler:
             self.send_request_simple(service_connection, request)
 
     def send_request_simple(self, service_connection, request):
-        # retrieves the result value
+        # retrieves the result value from the request, so that
+        # it's possible to send it through the proper connection
         result_value = request.get_result()
 
         try:
-            # sends the result value to the client
+            # sends the result value to the client, so that the
+            # proper network layers are used for operations
             service_connection.send(result_value)
         except self.service_utils_exception_class as exception:
-            # error in the client side
+            # print an error description about the error in the
+            # client side and the re-raises the exception to the
+            # various upper levels so that is properly handled
             self.service_plugin.error("Problem sending request simple: " + colony.legacy.UNICODE(exception))
-
-            # raises the http data sending exception
             raise exceptions.HttpDataSendingException("problem sending data")
 
     def send_request_mediated(self, service_connection, request):
