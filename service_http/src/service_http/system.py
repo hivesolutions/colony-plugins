@@ -1460,13 +1460,11 @@ class HttpClientServiceHandler:
                 # in case the read is complete (time to close
                 # the currently open mediated handler)
                 if not mediated_value:
-                    # prints a debug message
+                    # prints a debug message about the end of the mediated
+                    # operation, then closes the mediated handler and returns
+                    # the control flow to the caller method
                     self.service_plugin.debug("Completed transfer of request mediated")
-
-                    # closes the mediated handler
                     request.mediated_handler.close()
-
-                    # returns (no more writing)
                     return
 
                 try:
@@ -1474,16 +1472,14 @@ class HttpClientServiceHandler:
                     # and sets the callback as the current writer
                     service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
                 except self.service_utils_exception_class as exception:
-                    # error in the client side
+                    # prints an error message about the error in the client side and then
+                    # raises the http data sending exception to the upper layers
                     self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
-
-                    # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
             except:
-                # closes the mediated handler
+                # closes the mediated handler and then re-raises
+                # the exception to the top level layers
                 request.mediated_handler.close()
-
-                # re-raises the exception
                 raise
 
         # retrieves the result value
@@ -1622,10 +1618,9 @@ class HttpClientServiceHandler:
                     # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
             except:
-                # closes the chunk handler
+                # closes the chunk handler reference and then
+                # re-raises the exception to the top stack
                 request.chunk_handler.close()
-
-                # re-raises the exception
                 raise
 
         # retrieves the result value
@@ -1636,18 +1631,11 @@ class HttpClientServiceHandler:
             # chunked writer as the callback handler
             service_connection.send_callback(result_value, request_chunked_writer)
         except self.service_utils_exception_class as exception:
-            # error in the client side
+            # print an error message about the problem in the sending, then
+            # closes the chunk(ed) handler and raises a new exception
             self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
-
-            # closes the chunk handler
             request.chunk_handler.close()
-
-            # raises the http data sending exception
             raise exceptions.HttpDataSendingException("problem sending data")
-
-        # calls the initial request chunked writer
-        # for the initial writing (start of loop)
-        request_chunked_writer()
 
     def send_request_chunked_sync(self, service_connection, request):
         # retrieves the result value
@@ -2892,11 +2880,11 @@ class HttpRequest(object):
         self.message_stream.write(message)
 
     def write_generator(self, generator):
-        # sets the current request as mediated and then builds
-        # the generator based mediation handler that will be
-        # responsible for the mediation operation
-        self.mediated = True
-        self.mediated_handler = GeneratorHandler(generator)
+        # sets the current request as chunked and then builds
+        # the generator based chunked/mediated handler that
+        # will be responsible for the mediation operation
+        self.chunked_encoding = True
+        self.chunk_handler = GeneratorHandler(generator)
 
     def flush(self):
         pass
