@@ -772,7 +772,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
 
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach
-    paged = True if paged_s == "1" else False
+    if paged_s: paged = True if paged_s == "1" else False
 
     def eager_r(eager_s):
         # in case the eager sequence is not valid or empty
