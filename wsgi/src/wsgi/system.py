@@ -123,12 +123,19 @@ class Wsgi(colony.System):
             headers_out = request.headers_out
             headers_out_l = colony.legacy.items(headers_out)
 
+        # verifies if the current content to be handled is generator based
+        # if that's the case special handling is required meaning for example
+        # that the complete set of contents is considered to be the generator
+        is_generator = content and colony.legacy.is_generator(content[0])
+        if is_generator: content = content[0]
+
         # sets the content type to be returned as the one provided
-        # by the request or default to the basic one, then tries
+        # by the request or defaults to the basic one, then tries
         # to calculate the content length based on the size of the
         # various items present in the content sequence (list)
         content_type = request.content_type or "text/plain"
-        content_length = sum([len(value) for value in content])
+        if is_generator: content_length = -1
+        else: content_length = sum([len(value) for value in content])
 
         # in case the request is mediated additional operations may
         # be taken to provide the compatibility layer, the content
@@ -139,15 +146,24 @@ class Wsgi(colony.System):
             content = request.mediate()
 
         # update the status line with the provided code value and then
-        # creates the response headers list with the created values and
-        # sends these values as the start response
+        # creates the initial/static response headers list with the
+        # created values to be used as part of the initial response
         status = "%d %s" % (code, status)
         response_headers = [
             ("Content-Type", content_type),
-            ("Content-Length", str(content_length)),
             ("X-Powered-By", POWERED_BY_STRING % (manager_version, manager_environment))
         ]
+
+        # verifies if the provided content length value is considered
+        # valid and if that's the case adds it's value as an header
+        if not content_length == -1: response_headers.append(
+            ("Content-Length", str(content_length))
+        )
         response_headers.extend(headers_out_l)
+
+        # runs the initial start response method, part of the wsgi spec
+        # so that the proper initialization of the status code and the
+        # headers is provided and the handling of the request started
         start_response(status, response_headers)
 
         # returns the content sequence to the caller method so that is
