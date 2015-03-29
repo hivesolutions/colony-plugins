@@ -161,29 +161,39 @@ def escape_character(match):
             # returns the character
             return character
 
-def dumps(object, eager = None):
+def dumps(object):
     """
     Dumps (converts to json) the given object using the "normal"
-    approach. It's possible to control if the generator should
-    be returned or if it should be joined for string return.
-
-    By default the eager loading of the value is set for every
-    situation unless the provided object is a generator.
+    approach. The return value of this operation should always
+    be a plain buffer/string and so special attention to memory
+    usage should be considered a concern.
 
     @type object: Object
     @param object: The object to be dumped.
-    @type eager: bool
-    @param eager: If the returned generator object should
-    be eager evaluated to created the final json string.
-    @rtype: Generator/String
-    @return: The dumped json string or a generator from which
-    lazy evaluation may be performed for generation.
+    @rtype: String
+    @return: The dumped/serialized json string.
     """
 
-    if eager == None: eager = not colony.legacy.is_generator(object)
     parts = dump_parts(object)
-    if not eager: return parts
     return "".join([part for part in parts])
+
+def dumps_lazy(object):
+    """
+    Lazy version of the dumps operation meaning that a lazy
+    evaluation generator is returned so that proper evaluation
+    of large serialization objects may be used.
+
+    This method must be considered the primary way of archiving
+    low memory usage for large data set serialization.
+
+    @type object: Object
+    @param object: The object to be dumped.
+    @rtype: Generator
+    @return: The resulting generator that may be used to lazy
+    evaluated the various components of the json data.
+    """
+
+    return dump_parts(object)
 
 def dumps_pretty(object):
     """
