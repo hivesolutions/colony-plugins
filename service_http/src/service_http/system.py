@@ -2871,6 +2871,12 @@ class HttpRequest(object):
         return self.received_message
 
     def write(self, message, flush = 1, encode = True):
+        # tries to verify if the message to be written is a
+        # generator and if that's the case uses the special
+        # version of the method for a mediation handler
+        is_generator = colony.legacy.is_generator(message)
+        if is_generator: return self.write_generator(message)
+
         # retrieves the message type, so that it's possible to
         # "know" if an encoding operation is required or not
         message_type = type(message)
@@ -2884,6 +2890,13 @@ class HttpRequest(object):
         # properly sent to the client side of the connection
         message = colony.legacy.bytes(message)
         self.message_stream.write(message)
+
+    def write_generator(self, generator):
+        # sets the current request as mediated and then builds
+        # the generator based mediation handler that will be
+        # responsible for the mediation operation
+        self.mediated = True
+        self.mediated_handler = GeneratorHandler(generator)
 
     def flush(self):
         pass
@@ -2995,13 +3008,16 @@ class HttpRequest(object):
         # validates the current request
         self.validate()
 
-        # retrieves the result stream
+        # creates a new string buffer that will hold the partial contents
+        # of the message that is going to be set to the client side
         result = colony.StringBuffer()
 
-        # retrieves the result string value
+        # retrieves the result value from the message, meaning that a proper
+        # joining operation will be performed for it as part of building
         message = self.message_stream.get_value()
 
-        # in case the request is encoded
+        # in case the request is encoded, meaning that a special encoding
+        # should be applied to the message
         if self.encoded:
             if self.mediated:
                 self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
@@ -3010,14 +3026,18 @@ class HttpRequest(object):
             else:
                 message = self.encoding_handler(message)
 
-        # in case the request is mediated
+        # in case the request is mediated, meaning that a proper
+        # delegation structure is going to be used to guide sending
         if self.mediated:
-            # retrieves the content length
-            # from the mediated handler
+            # retrieves the content length from the mediated handler
+            # so that the retrieval of size is delegated
             self.content_length = self.mediated_handler.get_size()
+
+        # otherwise it's a normal message handling situation
+        # where the contents are store in a plain strings
         else:
             # retrieves the content length from the
-            # message content itself
+            # message content itself (measure string)
             self.content_length = len(message)
 
         # retrieves the value for the status code
@@ -3567,3 +3587,29 @@ class HttpRequest(object):
 
         # returns the content disposition map
         return content_disposition_map
+
+class GeneratorHandler(object):
+    """
+    The mediated handler class that is able to encapsulate
+    the logic for the generator python structure.
+    """
+
+    generator = None
+    """ The generator that is going to be encapsulated
+    using the current class's object """
+
+    def __init__(self, generator):
+        self.generator = generator
+
+    def encode_file(self, encoding_handler, encoding_name):
+        pass
+
+    def get_size(self):
+        return None
+
+    def get_chunk(self, chunk_size = CHUNK_SIZE):
+        try: return self.generator.next()
+        except StopIteration: return None
+
+    def close(self):
+        self.generator.close()
