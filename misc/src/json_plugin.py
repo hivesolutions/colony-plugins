@@ -68,6 +68,9 @@ class JsonPlugin(colony.Plugin):
     def dumps(self, object):
         return self.system.dumps(object)
 
+    def dumps_lazy(self, object):
+        return self.system.dumps_lazy(object)
+
     def dumps_pretty(self, object):
         return self.system.dumps_pretty(object)
 

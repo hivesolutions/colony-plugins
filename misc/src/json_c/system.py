@@ -55,6 +55,9 @@ class Json(colony.System):
     def dumps(self, object):
         return serializer.dumps(object)
 
+    def dumps_lazy(self, object):
+        return serializer.dumps_lazy(object)
+
     def dumps_pretty(self, object):
         return serializer.dumps_pretty(object)
 
