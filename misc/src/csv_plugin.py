@@ -70,6 +70,9 @@ class CsvPlugin(colony.Plugin):
     def dumps(self, object):
         return self.system.dumps(object)
 
+    def dumps_lazy(self, object):
+        return self.system.dumps_lazy(object)
+
     def loads(self, csv_string):
         return self.system.loads(csv_string)
 

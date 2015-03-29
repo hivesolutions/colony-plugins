@@ -60,16 +60,14 @@ LIST_TYPES = (list, tuple, types.GeneratorType)
 """ A tuple with the various list types """
 
 def dumps(object, encoding = DEFAULT_ENCODING):
-    # creates a new string buffer
-    string_buffer = colony.StringBuffer()
+    # "chunks" the object into a resulting generator
+    # object that is going to be used for string
+    chunks = _chunk(object)
 
-    # "chunks" the object into the string buffer
-    _chunk(object, string_buffer)
-
-    # retrieves the string value from the
-    # string buffer and then in case there's
-    # and encoding defined encodes the data
-    string_value = string_buffer.get_value()
+    # joins the various chunks as a single string value
+    # and then in case there's an encoding defined
+    # encodes the data into the target encoding
+    string_value = "".join([chunk for chunk in chunks])
     if encoding: string_value = string_value.encode(encoding)
 
     # returns the string value as an unicode
@@ -77,7 +75,10 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     # properly decoded (using provided encoding)
     return string_value
 
-def _chunk(object, string_buffer):
+def dumps_lazy(object, encoding = DEFAULT_ENCODING):
+    return _chunk(object)
+
+def _chunk(object):
     # retrieves the object type
     object_type = type(object)
 
@@ -131,31 +132,32 @@ def _chunk(object, string_buffer):
         is_unicode = type(header_value) == colony.legacy.UNICODE
         if not is_unicode: header_value = header_value.decode("utf-8")
 
-        # writes the header value to the string buffer, note that
+        # yields the header value into current generator, note that
         # this value is defined as an unicode based string
-        string_buffer.write(header_value)
+        yield header_value
 
     # in case the generator mode is defined we must run the proper
     # chunk line operation for the first line as we're never going
     # to have a chance to iterate over that line again
-    if is_generator: _chunk_line(
-        string_buffer,
-        _object_item,
-        attribute_names = attribute_names,
-        map_mode = map_mode
-    )
+    if is_generator:
+        chunks = _chunk_line(
+            _object_item,
+            attribute_names = attribute_names,
+            map_mode = map_mode
+        )
+        for chunk in chunks: yield chunk
 
     # iterates over all the object (items) in the object list for
     # serialization so that it's able to chunk (serialize) each item
     for object_item in object:
-        _chunk_line(
-            string_buffer,
+        chunks = _chunk_line(
             object_item,
             attribute_names = attribute_names,
             map_mode = map_mode
         )
+        for chunk in chunks: yield chunk
 
-def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = False):
+def _chunk_line(object_item, attribute_names = None, map_mode = False):
     # retrieves the various object items attribute values
     # (from the previously calculated attribute names) in
     # case the simple mode is used there is no need to retrieve
@@ -173,14 +175,14 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
     index = 0
 
     # iterates over all the attribute values
-    # to write them to the string buffer
+    # to yield them into the current generator
     for attribute_value in attribute_values:
         # retrieves the attribute value type
         attribute_value_type = type(attribute_value)
 
         # verifies the proper attribute type and according
         # to that creates the proper unicode based string
-        # to be added to the string buffer, note that for
+        # to be yield to the current generator, note that for
         # byte based strings the default encoding for the
         # system is used as a fallback (possible to fail)
         if attribute_value_type == colony.legacy.BYTES:
@@ -188,25 +190,25 @@ def _chunk_line(string_buffer, object_item, attribute_names = None, map_mode = F
         elif not attribute_value_type in colony.legacy.STRINGS:
             attribute_value = colony.legacy.UNICODE(attribute_value)
 
-        # writes the (decoded) attribute value, in case
+        # yields the (decoded) attribute value, in case
         # the value is valid (avoiding invalid values)
-        attribute_value and string_buffer.write(attribute_value)
+        if attribute_value: yield attribute_value
 
         # in case the current index represents the last
         # attribute must continue the loop as the the
         # separator character is not required in this case
         if index == attribute_values_length - 1: continue
 
-        # writes the separator character and then increments
+        # yields the separator character and then increments
         # the current index so that it's possible to count values
         separator = colony.legacy.u(SEPARATOR_CHARACTER)
-        string_buffer.write(separator)
+        yield separator
         index += 1
 
-    # writes the new line in the string buffer, note that the value
+    # yields the new line in the current generator, note that the value
     # is first encoded as an unicode string (provides common ground)
     newline = colony.legacy.u(NEWLINE_CHARACTER)
-    string_buffer.write(newline)
+    yield newline
 
 def _attribute_names(object_item, object = [], sort = True):
     # creates the first and initial set of attribute names
