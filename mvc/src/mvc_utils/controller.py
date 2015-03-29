@@ -2649,6 +2649,11 @@ def serialize(self, request, contents, serializer = None, lazy = True):
     if is_defined: serializer = serializer or request.serializer
     if not serializer: return
 
+    # retrieves the output (character) encoding value from the request
+    # so that it may be used for the lazy version of the dumps operation
+    # for the generation of the data, as required by specification
+    encoding = request.get_encoding()
+
     # verifies if lazy dumping support exists for the current serializer
     # and if that's the case and lazy serialization is requested the lazy
     # mode is enabled so that a generator based strategy is used
@@ -2658,7 +2663,7 @@ def serialize(self, request, contents, serializer = None, lazy = True):
     # runs the serialization process on the contents (dumps call) and
     # then retrieves the mime type for together with the data string
     # value set the contents in the current request
-    if lazy: data = self.dumps_lazy(serializer, contents)
+    if lazy: data = self.dumps_lazy(serializer, contents, encoding = encoding)
     else: data = serializer.dumps(contents)
     mime_type = serializer.get_mime_type()
     self.set_contents(request, data, content_type = mime_type)

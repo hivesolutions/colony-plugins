@@ -1997,6 +1997,21 @@ class RestRequest(object):
 
         self.request.delayed = value
 
+    def get_encoding(self):
+        """
+        Retrieves the (character) encoding that is going to be used
+        in the output stream associated with the request.
+
+        The return value should be gathered from the underlying
+        request interface.
+
+        @rtype: String
+        @return: The name of the encoding that is going to be used
+        by the output stream.
+        """
+
+        return self.request.content_type_charset
+
     def get_service(self):
         """
         Retrieves the reference to the service responsible for
