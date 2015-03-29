@@ -76,7 +76,12 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     return string_value
 
 def dumps_lazy(object, encoding = DEFAULT_ENCODING):
-    return _chunk(object)
+    # iterates over the complete set of chunk in the
+    # generator encoding the chunk (if required) and
+    # the re-yield the value to the upper layers
+    for chunk in _chunk(object):
+        if encoding: chunk = chunk.encode(encoding)
+        yield chunk
 
 def _chunk(object):
     # retrieves the object type
