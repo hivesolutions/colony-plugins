@@ -2601,7 +2601,7 @@ def template_file(self, template = None, *args, **kwargs):
         **kwargs
     )
 
-def serialize(self, request, contents, serializer = None):
+def serialize(self, request, contents, serializer = None, lazy = True):
     """
     Serializes the provided contents (wither map or list) using the
     infra-structure (serializer) that is currently defined for the
@@ -2628,7 +2628,10 @@ def serialize(self, request, contents, serializer = None):
     @type serializer: Object
     @param serializer: The serializer (protocol) compliant object that
     is going to be used for the "forced" serialization process.
-    @rtype: String
+    @type lazy: bool
+    @param lazy: If a lazy based serialization process should be used
+    in case there's such support from the serializer.
+    @rtype: String/Generator
     @return: The final serialized value that may be used for reference,
     please note that this value should not be set again in the request
     as that may create some unnecessary performance issues.
@@ -2646,10 +2649,17 @@ def serialize(self, request, contents, serializer = None):
     if is_defined: serializer = serializer or request.serializer
     if not serializer: return
 
+    # verifies if lazy dumping support exists for the current serializer
+    # and if that's the case and lazy serialization is requested the lazy
+    # mode is enabled so that a generator based strategy is used
+    has_lazy = hasattr(serializer, "dumps_lazy")
+    lazy = lazy and has_lazy
+
     # runs the serialization process on the contents (dumps call) and
     # then retrieves the mime type for together with the data string
     # value set the contents in the current request
-    data = serializer.dumps(contents)
+    if lazy: data = self.dumps_lazy(serializer, contents)
+    else: data = serializer.dumps(contents)
     mime_type = serializer.get_mime_type()
     self.set_contents(request, data, content_type = mime_type)
 
@@ -2657,6 +2667,44 @@ def serialize(self, request, contents, serializer = None):
     # may be inspected and analyzed to check for any issue, it may also
     # be re-used for a different context that the request one
     return data
+
+def dumps_lazy(self, serializer, contents, chunk_size = 4096, encoding = "utf-8"):
+    # creates the buffer list that will hold the various
+    # partially dumped values until they are joined together
+    buffer = []
+
+    # runs the lazy dumping operation of the contents that should
+    # return the various parts (generator) and from which a following
+    # iteration will populate the buffer and re-yield larger blocks
+    parts = serializer.dumps_lazy(contents)
+    for part in parts:
+        # adds the current part value to the buffer and then
+        # verifies if the length of the buffer has reached the
+        # maximum chunk value and should be flushed
+        buffer.append(part)
+        buffer_l = len(buffer)
+        if not buffer_l == chunk_size: continue
+
+        # re-joins the buffer parts into a single linear buffer
+        # string that is going to be yielded as large chunk
+        data = "".join(buffer)
+
+        # verifies if the returning data result is unicode based
+        # and if that's the case runs the local encoding
+        is_unicode = colony.legacy.is_unicode(data)
+        if encoding and is_unicode: data = data.encode(encoding)
+
+        # runs the yielding operation on the chunk of data and
+        # then clears the buffer so that new chunk may be created
+        yield data
+        del buffer[:]
+
+    # runs the final step of joining the remaining buffer and
+    # re-encoding it if required before yield the chunk back
+    data = "".join(buffer)
+    is_unicode = colony.legacy.is_unicode(data)
+    if encoding and is_unicode: data = data.encode(encoding)
+    yield data
 
 def process_set_contents(
     self,
