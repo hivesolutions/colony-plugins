@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
+import inspect
 
 import colony
 
@@ -103,7 +104,7 @@ def _chunk(object, string_buffer):
     # verifies if the type of the object provided for serialization
     # is generator, if that's the case special handling is required
     # as these objects defer in interface from tuples and lists
-    is_generator = object_type == types.GeneratorType
+    is_generator = colony.legacy.is_generator(object)
 
     # retrieves the first object item to try to detect the kind
     # of mode for serialization that must be used
