@@ -310,9 +310,8 @@ class ChunkHandler(object):
         """
 
         # in case the chunk handler is already closed
-        if self._closed:
-            # returns immediately
-            return
+        # returns immediately, no need to re-close it
+        if self._closed: return
 
         # sets the closed flag
         self._closed = True
