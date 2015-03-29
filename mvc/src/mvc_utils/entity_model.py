@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
+import inspect
 import datetime
 import itertools
 
@@ -418,7 +419,7 @@ def _class_find(
     # verifies the data type of the entity models sequence and
     # taking that into account determines the proper strategy
     # to retrieve the first element of the sequence for operations
-    is_generator = type(entity_models) == types.GeneratorType
+    is_generator = colony.legacy.is_generator(entity_models)
     if is_generator: entity_model = entity_models.next()
     else: entity_model = entity_models[0]
 
