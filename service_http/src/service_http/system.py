@@ -1581,17 +1581,18 @@ class HttpClientServiceHandler:
                 # in case the read is complete (time to close
                 # the currently open chunk handler)
                 if not chunk_value:
-                    # closes the chunk handler
+                    # closes the chunk handler, so that no more access is possible
+                    # to be done for it (no more usage for now)
                     request.chunk_handler.close()
 
                     try:
-                        # sends the final empty chunk
-                        service_connection.send("0\r\n\r\n")
+                        # sends the final empty chunk of the current sequence indicating
+                        # that no more chunks are going to be sent for now
+                        service_connection.send(b"0\r\n\r\n")
                     except self.service_utils_exception_class as exception:
-                        # error in the client side
+                        # logs the error coming from the client side and then raises
+                        # a proper exception indicating the problem in sending data
                         self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
-
-                        # raises the http data sending exception
                         raise exceptions.HttpDataSendingException("problem sending data")
 
                     # returns immediately
