@@ -1565,17 +1565,13 @@ class HttpClientServiceHandler:
 
     def send_request_chunked_async(self, service_connection, request):
         def request_chunked_writer(send_error = False):
-            # in case there was an error sending
-            # the data
-            if send_error:
-                # closes the chunk handler
-                request.chunk_handler.close()
-
-                # returns immediately
-                return
+            # in case there was an error sending the data must
+            # close the chunk handler and return immediately
+            if send_error: request.chunk_handler.close(); return
 
             try:
-                # retrieves the chunk value
+                # retrieves the chunk value from the currently associated
+                # handler, note that the chunk size is just for reference
                 chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
 
                 # in case the read is complete (time to close
