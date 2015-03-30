@@ -1538,10 +1538,9 @@ class HttpClientServiceHandler:
                     # sends the mediated value to the client
                     service_connection.send(mediated_value)
                 except self.service_utils_exception_class as exception:
-                    # error in the client side
+                    # prints the error message about the error in the client
+                    # side and then raises the http data sending exception
                     self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
-
-                    # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
             except:
                 # closes the mediated handler
@@ -1599,23 +1598,22 @@ class HttpClientServiceHandler:
                     return
 
                 try:
-                    # retrieves the length of the chunk value
+                    # retrieves the length of the chunk value, this value is going to be used
+                    # in the basis of the chunk data creation (for message sending)
                     length_chunk_value = len(chunk_value)
 
                     # sets the value for the hexadecimal length part of the chunk
-                    length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
-
-                    # sets the message value
-                    message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+                    # and then joins that value with the proper chunk value for sending
+                    length_chunk_value_hexadecimal_string = colony.legacy.bytes("%X\r\n" % length_chunk_value)
+                    message_value = length_chunk_value_hexadecimal_string + chunk_value + b"\r\n"
 
                     # sends the message value to the client (writes in front of the others)
                     # and sets the callback as the current writer
                     service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
                 except self.service_utils_exception_class as exception:
-                    # error in the client side
+                    # logs the error information about the client side error and then
+                    # raises the http data sending exception to the upper levels
                     self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
-
-                    # raises the http data sending exception
                     raise exceptions.HttpDataSendingException("problem sending data")
             except:
                 # closes the chunk handler reference and then
@@ -3596,7 +3594,7 @@ class GeneratorHandler(object):
         return None
 
     def get_chunk(self, chunk_size = CHUNK_SIZE):
-        try: return self.generator.next()
+        try: return next(self.generator)
         except StopIteration: return None
 
     def close(self):
