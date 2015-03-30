@@ -418,7 +418,7 @@ def _class_find(
     # taking that into account determines the proper strategy
     # to retrieve the first element of the sequence for operations
     is_generator = colony.legacy.is_generator(entity_models)
-    if is_generator: entity_model = entity_models.next()
+    if is_generator: entity_model = next(entity_models)
     else: entity_model = entity_models[0]
 
     # runs the proper set request method in the first entity model
