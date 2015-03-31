@@ -2678,11 +2678,22 @@ def dumps_lazy(self, serializer, contents, chunk_size = 4096, encoding = "utf-8"
     # partially dumped values until they are joined together
     buffer = []
 
+    # initializes the base element that is going to be used
+    # for the joining of the values, note that this value
+    # will be set once the first part is retrieved
+    base = None
+
     # runs the lazy dumping operation of the contents that should
     # return the various parts (generator) and from which a following
     # iteration will populate the buffer and re-yield larger blocks
     parts = serializer.dumps_lazy(contents)
     for part in parts:
+        # in case the base item value for joining is not defined
+        # tries to determine the proper value from the data type
+        # of this (first) retrieved part, this value will be used
+        # latter for the joining of the various parts of the chunk
+        if base == None: base = bytes() if type(part) == bytes else str()
+
         # adds the current part value to the buffer and then
         # verifies if the length of the buffer has reached the
         # maximum chunk value and should be flushed
@@ -2692,7 +2703,7 @@ def dumps_lazy(self, serializer, contents, chunk_size = 4096, encoding = "utf-8"
 
         # re-joins the buffer parts into a single linear buffer
         # string that is going to be yielded as large chunk
-        data = "".join(buffer)
+        data = base.join(buffer)
 
         # verifies if the returning data result is unicode based
         # and if that's the case runs the local encoding
@@ -2706,7 +2717,7 @@ def dumps_lazy(self, serializer, contents, chunk_size = 4096, encoding = "utf-8"
 
     # runs the final step of joining the remaining buffer and
     # re-encoding it if required before yield the chunk back
-    data = "".join(buffer)
+    data = base.join(buffer) if buffer else ""
     is_unicode = colony.legacy.is_unicode(data)
     if encoding and is_unicode: data = data.encode(encoding)
     yield data
