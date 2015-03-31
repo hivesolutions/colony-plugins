@@ -78,7 +78,7 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     # and then in case there's an encoding defined
     # encodes the data into the target encoding
     string_value = "".join([chunk for chunk in chunks])
-    if encoding: string_value = string_value.encode(encoding, errors = "ignore")
+    if encoding: string_value = string_value.encode(encoding, "ignore")
 
     # returns the string value as an unicode
     # or a raw/bytes string in case it was
@@ -90,7 +90,7 @@ def dumps_lazy(object, encoding = DEFAULT_ENCODING):
     # generator encoding the chunk (if required) and
     # the re-yield the value to the upper layers
     for chunk in _chunk(object):
-        if encoding: chunk = chunk.encode(encoding, errors = "ignore")
+        if encoding: chunk = chunk.encode(encoding, "ignore")
         yield chunk
 
 def _chunk(object, flatten = True):
