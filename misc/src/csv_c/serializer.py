@@ -57,7 +57,8 @@ SEPARATOR_CHARACTER = ";"
 each of the item columns in a csv file """
 
 LIST_TYPES = (list, tuple, types.GeneratorType)
-""" A tuple with the various list types """
+""" A tuple with the various list types considered
+as proper sequences for the current serializer """
 
 def dumps(object, encoding = DEFAULT_ENCODING):
     # "chunks" the object into a resulting generator
@@ -95,7 +96,7 @@ def _chunk(object, flatten = True):
     # in case the object type is neither an
     # instance nor a list it's considered not
     # valid and an exception should be raised
-    elif not object_type in LIST_TYPES and not isinstance(object, list):
+    elif not object_type in LIST_TYPES and not isinstance(object, LIST_TYPES):
         raise exceptions.CsvEncodeException("invalid object type")
 
     # in case the object is not set, is invalid
