@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
+import itertools
 
 import colony
 
@@ -56,7 +57,7 @@ SEPARATOR_CHARACTER = ";"
 """ The separator character separating
 each of the item columns in a csv file """
 
-LIST_TYPES = (list, tuple, types.GeneratorType)
+LIST_TYPES = (list, tuple, types.GeneratorType, itertools.chain)
 """ A tuple with the various list types considered
 as proper sequences for the current serializer """
 
