@@ -83,7 +83,7 @@ def dumps_lazy(object, encoding = DEFAULT_ENCODING):
         if encoding: chunk = chunk.encode(encoding)
         yield chunk
 
-def _chunk(object):
+def _chunk(object, flatten = True):
     # retrieves the object type
     object_type = type(object)
 
@@ -122,13 +122,25 @@ def _chunk(object):
     if _object_item_type in LIST_TYPES: map_mode = False
     else: map_mode = True
 
+    # in case the flatten mode is set and the current object item is a
+    # map it must be first "flattened" so that it can be used with the
+    # complete set of relations properly set for it
+    flatten = flatten and map_mode
+    if flatten: _object_item = colony.map_flatten(_object_item)
+
     # in case the map mode is enabled the header value must
     # be encoded by retrieving the names of the first object
     # element (considered to be the header element representation)
     if map_mode:
-        # retrieves the (header) attribute names in order to
-        # create the header value, from its names
-        attribute_names = _attribute_names(_object_item, object = [] if is_generator else object)
+        # retrieves the (header) attribute names in order to create
+        # the header value from its names, note that the flatten value
+        # is provided so that it may be used in the proper attribute
+        # names retrieval as new names may become available for flat
+        attribute_names = _attribute_names(
+            _object_item,
+            object = [] if is_generator else object,
+            flatten = flatten
+        )
         header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
         # verifies if the header is encoded as an unicode string
@@ -155,6 +167,7 @@ def _chunk(object):
     # iterates over all the object (items) in the object list for
     # serialization so that it's able to chunk (serialize) each item
     for object_item in object:
+        if flatten: object_item = colony.map_flatten(object_item)
         chunks = _chunk_line(
             object_item,
             attribute_names = attribute_names,
@@ -215,7 +228,7 @@ def _chunk_line(object_item, attribute_names = None, map_mode = False):
     newline = colony.legacy.u(NEWLINE_CHARACTER)
     yield newline
 
-def _attribute_names(object_item, object = [], sort = True):
+def _attribute_names(object_item, object = [], sort = True, flatten = True):
     # creates the first and initial set of attribute names
     # from the first object item, this is considered to be
     # the default one from which all the other will intersect
@@ -228,6 +241,7 @@ def _attribute_names(object_item, object = [], sort = True):
         # retrieves the object attribute names for the current
         # object item value and then intersects the current
         # names list with the new one (avoiding duplicates)
+        if flatten: object_item = colony.map_flatten(object_item)
         object_attribute_names = colony.object_attribute_names(object_item)
         attribute_names = colony.list_intersect(
             attribute_names,
