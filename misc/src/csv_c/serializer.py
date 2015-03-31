@@ -58,8 +58,8 @@ SEPARATOR_CHARACTER = ";"
 each of the item columns in a csv file """
 
 SPECIAL_SEQUENCE = ("\n", "\r", ";")
-""" The sequence string that defines the
-various characters that should be replaced """
+""" The sequence string that defines the various
+characters that should be replaced (sanitization) """
 
 SPECIAL_MAP = dict([ord(key), ord(" ")] for key in SPECIAL_SEQUENCE)
 """ The map version of the special sequence that map each
