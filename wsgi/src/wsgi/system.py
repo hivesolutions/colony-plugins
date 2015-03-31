@@ -116,7 +116,7 @@ class Wsgi(colony.System):
             status = "Not OK"
             message = self.error_message(exception, code = code)
             is_unicode = colony.legacy.is_unicode(message)
-            if is_unicode: message = message.encode("utf-8") 
+            if is_unicode: message = message.encode(request.content_type_charset)
             content = [message]
             headers_out_l = []
         else:
