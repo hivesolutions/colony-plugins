@@ -57,6 +57,14 @@ SEPARATOR_CHARACTER = ";"
 """ The separator character separating
 each of the item columns in a csv file """
 
+SPECIAL_SEQUENCE = ("\n", "\r", ";")
+""" The sequence string that defines the
+various characters that should be replaced """
+
+SPECIAL_MAP = dict([ord(key), ord(" ")] for key in SPECIAL_SEQUENCE)
+""" The map version of the special sequence that map each
+of the special items in the sequence into an invalid value """
+
 LIST_TYPES = (list, tuple, types.GeneratorType, itertools.chain)
 """ A tuple with the various list types considered
 as proper sequences for the current serializer """
@@ -70,7 +78,7 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     # and then in case there's an encoding defined
     # encodes the data into the target encoding
     string_value = "".join([chunk for chunk in chunks])
-    if encoding: string_value = string_value.encode(encoding)
+    if encoding: string_value = string_value.encode(encoding, errors = "ignore")
 
     # returns the string value as an unicode
     # or a raw/bytes string in case it was
@@ -82,7 +90,7 @@ def dumps_lazy(object, encoding = DEFAULT_ENCODING):
     # generator encoding the chunk (if required) and
     # the re-yield the value to the upper layers
     for chunk in _chunk(object):
-        if encoding: chunk = chunk.encode(encoding)
+        if encoding: chunk = chunk.encode(encoding, errors = "ignore")
         yield chunk
 
 def _chunk(object, flatten = True):
@@ -184,7 +192,8 @@ def _chunk_line(object_item, attribute_names = None, map_mode = False):
     # them using the header name
     attribute_values = map_mode and colony.object_attribute_values(
         object_item,
-        attribute_names
+        attribute_names,
+        strict = False
     ) or object_item
 
     # retrieves the attribute values length
@@ -197,7 +206,8 @@ def _chunk_line(object_item, attribute_names = None, map_mode = False):
     # iterates over all the attribute values
     # to yield them into the current generator
     for attribute_value in attribute_values:
-        # retrieves the attribute value type
+        # retrieves the attribute value type, this is going to
+        # be used to determine the proper encoding operation
         attribute_value_type = type(attribute_value)
 
         # verifies the proper attribute type and according
@@ -209,6 +219,10 @@ def _chunk_line(object_item, attribute_names = None, map_mode = False):
             attribute_value = attribute_value.decode("utf-8")
         elif not attribute_value_type in colony.legacy.STRINGS:
             attribute_value = colony.legacy.UNICODE(attribute_value)
+
+        # "sanitizes" the attribute value by removed some of the
+        # problematic characters from the attribute value
+        attribute_value = attribute_value.translate(SPECIAL_MAP)
 
         # yields the (decoded) attribute value, in case
         # the value is valid (avoiding invalid values)
