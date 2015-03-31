@@ -692,6 +692,11 @@ class WsgiRequest(object):
         if header_value_type == colony.legacy.UNICODE and encode:
             header_value = header_value.encode(self.content_type_charset)
 
+        # converts the header value string into a compatible
+        # string (according to all versions of python) so that
+        # an unicode is used instead for python 3
+        header_value = colony.legacy.str(header_value)
+
         # sets the header value in the headers map so that
         # any further access to the map will reflect the change
         self.headers_out[header_name] = header_value
