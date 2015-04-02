@@ -93,7 +93,7 @@ def dumps_lazy(object, encoding = DEFAULT_ENCODING):
         if encoding: chunk = chunk.encode(encoding, "ignore")
         yield chunk
 
-def _chunk(object, flatten = True):
+def _chunk(object, flatten = True, empty = True):
     # retrieves the object type
     object_type = type(object)
 
@@ -170,6 +170,7 @@ def _chunk(object, flatten = True):
         chunks = _chunk_line(
             _object_item,
             attribute_names = attribute_names,
+            empty = empty,
             map_mode = map_mode
         )
         for chunk in chunks: yield chunk
@@ -181,11 +182,12 @@ def _chunk(object, flatten = True):
         chunks = _chunk_line(
             object_item,
             attribute_names = attribute_names,
+            empty = empty,
             map_mode = map_mode
         )
         for chunk in chunks: yield chunk
 
-def _chunk_line(object_item, attribute_names = None, map_mode = False):
+def _chunk_line(object_item, attribute_names = None, empty = True, map_mode = False):
     # retrieves the various object items attribute values
     # (from the previously calculated attribute names) in
     # case the simple mode is used there is no need to retrieve
@@ -215,7 +217,9 @@ def _chunk_line(object_item, attribute_names = None, map_mode = False):
         # to be yield to the current generator, note that for
         # byte based strings the default encoding for the
         # system is used as a fallback (possible to fail)
-        if attribute_value_type == colony.legacy.BYTES:
+        if empty and attribute_value == None:
+            attribute_value = colony.legacy.u("")
+        elif attribute_value_type == colony.legacy.BYTES:
             attribute_value = attribute_value.decode("utf-8")
         elif not attribute_value_type in colony.legacy.STRINGS:
             attribute_value = colony.legacy.UNICODE(attribute_value)
@@ -277,10 +281,9 @@ def loads(data, header = True):
     # splits the data around the new line character
     chunks = [value.strip() for value in data.split(NEWLINE_CHARACTER)]
 
-    # "dechunks" the data (retrieving the object list)
+    # "dechunks" the data (retrieving the object list) and then returns
+    # the "loaded" object to the caller method (result value)
     object = _dechunk(chunks, header)
-
-    # returns the object (list)
     return object
 
 def _dechunk(chunks, header):
