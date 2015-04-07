@@ -81,7 +81,9 @@ class FileGridfs(colony.System):
         # creates a new mongo connection
         # for file insertion and then retrieves the correct
         # database from it (as the connection)
-        connection = pymongo.Connection(hostname, port)
+        has_connection = hasattr(pymongo, "Connection")
+        if has_connection: connection = pymongo.Connection(hostname, port)
+        else: connection = pymongo.MongoClient(hostname, port)
         connection_database = connection[database]
 
         # creates the gridfs system from the connection
