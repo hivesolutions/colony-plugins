@@ -142,11 +142,12 @@ class MysqlEngine(object):
         types_map["metadata"] = "longtext"
 
     def connect(self, connection, parameters = {}):
+        db_prefix = parameters.get("db_prefix", "")
+        db_default = self.entity_manager.id or db_prefix + "default"
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
-        db_prefix = parameters.get("db_prefix", "")
-        database = parameters.get("database", db_prefix + "default")
+        database = parameters.get("database", db_default)
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
