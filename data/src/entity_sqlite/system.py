@@ -272,7 +272,7 @@ class SqliteEngine(object):
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
             try: cursor.execute(query)
-            except: self.sqlite_system.info("[%s] %s" % (ENGINE_NAME, query)); raise
+            except: self.sqlite_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query)); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
@@ -280,7 +280,7 @@ class SqliteEngine(object):
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.sqlite_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.sqlite_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
