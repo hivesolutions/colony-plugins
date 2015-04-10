@@ -124,18 +124,9 @@ class PgsqlEngine(object):
 
     def get_database_encoding(self):
         connection = self.entity_manager.get_connection()
-        if hasattr(connection, "_encoding"): return connection._encoding
-
-        query = self._database_encoding_query(connection._database)
-        cursor = self.execute_query(query)
-        try: result = self._database_encoding_result(cursor)
-        finally: cursor.close()
-
-        # caches the database encoding into the current
-        # connection object (no need to retrieve it again
-        # from the data source) then returns it to the caller
-        connection._encoding = result
-        return result
+        _connection = connection._connection
+        encoding = _connection.get_database_encoding()
+        return encoding
 
     def connect(self, connection, parameters = {}):
         host = parameters.get("host", "localhost")
@@ -149,11 +140,12 @@ class PgsqlEngine(object):
         database = colony.conf("DB_NAME", database)
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
-        connection._connection = pgdb.connect(
+        connection._connection = PgsqlConnection(
             host = host,
             user = user,
             password = password,
-            database = database
+            database = database,
+            isolation = isolation
         )
         connection._transaction_level = 0
         connection._user = user
@@ -162,9 +154,6 @@ class PgsqlEngine(object):
         connection._isolation = isolation
         connection._show_sql = show_sql
         connection.open()
-        self._execute_query_t(
-            "set session characteristics as transaction isolation level %s" % isolation
-        ).close()
 
     def disconnect(self, connection):
         _connection = connection._connection
@@ -172,7 +161,9 @@ class PgsqlEngine(object):
         connection.close()
 
     def reconnect(self):
-        pass
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        _connection.reopen()
 
     def destroy(self):
         # runs the proper queries that will drop the complete set of
@@ -188,23 +179,64 @@ class PgsqlEngine(object):
 
     def begin(self):
         connection = self.entity_manager.get_connection()
-        connection._transaction_level += 1
+        _connection = connection._connection
+        _connection.push_transaction()
 
     def commit(self):
+        # retrieves the current connection from the associated
+        # entity manager and then retrieves the internal database
+        # connection for data access (logic retrieval)
         connection = self.entity_manager.get_connection()
+        _connection = connection._connection
 
         # in case the current transaction level is zero it's
         # not a valid situation as not transaction is open, must
         # raise an exception alerting for the situation
-        if connection._transaction_level == 0: raise RuntimeError("invalid transaction level, commit without begin")
-        connection._transaction_level -= 1
-        if connection._transaction_level == 0: self._commit()
+        is_empty_transaction = _connection.is_empty_transaction()
+        if is_empty_transaction: raise RuntimeError("invalid transaction level, commit without begin")
+
+        # pops the current transaction, decrementing the current
+        # transaction level by one, this will release a transaction
+        # level from the stack
+        _connection.pop_transaction()
+
+        is_empty_transaction = _connection.is_empty_transaction()
+        if not is_empty_transaction: return
+        self._commit()
 
     def rollback(self):
+        # retrieves the current connection from the associated
+        # entity manager and then retrieves the internal database
+        # connection for data access (logic retrieval)
         connection = self.entity_manager.get_connection()
-        if connection._transaction_level == 0: raise RuntimeError("invalid transaction level, rollback without begin")
-        connection._transaction_level -= 1
-        if connection._transaction_level == 0: self._rollback()
+        _connection = connection._connection
+
+        # checks if the current connection has been closed in the middle
+        # for such situation the current method should return, it's not
+        # possible to perform the rollback operation
+        is_close = _connection.is_close()
+        if is_close: return
+
+        # in case the current transaction level is zero it's
+        # not a valid situation as not transaction is open, must
+        # raise an exception alerting for the situation
+        is_empty_transaction = _connection.is_empty_transaction()
+        if is_empty_transaction: raise RuntimeError("invalid transaction level, rollback without begin")
+
+        # pops the current transaction, decrementing the current
+        # transaction level by one, this will release a transaction
+        # level from the stack
+        _connection.pop_transaction()
+
+        # checks the current transaction for empty state in case
+        # it's not empty there is no need to rollback the transaction
+        # because it's an inner level and no effect should be made
+        is_empty_transaction = _connection.is_empty_transaction()
+        if not is_empty_transaction: return
+
+        # runs the "rollback" command in the underlying data base
+        # layer, executes the "rollback" operation
+        self._rollback()
 
     def lock(self, entity_class, id_value = None, lock_parents = True):
         # retrieves the table name and id associated
@@ -296,6 +328,10 @@ class PgsqlEngine(object):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
 
+        # gathers the name of the data base for which the query
+        # is going to be executed (helps with debug operations)
+        database = _connection.get_database()
+
         # creates a new cursor to be used in case one
         # is required, for usage
         cursor = cursor or _connection.cursor()
@@ -303,11 +339,11 @@ class PgsqlEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the pgsql engine (for debugging purposes)
-            self.pgsql_system.debug("[%s] %s" % (ENGINE_NAME, query))
+            self.pgsql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the sql string
             # should be displayed it's printed to the logger properly
-            if connection._show_sql: self.pgsql_system.info("[%s] %s" % (ENGINE_NAME, query))
+            if connection._show_sql: self.pgsql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -318,7 +354,7 @@ class PgsqlEngine(object):
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
             try: cursor.execute(query)
-            except: self.pgsql_system.info("[%s] %s" % (ENGINE_NAME, query)); raise
+            except: self.pgsql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query)); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
@@ -326,7 +362,7 @@ class PgsqlEngine(object):
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.pgsql_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.pgsql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
@@ -358,7 +394,9 @@ class PgsqlEngine(object):
         self.isolation_level("serializable")
 
     def isolation_level(self, isolation):
-        self.execute_query("set transaction isolation level %s" % isolation)
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        _connection.isolation_level(isolation)
 
     def _commit(self):
         connection = self.entity_manager.get_connection()
@@ -449,29 +487,6 @@ class PgsqlEngine(object):
         # returns the result of the retrieval of the database
         # size from the data source
         return datbase_size
-
-    def _database_encoding_query(self, database_name):
-        # creates the query for the retrieval of the database
-        # encoding according to the requested database name
-        query = "select pg_encoding_to_char(encoding) from pg_database where datname = '%s';" % database_name
-
-        # returns the generated database encoding query
-        return query
-
-    def _database_encoding_result(self, cursor):
-        # selects all the elements from the cursor the
-        # database encoding should be the first element,
-        # then closes the cursor
-        try: counts = cursor.fetchall()
-        finally: cursor.close()
-
-        # retrieves the database encoding as the first element
-        # of the first retrieved row
-        datbase_encoding = counts[0][0]
-
-        # returns the result of the retrieval of the database
-        # encoding from the data source
-        return datbase_encoding
 
     def _index_query(self, entity_class, attribute_name, index_type = "hash"):
         # retrieves the associated table name
@@ -619,6 +634,211 @@ class PgsqlEngine(object):
         # the selected rows, making the for update support not reliable
         # this is considered a major drawback towards pgsql usage
         return False
+
+class PgsqlConnection(object):
+    """
+    Class that represents a logical connection with a
+    pgsql database, it should be used to encapsulate
+    the inner details of a connection.
+    """
+
+    host = None
+    """ The current (remote) host for the connection this
+    can be used to control the access to the remote database """
+
+    user = None
+    """ The name of the user (username) to be used in the
+    authentication process for the connection """
+
+    password = None
+    """ The password of the user to be used in the
+    authentication process for the connection """
+
+    database = None
+    """ The database to be used during the connection, this
+    should be a plain string for proper representation """
+
+    isolation = None
+    """ The isolation level that is currently in use
+    for the connection, may be changed at run-time """
+
+    connection = None
+    """ The reference to the underlying connection that handles
+    the proper pipelining of the execution """
+
+    transaction_level = 0
+    """ The current transaction depth for the connection, this value
+    should be increment by opening a transaction and decremented for
+    each close of a transaction """
+
+    def __init__(
+        self,
+        host = "localhost",
+        user = "root",
+        password = "root",
+        database = "default",
+        isolation = ISOLATION_LEVEL
+    ):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.isolation = isolation
+
+        self.connection = None
+        self.transaction_level = 0
+
+    def get_connection(self, create = True):
+        # in case there's a connection already defined (and open)
+        # for the current logical connection returns it to the
+        # proper caller method, otherwise goes for creation
+        if self.connection: return self.connection
+        if not create: return None
+
+        # creates a new connection and sets it in the current
+        # instance so that it may be properly re-used latter
+        self.connection = pgdb.connect(
+            host = self.host,
+            user = self.user,
+            password = self.password,
+            database = self.database
+        )
+        self.transaction_level = 0
+
+        # sets the isolation level for the connection as the one
+        # defined to be the default one by the "driver"
+        self._execute_query(
+            "set session characteristics as transaction isolation level %s" % self.isolation
+        ).close()
+
+        # returns the correct connection that has been created
+        # to the caller method, os that it may be used
+        return self.connection
+
+    def ensure_connection(self):
+        # by default ensure a connection is exactly the same operation
+        # as the retrieving a singleton based connection
+        self.get_connection()
+
+    def close(self):
+        # verifies if there's an open and valid "physical" connection
+        # and if taht's the case closes it and unsets the value
+        if not self.connection: return
+        self.connection.close()
+        self.connection = None
+        self.transaction_level = 0
+
+    def reopen(self):
+        """
+        Triggers the "forced" re-opening of the remote database connection
+        for that it invalidates the connection closing it an dereferencing
+        it in the internal structures.
+
+        This method only invalidates the proper connection for the current
+        thread all the other connection in the other threads remain open.
+
+        For this kind of strategy (single thread support) this operations
+        is equivalent to the close one.
+        """
+
+        self.close()
+
+    def cursor(self):
+        connection = self.get_connection()
+        return connection.cursor()
+
+    def commit(self):
+        connection = self.get_connection()
+        connection.commit()
+
+    def rollback(self):
+        connection = self.get_connection()
+        connection.rollback()
+
+    def push_transaction(self):
+        self.ensure_connection()
+        self.transaction_level += 1
+
+    def pop_transaction(self):
+        self.ensure_connection()
+        self.transaction_level -= 1
+
+    def reset_transaction(self):
+        self.transaction_level = 0
+
+    def isolation_level(self, isolation):
+        self.isolation = isolation
+        self._execute_query("set transaction isolation level %s" % self.isolation)
+
+    def is_close(self):
+        connection = self.get_connection(create = False)
+        is_close = connection == None
+        return is_close
+
+    def is_empty_transaction(self):
+        is_empty_transaction = self.transaction_level == 0
+        return is_empty_transaction
+
+    def is_valid_transaction(self):
+        is_valid_transaction = self.transaction_level >= 0
+        return is_valid_transaction
+
+    def get_database(self):
+        return self.database
+
+    def get_database_encoding(self):
+        # checks if the current object already contains the encoding
+        # attribute set for such cases the retrieval is immediate
+        if hasattr(self, "_encoding"): return self._encoding
+
+        # retrieves the query to be used in the retrieval of the
+        # database encoding and executes it retrieving the encoding
+        # used in the current database
+        query = self._database_encoding_query(self.database)
+        cursor = self._execute_query(query)
+        try: result = self._database_encoding_result(cursor)
+        finally: cursor.close()
+
+        # caches the database encoding into the current
+        # connection object (no need to retrieve it again
+        # from the data source) then returns it to the caller
+        self._encoding = result
+        return result
+
+    def _database_encoding_query(self, database_name):
+        query = "select pg_encoding_to_char(encoding) from pg_database where datname = '%s';" % database_name
+        return query
+
+    def _database_encoding_result(self, cursor):
+        # selects all the elements from the cursor the
+        # database encoding should be the first element,
+        # then closes the cursor
+        try: counts = cursor.fetchall()
+        finally: cursor.close()
+
+        # retrieves the database encoding as the first element
+        # of the first retrieved row
+        datbase_encoding = counts[0][0]
+
+        # returns the result of the retrieval of the database
+        # encoding from the data source
+        return datbase_encoding
+
+    def _execute_query(self, query, connection = None):
+        # retrieves the current connection and creates
+        # a new cursor object for query execution
+        connection = connection or self.get_connection()
+        cursor = connection.cursor()
+
+        # executes the query using the current cursor
+        # then closes the cursor avoid the leak of
+        # cursor objects (memory reference leaking)
+        try: cursor.execute(query)
+        except: cursor.close()
+
+        # returns the cursor that has just been created for
+        # the execution of the requested query
+        return cursor
 
 class IntegrityError(RuntimeError):
     pass
