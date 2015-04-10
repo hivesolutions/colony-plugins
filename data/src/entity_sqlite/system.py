@@ -113,8 +113,7 @@ class SqliteEngine(object):
         return "nocase"
 
     def connect(self, connection, parameters = {}):
-        default = self.entity_manager.id + ".db"
-        file_path = parameters.get("file_path", default)
+        file_path = parameters.get("file_path", None)
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
         show_sql = colony.conf("SHOW_SQL", False)
