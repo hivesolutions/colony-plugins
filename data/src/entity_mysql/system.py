@@ -806,6 +806,11 @@ class MysqlConnection(object):
         # for the current thread
         return connection
 
+    def ensure_connection(self):
+        # by default ensure a connection is exactly the same operation
+        # as the retrieving a singleton based connection
+        self.get_connection()
+
     def close(self):
         # iterates over all the connection in the connections
         # map to closes them (will close all the connections)
