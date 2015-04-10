@@ -362,7 +362,7 @@ class MysqlEngine(object):
 
         # gathers the name of the data base for which the query
         # is going to be executed (helps with debug operations)
-        database = _connection.database
+        database = _connection.get_database()
 
         # encodes the provided query into the appropriate
         # representation for mysql execution
@@ -894,6 +894,9 @@ class MysqlConnection(object):
         is_valid_transaction = self.transaction_level_map[connection] >= 0
 
         return is_valid_transaction
+
+    def get_database(self):
+        return self.database
 
     def get_database_encoding(self):
         # checks if the current object already contains the encoding
