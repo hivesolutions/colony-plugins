@@ -360,6 +360,10 @@ class MysqlEngine(object):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
 
+        # gathers the name of the data base for which the query
+        # is going to be executed (helps with debug operations)
+        database = _connection.database
+
         # encodes the provided query into the appropriate
         # representation for mysql execution
         query = self._encode_query(query)
@@ -371,11 +375,11 @@ class MysqlEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the mysql engine (for debugging purposes)
-            self.mysql_system.debug("[%s] %s" % (ENGINE_NAME, query))
+            self.mysql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the sql string
             # should be displayed it's printed to the logger properly
-            if connection._show_sql: self.mysql_system.info("[%s] %s" % (ENGINE_NAME, query))
+            if connection._show_sql: self.mysql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
