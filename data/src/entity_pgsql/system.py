@@ -129,11 +129,11 @@ class PgsqlEngine(object):
         return encoding
 
     def connect(self, connection, parameters = {}):
-        default = self.entity_manager.id or "default"
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "postgres")
         password = parameters.get("password", "postgres")
-        database = parameters.get("database", default)
+        db_prefix = parameters.get("db_prefix", "")
+        database = parameters.get("database", db_prefix + "default")
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
