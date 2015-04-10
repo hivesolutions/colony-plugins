@@ -1412,27 +1412,25 @@ class MvcUtils(colony.System):
         # retrieves the system database file name resource
         system_database_filename_resource = resources_manager_plugin.get_resource("system.database.file_name")
 
-        # in case the system database filename resource
-        # is defined
-        if system_database_filename_resource:
-            # retrieves the system database filename suffix
-            system_database_filename_suffix = system_database_filename_resource.data
-        # otherwise
-        else:
-            # sets the system database filename suffix as the default one
-            system_database_filename_suffix = database_sufix
+        # in case the system database filename resource is defined, retrieves the system
+        # database filename suffix, otherwise sets the system database filename suffix
+        # as the default one (fallback process)
+        if system_database_filename_resource: system_database_filename_suffix = system_database_filename_resource.data
+        else: system_database_filename_suffix = database_sufix
 
         # creates the system database file name value using the prefix and suffix values
         system_database_filename = database_prefix + system_database_filename_suffix
 
-        # retrieves the configuration plugin id
+        # retrieves the configuration plugin id and uses it to create the database file
+        # path using the configuration plugin id and the system database filename
         configuration_plugin_id = configuration_plugin.id
-
-        # creates the database file path using the configuration plugin id and the system database filename
         database_file_path = "%configuration:" + configuration_plugin_id + "%/" + system_database_filename
 
-        # sets the file path in the entity manager arguments
+        # sets the file path in the entity manager arguments, note that this operation
+        # also propagates the database prefix value to the connection parameters so that
+        # it may be used freely by the underlying database layers
         entity_manager_arguments["connection_parameters"]["file_path"] = database_file_path
+        entity_manager_arguments["connection_parameters"]["db_prefix"] = database_prefix
 
     def _start_controllers(self, controllers):
         """
