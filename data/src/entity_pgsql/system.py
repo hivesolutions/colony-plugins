@@ -129,7 +129,7 @@ class PgsqlEngine(object):
         return encoding
 
     def connect(self, connection, parameters = {}):
-        default = self.entity_manager.id
+        default = self.entity_manager.id or "default"
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "postgres")
         password = parameters.get("password", "postgres")

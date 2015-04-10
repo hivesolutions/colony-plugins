@@ -142,7 +142,7 @@ class MysqlEngine(object):
         types_map["metadata"] = "longtext"
 
     def connect(self, connection, parameters = {}):
-        default = self.entity_manager.id
+        default = self.entity_manager.id or "default"
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
