@@ -246,6 +246,10 @@ class SqliteEngine(object):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
 
+        # gathers the name of the data base for which the query
+        # is going to be executed (helps with debug operations)
+        database = _connection.get_database()
+
         # creates a new cursor to be used in case one
         # is required, for usage
         cursor = cursor or _connection.cursor()
@@ -253,11 +257,11 @@ class SqliteEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the pgsql engine (for debugging purposes)
-            self.sqlite_system.debug("[%s] %s" % (ENGINE_NAME, query))
+            self.sqlite_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the sql string
             # should be displayed it's printed to the logger properly
-            if connection._show_sql: self.sqlite_system.info("[%s] %s" % (ENGINE_NAME, query))
+            if connection._show_sql: self.sqlite_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -508,7 +512,8 @@ class SqliteConnection(object):
 
     file_path = None
     """ The path to the file containing the sqlite
-    database """
+    database, this should be a complete path to the
+    file and not a "simple" file name """
 
     cache_size = None
     """ The size (in pages) of the cache memory to be used
@@ -629,6 +634,10 @@ class SqliteConnection(object):
 
     def get_file_path(self):
         return self.file_path
+
+    def get_database(self):
+        if not self.file_path: return None
+        return os.path.basename(self.file_path)
 
     def _execute_query(self, query, connection = None):
         # retrieves the current connection and creates
