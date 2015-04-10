@@ -390,7 +390,7 @@ class MysqlEngine(object):
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
             try: cursor.execute(query)
-            except: self.mysql_system.info("[%s] %s" % (ENGINE_NAME, query)); raise
+            except: self.mysql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query)); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
@@ -398,7 +398,7 @@ class MysqlEngine(object):
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.mysql_system.info("[%s] [%d ms] %s" % (ENGINE_NAME, delta, query))
+            if is_slow: self.mysql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
             # triggers a notification about the sql query execution that
             # has just been performed (should contain also the time in ms)
@@ -731,6 +731,10 @@ class MysqlConnection(object):
     database = None
     """ The database to be used during the connection """
 
+    isolation = None
+    """ The isolation level that is currently in use
+    for the connection, may be changed at run-time """
+
     transaction_level_map = {}
     """ The map associating the mysql connection with the
     transaction depth (nesting) level """
@@ -879,7 +883,6 @@ class MysqlConnection(object):
     def is_close(self):
         connection = self.get_connection(create = False)
         is_close = connection == None
-
         return is_close
 
     def is_empty_transaction(self):
@@ -892,7 +895,6 @@ class MysqlConnection(object):
     def is_valid_transaction(self):
         connection = self.get_connection()
         is_valid_transaction = self.transaction_level_map[connection] >= 0
-
         return is_valid_transaction
 
     def get_database(self):
