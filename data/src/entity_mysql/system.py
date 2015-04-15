@@ -365,6 +365,7 @@ class MysqlEngine(object):
         # gathers the name of the data base for which the query
         # is going to be executed (helps with debug operations)
         database = _connection.get_database()
+        database = str(database)
 
         # encodes the provided query into the appropriate
         # representation for mysql execution

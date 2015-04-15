@@ -333,6 +333,7 @@ class PgsqlEngine(object):
         # gathers the name of the data base for which the query
         # is going to be executed (helps with debug operations)
         database = _connection.get_database()
+        database = str(database)
 
         # creates a new cursor to be used in case one
         # is required, for usage
