@@ -129,3 +129,21 @@ class ImageTreatmentPlugin(colony.Plugin):
         """
 
         return self.system.resize_image_aspect_background(image_path, width, height)
+
+    def guess_image_type(self, data):
+        """
+        Uses a series of simplistic heuristics to determine the
+        proper (image) mime type of the provided binary data.
+
+        Note that the accuracy of this method is quite limited
+        by its simplistic approach.
+
+        @type data: String
+        @param data: The string of bytes containing the data that
+        is going to be used in the image type detection.
+        @rtype: String
+        @return: The detected mime type string value for the provided
+        string of binary data.
+        """
+
+        return self.system.guess_image_type(data)

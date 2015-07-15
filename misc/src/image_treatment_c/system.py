@@ -207,6 +207,30 @@ class ImageTreatment(colony.System):
         # returns the new image
         return string_buffer
 
+    def guess_image_type(self, data):
+        """
+        Uses a series of simplistic heuristics to determine the
+        proper (image) mime type of the provided binary data.
+
+        Note that the accuracy of this method is quite limited
+        by its simplistic approach.
+
+        @type data: String
+        @param data: The string of bytes containing the data that
+        is going to be used in the image type detection.
+        @rtype: String
+        @return: The detected mime type string value for the provided
+        string of binary data.
+        """
+        
+        print(repr(data[:4]))
+        print(repr(data[:4]))
+
+        if data[:4] == "\xff\xd8\xff\xe0" and data[6:11] == "JFIF\0": return "image/jpeg"
+        elif data[1:4] == "PNG": return "image/png"
+        elif data[:2] == "BM": return "image/x-ms-bmp"
+        else: return "image/unknown-type"
+
     def _reset_image_path(self, image_path):
         """
         Resets the image path in order to make it ready
