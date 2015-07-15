@@ -222,9 +222,6 @@ class ImageTreatment(colony.System):
         @return: The detected mime type string value for the provided
         string of binary data.
         """
-        
-        print(repr(data[:4]))
-        print(repr(data[:4]))
 
         if data[:4] == "\xff\xd8\xff\xe0" and data[6:11] == "JFIF\0": return "image/jpeg"
         elif data[1:4] == "PNG": return "image/png"
