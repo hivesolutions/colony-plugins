@@ -42,14 +42,21 @@ import colony
 from . import serializer
 
 DEFAULT_ENCODING = "utf-8"
-""" The default encoding """
+""" The default encoding to be used for the json based operations,
+should be the most permissive possible (avoiding issues) """
 
 MIME_TYPE = "application/json"
-""" The mime type """
+""" The mime type for the json structure, this value should
+be changed according to the standard values """
+
+FAST_LOADS = True
+""" Flag that controls if by default the strategy for the loading
+operation should try to use the embedded loader (faster) """
 
 class Json(colony.System):
     """
-    Provides functions to interact with json.
+    Provides functions to interact with json, this class should
+    implement (and conform) with the generic serialization methods.
     """
 
     def dumps(self, object):
@@ -64,7 +71,8 @@ class Json(colony.System):
     def dumps_buffer(self, object):
         return serializer.dumps_buffer(object)
 
-    def loads(self, json_string):
+    def loads(self, json_string, fast = FAST_LOADS):
+        if fast: return serializer.loads_f(json_string)
         return serializer.loads(json_string)
 
     def load_file(self, json_file, encoding = DEFAULT_ENCODING):

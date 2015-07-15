@@ -1085,3 +1085,8 @@ def loads(data):
     except StopIteration:
         # raises the json decode exception
         raise exceptions.JsonDecodeException("Unexpected end of Json source")
+
+def loads_f(data):
+    try: import json
+    except: return loads(data)
+    return json.loads(data)
