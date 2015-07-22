@@ -1357,7 +1357,8 @@ class RestRequest(object):
         # checks if the current request is "marked" as asynchronous, for
         # such cases a special redirection process is applies to avoid the
         # typical problems with automated redirection using "ajax"
-        is_async = True if self.get_attribute("async") else False
+        is_async = True if self.request.get_header("X-Async") else False
+        is_async = True if self.get_attribute("async") else is_async
         if is_async: status_code = 280
 
         # sets the status code, that was defined as the argument
