@@ -496,9 +496,9 @@ class EntityClass(object):
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
-        # of an entity attribute
-        if not hasattr(self.__class__, name) or not getattr(self.__class__, name) == value:
-            return value
+        # of an entity attribute (it's a concrete value instead)
+        if not hasattr(self.__class__, name): return value
+        if not getattr(self.__class__, name) == value: return value
 
         # checks if the current attribute name refers a relation
         # so that options on how to lazy load it can be defined
