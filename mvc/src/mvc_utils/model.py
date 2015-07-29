@@ -97,13 +97,10 @@ def _start_model(self):
     methods in the model (for user code).
     """
 
-    # checks if the model has been already
-    # started (avoids duplicate initialization, in
-    # case of sub-classing)
-    if hasattr(self, "model_started"):
-        # returns immediately (model already
-        # started)
-        return
+    # checks if the model has been already started,
+    # (avoids duplicate initialization, in case of
+    # sub-classing) returning immediately if so
+    if hasattr(self, "model_started"): return
 
     # starts the underlying request reference as unset,
     # should be set after the start operation if access
