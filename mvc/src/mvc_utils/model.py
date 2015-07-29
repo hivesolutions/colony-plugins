@@ -129,12 +129,8 @@ def _start_model(self):
     # it as this provides a start endpoint for extension
     if hasattr(self, "start"): self.start()
 
-    # in case the model has the set validation method
-    # the control flow must call it so that extra validation
-    # methods may be included in the model
-    if hasattr(self, "set_validation"): self.set_validation()
-
-    # sets the model started flag as true
+    # sets the model started flag as true, avoiding further
+    # calls to this method to proceed further
     self.model_started = True
 
 def _class_new(cls, request = None, map = None, permissive = False, apply = True):
@@ -1176,6 +1172,29 @@ def clear_errors(self):
     # a new map to hold the values (clear process)
     self.validation_errors_map = {}
 
+def init_validate(self):
+    """
+    Initializes the validation system for the current
+    model, should set the complete set of validation
+    methods that are going to be run.
+
+    This method should always be called before a
+    validation is executed to ensure proper execution.
+    """
+
+    # checks if the validation has been already started,
+    # (avoids duplicated validation starting)
+    if hasattr(self, "validation_started"): return
+
+    # in case the model has the set validation method
+    # the control flow must call it so that extra validation
+    # methods may be included in the model
+    if hasattr(self, "set_validation"): self.set_validation()
+
+    # sets the starting of the validation avoiding any
+    # further calls to this method (performance issue)
+    self.validation_started = True
+
 def validate(self, checker = None, context = None):
     """
     Validates all the attributes in the current object.
@@ -1200,6 +1219,11 @@ def validate(self, checker = None, context = None):
     # method, in such case the method is called to signal
     # the start of the validation process
     if hasattr(self, "pre_validate"): self.pre_validate()
+
+    # initializes the validation structures so that it's possible
+    # and guaranteed to be able to properly execute validation on
+    # the current model as expected by the definition
+    self.init_validate()
 
     # tries to retrieve the proper (validation) context for the
     # current validation process, defaulting to the validation
