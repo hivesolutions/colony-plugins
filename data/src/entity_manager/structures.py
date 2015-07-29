@@ -510,7 +510,9 @@ class EntityClass(object):
         # attribute using (a concrete class load approach)
         attribute = self._load_lazy(name) if is_relation else self._load_lazy_attr(name)
 
-        # returns the retrieves (lazy) attribute
+        # returns the retrieved/loaded (lazy) attribute, ready
+        # to be used by the calling method, note that this value
+        # may not be loaded in case it's not currently possible
         return attribute
 
     def __getstate__(self, depth = None, detach = True):
@@ -4511,7 +4513,7 @@ class EntityClass(object):
         """
         Method called upon structure initialization, this
         is going to be called even in situations where just
-        the instance is create and no constructor is called.
+        the instance is created and no constructor is called.
 
         Overriding of this method is possible but should be
         done with extreme care.
