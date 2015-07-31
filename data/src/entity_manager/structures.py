@@ -484,25 +484,37 @@ class EntityClass(object):
         return self
 
     def __getattribute__(self, name):
-        # retrieves the value from the parent
-        # call and checks the type of it
-        value = object.__getattribute__(self, name)
+        # tries to retrieve the "concrete" value for the requested
+        # attribute using the parent retrieval method, in case it
+        # fails an extra retrieval is done using the (calculated)
+        # attributes strategy, so that extra delay resolution is
+        # possible according to the currently defined strategy
+        try: value = object.__getattribute__(self, name)
+        except AttributeError: value = self._try_attr(name)
+
+        # gathers the proper data type of the value that it's going
+        # to be used for some of the runtime evaluation strategies
         value_type = type(value)
 
         # in case the value is not a dictionary, it's not
         # a lazy loaded relation description (that's for sure)
         if not value_type == dict: return value
 
+        # extracts the parent class reference of the current
+        # instance as it's going to be used through the various
+        # processing lines of the current method
+        cls = self.__class__
+
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
         # of an entity attribute (it's a concrete value instead)
-        if not hasattr(self.__class__, name): return value
-        if not getattr(self.__class__, name) == value: return value
+        if not hasattr(cls, name): return value
+        if not getattr(cls, name) == value: return value
 
         # checks if the current attribute name refers a relation
         # so that options on how to lazy load it can be defined
-        is_relation = self.__class__.is_relation(name)
+        is_relation = cls.is_relation(name)
 
         # loads the lazy loaded relation with the provided
         # name, this will trigger an access to the data
@@ -643,7 +655,7 @@ class EntityClass(object):
         all_attr_methods = {}
 
         # retrieves the attr methods present at the current
-        # entity class level
+        # entity class level, for recursive iteration
         attr_methods = cls.get_attr_methods()
 
         # retrieves the parent entity classes from
@@ -4685,6 +4697,52 @@ class EntityClass(object):
         # returns the attribute value that triggered the lazy load
         # of the class concrete values
         return attribute
+
+    def _try_attr(self, name):
+        """
+        Tries to resolve a calculated (_attr) attribute by checking
+        the parent class of the current instance for the presence
+        of the requested attribute.
+
+        This method should avoid further calls to the calculated
+        attribute in case it has already been calculated for instance.
+
+        This method assumes to be called inside an exception handler
+        to provided proper exception re-raising.
+
+        @type name: String
+        @param name: The name of the attribute that is going to be
+        resolved as a calculated attribute.
+        @rtype: Object
+        @return: The resolved value calculated using the proper method.
+        """
+
+        # retrieves the class reference for the current entity as it's
+        # going to be used for the current method resolution strategy
+        cls = self.__class__
+
+        # verifies if the (calculated) attribute method for such value
+        # exists for the associated class and if that's not true raises
+        # the current exception in handling
+        has_attr = hasattr(cls, "_attr_" + name)
+        if not has_attr: raise
+
+        # sets the initial value for the error flag as false (default
+        # value) and then tries to extract the proper attribute method
+        error = False
+        method = getattr(cls, "_attr_" + name)
+
+        # runs the calculated attribute method and retrieves the associated
+        # value setting the error flag in case an exception occurs, otherwise
+        # sets the value in the current instance (no more delayed resolution)
+        try: value = method(self)
+        except: error = True
+        else: setattr(self, name, value)
+
+        # in case the error flag is set re-raise the current exception in
+        # handling (attribute not found) otherwise returns the resolved value
+        if error: raise
+        return value
 
     def _depth(self):
         """
