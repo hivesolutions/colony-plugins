@@ -5397,6 +5397,13 @@ class EntityManager(object):
         # the query (non complete parsing)
         count = options.get("count", False)
 
+        # gathers the value for the evaluate option that controls
+        # if the calculated attributes should be immediately evaluated
+        # for the cases of instance based retrieval, if this is set
+        # to false a delayed/runtime evaluation of the values is going
+        # to be performed once the value is requested (better performance)
+        evaluate = options.get("evaluate", False)
+
         try:
             # retrieves the result set (all the) items
             # available for fetching
@@ -5436,7 +5443,7 @@ class EntityManager(object):
         for _id, entity_tuple in colony.legacy.iteritems(_visited_m):
             entity, entity_class = entity_tuple
             if map: self.calc_attr_m(entity_class, entity)
-            else: self.calc_attr_e(entity_class, entity)
+            elif evaluate: self.calc_attr_e(entity_class, entity)
 
         # returns the unpacked result set that must contain either
         # a set of maps or a set of instances
