@@ -5433,8 +5433,10 @@ class EntityManager(object):
         # in case the map option is set the map method must be
         # used, otherwise the entity (instances) based method
         # should be used instead
-        if map: result_l, _result_m, _visited_m = self._unpack_result_m(entity_class, field_names, options, result_set)
-        else: result_l, _result_m, _visited_m = self._unpack_result_e(entity_class, field_names, options, result_set)
+        if map: result_l, _result_m, _visited_m =\
+            self._unpack_result_m(entity_class, field_names, options, result_set)
+        else: result_l, _result_m, _visited_m =\
+            self._unpack_result_e(entity_class, field_names, options, result_set)
 
         # iterates over all the values in the result to be able
         # to calculate the generated attributes for the various
