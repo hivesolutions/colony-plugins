@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (C) 2008-2015 Hive Solutions Lda.
+# Copyright (c) 2008-2015 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
