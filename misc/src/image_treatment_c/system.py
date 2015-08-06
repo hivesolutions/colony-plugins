@@ -223,9 +223,9 @@ class ImageTreatment(colony.System):
         string of binary data.
         """
 
-        if data[:4] == "\xff\xd8\xff\xe0" and data[6:11] == "JFIF\0": return "image/jpeg"
-        elif data[1:4] == "PNG": return "image/png"
-        elif data[:2] == "BM": return "image/x-ms-bmp"
+        if data[:4] == b"\xff\xd8\xff\xe0" and data[6:11] == b"JFIF\0": return "image/jpeg"
+        elif data[1:4] == b"PNG": return "image/png"
+        elif data[:2] == b"BM": return "image/x-ms-bmp"
         else: return "image/unknown-type"
 
     def _reset_image_path(self, image_path):
