@@ -867,8 +867,9 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
 
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query
-    # this is the base value for the search
-    if name:
+    # this is the base value for the search, note that this extra
+    # filter is only created in case the filter string is valid
+    if name and filter_string:
         # retrieves the data type for the name attribute and in
         # case it's not a sequence converts it to a immutable
         # sequence (tuple) for iteration
@@ -881,11 +882,18 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         first = name[0]
         _filters, _target, _name = resolve_s(first)
 
+        # retrieves the proper base name value from the resolution and
+        # then tries to retrieve the best filter type according to the
+        # data type of this first element (best guess)
+        _name = _name.rsplit(".", 1)[-1]
+        data_type = cls._get_data_type(_name)
+        is_like = data_type in ("string", "text")
+
         # creates the wildcard based filter with an empty set of field
         # (empty map) that is populated with the various field names
         # contained in the name sequence
         _filter = dict(
-            type = "like",
+            type = "like" if is_like else "equals",
             like_type = type_s,
             fields = dict()
         )
@@ -895,6 +903,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         fields = _filter["fields"]
         for _name in name:
             _name = _name.rsplit(".", 1)[-1]
+            filter_string = cls._cast_value(_name, filter_string)
             fields[_name] = filter_string
 
         # adds the "just" created filter to the filters structure resulting
