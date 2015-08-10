@@ -1573,21 +1573,21 @@
 
             // removes the overflow attribute from the html
             // element to restore it (show scroll)
-            _html.css("overflow-y", null);
+            _html.css("overflow-y", "");
 
             // removes the margin and padding attributes from
             // the body element
-            _body.css("margin", null);
-            _body.css("padding", null);
+            _body.css("margin", "");
+            _body.css("padding", "");
 
             // removes the complete set of css attributes
             // from the console to restore the original size
-            console.css("margin", null);
-            console.css("position", null);
-            console.css("top", null);
-            console.css("left", null);
-            console.css("height", null);
-            console.css("width", null);
+            console.css("margin", "");
+            console.css("position", "");
+            console.css("top", "");
+            console.css("left", "");
+            console.css("height", "");
+            console.css("width", "");
 
             // retrieves the scroll height from the console
             // and updates the console scroll position to
@@ -1948,21 +1948,21 @@
 
             // removes the overflow attribute from the html
             // element to restore it (show scroll)
-            _html.css("overflow-y", null);
+            _html.css("overflow-y", "");
 
             // removes the margin and padding attributes from
             // the body element
-            _body.css("margin", null);
-            _body.css("padding", null);
+            _body.css("margin", "");
+            _body.css("padding", "");
 
             // removes the complete set of css attributes
             // from the log to restore the original size
-            log.css("margin", null);
-            log.css("position", null);
-            log.css("top", null);
-            log.css("left", null);
-            log.css("height", null);
-            log.css("width", null);
+            log.css("margin", "");
+            log.css("position", "");
+            log.css("top", "");
+            log.css("left", "");
+            log.css("height", "");
+            log.css("width", "");
 
             // retrieves the scroll height from the log
             // and updates the log scroll position to
