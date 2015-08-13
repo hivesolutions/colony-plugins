@@ -752,14 +752,12 @@ class MysqlConnection(object):
         user = "root",
         password = "root",
         database = "default",
-        charset = "utf8",
         isolation = ISOLATION_LEVEL
     ):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
-        self.charset = charset
         self.isolation = isolation
 
         self.transaction_level_map = {}
@@ -782,8 +780,7 @@ class MysqlConnection(object):
                 self.host,
                 user = self.user,
                 passwd = self.password,
-                db = self.database,
-                charset = self.charset
+                db = self.database
             )
             self.connections_map[thread_id] = connection
 
@@ -797,9 +794,11 @@ class MysqlConnection(object):
             # with the database server, note that a verification is
             # previously done to ensure that the method exists avoiding
             # possible issues with the character setting operation
-            has_charset = hasattr(connection, "set_character_set")
+            has_charset = hasattr(connection, "set_charset")
+            has_character_set = hasattr(connection, "set_character_set")
             encoding = self.get_database_encoding()
-            if has_charset: connection.set_character_set(encoding)
+            if has_charset: connection.set_charset(encoding)
+            if has_character_set: connection.set_character_set(encoding)
 
             # sets the isolation level for the connection as the one defined
             # to be the default one by the "driver"
