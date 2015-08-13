@@ -752,12 +752,14 @@ class MysqlConnection(object):
         user = "root",
         password = "root",
         database = "default",
+        charset = "utf8",
         isolation = ISOLATION_LEVEL
     ):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
+        self.charset = charset
         self.isolation = isolation
 
         self.transaction_level_map = {}
@@ -780,7 +782,8 @@ class MysqlConnection(object):
                 self.host,
                 user = self.user,
                 passwd = self.password,
-                db = self.database
+                db = self.database,
+                charset = self.charset
             )
             self.connections_map[thread_id] = connection
 
