@@ -66,7 +66,8 @@ RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 
 class MvcFileHandler(object):
     """
-    The mvc file handler class.
+    The mvc file handler class, responsible for the low level
+    handling of static files under a filesystem structure.
     """
 
     mvc_plugin = None
