@@ -117,7 +117,7 @@ class ConsoleController(BaseController):
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
         locals = dict(
-            manager =  plugin_manager,
+            manager = plugin_manager,
             plugins = plugin_manager.plugins
         )
 
