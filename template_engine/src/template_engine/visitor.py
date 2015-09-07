@@ -523,6 +523,9 @@ class Visitor(object):
         value = prefix + value
         self.write(value)
 
+    def process_set(self, node):
+        return self.process_var(node)
+
     def process_var(self, node):
         """
         Processes the var node, this is the operation that
