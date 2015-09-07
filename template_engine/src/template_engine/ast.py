@@ -380,6 +380,7 @@ class EvalNode(SimpleNode):
 
         self.attributes["item"] = self.literal(item)
         self.attributes["from"] = self.parse(_from)
+        self.attributes["key"] = self.literal(key)
 
     def _process_set(self, contents):
         match = SET_REGEX.match(contents)
