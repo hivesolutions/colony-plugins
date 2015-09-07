@@ -151,6 +151,8 @@ are going to be used "inside" the visitor execution logic """
 
 FILTERS = dict(
     e = lambda v: v if v == None else xml.sax.saxutils.escape(colony.legacy.UNICODE(v)),
+    default = lambda v, default = "", boolean = False:\
+        default if boolean and not v or v == None else v,
     double = lambda v: v if v == None else v * 2,
     format = lambda v, format: v if v == None else format % v
 )
