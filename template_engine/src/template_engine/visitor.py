@@ -950,10 +950,24 @@ class Visitor(object):
         # is the default and expected behavior (fallback procedure)
         if not attribute: return default
 
-        # in case the attribute value is of type variable
+        # retrieves the (processed) value of the attribute and the
+        # original (unprocessed) value, so that they may be used
+        # for the value processing (as expected)
+        value = attribute["value"]
+        original = attribute["original"]
+
+        # splits the raw (attribute) value into the various parts
+        # of it, separating the proper variable name from the
+        # various filters as defined in the specification
+        parts = original.split("|")
+        filters = [filter.strip() for filter in parts[1:]]
+
+        # in case the attribute value is of type variable, must be
+        # properly handled (stripping the value from extra lines)
         if attribute["type"] == "variable":
-            # retrieves the variable name
-            variable_name = attribute["value"]
+            # retrieves the variable name by stripping the first part
+            # of the filters splitting (as expected)
+            variable_name = parts[0].strip()
 
             # in case the variable name is none sets the final value
             # with the invalid value as that's requested by the template
@@ -962,36 +976,28 @@ class Visitor(object):
             # otherwise the value must be processed according to the currently
             # defined template rules (may required method invocation)
             else:
-                # splits the variable name into the various parts of
-                # it, separating the proper variable name from the
-                # various filters as defined in the specification
-                parts = variable_name.split("|")
-                variable_name = parts[0].strip()
-                filters = [filter.strip() for filter in parts[1:]]
-
                 # resolves the variable name using the multiple parts
                 # approach so that the final value is retrieved according
                 # to the current state of the template engine
                 value = self.resolve_many(variable_name)
 
-                # iterates over the complete set of filter definition to
-                # resolve the final value according to the filter
-                for filter in filters: value = self.resolve_many(
-                    filter, value, global_map = self.filters
-                )
-
-                # resolves the current variable value, trying to
-                # localize it using the current locale bundles only
-                # do this in case the localize flag is set
-                value = self._resolve_locale(value) if localize else value
-
         # in case the attribute value is of type literal the value must
         # be "read" using a literal based approach so that the proper and
         # concrete value is going to be returned as the value
         elif attribute["type"] == "literal":
-            # retrieves the literal value from the attribute
-            # this is going to be considered the proper value
-            value = attribute["value"]
+            pass
+
+        # iterates over the complete set of filter definition to
+        # resolve the final value according to the filter
+        for filter in filters:
+            value = self.resolve_many(
+                filter, value, global_map = self.filters
+            )
+
+        # resolves the current "variable" value, trying to
+        # localize it using the current locale bundles only
+        # do this in case the localize flag is set
+        value = self._resolve_locale(value) if localize else value
 
         # returns the processed value to the caller method, this is the
         # considered to be the value for the requested attribute
