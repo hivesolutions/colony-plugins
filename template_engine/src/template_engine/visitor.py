@@ -989,10 +989,9 @@ class Visitor(object):
 
         # iterates over the complete set of filter definition to
         # resolve the final value according to the filter
-        for filter in filters:
-            value = self.resolve_many(
-                filter, value, global_map = self.filters
-            )
+        for filter in filters: value = self.resolve_many(
+            filter, value, global_map = self.filters
+        )
 
         # resolves the current "variable" value, trying to
         # localize it using the current locale bundles only
