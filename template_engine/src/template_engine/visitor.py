@@ -58,7 +58,8 @@ FUNCTION_TYPES = (
     types.BuiltinMethodType,
     types.BuiltinFunctionType
 )
-""" The function types """
+""" The complete set of types that are going to be
+considered function types during runtime """
 
 SERIALIZERS = (
     "json",
@@ -75,8 +76,9 @@ object to handle it """
 LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUCNTION_ARGUMENTS_REGEX_VALUE = "\([\sa-zA-Z0-9_\-,\.\:\='\/\"]+\)"
-""" The function arguments regular expression value """
+FUCNTION_ARGUMENTS_REGEX_VALUE = "\([\sa-zA-Z0-9_\-,\.\:\=\%'\/\"]+\)"
+""" The function arguments regular expression value
+that will match any possible (variable or constant) value """
 
 NAMES_REGEX_VALUE = "([^\.]+\([^\)]+\))|([^\.]+)"
 """ The regular expression that is going to be used for the
@@ -146,6 +148,15 @@ COMPARISION_FUNCTIONS = {
 }
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic """
+
+FILTERS = dict(
+    e = lambda v: xml.sax.saxutils.escape(v),
+    double = lambda v: v * 2,
+    format = lambda v, format: format % v
+)
+""" The dictionary containing the complete set
+of base filters to be exposed to the visitor,
+this dictionary may be extended at runtime """
 
 class Visitor(object):
     """
@@ -238,6 +249,7 @@ class Visitor(object):
         self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
+        self.filters = dict(FILTERS)
 
         self.update_node_method_map()
 
@@ -961,7 +973,9 @@ class Visitor(object):
 
                 # iterates over the complete set of filter definition to
                 # resolve the final value according to the filter
-                for filter in filters: value = self.resolve_many(filter, value)
+                for filter in filters: value = self.resolve_many(
+                    filter, value, global_map = FILTERS
+                )
 
                 # resolves the current variable value, trying to
                 # localize it using the current locale bundles only
@@ -1018,7 +1032,7 @@ class Visitor(object):
         # sets the initial value of the resolution process as the current
         # global map and then starts the resolution running it for the
         # complete set of "partial" attribute names (iterative resolution)
-        value = self.global_map
+        value = kwargs.pop("global_map", self.global_map)
         for name in names: value = self.resolve(value, name, *args, **kwargs)
 
         # return the final resolved value, this value should be a result
@@ -1168,7 +1182,7 @@ class Visitor(object):
             is_number = ord(first_char) > 0x2f and ord(first_char) < 0x3a
             is_bool = argument in ("True", "False")
             is_literal = is_string or is_number or is_bool
-            _type = is_literal and "literal" or "variable"
+            _type = "literal" if is_literal else "variable"
 
             # retrieves the correct value taking into account the various
             # type based flags
@@ -1590,7 +1604,9 @@ class EvalVisitor(Visitor):
         # iterates over the complete set of filter definition to
         # resolve the final value according to the filter and then
         # runs the final step of locale value resolution (auto locale)
-        for filter in filters: value = self.resolve_many(filter, value)
+        for filter in filters: value = self.resolve_many(
+            filter, value, global_map = FILTERS
+        )
         value = self._resolve_locale(value) if localize else value
 
         # returns the final value according to the eval based value

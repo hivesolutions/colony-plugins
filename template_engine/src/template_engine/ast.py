@@ -49,7 +49,7 @@ BOOL_TRUE = 5
 BOOL_FALSE = 6
 NONE = 7
 
-NAME_REGEX = re.compile(r"[a-zA-Z_\[\{][\sa-zA-Z0-9_\-\.\/\(\)\:\=,'\"\[\]\{\}\|]*")
+NAME_REGEX = re.compile(r"[a-zA-Z_\[\{][\sa-zA-Z0-9_\-\.\/\(\)\:\=,\%'\"\[\]\{\}\|]*")
 """ The regular expression that is going to be used in the matching
 of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
@@ -82,6 +82,12 @@ FOR_REGEX = re.compile(
 """ Regular expression used for the mating of the various parts of the for
 expression the expression defines two modes one simple with just the key
 definition and one more complex with both key and value definitions """
+
+SET_REGEX = re.compile(
+    "(.+)\s+=\s+(.+)"
+)
+""" The regular expression that is going to be used for the match operation
+in the payload of the set operation """
 
 OPERATORS = {
     "in" : "in",
@@ -304,6 +310,7 @@ class EvalNode(SimpleNode):
         elif self.type == "else": pass
         elif self.type == "elif": self._process_if(contents)
         elif self.type == "for": self._process_for(contents)
+        elif self.type == "set": self._process_set(contents)
         elif self.type == "block": self._process_block(contents)
         elif self.type == "include": self._process_include(contents)
         elif self.type == "extends": self._process_extends(contents)
@@ -373,7 +380,19 @@ class EvalNode(SimpleNode):
 
         self.attributes["item"] = self.literal(item)
         self.attributes["from"] = self.parse(_from)
-        self.attributes["key"] = self.literal(key)
+
+    def _process_set(self, contents):
+        match = SET_REGEX.match(contents)
+        if not match: raise exceptions.RuntimeError("malformed for expression")
+
+        item = match.group(1)
+        value = match.group(2)
+
+        item = item.strip()
+        value = value.strip()
+
+        self.attributes["item"] = self.parse(item)
+        self.attributes["value"] = self.parse(value)
 
     def _process_block(self, contents):
         self.attributes["name"] = self.parse(contents)
