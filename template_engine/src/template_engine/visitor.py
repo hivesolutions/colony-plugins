@@ -150,9 +150,9 @@ COMPARISION_FUNCTIONS = {
 are going to be used "inside" the visitor execution logic """
 
 FILTERS = dict(
-    e = lambda v: xml.sax.saxutils.escape(v),
-    double = lambda v: v * 2,
-    format = lambda v, format: format % v
+    e = lambda v: v if v == None else xml.sax.saxutils.escape(colony.legacy.UNICODE(v)),
+    double = lambda v: v if v == None else v * 2,
+    format = lambda v, format: v if v == None else format % v
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
@@ -977,7 +977,7 @@ class Visitor(object):
                 # iterates over the complete set of filter definition to
                 # resolve the final value according to the filter
                 for filter in filters: value = self.resolve_many(
-                    filter, value, global_map = FILTERS
+                    filter, value, global_map = self.filters
                 )
 
                 # resolves the current variable value, trying to
@@ -1608,7 +1608,7 @@ class EvalVisitor(Visitor):
         # resolve the final value according to the filter and then
         # runs the final step of locale value resolution (auto locale)
         for filter in filters: value = self.resolve_many(
-            filter, value, global_map = FILTERS
+            filter, value, global_map = self.filters
         )
         value = self._resolve_locale(value) if localize else value
 
