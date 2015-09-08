@@ -333,6 +333,9 @@ class Visitor(object):
     def add_bundle(self, bundle):
         self.locale_bundles.append(bundle)
 
+    def add_filter(self, name, filter):
+        self.filters[name] = filter
+
     def get_encoding(self):
         return self.encoding
 
