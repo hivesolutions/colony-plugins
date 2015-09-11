@@ -150,7 +150,7 @@ COMPARISION_FUNCTIONS = {
 are going to be used "inside" the visitor execution logic """
 
 FILTERS = dict(
-    e = lambda v, t: v if v == None else xml.sax.saxutils.escape(t._serialize_value(v)),
+    e = lambda v, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
     default = lambda v, t, default = "", boolean = False:\
         default if boolean and not v or v == None else v,
     double = lambda v, t: v if v == None else v * 2,
@@ -1430,6 +1430,12 @@ class Visitor(object):
 
         # returns the locale value or the literal value in case
         # no localization bundle is available for the value
+        return value
+
+    def _to_string(self, value):
+        value = self._serialize_value(value)
+        is_string = type(value) in colony.legacy.STRINGS
+        if not is_string: value = colony.legacy.UNICODE(value)
         return value
 
     def _serialize_value(self, value):
