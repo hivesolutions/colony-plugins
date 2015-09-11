@@ -150,11 +150,11 @@ COMPARISION_FUNCTIONS = {
 are going to be used "inside" the visitor execution logic """
 
 FILTERS = dict(
-    e = lambda v: v if v == None else xml.sax.saxutils.escape(colony.legacy.UNICODE(v)),
-    default = lambda v, default = "", boolean = False:\
+    e = lambda v, t: v if v == None else xml.sax.saxutils.escape(t._serialize_value(v)),
+    default = lambda v, t, default = "", boolean = False:\
         default if boolean and not v or v == None else v,
-    double = lambda v: v if v == None else v * 2,
-    format = lambda v, format: v if v == None else format % v
+    double = lambda v, t: v if v == None else v * 2,
+    format = lambda v, t, format: v if v == None else format % v
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
@@ -992,16 +992,16 @@ class Visitor(object):
         elif attribute["type"] == "literal":
             pass
 
-        # iterates over the complete set of filter definition to
-        # resolve the final value according to the filter
-        for filter in filters: value = self.resolve_many(
-            filter, value, global_map = self.filters
-        )
-
         # resolves the current "variable" value, trying to
         # localize it using the current locale bundles only
         # do this in case the localize flag is set
         value = self._resolve_locale(value) if localize else value
+
+        # iterates over the complete set of filter definition to
+        # resolve the final value according to the filter
+        for filter in filters: value = self.resolve_many(
+            filter, value, self, global_map = self.filters
+        )
 
         # returns the processed value to the caller method, this is the
         # considered to be the value for the requested attribute
@@ -1443,8 +1443,9 @@ class Visitor(object):
 
         # in case the value value is a sequence it must be
         # "serializable" using the serialization of sequences
-        # "mechanism"
-        if value_type in SEQUENCE_TYPES: return self._serialize_sequence(value)
+        # "mechanism" (the proper way of presenting the value)
+        if value_type in SEQUENCE_TYPES:
+            return self._serialize_sequence(value)
 
     def _serialize_sequence(self, value):
         # retrieves the data type for the given value
@@ -1614,13 +1615,16 @@ class EvalVisitor(Visitor):
         is_callable = hasattr(value, "__call__")
         if is_callable: value = value()
 
-        # iterates over the complete set of filter definition to
-        # resolve the final value according to the filter and then
-        # runs the final step of locale value resolution (auto locale)
-        for filter in filters: value = self.resolve_many(
-            filter, value, global_map = self.filters
-        )
+        # resolves the current "variable" value, trying to
+        # localize it using the current locale bundles only
+        # do this in case the localize flag is set
         value = self._resolve_locale(value) if localize else value
+
+        # iterates over the complete set of filter definition to
+        # resolve the final value according to the filters
+        for filter in filters: value = self.resolve_many(
+            filter, value, self, global_map = self.filters
+        )
 
         # returns the final value according to the eval based value
         # retrieval that uses the python interpreter for evaluation
