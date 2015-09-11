@@ -71,7 +71,7 @@ CHUNK_SIZE = 4096
 MINIMUM_BAUD_RATE = 51200
 """ The minimum baud rate to be used in communications """
 
-END_TOKEN_VALUE = "\r\n"
+END_TOKEN_VALUE = b"\r\n"
 """ The end token value """
 
 AUTHENTICATION_METHOD_VALUE = "authentication_method"
@@ -109,10 +109,12 @@ class SmtpClient(object):
     """
 
     client_smtp = None
-    """ The client smtp object """
+    """ The client smtp object, considered to be
+    the refernece to the parent object """
 
     client_connection = None
-    """ The current client connection """
+    """ The current client connection as a connection
+    object that encapsulate the underlying (socket) logic """
 
     _smtp_client = None
     """ The smtp client object used to provide connections """
@@ -182,10 +184,9 @@ class SmtpClient(object):
             # creates the session object
             session = SmtpSession()
 
-            # runs the initial login
+            # runs the initial login process and
+            # then runs the initial ehlo command
             self.login(session, parameters)
-
-            # runs the ehlo command
             self.ehlo(session, parameters)
 
             # retrieves the use tls flag
@@ -193,19 +194,17 @@ class SmtpClient(object):
 
             # in case the tls flag is active
             if tls:
-                # tries to start tls
+                # tries to start tls and then runs the
+                # ehlo command (again, because of tls)
                 self.starttls(session, parameters)
-
-                # runs the ehlo command (again, because of tls)
                 self.ehlo(session, parameters)
 
             # retrieves the verify user flag
             verify_user = parameters.get("verify_user", False)
 
-            # in case the verify user flag is active
-            if verify_user:
-                # runs the vrfy command
-                self.vrfy(session, parameters)
+            # in case the verify user flag is active, must
+            # run the proper vrfy comment (as expected)
+            if verify_user: self.vrfy(session, parameters)
 
             # tries to retrieve the username from the parameters
             username = parameters.get("username", "")
@@ -368,18 +367,17 @@ class SmtpClient(object):
                 comparison_character = message_value[base_value + 3]
 
                 # in case the comparison character is a dash (not the final line)
-                if comparison_character == "-":
+                if comparison_character == b"-":
                     continue
-                elif not comparison_character == " ":
+                elif not comparison_character == b" ":
                     raise exceptions.SmtpInvalidDataException("invalid comparison character")
 
-                # retrieves the smtp message
+                # retrieves the smtp message, by extracting the content
+                # until the end token value and then splits the message
+                # contents by each of the lines and retrieves the size
+                # of such lines list (going to be used as reference)
                 smtp_message = message_value[:end_token_index]
-
-                # splits the smtp message in lines
-                smtp_message_lines = smtp_message.split("\r\n")
-
-                # retrieves the number of smtp message lines
+                smtp_message_lines = smtp_message.split(b"\r\n")
                 smtp_message_lines_length = len(smtp_message_lines)
 
                 # starts the index counter
@@ -390,7 +388,7 @@ class SmtpClient(object):
                     # in case it's the last line
                     if index == smtp_message_lines_length:
                         # splits the smtp message line
-                        smtp_message_line_splitted = smtp_message_line.split(" ", 1)
+                        smtp_message_line_splitted = smtp_message_line.split(b" ", 1)
 
                         # retrieves the smtp code
                         smtp_code = int(smtp_message_line_splitted[0])
@@ -410,7 +408,7 @@ class SmtpClient(object):
                     # in case it's not the last line
                     else:
                         # splits the smtp message line
-                        smtp_message_line_splitted = smtp_message_line.split("-", 1)
+                        smtp_message_line_splitted = smtp_message_line.split(b"-", 1)
 
                         # retrieves the smtp message
                         smtp_message = smtp_message_line_splitted[1]
