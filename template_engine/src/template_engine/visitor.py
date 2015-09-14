@@ -154,7 +154,9 @@ FILTERS = dict(
     default = lambda v, t, default = "", boolean = False:\
         default if boolean and not v or v == None else v,
     double = lambda v, t: v if v == None else v * 2,
-    format = lambda v, t, format: v if v == None else format % v
+    format = lambda v, t, format: v if v == None else format % v,
+    timestamp = lambda v, t, default = "":\
+        str(calendar.timegm(v.utctimetuple())) if v else default
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
