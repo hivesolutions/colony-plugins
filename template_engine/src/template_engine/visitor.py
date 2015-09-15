@@ -163,6 +163,14 @@ FILTERS = dict(
 of base filters to be exposed to the visitor,
 this dictionary may be extended at runtime """
 
+EXTRAS = dict(
+    date = lambda format = "%d/%m/%y":\
+        datetime.datetime.now().strftime(format)
+)
+""" Dictionary that contains the set of symbols
+that are going to extend the base ones (builtins)
+in the process of name resolution """
+
 class Visitor(object):
     """
     The visitor class for the template engine. This is the abstract
@@ -255,6 +263,7 @@ class Visitor(object):
         self.process_methods_list = []
         self.locale_bundles = []
         self.filters = dict(FILTERS)
+        self.extras = dict(EXTRAS)
 
         self.update_node_method_map()
 
@@ -1082,6 +1091,7 @@ class Visitor(object):
             builtins = value.get("__builtins__", dict())
             if name in value: result = value[name]
             elif name in builtins: result = builtins[name]
+            elif name in self.extras: result = self.extras[name]
             else: raise exceptions.UndefinedVariable("variable is not defined: " + name)
 
         # otherwise variable is of type object or other, then the more complex
