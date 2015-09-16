@@ -258,13 +258,16 @@ class Visitor(object):
         self.owner = owner
         self.node_method_map = {}
         self.visit_childs = True
-        self.global_map = dict(__builtins__ = BUILTINS)
+        self.global_map = dict()
         self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
         self.filters = dict(FILTERS)
         self.extras = dict(EXTRAS)
+        self.builtins = dict(BUILTINS)
+        self.builtins.update(EXTRAS)
 
+        self.global_map["__builtins__"] = self.builtins
         self.update_node_method_map()
 
     def update_node_method_map(self):
@@ -1091,7 +1094,6 @@ class Visitor(object):
             builtins = value.get("__builtins__", dict())
             if name in value: result = value[name]
             elif name in builtins: result = builtins[name]
-            elif name in self.extras: result = self.extras[name]
             else: raise exceptions.UndefinedVariable("variable is not defined: " + name)
 
         # otherwise variable is of type object or other, then the more complex
@@ -1616,7 +1618,7 @@ class EvalVisitor(Visitor):
         # name literal value in the current python context, the resulting
         # value is nullified in case there's an exception in the evaluation
         globals = util.accessor(self.global_map)
-        globals["__builtins__"] = BUILTINS
+        globals["__builtins__"] = self.builtins
         try: value = eval(name, globals, globals)
         except AttributeError: value = None
         except NameError: value = None
