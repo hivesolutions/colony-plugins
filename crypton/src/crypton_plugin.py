@@ -69,7 +69,7 @@ class CryptonPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import crypton
         self.system = crypton.Crypton(self)
-
+ 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
         self.system.load_components()
