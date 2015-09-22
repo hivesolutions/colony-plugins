@@ -6,11 +6,12 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
-  - "3.5-dev"
+  - "3.5"
+  - "nightly"
   - "pypy"
   - "pypy3"
 install:
   - pip install -r requirements.txt
   - pip install coveralls
-script: PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test
+script: script: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test; else PLUGIN_PATH="./*/src;./*/*src" python setup.py test; fi
 after_success: coveralls
