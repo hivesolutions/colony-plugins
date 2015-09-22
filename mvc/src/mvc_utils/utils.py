@@ -265,7 +265,7 @@ def transaction(
         # it to verify if the yield argument is part of
         # it and sets the flag that controls such existence
         # in accordance with the existence of it
-        function_spec = inspect.getargspec(function)
+        function_spec = colony.legacy.getargspec(function)
         function_args = function_spec.args
         if "_yield" in function_args: is_yield = True
         else: is_yield = False
@@ -397,7 +397,7 @@ def eager(function, *args, **kwargs):
     # it to verify if the yield argument is part of
     # it and sets the flag that controls such existence
     # in accordance with the existence of it
-    function_spec = inspect.getargspec(function)
+    function_spec = colony.legacy.getargspec(function)
     function_args = function_spec.args
     if "_yield" in function_args: is_yield = True
     else: is_yield = False
