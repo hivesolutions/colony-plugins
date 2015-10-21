@@ -159,4 +159,4 @@ class DatagramSocket(colony.System):
 
         # sets the membership for the multicasting paradigm
         base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network)
-        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network);
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network)

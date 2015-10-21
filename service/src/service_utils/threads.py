@@ -87,7 +87,7 @@ class ServiceAcceptingThread(threading.Thread):
         while True:
             # in case the stop flag is set must break
             # the loop immediately
-            if self.stop_flag: break;
+            if self.stop_flag: break
 
             # acquires the service tuple queue condition
             self.service_tuple_queue_condition.acquire()
@@ -101,7 +101,7 @@ class ServiceAcceptingThread(threading.Thread):
 
                 # in case the stop flag is set must break
                 # the loop immediately
-                if self.stop_flag: break;
+                if self.stop_flag: break
 
                 # pops the top service tuple to be used in the accepting
                 # process inserting it into the connection pool

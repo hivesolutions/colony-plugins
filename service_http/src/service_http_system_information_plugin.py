@@ -70,7 +70,7 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_system_information
-        self.system = service_http_system_information.ServiceHttpSystemInformation(self);
+        self.system = service_http_system_information.ServiceHttpSystemInformation(self)
 
     def get_handler_name(self):
         """
