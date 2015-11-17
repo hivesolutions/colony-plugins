@@ -263,7 +263,8 @@ class SslStructure:
         # creates the list
         string_value_list = []
 
-        # iterates continuously
+        # iterates continuously, in order to properly split
+        # the (long) key into multiple lines
         while True:
             # in case the base index is greater or equal
             # to the private key der encoded length must
