@@ -4620,7 +4620,7 @@ class EntityClass(object):
         # attribute is not going to be "lazy loaded" again)
         return attribute
 
-    def _load_lazy_attr(self, name):
+    def _load_lazy_attr(self, name, force = False):
         """
         Loads a lazy loaded base attribute, this will be used in
         entities that have been loaded using polymorphism and for
@@ -4629,12 +4629,20 @@ class EntityClass(object):
         Loading the attribute will trigger a concrete loading of
         the entity values and all of them will be updated.
 
+        An optional flag may be used to force the setting of already
+        defined/set attributes (from the upper layers in hierarchy).
+
         This method accesses the data source so it's considered
         to be an "expensive" operation.
 
         @type name: String
         @param name: The name of the attribute to be used as reference
         in the loading of the concrete class (lazy load).
+        @type force: bool
+        @param force: If the setting of attributes should be forced
+        meaning that attributes that are already set in the entity
+        may be overriden by new values from data source, this is
+        valid for the upper layers of the class hierarchy.
         @rtype: Object
         @return: The value for the attribute that triggered the concrete
         load of the class (lazy load).
@@ -4682,11 +4690,13 @@ class EntityClass(object):
             # in case the current name in iteration is
             # not present in the (new) entity no need to
             # retrieve it and set it in the entity
-            if not _entity.has_value(name):
-                # continues the loop the name is not present
-                # in the (new) entity it's impossible to update
-                # it in the entity
-                continue
+            if not _entity.has_value(name): continue
+
+            # in case the value is already set in the base
+            # no duplicate setting should occur (would possibly
+            # revert changed to entity), note that in case the
+            # force flag is set the value is set the same way
+            if self.has_value(name) and not force: continue
 
             # retrieves the value for the current
             # name in the (new) entity and sets it in
