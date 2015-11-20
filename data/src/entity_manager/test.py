@@ -938,9 +938,58 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         pass
 
     def test_polymorphism(self):
-        # should test the polymorphic part
-        # of the entity manager
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates a person entity with it's default attributes and
+        # saves it into the data source
+        person = mocks.Person()
+        person.object_id = 1
+        person.status = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # verifies that the data remains unchanged after
+        # the saving (persistence)
+        self.assertEqual(person.object_id, 1)
+        self.assertEqual(person.status, 1)
+        self.assertEqual(person.name, "name_person")
+
+        # retrieves the person using a polymorphic query so
+        # that only the root entity fields are populated and
+        # then verifies that the result is valid/set
+        saved_person = self.entity_manager.get(mocks.RootEntity, 1)
+        self.assertNotEqual(saved_person, None)
+
+        # detaches the person from the data source and verifies
+        # that the root entity level fields are set but the person
+        # level ones are not (polymorphic query)
+        saved_person.detach()
+        self.assertEqual(saved_person.object_id, 1)
+        self.assertEqual(saved_person.status, 1)
+        self.assertEqual(saved_person.name, None)
+
+        # attaches the person back to the data source (enabling lazy
+        # attribute evaluation) and verifies that the person level
+        # attributes are now accessible and that the top level ones
+        # (root entity) remain the same after lazy attribute evaluation
+        saved_person.attach()
+        saved_person.status = 2
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertEqual(saved_person.status, 2)
+
+        # runs the original test one more time be using the root entity
+        # level of retrieval and then forces the loading of the lazy
+        # attribute (should populate also upper layers) and verifies
+        # that the status value is returned to the original value because
+        # of the forced loading of the upper layer attributes
+        saved_person = self.entity_manager.get(mocks.RootEntity, 1)
+        self.assertNotEqual(saved_person, None)
+        saved_person.status = 2
+        saved_person._load_lazy_attr("name", force = True)
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertEqual(saved_person.status, 1)
 
     def test_map(self):
         # tests that the map feature of the options
@@ -1305,60 +1354,6 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # is the parent
         valid_relation = self.entity_manager.validate_relation(person, "parent")
         self.assertEqual(valid_relation, True)
-
-    def test_lazy_attribute(self):
-        # creates the required entity classes in the data source
-        self.entity_manager.create(mocks.Person)
-        self.entity_manager.create(mocks.Dog)
-
-        # creates a person entity with it's default attributes and
-        # saves it into the data source
-        person = mocks.Person()
-        person.object_id = 1
-        person.status = 1
-        person.name = "name_person"
-        self.entity_manager.save(person)
-
-        # verifies that the data remains unchanged after
-        # the saving (persistence)
-        self.assertEqual(person.object_id, 1)
-        self.assertEqual(person.status, 1)
-        self.assertEqual(person.name, "name_person")
-
-        # retrieves the person using a polymorphic query so
-        # that only the root entity fields are populated and
-        # then verifies that the result is valid/set
-        saved_person = self.entity_manager.get(mocks.RootEntity, 1)
-        self.assertNotEqual(saved_person, None)
-
-        # detaches the person from the data source and verifies
-        # that the root entity level fields are set but the person
-        # level ones are not (polymorphic query)
-        saved_person.detach()
-        self.assertEqual(saved_person.object_id, 1)
-        self.assertEqual(saved_person.status, 1)
-        self.assertEqual(saved_person.name, None)
-
-        # attaches the person back to the data source (enabling lazy
-        # attribute evaluation) and verifies that the person level
-        # attributes are now accessible and that the top level ones
-        # (root entity) remain the same after lazy attribute evaluation
-        saved_person.attach()
-        saved_person.status = 2
-        self.assertEqual(saved_person.name, "name_person")
-        self.assertEqual(saved_person.status, 2)
-
-        # runs the original test one more time be using the root entity
-        # level of retrieval and then forces the loading of the lazy
-        # attribute (should populate also upper layers) and verifies
-        # that the status value is returned to the original value because
-        # of the forced loading of the upper layer attributes
-        saved_person = self.entity_manager.get(mocks.RootEntity, 1)
-        self.assertNotEqual(saved_person, None)
-        saved_person.status = 2
-        saved_person._load_lazy_attr("name", force = True)
-        self.assertEqual(saved_person.name, "name_person")
-        self.assertEqual(saved_person.status, 1)
 
     def test_abstract(self):
         # creates the required entity classes in the data source
