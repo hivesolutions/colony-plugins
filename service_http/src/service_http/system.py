@@ -1835,9 +1835,12 @@ class HttpClientServiceHandler:
 
     def _process_redirection(self, request, service_configuration):
         """
-        Processes the redirection stage of the http request.
+        Processes the redirection stage of the http request, this
+        step may be considered computer intensive.
+
         Processing redirection implies matching the path against the
-        rules.
+        rules, and then changing the "target" path in accordance
+        with matched rule.
 
         @type request: HttpRequest
         @param request: The request to be processed.
@@ -1848,64 +1851,72 @@ class HttpClientServiceHandler:
         # retrieves the service configuration redirections
         service_configuration_redirections = service_configuration.get("redirections", {})
 
-        # retrieves the service configuration redirections resolution order
-        service_configuration_redirections_resolution_order = service_configuration_redirections.get(
+        # retrieves the service configuration redirections order
+        service_configuration_redirections_order = service_configuration_redirections.get(
             RESOLUTION_ORDER_VALUE,
             colony.legacy.iterkeys(service_configuration_redirections)
         )
 
-        # (saves) the old path as the base path
-        request.set_base_path(request.path)
+        # (saves) the old/original path as the base path, this is going
+        # to be used in case no rule is matched at this stage
+        request.set_base_path(request.original_path)
 
-        # unsets the request handler base path
+        # unsets the request handler base path, as by default no specific
+        # handler is defined for the request until one is found
         request.handler_base_path = None
 
+        # sets the initial (current) path value to be used at the beginning
+        # of the redirection (possibly recursive) cycle
+        current_path = request.original_path
+
         # iterates over the service configuration redirection names
-        for service_configuration_redirection_name in service_configuration_redirections_resolution_order:
-            # in case the path is found in the request path
-            if request.path.find(service_configuration_redirection_name) == 0:
-                # sets the handler base path
-                request.handler_base_path = service_configuration_redirection_name
+        for service_configuration_redirection_name in service_configuration_redirections_order:
+            # in case the path is not found in the request path, skips
+            # the current iteration, as there's nothing to be done
+            if not current_path.find(service_configuration_redirection_name) == 0: continue
 
-                # retrieves the service configuration redirection
-                service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
+            # sets the handler base path as the service configuration
+            # redirection name and then retrieve the proper service
+            # configuration redirection specification
+            request.handler_base_path = service_configuration_redirection_name
+            service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
 
-                # retrieves the target path and the recursive redirection
-                # flag value for context resolution
-                target_path = service_configuration_redirection.get("target", service_configuration_redirection_name)
-                recursive_redirection = service_configuration_redirection.get("recursive_redirection", False)
+            # retrieves the target path and the recursive redirection
+            # flag value for context resolution
+            target_path = service_configuration_redirection.get("target", service_configuration_redirection_name)
+            recursive_redirection = service_configuration_redirection.get("recursive_redirection", False)
 
-                # retrieves the sub request path as the request from the redirection name path
-                # in front
-                sub_request_path = request.path[len(service_configuration_redirection_name):]
+            # retrieves the sub request path as the request from the redirection name path
+            # in front, so that only the remainder after the prefix is retrieved
+            sub_request_path = current_path[len(service_configuration_redirection_name):]
 
-                # in case the recursive redirection is disabled and there is a subdirectory
-                # in the sub request path
-                if not recursive_redirection and not sub_request_path.find("/") == -1:
-                    # breaks the loop because the request is not meant to be recursively redirected
-                    # and it contains a sub-directory
-                    break
-
-                # retrieves the new (redirected) path in the request
-                # strips both parts of the path to avoid problems with duplicated slashes
-                request_path = target_path.rstrip("/") + "/" + sub_request_path.lstrip("/")
-
-                # sets the new path in the request, avoids the overriding
-                # of the original path by unsetting the flag
-                request.set_path(request_path, set_original_path = False)
-
-                # sets the redirect configuration in the request as the current
-                # service configuration (still pending redirect confirmation, it
-                # will be confirmed in the process redirection)
-                request.redirect_configuration = service_configuration_redirection
-
-                # sets the redirection validation flag and the the
-                # redirected flag in the request
-                request.redirection_validation = True
-                request.redirected = True
-
-                # breaks the loop
+            # in case the recursive redirection is disabled and there is a sub-directory
+            # in the sub request path
+            if not recursive_redirection and not sub_request_path.find("/") == -1:
+                # breaks the loop because the request is not meant to be recursively redirected
+                # and it contains a sub-directory
                 break
+
+            # retrieves the new (redirected) path in the request by stripping
+            # both parts of the path to avoid problems with duplicated slashes
+            current_path = target_path.rstrip("/") + "/" + sub_request_path.lstrip("/")
+
+            # sets the new path in the request, avoids the overriding
+            # of the original path by unsetting the flag
+            request.set_path(current_path, set_original_path = False)
+
+            # sets the redirect configuration in the request as the current
+            # service configuration (still pending redirect confirmation, it
+            # will be confirmed in the process redirection)
+            request.redirect_configuration = service_configuration_redirection
+
+            # sets the redirection validation flag and the the
+            # redirected flag in the request
+            request.redirection_validation = True
+            request.redirected = True
+
+            # breaks the loop
+            break
 
     def _process_domain(self, request, service_connection, service_configuration):
         """
@@ -3226,12 +3237,15 @@ class HttpRequest(object):
         # without unquoting (in case the flag is set)
         if set_original_path: self.original_path = path
 
-        # "unquotes" the path value
-        path = colony.unquote(path)
-
-        # retrieves the resource path of the path
+        # retrieves the resource path of the path, by
+        # splitting the path around the separator
         resource_path = path.split("?")[0]
 
+        # "unquotes", both the global path value and
+        # the resource path one, and then sets a series
+        # of values in the current request
+        path = colony.unquote(path)
+        resource_path = colony.unquote(resource_path)
         self.path = path
         self.resource_path = resource_path
         self.filename = resource_path
@@ -3240,19 +3254,25 @@ class HttpRequest(object):
     def set_base_path(self, base_path):
         """
         Sets the base path in the request.
-        The base paths is set by processing it, creating
+        The base path is set by processing it, creating
         the resources path.
 
         @type path: String
-        @param path: The base path to be set in the request.
+        @param path: The base path to be set in the request,
+        this string should be already unquoted.
         """
 
-        # "unquotes" the base path value
-        base_path = colony.unquote(base_path)
-
-        # retrieves the resource path of the base path
+        # retrieves the resource base path value by splitting
+        # the path around the split token/indicator
         resource_base_path = base_path.split("?")[0]
 
+        # "unquotes" both the base path and the resource
+        # path values into their original utf-8 values
+        base_path = colony.unquote(base_path)
+        resource_base_path = colony.unquote(resource_base_path)
+
+        # sets both the base path and the resource base
+        # path values into the request
         self.base_path = base_path
         self.resource_base_path = resource_base_path
 
