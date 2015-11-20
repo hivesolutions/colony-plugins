@@ -940,7 +940,6 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
     def test_polymorphism(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.Person)
-        self.entity_manager.create(mocks.Dog)
 
         # creates a person entity with it's default attributes and
         # saves it into the data source
