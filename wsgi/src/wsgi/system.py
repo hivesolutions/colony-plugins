@@ -78,7 +78,14 @@ class Wsgi(colony.System):
     @see: http://www.python.org/dev/peps/pep-0333/
     """
 
-    def handle(self, environ, start_response, prefix = None, alias = None):
+    def handle(
+        self,
+        environ,
+        start_response,
+        prefix = None,
+        alias = None,
+        removal = None
+    ):
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
         plugin_manager = self.plugin.manager
@@ -106,7 +113,13 @@ class Wsgi(colony.System):
         # the default request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WsgiRequest(self, environ, prefix = prefix, alias = alias)
+        request = WsgiRequest(
+            self,
+            environ,
+            prefix = prefix,
+            alias = alias,
+            removal = removal
+        )
         try: rest_plugin.handle_request(request); request.finish()
         except BaseException as exception:
             has_code = hasattr(exception, "status_code")
@@ -348,7 +361,8 @@ class WsgiRequest(object):
         environ,
         content_type_charset = DEFAULT_CHARSET,
         prefix = None,
-        alias = None
+        alias = None,
+        removal = None
     ):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
@@ -382,6 +396,11 @@ class WsgiRequest(object):
         # the script name (routing base value) to the path info, this
         # value may be used internally as the original (path) value
         path_info_o = script_name + path_info if script_name else path_info
+
+        # runs the shorten operation on the original so that the stored
+        # value may be shorter than the original allowing proper absolute
+        # resolution even under complex proxy based configurations
+        path_info_o = self._shorten_path(path_info_o, removal)
 
         # sets the various default request values using the "calculated"
         # wsgi based values as reference
@@ -960,6 +979,46 @@ class WsgiRequest(object):
 
         # returns the "new" path info string object resulting from the
         # correct resolution of it's prefix value
+        return path_info
+
+    def _shorten_path(self, path_info, removal):
+        """
+        Shortens the provided path info value by removing any prefix
+        that is defined under the provided removal list.
+
+        The prefix is then replaced by the associated tuple value.
+
+        This operation is especially useful for scenarios of proxy
+        based configurations where the front-end server root path
+        points to a sub-path on the back-end server.
+
+        @type path_info: String
+        @param path_info: The path information string containing the
+        path to be shortened using the removal list.
+        @type removal: List
+        @param removal: The list containing prefix to target value
+        association to be used in the shortening operations.
+        @rtype: String
+        @return: The shortened path string resulting from the shortening
+        of the path info string according to the provided list.
+        """
+
+        # in case the provided list of removal tuples is not valid or
+        # is empty the path info is returned with no changes applied
+        if not removal: return path_info
+
+        # iterates over the complete set of removal tuples and verifies
+        # if the current path info value start with the prefix and if
+        # that the case removed such prefix from the path and prepends
+        # the requested suffix instead
+        for key, value in removal:
+            if not path_info.startswith(key): continue
+            key_l = len(key)
+            path_info = value + path_info[key_l:]
+            break
+
+        # returns the "final" path info string value with the proper
+        # shortening operation applied (reduced value)
         return path_info
 
     def _parse_multipart_part(self, start_index, end_index):
