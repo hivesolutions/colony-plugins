@@ -381,7 +381,7 @@ class WsgiRequest(object):
         # creates the complete "original" path info value by adding
         # the script name (routing base value) to the path info, this
         # value may be used internally as the original (path) value
-        path_info_o = script_name and script_name + path_info or path_info
+        path_info_o = script_name + path_info if script_name else path_info
 
         # sets the various default request values using the "calculated"
         # wsgi based values as reference
@@ -389,8 +389,8 @@ class WsgiRequest(object):
         self.content_type_charset = content_type_charset
         self.operation_type = request_method
         self.uri = path_info_r
-        self.path = query_string and path_info_r + "?" + query_string or path_info_r
-        self.original_path = query_string and path_info_o + "?" + query_string or path_info_o
+        self.path = path_info_r + "?" + query_string if query_string else path_info_r
+        self.original_path = path_info_o + "?" + query_string if query_string else path_info_o
 
         # starts the map that will hold the various attributes
         # resulting from the parsing of the request
