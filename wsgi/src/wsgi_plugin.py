@@ -70,5 +70,5 @@ class WsgiPlugin(colony.Plugin):
         import wsgi
         self.system = wsgi.Wsgi(self)
 
-    def handle(self, environ, start_response, prefix, alias, removal):
-        return self.system.handle(environ, start_response, prefix, alias, removal)
+    def handle(self, environ, start_response, prefix, alias, rewrite):
+        return self.system.handle(environ, start_response, prefix, alias, rewrite)

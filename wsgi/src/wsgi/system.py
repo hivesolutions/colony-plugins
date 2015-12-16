@@ -84,7 +84,7 @@ class Wsgi(colony.System):
         start_response,
         prefix = None,
         alias = None,
-        removal = None
+        rewrite = None
     ):
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
@@ -118,7 +118,7 @@ class Wsgi(colony.System):
             environ,
             prefix = prefix,
             alias = alias,
-            removal = removal
+            rewrite = rewrite
         )
         try: rest_plugin.handle_request(request); request.finish()
         except BaseException as exception:
@@ -362,7 +362,7 @@ class WsgiRequest(object):
         content_type_charset = DEFAULT_CHARSET,
         prefix = None,
         alias = None,
-        removal = None
+        rewrite = None
     ):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
@@ -400,7 +400,7 @@ class WsgiRequest(object):
         # runs the shorten operation on the original so that the stored
         # value may be shorter than the original allowing proper absolute
         # resolution even under complex proxy based configurations
-        path_info_o = self._shorten_path(path_info_o, removal)
+        path_info_o = self._shorten_path(path_info_o, rewrite)
 
         # sets the various default request values using the "calculated"
         # wsgi based values as reference
@@ -981,10 +981,10 @@ class WsgiRequest(object):
         # correct resolution of it's prefix value
         return path_info
 
-    def _shorten_path(self, path_info, removal):
+    def _shorten_path(self, path_info, rewrite):
         """
         Shortens the provided path info value by removing any prefix
-        that is defined under the provided removal list.
+        that is defined under the provided rewrite list.
 
         The prefix is then replaced by the associated tuple value.
 
@@ -994,24 +994,24 @@ class WsgiRequest(object):
 
         @type path_info: String
         @param path_info: The path information string containing the
-        path to be shortened using the removal list.
-        @type removal: List
-        @param removal: The list containing prefix to target value
+        path to be shortened using the rewrite list.
+        @type rewrite: List
+        @param rewrite: The list containing prefix to target value
         association to be used in the shortening operations.
         @rtype: String
         @return: The shortened path string resulting from the shortening
         of the path info string according to the provided list.
         """
 
-        # in case the provided list of removal tuples is not valid or
+        # in case the provided list of rewrite tuples is not valid or
         # is empty the path info is returned with no changes applied
-        if not removal: return path_info
+        if not rewrite: return path_info
 
-        # iterates over the complete set of removal tuples and verifies
+        # iterates over the complete set of rewrite tuples and verifies
         # if the current path info value start with the prefix and if
         # that the case removed such prefix from the path and prepends
         # the requested suffix instead
-        for key, value in removal:
+        for key, value in rewrite:
             if not path_info.startswith(key): continue
             key_l = len(key)
             path_info = value + path_info[key_l:]
