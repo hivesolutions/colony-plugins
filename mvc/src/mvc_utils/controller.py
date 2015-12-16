@@ -860,7 +860,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     # retrieves the base path for the current request
     # so that the complete path may be constructor, keep
     # in mind that the generated location is always a
-    # relative one a never an absolute url
+    # relative one and never an absolute url
     base_path = self.get_base_path(request)
     mvc_path = self.get_mvc_path(request)
     location = ""
@@ -4435,14 +4435,19 @@ def _get_host(self, request, prefix_path = None):
 
 def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
     """
-    Retrieves the complete host path to the current request.
+    Retrieves the complete/absolute host path to the current request.
+
+    This should be an absolute url mean to be used in situations
+    where no context is defined for the request.
 
     @type request: Request
     @param request: The request to be used.
     @type suffix_path: String
-    @param suffix_path: The suffix path to be appended.
+    @param suffix_path: The suffix path to be appended to the
+    resolved url (extra relative value).
     @type prefix_path: String
-    @param prefix_path: The prefix path to be prepended.
+    @param prefix_path: The prefix path to be prepended, this
+    should defined the protocol for most of cases.
     @rtype: String
     @return: The complete host path to the current request.
     """
@@ -4454,17 +4459,21 @@ def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VA
     # http information exception
     if not host: raise exceptions.InsufficientHttpInformation("no host value defined")
 
-    # retrieves the path
+    # retrieves the path for the current request and then removes
+    # the query part from it (obtains only the path part)
     path = self._get_path(request)
-
-    # removes the arguments part of the path
     path = path.split("?")[0]
 
-    # creates the host path with the prefix path the host the first part
-    # of the host split and the suffix path
-    host_path = prefix_path + host + path.rsplit("/", 1)[0] + suffix_path
+    # creates the base url value to be used in case no global
+    # wide value has been defined or selected, the value to be
+    # created is a generic/deducted one and may create issues
+    base_url = colony.conf("BASE_URL", None)
+    if base_url: base_url += "/"
+    else: base_url = prefix_path + host + path.rsplit("/", 1)[0]
 
-    # returns the host path
+    # creates the (final) host path from the resolved base url
+    # and the provided suffix value to be appended
+    host_path = base_url + suffix_path
     return host_path
 
 def _range_d(self, request, default):
