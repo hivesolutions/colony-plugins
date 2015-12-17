@@ -223,7 +223,7 @@ class ModelValidationError(ValidationError):
         """
 
         validation_s = self.get_validation_s()
-        return "Model validation error - (%s) - %s (%s)" %\
+        return "Model validation error - (%s) %s (%s)" %\
             (self.model, self.message, validation_s)
 
     def get_validation_s(self):
