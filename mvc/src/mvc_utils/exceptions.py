@@ -190,11 +190,15 @@ class ValidationError(MvcUtilsExceptionException):
 
 class ModelValidationError(ValidationError):
     """
-    The model validation error class.
+    The model validation error class, used to indicate that
+    one or more validation rules have failed for the currently
+    defined model state.
     """
 
     model = None
-    """ The model that failed the validation """
+    """ The model that failed the validation, this may be used
+    latter to be able to display the data of the model that has
+    failed proper model validation """
 
     def __init__(self, message, model = None):
         """
@@ -219,7 +223,8 @@ class ModelValidationError(ValidationError):
         """
 
         validation_s = self.get_validation_s()
-        return "Model validation error - %s (%s)" % (self.message, validation_s)
+        return "Model validation error (%s) - %s (%s)" %\
+            (self.model, self.message, validation_s)
 
     def get_validation_s(self):
         """
