@@ -986,7 +986,8 @@ class WsgiRequest(object):
         Shortens the provided path info value by removing any prefix
         that is defined under the provided rewrite list.
 
-        The prefix is then replaced by the associated tuple value.
+        The prefix is then replaced by the associated tuple item
+        value, considered to be the original prefix.
 
         This operation is especially useful for scenarios of proxy
         based configurations where the front-end server root path
