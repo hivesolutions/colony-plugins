@@ -1051,9 +1051,9 @@ class WsgiRequest(object):
             # finds the header separator
             division_index = header_splitted.find(":")
 
-            # retrieves the header name and vaude from the
+            # retrieves the header name and value from the
             # splitted value and then sets both of them in
-            # the headers map
+            # the headers map (as expected by specification)
             header_name = header_splitted[:division_index].strip()
             header_value = header_splitted[division_index + 1:].strip()
             headers_map[header_name] = header_value
