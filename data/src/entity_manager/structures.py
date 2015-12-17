@@ -4255,8 +4255,7 @@ class EntityClass(object):
         # possible security problems)
         raise exceptions.ValidationError(
             "invalid name '%s', attribute does not exist in '%s'" %
-            (name, cls.__name__),
-            context = self
+            (name, cls.__name__)
         )
 
     @classmethod
@@ -4312,8 +4311,7 @@ class EntityClass(object):
         if strict and value_type in warn_types:
             raise exceptions.ValidationError(
                 "data type '%s' is not perfect for '%s' in '%s'" %\
-                (value_type, name, cls.__name__),
-                context = self
+                (value_type, name, cls.__name__)
             )
 
         # checks if the current value is not set (considered
@@ -4331,8 +4329,7 @@ class EntityClass(object):
         # possible security problems)
         raise exceptions.ValidationError(
             "invalid value for name '%s' in '%s', expected '%s' got base '%s'" %
-            (name, cls.__name__, attribute_data_type, value_type),
-            context = self
+            (name, cls.__name__, attribute_data_type, value_type)
         )
 
     @classmethod
@@ -4365,8 +4362,7 @@ class EntityClass(object):
         # the request name is not correctly set in the current entity
         raise exceptions.ValidationError(
             "name '%s' unset for attribute of type '%s', expected attribute set" %
-            (name, cls.__name__),
-            context = self
+            (name, cls.__name__)
         )
 
     @classmethod
@@ -4404,8 +4400,7 @@ class EntityClass(object):
         # the request name is not a valid sequence in the current entity
         raise exceptions.ValidationError(
             "name '%s' is not a valid sequence for attribute of type '%s'" %\
-            (name, cls.__name__),
-            context = self
+            (name, cls.__name__)
         )
 
     @classmethod
@@ -4448,8 +4443,7 @@ class EntityClass(object):
         if target_is_reference: target_class = entity_manager.get_entity(target_class.__name__)
         if not target_class: raise exceptions.RelationValidationError(
             "not possible to find referenced class '%s' for relation '%s'" %\
-            (target_class.__name__, name),
-            context = self
+            (target_class.__name__, name)
         )
 
         # in case the class of the relation value is compatible
@@ -4462,8 +4456,7 @@ class EntityClass(object):
         # of it (assertion error)
         raise exceptions.RelationValidationError(
             "invalid class for relation '%s', expected '%s' got '%s'" %\
-            (name, target_class.__name__, value.__class__.__name__),
-            context = self
+            (name, target_class.__name__, value.__class__.__name__)
         )
 
     @classmethod
