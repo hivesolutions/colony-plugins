@@ -130,16 +130,25 @@ class ValidationError(EntityManagerException):
     The entity manager validation error class.
     """
 
-    def __init__(self, message):
+    context = None
+    """ The context in which the validation issue has been
+    generated, provides extra debug support """
+
+    def __init__(self, message, context = None):
         """
         Constructor of the class.
 
         @type message: String
         @param message: The message to be printed.
+        @type context: Object
+        @param context: The context (object) for the validation
+        issue, this will provide extra information for debug
+        purposes allowing for fast context
         """
 
         EntityManagerException.__init__(self)
         self.message = message
+        self.context = context
 
     def __str__(self):
         """
@@ -149,24 +158,18 @@ class ValidationError(EntityManagerException):
         @return: The string representation of the class.
         """
 
-        return "Validation error - %s" % self.message
+        return "Validation error - %s" % self._get_message()
+
+    def _get_message(self):
+        if not self.message: return self.message
+        if not self.context: return self.message
+        return "(%s) - %s" (self.context, self.message)
 
 class RelationValidationError(ValidationError):
     """
     The entity manager relation validation error class.
     """
 
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        EntityManagerException.__init__(self)
-        self.message = message
-
     def __str__(self):
         """
         Returns the string representation of the class.
@@ -175,24 +178,13 @@ class RelationValidationError(ValidationError):
         @return: The string representation of the class.
         """
 
-        return "Relation validation error - %s" % self.message
+        return "Relation validation error - %s" % self._get_message()
 
 class InvalidSerializerError(ValidationError):
     """
     The invalid serializer error class.
     """
 
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        EntityManagerException.__init__(self)
-        self.message = message
-
     def __str__(self):
         """
         Returns the string representation of the class.
@@ -201,4 +193,4 @@ class InvalidSerializerError(ValidationError):
         @return: The string representation of the class.
         """
 
-        return "Invalid serializer error - %s" % self.message
+        return "Invalid serializer error - %s" % self._get_message()

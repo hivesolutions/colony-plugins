@@ -3460,7 +3460,8 @@ class EntityClass(object):
             # mandatory field
             raise exceptions.ValidationError(
                 "missing mandatory field '%s', for entity '%s'" %
-                (key, entity_class.__name__)
+                (key, entity_class.__name__),
+                context = self
             )
 
     def validate_mandatory_u(self):
@@ -3490,7 +3491,8 @@ class EntityClass(object):
             # mandatory field
             raise exceptions.ValidationError(
                 "missing mandatory fields '%s', for entity '%s'" %
-                (key, entity_class.__name__)
+                (key, entity_class.__name__),
+                context = self
             )
 
     def validate_value(self, name, value = None, force = False):
@@ -4253,7 +4255,8 @@ class EntityClass(object):
         # possible security problems)
         raise exceptions.ValidationError(
             "invalid name '%s', attribute does not exist in '%s'" %
-            (name, cls.__name__)
+            (name, cls.__name__),
+            context = self
         )
 
     @classmethod
@@ -4309,7 +4312,8 @@ class EntityClass(object):
         if strict and value_type in warn_types:
             raise exceptions.ValidationError(
                 "data type '%s' is not perfect for '%s' in '%s'" %\
-                (value_type, name, cls.__name__)
+                (value_type, name, cls.__name__),
+                context = self
             )
 
         # checks if the current value is not set (considered
@@ -4326,8 +4330,9 @@ class EntityClass(object):
         # invalid attribute type for the entity class (this may avoid
         # possible security problems)
         raise exceptions.ValidationError(
-            "invalid value for name '%s' in '%s', expected '%s'" %
-            (name, cls.__name__, attribute_data_type)
+            "invalid value for name '%s' in '%s', expected '%s' got base '%s'" %
+            (name, cls.__name__, attribute_data_type, value_type),
+            context = self
         )
 
     @classmethod
@@ -4360,7 +4365,8 @@ class EntityClass(object):
         # the request name is not correctly set in the current entity
         raise exceptions.ValidationError(
             "name '%s' unset for attribute of type '%s', expected attribute set" %
-            (name, cls.__name__)
+            (name, cls.__name__),
+            context = self
         )
 
     @classmethod
@@ -4396,7 +4402,11 @@ class EntityClass(object):
 
         # raises an entity manager validation error, indicating that
         # the request name is not a valid sequence in the current entity
-        raise exceptions.ValidationError("name '%s' is not a valid sequence for attribute of type '%s'" % (name, cls.__name__))
+        raise exceptions.ValidationError(
+            "name '%s' is not a valid sequence for attribute of type '%s'" %\
+            (name, cls.__name__),
+            context = self
+        )
 
     @classmethod
     def _validate_relation_value(cls, name, value, entity_manager):
@@ -4436,7 +4446,11 @@ class EntityClass(object):
         target_class = cls.get_target(name)
         target_is_reference = target_class.is_reference()
         if target_is_reference: target_class = entity_manager.get_entity(target_class.__name__)
-        if not target_class: raise exceptions.RelationValidationError("not possible to find referenced class '%s' for relation '%s'" % (target_class.__name__, name))
+        if not target_class: raise exceptions.RelationValidationError(
+            "not possible to find referenced class '%s' for relation '%s'" %\
+            (target_class.__name__, name),
+            context = self
+        )
 
         # in case the class of the relation value is compatible
         # with the one defined in the target attribute of the relation
@@ -4446,7 +4460,11 @@ class EntityClass(object):
         # raises a relation validation error, because the relation
         # attribute value must be of type target class or a sub class
         # of it (assertion error)
-        raise exceptions.RelationValidationError("invalid class for relation '%s', expected '%s'" % (name, target_class.__name__))
+        raise exceptions.RelationValidationError(
+            "invalid class for relation '%s', expected '%s' got '%s'" %\
+            (name, target_class.__name__, value.__class__.__name__),
+            context = self
+        )
 
     @classmethod
     def _escape_text(cls, text_value, escape_slash = False, escape_double_quotes = False):
