@@ -64,7 +64,7 @@ class Ssl(colony.System):
         ssl_structure = SslStructure(rsa_plugin, pkcs1_plugin)
         return ssl_structure
 
-class SslStructure:
+class SslStructure(object):
     """
     Class representing the ssl, cryptographic
     protocol structure.

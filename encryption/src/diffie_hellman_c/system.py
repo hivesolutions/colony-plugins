@@ -57,7 +57,7 @@ class DiffieHellman(colony.System):
         # returns the diffie hellman structure
         return diffie_hellman_structure
 
-class DiffieHellmanStructure:
+class DiffieHellmanStructure(object):
     """
     Class representing the diffie hellman,
     cryptographic protocol structure.

@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "downloader"
 """ The console extension name """
 
-class ConsoleDownloader:
+class ConsoleDownloader(object):
     """
     The console downloader class.
     """

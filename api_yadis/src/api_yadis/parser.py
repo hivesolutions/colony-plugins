@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom.minidom
 
-class Parser:
+class Parser(object):
     """
     The abstract parser class.
     """
@@ -178,7 +178,7 @@ class ResourceDescriptorParser(Parser):
         service_attribute = attribute.firstChild.data.strip()
         return service_attribute
 
-class Resource:
+class Resource(object):
     """
     Class that represent an xrd resource.
     """
@@ -201,7 +201,7 @@ class Resource:
 
         self.services_list = []
 
-class Service:
+class Service(object):
     """
     The service class, describing a yadis service.
     """

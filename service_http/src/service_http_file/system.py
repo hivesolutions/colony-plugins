@@ -739,7 +739,7 @@ class ServiceHttpFile(colony.System):
         # returns the comparator method
         return comparator
 
-class ChunkHandler:
+class ChunkHandler(object):
     """
     The chunk handler class.
     """

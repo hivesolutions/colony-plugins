@@ -43,7 +43,7 @@ CONSOLE_EXTENSION_NAME = "scheduler"
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
 """ The table top text """
 
-class ConsoleScheduler:
+class ConsoleScheduler(object):
     """
     The console scheduler class.
     """

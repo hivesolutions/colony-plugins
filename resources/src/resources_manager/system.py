@@ -1444,7 +1444,7 @@ class ResourcesManager(colony.System):
         # clears the string value real string value map
         self.string_value_real_string_value_map.clear()
 
-class Resource:
+class Resource(object):
     """
     Class to describe a miscellaneous resource.
     """
@@ -1604,7 +1604,7 @@ class Resource:
 
         self.parsed = parsed
 
-class Namespace:
+class Namespace(object):
     """
     Class to describe a neutral structure for a namespace.
     """

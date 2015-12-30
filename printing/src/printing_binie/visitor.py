@@ -89,7 +89,7 @@ EXCLUSION_LIST = [
 DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
-class Visitor:
+class Visitor(object):
     """
     The visitor class.
     """

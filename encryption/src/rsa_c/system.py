@@ -60,7 +60,7 @@ class Rsa(colony.System):
         # returns the rsa structure
         return rsa_structure
 
-class RsaStructure:
+class RsaStructure(object):
     """
     Class representing the rsa,
     cryptographic protocol structure.

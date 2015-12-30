@@ -78,7 +78,7 @@ LEFT_CHARACTER_ORDINAL = (
 LINE_HISTORY_LIST_MAXIMUM_SIZE = 100
 """ The line history list maximum size """
 
-class ConsoleInterfaceCharacter:
+class ConsoleInterfaceCharacter(object):
     """
     The console interface character.
     Provides the basic abstraction to handle things like

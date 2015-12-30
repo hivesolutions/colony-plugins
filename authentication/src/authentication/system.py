@@ -217,7 +217,7 @@ class Authentication(colony.System):
         # returns the exception map
         return exception_map
 
-class AuthenticationRequest:
+class AuthenticationRequest(object):
     """
     The authentication request class.
     """

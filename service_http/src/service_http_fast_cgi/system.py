@@ -482,7 +482,7 @@ class ServiceHttpFastCgi(colony.System):
         # returns the connection
         return connection
 
-class FastCgiConnection:
+class FastCgiConnection(object):
     """
     The fast cgi connection class.
     """

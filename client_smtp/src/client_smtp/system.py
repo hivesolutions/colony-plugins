@@ -679,7 +679,7 @@ class SmtpClient(object):
         # returns the parameters
         return parameters
 
-class SmtpRequest:
+class SmtpRequest(object):
     """
     The smtp request class.
     """
@@ -875,7 +875,7 @@ class SmtpRequest:
 
         self.properties = properties
 
-class SmtpResponse:
+class SmtpResponse(object):
     """
     The smtp response class.
     """
@@ -1044,7 +1044,7 @@ class SmtpResponse:
 
         self.properties = properties
 
-class SmtpSession:
+class SmtpSession(object):
     """
     The smtp session class.
     """
@@ -1242,7 +1242,7 @@ class SmtpSession:
 
         self.properties = properties
 
-class SmtpMessage:
+class SmtpMessage(object):
     """
     The smtp message class that represents
     a message to be sent through smtp.

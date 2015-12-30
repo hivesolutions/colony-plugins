@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 from . import exceptions
 
-class ConsoleAuthentication:
+class ConsoleAuthentication(object):
     """
     The console authentication class.
     """

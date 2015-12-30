@@ -619,7 +619,7 @@ class FacebookClient(object):
         # returns the http client
         return self.http_client
 
-class FacebookClientOauth:
+class FacebookClientOauth(object):
     """
     The class that represents a facebook client oauth connection.
     """

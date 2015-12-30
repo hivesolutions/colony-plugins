@@ -85,7 +85,7 @@ class WorkPoolDummy(colony.System):
         # stops the (dummy) work pool
         self.work_pool.stop_pool()
 
-class ProcessingClass:
+class ProcessingClass(object):
     """
     The class for the processing of the work.
     This class is used as dummy processor for

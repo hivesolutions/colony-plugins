@@ -635,7 +635,7 @@ class ServiceHttp(colony.System):
         # closes the http log file
         self.http_log_file and self.http_log_file.close()
 
-class HttpClientServiceHandler:
+class HttpClientServiceHandler(object):
     """
     The http client service handler class, responsible
     for the handling of incoming client connection and

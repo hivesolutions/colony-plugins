@@ -652,7 +652,7 @@ class Scheduler(colony.System):
         # sleeps the extra sleep time
         time.sleep(extra_sleep_time)
 
-class SchedulerTask:
+class SchedulerTask(object):
     """
     The scheduler task class.
     """
@@ -682,7 +682,7 @@ class SchedulerTask:
         self.task_arguments = task_arguments
         self.scheduler_item = scheduler_item
 
-class SchedulerItem:
+class SchedulerItem(object):
     """
     The scheduler item class.
     This is the runtime abstraction used to control the

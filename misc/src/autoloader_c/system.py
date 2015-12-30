@@ -556,7 +556,7 @@ class Autoloader(colony.System):
         # sleeps the extra sleep time
         time.sleep(extra_sleep_time)
 
-class FileInformation:
+class FileInformation(object):
     """
     The file information class.
     """
@@ -586,7 +586,7 @@ class FileInformation:
         self.file_properties = file_properties
         self.exists = exists
 
-class FileProperties:
+class FileProperties(object):
     """
     The file properties class.
     """

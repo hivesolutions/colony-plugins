@@ -840,7 +840,7 @@ class ServiceHttpProxy(colony.System):
         # returns the value
         return value
 
-class ChunkHandler:
+class ChunkHandler(object):
     """
     The chunk handler class.
     Used to send a progressive response

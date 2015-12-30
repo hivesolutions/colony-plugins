@@ -400,7 +400,7 @@ class AbstractClient(object):
         # returns the connection tuple hashable
         return connection_tuple_hashable
 
-class ClientConnection:
+class ClientConnection(object):
     """
     The client connection class.
     Describes a client connection.

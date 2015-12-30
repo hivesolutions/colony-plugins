@@ -533,7 +533,7 @@ class AtClient(object):
             return _node.data
         return None
 
-class AtStructure:
+class AtStructure(object):
     """
     The at structure class used to store
     the various at dependent attributes

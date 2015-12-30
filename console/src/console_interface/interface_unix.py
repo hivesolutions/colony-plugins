@@ -97,7 +97,7 @@ SPECIAL_CHARACTER_ORDINAL_VALUE = 0x1b
 EXTRA_CHARACTER_ORDINAL_VALUE = 0x5b
 """ The extra character ordinal value """
 
-class ConsoleInterfaceUnix:
+class ConsoleInterfaceUnix(object):
     """
     The console interface unix.
     """

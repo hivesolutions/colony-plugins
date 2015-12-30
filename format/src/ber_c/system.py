@@ -136,7 +136,7 @@ class Ber(colony.System):
     def create_structure(self, parameters):
         return BerStructure()
 
-class BerStructure:
+class BerStructure(object):
     """
     Class representing a ber structure.
     """

@@ -141,7 +141,7 @@ class ServiceHttpWebsocket(colony.System):
 
         del self.websocket_handler_plugins_map[handler_name]
 
-class WebSocketConnection:
+class WebSocketConnection(object):
     """
     Web socket connection representing a websocket
     connection.
