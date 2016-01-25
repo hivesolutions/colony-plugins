@@ -73,14 +73,14 @@
             // iterates over each of the matched object to start "their"
             // console structures
             matchedObject.each(function(index, element) {
-                        // retrieves the current element
-                        var _element = jQuery(this);
+                // retrieves the current element
+                var _element = jQuery(this);
 
-                        // initializes the console by requesting the initial instace
-                        // from the client side (initialization scripts should be
-                        // executed at this stage)
-                        init(_element);
-                    });
+                // initializes the console by requesting the initial instace
+                // from the client side (initialization scripts should be
+                // executed at this stage)
+                init(_element);
+            });
         };
 
         /**
@@ -102,89 +102,89 @@
             // registers for the click event in the console to
             // propagate the focus event to the text area
             matchedObject.click(function() {
-                        // retrieves the current element and the associated
-                        // text area (from the console) and the autocomplete
-                        // display area
-                        var element = jQuery(this);
-                        var text = jQuery(".text", element);
-                        var autocomplete = jQuery(".autocomplete", element);
+                // retrieves the current element and the associated
+                // text area (from the console) and the autocomplete
+                // display area
+                var element = jQuery(this);
+                var text = jQuery(".text", element);
+                var autocomplete = jQuery(".autocomplete", element);
 
-                        // focus the activity in the text area of the console
-                        // and hides the autocomplete
-                        text.focus();
-                        autocomplete.hide();
-                    });
+                // focus the activity in the text area of the console
+                // and hides the autocomplete
+                text.focus();
+                autocomplete.hide();
+            });
 
             matchedObject.bind("dragenter", function(event) {
-                        // retrieves the current element and
-                        // adds the drag class to it (styling
-                        // of the element structure)
-                        var element = jQuery(this);
-                        element.addClass("drag");
-                    });
+                // retrieves the current element and
+                // adds the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.addClass("drag");
+            });
 
             matchedObject.bind("dragover", function(event) {
-                        // retrieves the current element and
-                        // adds the drag class to it (styling
-                        // of the element structure)
-                        var element = jQuery(this);
-                        element.addClass("drag");
-                    });
+                // retrieves the current element and
+                // adds the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.addClass("drag");
+            });
 
             matchedObject.bind("dragleave", function(event) {
-                        // retrieves the current element and
-                        // removes the drag class to it (styling
-                        // of the element structure)
-                        var element = jQuery(this);
-                        element.removeClass("drag");
-                    });
+                // retrieves the current element and
+                // removes the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.removeClass("drag");
+            });
 
             matchedObject.bind("drop", function(event) {
-                        // retrieves the current element and
-                        // removes the drag class to it (styling
-                        // of the element structure)
-                        var element = jQuery(this);
-                        element.removeClass("drag");
+                // retrieves the current element and
+                // removes the drag class to it (styling
+                // of the element structure)
+                var element = jQuery(this);
+                element.removeClass("drag");
 
-                        // prevents the default event (avoids browser showing
-                        // the file in raw mode)
-                        event.preventDefault();
+                // prevents the default event (avoids browser showing
+                // the file in raw mode)
+                event.preventDefault();
 
-                        // retrieves the first file and create a new file
-                        // reader object to handle the loading of the file
-                        var dataTransfer = event.originalEvent.dataTransfer;
-                        var file = dataTransfer.files[0];
-                        reader = new FileReader();
-                        reader.onload = function(event) {
-                            // retrieves the provided text value from
-                            // the event to be processed by the console
-                            // then replaces the windows style newlines
-                            // with the basic unix styled ones
-                            var value = event.target.result;
-                            value = value.replace(/\r\n/g, "\n");
+                // retrieves the first file and create a new file
+                // reader object to handle the loading of the file
+                var dataTransfer = event.originalEvent.dataTransfer;
+                var file = dataTransfer.files[0];
+                reader = new FileReader();
+                reader.onload = function(event) {
+                    // retrieves the provided text value from
+                    // the event to be processed by the console
+                    // then replaces the windows style newlines
+                    // with the basic unix styled ones
+                    var value = event.target.result;
+                    value = value.replace(/\r\n/g, "\n");
 
-                            // retrieves the current console commands and appends
-                            // the complete file value into it (for execution) then
-                            // puts the commands value back into the console
-                            var _commands = element.data("commands") || [];
-                            _commands.push(value);
-                            element.data("commands", _commands);
+                    // retrieves the current console commands and appends
+                    // the complete file value into it (for execution) then
+                    // puts the commands value back into the console
+                    var _commands = element.data("commands") || [];
+                    _commands.push(value);
+                    element.data("commands", _commands);
 
-                            // runs the process command on the console and waits for the
-                            // response to print the newline with the information regarding
-                            // the execution of the file
-                            process(element, true, file.name, function(result) {
-                                        newline(element, "load " + file.name,
-                                                "", result);
-                                    });
-                        };
-                        reader.readAsText(file);
-
-                        // stops the event propagation to avoid any possible
-                        // problem with upper handlers
-                        event.stopPropagation();
-                        event.stopImmediatePropagation();
+                    // runs the process command on the console and waits for the
+                    // response to print the newline with the information regarding
+                    // the execution of the file
+                    process(element, true, file.name, function(result) {
+                        newline(element, "load " + file.name,
+                            "", result);
                     });
+                };
+                reader.readAsText(file);
+
+                // stops the event propagation to avoid any possible
+                // problem with upper handlers
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+            });
 
             text.keydown(function(event) {
                 // retrieves the current element, the parent console
@@ -198,9 +198,8 @@
                 var value = console.data("text") || "";
 
                 // retrieves the key value
-                var keyValue = event.keyCode ? event.keyCode : event.charCode
-                        ? event.charCode
-                        : event.which;
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
+                    event.which;
 
                 // sets the default value for the canceling operation
                 // (no default behavior) as true (most of the times)
@@ -208,7 +207,7 @@
 
                 if (event.ctrlKey) {
                     switch (keyValue) {
-                        case 32 :
+                        case 32:
                             // forces the showing of the autocomplete panel
                             // to display it accordingly
                             autocomplete(console, true);
@@ -218,14 +217,14 @@
                             event.preventDefault();
                             break;
 
-                        default :
+                        default:
                             break;
                     }
                 }
 
                 if (event.shiftKey) {
                     switch (keyValue) {
-                        case 70 :
+                        case 70:
                             // checks if the current console is currently displayed
                             // in fullscreen and then checks if the autocomplete box
                             // is visible
@@ -237,10 +236,9 @@
                             // case the autocomplete window is shows runs the layout
                             // update in it using the autocomplete function
                             isFullscreen
-                                    ? _window(console)
-                                    : fullscreen(console);
+                                ? _window(console) : fullscreen(console);
                             isAutocompleteVisible
-                                    && autocomplete(console, true);
+                                && autocomplete(console, true);
 
                             // prevents the default event to avoid unwanted behavior
                             event.preventDefault();
@@ -251,7 +249,7 @@
                 }
 
                 switch (keyValue) {
-                    case 8 :
+                    case 8:
                         // prevents the default behavior for the backspace
                         // key because it would focus the window on the text area
                         event.preventDefault();
@@ -268,7 +266,7 @@
                         // this should be able to replicate the backspace "effect"
                         var first = value.slice(0, value.length - cursor - 2);
                         var second = value.slice(value.length - cursor - 1,
-                                value.length);
+                            value.length);
                         var value = first + second;
                         console.data("text", value)
 
@@ -277,7 +275,7 @@
                         refresh(console);
                         break;
 
-                    case 9 :
+                    case 9:
                         // prevents the default behavior for the tab key
                         // to avoid the focus from jumping to a different element
                         event.preventDefault();
@@ -297,7 +295,7 @@
                         var cursor = console.data("cursor");
                         var first = value.slice(0, value.length - cursor - 1);
                         var second = value.slice(value.length - cursor - 1,
-                                value.length);
+                            value.length);
                         var value = first + "    " + second;
                         console.data("text", value)
 
@@ -306,20 +304,20 @@
                         refresh(console);
                         break;
 
-                    case 27 :
+                    case 27:
                         // hides the autocomplete panel, cancelation operation
                         // occurred (should take effect immediately)
                         _autocomplete.hide();
                         break;
 
-                    case 32 :
+                    case 32:
                         // hides the autocomplete panel, cancelation operation
                         // occurred (should take effect immediately)
                         _autocomplete.hide();
                         cancel = false;
                         break;
 
-                    case 33 :
+                    case 33:
                         // checks if the autocomplete panel is currently visible
                         // for such situations the currently selected item in it
                         // should be replaced by the first one (page up)
@@ -328,14 +326,14 @@
                             // retrieves the currently selected item and removes the
                             // selected class from it
                             var selected = jQuery("ul > li.selected",
-                                    _autocomplete);
+                                _autocomplete);
                             selected.removeClass("selected");
 
                             // retrieves the target element (first element) and selects
                             // it by adding the selected class and ensuring its visibility
                             // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:first-child",
-                                    _autocomplete);
+                                _autocomplete);
                             target.addClass("selected");
                             ensureVisible(target, _autocomplete);
                             selectAutocomplete();
@@ -351,7 +349,7 @@
                         // breaks the switch
                         break;
 
-                    case 34 :
+                    case 34:
                         // checks if the autocomplete panel is currently visible
                         // for such situations the currently selected item in it
                         // should be replaced by the last one (page down)
@@ -360,14 +358,14 @@
                             // retrieves the currently selected item and removes the
                             // selected class from it
                             var selected = jQuery("ul > li.selected",
-                                    _autocomplete);
+                                _autocomplete);
                             selected.removeClass("selected");
 
                             // retrieves the target element (last element) and selects
                             // it by adding the selected class and ensuring its visibility
                             // then "selects" the autocomplete to update the tooltip
                             var target = jQuery("ul > li:last-child",
-                                    _autocomplete);
+                                _autocomplete);
                             target.addClass("selected");
                             ensureVisible(target, _autocomplete);
                             selectAutocomplete();
@@ -383,7 +381,7 @@
                         // breaks the switch
                         break;
 
-                    case 35 :
+                    case 35:
                         // updates the cursor position to the rightmost position
                         // (end operation) and then refreshes the console layout
                         // to update the console text value and other structures
@@ -391,7 +389,7 @@
                         refresh(console);
                         break;
 
-                    case 36 :
+                    case 36:
                         // updates the cursor position to the leftmost position
                         // (end operation) and then refreshes the console layout
                         // to update the console text value and other structures
@@ -399,7 +397,7 @@
                         refresh(console);
                         break;
 
-                    case 37 :
+                    case 37:
                         // retrieves the current cursor position in order
                         // to move it to the left, in case the position is the
                         // last breaks the switch (nothing to be done)
@@ -418,7 +416,7 @@
                         refresh(console);
                         break;
 
-                    case 38 :
+                    case 38:
                         // checks if the autocomplete panel is currently visible
                         // for such situations the currently selected item in it
                         // should be replaced by the previous one (move down)
@@ -428,7 +426,7 @@
                             // it's the first element returns immediately, can't
                             // move it up from that position
                             var selected = jQuery("ul > li.selected",
-                                    _autocomplete);
+                                _autocomplete);
                             if (selected.is(":first-child")) {
                                 return;
                             }
@@ -441,9 +439,8 @@
                             // retrieves the target element (previous element) and selects
                             // it by adding the selected class and ensuring its visibility
                             // then "selects" the autocomplete to update the tooltip
-                            var target = jQuery("ul > li:nth-child("
-                                            + (selectedIndex) + ")",
-                                    _autocomplete);
+                            var target = jQuery("ul > li:nth-child(" + (selectedIndex) + ")",
+                                _autocomplete);
                             target.addClass("selected");
                             ensureVisible(target, _autocomplete);
                             selectAutocomplete();
@@ -474,7 +471,7 @@
                         refresh(console);
                         break;
 
-                    case 39 :
+                    case 39:
                         // retrieves the current cursor position in order
                         // to move it to the right, in case the position is the
                         // last breaks the switch (nothing to be done)
@@ -493,7 +490,7 @@
                         refresh(console);
                         break;
 
-                    case 40 :
+                    case 40:
                         // checks if the autocomplete panel is currently visible
                         // for such situations the currently selected item in it
                         // should be replaced by the next one (move down)
@@ -503,7 +500,7 @@
                             // it's the last element returns immediately, can't
                             // move it down from that position
                             var selected = jQuery("ul > li.selected",
-                                    _autocomplete);
+                                _autocomplete);
                             if (selected.is(":last-child")) {
                                 return;
                             }
@@ -516,9 +513,8 @@
                             // retrieves the target element (next element) and selects
                             // it by adding the selected class and ensuring its visibility
                             // then "selects" the autocomplete to update the tooltip
-                            var target = jQuery("ul > li:nth-child("
-                                            + (selectedIndex + 2) + ")",
-                                    _autocomplete);
+                            var target = jQuery("ul > li:nth-child(" + (selectedIndex + 2) + ")",
+                                _autocomplete);
                             target.addClass("selected");
                             ensureVisible(target, _autocomplete);
                             selectAutocomplete();
@@ -549,7 +545,7 @@
                         refresh(console);
                         break;
 
-                    case 46 :
+                    case 46:
                         // prevents the default behavior for the delete
                         // key because it would focus the window on the text area
                         event.preventDefault();
@@ -566,7 +562,7 @@
                         // this should be able to replicate the delete "effect"
                         var first = value.slice(0, value.length - cursor - 1);
                         var second = value.slice(value.length - cursor,
-                                value.length);
+                            value.length);
                         var value = first + second;
 
                         // updates the text (value) in the console and "moves" the
@@ -579,7 +575,7 @@
                         refresh(console);
                         break;
 
-                    default :
+                    default:
                         cancel = false;
                         break;
                 }
@@ -603,210 +599,206 @@
                 // sets a timeout so that the complete paste data
                 // is set in the text area (deferred event)
                 setTimeout(function() {
-                            // retrieves the current value of the element and clears
-                            // the contents of the text element to avoid  any duplicate
-                            // paste operation (unwanted behavior)
-                            var character = element.val();
-                            element.val("");
+                    // retrieves the current value of the element and clears
+                    // the contents of the text element to avoid  any duplicate
+                    // paste operation (unwanted behavior)
+                    var character = element.val();
+                    element.val("");
 
-                            // retrieves the current console text to be able to be used
-                            // as teh base data for the paste operation
-                            var text = console.data("text") || "";
+                    // retrieves the current console text to be able to be used
+                    // as teh base data for the paste operation
+                    var text = console.data("text") || "";
 
-                            // adds the new character into the text buffer
-                            // by slicing the value around the current position,
-                            // then joins the value back with the character
-                            var cursor = console.data("cursor");
-                            var first = text.slice(0, text.length - cursor - 1);
-                            var second = text.slice(text.length - cursor - 1,
-                                    text.length);
-                            var value = first + character + second;
+                    // adds the new character into the text buffer
+                    // by slicing the value around the current position,
+                    // then joins the value back with the character
+                    var cursor = console.data("cursor");
+                    var first = text.slice(0, text.length - cursor - 1);
+                    var second = text.slice(text.length - cursor - 1,
+                        text.length);
+                    var value = first + character + second;
 
-                            // splits the various lines of the value arround
-                            // the newline character to retrieve the commands
-                            var commands = value.split("\n");
+                    // splits the various lines of the value arround
+                    // the newline character to retrieve the commands
+                    var commands = value.split("\n");
 
-                            // in case there are multiple commands the multiline
-                            // mode is activated and execution of the commands
-                            // is ensured immediately
-                            if (commands.length > 1) {
-                                var _commands = console.data("commands") || [];
-                                for (var index = 0; index < commands.length; index++) {
-                                    _commands.push(commands[index]);
-                                }
-                                console.data("commands", _commands);
-                                process(console);
-                            }
+                    // in case there are multiple commands the multiline
+                    // mode is activated and execution of the commands
+                    // is ensured immediately
+                    if (commands.length > 1) {
+                        var _commands = console.data("commands") || [];
+                        for (var index = 0; index < commands.length; index++) {
+                            _commands.push(commands[index]);
+                        }
+                        console.data("commands", _commands);
+                        process(console);
+                    }
 
-                            // updates the text value of the console and refreshes
-                            // the visual part of it
-                            var value = commands[commands.length - 1];
-                            console.data("text", value);
-                            refresh(console);
-                        }, 0);
+                    // updates the text value of the console and refreshes
+                    // the visual part of it
+                    var value = commands[commands.length - 1];
+                    console.data("text", value);
+                    refresh(console);
+                }, 0);
             });
 
             text.keypress(function(event) {
-                        // retrieves the element and the parent console
-                        var element = jQuery(this);
-                        var console = element.parents(".console");
-                        var _autocomplete = jQuery(".autocomplete", console);
+                // retrieves the element and the parent console
+                var element = jQuery(this);
+                var console = element.parents(".console");
+                var _autocomplete = jQuery(".autocomplete", console);
 
-                        // retrieves the key value
-                        var keyValue = event.keyCode
-                                ? event.keyCode
-                                : event.charCode ? event.charCode : event.which;
+                // retrieves the key value
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
+                    event.which;
 
-                        // retrieves the valid key code and converts it into
-                        // a character value, then retrieves the current text
-                        // and cancel value from the console
-                        var keyCode = event.keyCode || event.which;
-                        var character = String.fromCharCode(keyCode);
-                        var text = console.data("text") || "";
-                        var cancel = console.data("cancel") || false;
+                // retrieves the valid key code and converts it into
+                // a character value, then retrieves the current text
+                // and cancel value from the console
+                var keyCode = event.keyCode || event.which;
+                var character = String.fromCharCode(keyCode);
+                var text = console.data("text") || "";
+                var cancel = console.data("cancel") || false;
 
-                        // in case the cancel flag is set the key press must
-                        // be ignored and the call returned immediately
-                        if (cancel) {
-                            return false;
+                // in case the cancel flag is set the key press must
+                // be ignored and the call returned immediately
+                if (cancel) {
+                    return false;
+                }
+
+                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase() ==
+                    "v") {
+                    return true;
+                }
+
+                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase() ==
+                    "r") {
+                    return true;
+                }
+
+                // switches over the key value
+                switch (keyValue) {
+                    case 13:
+                        // checks if the autocomplete window is visible and in case
+                        // it is flushes the currently selected autocomplete option
+                        // to the console (autocomplete selection)
+                        var isVisible = _autocomplete.is(":visible");
+                        if (isVisible) {
+                            flushAutocomplete(console);
+                            break;
                         }
 
-                        if ((event.ctrlKey || event.metaKey)
-                                && String.fromCharCode(keyCode).toLowerCase() == "v") {
-                            return true;
-                        }
+                        var value = console.data("text") || "";
 
-                        if ((event.ctrlKey || event.metaKey)
-                                && String.fromCharCode(keyCode).toLowerCase() == "r") {
-                            return true;
-                        }
-
-                        // switches over the key value
-                        switch (keyValue) {
-                            case 13 :
-                                // checks if the autocomplete window is visible and in case
-                                // it is flushes the currently selected autocomplete option
-                                // to the console (autocomplete selection)
-                                var isVisible = _autocomplete.is(":visible");
-                                if (isVisible) {
-                                    flushAutocomplete(console);
-                                    break;
-                                }
-
-                                var value = console.data("text") || "";
-
-                                switch (value) {
-                                    case "clear" :
-                                        // clears the current console display removing the various
-                                        // information contained in it
-                                        clear(console, true);
-                                        event.preventDefault();
-
-                                        // breaks the switch
-                                        break;
-
-                                    case "fullscreen" :
-                                        // puts the current console window into the fullscreen mode
-                                        // this action should change the current body and window status
-                                        // so it should be used carefully to avoid side effects
-                                        fullscreen(console);
-                                        clear(console, false);
-                                        event.preventDefault();
-
-                                        // breaks the switch
-                                        break;
-
-                                    case "window" :
-                                        // puts the current console window into the window mode
-                                        // this action should change the current body and window status
-                                        // so it should be used carefully to avoid side effects
-                                        _window(console);
-                                        clear(console, false);
-                                        event.preventDefault();
-
-                                        // breaks the switch
-                                        break;
-
-                                    default :
-                                        // runs the process of the "remote" command this should trigger
-                                        // the execution of the server side execution
-                                        var commands = console.data("commands")
-                                                || [];
-                                        commands.push(value);
-                                        console.data("commands", commands)
-                                        process(console);
-
-                                        // breaks the switch
-                                        break;
-                                }
+                        switch (value) {
+                            case "clear":
+                                // clears the current console display removing the various
+                                // information contained in it
+                                clear(console, true);
+                                event.preventDefault();
 
                                 // breaks the switch
                                 break;
 
-                            default :
-                                // adds the new character into the text buffer
-                                // by slicing the value around the current position,
-                                // then joins the value back with the character
-                                var cursor = console.data("cursor");
-                                var first = text.slice(0, text.length - cursor
-                                                - 1);
-                                var second = text.slice(text.length - cursor
-                                                - 1, text.length);
-                                var value = first + character + second;
+                            case "fullscreen":
+                                // puts the current console window into the fullscreen mode
+                                // this action should change the current body and window status
+                                // so it should be used carefully to avoid side effects
+                                fullscreen(console);
+                                clear(console, false);
+                                event.preventDefault();
 
-                                // updates the text value of the console and refreshes
-                                // the visual part of it, note that the autocomplete
-                                // is only run in case the character is not a space
-                                console.data("text", value);
-                                refresh(console);
-                                character != " " && autocomplete(console, true);
+                                // breaks the switch
+                                break;
+
+                            case "window":
+                                // puts the current console window into the window mode
+                                // this action should change the current body and window status
+                                // so it should be used carefully to avoid side effects
+                                _window(console);
+                                clear(console, false);
+                                event.preventDefault();
+
+                                // breaks the switch
+                                break;
+
+                            default:
+                                // runs the process of the "remote" command this should trigger
+                                // the execution of the server side execution
+                                var commands = console.data("commands") || [];
+                                commands.push(value);
+                                console.data("commands", commands)
+                                process(console);
 
                                 // breaks the switch
                                 break;
                         }
 
-                        // stops the event propagation and prevents the default
-                        // behavior (no printing in the text area)
-                        event.stopPropagation();
-                        event.stopImmediatePropagation();
-                        event.preventDefault();
-                    });
+                        // breaks the switch
+                        break;
+
+                    default:
+                        // adds the new character into the text buffer
+                        // by slicing the value around the current position,
+                        // then joins the value back with the character
+                        var cursor = console.data("cursor");
+                        var first = text.slice(0, text.length - cursor - 1);
+                        var second = text.slice(text.length - cursor - 1, text.length);
+                        var value = first + character + second;
+
+                        // updates the text value of the console and refreshes
+                        // the visual part of it, note that the autocomplete
+                        // is only run in case the character is not a space
+                        console.data("text", value);
+                        refresh(console);
+                        character != " " && autocomplete(console, true);
+
+                        // breaks the switch
+                        break;
+                }
+
+                // stops the event propagation and prevents the default
+                // behavior (no printing in the text area)
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                event.preventDefault();
+            });
 
             text.focus(function() {
-                        // retrieves the current element and uses it to retrieve
-                        // the parent console element
-                        var element = jQuery(this);
-                        var console = element.parents(".console");
+                // retrieves the current element and uses it to retrieve
+                // the parent console element
+                var element = jQuery(this);
+                var console = element.parents(".console");
 
-                        // adds the focus class to the console element
-                        console.addClass("focus");
-                    });
+                // adds the focus class to the console element
+                console.addClass("focus");
+            });
 
             text.blur(function() {
-                        // retrieves the current element and uses it to retrieve
-                        // the parent console element, then uses it to retrieve
-                        // the reference to the autocomplete panel element
-                        var element = jQuery(this);
-                        var console = element.parents(".console");
-                        var _autocomplete = jQuery(".autocomplete", console);
+                // retrieves the current element and uses it to retrieve
+                // the parent console element, then uses it to retrieve
+                // the reference to the autocomplete panel element
+                var element = jQuery(this);
+                var console = element.parents(".console");
+                var _autocomplete = jQuery(".autocomplete", console);
 
-                        // removes the focus class from the console and hides the
-                        // autocomplete panel
-                        console.removeClass("focus");
-                        _autocomplete.hide();
-                    });
+                // removes the focus class from the console and hides the
+                // autocomplete panel
+                console.removeClass("focus");
+                _autocomplete.hide();
+            });
 
             __window.scroll(function() {
-                        // hides the autocomplete panel to avoid problems with
-                        // outdated positions
-                        _autocomplete.hide();
-                    });
+                // hides the autocomplete panel to avoid problems with
+                // outdated positions
+                _autocomplete.hide();
+            });
         };
 
         var escapeHtml = function(value) {
             return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(
-                    />/g, "&gt;").replace(/\n/g, "<br/>").replace(/ /g,
-                    "&nbsp;");
+                />/g, "&gt;").replace(/\n/g, "<br/>").replace(/ /g,
+                "&nbsp;");
         };
 
         var splitValue = function(value, escape, cursor) {
@@ -843,9 +835,8 @@
                 // (in case it's set) and then appends the word break tag
                 // into the final value to be appended to the word
                 slice = escape ? escapeHtml(slices[index]) : slices[index];
-                slice = length - cursor - 1 == index
-                        ? "<span class=\"cursor\">" + slice + "</span>"
-                        : slice;
+                slice = length - cursor - 1 == index ? "<span class=\"cursor\">" + slice + "</span>" :
+                    slice;
                 word += slice + "<wbr></wbr>";
             }
 
@@ -971,13 +962,13 @@
             // runs the remove query to retrieve the various autcomplete
             // results (this query is meant to be fast 100ms maximum)
             jQuery.ajax({
-                type : "post",
-                url : basePath + "console/autocomplete",
-                data : {
-                    command : token,
-                    instance : console.data("instance")
+                type: "post",
+                url: basePath + "console/autocomplete",
+                data: {
+                    command: token,
+                    instance: console.data("instance")
                 },
-                success : function(data) {
+                success: function(data) {
                     // retrieves the element reference to the global
                     // window object
                     var _window = jQuery(window);
@@ -1017,9 +1008,8 @@
 
                         // creates the new item with both the highlight and
                         // the remaind part and adds it to the list of options
-                        var item = jQuery("<li class=\"" + type
-                                + "\"><span class=\"high\">" + highlight
-                                + "</span>" + remainder + "</li>");
+                        var item = jQuery("<li class=\"" + type + "\"><span class=\"high\">" +
+                            highlight + "</span>" + remainder + "</li>");
                         list.append(item);
                         item.data("options", options);
                     }
@@ -1062,8 +1052,7 @@
                     // calculate the offset to be used in the autocomplete
                     var fontSize = text.css("font-size");
                     fontSize = parseInt(fontSize);
-                    _autocomplete.css("margin-left",
-                            (startIndex * fontSize + 24) + "px");
+                    _autocomplete.css("margin-left", (startIndex * fontSize + 24) + "px");
 
                     // retrieves the current window scroll top position to be used
                     // as offset for the position of the autocomplete panel
@@ -1080,15 +1069,13 @@
                     // the autocomplete window above the current line and then
                     // in case the window is not visible places in such
                     // place (notice the minus sign in the margin)
-                    var aboveMargin = _autocomplete.outerHeight()
-                            + line.outerHeight() + AUTOCOMPLETE_OFFSET
-                            + windowScroll;
+                    var aboveMargin = _autocomplete.outerHeight() + line.outerHeight() +
+                        AUTOCOMPLETE_OFFSET + windowScroll;
                     if (isVisible) {
                         _autocomplete.removeClass("above");
                     } else {
                         _autocomplete.addClass("above");
-                        _autocomplete.css("margin-top", (aboveMargin * -1)
-                                        + "px");
+                        _autocomplete.css("margin-top", (aboveMargin * -1) + "px");
                     }
 
                     // selects the autocomplete item, this should trigger the
@@ -1174,42 +1161,42 @@
             basePath = basePath.html();
 
             jQuery.ajax({
-                        type : "post",
-                        url : basePath + "console/execute",
-                        data : {
-                            command : command,
-                            instance : console.data("instance"),
-                            file : file,
-                            name : name
-                        },
-                        success : function(data) {
-                            // unpacks the resulting json data into the result
-                            // and the instance part, so that they may be used
-                            // in the processing and printing of the result
-                            var result = data["result"];
-                            var pending = data["pending"];
-                            var instance = data["instance"];
+                type: "post",
+                url: basePath + "console/execute",
+                data: {
+                    command: command,
+                    instance: console.data("instance"),
+                    file: file,
+                    name: name
+                },
+                success: function(data) {
+                    // unpacks the resulting json data into the result
+                    // and the instance part, so that they may be used
+                    // in the processing and printing of the result
+                    var result = data["result"];
+                    var pending = data["pending"];
+                    var instance = data["instance"];
 
-                            // sets the instance (identifier) value in the console
-                            // for latter usage of the value only in case the instance
-                            // value is defined (otherwise leave as it is)
-                            instance && console.data("instance", instance);
+                    // sets the instance (identifier) value in the console
+                    // for latter usage of the value only in case the instance
+                    // value is defined (otherwise leave as it is)
+                    instance && console.data("instance", instance);
 
-                            // in case the current processing mode is not silent
-                            // must create a newline with the current context (verbose)
-                            !silent
-                                    && newline(console, value, next, result,
-                                            command, pending);
+                    // in case the current processing mode is not silent
+                    // must create a newline with the current context (verbose)
+                    !silent
+                        && newline(console, value, next, result,
+                            command, pending);
 
-                            // in case the callback is defined calls it with
-                            // the resulting values from the client side
-                            callback && callback(result, pending, instance);
+                    // in case the callback is defined calls it with
+                    // the resulting values from the client side
+                    callback && callback(result, pending, instance);
 
-                            // runs the process command again to continue the processing
-                            // of the current queue
-                            process(console, silent, name, callback);
-                        }
-                    });
+                    // runs the process command again to continue the processing
+                    // of the current queue
+                    process(console, silent, name, callback);
+                }
+            });
         };
 
         var flushAutocomplete = function(console) {
@@ -1321,9 +1308,8 @@
 
             // creates a new previous line and adds it to the previous container
             // this line will contain the values of the executed command
-            previous.append("<div><span class=\"prompt\">" + previousPrompt
-                    + "</span><span>" + splitValue(value, true)
-                    + "</span></div>");
+            previous.append("<div><span class=\"prompt\">" + previousPrompt + "</span><span>" + splitValue(
+                value, true) + "</span></div>");
 
             // splits the result value (into the appropriate components) and
             // also adds it to the previous action container, then scrolls
@@ -1420,12 +1406,10 @@
                 // and add them to the tooltip parameters section
                 for (var index = 0; index < params.length; index++) {
                     var param = params[index];
-                    tooltipParams.append("<div class=\"param\"><span class=\"name\">"
-                            + param[0]
-                            + "</span>&nbsp;<span class=\"type\">("
-                            + param[1]
-                            + ")</span><br />&nbsp;&nbsp;<span class=\"description\">"
-                            + splitValue(param[2], true) + "</span></div>")
+                    tooltipParams.append("<div class=\"param\"><span class=\"name\">" + param[0] +
+                        "</span>&nbsp;<span class=\"type\">(" + param[1] +
+                        ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(param[2],
+                            true) + "</span></div>")
                 }
             }
 
@@ -1445,13 +1429,10 @@
                 // in case the return value is valid creates the element
                 // and adds it to the tooltip return element
                 _return
-                        && tooltipReturn.append("<div class=\"param\"><span class=\"name\">"
-                                + _return[0]
-                                + "</span>&nbsp;<span class=\"type\">("
-                                + _return[1]
-                                + ")</span><br />&nbsp;&nbsp;<span class=\"description\">"
-                                + splitValue(_return[2], true)
-                                + "</span></div>")
+                    && tooltipReturn.append("<div class=\"param\"><span class=\"name\">" + _return[0] +
+                        "</span>&nbsp;<span class=\"type\">(" + _return[1] +
+                        ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(_return[2],
+                            true) + "</span></div>")
             }
 
             // updates the return value in the tooltip data to avoid
@@ -1665,8 +1646,7 @@
 
             // checks if the element is visible in the current context
             // and returns that result to the caller method
-            var isVisible = elementBottom <= parentBottom
-                    && elementTop >= parentTop;
+            var isVisible = elementBottom <= parentBottom && elementTop >= parentTop;
             return isVisible;
         };
 
@@ -1680,15 +1660,13 @@
             // retrieves the measures for the element in order to be able
             // to calculate its own visibility status
             var elementHeight = element.outerHeight();
-            var elementTop = element.offset().top
-                    - element.parent().offset().top;
+            var elementTop = element.offset().top - element.parent().offset().top;
             var elementBottom = elementTop + elementHeight;
 
             // checks if the element is visible in the current context
             // and in case it's retunrs immediately no need to change the
             // parent element to ensure visibility
-            var isVisible = elementBottom <= parentBottom
-                    && elementTop >= parentTop;
+            var isVisible = elementBottom <= parentBottom && elementTop >= parentTop;
             if (isVisible) {
                 return;
             }
@@ -1700,8 +1678,7 @@
             // calculates the (new) current scroll position base on the
             // signal (relative position) of the element in relation with
             // the current scroll position
-            var current = signal == 1 ? elementTop
-                    - (parentHeight - elementHeight) : elementTop;
+            var current = signal == 1 ? elementTop - (parentHeight - elementHeight) : elementTop;
             parent.scrollTop(current);
         };
 
@@ -1723,31 +1700,31 @@
             // runs the remove query to retrieve the various autcomplete
             // results (this query is meant to be fast 100ms maximum)
             jQuery.ajax({
-                        type : "post",
-                        url : basePath + "console/init",
-                        success : function(data) {
-                            // unpacks the resulting json data into the result
-                            // and the instance part, so that they may be used
-                            // in the processing of the results
-                            var result = data["result"];
-                            var instance = data["instance"];
+                type: "post",
+                url: basePath + "console/init",
+                success: function(data) {
+                    // unpacks the resulting json data into the result
+                    // and the instance part, so that they may be used
+                    // in the processing of the results
+                    var result = data["result"];
+                    var instance = data["instance"];
 
-                            // splits the result value (into the appropriate components) and
-                            // also adds it to the previous action container, then scrolls
-                            // the current console area to the lower part
-                            var line = splitValue(result, true);
-                            previous.append("<div>" + line + "</div>");
-                            console.scrollTop(console[0].scrollHeight);
+                    // splits the result value (into the appropriate components) and
+                    // also adds it to the previous action container, then scrolls
+                    // the current console area to the lower part
+                    var line = splitValue(result, true);
+                    previous.append("<div>" + line + "</div>");
+                    console.scrollTop(console[0].scrollHeight);
 
-                            // sets the instance (identifier) value in the console
-                            // for latter usage of the value
-                            console.data("instance", instance);
+                    // sets the instance (identifier) value in the console
+                    // for latter usage of the value
+                    console.data("instance", instance);
 
-                            // restores the current line display, because the loading is now
-                            // considered complete
-                            current.show();
-                        }
-                    });
+                    // restores the current line display, because the loading is now
+                    // considered complete
+                    current.show();
+                }
+            });
         };
 
         // initializes the plugin
@@ -1815,14 +1792,12 @@
             // registers for the post async event so that it's possible
             // to scroll the log down again as the inital position
             _body.bind("post_async", onPostAsync = function() {
-                        var scrollHeight = matchedObject.length > 0
-                                ? matchedObject[0].scrollHeight
-                                : 0;
-                        matchedObject.scrollTop(scrollHeight);
-                    });
+                var scrollHeight = matchedObject.length > 0 ? matchedObject[0].scrollHeight : 0;
+                matchedObject.scrollTop(scrollHeight);
+            });
             matchedObject.bind("destroyed", function() {
-                        _body.unbind("post_async", onPostAsync);
-                    });
+                _body.unbind("post_async", onPostAsync);
+            });
 
             // registers for the key down event in the current body
             // element so that global keyboard events are captured
@@ -1833,15 +1808,14 @@
 
                 // retrieves the key value that is going to be used
                 // in the resolution of the proper method
-                var keyValue = event.keyCode ? event.keyCode : event.charCode
-                        ? event.charCode
-                        : event.which;
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
+                    event.which;
 
                 // in case the shift key is pressed some special
                 // operations may be performed
                 if (event.shiftKey) {
                     switch (keyValue) {
-                        case 70 :
+                        case 70:
                             // checks if the current console is currently displayed
                             // in fullscreen and then checks if the autocomplete box
                             // is visible
@@ -1852,8 +1826,7 @@
                             // case the autocomplete window is shows runs the layout
                             // update in it using the autocomplete function
                             isFullscreen
-                                    ? _window(console)
-                                    : fullscreen(console);
+                                ? _window(console) : fullscreen(console);
 
                             // prevents the default event to avoid unwanted behavior
                             event.preventDefault();
@@ -1869,8 +1842,8 @@
                 event.stopImmediatePropagation();
             });
             matchedObject.bind("destroyed", function() {
-                        _body.unbind("keydown", onKeyDown);
-                    });
+                _body.unbind("keydown", onKeyDown);
+            });
         };
 
         var fullscreen = function(log) {
@@ -2018,8 +1991,8 @@
 })(jQuery);
 
 jQuery(document).ready(function() {
-            var _body = jQuery("body");
-            _body.bind("applied", function(event, base) {
-                        base.uapply();
-                    });
-        });
+    var _body = jQuery("body");
+    _body.bind("applied", function(event, base) {
+        base.uapply();
+    });
+});
