@@ -29,8 +29,9 @@
  * @type List
  */
 WELCOME_LOGO_IMAGES = ["/welcome_handler/images/colony_welcome_screen_1.png",
-        "/welcome_handler/images/colony_welcome_screen_2.png",
-        "/welcome_handler/images/colony_welcome_screen_3.png"]
+    "/welcome_handler/images/colony_welcome_screen_2.png",
+    "/welcome_handler/images/colony_welcome_screen_3.png"
+]
 
 /**
  * Function called uppon loading of the document (window).
