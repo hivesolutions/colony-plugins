@@ -7,7 +7,7 @@
     <div class="separator-horizontal"></div>
     <div class="quote">
         Colony is currently licensed under the much permissive<br />
-        <strong>GNU General Public License (GPL), Version 3</strong>
+        <strong>Apache License, Version 2.0</strong>
         and the<br/>
         current repository is hosted at <a href="https://github.com/hivesolutions/colony">github</a>.
     </div>
