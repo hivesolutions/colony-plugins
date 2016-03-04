@@ -1392,6 +1392,8 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     # in a new dictionary "under" the root key value then stores the result
     # in the private json data value and returns the data map
     contents = request.read()
+    is_bytes = colony.legacy.is_bytes(contents)
+    if is_bytes: contents = contents.decode(encoding)
     data_map = self.json_plugin.loads(contents)
     is_valid = type(data_map) == dict
     data_map = data_map if is_valid else dict(root = data_map)
