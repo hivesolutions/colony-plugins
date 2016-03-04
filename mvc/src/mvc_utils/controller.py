@@ -1364,11 +1364,14 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     Processes the json data (attributes), creating a map containing
     the hierarchy of defined structure for the "json" contents.
 
+    Note that the encoding argument controls the encoding to be used
+    while decoding the request data for json loading.
+
     @type request: Request
     @param request: The request to be used.
     @type encoding: String
-    @param encoding: The encoding to be used when retrieving
-    the attribute values.
+    @param encoding: The encoding to be used when decoding the request
+    data/payload so that it can be used in json loading operation.
     @type force: bool
     @param force: If any cached data should be discarded and the
     the request information re-parsed if necessary.
