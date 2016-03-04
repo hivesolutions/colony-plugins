@@ -644,6 +644,10 @@ class WsgiRequest(object):
         _boundary, boundary_value = boundary_splitted
         boundary_value_length = len(boundary_value)
 
+        # ensures that the boundary value is properly converted into the
+        # base bytes based representation (required for search)
+        boundary_value = colony.legacy.bytes(boundary_value)
+
         # sets the initial index as the as the boundary value length
         # plus the base boundary value of two (equivalent to: --)
         current_index = boundary_value_length + 2
@@ -729,7 +733,8 @@ class WsgiRequest(object):
         header is not yet defined.
 
         @type header_name: String
-        @param header_name: The name of the header to be appended with the value.
+        @param header_name: The name of the header to be appended
+        with the value.
         @type header_value: Object
         @param header_value: The value of the header to be appended
         in the response.
@@ -1032,39 +1037,41 @@ class WsgiRequest(object):
         @type end_index: int
         @param end_index: The end index of the "part" to be processed.
         @rtype: Tuple
-        @return: A Tuple with a map of header for the "part" and the content of the "part".
+        @return: A tuple with a map of headers for the "part" and the
+        content of the "part", note that the headers value ios going to be
+        decoded using the default/set encoding (or content type).
         """
 
-        # creates the headers map
+        # creates the headers map, that is going to be populated with
+        # the complete set of headers for the current part
         headers_map = {}
 
         # retrieves the end header index and uses it to retrieve
         # the headers (string) from the multipart then splits it
         # "around" the several lines contained in it
-        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
+        end_header_index = self.multipart.find(b"\r\n\r\n", start_index, end_index)
         headers = self.multipart[start_index:end_header_index]
-        headers_splitted = headers.split("\r\n")
+        headers_splitted = headers.split(b"\r\n")
 
         # iterates over the headers lines to process their header
         # values (key and value pairs)
         for header_splitted in headers_splitted:
             # finds the header separator
-            division_index = header_splitted.find(":")
+            division_index = header_splitted.find(b":")
 
             # retrieves the header name and value from the
             # splitted value and then sets both of them in
             # the headers map (as expected by specification)
             header_name = header_splitted[:division_index].strip()
             header_value = header_splitted[division_index + 1:].strip()
+            header_name = header_name.decode(self.content_type_charset)
+            header_value = header_value.decode(self.content_type_charset)
             headers_map[header_name] = header_value
 
         # retrieves the contents from the multipart then uses them
         # to return the headers map and the contents as a tuple
         contents = self.multipart[end_header_index + 4:end_index - 2]
-        return (
-            headers_map,
-            contents
-        )
+        return (headers_map, contents)
 
     def _parse_content_disposition(self, headers_map):
         """
