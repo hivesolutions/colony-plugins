@@ -1885,10 +1885,9 @@ def get_referer(self, request):
     @return: The retrieved referer value (url).
     """
 
-    # retrieves the "referer" header
+    # retrieves the "referer" header and returns
+    # the same value to the caller method
     referer_header = request.get_header("Referer")
-
-    # returns the "referer" header (url)
     return referer_header
 
 def redirect(
