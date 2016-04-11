@@ -423,7 +423,7 @@ class Rest(colony.System):
         @param resource_path: The path part that is going to
         be used for the plugin resolution.
         @rtype: bool
-        @return: If there was at least one registererd plugin
+        @return: If there was at least one registered plugin
         able to handle the provided request.
         """
 
