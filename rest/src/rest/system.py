@@ -300,12 +300,12 @@ class Rest(colony.System):
             # handles the request with the services request handler,
             # note that proper callback are called before and after
             # and then returns immediately as the request is handled
-            rest_request.pre_handle(rest_request)
-            try: self.handle_rest_request_services(rest_request)
-            except BaseException as exception: rest_request.except_handle(
-                rest_request, exception
-            ); raise
-            else: rest_request.post_handle(rest_request)
+            rest_request.pre_handle()
+            try: self.handle_rest_request_services()
+            except BaseException as exception:
+                rest_request.except_handle(exception)
+                raise
+            else: rest_request.post_handle()
             return
 
         # otherwise it's a "general" request and the typical handling
@@ -330,12 +330,12 @@ class Rest(colony.System):
                 # handles the rest request using the rest service plugin,
                 # note that proper callback are called before and after and
                 # returns the control flow to the caller method immediately
-                rest_request.pre_handle(rest_request)
+                rest_request.pre_handle()
                 try: rest_service_plugin.handle_rest_request(rest_request)
-                except BaseException as exception: rest_request.except_handle(
-                    rest_request, exception
-                ); raise
-                else: rest_request.post_handle(rest_request)
+                except BaseException as exception:
+                    rest_request.except_handle(exception)
+                    raise
+                else: rest_request.post_handle()
                 return
 
         # raises the rest request not handled exception, because of the control
@@ -896,9 +896,11 @@ class RestRequest(object):
         Constructor of the class.
 
         @type rest: MainRestManager
-        @param rest: The rest.
+        @param rest: The rest manager that should control the handling
+        workflow for the request to be created (owner).
         @type request: Request
-        @param request: The associated request.
+        @param request: The associated request, should be compatible
+        with the expected request interface (defined properly).
         """
 
         self.rest = rest
@@ -907,6 +909,10 @@ class RestRequest(object):
         self.rest_encoder_plugins = []
         self.rest_encoder_plugins_map = {}
         self.parameters_map = {}
+
+        # determines if the ssl (secure) connection should be
+        # enforced for connections associated with the request
+        self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
 
         # updates the generation time value with the current
         # time (useful for generation time) also updates the
@@ -918,14 +924,15 @@ class RestRequest(object):
     def session(self):
         return self.ensure_session()
 
-    def pre_handle(self, rest_request):
-        colony.notify_g("request.begin", rest_request)
+    def pre_handle(self):
+        self._sslify()
+        colony.notify_g("request.begin", self)
 
-    def post_handle(self, rest_request):
-        colony.notify_g("request.end", rest_request)
+    def post_handle(self):
+        colony.notify_g("request.end", self)
 
-    def except_handle(self, rest_request, exception):
-        colony.notify_g("request.end", rest_request)
+    def except_handle(self, exception):
+        colony.notify_g("request.end", self, exception)
 
     def start_session(
         self,
@@ -2101,6 +2108,28 @@ class RestRequest(object):
         value = form_data.get(name, default)
         if cast and not value in (None, ""): value = cast(value)
         return value
+
+    @property
+    def scheme(self):
+        return
+
+    def _sslify(self):
+        """
+        Verifies if the current request is meant to be established
+        under a secure connection and if that's the case enforces
+        such connection by redirecting the request.
+        """
+
+        if not self.force_ssl: return
+
+        is_secure = self.request.is_secure()
+        host = self.request.get_header("Host")
+
+        if not host: return
+        if is_secure: return
+
+        url = "https://" + host + self.request.original_path
+        self.redirect(url, quote = False)
 
     def _update_session_cookie(self):
         """
