@@ -153,6 +153,10 @@ class Rest(colony.System):
     """ The service methods map associating the complete method
     name with the proper method object, to be called at runtime """
 
+    force_ssl = False
+    """ If the ssl verification must be performed as default for
+    the requests associated with this handler """
+
     session_c = None
     """ The reference to the class that is going to be
     used for session creation and loading, this may
@@ -169,6 +173,10 @@ class Rest(colony.System):
         self.regex_index_plugin_id_map = {}
         self.service_methods = []
         self.service_methods_map = {}
+
+        # determines if the ssl (secure) connection should be
+        # enforced for connections associated with the request
+        self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
 
         # prints a debug message about the starting of the loading
         # of the session infra-structure (may block)
@@ -901,6 +909,10 @@ class RestRequest(object):
     """ The translated result as a data string of contents that
     are going to be returned as part of the result for request """
 
+    force_ssl = False
+    """ If the ssl verification must be performed as default for
+    the current request (extra pre handling operation) """
+
     rest_encoder_plugins = []
     """ The rest encoder plugins that are going to be used
     in the translation process of the request workflow """
@@ -951,9 +963,7 @@ class RestRequest(object):
         self.rest_encoder_plugins_map = {}
         self.parameters_map = {}
 
-        # determines if the ssl (secure) connection should be
-        # enforced for connections associated with the request
-        self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
+        self.force_ssl = rest.force_ssl
 
         # updates the generation time value with the current
         # time (useful for generation time) also updates the
