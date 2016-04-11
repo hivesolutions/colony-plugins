@@ -301,7 +301,7 @@ class Rest(colony.System):
             # note that proper callback are called before and after
             # and then returns immediately as the request is handled
             rest_request.pre_handle()
-            try: self.handle_rest_request_services()
+            try: self.handle_rest_request_services(rest_request)
             except BaseException as exception:
                 rest_request.except_handle(exception)
                 raise
@@ -311,32 +311,11 @@ class Rest(colony.System):
         # otherwise it's a "general" request and the typical handling
         # strategy is going to be performed (as usual)
         else:
-            # iterates over all the matching regex in the matching regex list
-            for matching_regex in self.matching_regex_list:
-                # retrieves the resource path match and in case there is
-                # no valid resource path match, must continue the loop
-                resource_path_match = matching_regex.match(resource_path)
-                if not resource_path_match: continue
-
-                # retrieves the base value for the matching regex and uses
-                # the value together with the group regex to calculates the
-                # rest service plugin index to be used in the plugin id retrieval
-                base_value = self.matching_regex_base_values_map[matching_regex]
-                group_index = resource_path_match.lastindex
-                rest_service_plugin_index = base_value + group_index - 1
-                plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
-                rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
-
-                # handles the rest request using the rest service plugin,
-                # note that proper callback are called before and after and
-                # returns the control flow to the caller method immediately
-                rest_request.pre_handle()
-                try: rest_service_plugin.handle_rest_request(rest_request)
-                except BaseException as exception:
-                    rest_request.except_handle(exception)
-                    raise
-                else: rest_request.post_handle()
-                return
+            # tries to run the classical request handling (routing)
+            # strategy to find a proper plugin handler in case it
+            # successes returns the controls flow (avoid exception)
+            result = self.try_rest_request_plugin(rest_request, resource_path)
+            if result: return
 
         # raises the rest request not handled exception, because of the control
         # flow has reached this place no matching regex has able to handle the
@@ -360,6 +339,10 @@ class Rest(colony.System):
         process of the remote method and for the passing of
         the proper parameters/arguments into it.
         """
+
+        # in case the request has already been handled through
+        # redirection, the control flow must be returned immediately
+        if rest_request.redirected: return
 
         # retrieves the (underlying) request for the current
         # rest request, this value may be used latter for the
@@ -422,6 +405,64 @@ class Rest(colony.System):
         rest_request.set_content_type(content_type)
         rest_request.set_result_translated(result_translated)
         rest_request.flush()
+
+    def try_rest_request_plugin(self, rest_request, resource_path):
+        """
+        Tries to run the request handling strategy (regex matching)
+        for the complete set of rest request handling plugins.
+
+        This should be an expensive operation (routing) and should
+        be used with proper care.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled,
+        this request is going to be used for the resolution
+        process of the remote method and for the passing of
+        the proper parameters/arguments into it.
+        @type resource_path: String
+        @param resource_path: The path part that is going to
+        be used for the plugin resolution.
+        @rtype: bool
+        @return: If there was at least one registererd plugin
+        able to handle the provided request.
+        """
+
+        # in case the request has already been handled through
+        # redirection, the control flow must be returned immediately
+        if rest_request.redirected: return
+
+        # iterates over all the matching regex in the matching regex list
+        # to try to determined the proper one for handling
+        for matching_regex in self.matching_regex_list:
+            # retrieves the resource path match and in case there is
+            # no valid resource path match, must continue the loop
+            resource_path_match = matching_regex.match(resource_path)
+            if not resource_path_match: continue
+
+            # retrieves the base value for the matching regex and uses
+            # the value together with the group regex to calculates the
+            # rest service plugin index to be used in the plugin id retrieval
+            base_value = self.matching_regex_base_values_map[matching_regex]
+            group_index = resource_path_match.lastindex
+            rest_service_plugin_index = base_value + group_index - 1
+            plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
+            rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
+
+            # handles the rest request using the rest service plugin,
+            # note that proper callback are called before and after and
+            # returns the control flow to the caller method immediately
+            rest_request.pre_handle()
+            try: not rest_request.redirected and\
+                rest_service_plugin.handle_rest_request(rest_request)
+            except BaseException as exception:
+                rest_request.except_handle(exception)
+                raise
+            else: rest_request.post_handle()
+            return True
+
+        # in case the control flow reaches this places there has been no processing
+        # of the request and an invalid boolean value must be returned
+        return False
 
     def is_active(self):
         """
