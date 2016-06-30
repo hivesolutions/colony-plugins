@@ -359,7 +359,7 @@ class RsaStructure(object):
 
         # joins the parts in the part values list
         # to re-create the message decrypted
-        message_decrypted = "".join(part_values)
+        message_decrypted = b"".join(part_values)
 
         # returns the message decrypted
         return message_decrypted

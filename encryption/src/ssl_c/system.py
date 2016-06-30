@@ -108,6 +108,10 @@ class SslStructure(object):
         pkcs1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
     def encrypt_base_64(self, public_key_path, message):
+        # ensures that the provided message is properly encoded as
+        # a byte sequence as expected by the encoder
+        message = colony.legacy.bytes(message)
+
         # encrypts the message, creating the encrypted version
         # of the message, according to the rsa and pkcs specification
         message_e = self.encrypt(public_key_path, message)

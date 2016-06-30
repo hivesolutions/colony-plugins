@@ -948,12 +948,12 @@ class Pkcs1Structure:
         # retrieves the first character and converts
         # it into and ordinal value
         first_character = signature_verified[0]
-        first_character_ordinal = ord(first_character)
+        first_character_ordinal = colony.legacy.ord(first_character)
 
         # retrieves the second character and converts
         # it into and ordinal value
         second_character = signature_verified[1]
-        second_character_ordinal = ord(second_character)
+        second_character_ordinal = colony.legacy.ord(second_character)
 
         # in case the first character ordinal is not zero or the second character is not one
         # must raise and invalid format exception
@@ -973,7 +973,7 @@ class Pkcs1Structure:
             current_character = signature_verified[index]
 
             # converts the current character to ordinal
-            current_character_ordinal = ord(current_character)
+            current_character_ordinal = colony.legacy.ord(current_character)
 
             # in case the current character ordinal is zero
             # (end of padding part) must break the loop

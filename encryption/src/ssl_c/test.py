@@ -89,22 +89,23 @@ class SslBaseTestCase(colony.ColonyTestCase):
 
         self.ssl.generate_keys(private_path, public_path, number_bits = 128)
 
-        result_encrypt = self.ssl.encrypt_base_64(public_path, "Hello World")
+        result_encrypt = self.ssl.encrypt_base_64(public_path, b"Hello World")
         result = self.ssl.decrypt_base_64(private_path, result_encrypt)
-        self.assertEqual(result, "Hello World")
+        self.assertEqual(result, b"Hello World")
 
         for _index in colony.legacy.xrange(0, 128):
             value = "".join(random.choice(string.ascii_lowercase) for _index in colony.legacy.xrange(12))
+            value = colony.legacy.bytes(value)
             result_encrypt = self.ssl.encrypt_base_64(public_path, value)
             result = self.ssl.decrypt_base_64(private_path, result_encrypt)
             self.assertEqual(result, value)
 
     def test_encrypt_base_64(self):
-        result = self.ssl.encrypt_base_64(self.public_path, self._pad("Hello World"))
+        result = self.ssl.encrypt_base_64(self.public_path, self._pad(b"Hello World"))
         self.assertEqual(result, "FwMjXpD4Z1Q8TreGa9zjlq5THUjEVOjM6gKEAGcKiHERMoZvDBsj8xzIsVYp6Zs7\nwwx9NWM0BADE8WcUnL9Fxg==\n")
 
         result = self.ssl.decrypt_base_64(self.private_path, "FwMjXpD4Z1Q8TreGa9zjlq5THUjEVOjM6gKEAGcKiHERMoZvDBsj8xzIsVYp6Zs7\nwwx9NWM0BADE8WcUnL9Fxg==\n")
-        self.assertEqual(result, self._pad("Hello World"))
+        self.assertEqual(result, self._pad(b"Hello World"))
 
     def test_sign_base_64(self):
         signature = self.ssl.sign_base_64(self.private_path, "md5", "Hello World")
@@ -129,4 +130,4 @@ class SslBaseTestCase(colony.ColonyTestCase):
         size_b = size // 8
         message_s = len(message)
         pad_size = size_b - message_s - 3
-        return message + "\x00" * pad_size
+        return message + b"\x00" * pad_size
