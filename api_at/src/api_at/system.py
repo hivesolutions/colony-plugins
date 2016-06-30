@@ -327,7 +327,7 @@ class AtClient(object):
         # encrypts the current password using the aes structure
         # created for the current context and then encodes it
         # into a base 64 structure
-        password_encrypted = aes.encrypt(password)
+        password_encrypted = aes.encrypt(password_b)
         password_encrypted_b64 = base64.b64encode(password_encrypted)
         password_encrypted_b64 = colony.legacy.str(password_encrypted_b64)
 
