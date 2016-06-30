@@ -302,6 +302,7 @@ class AtClient(object):
         password = self.test_mode and "testes1234" or str(self.at_structure.password)
         username = str(username)
         password = str(password)
+        password_b = colony.legacy.bytes(password)
 
         # creates a new aes cipher structure to be
         # able to encrypt the target fields and gets
@@ -321,26 +322,30 @@ class AtClient(object):
         ssl_structure = self.ssl_plugin.create_structure({})
         secret_encrypted = ssl_structure.encrypt(public_key_path, secret)
         nonce = base64.b64encode(secret_encrypted)
+        nonce = colony.legacy.str(nonce)
 
         # encrypts the current password using the aes structure
         # created for the current context and then encodes it
         # into a base 64 structure
         password_encrypted = aes.encrypt(password)
         password_encrypted_b64 = base64.b64encode(password_encrypted)
+        password_encrypted_b64 = colony.legacy.str(password_encrypted_b64)
 
         # retrieves the current utc date to be used for temporal
         # verification of the request on the server side
         current_date = datetime.datetime.utcnow()
         current_date_s = current_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        current_date_b = colony.legacy.bytes(current_date_s)
 
         # creates the base digest string from the secret, current
         # date and password values, and uses it to create the verification
         # digest responsible for the "signature of the message"
-        digest = secret + current_date_s + password
+        digest = secret + current_date_b + password_b
         digest_sha1 = hashlib.sha1(digest)
         digest_hash = digest_sha1.digest()
         digest_hash_encrypted = aes.encrypt(digest_hash)
         digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
+        digest_hash_encrypted_b64 = colony.legacy.str(digest_hash_encrypted_b64)
 
         # defines the format of the soap envelope to be submitted to at
         # as a normal string template to be populated with global values

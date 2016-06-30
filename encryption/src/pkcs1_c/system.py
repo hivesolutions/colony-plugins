@@ -820,14 +820,14 @@ class Pkcs1Structure:
         # characters to avoid the zero value and then constructs the final
         # padded message that includes the created padding
         pad = "".join(random.choice(string.ascii_lowercase) for _value in colony.legacy.xrange(pad_length))
-        message_pad = "\x00\x02" + pad + "\x00" + message
+        message_pad = b"\x00\x02" + colony.legacy.bytes(pad) + b"\x00" + message
         return message_pad
 
     def _decrypt(self, keys, message_pad):
         # verifies if the provided message contains the "expected"
         # padding in case it does not returns the message (no padding)
         # is contained
-        is_padded = message_pad.startswith("\x00\x02")
+        is_padded = message_pad.startswith(b"\x00\x02")
         if not is_padded: return message_pad
 
         # retrieves the remaining part of the message (excludes the
@@ -835,7 +835,7 @@ class Pkcs1Structure:
         # start of the message in case it's not found raises an exception
         # indicating the invalid padding
         message_pad = message_pad[2:]
-        start_index = message_pad.find("\x00")
+        start_index = message_pad.find(b"\x00")
         if start_index == -1: raise exceptions.InvalidFormatException("invalid padding")
 
         # retrieve the message itself from the "discovered"

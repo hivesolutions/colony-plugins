@@ -777,7 +777,7 @@ class RsaStructure(object):
             # the least significant byte value of
             # the integer and adds that character
             # vale to the list containing the characters
-            character_value = chr(integer_value & 0xff)
+            character_value = colony.legacy.chr(integer_value & 0xff)
             characters_list.append(character_value)
 
             # shifts the integer value eight bits
@@ -793,14 +793,14 @@ class RsaStructure(object):
         # so that the requested length is fulfilled
         extra = string_length - characters_list_length
         extra = 0 if extra < 0 else extra
-        for _index in colony.legacy.xrange(extra): characters_list.append("\x00")
+        for _index in colony.legacy.xrange(extra): characters_list.append(b"\x00")
 
         # reverses the characters list, because the creation of
         # the string was made in the opposite order (big endian)
         # and then joins it to create the buffer, returning then
         # the value to the caller method (as requested)
         characters_list.reverse()
-        string_value = "".join(characters_list)
+        string_value = b"".join(characters_list)
         return string_value
 
     def _generate_random_integer_interval(self, minimum_value, maximum_value):
