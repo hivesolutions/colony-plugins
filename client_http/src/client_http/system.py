@@ -1114,10 +1114,8 @@ class HttpClient(object):
         """
 
         # in case the content type charset is not defined
-        # (no decoding should take place)
-        if not self.content_type_charset:
-            # returns immediately
-            return
+        # (no decoding should take place), returns immediately
+        if not self.content_type_charset: return
 
         # retrieves the received message value
         received_message_value = response.received_message
