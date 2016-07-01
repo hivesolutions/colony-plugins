@@ -69,9 +69,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         return "Client Http Plugin test case"
 
     def test_create_client(self):
-        file = self.http.fetch_url("https://httpbin.org/image/png")
+        response = self.http.fetch_url("https://httpbin.org/image/png")
 
-        self.assertEqual(file.file_name, "default")
-        self.assertEqual(file.mime, "image/png")
-        self.assertEqual(len(file.data) > 100, True)
-        self.assertEqual(len(file.data_b64) > 100, True)
+        self.assertEqual(response.headers_map["Content-Type"], "image/png")
+        self.assertEqual(len(response.received_message) > 100, True)
