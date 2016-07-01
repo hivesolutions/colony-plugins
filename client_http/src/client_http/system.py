@@ -1577,8 +1577,10 @@ class HttpRequest(object):
         # retrieves the result stream
         result = colony.StringBuffer()
 
-        # encodes the path if required
-        path = self.encode_path and self._encode_path() or self._encode(self.path)
+        # encodes the path if required then ensure that
+        # the same path is represented as a string value
+        path = self._encode_path() if self.encode_path else self._encode(self.path)
+        path = colony.legacy.str(path)
 
         # encodes the attributes
         encoded_attributes = self._encode_attributes()
@@ -1644,9 +1646,12 @@ class HttpRequest(object):
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
 
-        # iterates over all the header values to be sent
+        # iterates over all the header values to be sent to write
+        # them to the "header" result buffer, note that each of them
+        # is ensured to be a plain string value (no special characters)
         for header_name, header_value in colony.legacy.items(headers_ordered_map):
-            # writes the header value in the result
+            header_name = colony.legacy.str(header_name)
+            header_value = colony.legacy.str(header_value)
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
