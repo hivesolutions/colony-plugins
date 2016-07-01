@@ -54,6 +54,7 @@ class RsaPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "test",
         "encryption.rsa"
     ]
     main_modules = [

@@ -98,12 +98,21 @@ class RsaBaseTestCase(colony.ColonyTestCase):
         result = self.rsa._string_to_integer("\xf0\x95\xabR\xde\x9b_\xd7")
         self.assertEqual(result, 17335950713042984919)
 
+        result = self.rsa._string_to_integer(b"O\xe2\x9au\xe1")
+        self.assertEqual(result, 343104189921)
+
+        result = self.rsa._string_to_integer(b"\x18\x1e\xf2&\xbf\xec\xe0\x94")
+        self.assertEqual(result, 1738092754454241428)
+
+        result = self.rsa._string_to_integer(b"\xf0\x95\xabR\xde\x9b_\xd7")
+        self.assertEqual(result, 17335950713042984919)
+
     def test__integer_to_string(self):
         result = self.rsa._integer_to_string(343104189921)
-        self.assertEqual(result, "O\xe2\x9au\xe1")
+        self.assertEqual(result, b"O\xe2\x9au\xe1")
 
         result = self.rsa._integer_to_string(1738092754454241428)
-        self.assertEqual(result, "\x18\x1e\xf2&\xbf\xec\xe0\x94")
+        self.assertEqual(result, b"\x18\x1e\xf2&\xbf\xec\xe0\x94")
 
         result = self.rsa._integer_to_string(17335950713042984919)
-        self.assertEqual(result, "\xf0\x95\xabR\xde\x9b_\xd7")
+        self.assertEqual(result, b"\xf0\x95\xabR\xde\x9b_\xd7")
