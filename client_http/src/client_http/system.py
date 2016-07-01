@@ -929,10 +929,11 @@ class HttpClient(object):
                 # calculates the message value message length
                 message_value_message_length = message_value_length - start_message_index
 
-                # in case the length of the message value message is the same
-                # or greater as the message size and the message size
-                # is not undefined
-                if message_value_message_length >= message_size and not message_size == UNDEFINED_CONTENT_LENGTH:
+                # in case the length of the message value message size is defined
+                # and valid and the message value length (retrieved) is greater or
+                # equal to that same message size value (message loaded)
+                if not message_size == UNDEFINED_CONTENT_LENGTH and\
+                    message_value_message_length >= message_size: 
                     # retrieves the message part of the message value
                     message_value_message = message_value[start_message_index:]
 
