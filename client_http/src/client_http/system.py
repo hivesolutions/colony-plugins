@@ -790,11 +790,11 @@ class HttpClient(object):
 
                 # in case there is a new line value found
                 if not start_line_index == -1:
-                    # retrieves the start line
+                    # retrieves the start line, converts it into a plain string
+                    # value and then splits it into its parts
                     start_line = message_value[:start_line_index]
-
-                    # splits the start line in spaces
-                    start_line_splitted = start_line.split(b" ", 2)
+                    start_line = colony.legacy.str(start_line)
+                    start_line_splitted = start_line.split(" ", 2)
 
                     # retrieves the start line splitted length
                     start_line_splitted_length = len(start_line_splitted)
@@ -804,20 +804,13 @@ class HttpClient(object):
                         # raises the http invalid data exception
                         raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
 
-                    # retrieve the protocol version the status code and the satus message
-                    # from the start line splitted
+                    # retrieve the protocol version the status code and the status message
+                    # from the start line splitted, converts some of the values into their
+                    # proper representations and the sets the values in the response
                     protocol_version, status_code, status_message = start_line_splitted
-
-                    # converts the status code to integer
                     status_code_integer = int(status_code)
-
-                    # sets the response protocol version
                     response.set_protocol_version(protocol_version)
-
-                    # sets the response status code
                     response.set_status_code(status_code_integer)
-
-                    # sets the response status message
                     response.set_status_message(status_message)
 
                     # sets the start line loaded flag
@@ -855,13 +848,15 @@ class HttpClient(object):
                         # finds the header separator
                         division_index = header_splitted.find(b":")
 
-                        # retrieves the header name
+                        # retrieves the header name and value and then converts
+                        # them into the appropriate string representation
                         header_name = header_splitted[:division_index].strip()
-
-                        # retrieves the header value
                         header_value = header_splitted[division_index + 1:].strip()
+                        header_name = colony.legacy.str(header_name)
+                        header_value = colony.legacy.str(header_value)
 
-                        # sets the header in the headers map
+                        # sets the header in the headers map, so that it may be
+                        # latter retrieved in a proper way
                         response.headers_map[header_name] = header_value
 
                     # in case the content length exists in the headers map

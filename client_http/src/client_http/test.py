@@ -71,5 +71,8 @@ class ClientHttpTestCase(colony.ColonyTestCase):
     def test_create_client(self):
         response = self.http.fetch_url("https://httpbin.org/image/png")
 
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
         self.assertEqual(response.headers_map["Content-Type"], "image/png")
         self.assertEqual(len(response.received_message) > 100, True)
