@@ -1604,8 +1604,10 @@ class HttpRequest(object):
         # retrieves the real host value
         real_host = self._get_real_host()
 
-        # retrieves the result string value
+        # retrieves the result string value and ensures
+        # that the value is encoded as bytes (expected)
         message = self.message_stream.get_value()
+        message = colony.legacy.bytes(message)
 
         # retrieves the content length from the
         # message content itself
