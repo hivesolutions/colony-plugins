@@ -786,7 +786,7 @@ class HttpClient(object):
             # in case the start line is not loaded
             if not start_line_loaded:
                 # finds the first new line value
-                start_line_index = message_value.find("\r\n")
+                start_line_index = message_value.find(b"\r\n")
 
                 # in case there is a new line value found
                 if not start_line_index == -1:
@@ -830,7 +830,7 @@ class HttpClient(object):
             # in case the header is not loaded
             if not header_loaded:
                 # retrieves the end header index (two new lines)
-                end_header_index = message_value.find("\r\n\r\n")
+                end_header_index = message_value.find(b"\r\n\r\n")
 
                 # in case the end header index is found
                 if not end_header_index == -1:
@@ -985,7 +985,7 @@ class HttpClient(object):
         if yield_response: yield "message_data", response, message_value
 
         # tries to find the octet end index
-        octet_end_index = message_value.find("\r\n")
+        octet_end_index = message_value.find(b"\r\n")
 
         # loops indefinitely
         while True:
@@ -1017,7 +1017,7 @@ class HttpClient(object):
                 message_value = message.get_value()
 
                 # tries to find the octet end index
-                octet_end_index = message_value.find("\r\n")
+                octet_end_index = message_value.find(b"\r\n")
 
             # retrieves the octet size string
             octet_size_string = message_value[:octet_end_index]
@@ -1100,7 +1100,7 @@ class HttpClient(object):
             message_value = partial_message
 
             # tries to find the octet end index
-            octet_end_index = message_value.find("\r\n")
+            octet_end_index = message_value.find(b"\r\n")
 
         # retrieves the contents value
         contents_value = contents.get_value()
