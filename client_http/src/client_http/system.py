@@ -551,7 +551,7 @@ class HttpClient(object):
 
         # in case the request method is not get as the parameters
         # are not meant to be encoded as url parameters
-        if not method == GET_METHOD_VALUE:  return base_url
+        if not method == GET_METHOD_VALUE: return base_url
 
         # creates the http request to build the url
         request = HttpRequest(attributes_map = parameters)
@@ -933,7 +933,7 @@ class HttpClient(object):
                 # and valid and the message value length (retrieved) is greater or
                 # equal to that same message size value (message loaded)
                 if not message_size == UNDEFINED_CONTENT_LENGTH and\
-                    message_value_message_length >= message_size: 
+                    message_value_message_length >= message_size:
                     # retrieves the message part of the message value
                     message_value_message = message_value[start_message_index:]
 
