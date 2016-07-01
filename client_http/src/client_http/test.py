@@ -55,6 +55,12 @@ class ClientHttpTest(colony.Test):
 
         system = self.plugin.system
         test_case.http = system.create_client({})
+        test_case.http.open()
+
+    def tear_down(self, test_case):
+        colony.Test.tear_down(self, test_case)
+
+        test_case.http.close()
 
 class ClientHttpTestCase(colony.ColonyTestCase):
 
