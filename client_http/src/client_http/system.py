@@ -647,28 +647,24 @@ class HttpClient(object):
             base_url = base_url
         )
 
-        # in case the contents are defined
-        if contents:
-            # writes the contents to the request
-            request.write(contents)
+        # in case the contents are defined, writes the contents
+        # to the request structure
+        if contents: request.write(contents)
 
-        # in case authentication is set
+        # in case authentication is set, sets the authentication
+        # parameters in the request
         if self.authentication:
-            # sets the authentication in the request
             request.set_authentication(self.username, self.password)
 
-        # in case no cache is set
+        # in case no cache is set, sets the no cache value
+        # in the current request structure
         if self.no_cache:
-            # sets the no cache in the request
             request.set_no_cache(self.no_cache)
 
-        # retrieves the result value from the request
+        # retrieves the result value from the request,
+        # sends the result value and returns the request
         result_value = request.get_result()
-
-        # sends the result value
         self.client_connection.send(result_value)
-
-        # returns the request
         return request
 
     def retrieve_response(
