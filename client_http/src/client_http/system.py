@@ -1603,8 +1603,10 @@ class HttpRequest(object):
                 self.message_stream.write(encoded_attributes)
                 self.content_type = "application/x-www-form-urlencoded"
 
-        # retrieves the real host value
+        # retrieves the real host value and ensures that it
+        # is properly encoded as a plain string value
         real_host = self._get_real_host()
+        real_host = colony.legacy.str(real_host)
 
         # retrieves the result string value and ensures
         # that the value is encoded as bytes (expected)
