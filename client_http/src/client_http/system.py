@@ -1814,19 +1814,16 @@ class HttpRequest(object):
         """
 
         # in case the content type charset is not defined
-        # (no encoding should take place)
-        if not self.content_type_charset:
-            # returns the string value
-            # (without encoding)
-            return string_value
+        # (no encoding should take place), returns the string
+        # value immediately (no encoding possible)
+        if not self.content_type_charset: return string_value
 
-        # converts the string value to unicode
+        # converts the string value to unicode, this may not
+        # be required in case the string is already unicode based,
+        # then encodes the value with the proper content type and
+        # returns the resulting value to the caller method
         unicode_value = colony.legacy.UNICODE(string_value)
-
-        # encodes the unicode value
         unicode_value_encoded = unicode_value.encode(self.content_type_charset)
-
-        # returns the encoded unicode value
         return unicode_value_encoded
 
 class HttpResponse(object):

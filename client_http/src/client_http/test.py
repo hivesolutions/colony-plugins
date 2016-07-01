@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
+
 import colony
 
 class ClientHttpTest(colony.Test):
@@ -69,6 +71,15 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         return "Client Http Plugin test case"
 
     def test_create_client(self):
+        response = self.http.fetch_url("http://httpbin.org/image/png")
+
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
+        self.assertEqual(response.headers_map["Content-Type"], "image/png")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
+        self.assertEqual(len(response.received_message) > 100, True)
+
         response = self.http.fetch_url("https://httpbin.org/image/png")
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
@@ -77,3 +88,22 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(response.headers_map["Content-Type"], "image/png")
         self.assertEqual(type(response.received_message), colony.legacy.BYTES)
         self.assertEqual(len(response.received_message) > 100, True)
+
+        response = self.http.fetch_url(
+            "https://httpbin.org/post",
+            method = "POST",
+            contents = b"hello world"
+        )
+
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
+        self.assertEqual(response.headers_map["Content-Type"], "application/json")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
+        self.assertEqual(len(response.received_message) > 10, True)
+
+        received_message = response.received_message.decode("utf-8")
+        received_message_j = json.loads(received_message)
+        self.assertEqual(received_message_j["args"], {})
+        self.assertEqual(received_message_j["form"], {})
+        self.assertEqual(received_message_j["data"], "hello world")
