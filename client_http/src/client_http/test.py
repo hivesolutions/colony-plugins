@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,11 +37,35 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import exceptions
-from . import system
-from . import test
+import colony
 
-from .exceptions import ClientHttpException, HttpInvalidUrlData, HttpRuntimeException,\
-    HttpInvalidDataException
-from .system import ClientHttp
-from .test import ClientHttpTest, ClientHttpTestCase
+class ClientHttpTest(colony.Test):
+    """
+    The client http infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
+    def get_bundle(self):
+        return (
+            ClientHttpTestCase,
+        )
+
+    def set_up(self, test_case):
+        colony.Test.set_up(self, test_case)
+
+        system = self.plugin.system
+        test_case.http = system.create_client({})
+
+class ClientHttpTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "Client Http Plugin test case"
+
+    def test_create_client(self):
+        file = self.http.fetch_url("https://httpbin.org/image/png")
+
+        self.assertEqual(file.file_name, "default")
+        self.assertEqual(file.mime, "image/png")
+        self.assertEqual(len(file.data) > 100, True)
+        self.assertEqual(len(file.data_b64) > 100, True)

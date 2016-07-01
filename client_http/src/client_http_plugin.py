@@ -54,6 +54,7 @@ class ClientHttpPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT
     ]
     capabilities = [
+        "test",
         "client.http"
     ]
     dependencies = [
@@ -68,6 +69,7 @@ class ClientHttpPlugin(colony.Plugin):
         colony.Plugin.load_plugin(self)
         import client_http
         self.system = client_http.ClientHttp(self)
+        self.test = client_http.ClientHttpTest(self)
 
     def create_client(self, parameters):
         return self.system.create_client(parameters)
