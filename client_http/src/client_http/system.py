@@ -549,10 +549,9 @@ class HttpClient(object):
         @return: The final url value.
         """
 
-        # in case the request method is not get
-        if not method == GET_METHOD_VALUE:
-            # returns the base url
-            return base_url
+        # in case the request method is not get as the parameters
+        # are not meant to be encoded as url parameters
+        if not method == GET_METHOD_VALUE:  return base_url
 
         # creates the http request to build the url
         request = HttpRequest(attributes_map = parameters)
@@ -562,10 +561,8 @@ class HttpClient(object):
 
         # in case the encoded attributes string
         # is not valid or is empty the url remain
-        # the base one
-        if not encoded_attributes:
-            # returns the base url
-            return base_url
+        # the base one, returns the base url
+        if not encoded_attributes: return base_url
 
         # in case no exclamation mark exists in
         # the url
@@ -1610,9 +1607,8 @@ class HttpRequest(object):
             # in case the operation is of type post
             elif self.operation_type == POST_METHOD_VALUE:
                 # writes the encoded attributes into the message stream
+                # and then sets the response content type
                 self.message_stream.write(encoded_attributes)
-
-                # sets the response content type
                 self.content_type = "application/x-www-form-urlencoded"
 
         # retrieves the real host value
@@ -1664,10 +1660,16 @@ class HttpRequest(object):
         # writes the end of the headers and the message
         # values into the result
         result.write("\r\n")
-        result.write(message)
 
-        # retrieves the value from the result buffer
+        # retrieves the value from the result buffer, this
+        # value should represent the complete initial part
+        # of the request that should be encoded as utf-8
         result_value = result.get_value()
+        result_value = colony.legacy.bytes(result_value)
+
+        # adds the complete message buffer to the result
+        # value to complete the result
+        result_value += message
 
         # returns the result value
         return result_value
