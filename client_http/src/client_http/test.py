@@ -126,3 +126,41 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(received_message_j["args"], {})
         self.assertEqual(received_message_j["form"], {"hello" : "world"})
         self.assertEqual(received_message_j["data"], "")
+
+        response = self.http.fetch_url(
+            "https://httpbin.org/post",
+            method = "POST",
+            parameters = {"olá" : "mundo"}
+        )
+
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
+        self.assertEqual(response.headers_map["Content-Type"], "application/json")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
+        self.assertEqual(len(response.received_message) > 10, True)
+
+        received_message = response.received_message.decode("utf-8")
+        received_message_j = json.loads(received_message)
+        self.assertEqual(received_message_j["args"], {})
+        self.assertEqual(received_message_j["form"], {"olá" : "mundo"})
+        self.assertEqual(received_message_j["data"], "")
+
+        response = self.http.fetch_url(
+            "https://httpbin.org/post",
+            method = "POST",
+            parameters = {"你好" : "世界"}
+        )
+
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
+        self.assertEqual(response.headers_map["Content-Type"], "application/json")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
+        self.assertEqual(len(response.received_message) > 10, True)
+
+        received_message = response.received_message.decode("utf-8")
+        received_message_j = json.loads(received_message)
+        self.assertEqual(received_message_j["args"], {})
+        self.assertEqual(received_message_j["form"], {"你好" : "世界"})
+        self.assertEqual(received_message_j["data"], "")
