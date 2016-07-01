@@ -800,8 +800,8 @@ class HttpClient(object):
                     start_line_splitted_length = len(start_line_splitted)
 
                     # in case the length of the splitted line is not valid
+                    # raises the http invalid data exception
                     if start_line_splitted_length < 3:
-                        # raises the http invalid data exception
                         raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
 
                     # retrieve the protocol version the status code and the status message
