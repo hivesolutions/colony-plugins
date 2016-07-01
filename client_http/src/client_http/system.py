@@ -1698,7 +1698,11 @@ class HttpRequest(object):
 
         # creates the authentication token encoding the username
         # and password in base 64
-        self.authentication_token = BASIC_VALUE + " " + base64.b64encode(username + ":" + password)
+        token = username + ":" + password
+        token = colony.legacy.bytes(token)
+        token_b64 = base64.b64encode(token)
+        token_b64 = colony.legacy.str(token_b64)
+        self.authentication_token = BASIC_VALUE + " " + token_b64
 
     def get_no_cache(self, no_cache):
         """

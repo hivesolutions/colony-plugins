@@ -159,7 +159,6 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(response.status_message, "OK")
         self.assertEqual(response.headers_map["Content-Type"], "application/json")
         self.assertEqual(type(response.received_message), colony.legacy.BYTES)
-        self.assertEqual(len(response.received_message) > 10, True)
 
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
@@ -168,3 +167,19 @@ class ClientHttpTestCase(colony.ColonyTestCase):
             colony.legacy.u("你好") : colony.legacy.u("世界")
         })
         self.assertEqual(received_message_j["data"], "")
+
+        response = self.http.fetch_url(
+            "https://username:password@httpbin.org/basic-auth/username/password",
+            method = "GET"
+        )
+
+        self.assertEqual(response.protocol_version, "HTTP/1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_message, "OK")
+        self.assertEqual(response.headers_map["Content-Type"], "application/json")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
+
+        received_message = response.received_message.decode("utf-8")
+        received_message_j = json.loads(received_message)
+        self.assertEqual(received_message_j["authenticated"], True)
+        self.assertEqual(received_message_j["user"], "username")
