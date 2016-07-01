@@ -794,7 +794,7 @@ class HttpClient(object):
                     start_line = message_value[:start_line_index]
 
                     # splits the start line in spaces
-                    start_line_splitted = start_line.split(" ", 2)
+                    start_line_splitted = start_line.split(b" ", 2)
 
                     # retrieves the start line splitted length
                     start_line_splitted_length = len(start_line_splitted)
@@ -848,12 +848,12 @@ class HttpClient(object):
                     headers = message_value[start_header_index:end_header_index]
 
                     # splits the headers by line
-                    headers_splitted = headers.split("\r\n")
+                    headers_splitted = headers.split(b"\r\n")
 
                     # iterates over the headers lines
                     for header_splitted in headers_splitted:
                         # finds the header separator
-                        division_index = header_splitted.find(":")
+                        division_index = header_splitted.find(b":")
 
                         # retrieves the header name
                         header_name = header_splitted[:division_index].strip()
