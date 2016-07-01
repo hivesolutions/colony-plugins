@@ -143,7 +143,9 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
-        self.assertEqual(received_message_j["form"], {"olá" : "mundo"})
+        self.assertEqual(received_message_j["form"], {
+            colony.legacy.u("olá") : colony.legacy.u("mundo")
+        })
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
@@ -162,5 +164,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
-        self.assertEqual(received_message_j["form"], {"你好" : "世界"})
+        self.assertEqual(received_message_j["form"], {
+            colony.legacy.u("你好") : colony.legacy.u("世界")
+        })
         self.assertEqual(received_message_j["data"], "")
