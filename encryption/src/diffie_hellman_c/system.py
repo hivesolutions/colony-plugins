@@ -41,20 +41,18 @@ import colony
 
 class DiffieHellman(colony.System):
     """
-    The diffie hellman class.
+    The diffie hellman class, responsible for the management
+    of the diffie hellman key exchange protocol.
     """
 
     def create_structure(self, parameters):
-        # retrieves the prime value (if available)
+        # retrieves both the prime and the base values, in case
+        # they are available and then uses them for the construction
+        # of the diffie hellman structure, returning then the same
+        # structure to the caller method
         prime_value = parameters.get("prime_value", None)
-
-        # retrieves the base value (if available)
         base_value = parameters.get("base_value", None)
-
-        # creates the diffie hellman structure
         diffie_hellman_structure = DiffieHellmanStructure(prime_value, base_value)
-
-        # returns the diffie hellman structure
         return diffie_hellman_structure
 
 class DiffieHellmanStructure(object):
