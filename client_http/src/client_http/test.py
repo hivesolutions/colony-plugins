@@ -75,4 +75,5 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.status_message, "OK")
         self.assertEqual(response.headers_map["Content-Type"], "image/png")
+        self.assertEqual(type(response.received_message), colony.legacy.BYTES)
         self.assertEqual(len(response.received_message) > 100, True)
