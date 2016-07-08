@@ -66,12 +66,16 @@ class ClientHttpTest(colony.Test):
 
 class ClientHttpTestCase(colony.ColonyTestCase):
 
+    def setUp(self):
+        colony.ColonyTestCase.setUp(self)
+        self.httpbin = colony.conf("HTTPBIN", "httpbin.org")
+
     @staticmethod
     def get_description():
         return "Client Http Plugin test case"
 
     def test_create_client(self):
-        response = self.http.fetch_url("http://httpbin.org/image/png")
+        response = self.http.fetch_url("http://%s/image/png" % self.httpbin)
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
         self.assertEqual(response.status_code, 200)
@@ -80,7 +84,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(type(response.received_message), colony.legacy.BYTES)
         self.assertEqual(len(response.received_message) > 100, True)
 
-        response = self.http.fetch_url("https://httpbin.org/image/png")
+        response = self.http.fetch_url("https://%s/image/png" % self.httpbin)
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
         self.assertEqual(response.status_code, 200)
@@ -90,7 +94,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(len(response.received_message) > 100, True)
 
         response = self.http.fetch_url(
-            "https://httpbin.org/post",
+            "https://%s/post" % self.httpbin,
             method = "POST",
             contents = b"hello world"
         )
@@ -109,7 +113,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(received_message_j["data"], "hello world")
 
         response = self.http.fetch_url(
-            "https://httpbin.org/post",
+            "https://%s/post" % self.httpbin,
             method = "POST",
             parameters = dict(hello = "world")
         )
@@ -128,7 +132,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
-            "https://httpbin.org/post",
+            "https://%s/post" % self.httpbin,
             method = "POST",
             parameters = {"olá" : "mundo"}
         )
@@ -149,7 +153,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
-            "https://httpbin.org/post",
+            "https://%s/post" % self.httpbin,
             method = "POST",
             parameters = {"你好" : "世界"}
         )
@@ -169,7 +173,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
-            "https://username:password@httpbin.org/basic-auth/username/password",
+            "https://username:password@%s/basic-auth/username/password" % self.httpbin,
             method = "GET"
         )
 
