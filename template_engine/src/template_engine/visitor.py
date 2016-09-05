@@ -157,7 +157,8 @@ FILTERS = dict(
     format = lambda v, t, format, default = None:\
         default if v == None else format % v,
     timestamp = lambda v, t, default = "":\
-        str(calendar.timegm(v.utctimetuple())) if v else default
+        str(calendar.timegm(v.utctimetuple())) if v else default,
+    range = lambda v, t: range(int(v))
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
