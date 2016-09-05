@@ -1180,7 +1180,7 @@ class Visitor(object):
         # names and then treats them, converting them into the
         # normal form
         arguments = arguments_s.split(",")
-        arguments = [argument.strip().replace(":", ".") for argument in arguments]
+        arguments = [argument.strip() for argument in arguments]
 
         # creates the list that will hold the various argument types
         # (maps) to be used to retrieve their value, then iterates over
@@ -1216,6 +1216,10 @@ class Visitor(object):
             is_bool = argument in ("True", "False")
             is_literal = is_string or is_number or is_bool
             _type = "literal" if is_literal else "variable"
+
+            # in case the current argument is a literal some of its tokens
+            # must be replaced to provide proper compatibility
+            if not is_literal: argument = argument.replace(":", ".")
 
             # retrieves the correct value taking into account the various
             # type based flags
