@@ -1032,6 +1032,11 @@ class Visitor(object):
         # provided default value (as defined is specification)
         if attribute == None: return default
 
+        # verifies if the attribute is in itself a boolean (allows
+        # polymorphic values) if that's the case returns the value
+        # immediately as it's the one that is expected
+        if type(attribute) == bool: return attribute
+
         # retrieves the literal value of the provided
         # attribute, retrieving then the data type for it
         value = attribute["value"]

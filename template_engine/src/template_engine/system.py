@@ -145,6 +145,19 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
 """ The literal regular expression that matches all the literals, there
 are matching groups for each of the data types """
 
+ESCAPE_EXTENSIONS = (
+    ".xml",
+    ".html",
+    ".xhtml",
+    ".liquid",
+    ".xml.tpl",
+    ".html.tpl",
+    ".xhtml.tpl"
+)
+""" The sequence containing the various extensions
+for which the autoescape mode will be enabled  by
+default as expected by the end developer """
+
 class TemplateEngine(colony.System):
     """
     The template engine class, responsible for the processing
@@ -225,6 +238,12 @@ class TemplateEngine(colony.System):
         # in case the locale bundles list is not defined must
         # create a new list reference to handle it correctly
         if locale_bundles == None: locale_bundles = []
+
+        # retrieves the proper extension of the template's file
+        # path and then uses it to try to determine if the template
+        # output operation should be automatically escaped
+        extension = self._extension(file_path)
+        xml_escape = self._extension_in(extension, ESCAPE_EXTENSIONS)
 
         # reads the complete set of file contents and in case an
         # encoding is defined decodes the provided file contents
@@ -412,7 +431,7 @@ class TemplateEngine(colony.System):
 
             if mtype == OUTPUT_VALUE:
                 value = match_orderer.get_value()
-                node = ast.OutputNode(value)
+                node = ast.OutputNode(value, xml_escape = xml_escape)
                 parent_node = stack[-1]
                 parent_node.add_child(node)
 
@@ -479,9 +498,27 @@ class TemplateEngine(colony.System):
         # the template file (for diagnosis and debugging)
         template_file.load_system_variable()
 
+        # loads the complete set of based functions that should be
+        # made accessible to the template for be able to perform
+        # common operations like conversion and localization
+        template_file.load_functions()
+
         # returns the final template file template file to the caller
         # method so that it may be used for rendering
         return template_file
+
+    def _extension(self, file_path):
+        _head, tail = os.path.split(file_path)
+        tail_s = tail.split(".", 1)
+        if len(tail_s) > 1: return "." + tail_s[1]
+        return None
+
+    def _extension_in(self, extension, sequence):
+        for item in sequence:
+            valid = extension.endswith(item)
+            if not valid: continue
+            return True
+        return False
 
 class MatchOrderer(object):
     """
@@ -643,6 +680,45 @@ class TemplateFile(object):
 
         self.index_nodes()
 
+    @classmethod
+    def format(cls, template, *args):
+        """
+        Custom format operation that takes a template value and
+        a variable set of arguments and formats it according to
+        the c definition of string templating.
+
+        @type template: String
+        @param template: The template string to be used in the
+        c like format operation.
+        @rtype: String
+        @returns: The "final" formated string value.
+        """
+
+        return template % args
+
+    @classmethod
+    def convert(cls, value, mode):
+        """
+        Converts the provided value according to the requested "modification"
+        operation.
+
+        The final converted value should be a "plain" string value.
+
+        @type value: String
+        @param value: The base value that is going to be converted
+        according to the provided/requested mode.
+        @type mode: String
+        @param mode: The mode that described the operation that is
+        going to be applied to the "base" value.
+        @rtype: String
+        @return: The final converted value according to the requested
+        mode.
+        """
+
+        conversion_method = visitor.CONVERSION_MAP.get(mode, None)
+        if not conversion_method: return value
+        return conversion_method(value)
+
     def index_nodes(self):
         """
         Runs the indexing stage of the identifiable nodes, this is
@@ -761,6 +837,23 @@ class TemplateFile(object):
         # the template so that it may be used to retrieve
         # global information about the system
         self.assign(name, system_information_map)
+
+    def load_functions(self):
+        """
+        Loads the complete set of base functions that are going to be
+        used at template runtime to perform common operations.
+
+        These functions will be exposed on the global dictionary.
+        """
+
+        # retrieves the reference to the class associated with the
+        # current instance to be able to access class variables
+        cls = self.__class__
+
+        # runs the assign operation for the complete set of functions
+        # that are considered part of the global namespace
+        self.assign("format", cls.format)
+        self.assign("convert", cls.convert)
 
     def load_visitor(self):
         """

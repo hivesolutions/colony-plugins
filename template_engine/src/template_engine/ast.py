@@ -290,6 +290,10 @@ class OutputNode(SimpleNode):
     configured as an out operation.
     """
 
+    def __init__(self, value = None, type = "out", xml_escape = True):
+        SimpleNode.__init__(self, value = value, type = type)
+        self.attributes["xml_escape"] = xml_escape
+
     def process_value(self):
         value = self.value[2:-2]
         value = value.strip()
