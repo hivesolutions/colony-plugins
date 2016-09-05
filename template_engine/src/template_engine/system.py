@@ -694,7 +694,8 @@ class TemplateFile(object):
         @returns: The "final" formated string value.
         """
 
-        return template % args
+        try: return template % args
+        except: return None
 
     @classmethod
     def convert(cls, value, mode):
@@ -717,7 +718,8 @@ class TemplateFile(object):
 
         conversion_method = visitor.CONVERSION_MAP.get(mode, None)
         if not conversion_method: return value
-        return conversion_method(value)
+        try: return conversion_method(value)
+        except: return None
 
     def index_nodes(self):
         """
