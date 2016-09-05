@@ -698,6 +698,11 @@ class TemplateFile(object):
         except: return None
 
     @classmethod
+    def format_datetime(cls, template, value):
+        try: return value.strftime(template)
+        except: return None
+
+    @classmethod
     def convert(cls, value, mode):
         """
         Converts the provided value according to the requested "modification"
@@ -855,6 +860,7 @@ class TemplateFile(object):
         # runs the assign operation for the complete set of functions
         # that are considered part of the global namespace
         self.assign("format", cls.format)
+        self.assign("format_datetime", cls.format_datetime)
         self.assign("convert", cls.convert)
 
     def load_visitor(self):
