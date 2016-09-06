@@ -463,7 +463,19 @@ class ClientConnection(object):
     _write_lock = None
     """ The write lock """
 
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_persistent, connection_socket_name, connection_socket_parameters, connection_request_timeout, connection_response_timeout, connection_chunk_size):
+    def __init__(
+        self,
+        client_plugin,
+        client,
+        connection_socket,
+        connection_address,
+        connection_persistent,
+        connection_socket_name,
+        connection_socket_parameters,
+        connection_request_timeout,
+        connection_response_timeout,
+        connection_chunk_size
+    ):
         """
         Constructor of the class.
 
