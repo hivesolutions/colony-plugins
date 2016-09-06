@@ -47,24 +47,6 @@ import colony
 PROVIDER_NAME = "ssl"
 """ The provider name """
 
-FAMILY_VALUE = "family"
-""" The family value """
-
-KEY_FILE_PATH = "key_file_path"
-""" The key file path value """
-
-CERTIFICATE_FILE_PATH = "certificate_file_path"
-""" The certificate file path value """
-
-SERVER_SIDE_VALUE = "server_side"
-""" The server side value """
-
-SSL_VERSION_VALUE = "ssl_version"
-""" The ssl version value """
-
-DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
-""" The do handshake on connect value """
-
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
 
@@ -139,7 +121,7 @@ class SslSocket(colony.System):
         plugin_resources_path = plugin_path + "/ssl_socket/resources"
 
         # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+        socket_family = parameters.get("family", socket.AF_INET)
 
         # creates the normal socket
         normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
@@ -151,8 +133,8 @@ class SslSocket(colony.System):
 
         # tries to retrieve the key and certificate file paths,
         # falling back to the dummy certificate values
-        key_file_path = parameters.get(KEY_FILE_PATH, dummy_ssl_key_path)
-        certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH, dummy_ssl_certificate_path)
+        key_file_path = parameters.get("key_file_path", dummy_ssl_key_path)
+        certificate_file_path = parameters.get("certificate_file_path", dummy_ssl_certificate_path)
 
         # resolves both file paths using the plugin manager, in case
         # their refers logical references their are converted into absolute paths
@@ -160,14 +142,14 @@ class SslSocket(colony.System):
         certificate_file_path = manager.resolve_file_path(certificate_file_path)
 
         # tries to retrieve the server side value
-        server_side = parameters.get(SERVER_SIDE_VALUE, False)
+        server_side = parameters.get("server_side", False)
 
         # tries to retrieve the do handshake on connect value
-        do_handshake_on_connect = parameters.get(DO_HANDSHAKE_ON_CONNECT_VALUE, False)
+        do_handshake_on_connect = parameters.get("do_handshake_on_connect", False)
 
         # tries to retrieve the server side value, that will
         # control the accepted versions of the protocol
-        ssl_version = parameters.get(SSL_VERSION_VALUE, None)
+        ssl_version = parameters.get("ssl_version", None)
         ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
 
         # warps the normal socket into an ssl socket, providing
