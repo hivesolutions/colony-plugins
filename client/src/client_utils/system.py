@@ -924,7 +924,7 @@ class ClientConnection(object):
                     data = self.connection_socket.recv(CHUNK_SIZE)
 
                     # in case the data is invalid it means the connection has
-                    # been droped and a re-connection is required
+                    # been dropped and a re-connection is required
                     if not data:
                         # prints a debug message and then runs the re-connection
                         # operation to try to send the data
@@ -1028,6 +1028,17 @@ class ClientConnection(object):
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
 
     def _process_exception(self, exception):
+        """
+        Processes the exception taking into account the severity of it,
+        as for some exception a graceful handling is imposed.
+
+        @type exception: Exception
+        @param exception: The exception that is going to be handled/processed.
+        @rtype: bool
+        @return: The result of the processing, in case it's false a normal
+        exception handling should be performed otherwise a graceful one is used.
+        """
+
         # in case the current connection socket contains the process
         # exception method and the exception is process successfully
         # returns valid as the exception is not critical
