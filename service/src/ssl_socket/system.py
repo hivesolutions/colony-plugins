@@ -68,6 +68,9 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
 
+SSL_ERROR_WANT_WRITE = 3
+""" The ssl error want write value """
+
 WSAEWOULDBLOCK = 10035
 """ The wsa would block error code """
 
@@ -313,13 +316,14 @@ def set_option(self, name, value):
     setattr(self, name, value)
 
 def process_exception(self, exception):
-    # in case the exception is of type ssl error
-    # and the error number is ssl error want read
-    if exception.__class__ == ssl.SSLError and exception.errno == SSL_ERROR_WANT_READ:
-        # return false (exception
-        # must can be ignored)
+    # in case the exception is of type ssl error and the error
+    # number is ssl error want read or write, the exception must
+    # be ignored as it means that an operation could not be immediately
+    # performed and must be delayed
+    if exception.__class__ == ssl.SSLError and\
+       exception.errno in (SSL_ERROR_WANT_READ, SSL_ERROR_WANT_WRITE):
         return True
 
-    # return false (exception
-    # must be processed)
+    # return false (exception must be processed) as no graceful
+    # approach is possible for such exception
     return False

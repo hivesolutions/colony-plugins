@@ -66,19 +66,7 @@ RECEIVE_RETRIES = 3
 SEND_RETRIES = 3
 """ The send retries """
 
-CONNECTION_TYPE_VALUE = "connection"
-""" The connection type value """
-
-CONNECTIONLESS_TYPE_VALUE = "connectionless"
-""" The connectionless type value """
-
-PROCESS_EXCEPTION_VALUE = "process_exception"
-""" The process exception value """
-
-DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
-""" The do handshake on connect value """
-
-DEFAULT_TYPE = CONNECTION_TYPE_VALUE
+DEFAULT_TYPE = "connection"
 """ The default type client """
 
 class ClientUtils(colony.System):
@@ -362,7 +350,7 @@ class AbstractClient(object):
             # handshake process in case it's required must be forced
             # then copies the socket parameters to the parameters map
             parameters = {
-                DO_HANDSHAKE_ON_CONNECT_VALUE : True
+                "do_handshake_on_connect" : True
             }
             colony.map_copy(socket_parameters, parameters)
 
@@ -867,18 +855,15 @@ class ClientConnection(object):
                     retries -= 1
                     continue
 
-                # otherwise an exception should be
-                # raised
+                # otherwise an exception should be raised as this is considered
+                # a critical exception and top level must be notified
                 else:
-                    # processes the exception
-                    if hasattr(self.connection_socket, PROCESS_EXCEPTION_VALUE) and self.connection_socket.process_exception(exception):
-                        # continues the loop
-                        continue
-
-                    # closes the connection
+                    # closes the connection meaning that no more data is going
+                    # to be sent through the connection and socket
                     self.close()
 
-                    # raises the client request timeout exception
+                    # raises the client request timeout exception so that the
+                    # top layers are properly notified abou the issue
                     raise exceptions.ClientRequestTimeout(
                         "problem receiving data: " + colony.legacy.UNICODE(exception)
                     )
@@ -989,22 +974,32 @@ class ClientConnection(object):
                         # a non connection oriented connection
                         number_bytes_sent = self.connection_socket.sendto(message, self.connection_address)
                 except BaseException as exception:
-                    # in case the number of retries (available)
-                    # is greater than zero
-                    if retries > 0:
-                        # decrements the retries value
-                        retries -= 1
-
-                        # continues the loop
+                    # in case the current connection socket contains the process
+                    # exception method and the exception is process successfully
+                    # continues the loop as the exception is not critical
+                    if hasattr(self.connection_socket, "process_exception") and\
+                        self.connection_socket.process_exception(exception):
                         continue
-                    # otherwise an exception should be
-                    # raised
+
+                    # in case the number of retries (available) is greater than
+                    # zero must decrement the value and continue the loop as this
+                    # considered a graceful error
+                    if retries > 0:
+                        retries -= 1
+                        continue
+
+                    # otherwise an exception should be raised indicating that there
+                    # was an issue while sending data to the peer
                     else:
-                        # closes the connection
+                        # closes the connection current connection effectively disabling
+                        # any more access to the connection and socket
                         self.close()
 
-                        # raises the client response timeout exception
-                        raise exceptions.ClientResponseTimeout("problem sending data: " + colony.legacy.UNICODE(exception))
+                        # raises the client response timeout exception so that the top
+                        # layers are properly notified about the issue
+                        raise exceptions.ClientResponseTimeout(
+                            "problem sending data: " + colony.legacy.UNICODE(exception)
+                        )
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent
