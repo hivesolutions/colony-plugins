@@ -143,21 +143,21 @@ class MysqlEngine(object):
 
     def connect(self, connection, parameters = {}):
         db_prefix = parameters.get("db_prefix", "")
-        db_default = db_prefix + "default" if db_prefix else self.entity_manager.id
+        db_suffix = parameters.get("db_suffix", "default")
+        db_prefix = colony.conf("DB_PREFIX", db_prefix)
+        db_suffix = colony.conf("DB_SUFFIX", db_suffix)
+        db_default = db_prefix + db_suffix if db_prefix else self.entity_manager.id
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
         database = parameters.get("database", db_default)
-        prefix = parameters.get("prefix", "")
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
-        prefix = colony.conf("DB_PREFIX", prefix)
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
-        database = prefix + database
         connection._connection = MysqlConnection(
             host = host,
             user = user,
