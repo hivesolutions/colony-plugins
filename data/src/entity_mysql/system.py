@@ -148,13 +148,16 @@ class MysqlEngine(object):
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
         database = parameters.get("database", db_default)
+        prefix = parameters.get("prefix", "")
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
+        prefix = colony.conf("DB_PREFIX", prefix)
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
+        database = prefix + database
         connection._connection = MysqlConnection(
             host = host,
             user = user,
