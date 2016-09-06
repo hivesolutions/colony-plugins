@@ -797,6 +797,47 @@ class Connection(object):
 
         return hasattr(self.socket, "_secure")
 
+    def _process_exception(self, _socket, exception):
+        """
+        Processes the exception taking into account the severity of it,
+        as for some exception a graceful handling is imposed.
+
+        The provided socket object should comply with typical python
+        interface for it.
+
+        @type _socket: Socket
+        @param _socket: The socket to be used in the exception processing.
+        @type exception: Exception
+        @param exception: The exception that is going to be handled/processed.
+        @rtype: bool
+        @return: The result of the processing, in case it's false a normal
+        exception handling should be performed otherwise a graceful one is used.
+        """
+
+        # in case the current connection socket contains the process
+        # exception method and the exception is process successfully
+        # returns valid as the exception is not critical
+        if hasattr(_socket, "process_exception") and\
+            _socket.process_exception(exception):
+            return True
+
+        # tries to run the verification of the exception against the
+        # "valid" socket errors in case it's one of such errors the
+        # returned valid is true (should be ignored)
+        if isinstance(exception, socket.error) and\
+            exception.args[0] in (
+                errno.EWOULDBLOCK,
+                errno.EAGAIN,
+                errno.EPERM,
+                errno.ENOENT,
+                WSAEWOULDBLOCK
+            ):
+            return True
+
+        # by default returns an invalid value meaning that the exception
+        # should be handled as an error and not ignored
+        return False
+
 class ServiceConnection(Connection):
 
     handlers_association = {}
@@ -843,14 +884,8 @@ class ServiceConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event" (returns immediately)
-                if exception.args[0] in (
-                    errno.EWOULDBLOCK,
-                    errno.EAGAIN,
-                    errno.EPERM,
-                    errno.ENOENT,
-                    WSAEWOULDBLOCK
-                ):
-                    return
+                if self._process_exception(_socket, exception): return
+
                 # otherwise the exception is more severe and must re-raise it
                 # to the top level layers for proper handling
                 else: raise
@@ -1019,19 +1054,11 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # receiving "event"
-                if exception.args[0] in (
-                    errno.EWOULDBLOCK,
-                    errno.EAGAIN,
-                    errno.EPERM,
-                    errno.ENOENT,
-                    WSAEWOULDBLOCK
-                ):
-                    # returns immediately (no error)
-                    return
-                # otherwise the exception is more severe
-                else:
-                    # re-raises the exception
-                    raise
+                if self._process_exception(_socket, exception): return
+
+                # otherwise the exception is more severe and must be re-raised
+                # so that the top layers may properly handle it
+                else: raise
 
             # in case the data is empty, the connection is considered
             # closed and the final operations must be performed
@@ -1087,15 +1114,8 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event"
-                if exception.args[0] in (
-                    errno.EWOULDBLOCK,
-                    errno.EAGAIN,
-                    errno.EPERM,
-                    errno.ENOENT,
-                    WSAEWOULDBLOCK
-                ):
-                    # returns immediately (no error)
-                    return
+                if self._process_exception(_socket, exception): return
+
                 # otherwise the exception is more severe
                 # and it shall be handled properly
                 else:
@@ -1103,7 +1123,8 @@ class ClientConnection(Connection):
                     # error flag set (in case it's defined)
                     callback and callback(True)
 
-                    # re-raises the exception
+                    # re-raises the exception, so that the
+                    # upper layers may properly handle it
                     raise
 
             # pops the element from the write data buffer
