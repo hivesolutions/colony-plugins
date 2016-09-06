@@ -99,3 +99,22 @@ class DatagramSocketPlugin(colony.Plugin):
         """
 
         return self.system.provide_socket_parameters(parameters)
+
+    def process_exception(self, socket, exception):
+        """
+        Processes the exception taking into account the severity of it,
+        as for some exception a graceful handling is imposed.
+
+        The provided socket object should comply with typical python
+        interface for it.
+
+        @type socket: Socket
+        @param socket: The socket to be used in the exception processing.
+        @type exception: Exception
+        @param exception: The exception that is going to be handled/processed.
+        @rtype: bool
+        @return: The result of the processing, in case it's false a normal
+        exception handling should be performed otherwise a graceful one is used.
+        """
+
+        return self.system.process_exception(socket, exception)

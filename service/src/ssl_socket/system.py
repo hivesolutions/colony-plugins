@@ -168,6 +168,25 @@ class SslSocket(colony.System):
         # returns the ssl socket
         return ssl_socket
 
+    def process_exception(self, socket, exception):
+        """
+        Processes the exception taking into account the severity of it,
+        as for some exception a graceful handling is imposed.
+
+        The provided socket object should comply with typical python
+        interface for it.
+
+        @type socket: Socket
+        @param socket: The socket to be used in the exception processing.
+        @type exception: Exception
+        @param exception: The exception that is going to be handled/processed.
+        @rtype: bool
+        @return: The result of the processing, in case it's false a normal
+        exception handling should be performed otherwise a graceful one is used.
+        """
+
+        return process_exception(socket, exception)
+
     def _wrap_socket(
         self,
         base_socket,
@@ -312,7 +331,13 @@ def process_exception(self, exception):
     # value is inside the list of valid error the exception is considered
     # valid and a valid value is returned
     if isinstance(exception, socket.error) and\
-        exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+        exception.args[0] in (
+            errno.EWOULDBLOCK,
+            errno.EAGAIN,
+            errno.EPERM,
+            errno.ENOENT,
+            WSAEWOULDBLOCK
+        ):
         return True
 
     # in case the exception is of type ssl error and the error

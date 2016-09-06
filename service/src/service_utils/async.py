@@ -843,7 +843,13 @@ class ServiceConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event" (returns immediately)
-                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+                if exception.args[0] in (
+                    errno.EWOULDBLOCK,
+                    errno.EAGAIN,
+                    errno.EPERM,
+                    errno.ENOENT,
+                    WSAEWOULDBLOCK
+                ):
                     return
                 # otherwise the exception is more severe and must re-raise it
                 # to the top level layers for proper handling
@@ -1013,7 +1019,13 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # receiving "event"
-                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+                if exception.args[0] in (
+                    errno.EWOULDBLOCK,
+                    errno.EAGAIN,
+                    errno.EPERM,
+                    errno.ENOENT,
+                    WSAEWOULDBLOCK
+                ):
                     # returns immediately (no error)
                     return
                 # otherwise the exception is more severe
@@ -1075,7 +1087,13 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event"
-                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+                if exception.args[0] in (
+                    errno.EWOULDBLOCK,
+                    errno.EAGAIN,
+                    errno.EPERM,
+                    errno.ENOENT,
+                    WSAEWOULDBLOCK
+                ):
                     # returns immediately (no error)
                     return
                 # otherwise the exception is more severe
