@@ -837,34 +837,36 @@ class ClientConnection(object):
             try:
                 # iterates continuously
                 while True:
-                    # receives the data in chunks
+                    # receives the data in chunks and adds the received
+                    # data to the read buffer sequence, then sets the read
+                    # flag meaning that at least one value has been read
                     data = self.connection_socket.recv(chunk_size)
-
-                    # adds the data to the read buffer
                     self._read_buffer.append(data)
-
-                    # sets the read flag
                     read_flag = True
 
                     # in case no data is received (end of connection)
-                    if not data:
-                        # breaks the loop
-                        break
+                    # must break the current loop
+                    if not data: break
+
             except BaseException as exception:
-                # in case there was at least one
-                # successful read
-                if read_flag:
-                    # breaks the loop
-                    break
+                # in case there was at least one successful read
+                # breaks the current loop (read complete)
+                if read_flag: break
+
+                # in case the current connection socket contains the process
+                # exception method and the exception is process successfully
+                # continues the loop as the exception is not critical
+                if hasattr(self.connection_socket, "process_exception") and\
+                    self.connection_socket.process_exception(exception):
+                    continue
 
                 # in case the number of retries (available)
-                # is greater than zero
+                # is greater than zero, decrements the retries value
+                # and then continues the current loop
                 if retries > 0:
-                    # decrements the retries value
                     retries -= 1
-
-                    # continues the loop
                     continue
+
                 # otherwise an exception should be
                 # raised
                 else:
