@@ -46,23 +46,11 @@ import colony
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
 
-KEY_FILE_PATH = "key_file_path"
-""" The key file path value """
-
-CERTIFICATE_FILE_PATH = "certificate_file_path"
-""" The certificate file path value """
-
-SERVER_SIDE_VALUE = "server_side"
-""" The server side value """
-
-SSL_VERSION_VALUE = "ssl_version"
-""" The ssl version value """
-
-DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
-""" The do handshake on connect value """
-
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
+
+SSL_ERROR_WANT_WRITE = 3
+""" The ssl error want write value """
 
 SSL_VERSIONS = {
     "ssl2" : ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,
@@ -139,8 +127,8 @@ class SslSocketUpgrader(colony.System):
 
         # tries to retrieve the key and certificate file paths,
         # falling back to the dummy certificate values
-        key_file_path = parameters.get(KEY_FILE_PATH, dummy_ssl_key_path)
-        certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH, dummy_ssl_certificate_path)
+        key_file_path = parameters.get("key_file_path", dummy_ssl_key_path)
+        certificate_file_path = parameters.get("certificate_file_path", dummy_ssl_certificate_path)
 
         # resolves both file paths using the plugin manager, in case
         # their refers logical references their are converted into absolute paths
@@ -148,14 +136,14 @@ class SslSocketUpgrader(colony.System):
         certificate_file_path = manager.resolve_file_path(certificate_file_path)
 
         # tries to retrieve the server side value
-        server_side = parameters.get(SERVER_SIDE_VALUE, False)
+        server_side = parameters.get("server_side", False)
 
         # tries to retrieve the do handshake on connect value
-        do_handshake_on_connect = parameters.get(DO_HANDSHAKE_ON_CONNECT_VALUE, True)
+        do_handshake_on_connect = parameters.get("do_handshake_on_connect", True)
 
         # tries to retrieve the server side value, that will
         # control the accepted versions of the protocol
-        ssl_version = parameters.get(SSL_VERSION_VALUE, None)
+        ssl_version = parameters.get("ssl_version", None)
         ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
 
         # warps the socket into an ssl socket
@@ -295,13 +283,14 @@ def accept(self):
     return return_value
 
 def process_exception(self, exception):
-    # in case the exception is of type ssl error
-    # and the error number is ssl error want read
-    if exception.__class__ == ssl.SSLError and exception.errno == SSL_ERROR_WANT_READ:
-        # return false (exception
-        # must can be ignored)
+    # in case the exception is of type ssl error and the error
+    # number is ssl error want read or write, the exception must
+    # be ignored as it means that an operation could not be immediately
+    # performed and must be delayed
+    if exception.__class__ == ssl.SSLError and\
+       exception.errno in (SSL_ERROR_WANT_READ, SSL_ERROR_WANT_WRITE):
         return True
 
-    # return false (exception
-    # must be processed)
+    # return false (exception must be processed) as no graceful
+    # approach is possible for such exception
     return False
