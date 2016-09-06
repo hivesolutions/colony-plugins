@@ -698,29 +698,6 @@ class TemplateFile(object):
         except: return None
 
     @classmethod
-    def format_datetime(cls, value, template = "%Y/%m/%d %H:%M:%S"):
-        """
-        Formats the provided value according to the template of
-        date time structure.
-
-        The syntax of the template should follow the standard
-        date time format syntax.
-
-        @type value: datetime
-        @param value: The date time value that is going to be
-        formated according to the provided template.
-        @type template: String
-        @param template: The string that defined the date time
-        template to be used in the formating operation.
-        @rtype: String
-        @return: The date time string formated according to the
-        template string.
-        """
-
-        try: return value.strftime(template)
-        except: return None
-
-    @classmethod
     def convert(cls, value, mode):
         """
         Converts the provided value according to the requested "modification"
@@ -878,7 +855,6 @@ class TemplateFile(object):
         # runs the assign operation for the complete set of functions
         # that are considered part of the global namespace
         self.assign("format", cls.format)
-        self.assign("format_datetime", cls.format_datetime)
         self.assign("convert", cls.convert)
 
     def load_visitor(self):

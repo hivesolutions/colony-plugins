@@ -166,7 +166,9 @@ this dictionary may be extended at runtime """
 
 EXTRAS = dict(
     date = lambda format = "%d/%m/%y":\
-        datetime.datetime.now().strftime(format)
+        datetime.datetime.now().strftime(format),
+    format_datetime = lambda v, format = "%Y/%m/%d %H:%M:%S":\
+        None if v == None else v.strftime(format)
 )
 """ Dictionary that contains the set of symbols
 that are going to extend the base ones (builtins)
