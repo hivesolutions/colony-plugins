@@ -184,7 +184,15 @@ class SslSocket(colony.System):
         # returns the ssl socket
         return ssl_socket
 
-    def _wrap_socket(self, base_socket, key_file_path, certificate_file_path, server_side = False, ssl_version = ssl.PROTOCOL_SSLv23, do_handshake_on_connect = False):
+    def _wrap_socket(
+        self,
+        base_socket,
+        key_file_path,
+        certificate_file_path,
+        server_side = False,
+        ssl_version = ssl.PROTOCOL_SSLv23,
+        do_handshake_on_connect = False
+    ):
         """
         Wraps the base socket into an ssl socket using the given
         key file, certificate file and attributes.
