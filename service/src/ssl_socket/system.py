@@ -306,11 +306,18 @@ def set_option(self, name, value):
     setattr(self, name, value)
 
 def process_exception(self, exception):
+    # in case the exception is of type socket error and the error
+    # value is inside the list of valid error the exception is considered
+    # valid and a valid value is returned
+    if isinstance(exception, socket.error) and\
+        exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+        return True
+
     # in case the exception is of type ssl error and the error
     # number is ssl error want read or write, the exception must
     # be ignored as it means that an operation could not be immediately
     # performed and must be delayed
-    if exception.__class__ == ssl.SSLError and\
+    if isinstance(exception, ssl.SSLError) and\
        exception.errno in (SSL_ERROR_WANT_READ, SSL_ERROR_WANT_WRITE):
         return True
 
