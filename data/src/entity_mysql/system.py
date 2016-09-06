@@ -143,7 +143,7 @@ class MysqlEngine(object):
 
     def connect(self, connection, parameters = {}):
         db_prefix = parameters.get("db_prefix", "")
-        db_default = self.entity_manager.id or db_prefix + "default"
+        db_default = db_prefix + "default" if db_prefix else self.entity_manager.id
         host = parameters.get("host", "localhost")
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
