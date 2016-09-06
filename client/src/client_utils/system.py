@@ -38,7 +38,9 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import time
+import errno
 import select
+import socket
 import threading
 
 import colony
@@ -65,6 +67,11 @@ RECEIVE_RETRIES = 3
 
 SEND_RETRIES = 3
 """ The send retries """
+
+WSAEWOULDBLOCK = 10035
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
 
 DEFAULT_TYPE = "connection"
 """ The default type client """
@@ -587,8 +594,8 @@ class ClientConnection(object):
         socket_upgrader_plugins_map = client_utils.socket_upgrader_plugins_map
 
         # in case the upgrader handler is not found in the handler plugins map
+        # raises the socket upgrader not found exception
         if not socket_upgrader in socket_upgrader_plugins_map:
-            # raises the socket upgrader not found exception
             raise exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
 
         # retrieves the socket upgrader plugin
@@ -615,17 +622,9 @@ class ClientConnection(object):
         @return: The received data.
         """
 
-        # acquires the read lock
         self._read_lock.acquire()
-
-        try:
-            # receives the data and returns the value
-            return_value = self._receive(request_timeout, chunk_size, retries)
-        finally:
-            # releases the read lock
-            self._read_lock.release()
-
-        # returns the return value
+        try: return_value = self._receive(request_timeout, chunk_size, retries)
+        finally: self._read_lock.release()
         return return_value
 
     def send(self, message, response_timeout = None, retries = SEND_RETRIES):
@@ -642,15 +641,9 @@ class ClientConnection(object):
         @param retries: The number of retries to be used.
         """
 
-        # acquires the write lock
         self._write_lock.acquire()
-
-        try:
-            # sends the message
-            self._send(message, response_timeout, retries)
-        finally:
-            # releases the write lock
-            self._write_lock.release()
+        try: self._send(message, response_timeout, retries)
+        finally: self._write_lock.release()
 
     def return_data(self, data):
         """
@@ -662,7 +655,6 @@ class ClientConnection(object):
         connection internal buffer.
         """
 
-        # adds the data to the read buffer
         self._read_buffer.append(data)
 
     def is_open(self):
@@ -841,12 +833,11 @@ class ClientConnection(object):
                 # breaks the current loop (read complete)
                 if read_flag: break
 
-                # in case the current connection socket contains the process
-                # exception method and the exception is process successfully
-                # continues the loop as the exception is not critical
-                if hasattr(self.connection_socket, "process_exception") and\
-                    self.connection_socket.process_exception(exception):
-                    continue
+                # tries to process the exception, meaning that the
+                # exception is going to be tested against a series
+                # of validation and in case it's considered valid
+                # it's ignored and the loop continues
+                if self._process_exception(exception): continue
 
                 # in case the number of retries (available)
                 # is greater than zero, decrements the retries value
@@ -898,66 +889,67 @@ class ClientConnection(object):
         # retrieves the number of bytes in the message
         number_bytes = len(message)
 
-        # iterates over all the read buffer data
+        # iterates over all the read buffer data read from the client
+        # to make decisions on either reconnect or not
         for data in self._read_buffer:
-            # in case the data is invalid
+            # in case the data is invalid meaning that the connection
+            # has been dropped for some reason a reconnection attempt
+            # must be performed to retry the client
             if not data:
-                # prints a debug message
                 self.client_plugin.debug("Received empty data (in read buffer), reconnecting socket")
-
-                # reconnects the connection socket
                 self._reconnect_connection_socket()
-
-                # breaks the loop
                 break
 
-        # iterates continuously
+        # iterates continuously, trying to select
         while True:
             try:
-                # runs the select in the connection socket, with timeout
-                selected_values = select.select([self.connection_socket], [self.connection_socket], [], response_timeout)
+                # runs the select in the connection socket, with the timeout
+                # defined for the response (as expected)
+                selected_values = select.select(
+                    [self.connection_socket],
+                    [self.connection_socket],
+                    [],
+                    response_timeout
+                )
             except:
-                # closes the connection
+                # closes the connection and raises a request closed exception
+                # meaning that there was a problem in the connection selection
                 self.close()
-
-                # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
 
-            # in case there is pending data to
-            # be received
+            # in case there is pending data to be received
             if not selected_values[0] == []:
                 try:
                     # receives the data from the socket
                     data = self.connection_socket.recv(CHUNK_SIZE)
 
-                    # in case the data is invalid
+                    # in case the data is invalid it means the connection has
+                    # been droped and a re-connection is required
                     if not data:
-                        # prints a debug message
+                        # prints a debug message and then runs the re-connection
+                        # operation to try to send the data
                         self.client_plugin.debug("Received empty data, reconnecting socket")
-
-                        # reconnects the connection socket
                         self._reconnect_connection_socket()
+
                     # otherwise there are contents in it
                     else:
-                        # prints a debug message
+                        # prints a debug message and then returns the data back
+                        # into the queue to be handled latter
                         self.client_plugin.debug("Received extra data, returning it")
-
-                        # returns the data back into the queue
                         self.return_data(data)
                 except BaseException as exception:
-                    # prints a debug message
+                    # prints a debug message and then reconnects the connection socket
                     self.client_plugin.debug("Problem while receiving pending data: " + colony.legacy.UNICODE(exception))
-
-                    # reconnects the connection socket
                     self._reconnect_connection_socket()
-            # in case there are no selected values
-            # connection is closed
-            elif selected_values == ([], [], []):
-                # closes the connection
-                self.close()
 
-                # raises the server response timeout exception
+            # in case there are no selected values connection is closed as the timeout
+            # value has been reached (reason for unblocking)
+            elif selected_values == ([], [], []):
+                # closes the connection, and then raises the server
+                # response timeout exception
+                self.close()
                 raise exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
+
             # in case the socket is ready to have data
             # sent through it
             elif not selected_values[1] == []:
@@ -968,18 +960,19 @@ class ClientConnection(object):
                         # sends the data in chunks, the send command is used for
                         # a connection oriented connection
                         number_bytes_sent = self.connection_socket.send(message)
+
                     # otherwise the connection is not persistent (no connection)
+                    # and a "datagram" oriented operation must be performed
                     else:
                         # sends the data in chunks, the send to command is used for
                         # a non connection oriented connection
                         number_bytes_sent = self.connection_socket.sendto(message, self.connection_address)
                 except BaseException as exception:
-                    # in case the current connection socket contains the process
-                    # exception method and the exception is process successfully
-                    # continues the loop as the exception is not critical
-                    if hasattr(self.connection_socket, "process_exception") and\
-                        self.connection_socket.process_exception(exception):
-                        continue
+                    # tries to process the exception, meaning that the
+                    # exception is going to be tested against a series
+                    # of validation and in case it's considered valid
+                    # it's ignored and the loop continues
+                    if self._process_exception(exception): continue
 
                     # in case the number of retries (available) is greater than
                     # zero must decrement the value and continue the loop as this
@@ -1006,12 +999,8 @@ class ClientConnection(object):
 
                 # in case the number of bytes (pending)
                 # is zero (the transfer is complete)
-                if number_bytes == 0:
-                    # breaks the cycle
-                    break
-                else:
-                    # creates the new message
-                    message = message[number_bytes * -1:]
+                if number_bytes == 0: break
+                else: message = message[number_bytes * -1:]
 
     def _reconnect_connection_socket(self):
         """
@@ -1031,20 +1020,46 @@ class ClientConnection(object):
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
-        # sets the socket to non blocking mode
+        # sets the socket to non blocking mode, so that not network
+        # relates operation is going to blow flow of control
         self.connection_socket.setblocking(0)
 
         # prints a debug message about reconnection
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
+
+    def _process_exception(self, exception):
+        # in case the current connection socket contains the process
+        # exception method and the exception is process successfully
+        # returns valid as the exception is not critical
+        if hasattr(self.connection_socket, "process_exception") and\
+            self.connection_socket.process_exception(exception):
+            return True
+
+        # tries to run the verification of the exception against the
+        # "valid" socket errors in case it's one of such errors the
+        # returned valid is true (should be ignored)
+        if isinstance(exception, socket.error) and\
+            exception.args[0] in (
+                errno.EWOULDBLOCK,
+                errno.EAGAIN,
+                errno.EPERM,
+                errno.ENOENT,
+                WSAEWOULDBLOCK
+            ):
+            return True
+
+        # by default returns an invalid value meaning that the exception
+        # should be handled as an error and not ignored
+        return False
 
     def _call_connection_opened_handlers(self):
         """
         Calls all the connection opened handlers.
         """
 
-        # iterates over all the connection opened handler
+        # iterates over all the connection opened handlers
+        # and calls each of them (notification)
         for connection_opened_handler in self.connection_opened_handlers:
-            # calls the connection opened handler
             connection_opened_handler(self)
 
     def _call_connection_closed_handlers(self):
@@ -1052,7 +1067,7 @@ class ClientConnection(object):
         Calls all the connection closed handlers.
         """
 
-        # iterates over all the connection closed handler
+        # iterates over all the connection closed handlers
+        # to call each of them (tell about the notification)
         for connection_closed_handler in self.connection_closed_handlers:
-            # calls the connection closed handler
             connection_closed_handler(self)
