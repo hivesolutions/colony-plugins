@@ -48,6 +48,11 @@ import colony
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
 
+WSAEWOULDBLOCK = 10035
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
+
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
 

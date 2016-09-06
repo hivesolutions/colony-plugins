@@ -54,7 +54,9 @@ SSL_ERROR_WANT_WRITE = 3
 """ The ssl error want write value """
 
 WSAEWOULDBLOCK = 10035
-""" The wsa would block error code """
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
 
 SSL_VERSIONS = {
     "ssl2" : ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,

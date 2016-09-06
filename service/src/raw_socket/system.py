@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import errno
 import socket
 
 import colony
@@ -44,8 +45,10 @@ import colony
 PROVIDER_NAME = "raw"
 """ The provider name """
 
-FAMILY_VALUE = "family"
-""" The family value """
+WSAEWOULDBLOCK = 10035
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
 
 class RawSocket(colony.System):
     """
@@ -92,10 +95,22 @@ class RawSocket(colony.System):
         self.plugin.debug("Providing a raw socket")
 
         # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+        socket_family = parameters.get("family", socket.AF_INET)
 
         # creates the raw socket
         raw_socket = socket.socket(socket_family, socket.SOCK_RAW)
 
         # returns the raw socket
         return raw_socket
+
+def process_exception(self, exception):
+    # in case the exception is of type socket error and the error
+    # value is inside the list of valid error the exception is considered
+    # valid and a valid value is returned
+    if isinstance(exception, socket.error) and\
+        exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+        return True
+
+    # return false (exception must be processed) as no graceful
+    # approach is possible for such exception
+    return False

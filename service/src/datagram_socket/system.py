@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import errno
 import socket
 
 import colony
@@ -44,20 +45,10 @@ import colony
 PROVIDER_NAME = "datagram"
 """ The provider name """
 
-FAMILY_VALUE = "family"
-""" The family value """
-
-MULTICAST_ADDRESS_VALUE = "multicast_address"
-""" The multicast address value """
-
-MULTICAST_PARAMETERS_VALUE = "multicast_parameters"
-""" The multicast parameters value """
-
-SO_REUSEPORT_VALUE = "SO_REUSEPORT"
-""" The so reuseport value """
-
-TTL_VALUE = "ttl"
-""" The ttl value """
+WSAEWOULDBLOCK = 10035
+""" Windows based value for the error raised when a non
+blocking connection is not able to read/write more, this
+error should be raised constantly in no blocking connections """
 
 DEFAULT_MULTICAST_TTL = 255
 """ The default multicast ttl """
@@ -107,13 +98,13 @@ class DatagramSocket(colony.System):
         self.plugin.debug("Providing a datagram socket")
 
         # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+        socket_family = parameters.get("family", socket.AF_INET)
 
         # tries to retrieve the multicast value
-        multicast_address = parameters.get(MULTICAST_ADDRESS_VALUE, None)
+        multicast_address = parameters.get("multicast_address", None)
 
         # tries to retrieve the multicast parameters
-        multicast_parameters = parameters.get(MULTICAST_PARAMETERS_VALUE, {})
+        multicast_parameters = parameters.get("multicast_parameters", {})
 
         # creates the datagram socket
         datagram_socket = socket.socket(socket_family, socket.SOCK_DGRAM)
@@ -140,11 +131,11 @@ class DatagramSocket(colony.System):
         multicast_host, _multicast_port = multicast_address
 
         # retrieves the multicast parameters
-        multicast_ttl = multicast_parameters.get(TTL_VALUE, DEFAULT_MULTICAST_TTL)
+        multicast_ttl = multicast_parameters.get("ttl", DEFAULT_MULTICAST_TTL)
 
         # sets the socket for reuse
         base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        hasattr(socket, SO_REUSEPORT_VALUE) and base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
+        hasattr(socket, "SO_REUSEPORT") and base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
 
         # sets the datagram socket options
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
@@ -160,3 +151,15 @@ class DatagramSocket(colony.System):
         # sets the membership for the multicasting paradigm
         base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network)
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network)
+
+def process_exception(self, exception):
+    # in case the exception is of type socket error and the error
+    # value is inside the list of valid error the exception is considered
+    # valid and a valid value is returned
+    if isinstance(exception, socket.error) and\
+        exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, errno.EPERM, errno.ENOENT, WSAEWOULDBLOCK):
+        return True
+
+    # return false (exception must be processed) as no graceful
+    # approach is possible for such exception
+    return False
