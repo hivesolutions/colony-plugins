@@ -863,7 +863,7 @@ class ClientConnection(object):
                     self.close()
 
                     # raises the client request timeout exception so that the
-                    # top layers are properly notified abou the issue
+                    # top layers are properly notified about the issue
                     raise exceptions.ClientRequestTimeout(
                         "problem receiving data: " + colony.legacy.UNICODE(exception)
                     )
