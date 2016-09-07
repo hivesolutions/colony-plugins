@@ -88,10 +88,12 @@ DEFAULT_LANG_VALUE = "en"
 """ The default lang value """
 
 DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
-""" The default expiration delta timestamp """
+""" The default expiration delta timestamp, this value
+is going to be used in the cookie to "notify" the client
+about the expiration of it """
 
-DEFAULT_TIMEOUT = 259200
-""" The default timeout (seventy two hours of life)
+DEFAULT_TIMEOUT = 604800
+""" The default timeout (seven days of life) to be used,
 note that a "touch" operation on the session will
 extend the session lifetime and ensure that there's
 always the same time until expiration """
