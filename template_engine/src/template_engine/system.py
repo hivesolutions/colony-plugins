@@ -854,6 +854,7 @@ class TemplateFile(object):
 
         # runs the assign operation for the complete set of functions
         # that are considered part of the global namespace
+        self.assign("colony", colony)
         self.assign("format", cls.format)
         self.assign("convert", cls.convert)
 
