@@ -180,6 +180,14 @@ class Rest(colony.System):
         # enforced for connections associated with the request
         self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
 
+        # tries to retrieve the value of the session (engine) configuration
+        # value and if there's success retrieves the proper class from the
+        # dictionary of global values as the session class to be used
+        session = colony.conf("SESSION", None)
+        if session:
+            session = colony.to_camelcase(session)
+            self.session_c = globals()[session + "Session"]
+
         # prints a debug message about the starting of the loading
         # of the session infra-structure (may block)
         self.debug("Loading %s session into system" % self.session_c.__name__)
