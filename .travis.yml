@@ -17,8 +17,10 @@ install:
 env:
   global:
     - HTTPBIN=httpbin.stage.hive.pt
+    - REPO_URL_COLONY="https://colony.bemisc.com/"
+    - REPO_USERNAME=root
     - secure: l7gFGuBD1TmMF7nCnkDcsm6LCbOt5s7S6cO6YdXD35HebULtxWbbxNGPehxcZ03AbBX/arLFeowHqNgd9gPnWenzErkUGVu3uF1Q5St46Tb3p9Ga3obnsJPh3bBw8YWElzp6unZy+XpSpqsxTTPqAPC6ZhVAzKNGfcXSeGgAPLE=
 script: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test; else PLUGIN_PATH="./*/src;./*/*src" python setup.py test; fi
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then coveralls; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then REPO_URL_COLONY="https://colony.bemisc.com/" REPO_USERNAME=root cpm upload "./*/*/*_plugin.py" colony; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then cpm upload "./*/*/*_plugin.py" colony; fi
