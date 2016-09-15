@@ -14,6 +14,8 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 env:
-  - HTTPBIN=httpbin.stage.hive.pt
+  - secure: InlBTWsq9jULWigQKuKbg2E2uNn2ezNowBys9dGovv1snnV6j/SHyFePreSj8nQpwXrVB7FwITnCblLTkbJeZVoga3zZX2JYeYeTVPQ5iFmPaeC/ITEz9KdWrIk2nLNPEklIqyYVgmkgS2w8rIkMiGJIvCHjSV0B6z0d1CZuX0g=
 script: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test; else PLUGIN_PATH="./*/src;./*/*src" python setup.py test; fi
-after_success: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then coveralls; fi
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then coveralls; fi
+  - REPO_URL_COLONY=https://colony.bemisc.com/ REPO_USERNAME=root cpm upload ./*/*_plugin.py colony
