@@ -124,7 +124,7 @@ PERSIST_ALL = PERSIST_UPDATE | PERSIST_SAVE | PERSIST_ASSOCIATE
 """ The persist all persist type resulting from the association
 of the complete set of persist type values """
 
-ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
+ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w\-]+)|(?P<sequence>\[\])|(?P<map>\[[\w\-]+\])"
 """ The attribute parsing regular expression value """
 
 CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([A-Z]+)([A-Z][a-z])"
@@ -1403,7 +1403,14 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     request.set_parameter("_json_data", data_map)
     return data_map
 
-def process_form_data(self, request, encoding = "utf-8", nullify = False, force = False):
+def process_form_data(
+    self,
+    request,
+    encoding = "utf-8",
+    nullify = False,
+    force = False,
+    strict = True
+):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -1419,6 +1426,10 @@ def process_form_data(self, request, encoding = "utf-8", nullify = False, force 
     @type force: bool
     @param force: If any cached data should be discarded and the
     the request information re-parsed if necessary.
+    @type strict: bool
+    @param strict: If a strict approach should be taken while parsing
+    the form data, meaning that any attribute that is not compliant
+    with the form information should raise an exception.
     @rtype: Dictionary
     @return: The map containing the hierarchy of defined structure
     for the "form" contents.
@@ -1476,7 +1487,8 @@ def process_form_data(self, request, encoding = "utf-8", nullify = False, force 
                     base_attributes_map,
                     attribute,
                     attribute_value_item,
-                    index
+                    strict = strict,
+                    index = index
                 )
 
                 # increments the index, next element in sequence must be
@@ -1495,7 +1507,8 @@ def process_form_data(self, request, encoding = "utf-8", nullify = False, force 
             self._process_form_attribute(
                 base_attributes_map,
                 attribute,
-                attribute_value
+                attribute_value,
+                strict = strict
             )
 
     # sets the "processed" form data in the request
@@ -4830,7 +4843,14 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
     # the attribute names list and the attribute value
     self._process_form_attribute_flat(next_parent_structure, attribute_names_list, attribute_value)
 
-def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
+def _process_form_attribute(
+    self,
+    parent_structure,
+    current_attribute_name,
+    attribute_value,
+    strict = True,
+    index = 0
+):
     """
     Processes a form attribute using the sent parent structure and for
     the given index as a reference.
@@ -4842,10 +4862,13 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
     attribute.
     @type current_attribute_name: String
     @param current_attribute_name: The current attribute name, current
-    because it's parsed
-    recursively using this process method.
+    because it's parsed recursively using this process method.
     @type attribute_value: Object
     @param attribute_value: The attribute value.
+    @type strict: bool
+    @param strict: If the strict mode should be used, meaning that an
+    exception should be raised whenever a non compliant attribute is
+    found or if a return/ignore operation should be performed instead.
     @type index: int
     @param index: The index of the current attribute reference.
     """
@@ -4855,6 +4878,7 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
     # the invalid match problem
     match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
     if not match_result:
+        if not strict: return
         raise exceptions.InvalidAttributeName("invalid match value: " + current_attribute_name)
 
     # retrieves the match end position and verifies if it
@@ -4891,10 +4915,13 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # retrieves the next match value in order to make
         next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_end)
 
-        # in case there is no next match
+        # in case there is no next match raises the invalid
+        # attribute name exception
         if not next_match_result:
-            # raises the invalid attribute name exception
-            raise exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
+            if not strict: return
+            raise exceptions.InvalidAttributeName(
+                "invalid next match value: " + current_attribute_name
+            )
 
         # retrieves the next match name and value to be used
         # for conditional execution
@@ -4902,15 +4929,20 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         next_match_value = next_match_result.group()
 
         # in case the next match value is of type map
-        # the parentheses need to be removed
+        # the parentheses need to be removed, retrieves
+        # the next match value without the parentheses
         if next_match_name == "map":
-            # retrieves the next match value without the parentheses
             next_match_value = next_match_value[1:-1]
 
-        # in case the next match is of type name
+        # in case the next match is of type name,
+        # raises the invalid attribute name exception
         if next_match_name == "name":
-            # raises the invalid attribute name exception
-            raise exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
+            if not strict: return
+            raise exceptions.InvalidAttributeName(
+                "invalid next match value (it's a name): " +\
+                current_attribute_name
+            )
+
         # in case the next match is of type list, a list needs to
         # be created in order to support the sequence, in case a list
         # already exists it is used instead
@@ -4985,7 +5017,13 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # processes the next form attribute with the current attribute value as the new parent structure
         # the remaining attribute name as the new current attribute name and the attribute value
         # continues with the same value
-        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
+        self._process_form_attribute(
+            current_attribute_value,
+            remaining_attribute_name,
+            attribute_value,
+            strict = strict,
+            index = index
+        )
 
 def _get_complete_session_attribute_name(session_attribute_name, namespace_name = None):
     """
