@@ -140,7 +140,7 @@ class ConsoleController(BaseController):
         # contents in it (to be executed in the current instance)
         file = open(configuration_file_path, "rb")
         try: contents = file.read()
-        except: file.close()
+        finally: file.close()
 
         # replaces the windows styled newlines with the normalized unix like
         # newline styled values (compatibility issues)
