@@ -80,7 +80,7 @@ class SslBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Ssl Plugin test case"
+        return "Ssl Base test case"
 
     def test_generate_keys(self):
         dir_path = tempfile.mkdtemp()

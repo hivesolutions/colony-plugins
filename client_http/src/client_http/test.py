@@ -72,7 +72,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Client Http Plugin test case"
+        return "Client Http test case"
 
     def test_create_client(self):
         response = self.http.fetch_url("http://%s/image/png" % self.httpbin)

@@ -54,7 +54,7 @@ class MimeBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Mime Plugin test case"
+        return "Mime Base test case"
 
     def test_write(self):
         message = self.system.create_message({})

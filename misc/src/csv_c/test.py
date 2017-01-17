@@ -56,7 +56,7 @@ class CsvBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Csv Plugin test case"
+        return "Csv Base test case"
 
     def test_dumps(self):
         result = self.system.dumps(mocks.SIMPLE_OBJECT, encoding = None)

@@ -86,7 +86,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Entity Manager Base Plugin test case"
+        return "Entity Manager Base test case"
 
     def test_create(self):
         # creates the complete set of entities existent in the current
@@ -1697,7 +1697,7 @@ class EntityManagerRsetTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Entity Manager Rset Plugin test case"
+        return "Entity Manager Rset test case"
 
     def test_simple(self):
         first_set = structures.rset([["First", 30]])

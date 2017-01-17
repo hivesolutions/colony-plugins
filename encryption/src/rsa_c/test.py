@@ -60,7 +60,7 @@ class RsaBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Rsa Plugin test case"
+        return "Rsa Base test case"
 
     def test__relatively_prime(self):
         result = self.rsa._relatively_prime(3, 1)
