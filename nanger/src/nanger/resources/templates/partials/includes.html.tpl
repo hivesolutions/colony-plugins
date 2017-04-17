@@ -1,6 +1,6 @@
 <!-- css inclusion -->
 <link rel="stylesheet" href="{{ base_path }}resources/libs/uxf/css/ux-min.css" type="text/css" />
-<link rel="stylesheet" href="{{ base_path }}resources/libs/layout/css/layout.modern.css" type="text/css" />
+<link rel="stylesheet" href="{{ base_path }}resources/libs/layout/css/layout.flat.css" type="text/css" />
 <link rel="stylesheet" href="{{ base_path }}resources/libs/layout/css/layout.extras.css" type="text/css" />
 <link rel="stylesheet" href="{{ base_path }}resources/css/layout.css" type="text/css" />
 
