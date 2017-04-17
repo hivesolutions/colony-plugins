@@ -99,12 +99,18 @@ __license__   = Apache License, Version 2.0
 }
 
 .console .autocomplete {
+    animation: fade-into-drop 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-animation: fade-into-drop 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-animation: fade-into-drop 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-animation: fade-into-drop 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-animation: fade-into-drop 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     background-color: #ffffff;
     border: 1px solid #aaaaaa;
     color: #4d4d4d;
     display: none;
     font-family: Arial, "serif";
     font-size: 10px;
+    font-weight: normal;
     max-height: 210px;
     min-width: 200px;
     overflow-x: hidden;
