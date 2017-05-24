@@ -51,7 +51,8 @@ NAMED_GROUPS_REGEX_VALUE = "\(\?P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 to replace the named group naming with simple group sequences """
 
 NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
-""" The named groups regex """
+""" The named groups (compiled) regex, to be used runtime
+at the runtime matching """
 
 REPLACE_REGEX = re.compile("(?<!\(\?P)\<((\w+)(\([\"'].*?[\"']\))?:)?(\w+)\>")
 """ The regular expression to be used in the replacement
