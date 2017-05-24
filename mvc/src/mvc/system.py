@@ -1139,9 +1139,9 @@ class Mvc(colony.System):
         # the expression from a simplified domain into a regex based domain
         # that may be correctly compiled into the rest environment, then sets
         # the new expression value as the first element of the pattern
-        expression = INT_REGEX.sub("(?P[\\1>[\\d+])", expression)
-        expression = REGEX_REGEX.sub("(?P[\\2>\1)", expression)
-        expression = REPLACE_REGEX.sub("(?P[\\4>[\\:\\.\\s\\w-]+)", expression)
+        expression = INT_REGEX.sub(r"(?P[\1>[\\d]+)", expression)
+        expression = REGEX_REGEX.sub(r"(?P[\2>\1)", expression)
+        expression = REPLACE_REGEX.sub(r"(?P[\4>[\\@\\+\\:\\.\\s\\w-]+)", expression)
         expression = expression.replace("?P[", "?P<")
         pattern[0] = expression
 
