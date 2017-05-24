@@ -46,8 +46,9 @@ from . import exceptions
 from . import file_handler
 from . import communication
 
-NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
-""" The named groups regex value """
+NAMED_GROUPS_REGEX_VALUE = "\(\?P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
+""" The named groups regex value, that is going to be used
+to replace the named group naming with simple group sequences """
 
 NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
 """ The named groups regex """
