@@ -731,8 +731,7 @@ class FastCgiConnection(object):
             # creates a new record list in the record buffer map
             self.record_buffer_map[request_id] = []
 
-        # retrieves the record list for the request id
-        record_list = self.record_buffer_map[request_id]
-
+        # retrieves the record list for the request id and then
         # inserts the record in the record list
+        record_list = self.record_buffer_map[request_id]
         record_list.insert(0, record)
