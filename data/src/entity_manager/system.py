@@ -126,6 +126,11 @@ SQL_TYPES_MAP = dict(
 """ The map containing the association of the entity types with
 the corresponding sql types to be used during runtime mapping """
 
+__builtins__ = __builtins__ if isinstance(__builtins__, dict) else\
+    __builtins__.__dict__
+""" The global builtins reference created by the proper redefinition
+of the variable if that's required by python implementation """
+
 class DataEntityManager(colony.System):
     """
     The data entity manager class, responsible for the construction
