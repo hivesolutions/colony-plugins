@@ -724,7 +724,7 @@ class Visitor(object):
         # completes the error flag is unset
         error = True
 
-        # iterate over all the font path trying to find a path
+        # iterates over all the font paths trying to find a path
         # that can correctly load the requested font
         for font_path in FONT_PATHS:
             try:
