@@ -257,7 +257,7 @@
                         // retrieves the current cursor position and in case the
                         // position is the first (leftmost) nothing is to be done
                         var cursor = console.data("cursor");
-                        if (cursor == value.length - 1) {
+                        if (cursor === value.length - 1) {
                             break;
                         }
 
@@ -402,7 +402,7 @@
                         // to move it to the left, in case the position is the
                         // last breaks the switch (nothing to be done)
                         var cursor = console.data("cursor");
-                        if (cursor == value.length - 1) {
+                        if (cursor === value.length - 1) {
                             break;
                         }
 
@@ -457,7 +457,7 @@
                         // retrieves the current (text) value from the history list
                         // and then increments the index (pointer) for the history
                         var value = history[history.length - historyIndex - 1];
-                        if (historyIndex != history.length - 1) {
+                        if (historyIndex !== history.length - 1) {
                             historyIndex++;
                         }
 
@@ -476,7 +476,7 @@
                         // to move it to the right, in case the position is the
                         // last breaks the switch (nothing to be done)
                         var cursor = console.data("cursor");
-                        if (cursor == -1) {
+                        if (cursor === -1) {
                             break;
                         }
 
@@ -531,7 +531,7 @@
                         // retrieves the current (text) value from the history list
                         // and then decrements the index (pointer) for the history
                         var value = history[history.length - historyIndex];
-                        if (historyIndex != 0) {
+                        if (historyIndex !== 0) {
                             historyIndex--;
                         }
 
@@ -553,7 +553,7 @@
                         // retrieves the currently set cursor from the console
                         // and in case it's not set breaks immediately
                         var cursor = console.data("cursor");
-                        if (cursor == -1) {
+                        if (cursor === -1) {
                             break;
                         }
 
@@ -751,7 +751,7 @@
                         // is only run in case the character is not a space
                         console.data("text", value);
                         refresh(console);
-                        character != " " && autocomplete(console, true);
+                        character !== " " && autocomplete(console, true);
 
                         // breaks the switch
                         break;
@@ -804,7 +804,7 @@
         var splitValue = function(value, escape, cursor) {
             // in case there is no value defined there is no need
             // to split because there is no definition of it
-            if (value == null) {
+            if (value === null || value === undefined) {
                 return value;
             }
 
@@ -835,14 +835,14 @@
                 // (in case it's set) and then appends the word break tag
                 // into the final value to be appended to the word
                 slice = escape ? escapeHtml(slices[index]) : slices[index];
-                slice = length - cursor - 1 == index ? "<span class=\"cursor\">" + slice + "</span>" :
+                slice = length - cursor - 1 === index ? "<span class=\"cursor\">" + slice + "</span>" :
                     slice;
                 word += slice + "<wbr></wbr>";
             }
 
             // in case the cursor is not set (invalid) adds the cursor
             // to the end of the word
-            if (cursor == -1) {
+            if (cursor === -1) {
                 word += "<span class=\"cursor\">&nbsp;</span>"
             }
 
@@ -924,7 +924,7 @@
                 // the result list (set)
                 var current = COMMANDS[index];
                 var offset = current.indexOf(token);
-                if (offset != 0) {
+                if (offset !== 0) {
                     continue;
                 }
                 result.push([current, "command"]);
@@ -1120,7 +1120,7 @@
             // tries to retrieve the command queue and checks if it's empty
             // in such case must return immediately
             var commands = console.data("commands") || [];
-            if (commands.length == 0) {
+            if (commands.length === 0) {
                 return;
             }
 
@@ -1326,7 +1326,7 @@
             // into the history is not equal to the one already
             // present at the top of the history only in that
             // situation shall the value be inserted in history
-            if (value != history[history.length - 1]) {
+            if (value !== history[history.length - 1]) {
                 history.push(value);
             }
             console.data("history", history);
@@ -1388,7 +1388,7 @@
             // the layout value accordingly, then saves the new value in teh data
             // in order to avoid unnecessary updates
             var _doc = tooltip.data("doc") || "";
-            if (doc != _doc) {
+            if (doc !== _doc) {
                 tooltipDoc.html(splitValue(doc, true));
             }
             tooltip.data("doc", doc);
@@ -1397,7 +1397,7 @@
             // and only in case the current parameters are different the
             // the tooltip parameters are created (performance decision)
             var _params = tooltip.data("params") || [];
-            if (params != _params) {
+            if (params !== _params) {
                 // clears the tooltip parameters element in order to place
                 // new parameter element in there
                 tooltipParams.empty();
@@ -1421,7 +1421,7 @@
             // and only in case the current return value is different the
             // the tooltip return value is created (performance decision)
             var __return = tooltip.data("return") || [];
-            if (_return != __return) {
+            if (_return !== __return) {
                 // clears the tooltip return element in order to place
                 // new return element in there
                 tooltipReturn.empty();
@@ -1473,7 +1473,7 @@
             // try to find the index of the token to be used in the retrieval
             var cursor = console.data("cursor") || -1;
             for (var index = command.length - cursor - 2; index >= 0; index--) {
-                if (command[index] != " ") {
+                if (command[index] !== " ") {
                     continue;
                 }
                 break;
@@ -1490,7 +1490,7 @@
             // iterates over the range between the start index and the command
             // length to try to find the next space character and end the token
             for (var index = startIndex; index < command.length; index++) {
-                if (command[index] != " ") {
+                if (command[index] !== " ") {
                     continue;
                 }
                 break;
@@ -1678,7 +1678,7 @@
             // calculates the (new) current scroll position base on the
             // signal (relative position) of the element in relation with
             // the current scroll position
-            var current = signal == 1 ? elementTop - (parentHeight - elementHeight) : elementTop;
+            var current = signal === 1 ? elementTop - (parentHeight - elementHeight) : elementTop;
             parent.scrollTop(current);
         };
 
@@ -1764,7 +1764,7 @@
         var _appendHtml = function() {
             // in case no valid elements are matched must
             // return immediately to avoid problems
-            if (matchedObject.length == 0) {
+            if (matchedObject.length === 0) {
                 return;
             }
 
