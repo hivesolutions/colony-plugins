@@ -16,7 +16,7 @@ python:
   - "pypy-5.6.0"
   - "pypy3-dev"
   - "pypy3-2.4.0"
-  - "pypy3-5.5.0"
+  - "pypy3.5-5.7.1"
 install:
   - pip install -r requirements.txt
   - pip install coveralls
