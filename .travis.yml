@@ -11,7 +11,7 @@ python:
   - "nightly"
   - "pypy-5.3.1"
   - "pypy-5.7.1"
-  - "pypy3-5.5.0"
+  - "pypy3-2.4.0"
   - "pypy3-5.7.1"
 install:
   - pip install -r requirements.txt
