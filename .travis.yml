@@ -9,9 +9,9 @@ python:
   - "3.5"
   - "3.6"
   - "nightly"
-  - "pypy-5.3.0"
+  - "pypy-5.3.1"
   - "pypy-5.8.0"
-  - "pypy3-5.3.0"
+  - "pypy3-5.5.0"
   - "pypy3-5.8.0"
 install:
   - pip install -r requirements.txt
