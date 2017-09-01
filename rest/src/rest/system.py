@@ -2875,7 +2875,8 @@ class RedisSession(RestSession):
 
     @classmethod
     def count(cls):
-        return 0
+        if not cls.REDIS: cls.load()
+        return cls.REDIS.dbsize()
 
     @classmethod
     def new(cls, *args, **kwargs):
