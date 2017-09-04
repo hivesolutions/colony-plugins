@@ -648,31 +648,31 @@ class MvcUtils(colony.System):
         After the controllers creation process the given system instance should have
         the created controllers set on it.
 
-        @type system_instance: Object
-        @param system_instance: The (system) instance that controls (owns) the
+        :type system_instance: Object
+        :param system_instance: The (system) instance that controls (owns) the
         created controllers, the controllers are going to be set on it.
-        @type plugin_instance: Plugin
-        @param plugin_instance: The plugin instance that own the system instance
+        :type plugin_instance: Plugin
+        :param plugin_instance: The plugin instance that own the system instance
         and so owns the controllers too.
-        @type package_path: String
-        @param package_path: Dot notation based path to the package to be
+        :type package_path: String
+        :param package_path: Dot notation based path to the package to be
         used for controllers loading.
-        @type prefix_name: String
-        @param prefix_name: The prefix to be used on setting the controllers in
+        :type prefix_name: String
+        :param prefix_name: The prefix to be used on setting the controllers in
         the "owning" system instance.
-        @type directory_path: String
-        @param directory_path: The path to base directory to be used in the controller
+        :type directory_path: String
+        :param directory_path: The path to base directory to be used in the controller
         path resolution process.
-        @type entity_manager_arguments: Dictionary
-        @param entity_manager_arguments: The map containing the complete set of arguments
+        :type entity_manager_arguments: Dictionary
+        :param entity_manager_arguments: The map containing the complete set of arguments
         that are going to be used for access to the entity manager, this value is going
         to be used to retrieve the associated models module to be accessible under the
         controllers module to be loaded.
-        @type is_first: bool
-        @param is_first: Auxiliary argument that controls if this is the first run
+        :type is_first: bool
+        :param is_first: Auxiliary argument that controls if this is the first run
         (top recursion) or if it is a nested call.
-        @rtype: List
-        @return: The list containing the various created controller instance, that may be
+        :rtype: List
+        :return: The list containing the various created controller instance, that may be
         used from this moment on as they've been correctly started.
         """
 
@@ -1060,14 +1060,14 @@ class MvcUtils(colony.System):
         The created file manager respects the given engine name
         and connection parameters.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used in
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used in
         the file manager.
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The parameters for the connection
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The parameters for the connection
         in the file manager.
-        @rtype: FileManager
-        @return: The created file manager.
+        :rtype: FileManager
+        :return: The created file manager.
         """
 
         # retrieves the file manager plugin
@@ -1148,8 +1148,8 @@ class MvcUtils(colony.System):
         Resolves the given connection parameters map, substituting
         the values with the resolved ones.
 
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The connection parameters to be resolved.
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The connection parameters to be resolved.
         """
 
         # retrieves the plugin manager
@@ -1165,14 +1165,14 @@ class MvcUtils(colony.System):
         Retrieves all the entity classes from the given module
         using the given entity class as the reference to get the entity classes.
 
-        @type module: Module
-        @param module: The module to be used to retrieve the entity classes.
-        @type entity_class: Class
-        @param entity_class: The entity class to be used as reference
+        :type module: Module
+        :param module: The module to be used to retrieve the entity classes.
+        :type entity_class: Class
+        :param entity_class: The entity class to be used as reference
         to retrieve the entity classes (all entity class must inherit
         from this base class).
-        @rtype: List
-        @return: The list of entity classes in the module.
+        :rtype: List
+        :return: The list of entity classes in the module.
         """
 
         # creates the entity classes list
@@ -1214,14 +1214,14 @@ class MvcUtils(colony.System):
         using the given (raw model) class as the reference to get
         the classes.
 
-        @type module: Module
-        @param module: The module to be used to retrieve the entity classes.
-        @type base_class: Class
-        @param base_class: The base class to be used as reference
+        :type module: Module
+        :param module: The module to be used to retrieve the entity classes.
+        :type base_class: Class
+        :param base_class: The base class to be used as reference
         to retrieve the classes (all classes must inherit from this
         base class).
-        @rtype: List
-        @return: The list of classes in the module.
+        :rtype: List
+        :return: The list of classes in the module.
         """
 
         # creates the classes list
@@ -1252,14 +1252,14 @@ class MvcUtils(colony.System):
         Retrieves the map that holds the extra symbols to be used
         during a models module import.
 
-        @type extra_entity_models: List
-        @param extra_entity_models: A list of extra entity models (modules)
+        :type extra_entity_models: List
+        :param extra_entity_models: A list of extra entity models (modules)
         to be used to construct the extra symbols map.
-        @type entity_class: EntityClass
-        @param entity_class: The base entity class from all the
+        :type entity_class: EntityClass
+        :param entity_class: The base entity class from all the
         entity classes must inherit (for reference).
-        @rtype: Dictionary
-        @return: A map containing all the extra symbols for the models
+        :rtype: Dictionary
+        :return: A map containing all the extra symbols for the models
         module importing.
         """
 
@@ -1294,11 +1294,11 @@ class MvcUtils(colony.System):
         Updates the target class, adding all the functions
         found in the given module as method to it.
 
-        @type module: Module
-        @param module: The module to be used to find the functions
+        :type module: Module
+        :param module: The module to be used to find the functions
         to be added to the target class.
-        @type target_class: Class
-        @param target_class: The class to be used as target of the adding
+        :type target_class: Class
+        :param target_class: The class to be used as target of the adding
         of the methods.
         """
 
@@ -1339,10 +1339,10 @@ class MvcUtils(colony.System):
         this path is relative to the system path entry used
         to import it.
 
-        @type module: Module
-        @param module: The module to retrieve the relative path.
-        @rtype: String
-        @return: The relative module path, from the system path
+        :type module: Module
+        :param module: The module to retrieve the relative path.
+        :rtype: String
+        :return: The relative module path, from the system path
         entry used to import it.
         """
 
@@ -1437,8 +1437,8 @@ class MvcUtils(colony.System):
         Starts the internal structures, by calling the start
         method in the given set of controllers.
 
-        @type controllers: List
-        @param controllers: The list of controllers to have
+        :type controllers: List
+        :param controllers: The list of controllers to have
         the internal structures started.
         """
 
@@ -1453,8 +1453,8 @@ class MvcUtils(colony.System):
         Stops the internal structures, by calling the stop
         method in the given set of controllers.
 
-        @type controllers: List
-        @param controllers: The list of controllers to have
+        :type controllers: List
+        :param controllers: The list of controllers to have
         the internal structures started.
         """
 
@@ -1470,8 +1470,8 @@ class MvcUtils(colony.System):
         removing the module referred by the given path from
         it if necessary.
 
-        @type package_path: String
-        @param package_path: The (package) path to the module to be removed
+        :type package_path: String
+        :param package_path: The (package) path to the module to be removed
         from the globals map.
         """
 
@@ -1558,11 +1558,11 @@ def create_new_start(base_model):
     The object is to provide an extra level of indirection in order
     to start additional entity structures.
 
-    @type base_model: Model
-    @param base_model: The base model to be used
+    :type base_model: Model
+    :param base_model: The base model to be used
     in the construction of the the new start function.
-    @rtype: Function
-    @return: The generated new start function.
+    :rtype: Function
+    :return: The generated new start function.
     """
 
     # retrieves the base model old start function

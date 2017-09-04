@@ -56,8 +56,8 @@ class PackingError(BerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BerException.__init__(self)
@@ -67,8 +67,8 @@ class PackingError(BerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Packing error - %s" % self.message
@@ -82,8 +82,8 @@ class UnpackingError(BerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BerException.__init__(self)
@@ -93,8 +93,8 @@ class UnpackingError(BerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Unpacking error - %s" % self.message
@@ -108,8 +108,8 @@ class OperationNotImplemented(BerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BerException.__init__(self)
@@ -119,8 +119,8 @@ class OperationNotImplemented(BerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Operation not implemented - %s" % self.message

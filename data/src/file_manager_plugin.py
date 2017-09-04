@@ -79,10 +79,10 @@ class FileManagerPlugin(colony.Plugin):
         """
         Loads an file manager for the given engine name.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @rtype: FileManager
-        @return: The loaded file manager.
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :rtype: FileManager
+        :return: The loaded file manager.
         """
 
         return self.system.load_file_manager(engine_name)
@@ -91,13 +91,13 @@ class FileManagerPlugin(colony.Plugin):
         """
         Loads an file manager for the given engine name.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @type properties: Dictionary
-        @param properties: The properties to be used in the
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :type properties: Dictionary
+        :param properties: The properties to be used in the
         loading of the file manager
-        @rtype: FileManager
-        @return: The loaded file manager.
+        :rtype: FileManager
+        :return: The loaded file manager.
         """
 
         return self.system.load_file_manager(engine_name, properties)

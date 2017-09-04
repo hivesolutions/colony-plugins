@@ -62,8 +62,8 @@ class Parser(object):
         """
         Retrieves the result of the parse.
 
-        @rtype: Object
-        @return: The result of the parse.
+        :rtype: Object
+        :return: The result of the parse.
         """
 
         pass
@@ -193,8 +193,8 @@ class Resource(object):
         """
         Constructor of the class.
 
-        @type version: String
-        @param version: The version of the resource.
+        :type version: String
+        :param version: The version of the resource.
         """
 
         self.version = version
@@ -219,8 +219,8 @@ class Service(object):
         """
         Constructor of the class.
 
-        @type priority: String
-        @param priority: The priority of the service.
+        :type priority: String
+        :param priority: The priority of the service.
         """
 
         self.priority = priority
@@ -232,10 +232,10 @@ class Service(object):
         """
         Retrieves an attribute from the attributes map.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
-        @rtype: Object
-        @return: The retrieved attribute.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
+        :rtype: Object
+        :return: The retrieved attribute.
         """
 
         return self.attributes_map.get(attribute_name, None)
@@ -244,10 +244,10 @@ class Service(object):
         """
         Sets an attribute in the attributes map.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to set.
-        @type attribute_value: Object
-        @param attribute_value: The value of the attribute to set.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to set.
+        :type attribute_value: Object
+        :param attribute_value: The value of the attribute to set.
         """
 
         self.attributes_map[attribute_name] = attribute_value
@@ -256,10 +256,10 @@ def valid_node(node):
     """
     Gets if a node is valid or not for parsing.
 
-    @type node: Node
-    @param node: The Xml node to be validated.
-    @rtype: bool
-    @return: The valid or not valid value.
+    :type node: Node
+    :param node: The Xml node to be validated.
+    :rtype: bool
+    :return: The valid or not valid value.
     """
 
     # in case the node is of type element

@@ -70,8 +70,8 @@ class InvalidTokenValue(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -81,8 +81,8 @@ class InvalidTokenValue(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid token value - %s" % self.message
@@ -98,8 +98,8 @@ class RuntimeRequestException(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self, message)
@@ -109,8 +109,8 @@ class RuntimeRequestException(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Runtime request exception - %s" % self.message
@@ -124,10 +124,10 @@ class MvcRequestNotHandled(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The integer describing the status
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The integer describing the status
         code that is going to be returned in the request.
         """
 
@@ -139,8 +139,8 @@ class MvcRequestNotHandled(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Mvc Request Not handled - %s" % self.message
@@ -157,10 +157,10 @@ class FileNotFoundException(MvcRequestNotHandled):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         MvcRequestNotHandled.__init__(self, message)
@@ -170,8 +170,8 @@ class FileNotFoundException(MvcRequestNotHandled):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "File not found - %s" % self.message
@@ -188,10 +188,10 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         MvcRequestNotHandled.__init__(self, message)
@@ -201,8 +201,8 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid communication command - %s" % self.message
@@ -216,8 +216,8 @@ class CommunicationCommandException(MvcRequestNotHandled):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcRequestNotHandled.__init__(self, message)
@@ -226,8 +226,8 @@ class CommunicationCommandException(MvcRequestNotHandled):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Communication command exception - %s" % self.message

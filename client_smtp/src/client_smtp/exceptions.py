@@ -56,8 +56,8 @@ class SmtpRuntimeException(ClientSmtpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientSmtpException.__init__(self)
@@ -67,8 +67,8 @@ class SmtpRuntimeException(ClientSmtpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Smtp runtime exception - %s" % self.message
@@ -82,8 +82,8 @@ class SmtpInvalidDataException(SmtpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         SmtpRuntimeException.__init__(self, message)
@@ -92,8 +92,8 @@ class SmtpInvalidDataException(SmtpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Smtp invalid data exception - %s" % self.message
@@ -107,8 +107,8 @@ class SmtpResponseError(SmtpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         SmtpRuntimeException.__init__(self, message)
@@ -117,8 +117,8 @@ class SmtpResponseError(SmtpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Smtp response error - %s" % self.message

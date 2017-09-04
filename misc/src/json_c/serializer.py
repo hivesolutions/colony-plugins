@@ -132,10 +132,10 @@ def escape_character(match):
     Escapes the character based in the given
     match object.
 
-    @type match: MatchObject
-    @param match: The math object to retrieve the character.
-    @rtype: String
-    @return: The escaped character.
+    :type match: MatchObject
+    :param match: The math object to retrieve the character.
+    :rtype: String
+    :return: The escaped character.
     """
 
     # retrieves the first group from the match
@@ -168,10 +168,10 @@ def dumps(object):
     be a plain buffer/string and so special attention to memory
     usage should be considered a concern.
 
-    @type object: Object
-    @param object: The object to be dumped.
-    @rtype: String
-    @return: The dumped/serialized json string.
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: String
+    :return: The dumped/serialized json string.
     """
 
     parts = dump_parts(object)
@@ -186,10 +186,10 @@ def dumps_lazy(object):
     This method must be considered the primary way of archiving
     low memory usage for large data set serialization.
 
-    @type object: Object
-    @param object: The object to be dumped.
-    @rtype: Generator
-    @return: The resulting generator that may be used to lazy
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: Generator
+    :return: The resulting generator that may be used to lazy
     evaluated the various components of the json data.
     """
 
@@ -201,10 +201,10 @@ def dumps_pretty(object):
     approach.
     This dumps method prints the json in "pretty" mode
 
-    @type object: Object
-    @param object: The object to be dumped.
-    @rtype: String
-    @return: The dumped json string (pretty).
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: String
+    :return: The dumped json string (pretty).
     """
 
     return "".join([part for part in dump_parts_pretty(object)])
@@ -214,10 +214,10 @@ def dumps_buffer(object):
     Dumps (converts to json) the given object using the "buffered"
     approach.
 
-    @type object: Object
-    @param object: The object to be dumped.
-    @rtype: String
-    @return: The dumped json string.
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: String
+    :return: The dumped json string.
     """
 
     # creates the string buffer
@@ -238,16 +238,16 @@ def dump_parts(object, objects = None, cycles = False):
     approach, note that the construction of the final string must be
     performed using a generator based strategy.
 
-    @type object: Object
-    @param object: The object to have the parts dumped.
-    @type objects: Dictionary
-    @param objects: The set of object identifiers that have
+    :type object: Object
+    :param object: The object to have the parts dumped.
+    :type objects: Dictionary
+    :param objects: The set of object identifiers that have
     already been serialized (avoids circular references).
-    @type cycles: bool
-    @param cycles: Flag that controls if cycles should be detected
+    :type cycles: bool
+    :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
-    @rtype: Generator
-    @return: The generator from which a proper json string
+    :rtype: Generator
+    :return: The generator from which a proper json string
     may be constructed using a lazy approach.
     """
 
@@ -435,18 +435,18 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     Dumps (converts to json) the given object parts using the "normal"
     approach.
 
-    @type object: Object
-    @param object: The object to have the parts dumped.
-    @type objects: Dictionary
-    @param objects: The set of object identifiers that have
+    :type object: Object
+    :param object: The object to have the parts dumped.
+    :type objects: Dictionary
+    :param objects: The set of object identifiers that have
     already been serialized (avoids circular references).
-    @type indentation: int
-    @param indentation: The current indentation value.
-    @type cycles: bool
-    @param cycles: Flag that controls if cycles should be detected
+    :type indentation: int
+    :param indentation: The current indentation value.
+    :type cycles: bool
+    :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
-    @rtype: String
-    @return: The dumped json string.
+    :rtype: String
+    :return: The dumped json string.
     """
 
     # in case the current object contains the json value
@@ -663,19 +663,19 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     Dumps (converts to json) the given object parts using the "buffered"
     approach.
 
-    @type object: Object
-    @param object: The object to have the parts dumped.
-    @type string_buffer: StringBuffer
-    @param string_buffer: The string buffer that is going to be
+    :type object: Object
+    :param object: The object to have the parts dumped.
+    :type string_buffer: StringBuffer
+    :param string_buffer: The string buffer that is going to be
     used to store the partial dump results.
-    @type objects: Dictionary
-    @param objects: The set of object identifiers that have
+    :type objects: Dictionary
+    :param objects: The set of object identifiers that have
     already been serialized (avoids circular references).
-    @type cycles: bool
-    @param cycles: Flag that controls if cycles should be detected
+    :type cycles: bool
+    :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
-    @rtype: String
-    @return: The dumped json string.
+    :rtype: String
+    :return: The dumped json string.
     """
 
     # in case the current object contains the json value

@@ -72,10 +72,10 @@ class ApiTwitterPlugin(colony.Plugin):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @rtype: TwitterClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :rtype: TwitterClient
+        :return: The created client.
         """
 
         return self.system.create_client(api_attributes)

@@ -71,8 +71,8 @@ class SslSocketUpgraderPlugin(colony.Plugin):
         """
         Retrieves the socket upgrader name.
 
-        @rtype: String
-        @return: The socket upgrader name.
+        :rtype: String
+        :return: The socket upgrader name.
         """
 
         return self.system.get_upgrader_name()
@@ -82,10 +82,10 @@ class SslSocketUpgraderPlugin(colony.Plugin):
         Upgrades the given socket, configured with
         the default parameters.
 
-        @type socket: Socket
-        @param socket: The socket to be upgraded.
-        @rtype: Socket
-        @return: The upgraded socket.
+        :type socket: Socket
+        :param socket: The socket to be upgraded.
+        :rtype: Socket
+        :return: The upgraded socket.
         """
 
         return self.system.upgrade_socket(socket)
@@ -95,12 +95,12 @@ class SslSocketUpgraderPlugin(colony.Plugin):
         Upgrades the given socket, configured with
         the given parameters.
 
-        @type socket: Socket
-        @param socket: The socket to be upgraded.
-        @type parameters: Dictionary
-        @param parameters: The parameters for socket configuration.
-        @rtype: Socket
-        @return: The upgraded socket.
+        :type socket: Socket
+        :param socket: The socket to be upgraded.
+        :type parameters: Dictionary
+        :param parameters: The parameters for socket configuration.
+        :rtype: Socket
+        :return: The upgraded socket.
         """
 
         return self.system.upgrade_socket_parameters(socket, parameters)
@@ -113,12 +113,12 @@ class SslSocketUpgraderPlugin(colony.Plugin):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type socket: Socket
-        @param socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type socket: Socket
+        :param socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 

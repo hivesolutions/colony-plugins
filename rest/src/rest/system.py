@@ -210,8 +210,8 @@ class Rest(colony.System):
         """
         Retrieves the handler filename.
 
-        @rtype: String
-        @return: The handler filename.
+        :rtype: String
+        :return: The handler filename.
         """
 
         return HANDLER_FILENAME
@@ -220,10 +220,10 @@ class Rest(colony.System):
         """
         Retrieves if it's an handler for the given request.
 
-        @type request: Request
-        @param request: The request to be used in the test.
-        @rtype: bool
-        @return: If it's an handler for the given request.
+        :type request: Request
+        :param request: The request to be used in the test.
+        :rtype: bool
+        :return: If it's an handler for the given request.
         """
 
         # retrieves the request filename
@@ -244,8 +244,8 @@ class Rest(colony.System):
         Multiple types of handling are possible ranging from remote
         procedure call ones to simple service ones.
 
-        @type request: Request
-        @param request: The request to be handled.
+        :type request: Request
+        :param request: The request to be handled.
         """
 
         # retrieves the rest encoder plugins, these values are going
@@ -351,8 +351,8 @@ class Rest(colony.System):
         method. This is considered legacy operation mode
         and it's not recommended.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled,
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
         the proper parameters/arguments into it.
@@ -432,16 +432,16 @@ class Rest(colony.System):
         This should be an expensive operation (routing) and should
         be used with proper care.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled,
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
         the proper parameters/arguments into it.
-        @type resource_path: String
-        @param resource_path: The path part that is going to
+        :type resource_path: String
+        :param resource_path: The path part that is going to
         be used for the plugin resolution.
-        @rtype: bool
-        @return: If there was at least one registered plugin
+        :rtype: bool
+        :return: If there was at least one registered plugin
         able to handle the provided request.
         """
 
@@ -486,8 +486,8 @@ class Rest(colony.System):
         """
         Tests if the service is active.
 
-        @rtype: bool
-        @return: If the service is active.
+        :rtype: bool
+        :return: If the service is active.
         """
 
         # retrieves the plugin manager
@@ -503,8 +503,8 @@ class Rest(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -513,8 +513,8 @@ class Rest(colony.System):
         """
         Retrieves the handler port.
 
-        @rtype: int
-        @return: The handler port.
+        :rtype: int
+        :return: The handler port.
         """
 
         return HANDLER_PORT
@@ -523,8 +523,8 @@ class Rest(colony.System):
         """
         Retrieves the handler properties.
 
-        @rtype: Dictionary
-        @return: The handler properties.
+        :rtype: Dictionary
+        :return: The handler properties.
         """
 
         return dict(
@@ -536,8 +536,8 @@ class Rest(colony.System):
         """
         Loads the rest service plugin, in the rest manager.
 
-        @type rest_service_plugin: Plugin
-        @param rest_service_plugin: The rest service plugin to be loaded.
+        :type rest_service_plugin: Plugin
+        :param rest_service_plugin: The rest service plugin to be loaded.
         """
 
         # retrieves the rest service plugin id
@@ -558,8 +558,8 @@ class Rest(colony.System):
         """
         Unloads the rest service plugin, from the rest manager.
 
-        @type rest_service_plugin: Plugin
-        @param rest_service_plugin: The rest service plugin to be unloaded.
+        :type rest_service_plugin: Plugin
+        :param rest_service_plugin: The rest service plugin to be unloaded.
         """
 
         # retrieves the rest service plugin id
@@ -586,8 +586,8 @@ class Rest(colony.System):
         The update may be partial in case the plugin with new methods is
         provided as argument.
 
-        @type updated_rpc_service_plugin: Plugin
-        @param updated_rpc_service_plugin: The plugin that is being registered
+        :type updated_rpc_service_plugin: Plugin
+        :param updated_rpc_service_plugin: The plugin that is being registered
         and that should have it's methods registered.
         """
 
@@ -697,10 +697,10 @@ class Rest(colony.System):
         """
         Translates the given encoded data data into a python request.
 
-        @type data: String
-        @param data: The encoded data to be translated into a python request.
-        @rtype: Any
-        @return: The translated python request.
+        :type data: String
+        :param data: The encoded data to be translated into a python request.
+        :rtype: Any
+        :return: The translated python request.
         """
 
         return data
@@ -713,12 +713,12 @@ class Rest(colony.System):
         the requested name failing with an exception in case no rest
         encoder plugin is loaded for the requested naming.
 
-        @type result: Any
-        @param result: The python result to be translated into encoded data.
-        @type method_name: String
-        @param method_name: The name of the encoder to be used.
-        @rtype: Tuple
-        @return: The content type and the translated data.
+        :type result: Any
+        :param result: The python result to be translated into encoded data.
+        :type method_name: String
+        :param method_name: The name of the encoder to be used.
+        :rtype: Tuple
+        :return: The content type and the translated data.
         """
 
         # retrieves the rest encoder plugins
@@ -763,10 +763,10 @@ class Rest(colony.System):
         from the underlying registry that stores the various
         session in secondary/main memory.
 
-        @type session_id: String
-        @param session_id: The id of the session to retrieve.
-        @rtype: RestSession
-        @return: The session that has been loaded from memory
+        :type session_id: String
+        :param session_id: The id of the session to retrieve.
+        :rtype: RestSession
+        :return: The session that has been loaded from memory
         or an invalid value in case no session was found
         """
 
@@ -958,11 +958,11 @@ class RestRequest(object):
         """
         Constructor of the class.
 
-        @type rest: MainRestManager
-        @param rest: The rest manager that should control the handling
+        :type rest: MainRestManager
+        :param rest: The rest manager that should control the handling
         workflow for the request to be created (owner).
-        @type request: Request
-        @param request: The associated request, should be compatible
+        :type request: Request
+        :param request: The associated request, should be compatible
         with the expected request interface (defined properly).
         """
 
@@ -1008,17 +1008,17 @@ class RestRequest(object):
         In case the session id is not provided a new
         session id is generated in a secure manner.
 
-        @type force: bool
-        @param force: If the session should be created if a session
+        :type force: bool
+        :param force: If the session should be created if a session
         is already selected.
-        @type session_id: String
-        @param session_id: The session id to be used.
-        @type timeout: float
-        @param timeout: The timeout to be used in the session.
-        @type maximum_timeout: float
-        @param maximum_timeout: The maximum timeout to be used in the session.
-        @rtype: RestSession
-        @return: The session that has just be started/created or
+        :type session_id: String
+        :param session_id: The session id to be used.
+        :type timeout: float
+        :param timeout: The timeout to be used in the session.
+        :type maximum_timeout: float
+        :param maximum_timeout: The maximum timeout to be used in the session.
+        :rtype: RestSession
+        :return: The session that has just be started/created or
         the already created session in case no "force" is required.
         """
 
@@ -1138,8 +1138,8 @@ class RestRequest(object):
         to the current date information including a "small"
         security oriented delta value to avoid browser problems.
 
-        @type secure_delta: float
-        @param secure_delta: The delta value to be removed from the
+        :type secure_delta: float
+        :param secure_delta: The delta value to be removed from the
         current time value to avoid browser problems
         """
 
@@ -1155,11 +1155,11 @@ class RestRequest(object):
         This method provides extra security tools for session
         timing control.
 
-        @type timeout: float
-        @param timeout: The timeout value to be used as the "new"
+        :type timeout: float
+        :param timeout: The timeout value to be used as the "new"
         timeout of the session.
-        @type maximum_timeout: float
-        @param maximum_timeout: The maximum timeout value to be
+        :type maximum_timeout: float
+        :param maximum_timeout: The maximum timeout value to be
         used as the "new" maximum timeout of the session.
         """
 
@@ -1185,8 +1185,8 @@ class RestRequest(object):
         rest request, this operation may take some performance
         impact as the complete data is stored in memory.
 
-        @rtype: String
-        @return: The complete data contents of the request associated
+        :rtype: String
+        :return: The complete data contents of the request associated
         with the current rest request.
         """
 
@@ -1198,8 +1198,8 @@ class RestRequest(object):
         structures. The data is not immediately flushed to the
         client side.
 
-        @type data: String
-        @param data: The data to be written to the underlying
+        :type data: String
+        :param data: The data to be written to the underlying
         request structures.
         """
 
@@ -1235,8 +1235,8 @@ class RestRequest(object):
         Tests the request to check if it is of type
         get method.
 
-        @rtype: bool
-        @return: If the request method is of type get.
+        :rtype: bool
+        :return: If the request method is of type get.
         """
 
         # in case the operation is of type get must return
@@ -1249,8 +1249,8 @@ class RestRequest(object):
         Tests the request to check if it is of type
         post method.
 
-        @rtype: bool
-        @return: If the request method is of type post.
+        :rtype: bool
+        :return: If the request method is of type post.
         """
 
         # in case the operation is of type post must return
@@ -1263,8 +1263,8 @@ class RestRequest(object):
         In case the request should be set in debug mode.
         Maximum verbosity, in actions like exception handling.
 
-        @type minimum_level: int
-        @param minimum_level: The minimum level to be used for verbosity.
+        :type minimum_level: int
+        :param minimum_level: The minimum level to be used for verbosity.
         """
 
         # retrieves the rest plugin
@@ -1289,8 +1289,8 @@ class RestRequest(object):
         In case the data has been already flushed, care should be taken
         to avoid any inconsistent state (double data flush).
 
-        @rtype: bool
-        @return: If the current rest request has already been flushed and
+        :rtype: bool
+        :return: If the current rest request has already been flushed and
         the data sent to the output stream.
         """
 
@@ -1305,8 +1305,8 @@ class RestRequest(object):
         detected, meaning that direct changes to headers and status
         codes may not be detect thought this call.
 
-        @rtype: bool
-        @return: If the current request represents a redirect based
+        :rtype: bool
+        :return: If the current request represents a redirect based
         response, and not a typical payload/data one.
         """
 
@@ -1386,18 +1386,18 @@ class RestRequest(object):
         An optional attributes map may be used to use
         url parameters in the redirect.
 
-        @type target_path: String
-        @param target_path: The target path of the redirection.
-        @type status_code: int
-        @param status_code: The status code to be used.
-        @type quote: bool
-        @param quote: If the target path should be quoted.
-        @type keep: bool
-        @param keep: If the attributes map from the current request
+        :type target_path: String
+        :param target_path: The target path of the redirection.
+        :type status_code: int
+        :param status_code: The status code to be used.
+        :type quote: bool
+        :param quote: If the target path should be quoted.
+        :type keep: bool
+        :param keep: If the attributes map from the current request
         should be propagated (as get parameters) to the redirection
         action that is going to be triggered.
-        @type attributes_map: Dictionary
-        @param attributes_map: Map containing the series of
+        :type attributes_map: Dictionary
+        :param attributes_map: Map containing the series of
         attributes to be sent over the target path in the
         redirect url.
         """
@@ -1448,16 +1448,16 @@ class RestRequest(object):
         This method is useful for avoid blocking the request
         handling method in non critic tasks.
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 
@@ -1495,10 +1495,10 @@ class RestRequest(object):
         Retrieves an header value of the request, or none if no
         header is defined for the given header name.
 
-        @type header_name: String
-        @param header_name: The name of the header to be retrieved.
-        @rtype: Object
-        @return: The value of the request header.
+        :type header_name: String
+        :param header_name: The name of the header to be retrieved.
+        :rtype: Object
+        :return: The value of the request header.
         """
 
         return self.request.get_header(header_name)
@@ -1508,10 +1508,10 @@ class RestRequest(object):
         Set a response header value on the request, this will
         set a value for the output headers.
 
-        @type header_name: String
-        @param header_name: The name of the header to be set.
-        @type header_value: Object
-        @param header_value: The value of the header to be sent
+        :type header_name: String
+        :param header_name: The name of the header to be set.
+        :type header_value: Object
+        :param header_value: The value of the header to be sent
         in the response.
         """
 
@@ -1522,8 +1522,8 @@ class RestRequest(object):
         Sets the max age attribute to be used by the cache
         infra-structure on the client side.
 
-        @type max_age: int
-        @param max_age: The maximum age in seconds for the
+        :type max_age: int
+        :param max_age: The maximum age in seconds for the
         returned value to be cached in the client side.
         """
 
@@ -1533,8 +1533,8 @@ class RestRequest(object):
         """
         Retrieves the list of available attribute names.
 
-        @rtype: List
-        @return: The list of available attribute names.
+        :rtype: List
+        :return: The list of available attribute names.
         """
 
         return self.request.get_attributes_list()
@@ -1543,10 +1543,10 @@ class RestRequest(object):
         """
         Retrieves the attribute for the given attribute name.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
-        @rtype: Object
-        @return: The value of the retrieved attribute.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
+        :rtype: Object
+        :return: The value of the retrieved attribute.
         """
 
         return self.request.get_attribute(attribute_name)
@@ -1556,10 +1556,10 @@ class RestRequest(object):
         Sets the attribute with the given name with the given
         value.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to set.
-        @type attribute_value: Object
-        @param attribute_value: The value to set the attribute.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to set.
+        :type attribute_value: Object
+        :param attribute_value: The value to set the attribute.
         """
 
         self.request.set_attribute(attribute_name, attribute_value)
@@ -1571,10 +1571,10 @@ class RestRequest(object):
         This parameter should be used to compute temporary
         data (not for long term storage).
 
-        @type parameter_name: String
-        @param parameter_name: The name of the parameter to retrieve.
-        @rtype: Object
-        @return: The value of the retrieved parameter.
+        :type parameter_name: String
+        :param parameter_name: The name of the parameter to retrieve.
+        :rtype: Object
+        :return: The value of the retrieved parameter.
         """
 
         return self.parameters_map.get(parameter_name, None)
@@ -1587,10 +1587,10 @@ class RestRequest(object):
         This parameter should be used to compute temporary
         data (not for long term storage).
 
-        @type parameter_name: String
-        @param parameter_name: The name of the parameter to set.
-        @type parameter_value: Object
-        @param parameter_value: The value to set the parameter.
+        :type parameter_name: String
+        :param parameter_name: The name of the parameter to set.
+        :type parameter_value: Object
+        :param parameter_value: The value to set the parameter.
         """
 
         self.parameters_map[parameter_name] = parameter_value
@@ -1601,8 +1601,8 @@ class RestRequest(object):
         In case the session is not defined the default (empty)
         attributes map is returned.
 
-        @rtype: Dictionary
-        @return: The session attributes map.
+        :rtype: Dictionary
+        :return: The session attributes map.
         """
 
         # retrieves the session attributes map in case the session
@@ -1616,8 +1616,8 @@ class RestRequest(object):
         Retrieves the plugin manager for the context
         of the rest request.
 
-        @rtype: PluginManager
-        @return: The plugin manager for the context
+        :rtype: PluginManager
+        :return: The plugin manager for the context
         of the rest request.
         """
 
@@ -1633,8 +1633,8 @@ class RestRequest(object):
         """
         Retrieves the associated request.
 
-        @rtype: Request
-        @return: The associated request.
+        :rtype: Request
+        :return: The associated request.
         """
 
         return self.request
@@ -1643,8 +1643,8 @@ class RestRequest(object):
         """
         Sets the associated request.
 
-        @type request: Request
-        @param request: The associated request.
+        :type request: Request
+        :param request: The associated request.
         """
 
         self.request = request
@@ -1658,18 +1658,18 @@ class RestRequest(object):
         An optional parameter may unset the variable afterwards
         if that's required.
 
-        @type name: String
-        @param name: The name of the session attribute that is
+        :type name: String
+        :param name: The name of the session attribute that is
         going to be retrieved.
-        @type default: Object
-        @param default: The default value to be returned in case no
+        :type default: Object
+        :param default: The default value to be returned in case no
         session is found or no value is retrieved from the currently
         set session (fallback value).
-        @type unset: bool
-        @param unset: If the session attribute should be unset
+        :type unset: bool
+        :param unset: If the session attribute should be unset
         or removed from the session after the retrieval.
-        @rtype: Object
-        @return: The value (as an object) for the requested session
+        :rtype: Object
+        :return: The value (as an object) for the requested session
         attribute according to the provided name.
         """
 
@@ -1687,11 +1687,11 @@ class RestRequest(object):
         This method is provided as a shortcut to quickly access
         the session associated with the request.
 
-        @type name: String
-        @param name: The name that is going to be given to the
+        :type name: String
+        :param name: The name that is going to be given to the
         session parameter to be set.
-        @type value: Object
-        @param value: The value to be set in the target session
+        :type value: Object
+        :param value: The value to be set in the target session
         attribute to be changed/created.
         """
 
@@ -1704,8 +1704,8 @@ class RestRequest(object):
         Unsets the session attribute so that it becomes no longer
         accessible from a session point of view.
 
-        @type name: String
-        @param name: The name of the session attribute that is going
+        :type name: String
+        :param name: The name of the session attribute that is going
         to be unset from session and become unavailable.
         """
 
@@ -1723,8 +1723,8 @@ class RestRequest(object):
         to the session (session is only loaded when required), to be
         able to minimize the resources used for loading session.
 
-        @rtype: Session
-        @return: The session that was "loaded" from the current request
+        :rtype: Session
+        :return: The session that was "loaded" from the current request
         or an invalid/unset value in case no session was loaded.
         """
 
@@ -1738,11 +1738,11 @@ class RestRequest(object):
         Retrieves the associated session using the proper
         locking mechanisms (secure way).
 
-        @type block: bool
-        @param block: If the lock should be used while
+        :type block: bool
+        :param block: If the lock should be used while
         accessing the session.
-        @rtype: RestSession
-        @return: The associated session.
+        :rtype: RestSession
+        :return: The associated session.
         """
 
         # makes sure that the session attribute is
@@ -1780,8 +1780,8 @@ class RestRequest(object):
         """
         Sets the associated session.
 
-        @type session: RestSession
-        @param session: The associated session.
+        :type session: RestSession
+        :param session: The associated session.
         """
 
         self._session = session
@@ -1847,8 +1847,8 @@ class RestRequest(object):
         this value is stored and the operation type value of the
         original/underlying request object.
 
-        @rtype: String
-        @return: The normalized http verb/method for the request.
+        :rtype: String
+        :return: The normalized http verb/method for the request.
         """
 
         return self.request.operation_type
@@ -1859,8 +1859,8 @@ class RestRequest(object):
         the original path of the request and removing any extra
         get based arguments from it.
 
-        @rtype: String
-        @return: The (original) path of the request as a canonical
+        :rtype: String
+        :return: The (original) path of the request as a canonical
         version of the uri/url.
         """
 
@@ -1871,8 +1871,8 @@ class RestRequest(object):
         Retrieves the content type for the current rest request
         using the associated header and processing it.
 
-        @rtype: String
-        @return: The content type value (base value) for the
+        :rtype: String
+        :return: The content type value (base value) for the
         current request.
         """
 
@@ -1887,8 +1887,8 @@ class RestRequest(object):
         """
         Retrieves the resource name.
 
-        @rtype: String
-        @return: The resource name.
+        :rtype: String
+        :return: The resource name.
         """
 
         return self.resource_name
@@ -1897,8 +1897,8 @@ class RestRequest(object):
         """
         Sets the resource name.
 
-        @type resource_name: String
-        @param resource_name: The resource name.
+        :type resource_name: String
+        :param resource_name: The resource name.
         """
 
         self.resource_name = resource_name
@@ -1907,8 +1907,8 @@ class RestRequest(object):
         """
         Retrieves the path list.
 
-        @rtype: List
-        @return: The path list.
+        :rtype: List
+        :return: The path list.
         """
 
         return self.path_list
@@ -1917,8 +1917,8 @@ class RestRequest(object):
         """
         Sets the path list.
 
-        @type path_list: String
-        @param path_list: The path list.
+        :type path_list: String
+        :param path_list: The path list.
         """
 
         self.path_list = path_list
@@ -1927,8 +1927,8 @@ class RestRequest(object):
         """
         Retrieves the encoder name.
 
-        @rtype: String
-        @return: The encoder name.
+        :rtype: String
+        :return: The encoder name.
         """
 
         return self.encoder_name
@@ -1937,8 +1937,8 @@ class RestRequest(object):
         """
         Sets the encoder name.
 
-        @type encoder_name: String
-        @param encoder_name: The encoder name.
+        :type encoder_name: String
+        :param encoder_name: The encoder name.
         """
 
         self.encoder_name = encoder_name
@@ -1947,8 +1947,8 @@ class RestRequest(object):
         """
         Retrieves the content type.
 
-        @rtype: String
-        @return: The content type.
+        :rtype: String
+        :return: The content type.
         """
 
         return self.content_type
@@ -1959,10 +1959,10 @@ class RestRequest(object):
         flag is set the content type is immediately
         set on the current target request.
 
-        @type content_type: String
-        @param content_type: The content type.
-        @type flush: bool
-        @param flush: If the content type should be
+        :type content_type: String
+        :param content_type: The content type.
+        :type flush: bool
+        :param flush: If the content type should be
         immediately set on the target request object
         (underlying layer of abstraction).
         """
@@ -1974,8 +1974,8 @@ class RestRequest(object):
         """
         Retrieves the result translated.
 
-        @rtype: String
-        @return: The result translated.
+        :rtype: String
+        :return: The result translated.
         """
 
         return self.result_translated
@@ -1984,8 +1984,8 @@ class RestRequest(object):
         """
         Sets the result translated.
 
-        @type result_translated: String
-        @param result_translated: The result translated.
+        :type result_translated: String
+        :param result_translated: The result translated.
         """
 
         self.result_translated = result_translated
@@ -1994,8 +1994,8 @@ class RestRequest(object):
         """
         Retrieves the rest encoder plugins.
 
-        @rtype: List
-        @return: The rest encoder plugins.
+        :rtype: List
+        :return: The rest encoder plugins.
         """
 
         return self.rest_encoder_plugins
@@ -2004,8 +2004,8 @@ class RestRequest(object):
         """
         Sets the rest encoder plugins.
 
-        @type rest_encoder_plugins: List
-        @param rest_encoder_plugins: The rest encoder plugins.
+        :type rest_encoder_plugins: List
+        :param rest_encoder_plugins: The rest encoder plugins.
         """
 
         self.rest_encoder_plugins = rest_encoder_plugins
@@ -2014,8 +2014,8 @@ class RestRequest(object):
         """
         Retrieves the rest encoder plugins map.
 
-        @rtype: Dictionary
-        @return: The rest encoder plugins map.
+        :rtype: Dictionary
+        :return: The rest encoder plugins map.
         """
 
         return self.set_rest_encoder_plugins_map
@@ -2024,8 +2024,8 @@ class RestRequest(object):
         """
         Sets the rest encoder plugins.
 
-        @type set_rest_encoder_plugins_map: Dictionary
-        @param set_rest_encoder_plugins_map: The rest encoder plugins map.
+        :type set_rest_encoder_plugins_map: Dictionary
+        :param set_rest_encoder_plugins_map: The rest encoder plugins map.
         """
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
@@ -2034,8 +2034,8 @@ class RestRequest(object):
         """
         Retrieves the status code.
 
-        @rtype: int
-        @return: The status code.
+        :rtype: int
+        :return: The status code.
         """
 
         return self.request.status_code
@@ -2044,8 +2044,8 @@ class RestRequest(object):
         """
         Sets the status code.
 
-        @type status_code: int
-        @param status_code: The status code.
+        :type status_code: int
+        :param status_code: The status code.
         """
 
         self.request.status_code = status_code
@@ -2059,8 +2059,8 @@ class RestRequest(object):
         process method is required to flush the data to the
         client side.
 
-        @type value: bool
-        @param value: The boolean value for the setting of
+        :type value: bool
+        :param value: The boolean value for the setting of
         the delayed mode flag.
         """
 
@@ -2074,8 +2074,8 @@ class RestRequest(object):
         The return value should be gathered from the underlying
         request interface.
 
-        @rtype: String
-        @return: The name of the encoding that is going to be used
+        :rtype: String
+        :return: The name of the encoding that is going to be used
         by the output stream.
         """
 
@@ -2086,8 +2086,8 @@ class RestRequest(object):
         Retrieves the reference to the service responsible for
         the handling of the current request (owner).
 
-        @rtype: Service
-        @return: The service responsible for the handling of
+        :rtype: Service
+        :return: The service responsible for the handling of
         the current request.
         """
 
@@ -2098,8 +2098,8 @@ class RestRequest(object):
         Retrieves the reference to the service connection
         associated with the handling of the request.
 
-        @rtype: ServiceConnection
-        @return: The reference to the service connection
+        :rtype: ServiceConnection
+        :return: The reference to the service connection
         associated with the handling of the request.
         """
 
@@ -2110,8 +2110,8 @@ class RestRequest(object):
         Retrieves the (ip) address of the service connection
         associated with the rest request.
 
-        @rtype: String
-        @return: The (ip) address of the service connection.
+        :rtype: String
+        :return: The (ip) address of the service connection.
         """
 
         # retrieves the service connection for the request,
@@ -2125,8 +2125,8 @@ class RestRequest(object):
         Retrieves the (tcp) port of the service connection
         associated with the rest request.
 
-        @rtype: String
-        @return: The (tcp) port of the service connection.
+        :rtype: String
+        :return: The (tcp) port of the service connection.
         """
 
         # retrieves the service connection for the request,
@@ -2268,8 +2268,8 @@ class RestRequest(object):
         so a calling to this method is required to avoid
         any exception raising.
 
-        @rtype: Controller
-        @return: The controller retrieved from the current
+        :rtype: Controller
+        :return: The controller retrieved from the current
         request instance, or an invalid value in case it was
         not possible to find it.
         """
@@ -2282,8 +2282,8 @@ class RestRequest(object):
         Retrieves the domain using the http request header
         host value.
 
-        @rtype: String
-        @return: The currently used domain.
+        :rtype: String
+        :return: The currently used domain.
         """
 
         # retrieves the host value from the request headers
@@ -2369,12 +2369,12 @@ class RestSession(object):
         """
         Constructor of the class.
 
-        @type session_id: String
-        @param session_id: The session id.
-        @type timeout: float
-        @param timeout: The timeout.
-        @type maxmimum_timeout: float
-        @param maxmimum_timeout: The maximum timeout.
+        :type session_id: String
+        :param session_id: The session id.
+        :type timeout: float
+        :param timeout: The timeout.
+        :type maxmimum_timeout: float
+        :param maxmimum_timeout: The maximum timeout.
         """
 
         self.session_id = session_id
@@ -2469,12 +2469,12 @@ class RestSession(object):
         """
         Starts the current session.
 
-        @type domain: String
-        @param domain: The domain to be used by the cookie.
-        @type include_sub_domain: bool
-        @param include_sub_domain: Controls if the sub domain should be included.
-        @type secure: bool
-        @param secure: Controls if the cookie should be considered secure,
+        :type domain: String
+        :param domain: The domain to be used by the cookie.
+        :type include_sub_domain: bool
+        :param include_sub_domain: Controls if the sub domain should be included.
+        :type secure: bool
+        :param secure: Controls if the cookie should be considered secure,
         and only available through secure connections.
         """
 
@@ -2496,12 +2496,12 @@ class RestSession(object):
         """
         Stops the current session.
 
-        @type domain: String
-        @param domain: The domain used by the cookie.
-        @type include_sub_domain: bool
-        @param include_sub_domain: Controls if the sub domain should be included.
-        @type secure: bool
-        @param secure: Controls if the cookie should be considered secure,
+        :type domain: String
+        :param domain: The domain used by the cookie.
+        :type include_sub_domain: bool
+        :param include_sub_domain: Controls if the sub domain should be included.
+        :type secure: bool
+        :param secure: Controls if the cookie should be considered secure,
         and only available through secure connections.
         """
 
@@ -2524,8 +2524,8 @@ class RestSession(object):
         This update will mark the current session as dirty only
         in case the expire time delta exceeds the provided interval.
 
-        @type dirty_interval: float
-        @param dirty_interval: The minimum amount of seconds (delta) that
+        :type dirty_interval: float
+        :param dirty_interval: The minimum amount of seconds (delta) that
         must be defined between the original and the new expire time, so
         that the current session will be marked as dirty (and flushed).
         This value helps maintaining performance in session management.
@@ -2609,13 +2609,13 @@ class RestSession(object):
         a default value so that such value is returned when
         no value is found in the current session.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
-        @type default: Object
-        @param default: The fallback value to be returned when no
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
+        :type default: Object
+        :param default: The fallback value to be returned when no
         value is found for the provided name.
-        @rtype: Object
-        @return: The retrieved attribute value according to the
+        :rtype: Object
+        :return: The retrieved attribute value according to the
         provided name (as defined in specification).
         """
 
@@ -2626,10 +2626,10 @@ class RestSession(object):
         Sets the attribute with the given name with the
         provided value.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to set.
-        @type attribute_value: String
-        @param attribute_value: The attribute value to set.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to set.
+        :type attribute_value: String
+        :param attribute_value: The attribute value to set.
         """
 
         self.attributes_map[attribute_name] = attribute_value
@@ -2639,8 +2639,8 @@ class RestSession(object):
         """
         Unsets the attribute with the given name.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to unset.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to unset.
         """
 
         if not attribute_name in self.attributes_map: return
@@ -2651,8 +2651,8 @@ class RestSession(object):
         """
         Retrieves the attributes map.
 
-        @rtype: Dictionary
-        @return: The attributes map.
+        :rtype: Dictionary
+        :return: The attributes map.
         """
 
         return self.attributes_map
@@ -2661,8 +2661,8 @@ class RestSession(object):
         """
         Sets the attributes map.
 
-        @type attributes_map: Dictionary
-        @param attributes_map: The attributes map.
+        :type attributes_map: Dictionary
+        :param attributes_map: The attributes map.
         """
 
         self.attributes_map = attributes_map
@@ -2676,10 +2676,10 @@ class RestSession(object):
         to allow the cookie to be propagated to sub domains
         (by default it's disabled).
 
-        @type domain: String
-        @param domain: The domain used by the cookie.
-        @type include_sub_domain: bool
-        @param include_sub_domain: Controls if the sub domain should be included.
+        :type domain: String
+        :param domain: The domain used by the cookie.
+        :type include_sub_domain: bool
+        :param include_sub_domain: Controls if the sub domain should be included.
         """
 
         # in case the domain is not defined defined
@@ -2708,8 +2708,8 @@ class RestSession(object):
         the cookie to be propagated to sub domains (by default
         it's disabled).
 
-        @type secure: bool
-        @param secure: Flag that controls if the cookie should
+        :type secure: bool
+        :param secure: Flag that controls if the cookie should
         be considered secure.
         """
 
@@ -2724,11 +2724,11 @@ class RestSession(object):
         The maximum timeout is used to control the generated
         expire time, and for calculation of the maximum expire time.
 
-        @type timeout: float
-        @param timeout: The timeout value to be
+        :type timeout: float
+        :param timeout: The timeout value to be
         used for expire time generation.
-        @type maximum_timeout: float
-        @param maximum_timeout: The maximum timeout value to be
+        :type maximum_timeout: float
+        :param maximum_timeout: The maximum timeout value to be
         used to control the new expire time.
         """
 
@@ -2938,8 +2938,8 @@ class Cookie(object):
         """
         Constructor of the class.
 
-        @type string_value: String
-        @param string_value: The cookie string value.
+        :type string_value: String
+        :param string_value: The cookie string value.
         """
 
         self.string_value = string_value
@@ -2987,8 +2987,8 @@ class Cookie(object):
         Serializes the cookie into a string value, using
         the current attributes map.
 
-        @rtype: String
-        @return: The linear version of the cookie as default
+        :rtype: String
+        :return: The linear version of the cookie as default
         serialized value according to http specification.
         """
 
@@ -3029,8 +3029,8 @@ class Cookie(object):
         """
         Retrieves an attribute using the attribute name.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
         """
 
         return self.attributes_map.get(attribute_name, None)
@@ -3039,10 +3039,10 @@ class Cookie(object):
         """
         Retrieves an attribute using the attribute name.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to set.
-        @type attribute_value: Object
-        @param attribute_value: The value of the attribute to set.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to set.
+        :type attribute_value: Object
+        :param attribute_value: The value of the attribute to set.
         """
 
         self.attributes_map[attribute_name] = attribute_value
@@ -3051,8 +3051,8 @@ class Cookie(object):
         """
         Sets the main attribute name.
 
-        @type main_attribute_name: String
-        @param main_attribute_name: The main attribute name.
+        :type main_attribute_name: String
+        :param main_attribute_name: The main attribute name.
         """
 
         self.main_attribute_name = main_attribute_name
@@ -3065,12 +3065,12 @@ class Cookie(object):
         In case no attribute value is provided the attribute
         is considered to be singleton no equal sign.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to be serialized.
-        @type attribute_value: Object
-        @param attribute_value: The of the attribute to be serialized.
-        @rtype: String
-        @return: The serialized for of the name and attribute pair.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to be serialized.
+        :type attribute_value: Object
+        :param attribute_value: The of the attribute to be serialized.
+        :rtype: String
+        :return: The serialized for of the name and attribute pair.
         """
 
         # converts the attribute into the correct key value

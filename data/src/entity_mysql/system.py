@@ -343,19 +343,19 @@ class MysqlEngine(object):
         if the connection should be retries if there's a
         connection related issue.
 
-        @type query: String
-        @param query: The query that is going to be executed
+        :type query: String
+        :param query: The query that is going to be executed
         in the current engine.
-        @type cursor: Cursor
-        @param cursor: The cursor that is going to be execute
+        :type cursor: Cursor
+        :param cursor: The cursor that is going to be execute
         the query in the engine, this cursor must have been
         created for this engine.
-        @type retries: int
-        @param retries: The current number of retries pending
+        :type retries: int
+        :param retries: The current number of retries pending
         for the execution of the query. This is used to solve
         the reconnection related issues.
-        @rtype: Cursor
-        @return: The cursor that was used for the query execution
+        :rtype: Cursor
+        :return: The cursor that was used for the query execution
         it must be closed in the outside context.
         """
 
@@ -478,15 +478,15 @@ class MysqlEngine(object):
         transaction context that is created "just" for the
         query execution.
 
-        @type query: String
-        @param query: The query that is going to be executed
+        :type query: String
+        :param query: The query that is going to be executed
         in the current engine.
-        @type cursor: Cursor
-        @param cursor: The cursor that is going to be execute
+        :type cursor: Cursor
+        :param cursor: The cursor that is going to be execute
         the query in the engine, this cursor must have been
         created for this engine.
-        @rtype: Cursor
-        @return: The cursor that was used for the query execution
+        :rtype: Cursor
+        :return: The cursor that was used for the query execution
         it must be closed in the outside context.
         """
 
@@ -673,11 +673,11 @@ class MysqlEngine(object):
         The encoding process is required to avoid possible problems
         with the automatic decoding of the mysql library.
 
-        @type query: String/Unicode
-        @param query: The query to be encoded into the appropriate
+        :type query: String/Unicode
+        :param query: The query to be encoded into the appropriate
         data type for execution in mysql.
-        @rtype: String
-        @return: The query string encoded in to the appropriate data
+        :rtype: String
+        :return: The query string encoded in to the appropriate data
         format for mysql execution.
         """
 

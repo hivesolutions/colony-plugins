@@ -75,18 +75,18 @@ def validated(
     """
     Decorator for the validated method.
 
-    @type validation_parameters: Object
-    @param validation_parameters: The parameters to be used when calling
+    :type validation_parameters: Object
+    :param validation_parameters: The parameters to be used when calling
     the validate method.
-    @type validation_method: Method
-    @param validation_method: The validation method to be used for extra
+    :type validation_method: Method
+    :param validation_method: The validation method to be used for extra
     validation (in case it's necessary).
-    @type call_validation_failed: bool
-    @param call_validation_failed: If the validation failed method should be
+    :type call_validation_failed: bool
+    :param call_validation_failed: If the validation failed method should be
     called in case the validation fails. This value is not defined by default
     and for such situations it will be inferred from the current parameters.
-    @rtype: Function
-    @return: The created decorator.
+    :rtype: Function
+    :return: The created decorator.
     """
 
     def create_decorator_interceptor(function):
@@ -94,8 +94,8 @@ def validated(
         Creates a decorator interceptor, that intercepts
         the normal function call.
 
-        @type function: Function
-        @param function: The callback function.
+        :type function: Function
+        :param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -204,10 +204,10 @@ def validated(
         """
         The decorator function for the load allowed decorator.
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @rtype: Function
-        @return: The decorator interceptor function.
+        :type function: Function
+        :param function: The function to be decorated.
+        :rtype: Function
+        :return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
@@ -231,17 +231,17 @@ def transaction(
     A default entity manager reference is used to avoid the
     developer of defining one, this is defined by convention.
 
-    @type manager_ref: String
-    @param manager_ref: The entity manager to be used for transaction
+    :type manager_ref: String
+    :param manager_ref: The entity manager to be used for transaction
     management, this entity manager should be started and running.
-    @type controller: bool
-    @param controller: If the method that is being decorator is defined
+    :type controller: bool
+    :param controller: If the method that is being decorator is defined
     inside a controller as opposed to a model (default behavior). For this
     situation a different default entity manager reference will be used.
-    @type raise_exception: bool
-    @param raise_exception: If an exception should be raised in case it occurs.
-    @rtype: Function
-    @return: The created decorator.
+    :type raise_exception: bool
+    :param raise_exception: If an exception should be raised in case it occurs.
+    :rtype: Function
+    :return: The created decorator.
     """
 
     # defaults the (entity manager) manager reference to the proper default
@@ -255,8 +255,8 @@ def transaction(
         Creates a decorator interceptor, that intercepts
         the normal function call.
 
-        @type function: Function
-        @param function: The callback function.
+        :type function: Function
+        :param function: The callback function.
         """
 
         # retrieves the function specification and uses
@@ -360,10 +360,10 @@ def transaction(
         """
         The decorator function for the load allowed decorator.
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @rtype: Function
-        @return: The decorator interceptor function.
+        :type function: Function
+        :param function: The function to be decorated.
+        :rtype: Function
+        :return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
@@ -383,11 +383,11 @@ def eager(function, *args, **kwargs):
     This is a convenience decorator to be used mostly under
     data model validation processes.
 
-    @type function: Function
-    @param function: The function that is going to be decorator
+    :type function: Function
+    :param function: The function that is going to be decorator
     and have the result of calls eager loaded.
-    @rtype: Function
-    @return: The resulting decorated function that may be used
+    :rtype: Function
+    :return: The resulting decorated function that may be used
     freely under a "generator environment".
     """
 
@@ -427,14 +427,14 @@ def serialized(serialization_parameters = None, default_success = True):
     or directly by it. The serializer that is used is the
     one passed in the provided parameters value.
 
-    @type serialization_parameters: Object
-    @param serialization_parameters: The parameters to be used when serializing
+    :type serialization_parameters: Object
+    :param serialization_parameters: The parameters to be used when serializing
     the exception, should condition the serialization process.
-    @type default_success: bool
-    @param default_success: If an empty success operation should be serialized
+    :type default_success: bool
+    :param default_success: If an empty success operation should be serialized
     as a simple map containing the result as success (default behavior).
-    @rtype: Function
-    @return: The created decorator.
+    :rtype: Function
+    :return: The created decorator.
     """
 
     def create_decorator_interceptor(function):
@@ -442,8 +442,8 @@ def serialized(serialization_parameters = None, default_success = True):
         Creates a decorator interceptor, that intercepts
         the normal function call.
 
-        @type function: Function
-        @param function: The callback function.
+        :type function: Function
+        :param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -569,10 +569,10 @@ def serialized(serialization_parameters = None, default_success = True):
         """
         The decorator function for the load allowed decorator.
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @rtype: Function
-        @return: The decorator interceptor function.
+        :type function: Function
+        :param function: The function to be decorated.
+        :rtype: Function
+        :return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
@@ -608,11 +608,11 @@ class Controller(object):
         """
         Constructor of the class.
 
-        @type plugin: Plugin
-        @param plugin: The owner plugin of the controller class
+        :type plugin: Plugin
+        :param plugin: The owner plugin of the controller class
         to be used to obtain external references.
-        @type system: System
-        @param system: The system object used to call inner
+        :type system: System
+        :param system: The system object used to call inner
         behavior in the current context.
         """
 

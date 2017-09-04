@@ -56,8 +56,8 @@ class InvalidHandshakeData(ServiceHttpWebsocketException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpWebsocketException.__init__(self)
@@ -67,8 +67,8 @@ class InvalidHandshakeData(ServiceHttpWebsocketException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid handshake data - %s" % self.message
@@ -82,8 +82,8 @@ class WebsocketHandlerNotFoundException(ServiceHttpWebsocketException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpWebsocketException.__init__(self)
@@ -93,8 +93,8 @@ class WebsocketHandlerNotFoundException(ServiceHttpWebsocketException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Websocket handler not found - %s" % self.message

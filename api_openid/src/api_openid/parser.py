@@ -52,10 +52,10 @@ class YadisHtmlParser(colony.legacy.HTMLParser.HTMLParser):
         """
         Handles the parsing of the start of a tag.
 
-        @type tag: String
-        @param tag: The value of the start of a tag.
-        @type attributes: List
-        @param attributes: The list of attribute pairs of the tag.
+        :type tag: String
+        :param tag: The value of the start of a tag.
+        :type attributes: List
+        :param attributes: The list of attribute pairs of the tag.
         """
 
         # in case the tag is of type meta

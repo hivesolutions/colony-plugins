@@ -77,8 +77,8 @@ class MvcFileHandler(object):
         """
         Constructor of the class.
 
-        @type mvc_plugin: MvcPlugin
-        @param mvc_plugin: The mvc plugin
+        :type mvc_plugin: MvcPlugin
+        :param mvc_plugin: The mvc plugin
         """
 
         self.mvc_plugin = mvc_plugin
@@ -87,10 +87,10 @@ class MvcFileHandler(object):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
+        :rtype: bool
+        :return: The result of the handling.
         """
 
         # retrieves the mime plugin, that is going to be used to
@@ -171,12 +171,12 @@ class MvcFileHandler(object):
         Computes the etag for the given file stat and
         modified timestamp.
 
-        @type file_stat: Dictionary
-        @param file_stat: The file stat values dictionary.
-        @type modified_timestamp: int
-        @param modified_timestamp: The last modified timestamp.
-        @rtype: String
-        @return: The etag value.
+        :type file_stat: Dictionary
+        :param file_stat: The file stat values dictionary.
+        :type modified_timestamp: int
+        :param modified_timestamp: The last modified timestamp.
+        :rtype: String
+        :return: The etag value.
         """
 
         # retrieves the md5 builder
@@ -204,10 +204,10 @@ class MvcFileHandler(object):
         """
         Escapes the relative path values in the given path.
 
-        @type path: String
-        @param path: The path to be escaped.
-        @rtype: String
-        @return: The escaped path.
+        :type path: String
+        :param path: The path to be escaped.
+        :rtype: String
+        :return: The escaped path.
         """
 
         # escapes the paths in the relative paths value
@@ -234,10 +234,10 @@ class ChunkHandler(object):
         """
         Constructor of the class.
 
-        @type file: File
-        @param file: The file.
-        @type file_size: int
-        @param file_size: The file size.
+        :type file: File
+        :param file: The file.
+        :type file_size: int
+        :param file_size: The file size.
         """
 
         self.file = file
@@ -247,10 +247,10 @@ class ChunkHandler(object):
         """
         Encodes the file using the given encoding handler with the given name.
 
-        @type encoding_handler: Method
-        @param encoding_handler: The encoding handler method to be used.
-        @type encoding_name: String
-        @param encoding_name: The name of the encoding to be used.
+        :type encoding_handler: Method
+        :param encoding_handler: The encoding handler method to be used.
+        :type encoding_name: String
+        :param encoding_name: The name of the encoding to be used.
         """
 
         # reads the file contents
@@ -280,8 +280,8 @@ class ChunkHandler(object):
         """
         Retrieves the size of the file being chunked.
 
-        @rtype: int
-        @return: The size of the file being chunked.
+        :rtype: int
+        :return: The size of the file being chunked.
         """
 
         return self.file_size
@@ -290,10 +290,10 @@ class ChunkHandler(object):
         """
         Retrieves the a chunk with the given size.
 
-        @rtype: chunk_size
-        @return: The size of the chunk to be retrieved.
-        @rtype: String
-        @return: A chunk with the given size.
+        :rtype: chunk_size
+        :return: The size of the chunk to be retrieved.
+        :rtype: String
+        :return: A chunk with the given size.
         """
 
         # in case the chunk handler is

@@ -190,12 +190,12 @@ class ApiOpenid(colony.System):
         """
         Creates a server, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_server: bool
-        @param open_server: If the server should be opened.
-        @rtype: OpenidServer
-        @return: The created server.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_server: bool
+        :param open_server: If the server should be opened.
+        :rtype: OpenidServer
+        :return: The created server.
         """
 
         # retrieves the diffie hellman plugin
@@ -221,12 +221,12 @@ class ApiOpenid(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: OpenidClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: OpenidClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -251,13 +251,13 @@ class ApiOpenid(colony.System):
         nonce values database. The validation is made in accordance
         with the openid specification.
 
-        @type nonce_value: String
-        @param nonce_value: The nonce value to be verified.
-        @type provider_url: String
-        @param provider_url: The provider url to be used in
+        :type nonce_value: String
+        :param nonce_value: The nonce value to be verified.
+        :type provider_url: String
+        :param provider_url: The provider url to be used in
         the verification.
-        @rtype: bool
-        @return: The result of the verification.
+        :rtype: bool
+        :return: The result of the verification.
         """
 
         # in case the provider url does not exists in the
@@ -282,10 +282,10 @@ class ApiOpenid(colony.System):
         Updates the nonce database by adding the nonce value
         to it, using the provider url.
 
-        @type nonce_value: String
-        @param nonce_value: The nonce value to be added.
-        @type provider_url: String
-        @param provider_url: The provider url to be used in
+        :type nonce_value: String
+        :param nonce_value: The nonce value to be added.
+        :type provider_url: String
+        :param provider_url: The provider url to be used in
         the addition.
         """
 
@@ -329,10 +329,10 @@ class ApiOpenid(colony.System):
         Given some kind of integer (generally a long), this function
         returns the big-endian two's complement as a binary string.
 
-        @type value: int
-        @param value: The value to be converted.
-        @rtype: String
-        @return: The big-endian two's complement as a binary string.
+        :type value: int
+        :param value: The value to be converted.
+        :rtype: String
+        :return: The big-endian two's complement as a binary string.
         """
 
         # encodes the long value into string value
@@ -355,10 +355,10 @@ class ApiOpenid(colony.System):
         Given a big-endian two's complement string, return the
         long int it represents.
 
-        @type btwoc: String
-        @param btwoc: A big-endian two's complement string
-        @rtype: int
-        @return: The decoded int value.
+        :type btwoc: String
+        :param btwoc: A big-endian two's complement string
+        :rtype: int
+        :return: The decoded int value.
         """
 
         # converts the string value to string
@@ -411,18 +411,18 @@ class OpenidServer(object):
         """
         Constructor of the class.
 
-        @type api_openid_plugin: ApiOpenidPlugin
-        @param api_openid_plugin: The api openid plugin.
-        @type diffie_hellman_plugin: DiffieHellmanPlugin
-        @param diffie_hellman_plugin: The diffie hellman plugin.
-        @type random_plugin: RandomPlugin
-        @param random_plugin: The random plugin.
-        @type api_openid: ServiceOpenid
-        @param api_openid: The api openid.
-        @type openid_structure: OpenidStructure
-        @param openid_structure: The openid structure.
-        @type diffie_hellman: DiffieHellman
-        @param diffie_hellman: The diffie hellman management structure.
+        :type api_openid_plugin: ApiOpenidPlugin
+        :param api_openid_plugin: The api openid plugin.
+        :type diffie_hellman_plugin: DiffieHellmanPlugin
+        :param diffie_hellman_plugin: The diffie hellman plugin.
+        :type random_plugin: RandomPlugin
+        :param random_plugin: The random plugin.
+        :type api_openid: ServiceOpenid
+        :param api_openid: The api openid.
+        :type openid_structure: OpenidStructure
+        :param openid_structure: The openid structure.
+        :type diffie_hellman: DiffieHellman
+        :param diffie_hellman: The diffie hellman management structure.
         """
 
         self.api_openid_plugin = api_openid_plugin
@@ -495,8 +495,8 @@ class OpenidServer(object):
         Requests an association (associate mode) according to the
         openid specification.
 
-        @rtype: OpenidStructure
-        @return: The current openid structure.
+        :rtype: OpenidStructure
+        :return: The current openid structure.
         """
 
         # generates an association handle
@@ -568,13 +568,13 @@ class OpenidServer(object):
         Verifies the given return openid structure (verification)
         according to the openid specification.
 
-        @type return_openid_structure: OpenidStructure
-        @param return_openid_structure: The return openid structure
+        :type return_openid_structure: OpenidStructure
+        :param return_openid_structure: The return openid structure
         to be verified.
-        @type strict: bool
-        @param strict: Flag to control if the verification should be strict.
-        @rtype: OpenidStructure
-        @return: The current openid structure.
+        :type strict: bool
+        :param strict: Flag to control if the verification should be strict.
+        :rtype: OpenidStructure
+        :return: The current openid structure.
         """
 
         # in case the verification is strict and any of the base information items mismatches
@@ -715,8 +715,8 @@ class OpenidServer(object):
         """
         Retrieves the openid structure.
 
-        @rtype: OpenidStructure
-        @return: The openid structure.
+        :rtype: OpenidStructure
+        :return: The openid structure.
         """
 
         return self.openid_structure
@@ -725,8 +725,8 @@ class OpenidServer(object):
         """
         Sets the openid structure.
 
-        @type openid_structure: OpenidStructure
-        @param openid_structure: The openid structure.
+        :type openid_structure: OpenidStructure
+        :param openid_structure: The openid structure.
         """
 
         self.openid_structure = openid_structure
@@ -736,8 +736,8 @@ class OpenidServer(object):
         Retrieves the type of hashing to be used in the
         mac key.
 
-        @rtype: String
-        @return: The type of hashing to be used in the mac key.
+        :rtype: String
+        :return: The type of hashing to be used in the mac key.
         """
 
         # in case the current session is of type no encryption
@@ -858,12 +858,12 @@ class OpenidServer(object):
         Builds the url for the given url and parameters.
         The url is valid only for a get request.
 
-        @type base_url: String
-        @param base_url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type base_url: String
+        :param base_url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # encodes the parameters with the url encode
@@ -888,11 +888,11 @@ class OpenidServer(object):
         Encodes the given values map into the key value
         encoding.
 
-        @type values_map: Dictionary
-        @param values_map: The map containing the values to be
+        :type values_map: Dictionary
+        :param values_map: The map containing the values to be
         encoded.
-        @rtype: String
-        @return: The key value encoded string.
+        :rtype: String
+        :return: The key value encoded string.
         """
 
         return "\n".join([key + ":" + value for key, value in colony.legacy.items(values_map)])
@@ -934,16 +934,16 @@ class OpenidClient(object):
         """
         Constructor of the class.
 
-        @type api_openid_plugin: ApiOpenidPlugin
-        @param api_openid_plugin: The api openid plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type api_yadis_plugin: ApiYadisPlugin
-        @param api_yadis_plugin: The api yadis plugin.
-        @type api_openid: ServiceOpenid
-        @param api_openid: The api openid.
-        @type openid_structure: OpenidStructure
-        @param openid_structure: The openid structure.
+        :type api_openid_plugin: ApiOpenidPlugin
+        :param api_openid_plugin: The api openid plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type api_yadis_plugin: ApiYadisPlugin
+        :param api_yadis_plugin: The api yadis plugin.
+        :type api_openid: ServiceOpenid
+        :param api_openid: The api openid.
+        :type openid_structure: OpenidStructure
+        :param openid_structure: The openid structure.
         """
 
         self.api_openid_plugin = api_openid_plugin
@@ -999,10 +999,10 @@ class OpenidClient(object):
         Normalizes the claimed id according to the
         openid specification.
 
-        @type claimed_id: String
-        @param claimed_id: The claimed id to be normalized.
-        @rtype: String
-        @return: The normalized claimed id.
+        :type claimed_id: String
+        :param claimed_id: The claimed id to be normalized.
+        :rtype: String
+        :return: The normalized claimed id.
         """
 
         # strips the claimed id from trailing spaces
@@ -1038,8 +1038,8 @@ class OpenidClient(object):
         Initializes the discovery process according to the
         openid specification.
 
-        @rtype: OpenidStructure
-        @return: The current openid structure.
+        :rtype: OpenidStructure
+        :return: The current openid structure.
         """
 
         # retrieves the yadis provider url
@@ -1087,8 +1087,8 @@ class OpenidClient(object):
         Requests an association (associate mode) according to the
         openid specification.
 
-        @rtype: OpenidStructure
-        @return: The current openid structure.
+        :rtype: OpenidStructure
+        :return: The current openid structure.
         """
 
         # sets the retrieval url
@@ -1149,13 +1149,13 @@ class OpenidClient(object):
         Verifies the given return openid structure (verification)
         according to the openid specification.
 
-        @type return_openid_structure: OpenidStructure
-        @param return_openid_structure: The return openid structure
+        :type return_openid_structure: OpenidStructure
+        :param return_openid_structure: The return openid structure
         to be verified.
-        @type strict: bool
-        @param strict: Flag to control if the verification should be strict.
-        @rtype: OpenidStructure
-        @return: The current openid structure.
+        :type strict: bool
+        :param strict: Flag to control if the verification should be strict.
+        :rtype: OpenidStructure
+        :return: The current openid structure.
         """
 
         # in case the verification is strict and any of the base information items mismatches
@@ -1226,8 +1226,8 @@ class OpenidClient(object):
         Retrieves the request (authentication) url according to the
         openid specification.
 
-        @rtype: String
-        @return: The request url.
+        :rtype: String
+        :return: The request url.
         """
 
         # sets the retrieval url
@@ -1271,8 +1271,8 @@ class OpenidClient(object):
         Processes the extensions part of the openid
         get request method.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to be processed.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be processed.
         """
 
         # in case the sreg 1.1 extension exists in the current openid
@@ -1300,8 +1300,8 @@ class OpenidClient(object):
         Retrieves the preferred claimed id
         for the current openid structure.
 
-        @rtype: String
-        @return: The preferred claimed id value.
+        :rtype: String
+        :return: The preferred claimed id value.
         """
 
         return self.openid_structure.get_preferred_claimed_id()
@@ -1310,8 +1310,8 @@ class OpenidClient(object):
         """
         Retrieves the openid structure.
 
-        @rtype: OpenidStructure
-        @return: The openid structure.
+        :rtype: OpenidStructure
+        :return: The openid structure.
         """
 
         return self.openid_structure
@@ -1320,8 +1320,8 @@ class OpenidClient(object):
         """
         Sets the openid structure.
 
-        @type openid_structure: OpenidStructure
-        @param openid_structure: The openid structure.
+        :type openid_structure: OpenidStructure
+        :param openid_structure: The openid structure.
         """
 
         self.openid_structure = openid_structure
@@ -1331,8 +1331,8 @@ class OpenidClient(object):
         Retrieves the "yadis" provider url, using the two base strategies
         (the header and the html header strategies).
 
-        @rtype: String
-        @return: The "yadis" provider url.
+        :rtype: String
+        :return: The "yadis" provider url.
         """
 
         # sets the retrieval url
@@ -1384,12 +1384,12 @@ class OpenidClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type base_url: String
-        @param base_url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type base_url: String
+        :param base_url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -1405,16 +1405,16 @@ class OpenidClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @type headers: bool
-        @param headers: If the headers should be returned.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :type headers: bool
+        :param headers: If the headers should be returned.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -1447,8 +1447,8 @@ class OpenidClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -1472,8 +1472,8 @@ class OpenidClient(object):
         Retrieves the yadis (remote) client currently in use (in case it's created)
         if not created creates the yadis (remote) client.
 
-        @rtype: YadisClient
-        @return: The retrieved yadis (remote) client.
+        :rtype: YadisClient
+        :return: The retrieved yadis (remote) client.
         """
 
         # in case no yadis client exists, creates the yadis
@@ -1556,20 +1556,20 @@ class OpenidStructure(object):
         """
         Constructor of the class.
 
-        @type provider_url: String
-        @param provider_url: The url of the openid provider.
-        @type claimed_id: String
-        @param claimed_id: The id being claimed.
-        @type identity: String
-        @param identity: The identity of the authentication.
-        @type return_to: String
-        @param return_to: The return to url to be used after authentication.
-        @type realm: String
-        @param realm: The realm to be used during the authentication.
-        @type association_type: String
-        @param association_type: The association type.
-        @param session_type: String
-        @param session_type: The session type.
+        :type provider_url: String
+        :param provider_url: The url of the openid provider.
+        :type claimed_id: String
+        :param claimed_id: The id being claimed.
+        :type identity: String
+        :param identity: The identity of the authentication.
+        :type return_to: String
+        :param return_to: The return to url to be used after authentication.
+        :type realm: String
+        :param realm: The realm to be used during the authentication.
+        :type association_type: String
+        :param association_type: The association type.
+        :param session_type: String
+        :param session_type: The session type.
         """
 
         self.provider_url = provider_url
@@ -1587,8 +1587,8 @@ class OpenidStructure(object):
         Retrieves the preferred claimed id
         for the current openid structure.
 
-        @rtype: String
-        @return: The preferred claimed id value.
+        :rtype: String
+        :return: The preferred claimed id value.
         """
 
         # in case there is a local id defined
@@ -1609,8 +1609,8 @@ class OpenidStructure(object):
         Retrieves the username from the current claimed id
         value, converted accordingly.
 
-        @rtype: String
-        @return: The username from the current claimed id
+        :rtype: String
+        :return: The username from the current claimed id
         value, converted accordingly.
         """
 
@@ -1631,8 +1631,8 @@ class OpenidStructure(object):
         """
         Retrieves the provider url.
 
-        @rtype: String
-        @return: The provider url.
+        :rtype: String
+        :return: The provider url.
         """
 
         return self.provider_url
@@ -1641,8 +1641,8 @@ class OpenidStructure(object):
         """
         Sets the provider url.
 
-        @type provider_url: String
-        @param provider_url: The provider url.
+        :type provider_url: String
+        :param provider_url: The provider url.
         """
 
         self.provider_url = provider_url
@@ -1651,8 +1651,8 @@ class OpenidStructure(object):
         """
         Retrieves the claimed id.
 
-        @rtype: String
-        @return: The claimed id.
+        :rtype: String
+        :return: The claimed id.
         """
 
         return self.claimed_id
@@ -1661,8 +1661,8 @@ class OpenidStructure(object):
         """
         Sets the claimed id.
 
-        @type claimed_id: String
-        @param claimed_id: The claimed id.
+        :type claimed_id: String
+        :param claimed_id: The claimed id.
         """
 
         self.claimed_id = claimed_id
@@ -1671,8 +1671,8 @@ class OpenidStructure(object):
         """
         Retrieves the identity.
 
-        @rtype: String
-        @return: The identity.
+        :rtype: String
+        :return: The identity.
         """
 
         return self.identity
@@ -1681,8 +1681,8 @@ class OpenidStructure(object):
         """
         Sets the identity.
 
-        @type identity: String
-        @param identity: The identity.
+        :type identity: String
+        :param identity: The identity.
         """
 
         self.identity = identity
@@ -1691,8 +1691,8 @@ class OpenidStructure(object):
         """
         Retrieves the return to.
 
-        @rtype: String
-        @return: The return to.
+        :rtype: String
+        :return: The return to.
         """
 
         return self.return_to
@@ -1701,8 +1701,8 @@ class OpenidStructure(object):
         """
         Sets the return to.
 
-        @type return_to: String
-        @param return_to: The return to.
+        :type return_to: String
+        :param return_to: The return to.
         """
 
         self.return_to = return_to
@@ -1711,8 +1711,8 @@ class OpenidStructure(object):
         """
         Retrieves the realm.
 
-        @rtype: String
-        @return: The realm.
+        :rtype: String
+        :return: The realm.
         """
 
         return self.realm
@@ -1721,8 +1721,8 @@ class OpenidStructure(object):
         """
         Sets the realm.
 
-        @type realm: String
-        @param realm: The realm.
+        :type realm: String
+        :param realm: The realm.
         """
 
         self.realm = realm
@@ -1731,8 +1731,8 @@ class OpenidStructure(object):
         """
         Retrieves the association type.
 
-        @rtype: String
-        @return: The association type.
+        :rtype: String
+        :return: The association type.
         """
 
         return self.association_type
@@ -1741,8 +1741,8 @@ class OpenidStructure(object):
         """
         Sets the association type.
 
-        @type association_type: String
-        @param association_type: The association type.
+        :type association_type: String
+        :param association_type: The association type.
         """
 
         self.association_type = association_type
@@ -1751,8 +1751,8 @@ class OpenidStructure(object):
         """
         Retrieves the session type.
 
-        @rtype: String
-        @return: The session type.
+        :rtype: String
+        :return: The session type.
         """
 
         return self.session_type
@@ -1761,8 +1761,8 @@ class OpenidStructure(object):
         """
         Sets the session type.
 
-        @type session_type: String
-        @param session_type: The session type.
+        :type session_type: String
+        :param session_type: The session type.
         """
 
         self.session_type = session_type
@@ -1771,8 +1771,8 @@ class OpenidStructure(object):
         """
         Retrieves the namespace.
 
-        @rtype: String
-        @return: The namespace.
+        :rtype: String
+        :return: The namespace.
         """
 
         return self.ns
@@ -1781,8 +1781,8 @@ class OpenidStructure(object):
         """
         Sets the namespace.
 
-        @type ns: String
-        @param ns: The namespace.
+        :type ns: String
+        :param ns: The namespace.
         """
 
         self.ns = ns
@@ -1791,8 +1791,8 @@ class OpenidStructure(object):
         """
         Retrieves the mode.
 
-        @rtype: String
-        @return: The mode.
+        :rtype: String
+        :return: The mode.
         """
 
         return self.mode
@@ -1801,8 +1801,8 @@ class OpenidStructure(object):
         """
         Sets the mode.
 
-        @type mode: String
-        @param mode: The mode.
+        :type mode: String
+        :param mode: The mode.
         """
 
         self.mode = mode
@@ -1811,8 +1811,8 @@ class OpenidStructure(object):
         """
         Retrieves the expires in.
 
-        @rtype: String
-        @return: The expires in.
+        :rtype: String
+        :return: The expires in.
         """
 
         return self.expires_in
@@ -1821,8 +1821,8 @@ class OpenidStructure(object):
         """
         Sets the expires in.
 
-        @type expires_in: String
-        @param expires_in: The expires in.
+        :type expires_in: String
+        :param expires_in: The expires in.
         """
 
         self.expires_in = expires_in
@@ -1831,8 +1831,8 @@ class OpenidStructure(object):
         """
         Retrieves the association handle.
 
-        @rtype: String
-        @return: The association handle.
+        :rtype: String
+        :return: The association handle.
         """
 
         return self.association_handle
@@ -1841,8 +1841,8 @@ class OpenidStructure(object):
         """
         Sets the association handle.
 
-        @type association_handle: String
-        @param association_handle: The association handle.
+        :type association_handle: String
+        :param association_handle: The association handle.
         """
 
         self.association_handle = association_handle
@@ -1851,8 +1851,8 @@ class OpenidStructure(object):
         """
         Retrieves the invalidate handle.
 
-        @rtype: String
-        @return: The invalidate handle.
+        :rtype: String
+        :return: The invalidate handle.
         """
 
         return self.invalidate_handle
@@ -1861,8 +1861,8 @@ class OpenidStructure(object):
         """
         Sets the invalidate handle.
 
-        @type invalidate_handle: String
-        @param invalidate_handle: The invalidate handle.
+        :type invalidate_handle: String
+        :param invalidate_handle: The invalidate handle.
         """
 
         self.invalidate_handle = invalidate_handle
@@ -1871,8 +1871,8 @@ class OpenidStructure(object):
         """
         Retrieves the mac key.
 
-        @rtype: String
-        @return: The mac key.
+        :rtype: String
+        :return: The mac key.
         """
 
         return self.mac_key
@@ -1881,8 +1881,8 @@ class OpenidStructure(object):
         """
         Sets the mac key.
 
-        @type mac_key: String
-        @param mac_key: The mac key.
+        :type mac_key: String
+        :param mac_key: The mac key.
         """
 
         self.mac_key = mac_key
@@ -1891,8 +1891,8 @@ class OpenidStructure(object):
         """
         Retrieves the signed
 
-        @rtype: String
-        @return: The signed.
+        :rtype: String
+        :return: The signed.
         """
 
         return self.signed
@@ -1901,8 +1901,8 @@ class OpenidStructure(object):
         """
         Sets the signed.
 
-        @type signed: String
-        @param signed: The signed.
+        :type signed: String
+        :param signed: The signed.
         """
 
         self.signed = signed
@@ -1911,8 +1911,8 @@ class OpenidStructure(object):
         """
         Retrieves the signature
 
-        @rtype: String
-        @return: The signature.
+        :rtype: String
+        :return: The signature.
         """
 
         return self.signature
@@ -1921,8 +1921,8 @@ class OpenidStructure(object):
         """
         Sets the signature.
 
-        @type signed: String
-        @param signed: The signature.
+        :type signed: String
+        :param signed: The signature.
         """
 
         self.signature = signature
@@ -1931,8 +1931,8 @@ class OpenidStructure(object):
         """
         Retrieves the response nonce
 
-        @rtype: String
-        @return: The response nonce.
+        :rtype: String
+        :return: The response nonce.
         """
 
         return self.response_nonce
@@ -1941,8 +1941,8 @@ class OpenidStructure(object):
         """
         Sets the response nonce.
 
-        @type signed: String
-        @param signed: The response nonce.
+        :type signed: String
+        :param signed: The response nonce.
         """
 
         self.response_nonce = response_nonce
@@ -1951,8 +1951,8 @@ class OpenidStructure(object):
         """
         Retrieves the local id.
 
-        @rtype: String
-        @return: The local id.
+        :rtype: String
+        :return: The local id.
         """
 
         return self.local_id
@@ -1961,8 +1961,8 @@ class OpenidStructure(object):
         """
         Sets the local id.
 
-        @type local_id: String
-        @param local_id: The local id.
+        :type local_id: String
+        :param local_id: The local id.
         """
 
         self.local_id = local_id
@@ -1971,8 +1971,8 @@ class OpenidStructure(object):
         """
         Retrieves the types list.
 
-        @rtype: List
-        @return: The types list.
+        :rtype: List
+        :return: The types list.
         """
 
         return self.types_list
@@ -1981,8 +1981,8 @@ class OpenidStructure(object):
         """
         Sets the types list.
 
-        @type types_list: List
-        @param types_list: The types list.
+        :type types_list: List
+        :param types_list: The types list.
         """
 
         self.types_list = types_list

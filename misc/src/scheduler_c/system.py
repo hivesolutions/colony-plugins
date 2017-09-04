@@ -183,10 +183,10 @@ class Scheduler(colony.System):
         Registers the given task for the given time.
         The given time is a delta value from the current time.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type time: float
-        @param time: The delta time to register the task.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type time: float
+        :param time: The delta time to register the task.
         """
 
         # calculates the absolute time
@@ -200,10 +200,10 @@ class Scheduler(colony.System):
         Registers the given task for the given absolute time.
         The given time is an absolute time value.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type absolute_time: float
-        @param absolute_time: The absolute time to register the task.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type absolute_time: float
+        :param absolute_time: The absolute time to register the task.
         """
 
         self.register_task_absolute_recursive(task, absolute_time, None)
@@ -213,10 +213,10 @@ class Scheduler(colony.System):
         Registers the given task for the given date time structure.
         The given date time is a delta value from the current time.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type time: datetime
-        @param time: The delta date time to register the task.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type time: datetime
+        :param time: The delta date time to register the task.
         """
 
         # retrieves the current date time
@@ -236,10 +236,10 @@ class Scheduler(colony.System):
         Registers the given task for the given absolute date time.
         The given date time is an absolute time value.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type absolute_date_time: datetime
-        @param absolute_date_time: The absolute date time to register the task.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type absolute_date_time: datetime
+        :param absolute_date_time: The absolute date time to register the task.
         """
 
         # converts the absolute date time to timestamp
@@ -254,12 +254,12 @@ class Scheduler(colony.System):
         the given time value.
         The given time is a delta value from the current time.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type time: float
-        @param time: The delta time to register the task.
-        @type recursion_list: List
-        @param recursion_list: The recursion list to be used.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type time: float
+        :param time: The delta time to register the task.
+        :type recursion_list: List
+        :param recursion_list: The recursion list to be used.
         """
 
         # calculates the absolute time
@@ -274,12 +274,12 @@ class Scheduler(colony.System):
         the given absolute time value.
         The given time is an absolute time value.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type absolute_time: float
-        @param absolute_time: The absolute time to register the task.
-        @type recursion_list: List
-        @param recursion_list: The recursion list to be used.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type absolute_time: float
+        :param absolute_time: The absolute time to register the task.
+        :type recursion_list: List
+        :param recursion_list: The recursion list to be used.
         """
 
         # retrieves the task_type
@@ -330,12 +330,12 @@ class Scheduler(colony.System):
         the given date time value.
         The given date time is a delta value from the current date time.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type date_time: float
-        @param date_time: The delta date time to register the task.
-        @type recursion_list: List
-        @param recursion_list: The recursion list to be used.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type date_time: float
+        :param date_time: The delta date time to register the task.
+        :type recursion_list: List
+        :param recursion_list: The recursion list to be used.
         """
 
         # retrieves the current date time
@@ -356,12 +356,12 @@ class Scheduler(colony.System):
         the given absolute date time value.
         The given date time is an absolute date time value.
 
-        @type task: SchedulerTask
-        @param task: The task to be registered.
-        @type absolute_date_time: float
-        @param absolute_date_time: The absolute date time to register the task.
-        @type recursion_list: List
-        @param recursion_list: The recursion list to be used.
+        :type task: SchedulerTask
+        :param task: The task to be registered.
+        :type absolute_date_time: float
+        :param absolute_date_time: The absolute date time to register the task.
+        :type recursion_list: List
+        :param recursion_list: The recursion list to be used.
         """
 
         # converts the absolute date time to timestamp
@@ -375,8 +375,8 @@ class Scheduler(colony.System):
         Unregisters the given task from the scheduler.
         The task execution is suspended and then canceled.
 
-        @type task: SchedulerTask
-        @param task: The task to be unregistered.
+        :type task: SchedulerTask
+        :param task: The task to be unregistered.
         """
 
         # retrieves the scheduler item from the task
@@ -390,8 +390,8 @@ class Scheduler(colony.System):
         Retrieves the class that represents
         a task in the current scope.
 
-        @rtype: Class
-        @return: The task class for the current scope.
+        :rtype: Class
+        :return: The task class for the current scope.
         """
 
         return SchedulerTask
@@ -627,8 +627,8 @@ class Scheduler(colony.System):
         Custom sleep function used to be able to cancel
         the scheduler.
 
-        @type sleep_time: int
-        @param sleep_time: The amount of time to sleep.
+        :type sleep_time: int
+        :param sleep_time: The amount of time to sleep.
         """
 
         # calculates the number of iterations to be used
@@ -670,12 +670,12 @@ class SchedulerTask(object):
         """
         Constructor of the class.
 
-        @type task_type: String
-        @param task_type: The task type.
-        @type task_arguments: Dictionary
-        @param task_arguments: The task arguments map.
-        @type scheduler_item: SchedulerItem
-        @param scheduler_item: The scheduler item.
+        :type task_type: String
+        :param task_type: The task type.
+        :type task_arguments: Dictionary
+        :param task_arguments: The task arguments map.
+        :type scheduler_item: SchedulerItem
+        :param scheduler_item: The scheduler item.
         """
 
         self.task_type = task_type
@@ -717,22 +717,22 @@ class SchedulerItem(object):
         """
         Constructor of the class.
 
-        @type item_id: String
-        @param item_id: The item id.
-        @type task_method: Method
-        @param task_method: The task method.
-        @type task_method_arguments: List
-        @param task_method_arguments: The task method arguments.
-        @type absolute_time: float
-        @param absolute_time: The absolute time.
-        @type recursion_list: List
-        @param recursion_list: The recursion list.
-        @type scheduler_task: SchedulerTask
-        @param scheduler_task: The scheduler task.
-        @type current_event: Event
-        @param current_event: The current event.
-        @type canceled: bool
-        @param canceled: The canceled flag.
+        :type item_id: String
+        :param item_id: The item id.
+        :type task_method: Method
+        :param task_method: The task method.
+        :type task_method_arguments: List
+        :param task_method_arguments: The task method arguments.
+        :type absolute_time: float
+        :param absolute_time: The absolute time.
+        :type recursion_list: List
+        :param recursion_list: The recursion list.
+        :type scheduler_task: SchedulerTask
+        :param scheduler_task: The scheduler task.
+        :type current_event: Event
+        :param current_event: The current event.
+        :type canceled: bool
+        :param canceled: The canceled flag.
         """
 
         self.item_id = item_id
@@ -749,8 +749,8 @@ class SchedulerItem(object):
         Retrieves if the current scheduler task
         is recursive or not.
 
-        @rtype: bool
-        @return: If the current task is recursive
+        :rtype: bool
+        :return: If the current task is recursive
         or not.
         """
 
@@ -769,8 +769,8 @@ class SchedulerItem(object):
         Retrieves if the current scheduler task
         is active or not.
 
-        @rtype: bool
-        @return: If the current task is active
+        :rtype: bool
+        :return: If the current task is active
         or not.
         """
 

@@ -62,12 +62,12 @@ class ApiYadis(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: YadisClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: YadisClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -101,10 +101,10 @@ class YadisClient(object):
         """
         Constructor of the class.
 
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type yadis_structure: YadisStructure
-        @param yadis_structure: The yadis structure.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type yadis_structure: YadisStructure
+        :param yadis_structure: The yadis structure.
         """
 
         self.client_http_plugin = client_http_plugin
@@ -131,8 +131,8 @@ class YadisClient(object):
         """
         Generates a new yadis structure, for the given parameters.
 
-        @type provider_url: String
-        @param provider_url: The url of the yadis provider.
+        :type provider_url: String
+        :param provider_url: The url of the yadis provider.
         """
 
         # constructs a new yadis structure
@@ -150,8 +150,8 @@ class YadisClient(object):
         Retrieves the yadis resource descriptor for the current
         provider url.
 
-        @rtype: YadisResourceDescriptor
-        @return: The yadis resource descriptor for the current
+        :rtype: YadisResourceDescriptor
+        :return: The yadis resource descriptor for the current
         provider url.
         """
 
@@ -183,8 +183,8 @@ class YadisClient(object):
         """
         Retrieves the yadis structure.
 
-        @rtype: YadisStructure
-        @return: The yadis structure.
+        :rtype: YadisStructure
+        :return: The yadis structure.
         """
 
         return self.yadis_structure
@@ -193,8 +193,8 @@ class YadisClient(object):
         """
         Sets the yadis structure.
 
-        @type yadis_structure: YadisStructure
-        @param yadis_structure: The yadis structure.
+        :type yadis_structure: YadisStructure
+        :param yadis_structure: The yadis structure.
         """
 
         self.yadis_structure = yadis_structure
@@ -203,12 +203,12 @@ class YadisClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type base_url: String
-        @param base_url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type base_url: String
+        :param base_url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -224,14 +224,14 @@ class YadisClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -256,8 +256,8 @@ class YadisClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -288,8 +288,8 @@ class YadisStructure(object):
         """
         Constructor of the class.
 
-        @type provider_url: String
-        @param provider_url: The url of the yadis provider.
+        :type provider_url: String
+        :param provider_url: The url of the yadis provider.
         """
 
         self.provider_url = provider_url
@@ -298,8 +298,8 @@ class YadisStructure(object):
         """
         Retrieves the provider url.
 
-        @rtype: String
-        @return: The provider url.
+        :rtype: String
+        :return: The provider url.
         """
 
         return self.provider_url
@@ -308,8 +308,8 @@ class YadisStructure(object):
         """
         Sets the provider url.
 
-        @type provider_url: String
-        @param provider_url: The provider url.
+        :type provider_url: String
+        :param provider_url: The provider url.
         """
 
         self.provider_url = provider_url
@@ -326,8 +326,8 @@ class YadisResourceDescriptor(object):
         """
         Constructor of the class.
 
-        @type resources_list: List
-        @param resources_list: The list of yadis resources.
+        :type resources_list: List
+        :param resources_list: The list of yadis resources.
         """
 
         self.resources_list = resources_list
@@ -336,8 +336,8 @@ class YadisResourceDescriptor(object):
         """
         Retrieves the list of yadis resources.
 
-        @rtype: List
-        @return: The list of yadis resources.
+        :rtype: List
+        :return: The list of yadis resources.
         """
 
         return self.resources_list
@@ -346,8 +346,8 @@ class YadisResourceDescriptor(object):
         """
         Sets the list of yadis resources.
 
-        @type resources_list: List
-        @param resources_list: The list of yadis resources.
+        :type resources_list: List
+        :param resources_list: The list of yadis resources.
         """
 
         self.resources_list = resources_list

@@ -69,26 +69,26 @@ class BusinessHelper(colony.System):
         Imports the class module using the globals and locals from the current target,
         it imports the symbols in the module to the current globals environment.
 
-        @type class_module_name: String
-        @param class_module_name: The name of the module containing the classes to be imported.
-        @type globals: Dictionary
-        @param globals: The global variables map.
-        @type locals: Dictionary
-        @param locals: The local variables map.
-        @type global_values: List
-        @param global_values: A list containing the global values to be converted from locals.
-        @type base_directory_path: String
-        @param base_directory_path: The base directory path to be used.
-        @type target_module_name: String
-        @param target_module_name: The name of the module to import the classes.
-        @type extra_symbols_map: Dictionary
-        @param extra_symbols_map: A map containing a set of (extra) symbols to be set in
+        :type class_module_name: String
+        :param class_module_name: The name of the module containing the classes to be imported.
+        :type globals: Dictionary
+        :param globals: The global variables map.
+        :type locals: Dictionary
+        :param locals: The local variables map.
+        :type global_values: List
+        :param global_values: A list containing the global values to be converted from locals.
+        :type base_directory_path: String
+        :param base_directory_path: The base directory path to be used.
+        :type target_module_name: String
+        :param target_module_name: The name of the module to import the classes.
+        :type extra_symbols_map: Dictionary
+        :param extra_symbols_map: A map containing a set of (extra) symbols to be set in
         the imported module under the base entity module.
-        @type extra_globals_map: Dictionary
-        @param extra_globals_map: A map containing a set of (extra) global symbols to be set in
+        :type extra_globals_map: Dictionary
+        :param extra_globals_map: A map containing a set of (extra) global symbols to be set in
         the imported module under as global variables.
-        @rtype: module
-        @return: The created target module.
+        :rtype: module
+        :return: The created target module.
         """
 
         # checks if the target module already exists, to later

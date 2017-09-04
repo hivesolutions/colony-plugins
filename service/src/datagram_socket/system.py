@@ -62,8 +62,8 @@ class DatagramSocket(colony.System):
         """
         Retrieves the socket provider name.
 
-        @rtype: String
-        @return: The socket provider name.
+        :rtype: String
+        :return: The socket provider name.
         """
 
         return PROVIDER_NAME
@@ -73,8 +73,8 @@ class DatagramSocket(colony.System):
         Provides a new socket, configured with
         the default parameters.
 
-        @rtype: Socket
-        @return: The provided socket.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         # creates the datagram socket
@@ -88,10 +88,10 @@ class DatagramSocket(colony.System):
         Provides a new socket, configured with
         the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for socket configuration.
-        @rtype: Socket
-        @return: The provided socket.
+        :type parameters: Dictionary
+        :param parameters: The parameters for socket configuration.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         # prints a debug message
@@ -123,12 +123,12 @@ class DatagramSocket(colony.System):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type socket: Socket
-        @param socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type socket: Socket
+        :param socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 
@@ -138,12 +138,12 @@ class DatagramSocket(colony.System):
         """
         Wraps the given base socket in to a multicast supported layer.
 
-        @type base_socket: Socket
-        @param base_socket: The base socket to be wrapped.
-        @type multicast_address: Tuple
-        @param multicast_address: The multicast address to be used.
-        @type multicast_parameters: Dictionary
-        @param multicast_parameters: The parameters for multicast.
+        :type base_socket: Socket
+        :param base_socket: The base socket to be wrapped.
+        :type multicast_address: Tuple
+        :param multicast_address: The multicast address to be used.
+        :type multicast_parameters: Dictionary
+        :param multicast_parameters: The parameters for multicast.
         """
 
         # unpacks the multicast address into host and port

@@ -344,8 +344,8 @@ class ServiceHttp(colony.System):
         """
         Starts the service with the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        :type parameters: Dictionary
+        :param parameters: The parameters to start the service.
         """
 
         # retrieves the service utils plugin
@@ -364,8 +364,8 @@ class ServiceHttp(colony.System):
         """
         Stops the service.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to stop the service.
+        :type parameters: Dictionary
+        :param parameters: The parameters to stop the service.
         """
 
         # destroys the parameters
@@ -480,8 +480,8 @@ class ServiceHttp(colony.System):
         """
         Retrieves the service configuration map.
 
-        @rtype: Dictionary
-        @return: The service configuration map.
+        :rtype: Dictionary
+        :return: The service configuration map.
         """
 
         return self.http_service_configuration
@@ -510,11 +510,11 @@ class ServiceHttp(colony.System):
         Retrieves the service parameters map from the base parameters
         map.
 
-        @type parameters: Dictionary
-        @param parameters: The base parameters map to be used to build
+        :type parameters: Dictionary
+        :param parameters: The base parameters map to be used to build
         the final service parameters map.
-        @rtype: Dictionary
-        @return: The final service parameters map.
+        :rtype: Dictionary
+        :return: The final service parameters map.
         """
 
         # retrieves the plugin manager
@@ -627,8 +627,8 @@ class ServiceHttp(colony.System):
         Destroys the service parameters map from the base parameters
         map.
 
-        @type parameters: Dictionary
-        @param parameters: The base parameters map to be used to destroy
+        :type parameters: Dictionary
+        :param parameters: The base parameters map to be used to destroy
         the final service parameters map.
         """
 
@@ -680,17 +680,17 @@ class HttpClientServiceHandler(object):
         """
         Constructor of the class.
 
-        @type service_plugin: Plugin
-        @param service_plugin: The service plugin.
-        @type service_connection_handler: AbstractServiceConnectionHandler
-        @param service_connection_handler: The abstract service connection handler, that
+        :type service_plugin: Plugin
+        :param service_plugin: The service plugin.
+        :type service_connection_handler: AbstractServiceConnectionHandler
+        :param service_connection_handler: The abstract service connection handler, that
         handles this connection.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration.
-        @type service_utils_exception: Class
-        @param service_utils_exception: The service utils exception class.
-        @type extra_parameters: Dictionary
-        @param extra_parameters: The extra parameters.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration.
+        :type service_utils_exception: Class
+        :param service_utils_exception: The service utils exception class.
+        :type extra_parameters: Dictionary
+        :param extra_parameters: The extra parameters.
         """
 
         self.service_plugin = service_plugin
@@ -987,10 +987,10 @@ class HttpClientServiceHandler(object):
         message is received.
         This method is not compatible with async communication.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to be used.
-        @rtype: HttpRequest
-        @return: The request from the received message.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to be used.
+        :rtype: HttpRequest
+        :return: The request from the received message.
         """
 
         # continuous loop
@@ -1033,12 +1033,12 @@ class HttpClientServiceHandler(object):
         This method retrieves the request using only the
         provided data value.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to be used.
-        @type String: data
-        @param String: The data to be used in processing the request.
-        @rtype: HttpRequest
-        @return: The request from the received message.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to be used.
+        :type String: data
+        :param String: The data to be used in processing the request.
+        :rtype: HttpRequest
+        :return: The request from the received message.
         """
 
         # creates the string buffer for the message
@@ -1279,8 +1279,8 @@ class HttpClientServiceHandler(object):
         Decodes the request message for the encoding
         specified in the request.
 
-        @type request: HttpRequest
-        @param request: The request to be decoded.
+        :type request: HttpRequest
+        :param request: The request to be decoded.
         """
 
         # start the valid charset flag
@@ -1353,12 +1353,12 @@ class HttpClientServiceHandler(object):
         """
         Sends the exception to the given request for the given exception.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to be used.
-        @type request: HttpRequest
-        @param request: The request to send the exception.
-        @type exception: Exception
-        @param exception: The exception to be sent.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to be used.
+        :type request: HttpRequest
+        :param request: The request to send the exception.
+        :type exception: Exception
+        :param exception: The exception to be sent.
         """
 
         # retrieves the preferred error handlers list
@@ -1703,10 +1703,10 @@ class HttpClientServiceHandler(object):
         """
         Retrieves the value of the keep alive for the given request.
 
-        @type request: HttpRequest
-        @param request: The request to retrieve the keep alive value.
-        @rtype: bool
-        @return: The value of the keep alive for the given request.
+        :type request: HttpRequest
+        :param request: The request to retrieve the keep alive value.
+        :rtype: bool
+        :return: The value of the keep alive for the given request.
         """
 
         # in case connection is defined in the headers map
@@ -1733,10 +1733,10 @@ class HttpClientServiceHandler(object):
         """
         The default error handler for exception sending.
 
-        @type request: HttpRequest
-        @param request: The request to send the error.
-        @type exception: Exception
-        @param exception: The error to be sent.
+        :type request: HttpRequest
+        :param request: The request to send the error.
+        :type exception: Exception
+        :param exception: The error to be sent.
         """
 
         # sets the request content type
@@ -1792,8 +1792,8 @@ class HttpClientServiceHandler(object):
         """
         Retrieves the current request handler.
 
-        @rtype: Method
-        @return: The current request handler.
+        :rtype: Method
+        :return: The current request handler.
         """
 
         return self.current_request_handler
@@ -1802,8 +1802,8 @@ class HttpClientServiceHandler(object):
         """
         Sets the current request handler.
 
-        @type current_request_handler: Method
-        @param current_request_handler: The current request handler.
+        :type current_request_handler: Method
+        :param current_request_handler: The current request handler.
         """
 
         self.current_request_handler = current_request_handler
@@ -1812,11 +1812,11 @@ class HttpClientServiceHandler(object):
         """
         Sets a "custom" request handler method for the given service connection.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to have the
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to have the
         "custom" request handler method associated.
-        @type request_handler_method: Method
-        @param request_handler_method: The method to be used in the handling
+        :type request_handler_method: Method
+        :param request_handler_method: The method to be used in the handling
         of the request.
         """
 
@@ -1826,8 +1826,8 @@ class HttpClientServiceHandler(object):
         """
         Unsets a "custom" request handler method for the given service connection.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to have the "custom"
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to have the "custom"
         request handler method association removed.
         """
 
@@ -1842,10 +1842,10 @@ class HttpClientServiceHandler(object):
         rules, and then changing the "target" path in accordance
         with matched rule.
 
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
+        :type request: HttpRequest
+        :param request: The request to be processed.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration map.
         """
 
         # retrieves the service configuration redirections
@@ -1924,12 +1924,12 @@ class HttpClientServiceHandler(object):
         domain, running this method allows the connection to be redirected
         to a certain domain in case such behavior is required.
 
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection currently in use.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
+        :type request: HttpRequest
+        :param request: The request to be processed.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection currently in use.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration map.
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
@@ -1981,12 +1981,12 @@ class HttpClientServiceHandler(object):
         this method allows the connection to be redirected to a secure
         channel in case such behavior is required.
 
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection currently in use.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
+        :type request: HttpRequest
+        :param request: The request to be processed.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection currently in use.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration map.
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
@@ -2108,12 +2108,12 @@ class HttpClientServiceHandler(object):
         Processing handler implies matching the path against the
         various handler rules defined to retrieve the valid handler.
 
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        @rtype: String
-        @return: The processed handler name.
+        :type request: HttpRequest
+        :param request: The request to be processed.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration map.
+        :rtype: String
+        :return: The processed handler name.
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
@@ -2232,8 +2232,8 @@ class HttpClientServiceHandler(object):
         Verifies the request information, checking if there is
         any possible security problems associated.
 
-        @type request: HttpRequest
-        @param request: The request to be verified.
+        :type request: HttpRequest
+        :param request: The request to be verified.
         """
 
         # retrieves the base service configuration
@@ -2284,11 +2284,11 @@ class HttpClientServiceHandler(object):
         This retrieval takes into account the request target and characteristics
         to merge the virtual servers configurations.
 
-        @type request: HttpRequest
-        @param request: The request to be used in the resolution
+        :type request: HttpRequest
+        :param request: The request to be used in the resolution
         of the service configuration.
-        @rtype: Dictionary
-        @return: The resolved service configuration.
+        :rtype: Dictionary
+        :return: The resolved service configuration.
         """
 
         # retrieves the base service configuration
@@ -2347,12 +2347,12 @@ class HttpClientServiceHandler(object):
         is taken into account and the merge only occurs when
         the type is list or dictionary.
 
-        @type target_list: Object
-        @param target_list: The target value to be used.
-        @type source_list: Object
-        @param source_list: The source value to be used.
-        @rtype: Object
-        @return: The final resulting value.
+        :type target_list: Object
+        :param target_list: The target value to be used.
+        :type source_list: Object
+        :param source_list: The source value to be used.
+        :rtype: Object
+        :return: The final resulting value.
         """
 
         # retrieves the types for both the target and
@@ -2383,12 +2383,12 @@ class HttpClientServiceHandler(object):
         Merges two lists into one, the source list is made
         prioritaire, and is taken into account first.
 
-        @type target_list: List
-        @param target_list: The target list to be used.
-        @type source_list: List
-        @param source_list: The source list to be used.
-        @rtype: List
-        @return: The final resulting list.
+        :type target_list: List
+        :param target_list: The target list to be used.
+        :type source_list: List
+        :param source_list: The source list to be used.
+        :rtype: List
+        :return: The final resulting list.
         """
 
         # creates the final list
@@ -2406,12 +2406,12 @@ class HttpClientServiceHandler(object):
         Merges two maps into one, the source map is made
         prioritaire, and is taken into account first.
 
-        @type target_map: Dictionary
-        @param target_map: The target map to be used.
-        @type source_map: List
-        @param source_map: The source map to be used.
-        @rtype: List
-        @return: The final resulting map.
+        :type target_map: Dictionary
+        :param target_map: The target map to be used.
+        :type source_map: List
+        :param source_map: The source map to be used.
+        :rtype: List
+        :return: The final resulting map.
         """
 
         # copies the target map as the final map
@@ -2617,10 +2617,10 @@ class HttpRequest(object):
         """
         Retrieves the attribute from the attributes map.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
-        @rtype: Object
-        @return: The retrieved attribute.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
+        :rtype: Object
+        :return: The retrieved attribute.
         """
 
         return self.attributes_map.get(attribute_name, None)
@@ -2631,10 +2631,10 @@ class HttpRequest(object):
         attribute is the http request attribute and the setting takes
         into account a possible duplication of the values.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to be set.
-        @type attribute_value: Object
-        @param attribute_value: The value of the attribute to be set.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to be set.
+        :type attribute_value: Object
+        :param attribute_value: The value of the attribute to be set.
         """
 
         # in case the attribute name is already defined
@@ -2841,16 +2841,16 @@ class HttpRequest(object):
         This method is useful for avoid blocking the request
         handling method in non critic tasks.
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 
@@ -2913,8 +2913,8 @@ class HttpRequest(object):
         channel, the verification is made at a connection abstraction
         level (down socket verification).
 
-        @rtype: bool
-        @return: If the current request is being transmitted over a secure
+        :rtype: bool
+        :return: If the current request is being transmitted over a secure
         channel (secure request).
         """
 
@@ -2926,10 +2926,10 @@ class HttpRequest(object):
         or none if no header is defined for the given
         header name.
 
-        @type header_name: String
-        @param header_name: The name of the header to be retrieved.
-        @rtype: Object
-        @return: The value of the request header.
+        :type header_name: String
+        :param header_name: The name of the header to be retrieved.
+        :rtype: Object
+        :return: The value of the request header.
         """
 
         return self.headers_map.get(header_name, None)
@@ -2938,13 +2938,13 @@ class HttpRequest(object):
         """
         Set a response header value on the request.
 
-        @type header_name: String
-        @param header_name: The name of the header to be set.
-        @type header_value: Object
-        @param header_value: The value of the header to be sent
+        :type header_name: String
+        :param header_name: The name of the header to be set.
+        :type header_value: Object
+        :param header_value: The value of the header to be sent
         in the response.
-        @type encode: bool
-        @param encode: If the header value should be encoded in
+        :type encode: bool
+        :param encode: If the header value should be encoded in
         case the type is unicode.
         """
 
@@ -2967,10 +2967,10 @@ class HttpRequest(object):
         This method calls the set header method in case the
         header is not yet defined.
 
-        @type header_name: String
-        @param header_name: The name of the header to be appended with the value.
-        @type header_value: Object
-        @param header_value: The value of the header to be appended
+        :type header_name: String
+        :param header_name: The name of the header to be appended with the value.
+        :type header_value: Object
+        :param header_value: The value of the header to be appended
         in the response.
         """
 
@@ -2994,8 +2994,8 @@ class HttpRequest(object):
         Retrieves the result string value of
         the request.
 
-        @rtype: String
-        @return: The result string value of
+        :rtype: String
+        :return: The result string value of
         the request.
         """
 
@@ -3130,8 +3130,8 @@ class HttpRequest(object):
         """
         Retrieves a string describing the server.
 
-        @rtype: String
-        @return: A string describing the server.
+        :rtype: String
+        :return: A string describing the server.
         """
 
         return SERVER_IDENTIFIER
@@ -3141,8 +3141,8 @@ class HttpRequest(object):
         Returns the service associated with the request
         the one that owns the current request.
 
-        @rtype: Service
-        @return: The service that owns the current
+        :rtype: Service
+        :return: The service that owns the current
         request (request owner/parent).
         """
 
@@ -3153,8 +3153,8 @@ class HttpRequest(object):
         Returns a the service connection object, that
         contains the connection information.
 
-        @rtype: ServiceConnection
-        @return: The service connection to be used.
+        :rtype: ServiceConnection
+        :return: The service connection to be used.
         """
 
         return self.service_connection
@@ -3164,8 +3164,8 @@ class HttpRequest(object):
         Retrieves the list of attribute names in the
         current attributes map.
 
-        @rtype: List
-        @return: The list of attribute names in the
+        :rtype: List
+        :return: The list of attribute names in the
         current attributes map.
         """
 
@@ -3209,8 +3209,8 @@ class HttpRequest(object):
         This method is an alias to the retrieval of the
         operation type.
 
-        @rtype: String
-        @return: The method used in the current request
+        :rtype: String
+        :return: The method used in the current request
         context.
         """
 
@@ -3225,10 +3225,10 @@ class HttpRequest(object):
         An optional set original path flag may be unset
         to allow overriding the original path.
 
-        @type path: String
-        @param path: The path to be set in the request.
-        @type set_original_path: bool
-        @param set_original_path: If the original path
+        :type path: String
+        :param path: The path to be set in the request.
+        :type set_original_path: bool
+        :param set_original_path: If the original path
         should be saved in the original path variable for
         later "raw" retrieval (must only be used once).
         """
@@ -3257,8 +3257,8 @@ class HttpRequest(object):
         The base path is set by processing it, creating
         the resources path.
 
-        @type path: String
-        @param path: The base path to be set in the request,
+        :type path: String
+        :param path: The base path to be set in the request,
         this string should be already unquoted.
         """
 
@@ -3280,8 +3280,8 @@ class HttpRequest(object):
         """
         Sets the protocol version.
 
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
+        :type protocol_version: String
+        :param protocol_version: The protocol version.
         """
 
         self.protocol_version = protocol_version
@@ -3290,8 +3290,8 @@ class HttpRequest(object):
         """
         Retrieves the resource path.
 
-        @rtype: String
-        @return: The resource path.
+        :rtype: String
+        :return: The resource path.
         """
 
         return self.resource_path
@@ -3300,8 +3300,8 @@ class HttpRequest(object):
         """
         Retrieves the resource path in decoded format.
 
-        @rtype: String
-        @return: The resource path in decoded format.
+        :rtype: String
+        :return: The resource path in decoded format.
         """
 
         # verifies if the data type of the resource path
@@ -3319,8 +3319,8 @@ class HttpRequest(object):
         """
         Retrieves the resource base path in decoded format.
 
-        @rtype: String
-        @return: The resource base path in decoded format.
+        :rtype: String
+        :return: The resource base path in decoded format.
         """
 
         # verifies if the resource base path is unicode based
@@ -3337,8 +3337,8 @@ class HttpRequest(object):
         """
         Retrieves the handler path.
 
-        @rtype: String
-        @return: The handler path.
+        :rtype: String
+        :return: The handler path.
         """
 
         return self.handler_path
@@ -3347,8 +3347,8 @@ class HttpRequest(object):
         """
         Retrieves the arguments.
 
-        @rtype: String
-        @return: The arguments.
+        :rtype: String
+        :return: The arguments.
         """
 
         return self.arguments
@@ -3407,8 +3407,8 @@ class HttpRequest(object):
         The method returns the defined status code value,
         or the default in case none is defined.
 
-        @rtype: String
-        @return: The status code value as the string that
+        :rtype: String
+        :return: The status code value as the string that
         describes the currently defined status code.
         """
 
@@ -3433,12 +3433,12 @@ class HttpRequest(object):
         Verifies the resource to check for any modification since the
         value defined in the http request.
 
-        @type modified_timestamp: int
-        @param modified_timestamp: The timestamp of the resource modification.
-        @type etag_value: String
-        @param etag_value: The etag value of the resource.
-        @rtype: bool
-        @return: The result of the resource modification test.
+        :type modified_timestamp: int
+        :param modified_timestamp: The timestamp of the resource modification.
+        :type etag_value: String
+        :param etag_value: The etag value of the resource.
+        :rtype: bool
+        :return: The result of the resource modification test.
         """
 
         # retrieves the if modified header value and in case the
@@ -3479,12 +3479,12 @@ class HttpRequest(object):
         Parses a "part" of the whole multipart content bases on the
         interval of send indexes.
 
-        @type start_index: int
-        @param start_index: The start index of the "part" to be processed.
-        @type end_index: int
-        @param end_index: The end index of the "part" to be processed.
-        @rtype: Tuple
-        @return: A Tuple with a map of header for the "part" and the content of the "part".
+        :type start_index: int
+        :param start_index: The start index of the "part" to be processed.
+        :type end_index: int
+        :param end_index: The end index of the "part" to be processed.
+        :rtype: Tuple
+        :return: A Tuple with a map of header for the "part" and the content of the "part".
         """
 
         # creates the headers map
@@ -3529,10 +3529,10 @@ class HttpRequest(object):
         This method returns a map containing associations of key and value
         of the various content disposition values.
 
-        @type headers_map: Dictionary
-        @param headers_map: The map containing the headers and the values.
-        @rtype: Dictionary
-        @return: The map containing the various disposition values in a map.
+        :type headers_map: Dictionary
+        :param headers_map: The map containing the headers and the values.
+        :rtype: Dictionary
+        :return: The map containing the various disposition values in a map.
         """
 
         # retrieves the content disposition header

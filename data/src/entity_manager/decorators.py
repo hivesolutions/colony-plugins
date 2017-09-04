@@ -47,12 +47,12 @@ def transaction(transaction_type = "required"):
     the optional parameter, but this is considered to be an
     advanced feature and should be used carefully
 
-    @type transaction_type: String
-    @param transaction_type: The type of transaction to be created,
+    :type transaction_type: String
+    :param transaction_type: The type of transaction to be created,
     this option is considered to be an advanced feature (use it
     with extreme care).
-    @rtype: Function
-    @return: The created decorator, that can be used to decorate
+    :rtype: Function
+    :return: The created decorator, that can be used to decorate
     a function to be executed in a new "transactional" environment.
     """
 
@@ -61,8 +61,8 @@ def transaction(transaction_type = "required"):
         Creates a decorator interceptor, that intercepts
         the normal function call.
 
-        @type function: Function
-        @param function: The callback function.
+        :type function: Function
+        :param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -110,10 +110,10 @@ def transaction(transaction_type = "required"):
         """
         The decorator function for the transaction decorator.
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @rtype: Function
-        @return: The decorator interceptor function.
+        :type function: Function
+        :param function: The function to be decorated.
+        :rtype: Function
+        :return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
@@ -137,22 +137,22 @@ def lock_table(table_name, parameters):
     This method required that a transaction context exist, can
     only lock inside a transaction-
 
-    @type table_name: String
-    @param table_name: The name of the table to be locked,
+    :type table_name: String
+    :param table_name: The name of the table to be locked,
     the requested table must be present int he data source.
-    @type parameters: Dictionary
-    @param parameters: The parameters for the lock, these
+    :type parameters: Dictionary
+    :param parameters: The parameters for the lock, these
     should be a map with data source specific options.
-    @rtype: Function
-    @return: The created decorator.
+    :rtype: Function
+    :return: The created decorator.
     """
 
     def create_decorator_interceptor(function):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
 
-        @type function: Function
-        @param function: The callback function.
+        :type function: Function
+        :param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -185,10 +185,10 @@ def lock_table(table_name, parameters):
         """
         The decorator function for the transaction decorator.
 
-        @type function: Function
-        @param function: The function to be decorated.
-        @rtype: Function
-        @return: The decorator interceptor function.
+        :type function: Function
+        :param function: The function to be decorated.
+        :rtype: Function
+        :return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function

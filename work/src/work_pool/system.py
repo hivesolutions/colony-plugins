@@ -119,26 +119,26 @@ class WorkPool(colony.System):
         """
         Creates a new work pool with the given name, description and number of works.
 
-        @type name: String
-        @param name: The work pool name.
-        @type description: String
-        @param description: The work pool description.
-        @type work_processing_task_class: Class
-        @param work_processing_task_class: The work pool reference to the class to be used for work processing.
-        @type work_processing_task_arguments: List
-        @param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
-        @type number_threads: int
-        @param number_threads: The thread pool number of threads.
-        @type scheduling_algorithm: int
-        @param scheduling_algorithm: The thread pool scheduling algorithm.
-        @type maximum_number_threads: int
-        @param maximum_number_threads: The thread pool maximum number of threads.
-        @type maximum_number_works_thread: int
-        @param maximum_number_works_thread: The maximum number of works per thread.
-        @type work_scheduling_algorithm: int
-        @param work_scheduling_algorithm: The work pool scheduling algorithm.
-        @rtype: WorkPoolImplementation
-        @return: The created thread pool.
+        :type name: String
+        :param name: The work pool name.
+        :type description: String
+        :param description: The work pool description.
+        :type work_processing_task_class: Class
+        :param work_processing_task_class: The work pool reference to the class to be used for work processing.
+        :type work_processing_task_arguments: List
+        :param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
+        :type number_threads: int
+        :param number_threads: The thread pool number of threads.
+        :type scheduling_algorithm: int
+        :param scheduling_algorithm: The thread pool scheduling algorithm.
+        :type maximum_number_threads: int
+        :param maximum_number_threads: The thread pool maximum number of threads.
+        :type maximum_number_works_thread: int
+        :param maximum_number_works_thread: The maximum number of works per thread.
+        :type work_scheduling_algorithm: int
+        :param work_scheduling_algorithm: The work pool scheduling algorithm.
+        :rtype: WorkPoolImplementation
+        :return: The created thread pool.
         """
 
         # retrieves the work pool plugin
@@ -177,8 +177,8 @@ class WorkPool(colony.System):
         Retrieves the system information map, containing structured
         information to be visible using presentation viewers.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         # creates the map to hold the system information (ordered  map)
@@ -329,30 +329,30 @@ class WorkPoolImplementation(object):
         """
         Constructor of the class
 
-        @type thread_pool: Object
-        @param thread_pool: The thread pool object to be used to create the thread pool
-        @type name: String
-        @param name: The work pool name.
-        @type description: String
-        @param description: The work pool description.
-        @type work_processing_task_class: Class
-        @param work_processing_task_class: The work pool reference to the class to be used for work processing.
-        @type work_processing_task_arguments: List
-        @param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
-        @type task_descriptor_class: Class
-        @param task_descriptor_class: The work pool task descriptor class.
-        @type number_threads: int
-        @param number_threads: The work pool number of threads.
-        @type scheduling_algorithm: int
-        @param scheduling_algorithm: The work pool scheduling algorithm.
-        @type maximum_number_threads: int
-        @param maximum_number_threads: The work pool maximum number of threads.
-        @type maximum_number_works_thread: int
-        @param maximum_number_works_thread: The maximum number of works per thread.
-        @type work_scheduling_algorithm: int
-        @param work_scheduling_algorithm: The work pool work scheduling algorithm.
-        @type logger: Log
-        @param logger: The logger used.
+        :type thread_pool: Object
+        :param thread_pool: The thread pool object to be used to create the thread pool
+        :type name: String
+        :param name: The work pool name.
+        :type description: String
+        :param description: The work pool description.
+        :type work_processing_task_class: Class
+        :param work_processing_task_class: The work pool reference to the class to be used for work processing.
+        :type work_processing_task_arguments: List
+        :param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
+        :type task_descriptor_class: Class
+        :param task_descriptor_class: The work pool task descriptor class.
+        :type number_threads: int
+        :param number_threads: The work pool number of threads.
+        :type scheduling_algorithm: int
+        :param scheduling_algorithm: The work pool scheduling algorithm.
+        :type maximum_number_threads: int
+        :param maximum_number_threads: The work pool maximum number of threads.
+        :type maximum_number_works_thread: int
+        :param maximum_number_works_thread: The maximum number of works per thread.
+        :type work_scheduling_algorithm: int
+        :param work_scheduling_algorithm: The work pool work scheduling algorithm.
+        :type logger: Log
+        :param logger: The logger used.
         """
 
         self.name = name
@@ -425,8 +425,8 @@ class WorkPoolImplementation(object):
         This method is thread safe and may be called
         from different threads.
 
-        @type work_reference: Object
-        @param work_reference: The object used as reference for the work.
+        :type work_reference: Object
+        :param work_reference: The object used as reference for the work.
         """
 
         # acquires the work tasks access lock
@@ -451,8 +451,8 @@ class WorkPoolImplementation(object):
         """
         Retrieves the thread pool.
 
-        @rtype: ThreadPool
-        @return: The thread pool.
+        :rtype: ThreadPool
+        :return: The thread pool.
         """
 
         return self.thread_pool
@@ -491,10 +491,10 @@ class WorkPoolImplementation(object):
         """
         Verifies that the work conditions are met.
 
-        @type work_task: WorkTask
-        @param work_task: The work task to be verified.
-        @rtype: bool
-        @return: The result of the verification.
+        :type work_task: WorkTask
+        :param work_task: The work task to be verified.
+        :rtype: bool
+        :return: The result of the verification.
         """
 
         # in case the current number of works is equal or greater
@@ -539,10 +539,10 @@ class WorkTask(object):
         """
         Constructor of the class.
 
-        @type work_pool: WorkPool
-        @param work_pool: The work pool for the work task.
-        @type work_processing_task: Object
-        @param work_processing_task: The work processing task object.
+        :type work_pool: WorkPool
+        :param work_pool: The work pool for the work task.
+        :type work_processing_task: Object
+        :param work_processing_task: The work processing task object.
         """
 
         self.work_pool = work_pool
@@ -643,8 +643,8 @@ class WorkTask(object):
         """
         Retrieves the current busy status.
 
-        @rtype: bool
-        @return: The current busy status.
+        :rtype: bool
+        :return: The current busy status.
         """
 
         # in case there is no work to
@@ -660,8 +660,8 @@ class WorkTask(object):
         """
         Retrieves the work processing task.
 
-        @rtype: Object
-        @return: The work processing task.
+        :rtype: Object
+        :return: The work processing task.
         """
 
         return self.work_processing_task
@@ -717,8 +717,8 @@ class WorkTask(object):
         This method assumes that the work access condition is locked
         and in possession of the current executing thread.
 
-        @type work_reference: Object
-        @param work_reference: The object used as reference for the work.
+        :type work_reference: Object
+        :param work_reference: The object used as reference for the work.
         """
 
         # notifies the work processing task about the new work
@@ -742,8 +742,8 @@ class WorkTask(object):
         This method assumes that the work access condition is locked
         and in possession of the current executing thread.
 
-        @type work_reference: Object
-        @param work_reference: The object used as reference for the work.
+        :type work_reference: Object
+        :param work_reference: The object used as reference for the work.
         """
 
         # removes the work reference from the work list
@@ -766,8 +766,8 @@ def remove_work(self, work_reference):
     Remove work method to be included
     in the work processing task.
 
-    @type work_reference: Object
-    @param work_reference: The object used as reference for the work.
+    :type work_reference: Object
+    :param work_reference: The object used as reference for the work.
     """
 
     # calls the remove work in the work task

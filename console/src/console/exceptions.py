@@ -56,8 +56,8 @@ class MissingProperty(ConsoleException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ConsoleException.__init__(self)
@@ -67,8 +67,8 @@ class MissingProperty(ConsoleException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Missing property - %s" % self.message
@@ -82,8 +82,8 @@ class AuthenticationFailed(ConsoleException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ConsoleException.__init__(self)
@@ -93,8 +93,8 @@ class AuthenticationFailed(ConsoleException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Authentication failed - %s" % self.message

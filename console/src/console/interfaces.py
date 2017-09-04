@@ -112,12 +112,12 @@ class ConsoleInterfaceCharacter(object):
         """
         Constructor of the class.
 
-        @type console: Console
-        @param console: The console.
-        @type console_handler: ConsoleHandler
-        @param console_handler: The console handler to be used.
-        @type console_context: ConsoleContext
-        @param console_context: The console context to be used.
+        :type console: Console
+        :param console: The console.
+        :type console_handler: ConsoleHandler
+        :param console_handler: The console handler to be used.
+        :type console_context: ConsoleContext
+        :param console_context: The console context to be used.
         """
 
         self.console = console
@@ -154,8 +154,8 @@ class ConsoleInterfaceCharacter(object):
         caller must the cautious in the handling of it.
         On failure this function returns an invalid value (none).
 
-        @rtype: Tuple
-        @return: A tuple containing the width and the height of
+        :rtype: Tuple
+        :return: A tuple containing the width and the height of
         the current console window.
         """
 
@@ -397,8 +397,8 @@ class ConsoleInterfaceCharacter(object):
         Completes the current line value with the
         given best match.
 
-        @type best_match: String
-        @param best_match: The best match to complete
+        :type best_match: String
+        :param best_match: The best match to complete
         the current line value.
         """
 
@@ -426,8 +426,8 @@ class ConsoleInterfaceCharacter(object):
         Shows the given alternatives list in the output
         method.
 
-        @type alternatives_list: List
-        @param alternatives_list: The list of alternatives to
+        :type alternatives_list: List
+        :param alternatives_list: The list of alternatives to
         show.
         """
 
@@ -472,10 +472,10 @@ class ConsoleInterfaceCharacter(object):
         Writes the given text to the standard output,
         may use a newline or not.
 
-        @type text: String
-        @param text: The text to be written to the standard output.
-        @type new_line: bool
-        @param new_line: If the text should be suffixed with a newline.
+        :type text: String
+        :param text: The text to be written to the standard output.
+        :type new_line: bool
+        :param new_line: If the text should be suffixed with a newline.
         """
 
         # prints (writes) the text contents

@@ -95,12 +95,12 @@ class ApiPaypal(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: OpenidClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: OpenidClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -163,12 +163,12 @@ class PaypalClient(object):
         """
         Constructor of the class.
 
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type paypal_structure: PaypalStructure
-        @param paypal_structure: The paypal structure.
-        @type test_mode: bool
-        @param test_mode: Flag indicating if the client is to
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type paypal_structure: PaypalStructure
+        :param paypal_structure: The paypal structure.
+        :type test_mode: bool
+        :param test_mode: Flag indicating if the client is to
         be run in test mode.
         """
 
@@ -196,19 +196,19 @@ class PaypalClient(object):
         """
         Generates the paypal structure for the given arguments.
 
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param passwird: The password.
-        @type country: String
-        @param country: The signature value unique by client.
-        @type api_version: String
-        @param api_version: The version of the api being used.
-        @type set_structure: bool
-        @param set_structure: If the structure should be
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param passwird: The password.
+        :type country: String
+        :param country: The signature value unique by client.
+        :type api_version: String
+        :param api_version: The version of the api being used.
+        :type set_structure: bool
+        :param set_structure: If the structure should be
         set in the paypal client.
-        @rtype: PaypalStructure
-        @return: The generated paypal structure.
+        :rtype: PaypalStructure
+        :return: The generated paypal structure.
         """
 
         # creates a new paypal structure
@@ -229,20 +229,20 @@ class PaypalClient(object):
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
-        @type ip_address: String
-        @param ip_address: The ip address from where the customer performed the payment.
-        @type amount: float
-        @param amount: The amount being paid.
-        @type card: Dictionary
-        @param card: The card to be used to pay for the order.
-        @type payer: Dictionary
-        @param payer: The payer that is to pay the order.
-        @type order: Dictionary
-        @param order: Map with details about the order being paid (lines and totals).
-        @type shipping_address: Dictionary
-        @param shipping_address: The address details of where the order is to be shipped.
-        @rtype: Dictionary
-        @return: The paypal response data.
+        :type ip_address: String
+        :param ip_address: The ip address from where the customer performed the payment.
+        :type amount: float
+        :param amount: The amount being paid.
+        :type card: Dictionary
+        :param card: The card to be used to pay for the order.
+        :type payer: Dictionary
+        :param payer: The payer that is to pay the order.
+        :type order: Dictionary
+        :param order: Map with details about the order being paid (lines and totals).
+        :type shipping_address: Dictionary
+        :param shipping_address: The address details of where the order is to be shipped.
+        :rtype: Dictionary
+        :return: The paypal response data.
         """
 
         # sets the retrieval url (using the sandbox url in
@@ -362,26 +362,26 @@ class PaypalClient(object):
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
-        @type transaction_id: String
-        @param transaction_id: The unique identifier of the paypal transaction that is to be
+        :type transaction_id: String
+        :param transaction_id: The unique identifier of the paypal transaction that is to be
         refunded.
-        @type refund_type: String
-        @param refund_type: The type of refund to be performed: Full, Partial, ExternalDispute,
+        :type refund_type: String
+        :param refund_type: The type of refund to be performed: Full, Partial, ExternalDispute,
         Other).
-        @type refund_source: String
-        @param refund_source: The source used to refund the transaction: any, default (source
+        :type refund_source: String
+        :param refund_source: The source used to refund the transaction: any, default (source
         will be retrieved from merchant configuration), instant (balance will be used), echeck.
-        @type amount: float
-        @param amount: The amount to be refunded in case this is a partial refund (otherwise
+        :type amount: float
+        :param amount: The amount to be refunded in case this is a partial refund (otherwise
         the amount should not be specified).
-        @type currency_code: String
-        @param currency_code: The code of the currency in which to perform the refund.
-        @type refund_item_details: String
-        @param refund_item_details: Details about the item being refunded.
-        @type note: String
-        @param note: Optional notes about the refund.
-        @rtype: Dictionary
-        @return: The paypal response data.
+        :type currency_code: String
+        :param currency_code: The code of the currency in which to perform the refund.
+        :type refund_item_details: String
+        :param refund_item_details: Details about the item being refunded.
+        :type note: String
+        :param note: Optional notes about the refund.
+        :rtype: Dictionary
+        :return: The paypal response data.
         """
 
         # sets the retrieval url (using the sandbox url in
@@ -427,11 +427,11 @@ class PaypalClient(object):
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
-        @type transaction_id: String
-        @param transaction_id: The unique identifier of the paypal transaction whose details
+        :type transaction_id: String
+        :param transaction_id: The unique identifier of the paypal transaction whose details
         are to be retrieved.
-        @rtype: Dictionary
-        @return: The paypal response data.
+        :rtype: Dictionary
+        :return: The paypal response data.
         """
 
         # sets the retrieval url (using the sandbox url in
@@ -467,8 +467,8 @@ class PaypalClient(object):
         """
         Retrieves the user's balance.
 
-        @rtype: Dictionary
-        @return: The paypal response data.
+        :rtype: Dictionary
+        :return: The paypal response data.
         """
 
         # sets the retrieval url (using the sandbox url in
@@ -509,8 +509,8 @@ class PaypalClient(object):
         the credentials are valid, therefore it can be used as a
         discriminator for the validity of the credentials.
 
-        @rtype: bool
-        @return: Flag indicating if the credentials are valid.
+        :rtype: bool
+        :return: Flag indicating if the credentials are valid.
         """
 
         # attempts to perform the get balance operation as a no-op,
@@ -578,8 +578,8 @@ class PaypalClient(object):
         Retrieves the url used to redirect the user to the payment page
         in the paypal api in the express checkout mode.
 
-        @rtype: String
-        @return: the url used to redirect the user to the payment page
+        :rtype: String
+        :return: the url used to redirect the user to the payment page
         in the paypal api in the express checkout mode.
         """
 
@@ -606,8 +606,8 @@ class PaypalClient(object):
         """
         Retrieves the paypal structure.
 
-        @rtype: PaypalStructure
-        @return: The paypal structure.
+        :rtype: PaypalStructure
+        :return: The paypal structure.
         """
 
         return self.paypal_structure
@@ -616,8 +616,8 @@ class PaypalClient(object):
         """
         Sets the paypal structure.
 
-        @type paypal_structure: PaypalStructure
-        @param paypal_structure: The paypal structure.
+        :type paypal_structure: PaypalStructure
+        :param paypal_structure: The paypal structure.
         """
 
         self.paypal_structure = paypal_structure
@@ -630,8 +630,8 @@ class PaypalClient(object):
         These are considered to be the base values used for the
         authentication of the request.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be used in setting
+        :type parameters: Dictionary
+        :param parameters: The parameters map to be used in setting
         the base parameters.
         """
 
@@ -647,14 +647,14 @@ class PaypalClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -677,12 +677,12 @@ class PaypalClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -701,8 +701,8 @@ class PaypalClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary
-        @param data: The data to be checked for paypal errors.
+        :type data: Dictionary
+        :param data: The data to be checked for paypal errors.
         """
 
         # retrieves the message value and returns immediately
@@ -722,11 +722,11 @@ class PaypalClient(object):
         Parses the query string value, creating a map
         containing the various key value pair associations.
 
-        @type query_string: String
-        @param query_string: The query string value to be
+        :type query_string: String
+        :param query_string: The query string value to be
         decoded and parsed into the key values map.
-        @rtype: Dictionary
-        @return: The map resulting from the parsing of the
+        :rtype: Dictionary
+        :return: The map resulting from the parsing of the
         provided query string value.
         """
 
@@ -753,8 +753,8 @@ class PaypalClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -807,14 +807,14 @@ class PaypalStructure(object):
         """
         Constructor of the class.
 
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param password: The password.
-        @type signature: String
-        @param signature: The signature value unique by client.
-        @type api_version: String
-        @param api_version: The version of the api being used.
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param password: The password.
+        :type signature: String
+        :param signature: The signature value unique by client.
+        :type api_version: String
+        :param api_version: The version of the api being used.
         """
 
         self.username = username
@@ -826,8 +826,8 @@ class PaypalStructure(object):
         """
         Retrieves the username.
 
-        @rtype: String
-        @return: The username.
+        :rtype: String
+        :return: The username.
         """
 
         return self.username
@@ -836,8 +836,8 @@ class PaypalStructure(object):
         """
         Sets the username.
 
-        @type username: String
-        @param username: The username.
+        :type username: String
+        :param username: The username.
         """
 
         self.username = username
@@ -846,8 +846,8 @@ class PaypalStructure(object):
         """
         Retrieves the password.
 
-        @rtype: String
-        @return: The password.
+        :rtype: String
+        :return: The password.
         """
 
         return self.password
@@ -856,8 +856,8 @@ class PaypalStructure(object):
         """
         Sets the password.
 
-        @type password: String
-        @param password: The password.
+        :type password: String
+        :param password: The password.
         """
 
         self.password = password
@@ -866,8 +866,8 @@ class PaypalStructure(object):
         """
         Retrieves the signature.
 
-        @rtype: String
-        @return: The signature.
+        :rtype: String
+        :return: The signature.
         """
 
         return self.signature
@@ -876,8 +876,8 @@ class PaypalStructure(object):
         """
         Sets the signature.
 
-        @type signature: String
-        @param signature: The signature.
+        :type signature: String
+        :param signature: The signature.
         """
 
         self.signature = signature
@@ -886,8 +886,8 @@ class PaypalStructure(object):
         """
         Retrieves the api version.
 
-        @rtype: String
-        @return: The api version.
+        :rtype: String
+        :return: The api version.
         """
 
         return self.api_version
@@ -896,8 +896,8 @@ class PaypalStructure(object):
         """
         Sets the api version.
 
-        @type api_version: String
-        @param api_version: The api version.
+        :type api_version: String
+        :param api_version: The api version.
         """
 
         self.api_version = api_version
@@ -906,8 +906,8 @@ class PaypalStructure(object):
         """
         Retrieves the token.
 
-        @rtype: String
-        @return: The token.
+        :rtype: String
+        :return: The token.
         """
 
         return self.token
@@ -916,8 +916,8 @@ class PaypalStructure(object):
         """
         Sets the token.
 
-        @type token: String
-        @param token: The token.
+        :type token: String
+        :param token: The token.
         """
 
         self.token = token
@@ -926,8 +926,8 @@ class PaypalStructure(object):
         """
         Retrieves the transaction id.
 
-        @rtype: String
-        @return: The transaction id.
+        :rtype: String
+        :return: The transaction id.
         """
 
         return self.transaction_id
@@ -936,8 +936,8 @@ class PaypalStructure(object):
         """
         Sets the transaction id.
 
-        @type transaction_id: String
-        @param transaction_id: The transaction id.
+        :type transaction_id: String
+        :param transaction_id: The transaction id.
         """
 
         self.transaction_id = transaction_id

@@ -56,8 +56,8 @@ class BencodeEncodeException(BencodeException):
         """
         Constructor of the class.
 
-        @type object: Object
-        @param object: The object containing the encoding problems.
+        :type object: Object
+        :param object: The object containing the encoding problems.
         """
 
         BencodeException.__init__(self)
@@ -67,8 +67,8 @@ class BencodeEncodeException(BencodeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Object not encodeable - %s" % self.object
@@ -82,8 +82,8 @@ class BencodeDecodeException(BencodeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BencodeException.__init__(self)
@@ -93,8 +93,8 @@ class BencodeDecodeException(BencodeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Bencode data not decodable - %s" % self.message

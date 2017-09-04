@@ -338,10 +338,10 @@ class MimeMessage(object):
         or none if no header is defined for the given
         header name.
 
-        @type header_name: String
-        @param header_name: The name of the header to be retrieved.
-        @rtype: Object
-        @return: The value of the request header.
+        :type header_name: String
+        :param header_name: The name of the header to be retrieved.
+        :rtype: Object
+        :return: The value of the request header.
         """
 
         return self.headers_map.get(header_name, None)
@@ -351,13 +351,13 @@ class MimeMessage(object):
         Set a mime header value in the message, the operation
         of this method will decode the header value if required.
 
-        @type header_name: String
-        @param header_name: The name of the header to be set.
-        @type header_value: Object
-        @param header_value: The value of the header to be sent
+        :type header_name: String
+        :param header_name: The name of the header to be set.
+        :type header_value: Object
+        :param header_value: The value of the header to be sent
         in the response.
-        @type decode: bool
-        @param decode: If the header value should be decoded in
+        :type decode: bool
+        :param decode: If the header value should be decoded in
         case the type is byte string based.
         """
 
@@ -386,8 +386,8 @@ class MimeMessage(object):
         """
         Retrieves the multi part.
 
-        @rtype: String
-        @return: The multi part.
+        :rtype: String
+        :return: The multi part.
         """
 
         return self.multi_part
@@ -396,8 +396,8 @@ class MimeMessage(object):
         """
         Sets the multi part.
 
-        @type multi_part: String
-        @param multi_part: The multi part.
+        :type multi_part: String
+        :param multi_part: The multi part.
         """
 
         self.multi_part = multi_part
@@ -406,8 +406,8 @@ class MimeMessage(object):
         """
         Retrieves the boundary.
 
-        @rtype: String
-        @return: The boundary.
+        :rtype: String
+        :return: The boundary.
         """
 
         return self.boundary
@@ -416,8 +416,8 @@ class MimeMessage(object):
         """
         Sets the boundary.
 
-        @type boundary: String
-        @param boundary: The boundary
+        :type boundary: String
+        :param boundary: The boundary
         """
 
         self.boundary = boundary
@@ -426,8 +426,8 @@ class MimeMessage(object):
         """
         Retrieves the protocol version.
 
-        @rtype: String
-        @return: The protocol version.
+        :rtype: String
+        :return: The protocol version.
         """
 
         return self.protocol_version
@@ -436,8 +436,8 @@ class MimeMessage(object):
         """
         Sets the protocol version.
 
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
+        :type protocol_version: String
+        :param protocol_version: The protocol version.
         """
 
         self.protocol_version = protocol_version
@@ -446,8 +446,8 @@ class MimeMessage(object):
         """
         Retrieves the content type charset.
 
-        @rtype: String
-        @return: The content type charset.
+        :rtype: String
+        :return: The content type charset.
         """
 
         return self.content_type_charset
@@ -456,8 +456,8 @@ class MimeMessage(object):
         """
         Sets the content type charset.
 
-        @type content_type_charset: String
-        @param content_type_charset: The content type charset.
+        :type content_type_charset: String
+        :param content_type_charset: The content type charset.
         """
 
         self.content_type_charset = content_type_charset
@@ -507,10 +507,10 @@ class MimeMessage(object):
         Generates a boundary, using the given boundary as the
         base value in case it is given.
 
-        @type boundary: String
-        @param boundary: The base boundary to be used.
-        @rtype: String
-        @return: The new generated boundary.
+        :type boundary: String
+        :param boundary: The base boundary to be used.
+        :rtype: String
+        :return: The new generated boundary.
         """
 
         # creates a new boundary if necessary
@@ -545,12 +545,12 @@ class MimeMessage(object):
         In case any of the files contains the boundary the
         checks fails and returns invalid.
 
-        @type boundary: String
-        @param boundary: The boundary to be checked.
-        @type part_values: List
-        @param part_values: The values of the various parts.
-        @rtype: bool
-        @return: The result of the check.
+        :type boundary: String
+        :param boundary: The boundary to be checked.
+        :type part_values: List
+        :param part_values: The values of the various parts.
+        :rtype: bool
+        :return: The result of the check.
         """
 
         # ensures that the boundary value is encoded a a bytes

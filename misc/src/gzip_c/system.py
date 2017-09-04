@@ -56,14 +56,14 @@ class Gzip(colony.System):
         Compresses the given contents using the deflate compression
         algorithm and encapsulating it into the gzip file format.
 
-        @type contents_string: String
-        @param contents_string: A string containing the contents
+        :type contents_string: String
+        :param contents_string: A string containing the contents
         to be compressed.
-        @type file_name: String
-        @param file_name: The name to be set to the file in the
+        :type file_name: String
+        :param file_name: The name to be set to the file in the
         generated compressed buffer.
-        @rtype: String
-        @return: The string containing the compressed buffer.
+        :rtype: String
+        :return: The string containing the compressed buffer.
         """
 
         # creates a new string buffer
@@ -125,10 +125,10 @@ class Gzip(colony.System):
         Converts the given number to unsigned assuming
         a 32 bit value.
 
-        @type number: int
-        @param number: The number to be converted to unsigned.
-        @rtype: int
-        @return: The given number converted to unsigned.
+        :type number: int
+        :param number: The number to be converted to unsigned.
+        :rtype: int
+        :return: The given number converted to unsigned.
         """
 
         # in case the number is positive or zero

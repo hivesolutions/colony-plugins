@@ -228,12 +228,12 @@ class AbstractService(object):
         """
         Constructor of the class.
 
-        @type service_utils: ServiceUtils
-        @param service_utils: The service utils.
-        @type service_utils_plugin: ServiceUtilsPlugin
-        @param service_utils_plugin: The service utils plugin.
-        @type parameters: Dictionary
-        @param parameters: The parameters
+        :type service_utils: ServiceUtils
+        :param service_utils: The service utils.
+        :type service_utils_plugin: ServiceUtilsPlugin
+        :param service_utils_plugin: The service utils plugin.
+        :type parameters: Dictionary
+        :param parameters: The parameters
         """
 
         self.service_utils = service_utils
@@ -480,8 +480,8 @@ class AbstractService(object):
         Polls the service sockets for changes
         and returns the selected values (if successful).
 
-        @rtype: List
-        @return: The selected values.
+        :rtype: List
+        :return: The selected values.
         """
 
         try:
@@ -515,8 +515,8 @@ class AbstractService(object):
         Accepts the client connection in
         the service socket.
 
-        @type service_socket: Socket
-        @param service_socket: The service socket to be accepted.
+        :type service_socket: Socket
+        :param service_socket: The service socket to be accepted.
         """
 
         try:
@@ -546,8 +546,8 @@ class AbstractService(object):
         Reads data from the client connection
         in the service socket.
 
-        @type service_socket: Socket
-        @param service_socket: The service socket to read from.
+        :type service_socket: Socket
+        :param service_socket: The service socket to read from.
         """
 
         try:
@@ -609,13 +609,13 @@ class AbstractService(object):
         This process takes into account the pool usage and the current
         available task.
 
-        @type service_connection: Socket
-        @param service_connection: The service connection to be inserted.
-        @type service_address: Tuple
-        @param service_address: A tuple containing the address information
+        :type service_connection: Socket
+        :param service_connection: The service connection to be inserted.
+        :type service_address: Tuple
+        :param service_address: A tuple containing the address information
         of the connection.
-        @type port: int
-        @param port: The associated port.
+        :type port: int
+        :param port: The associated port.
         """
 
         # creates the work reference tuple
@@ -634,15 +634,15 @@ class AbstractService(object):
         This process takes into account the pool usage and the current
         available task.
 
-        @type service_data: String
-        @param service_data: The data to be inserted.
-        @type service_socket: Socket
-        @param service_socket: The associated service socket.
-        @type service_address: Tuple
-        @param service_address: A tuple containing the address information
+        :type service_data: String
+        :param service_data: The data to be inserted.
+        :type service_socket: Socket
+        :param service_socket: The associated service socket.
+        :type service_address: Tuple
+        :param service_address: A tuple containing the address information
         of the connection.
-        @type port: int
-        @param port: The associated port.
+        :type port: int
+        :param port: The associated port.
         """
 
         # creates the work reference tuple
@@ -661,8 +661,8 @@ class AbstractService(object):
         Retrieves the service handler class for
         the current configuration.
 
-        @rtype: Class
-        @return: The service handler class for
+        :rtype: Class
+        :return: The service handler class for
         the current configuration.
         """
 
@@ -769,24 +769,24 @@ class AbstractServiceConnectionHandler(object):
         """
         Constructor of the class.
 
-        @type service: AbstractService
-        @param service: The service reference.
-        @type service_plugin: Plugin
-        @param service_plugin: The service plugin.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration.
-        @type connection_timeout: float
-        @param connection_timeout: The connection timeout.
-        @type request_timeout: float
-        @param request_timeout: The request timeout.
-        @type response_timeout: float
-        @param response_timeout: The response timeout.
-        @type chunk_size: int
-        @param chunk_size: The chunk size.
-        @type client_service_class: Class
-        @param client_service_class: The client service class.
-        @type extra_parameters: Dictionary
-        @param extra_parameters: The extra parameters.
+        :type service: AbstractService
+        :param service: The service reference.
+        :type service_plugin: Plugin
+        :param service_plugin: The service plugin.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration.
+        :type connection_timeout: float
+        :param connection_timeout: The connection timeout.
+        :type request_timeout: float
+        :param request_timeout: The request timeout.
+        :type response_timeout: float
+        :param response_timeout: The response timeout.
+        :type chunk_size: int
+        :param chunk_size: The chunk size.
+        :type client_service_class: Class
+        :param client_service_class: The client service class.
+        :type extra_parameters: Dictionary
+        :param extra_parameters: The extra parameters.
         """
 
         self.service = service
@@ -921,8 +921,8 @@ class AbstractServiceConnectionHandler(object):
         """
         Retrieves the current busy status.
 
-        @rtype: bool
-        @return: The current busy status.
+        :rtype: bool
+        :return: The current busy status.
         """
 
         return self.busy_status
@@ -931,8 +931,8 @@ class AbstractServiceConnectionHandler(object):
         """
         Called when a work is added.
 
-        @type work_reference: Object
-        @param work_reference: The reference to the work to be added.
+        :type work_reference: Object
+        :param work_reference: The reference to the work to be added.
         """
 
         # unpacks the work reference retrieving the connection socket,
@@ -950,8 +950,8 @@ class AbstractServiceConnectionHandler(object):
         """
         Called when a work is removed.
 
-        @type work_reference: Object
-        @param work_reference: The reference to the work to be removed.
+        :type work_reference: Object
+        :param work_reference: The reference to the work to be removed.
         """
 
         # unpacks the work reference retrieving the connection socket,
@@ -969,14 +969,14 @@ class AbstractServiceConnectionHandler(object):
         """
         Adds a new connection to the service connection handler.
 
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
-        @rtype: ServiceConnection
-        @return: The created service connection.
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket.
+        :type connection_address: Tuple
+        :param connection_address: The connection address.
+        :type connection_port: int
+        :param connection_port: The connection port.
+        :rtype: ServiceConnection
+        :return: The created service connection.
         """
 
         # in case the connection socket already exists in
@@ -1029,8 +1029,8 @@ class AbstractServiceConnectionHandler(object):
         """
         Removes the given service connection.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to be removed.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to be removed.
         """
 
         # retrieves the connection socket
@@ -1075,8 +1075,8 @@ class AbstractServiceConnectionHandler(object):
         """
         Removes the connection with the given socket.
 
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket to be used
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket to be used
         in the removal of the connection.
         """
 
@@ -1113,10 +1113,10 @@ class AbstractServiceConnectionHandler(object):
         Polls the current connection to check
         if any contains new information to be read.
 
-        @type poll_timeout: float
-        @param poll_timeout: The timeout to be used in the polling.
-        @rtype: List
-        @return: The selected values for read (ready sockets).
+        :type poll_timeout: float
+        :param poll_timeout: The timeout to be used in the polling.
+        :rtype: List
+        :return: The selected values for read (ready sockets).
         """
 
         if EPOLL_SUPPORT:
@@ -1129,8 +1129,8 @@ class AbstractServiceConnectionHandler(object):
         Handles the sockets that are ready to be handled.
         The handling is done via the service plugin.
 
-        @type ready_sockets: List
-        @param ready_sockets: The list of sockets ready
+        :type ready_sockets: List
+        :param ready_sockets: The list of sockets ready
         to be handled.
         """
 
@@ -1271,11 +1271,11 @@ class AbstractServiceConnectionHandler(object):
         Retrieves the connection socket file descriptor from
         the given connection socket.
 
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket to retrieve the
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket to retrieve the
         connection socket file descriptor.
-        @rtype: int
-        @return: The connection socket file descriptor.
+        :rtype: int
+        :return: The connection socket file descriptor.
         """
 
         try:
@@ -1341,24 +1341,24 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Constructor of the class.
 
-        @type service: AbstractService
-        @param service: The service reference.
-        @type service_plugin: Plugin
-        @param service_plugin: The service plugin.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration.
-        @type connection_timeout: float
-        @param connection_timeout: The connection timeout.
-        @type request_timeout: float
-        @param request_timeout: The request timeout.
-        @type response_timeout: float
-        @param response_timeout: The response timeout.
-        @type chunk_size: int
-        @param chunk_size: The chunk size.
-        @type client_service_class: Class
-        @param client_service_class: The client service class.
-        @type extra_parameters: Dictionary
-        @param extra_parameters: The extra parameters.
+        :type service: AbstractService
+        :param service: The service reference.
+        :type service_plugin: Plugin
+        :param service_plugin: The service plugin.
+        :type service_configuration: Dictionary
+        :param service_configuration: The service configuration.
+        :type connection_timeout: float
+        :param connection_timeout: The connection timeout.
+        :type request_timeout: float
+        :param request_timeout: The request timeout.
+        :type response_timeout: float
+        :param response_timeout: The response timeout.
+        :type chunk_size: int
+        :param chunk_size: The chunk size.
+        :type client_service_class: Class
+        :param client_service_class: The client service class.
+        :type extra_parameters: Dictionary
+        :param extra_parameters: The extra parameters.
         """
 
         self.service = service
@@ -1416,8 +1416,8 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Retrieves the current busy status.
 
-        @rtype: bool
-        @return: The current busy status.
+        :rtype: bool
+        :return: The current busy status.
         """
 
         return self.busy_status
@@ -1426,8 +1426,8 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Called when a work is added.
 
-        @type work_reference: Object
-        @param work_reference: The reference to the work to be added.
+        :type work_reference: Object
+        :param work_reference: The reference to the work to be added.
         """
 
         # unpacks the work reference retrieving the connection data, socket,
@@ -1441,8 +1441,8 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Called when a work is removed.
 
-        @type work_reference: Object
-        @param work_reference: The reference to the work to be removed.
+        :type work_reference: Object
+        :param work_reference: The reference to the work to be removed.
         """
 
         # unpacks the work reference retrieving the connection data, socket,
@@ -1456,16 +1456,16 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Adds a new connection to the service connection handler.
 
-        @type connection_data: String
-        @param connection_data: The connection data.
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
-        @rtype: ServiceConnection
-        @return: The created service connection.
+        :type connection_data: String
+        :param connection_data: The connection data.
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket.
+        :type connection_address: Tuple
+        :param connection_address: The connection address.
+        :type connection_port: int
+        :param connection_port: The connection port.
+        :rtype: ServiceConnection
+        :return: The created service connection.
         """
 
         # creates the new service connection  and sets the service execution thread
@@ -1505,8 +1505,8 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Removes the given service connection.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection to be removed.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection to be removed.
         """
 
         # retrieves the connection socket
@@ -1534,11 +1534,11 @@ class AbstractServiceConnectionlessHandler(object):
         """
         Removes the connection with the given socket and address.
 
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket to be used
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket to be used
         in the removal of the connection.
-        @type connection_address: Tuple
-        @param connection_address: The connection address tuple to be
+        :type connection_address: Tuple
+        :param connection_address: The connection address tuple to be
         used in the removal of the connection.
         """
 
@@ -1559,8 +1559,8 @@ class AbstractServiceConnectionlessHandler(object):
         Handles the service connections that are ready to be handled.
         The handling is done via the service plugin.
 
-        @type service_connections: List
-        @param service_connections: The list of service connections
+        :type service_connections: List
+        :param service_connections: The list of service connections
         ready to be handled.
         """
 
@@ -1650,22 +1650,22 @@ class ServiceConnection(object):
         """
         Constructor of the class.
 
-        @type service_plugin: Plugin
-        @param service_plugin: The service plugin.
-        @type service_connection_handler: AbstractServiceConnectionHandler
-        @param service_connection_handler: The service connection handler.
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
-        @type connection_request_timeout: float
-        @param connection_request_timeout: The connection request timeout.
-        @type connection_response_timeout: float
-        @param connection_response_timeout: The connection response timeout.
-        @type connection_chunk_size: int
-        @param connection_chunk_size: The connection chunk size.
+        :type service_plugin: Plugin
+        :param service_plugin: The service plugin.
+        :type service_connection_handler: AbstractServiceConnectionHandler
+        :param service_connection_handler: The service connection handler.
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket.
+        :type connection_address: Tuple
+        :param connection_address: The connection address.
+        :type connection_port: int
+        :param connection_port: The connection port.
+        :type connection_request_timeout: float
+        :param connection_request_timeout: The connection request timeout.
+        :type connection_response_timeout: float
+        :param connection_response_timeout: The connection response timeout.
+        :type connection_chunk_size: int
+        :param connection_chunk_size: The connection chunk size.
         """
 
         self.service_plugin = service_plugin
@@ -1728,8 +1728,8 @@ class ServiceConnection(object):
         Cancels (closes) the given connection in
         the given amount of seconds.
 
-        @type delta_time: float
-        @param delta_time: The amount of seconds until canceling.
+        :type delta_time: float
+        :param delta_time: The amount of seconds until canceling.
         """
 
         # sets the cancel time
@@ -1740,10 +1740,10 @@ class ServiceConnection(object):
         Upgrades the current connection socket, using
         the the upgrader with the given name and the given parameters.
 
-        @type socket_upgrader: String
-        @param socket_upgrader: The name of the socket upgrader.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the upgrade process.
+        :type socket_upgrader: String
+        :param socket_upgrader: The name of the socket upgrader.
+        :type parameters: Dictionary
+        :param parameters: The parameters to the upgrade process.
         """
 
         # retrieves the service utils
@@ -1773,16 +1773,16 @@ class ServiceConnection(object):
         This method is useful for avoid blocking the request
         handling method in non critic tasks.
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 
@@ -1799,14 +1799,14 @@ class ServiceConnection(object):
         Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
 
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data receiving.
-        @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be received.
-        @type retries: int
-        @param retries: The number of retries to be used.
-        @rtype: String
-        @return: The received data.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data receiving.
+        :type chunk_size: int
+        :param chunk_size: The maximum size of the chunk to be received.
+        :type retries: int
+        :param retries: The number of retries to be used.
+        :rtype: String
+        :return: The received data.
         """
 
         # acquires the read lock
@@ -1828,14 +1828,14 @@ class ServiceConnection(object):
         Raises an exception in case there is a problem sending
         the message.
 
-        @type message: String
-        @param message: The message to be sent.
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data sending.
-        @type retries: int
-        @param retries: The number of retries to be used.
-        @type write_front: bool
-        @param write_front: If the write of the message should be
+        :type message: String
+        :param message: The message to be sent.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data sending.
+        :type retries: int
+        :param retries: The number of retries to be used.
+        :type write_front: bool
+        :param write_front: If the write of the message should be
         made to the front of the buffer.
         """
 
@@ -1854,8 +1854,8 @@ class ServiceConnection(object):
         Retrieves if the current connection is
         of type asynchronous.
 
-        @rtype: bool
-        @return: If the current connection is of type
+        :rtype: bool
+        :return: If the current connection is of type
         asynchronous.
         """
 
@@ -1865,8 +1865,8 @@ class ServiceConnection(object):
         """
         Retrieves if the current connection is open.
 
-        @rtype: bool
-        @return: If the current connection is open.
+        :rtype: bool
+        :return: If the current connection is open.
         """
 
         return self.connection_status
@@ -1879,8 +1879,8 @@ class ServiceConnection(object):
         If the connection is secure the underlying level should
         be using an encrypted channel for communication.
 
-        @rtype: bool
-        @return: If the current connection is being transmitted
+        :rtype: bool
+        :return: If the current connection is being transmitted
         using a secure and encrypted channel.
         """
 
@@ -1890,11 +1890,11 @@ class ServiceConnection(object):
         """
         Retrieves the connection property for the given name.
 
-        @type property_name: String
-        @param property_name: The name of the property to
+        :type property_name: String
+        :param property_name: The name of the property to
         be retrieved.
-        @rtype: Object
-        @return: The value of the retrieved property.
+        :rtype: Object
+        :return: The value of the retrieved property.
         """
 
         return self.connection_properties.get(property_name, None)
@@ -1904,10 +1904,10 @@ class ServiceConnection(object):
         Sets a connection property, associating the given name
         with the given value.
 
-        @type property_name: String
-        @param property_name: The name of the property to set.
-        @type property_value: Object
-        @param property_value: The value of the property to set.
+        :type property_name: String
+        :param property_name: The name of the property to set.
+        :type property_value: Object
+        :param property_value: The value of the property to set.
         """
 
         self.connection_properties[property_name] = property_value
@@ -1917,8 +1917,8 @@ class ServiceConnection(object):
         Unsets a connection property, removing it from the internal
         structures.
 
-        @type property_name: String
-        @param property_name: The name of the property to unset.
+        :type property_name: String
+        :param property_name: The name of the property to unset.
         """
 
         del self.connection_properties[property_name]
@@ -1928,8 +1928,8 @@ class ServiceConnection(object):
         Adds a chunk of pending data to the pending
         data buffer.
 
-        @type pending_data: String
-        @param pending_data: The pending data to be
+        :type pending_data: String
+        :param pending_data: The pending data to be
         added to the pending data buffer.
         """
 
@@ -1947,8 +1947,8 @@ class ServiceConnection(object):
         "Pops" the current pending data from the
         service connection.
 
-        @rtype: String
-        @return: The current pending data from the
+        :rtype: String
+        :return: The current pending data from the
         service connection (in case there is one).
         """
 
@@ -1967,8 +1967,8 @@ class ServiceConnection(object):
         Checks if there is pending data to be "read"
         or interpreted by the client service.
 
-        @rtype: bool
-        @return: If there is pending data to be "read"
+        :rtype: bool
+        :return: If there is pending data to be "read"
         or interpreted by the client service.
         """
 
@@ -1980,8 +1980,8 @@ class ServiceConnection(object):
         """
         Returns a tuple representing the connection.
 
-        @rtype: Tuple
-        @return: A tuple representing the connection.
+        :rtype: Tuple
+        :return: A tuple representing the connection.
         """
 
         return (
@@ -1994,8 +1994,8 @@ class ServiceConnection(object):
         """
         Retrieves the connection socket.
 
-        @rtype: Socket
-        @return: The connection socket.
+        :rtype: Socket
+        :return: The connection socket.
         """
 
         return self.connection_socket
@@ -2004,8 +2004,8 @@ class ServiceConnection(object):
         """
         Retrieves the connection address.
 
-        @rtype: Tuple
-        @return: The connection address.
+        :rtype: Tuple
+        :return: The connection address.
         """
 
         return self.connection_address
@@ -2014,8 +2014,8 @@ class ServiceConnection(object):
         """
         Retrieves the base connection socket.
 
-        @rtype: Socket
-        @return: The base connection socket.
+        :rtype: Socket
+        :return: The base connection socket.
         """
 
         return self._connection_socket
@@ -2026,14 +2026,14 @@ class ServiceConnection(object):
         given timeout and with a maximum size given by the chunk size.
         This method is not thread safe.
 
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data receiving.
-        @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be received.
-        @type retries: int
-        @param retries: The number of retries to be used.
-        @rtype: String
-        @return: The received data.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data receiving.
+        :type chunk_size: int
+        :param chunk_size: The maximum size of the chunk to be received.
+        :type retries: int
+        :param retries: The number of retries to be used.
+        :rtype: String
+        :return: The received data.
         """
 
         # retrieves the request timeout
@@ -2138,12 +2138,12 @@ class ServiceConnection(object):
         the message.
         This method is not thread safe.
 
-        @type message: String
-        @param message: The message to be sent.
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data sending.
-        @type retries: int
-        @param retries: The number of retries to be used.
+        :type message: String
+        :param message: The message to be sent.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data sending.
+        :type retries: int
+        :param retries: The number of retries to be used.
         """
 
         # retrieves the response timeout
@@ -2227,24 +2227,24 @@ class ServiceConnectionless(ServiceConnection):
         """
         Constructor of the class.
 
-        @type service_plugin: Plugin
-        @param service_plugin: The service plugin.
-        @type service_connection_handler: AbstractServiceConnectionHandler
-        @param service_connection_handler: The service connection handler.
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
-        @type connection_data: String
-        @param connection_data: The connection data.
-        @type connection_request_timeout: float
-        @param connection_request_timeout: The connection request timeout.
-        @type connection_response_timeout: float
-        @param connection_response_timeout: The connection response timeout.
-        @type connection_chunk_size: int
-        @param connection_chunk_size: The connection chunk size.
+        :type service_plugin: Plugin
+        :param service_plugin: The service plugin.
+        :type service_connection_handler: AbstractServiceConnectionHandler
+        :param service_connection_handler: The service connection handler.
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket.
+        :type connection_address: Tuple
+        :param connection_address: The connection address.
+        :type connection_port: int
+        :param connection_port: The connection port.
+        :type connection_data: String
+        :param connection_data: The connection data.
+        :type connection_request_timeout: float
+        :param connection_request_timeout: The connection request timeout.
+        :type connection_response_timeout: float
+        :param connection_response_timeout: The connection response timeout.
+        :type connection_chunk_size: int
+        :param connection_chunk_size: The connection chunk size.
         """
 
         ServiceConnection.__init__(
@@ -2265,8 +2265,8 @@ class ServiceConnectionless(ServiceConnection):
         """
         Receives the data from the current connection socket.
 
-        @rtype: String
-        @return: The received data.
+        :rtype: String
+        :return: The received data.
         """
 
         # returns the connection data
@@ -2276,8 +2276,8 @@ class ServiceConnectionless(ServiceConnection):
         """
         Sends the given message to the socket.
 
-        @type message: String
-        @param message: The message to be sent.
+        :type message: String
+        :param message: The message to be sent.
         """
 
         return self.connection_socket.sendto(message, self.connection_address)
@@ -2288,10 +2288,10 @@ class ServiceConnectionless(ServiceConnection):
         This method controls the connection address to
         be used in sending the message.
 
-        @type message: String
-        @param message: The message to be sent.
-        @type connection_address: Tuple
-        @param connection_address: The connection address tuple to be used.
+        :type message: String
+        :param message: The message to be sent.
+        :type connection_address: Tuple
+        :param connection_address: The connection address tuple to be used.
         """
 
         return self.connection_socket.sendto(message, connection_address)
@@ -2300,8 +2300,8 @@ class ServiceConnectionless(ServiceConnection):
         """
         Returns a tuple representing the connection.
 
-        @rtype: Tuple
-        @return: A tuple representing the connection.
+        :rtype: Tuple
+        :return: A tuple representing the connection.
         """
 
         return (

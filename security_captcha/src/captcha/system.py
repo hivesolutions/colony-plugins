@@ -151,11 +151,11 @@ class Captcha(colony.System):
         Generates a string value with the given number
         of letters.
 
-        @type number_letters: int
-        @param number_letters: The number of letters for the
+        :type number_letters: int
+        :param number_letters: The number of letters for the
         string value to be generated.
-        @rtype: String
-        @return: The generated string value.
+        :rtype: String
+        :return: The generated string value.
         """
 
         # creates the list of letters

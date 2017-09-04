@@ -72,8 +72,8 @@ class PrintingPdfPlugin(colony.Plugin):
         """
         Retrieves the printing name.
 
-        @rtype: String
-        @return: The printing name.
+        :rtype: String
+        :return: The printing name.
         """
 
         return self.system.get_printing_name()

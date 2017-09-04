@@ -56,8 +56,8 @@ class InvalidData(ApiOpenidException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiOpenidException.__init__(self)
@@ -67,8 +67,8 @@ class InvalidData(ApiOpenidException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid data - %s" % self.message
@@ -82,8 +82,8 @@ class ProviderError(ApiOpenidException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiOpenidException.__init__(self)
@@ -93,8 +93,8 @@ class ProviderError(ApiOpenidException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Provider error - %s" % self.message
@@ -108,8 +108,8 @@ class VerificationFailed(ApiOpenidException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiOpenidException.__init__(self)
@@ -119,8 +119,8 @@ class VerificationFailed(ApiOpenidException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Verification failed - %s" % self.message
@@ -134,8 +134,8 @@ class InvalidHashFunction(ApiOpenidException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiOpenidException.__init__(self)
@@ -145,8 +145,8 @@ class InvalidHashFunction(ApiOpenidException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid hash function - %s" % self.message
@@ -160,8 +160,8 @@ class InvalidClaimedId(ApiOpenidException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiOpenidException.__init__(self)
@@ -171,8 +171,8 @@ class InvalidClaimedId(ApiOpenidException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid claimed id - %s" % self.message

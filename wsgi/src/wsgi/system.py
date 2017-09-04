@@ -75,7 +75,7 @@ class Wsgi(colony.System):
     The wsgi class, responsible for the implementation
     of the colony side of the wsgi specification.
 
-    @see: http://www.python.org/dev/peps/pep-0333/
+    :see: http://www.python.org/dev/peps/pep-0333/
     """
 
     def handle(
@@ -193,14 +193,14 @@ class Wsgi(colony.System):
         The retrieved message is set as an undefined encoding string
         and may be used with care to avoid encoding problems.
 
-        @type error: Exception
-        @param error: The exception object to be used in the creation
+        :type error: Exception
+        :param error: The exception object to be used in the creation
         of the message string to be returned.
-        @type code: int
-        @param code: The http status code that should be included in
+        :type code: int
+        :param code: The http status code that should be included in
         the created message default to internal error (500).
-        @rtype: String
-        @return: The constructed error message as a string that represents
+        :rtype: String
+        :return: The constructed error message as a string that represents
         the error that was passed as an argument
         """
 
@@ -234,8 +234,8 @@ class Wsgi(colony.System):
         This method returns a generator and proper usage methods should
         be used to avoid miss-usage.
 
-        @rtype: Generator
-        @return: The sequence containing the the various values/lines of
+        :rtype: Generator
+        :return: The sequence containing the the various values/lines of
         the stack trace associated with the current context.
         """
 
@@ -446,10 +446,10 @@ class WsgiRequest(object):
         """
         Retrieves the attribute from the attributes map.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to retrieve.
-        @rtype: Object
-        @return: The retrieved attribute.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to retrieve.
+        :rtype: Object
+        :return: The retrieved attribute.
         """
 
         return self.attributes_map.get(attribute_name, None)
@@ -460,10 +460,10 @@ class WsgiRequest(object):
         attribute is the http request attribute and the setting takes
         into account a possible duplication of the values.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to be set.
-        @type attribute_value: Object
-        @param attribute_value: The value of the attribute to be set.
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to be set.
+        :type attribute_value: Object
+        :param attribute_value: The value of the attribute to be set.
         """
 
         # in case the attribute name is already defined
@@ -601,7 +601,7 @@ class WsgiRequest(object):
         The processing of multipart is done according the standard
         specifications and rfqs.
 
-        @see: http://en.wikipedia.org/wiki/MIME
+        :see: http://en.wikipedia.org/wiki/MIME
         """
 
         # retrieves the content type header
@@ -698,13 +698,13 @@ class WsgiRequest(object):
         The header that is set is sent to the client after
         the request handling.
 
-        @type header_name: String
-        @param header_name: The name of the header to be set.
-        @type header_value: Object
-        @param header_value: The value of the header to be sent
+        :type header_name: String
+        :param header_name: The name of the header to be set.
+        :type header_value: Object
+        :param header_value: The value of the header to be sent
         in the response.
-        @type encode: bool
-        @param encode: If the header value should be encoded in
+        :type encode: bool
+        :param encode: If the header value should be encoded in
         case the type is unicode.
         """
 
@@ -732,11 +732,11 @@ class WsgiRequest(object):
         This method calls the set header method in case the
         header is not yet defined.
 
-        @type header_name: String
-        @param header_name: The name of the header to be appended
+        :type header_name: String
+        :param header_name: The name of the header to be appended
         with the value.
-        @type header_value: Object
-        @param header_value: The value of the header to be appended
+        :type header_value: Object
+        :param header_value: The value of the header to be appended
         in the response.
         """
 
@@ -760,8 +760,8 @@ class WsgiRequest(object):
         current request, this call may bloc the control (in a
         blocking service).
 
-        @rtype: String
-        @return: The buffer containing the full data (message body)
+        :rtype: String
+        :return: The buffer containing the full data (message body)
         for the current request.
         """
 
@@ -784,16 +784,16 @@ class WsgiRequest(object):
         This method is useful for avoid blocking the request
         handling method in non critic tasks.
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 
@@ -825,8 +825,8 @@ class WsgiRequest(object):
         channel, the verification is made at a connection abstraction
         level (down socket verification).
 
-        @rtype: bool
-        @return: If the current request is being transmitted over a secure
+        :rtype: bool
+        :return: If the current request is being transmitted over a secure
         channel (secure request).
         """
 
@@ -840,8 +840,8 @@ class WsgiRequest(object):
         Retrieves the list of attribute names in the
         current attributes map.
 
-        @rtype: List
-        @return: The list of attribute names in the
+        :rtype: List
+        :return: The list of attribute names in the
         current attributes map.
         """
 
@@ -866,8 +866,8 @@ class WsgiRequest(object):
         This method is an alias to the retrieval of the
         operation type.
 
-        @rtype: String
-        @return: The method used in the current request
+        :rtype: String
+        :return: The method used in the current request
         context.
         """
 
@@ -958,14 +958,14 @@ class WsgiRequest(object):
         alias list, if there's a match at beginning of the string in
         the path info the value is replaced.
 
-        @type path_info: String
-        @param path_info: The path information string containing the
+        :type path_info: String
+        :param path_info: The path information string containing the
         path to be resolved using the alias list.
-        @type alias: List
-        @param alias: The list containing prefix to resolution values
+        :type alias: List
+        :param alias: The list containing prefix to resolution values
         associations that will be used in the resolution.
-        @rtype: String
-        @return: The resolved path string resulting from the resolution
+        :rtype: String
+        :return: The resolved path string resulting from the resolution
         of the path info string according to the provided list.
         """
 
@@ -998,14 +998,14 @@ class WsgiRequest(object):
         based configurations where the front-end server root path
         points to a sub-path on the back-end server.
 
-        @type path_info: String
-        @param path_info: The path information string containing the
+        :type path_info: String
+        :param path_info: The path information string containing the
         path to be shortened using the rewrite list.
-        @type rewrite: List
-        @param rewrite: The list containing prefix to target value
+        :type rewrite: List
+        :param rewrite: The list containing prefix to target value
         association to be used in the shortening operations.
-        @rtype: String
-        @return: The shortened path string resulting from the shortening
+        :rtype: String
+        :return: The shortened path string resulting from the shortening
         of the path info string according to the provided list.
         """
 
@@ -1032,12 +1032,12 @@ class WsgiRequest(object):
         Parses a "part" of the whole multipart content bases on the
         interval of send indexes.
 
-        @type start_index: int
-        @param start_index: The start index of the "part" to be processed.
-        @type end_index: int
-        @param end_index: The end index of the "part" to be processed.
-        @rtype: Tuple
-        @return: A tuple with a map of headers for the "part" and the
+        :type start_index: int
+        :param start_index: The start index of the "part" to be processed.
+        :type end_index: int
+        :param end_index: The end index of the "part" to be processed.
+        :rtype: Tuple
+        :return: A tuple with a map of headers for the "part" and the
         content of the "part", note that the headers value ios going to be
         decoded using the default/set encoding (or content type).
         """
@@ -1079,10 +1079,10 @@ class WsgiRequest(object):
         This method returns a map containing associations of key and value
         of the various content disposition values.
 
-        @type headers_map: Dictionary
-        @param headers_map: The map containing the headers and the values.
-        @rtype: Dictionary
-        @return: The map containing the various disposition values in a map.
+        :type headers_map: Dictionary
+        :param headers_map: The map containing the headers and the values.
+        :rtype: Dictionary
+        :return: The map containing the various disposition values in a map.
         """
 
         # retrieves the content disposition header
@@ -1149,16 +1149,16 @@ class WsgiRequest(object):
         it represents a huge overhead in creation (thread
         creation is slow).
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 

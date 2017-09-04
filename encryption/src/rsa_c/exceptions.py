@@ -56,8 +56,8 @@ class KeyGenerationError(RsaException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         RsaException.__init__(self)
@@ -67,8 +67,8 @@ class KeyGenerationError(RsaException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Key generation error - %s" % self.message

@@ -59,10 +59,10 @@ class FileNotFoundException(ServiceHttpFileException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         ServiceHttpFileException.__init__(self)
@@ -73,8 +73,8 @@ class FileNotFoundException(ServiceHttpFileException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "File not found - %s" % self.message
@@ -91,10 +91,10 @@ class NotImplementedException(ServiceHttpFileException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         ServiceHttpFileException.__init__(self)
@@ -105,8 +105,8 @@ class NotImplementedException(ServiceHttpFileException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Not implemented - %s" % self.message

@@ -55,8 +55,8 @@ class ConsoleDownloader(object):
         """
         Constructor of the class.
 
-        @type downloader_plugin: DownloaderPlugin
-        @param downloader_plugin: The downloader plugin.
+        :type downloader_plugin: DownloaderPlugin
+        :param downloader_plugin: The downloader plugin.
         """
 
         self.downloader_plugin = downloader_plugin
@@ -73,14 +73,14 @@ class ConsoleDownloader(object):
         Processes the download command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the downloader instance

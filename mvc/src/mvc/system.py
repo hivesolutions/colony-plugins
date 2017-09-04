@@ -217,8 +217,8 @@ class Mvc(colony.System):
         Retrieves the list of regular expressions to be used as route,
         to the rest service.
 
-        @rtype: List
-        @return: The list of regular expressions to be used as route,
+        :rtype: List
+        :return: The list of regular expressions to be used as route,
         to the rest service.
         """
 
@@ -236,8 +236,8 @@ class Mvc(colony.System):
         The execution follows a order of resources, communication
         and at last normal (dynamic) handling.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled, this
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be handled, this
         value is going to be encapsulated into an abstract request
         interface to be handled by the underlying mvc services.
         """
@@ -339,8 +339,8 @@ class Mvc(colony.System):
         the correct update of the internal structures of the mvc
         to handling these "new" patterns.
 
-        @type mvc_service_plugin: Plugin
-        @param mvc_service_plugin: The mvc service plugin to be loaded.
+        :type mvc_service_plugin: Plugin
+        :param mvc_service_plugin: The mvc service plugin to be loaded.
         """
 
         # verifies the existence of all the method in the facade of the plugin
@@ -447,8 +447,8 @@ class Mvc(colony.System):
         Any further mvc request should not be able to be handled
         by the plugins's patterns.
 
-        @type mvc_service_plugin: Plugin
-        @param mvc_service_plugin: The mvc service plugin to be unloaded.
+        :type mvc_service_plugin: Plugin
+        :param mvc_service_plugin: The mvc service plugin to be unloaded.
         """
 
         # retrieves the reference to the plugin manager and verifies
@@ -780,10 +780,10 @@ class Mvc(colony.System):
         This is the method that is equivalent to the general concept
         of "dispatching" for the request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be "handled".
-        @type handler_tuple: Tuple
-        @param handler_tuple: The tuple containing the handler method
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be "handled".
+        :type handler_tuple: Tuple
+        :param handler_tuple: The tuple containing the handler method
         and the parameters to be used for handling.
         """
 
@@ -875,8 +875,8 @@ class Mvc(colony.System):
         Processes the given rest request, changing its
         attributes to provide a valid rest request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be "processed".
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be "processed".
         """
 
         # retrieves the rest request status code
@@ -1284,10 +1284,10 @@ class Mvc(colony.System):
         Casts the given value to a tuple,
         converting it if required.
 
-        @type value: Object
-        @param value: The value to be "casted".
-        @rtype: Tuple
-        @return: The casted tuple value.
+        :type value: Object
+        :param value: The value to be "casted".
+        :rtype: Tuple
+        :return: The casted tuple value.
         """
 
         # in case the value is invalid, returns

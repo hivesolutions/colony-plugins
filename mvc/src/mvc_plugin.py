@@ -106,8 +106,8 @@ class MvcPlugin(colony.Plugin):
         Retrieves the list of regular expressions to be used as route,
         to the rest service.
 
-        @rtype: List
-        @return: The list of regular expressions to be used as route,
+        :rtype: List
+        :return: The list of regular expressions to be used as route,
         to the rest service.
         """
 
@@ -117,10 +117,10 @@ class MvcPlugin(colony.Plugin):
         """
         Handles the given rest request.
 
-        @type rest_request: RestRequest
-        @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
+        :type rest_request: RestRequest
+        :param rest_request: The rest request to be handled.
+        :rtype: bool
+        :return: The result of the handling.
         """
 
         return self.system.handle_rest_request(rest_request)

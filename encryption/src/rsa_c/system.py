@@ -74,8 +74,8 @@ class RsaStructure(object):
         """
         Constructor of the class.
 
-        @type keys: Tuple
-        @param keys: Tuple containing the public, private and extra keys.
+        :type keys: Tuple
+        :param keys: Tuple containing the public, private and extra keys.
         """
 
         self.keys = keys
@@ -85,11 +85,11 @@ class RsaStructure(object):
         Generates public, private and extra keys, using
         the given number of bits to generate the keys
 
-        @type number_bits: int
-        @param number_bits: The number of bits to be
+        :type number_bits: int
+        :param number_bits: The number of bits to be
         used in the generated keys.
-        @rtype: Tuple
-        @return: A tuple containing the public, private
+        :rtype: Tuple
+        :return: A tuple containing the public, private
         and extra keys.
         """
 
@@ -143,12 +143,12 @@ class RsaStructure(object):
         """
         Encrypts the given message using the given public key.
 
-        @type message: String
-        @param message: The message to be encrypted.
-        @type public_key: Dictionary
-        @param public_key: The map containing the public key.
-        @rtype: String
-        @return: The encrypted message (cipher).
+        :type message: String
+        :param message: The message to be encrypted.
+        :type public_key: Dictionary
+        :param public_key: The map containing the public key.
+        :rtype: String
+        :return: The encrypted message (cipher).
         """
 
         # retrieves the public key to be used
@@ -174,13 +174,13 @@ class RsaStructure(object):
         """
         Decrypts the given message using the given private key.
 
-        @type encrypted_message: String
-        @param encrypted_message: The encrypted message (cipher) to
+        :type encrypted_message: String
+        :param encrypted_message: The encrypted message (cipher) to
         be decrypted.
-        @type private_key: Dictionary
-        @param private_key: The map containing the private key.
-        @rtype: String
-        @return: The decrypted message.
+        :type private_key: Dictionary
+        :param private_key: The map containing the private key.
+        :rtype: String
+        :return: The decrypted message.
         """
 
         # retrieves the key to be used either from the provided
@@ -225,13 +225,13 @@ class RsaStructure(object):
         keys, in this case private key encrypts the message and the
         public key decrypts it.
 
-        @type message: String
-        @param message: The encrypted message (cipher) to
+        :type message: String
+        :param message: The encrypted message (cipher) to
         be signed.
-        @type private_key: Dictionary
-        @param private_key: The map containing the private key.
-        @rtype: String
-        @return: The signed message encrypted using the provided
+        :type private_key: Dictionary
+        :param private_key: The map containing the private key.
+        :rtype: String
+        :return: The signed message encrypted using the provided
         private key or the locally stored private key.
         """
 
@@ -262,12 +262,12 @@ class RsaStructure(object):
         keys, in this case private key encrypts the message and the
         public key decrypts it.
 
-        @type signed_message: String
-        @param signed_message: The signed message to be verified.
-        @type public_key: Dictionary
-        @param public_key: The map containing the public key.
-        @rtype: String
-        @return: The (original) message, decrypted using the provided
+        :type signed_message: String
+        :param signed_message: The signed message to be verified.
+        :type public_key: Dictionary
+        :param public_key: The map containing the public key.
+        :rtype: String
+        :return: The (original) message, decrypted using the provided
         public key or the locally stored public key.
         """
 
@@ -286,8 +286,8 @@ class RsaStructure(object):
         """
         Returns the keys.
 
-        @rtype: Dictionary
-        @return: The keys.
+        :rtype: Dictionary
+        :return: The keys.
         """
 
         return self.keys
@@ -296,8 +296,8 @@ class RsaStructure(object):
         """
         Sets the keys.
 
-        @type keys: Dictionary
-        @param keys: The keys.
+        :type keys: Dictionary
+        :param keys: The keys.
         """
 
         self.keys = keys
@@ -388,14 +388,14 @@ class RsaStructure(object):
         and modulus values. This is the main encryption step and
         the basis for the rsa cryptosystem.
 
-        @type message: int
-        @param message: The message represented as an integer.
-        @type e_value: int
-        @param e_value: The exponent to be used.
-        @type n_value: int
-        @param n_value: The modulus value.
-        @rtype: int
-        @return: The encrypted message as an integer.
+        :type message: int
+        :param message: The message represented as an integer.
+        :type e_value: int
+        :param e_value: The exponent to be used.
+        :type n_value: int
+        :param n_value: The modulus value.
+        :rtype: int
+        :return: The encrypted message as an integer.
         """
 
         if type(message) == int and not type(message) == colony.legacy.LONG:
@@ -415,11 +415,11 @@ class RsaStructure(object):
         of bits.
         This method is very processor intensive.
 
-        @type number_bits: int
-        @param number_bits: The number of bits to be used
+        :type number_bits: int
+        :param number_bits: The number of bits to be used
         in the keys generation.
-        @rtype: Tuple
-        @return: A tuple containing the various rsa keys.
+        :rtype: Tuple
+        :return: A tuple containing the various rsa keys.
         """
 
         # iterates continuously
@@ -452,14 +452,14 @@ class RsaStructure(object):
         Generates the exponents, using the given p and q prime values
         according to the given number of bits.
 
-        @type p_value: int
-        @param p_value: The p prime value.
-        @type q_value: int
-        @param q_value: The q prime value.
-        @type number_bits: int
-        @param number_bits: The number of bits for the key.
-        @rtype: Tuple
-        @return: A Tuple containing the exponents.
+        :type p_value: int
+        :param p_value: The p prime value.
+        :type q_value: int
+        :param q_value: The q prime value.
+        :type number_bits: int
+        :param number_bits: The number of bits for the key.
+        :rtype: Tuple
+        :return: A Tuple containing the exponents.
         """
 
         # calculates the modulus
@@ -517,11 +517,11 @@ class RsaStructure(object):
         The generation is made according to the number
         of bits defined
 
-        @type number_bits: int
-        @param number_bits: The number of bits to be used in
+        :type number_bits: int
+        :param number_bits: The number of bits to be used in
         prime generation.
-        @rtype: Tuple
-        @return: A tuple containing the two different prime
+        :rtype: Tuple
+        :return: A tuple containing the two different prime
         numbers.
         """
 
@@ -550,11 +550,11 @@ class RsaStructure(object):
         in length. This is a brute force based generation as a
         random number is generated and then tested for primality.
 
-        @type number_bits: int
-        @param number_bits: The number of bits to be used in
+        :type number_bits: int
+        :param number_bits: The number of bits to be used in
         the prime number generation.
-        @rtype: int
-        @return: The generated prime number.
+        :rtype: int
+        :return: The generated prime number.
         """
 
         # iterates continuously, trying to find a large enough
@@ -579,10 +579,10 @@ class RsaStructure(object):
         """
         Tests if the given number is a prime number.
 
-        @type number: int
-        @param number: The number to be tested as prime.
-        @rtype: bool
-        @return: The result of the test.
+        :type number: int
+        :param number: The number to be tested as prime.
+        :rtype: bool
+        :return: The result of the test.
         """
 
         # in case the randomized primality testing fails
@@ -621,12 +621,12 @@ class RsaStructure(object):
         non primality.
         This check is made according to euler's theorem.
 
-        @type x_value: int
-        @param x_value: The value to be checked for witness.
-        @type n_value: int
-        @param n_value: The value to be checked for primality.
-        @rtype: bool
-        @return: The result of the checking.
+        :type x_value: int
+        :param x_value: The value to be checked for witness.
+        :type n_value: int
+        :param n_value: The value to be checked for primality.
+        :rtype: bool
+        :return: The result of the checking.
         """
 
         # calculates the j value from jacobi
@@ -646,12 +646,12 @@ class RsaStructure(object):
         Calculates the value of the jacobi symbol, using the
         given a and b values.
 
-        @type a_value: int
-        @param a_value: The a value.
-        @type b_value: int
-        @param b_value: The b value.
-        @rtype: int
-        @return: The calculated jacobi symbol.
+        :type a_value: int
+        :param a_value: The a value.
+        :type b_value: int
+        :param b_value: The b value.
+        :rtype: int
+        :return: The calculated jacobi symbol.
         """
 
         # in case the modulus of the a value
@@ -690,12 +690,12 @@ class RsaStructure(object):
         Tests if the given values are relative primes
         to each other.
 
-        @type first_value: int
-        @param first_value: The first value to be tested.
-        @type second_value: int
-        @param second_value: The second value to be tested.
-        @rtype: bool
-        @return: The result of the relative prime test.
+        :type first_value: int
+        :param first_value: The first value to be tested.
+        :type second_value: int
+        :param second_value: The second value to be tested.
+        :rtype: bool
+        :return: The result of the relative prime test.
         """
 
         # retrieves the greatest common divisor between the
@@ -842,11 +842,11 @@ class RsaStructure(object):
         size of the provided number bits bits rounded up
         to whole bytes.
 
-        @type number_bits: int
-        @param number_bits: The number of bits of the generated
+        :type number_bits: int
+        :param number_bits: The number of bits of the generated
         random integer.
-        @rtype: int
-        @return: The generated random integer.
+        :rtype: int
+        :return: The generated random integer.
         """
 
         # calculates the number of bytes to represent the number

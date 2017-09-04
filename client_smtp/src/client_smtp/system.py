@@ -86,11 +86,11 @@ class ClientSmtp(colony.System):
         """
         Creates a client object for the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used in creating
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used in creating
         the client object.
-        @rtype: SmtpClient
-        @return: The created client object.
+        :rtype: SmtpClient
+        :return: The created client object.
         """
 
         # creates the smtp client
@@ -126,13 +126,13 @@ class SmtpClient(object):
         """
         Constructor of the class.
 
-        @type client_smtp: ClientSmtp
-        @param client_smtp: The client smtp object.
-        @type protocol_version: String
-        @param protocol_version: The version of the smtp protocol to
+        :type client_smtp: ClientSmtp
+        :param client_smtp: The client smtp object.
+        :type protocol_version: String
+        :param protocol_version: The version of the smtp protocol to
         be used.
-        @type content_type_charset: String
-        @param content_type_charset: The charset to be used by the content.
+        :type content_type_charset: String
+        :param content_type_charset: The charset to be used by the content.
         """
 
         self.client_smtp = client_smtp
@@ -239,16 +239,16 @@ class SmtpClient(object):
         """
         Sends the request for the given parameters.
 
-        @type command: String
-        @param command: The command to be sent.
-        @type message: String
-        @param message: The message to be sent.
-        @type session: SmtpSession
-        @param session: The current smtp session.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the request.
-        @rtype: SmtpRequest
-        @return: The sent request for the given parameters.
+        :type command: String
+        :param command: The command to be sent.
+        :type message: String
+        :param message: The message to be sent.
+        :type session: SmtpSession
+        :param session: The current smtp session.
+        :type parameters: Dictionary
+        :param parameters: The parameters to the request.
+        :rtype: SmtpRequest
+        :return: The sent request for the given parameters.
         """
 
         # creates the smtp request
@@ -276,14 +276,14 @@ class SmtpClient(object):
         """
         Sends the data request for the given parameters.
 
-        @type data: String
-        @param data: The string containing the data to be sent.
-        @type session: SmtpSession
-        @param session: The current smtp session.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the request.
-        @rtype: SmtpRequest
-        @return: The sent request for the given parameters.
+        :type data: String
+        :param data: The string containing the data to be sent.
+        :type session: SmtpSession
+        :param session: The current smtp session.
+        :type parameters: Dictionary
+        :param parameters: The parameters to the request.
+        :rtype: SmtpRequest
+        :return: The sent request for the given parameters.
         """
 
         # creates the smtp request
@@ -305,14 +305,14 @@ class SmtpClient(object):
         """
         Retrieves the response from the sent request.
 
-        @type request: SmtpRequest
-        @param request: The request that originated the response.
-        @type session: SmtpSession
-        @param session: The current smtp session.
-        @type response_timeout: int
-        @param response_timeout: The timeout for the response retrieval.
-        @rtype: SmtpResponse
-        @return: The response from the sent request.
+        :type request: SmtpRequest
+        :param request: The request that originated the response.
+        :type session: SmtpSession
+        :param session: The current smtp session.
+        :type response_timeout: int
+        :param response_timeout: The timeout for the response retrieval.
+        :rtype: SmtpResponse
+        :return: The response from the sent request.
         """
 
         # creates the string buffer for the message
@@ -616,8 +616,8 @@ class SmtpClient(object):
         Retrieves the transaction id, incrementing the
         current transaction id counter.
 
-        @rtype: int
-        @return: The newly generated transaction id.
+        :rtype: int
+        :return: The newly generated transaction id.
         """
 
         # in case the limit is reached
@@ -638,12 +638,12 @@ class SmtpClient(object):
         value for checking. In case of error it raises an exception with the
         given message as prefix.
 
-        @type response: SmtpResponse
-        @param response: The response
-        @type accepted_codes: List
-        @param accepted_codes: The list of accepted codes.
-        @type message: String
-        @param message: The message to be used as base for the exception.
+        :type response: SmtpResponse
+        :param response: The response
+        :type accepted_codes: List
+        :param accepted_codes: The list of accepted codes.
+        :type message: String
+        :param message: The message to be used as base for the exception.
         """
 
         # retrieves the response code
@@ -659,11 +659,11 @@ class SmtpClient(object):
         Retrieves the client parameters map from the base parameters
         map.
 
-        @type parameters: Dictionary
-        @param parameters: The base parameters map to be used to build
+        :type parameters: Dictionary
+        :param parameters: The base parameters map to be used to build
         the final client parameters map.
-        @rtype: Dictionary
-        @return: The client service parameters map.
+        :rtype: Dictionary
+        :return: The client service parameters map.
         """
 
         # creates the default parameters
@@ -722,8 +722,8 @@ class SmtpRequest(object):
         Retrieves the result value, processing
         the current request structure.
 
-        @rtype: String
-        @return: The result value for the current
+        :rtype: String
+        :return: The result value for the current
         request structure.
         """
 
@@ -779,8 +779,8 @@ class SmtpRequest(object):
         """
         Retrieves the message.
 
-        @rtype: String
-        @return: The message.
+        :rtype: String
+        :return: The message.
         """
 
         return self.message
@@ -789,8 +789,8 @@ class SmtpRequest(object):
         """
         Sets the message.
 
-        @type message: String
-        @param message: The message.
+        :type message: String
+        :param message: The message.
         """
 
         self.message = message
@@ -799,8 +799,8 @@ class SmtpRequest(object):
         """
         Retrieves the command.
 
-        @rtype: String
-        @return: The command.
+        :rtype: String
+        :return: The command.
         """
 
         return self.command
@@ -809,8 +809,8 @@ class SmtpRequest(object):
         """
         Sets the code.
 
-        @type command: String
-        @param command: The command.
+        :type command: String
+        :param command: The command.
         """
 
         self.command = command
@@ -819,8 +819,8 @@ class SmtpRequest(object):
         """
         Retrieves the messages.
 
-        @rtype: List
-        @return: The messages.
+        :rtype: List
+        :return: The messages.
         """
 
         return self.messages
@@ -829,8 +829,8 @@ class SmtpRequest(object):
         """
         Sets the messages.
 
-        @type messages: List
-        @param messages: The messages.
+        :type messages: List
+        :param messages: The messages.
         """
 
         self.messages = messages
@@ -839,8 +839,8 @@ class SmtpRequest(object):
         """
         Retrieves the session.
 
-        @rtype: Session
-        @return: The session.
+        :rtype: Session
+        :return: The session.
         """
 
         return self.session
@@ -849,8 +849,8 @@ class SmtpRequest(object):
         """
         Sets the session.
 
-        @type session: Session
-        @param session: The session.
+        :type session: Session
+        :param session: The session.
         """
 
         self.session = session
@@ -859,8 +859,8 @@ class SmtpRequest(object):
         """
         Retrieves the properties.
 
-        @rtype: Dictionary
-        @return: The properties.
+        :rtype: Dictionary
+        :return: The properties.
         """
 
         return self.properties
@@ -869,8 +869,8 @@ class SmtpRequest(object):
         """
         Sets the properties.
 
-        @type properties: Dictionary
-        @param properties: The properties.
+        :type properties: Dictionary
+        :param properties: The properties.
         """
 
         self.properties = properties
@@ -917,8 +917,8 @@ class SmtpResponse(object):
         """
         Adds a message to the list of messages.
 
-        @type message: String
-        @param message: The message to be added to the list
+        :type message: String
+        :param message: The message to be added to the list
         of messages.
         """
 
@@ -928,8 +928,8 @@ class SmtpResponse(object):
         """
         Retrieves the request.
 
-        @rtype: SmtpRequest
-        @return: The request.
+        :rtype: SmtpRequest
+        :return: The request.
         """
 
         return self.request
@@ -938,8 +938,8 @@ class SmtpResponse(object):
         """
         Sets the request.
 
-        @type request: SmtpRequest
-        @param request:  The request.
+        :type request: SmtpRequest
+        :param request:  The request.
         """
 
         self.request = request
@@ -948,8 +948,8 @@ class SmtpResponse(object):
         """
         Retrieves the message.
 
-        @rtype: String
-        @return: The message.
+        :rtype: String
+        :return: The message.
         """
 
         return self.message
@@ -958,8 +958,8 @@ class SmtpResponse(object):
         """
         Sets the message.
 
-        @type message: String
-        @param message: The message.
+        :type message: String
+        :param message: The message.
         """
 
         self.message = message
@@ -968,8 +968,8 @@ class SmtpResponse(object):
         """
         Retrieves the messages.
 
-        @rtype: List
-        @return: The messages.
+        :rtype: List
+        :return: The messages.
         """
 
         return self.messages
@@ -978,8 +978,8 @@ class SmtpResponse(object):
         """
         Sets the messages.
 
-        @type messages: List
-        @param messages: The messages.
+        :type messages: List
+        :param messages: The messages.
         """
 
         self.messages = messages
@@ -988,8 +988,8 @@ class SmtpResponse(object):
         """
         Retrieves the code.
 
-        @rtype: int
-        @return: The code.
+        :rtype: int
+        :return: The code.
         """
 
         return self.code
@@ -998,8 +998,8 @@ class SmtpResponse(object):
         """
         Sets the code.
 
-        @type code: int
-        @param code: The code.
+        :type code: int
+        :param code: The code.
         """
 
         self.code = code
@@ -1008,8 +1008,8 @@ class SmtpResponse(object):
         """
         Retrieves the session.
 
-        @rtype: Session
-        @return: The session.
+        :rtype: Session
+        :return: The session.
         """
 
         return self.session
@@ -1018,8 +1018,8 @@ class SmtpResponse(object):
         """
         Sets the session.
 
-        @type session: Session
-        @param session: The session.
+        :type session: Session
+        :param session: The session.
         """
 
         self.session = session
@@ -1028,8 +1028,8 @@ class SmtpResponse(object):
         """
         Retrieves the properties.
 
-        @rtype: Dictionary
-        @return: The properties.
+        :rtype: Dictionary
+        :return: The properties.
         """
 
         return self.properties
@@ -1038,8 +1038,8 @@ class SmtpResponse(object):
         """
         Sets the properties.
 
-        @type properties: Dictionary
-        @param properties: The properties.
+        :type properties: Dictionary
+        :param properties: The properties.
         """
 
         self.properties = properties
@@ -1095,8 +1095,8 @@ class SmtpSession(object):
         Adds a message to the list of messages
         of the current session.
 
-        @type message: SmtpMessage
-        @param message: The message to be added
+        :type message: SmtpMessage
+        :param message: The message to be added
         to the session.
         """
 
@@ -1106,8 +1106,8 @@ class SmtpSession(object):
         """
         Retrieves the client hostname.
 
-        @rtype: String
-        @return: The client hostname.
+        :rtype: String
+        :return: The client hostname.
         """
 
         return self.client_hostname
@@ -1116,8 +1116,8 @@ class SmtpSession(object):
         """
         Sets the client hostname.
 
-        @type client_hostname: String
-        @param client_hostname: The client hostname.
+        :type client_hostname: String
+        :param client_hostname: The client hostname.
         """
 
         self.client_hostname = client_hostname
@@ -1126,8 +1126,8 @@ class SmtpSession(object):
         """
         Retrieves the extensions active.
 
-        @rtype: bool
-        @return: The extensions active.
+        :rtype: bool
+        :return: The extensions active.
         """
 
         return self.extensions_active
@@ -1136,8 +1136,8 @@ class SmtpSession(object):
         """
         Sets the extensions active.
 
-        @type extensions_active: bool
-        @param extensions_active: The extensions active.
+        :type extensions_active: bool
+        :param extensions_active: The extensions active.
         """
 
         self.extensions_active = extensions_active
@@ -1146,8 +1146,8 @@ class SmtpSession(object):
         """
         Retrieves the data transmission.
 
-        @rtype: bool
-        @return: The data transmission.
+        :rtype: bool
+        :return: The data transmission.
         """
 
         return self.data_transmission
@@ -1156,8 +1156,8 @@ class SmtpSession(object):
         """
         Sets the data transmission.
 
-        @type data_transmission: bool
-        @param data_transmission: The data transmission.
+        :type data_transmission: bool
+        :param data_transmission: The data transmission.
         """
 
         self.data_transmission = data_transmission
@@ -1166,8 +1166,8 @@ class SmtpSession(object):
         """
         Retrieves the closed.
 
-        @rtype: bool
-        @return: The closed.
+        :rtype: bool
+        :return: The closed.
         """
 
         return self.closed
@@ -1176,8 +1176,8 @@ class SmtpSession(object):
         """
         Sets the closed.
 
-        @type closed: bool
-        @param closed: The closed.
+        :type closed: bool
+        :param closed: The closed.
         """
 
         self.closed = closed
@@ -1186,8 +1186,8 @@ class SmtpSession(object):
         """
         Retrieves the current message.
 
-        @rtype: SmtpMessage
-        @return: The current message.
+        :rtype: SmtpMessage
+        :return: The current message.
         """
 
         return self.current_message
@@ -1196,8 +1196,8 @@ class SmtpSession(object):
         """
         Sets the current message.
 
-        @type current_message: SmtpMessage
-        @param current_message: The current message.
+        :type current_message: SmtpMessage
+        :param current_message: The current message.
         """
 
         self.current_message = current_message
@@ -1206,8 +1206,8 @@ class SmtpSession(object):
         """
         Retrieves the messages.
 
-        @rtype: List
-        @return: The messages.
+        :rtype: List
+        :return: The messages.
         """
 
         return self.messages
@@ -1216,8 +1216,8 @@ class SmtpSession(object):
         """
         Sets the messages.
 
-        @type messages: List
-        @param messages: The messages.
+        :type messages: List
+        :param messages: The messages.
         """
 
         self.messages = messages
@@ -1226,8 +1226,8 @@ class SmtpSession(object):
         """
         Retrieves the properties.
 
-        @rtype: Dictionary
-        @return: The properties.
+        :rtype: Dictionary
+        :return: The properties.
         """
 
         return self.properties
@@ -1236,8 +1236,8 @@ class SmtpSession(object):
         """
         Sets the properties.
 
-        @type properties: Dictionary
-        @param properties: The properties.
+        :type properties: Dictionary
+        :param properties: The properties.
         """
 
         self.properties = properties
@@ -1268,8 +1268,8 @@ class SmtpMessage(object):
         """
         Adds a recipient to the recipients list
 
-        @type recipient: String
-        @param recipient: The recipient to be added.
+        :type recipient: String
+        :param recipient: The recipient to be added.
         """
 
         self.recipients_list.append(recipient)
@@ -1278,8 +1278,8 @@ class SmtpMessage(object):
         """
         Retrieves the contents.
 
-        @rtype: String
-        @return: The contents.
+        :rtype: String
+        :return: The contents.
         """
 
         return self.contents
@@ -1288,8 +1288,8 @@ class SmtpMessage(object):
         """
         Sets the contents.
 
-        @type contents: String
-        @param contents: The contents.
+        :type contents: String
+        :param contents: The contents.
         """
 
         self.contents = contents
@@ -1298,8 +1298,8 @@ class SmtpMessage(object):
         """
         Retrieves the .
 
-        @rtype: String
-        @return: The sender.
+        :rtype: String
+        :return: The sender.
         """
 
         return self.sender
@@ -1308,8 +1308,8 @@ class SmtpMessage(object):
         """
         Sets the sender.
 
-        @type sender: String
-        @param sender: The sender.
+        :type sender: String
+        :param sender: The sender.
         """
 
         self.sender = sender
@@ -1318,8 +1318,8 @@ class SmtpMessage(object):
         """
         Retrieves the recipients list.
 
-        @rtype: List
-        @return: The recipients list.
+        :rtype: List
+        :return: The recipients list.
         """
 
         return self.recipients_list
@@ -1328,8 +1328,8 @@ class SmtpMessage(object):
         """
         Sets the recipients list.
 
-        @type recipients_list: List
-        @param recipients_list: The recipients list.
+        :type recipients_list: List
+        :param recipients_list: The recipients list.
         """
 
         self.recipients_list = recipients_list

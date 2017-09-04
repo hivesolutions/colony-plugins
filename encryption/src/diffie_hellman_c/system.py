@@ -83,10 +83,10 @@ class DiffieHellmanStructure(object):
         """
         Constructor of the class.
 
-        @type p_value: int
-        @param p_value: The "p" (prime number) value.
-        @type g_value: int
-        @param g_value: The "g" value.
+        :type p_value: int
+        :param p_value: The "p" (prime number) value.
+        :type g_value: int
+        :param g_value: The "g" value.
         """
 
         self.p_value = p_value
@@ -97,8 +97,8 @@ class DiffieHellmanStructure(object):
         Generates the "A" value to be sent to the "second"
         party of the communication.
 
-        @rtype: int
-        @return: The generated "A" value.
+        :rtype: int
+        :return: The generated "A" value.
         """
 
         return pow(self.g_value, self.a_value, self.p_value)
@@ -108,8 +108,8 @@ class DiffieHellmanStructure(object):
         Generates the "B" value to be sent to the "first"
         party of the communication.
 
-        @rtype: int
-        @return: The generated "B" value.
+        :rtype: int
+        :return: The generated "B" value.
         """
 
         return pow(self.g_value, self.b_value, self.p_value)
@@ -118,8 +118,8 @@ class DiffieHellmanStructure(object):
         """
         Calculates the secret "K" value for the first party.
 
-        @rtype: int
-        @return: The calculated secret "K" value.
+        :rtype: int
+        :return: The calculated secret "K" value.
         """
 
         return pow(self.B_value, self.a_value, self.p_value)
@@ -128,8 +128,8 @@ class DiffieHellmanStructure(object):
         """
         Calculates the secret "K" value for the second party.
 
-        @rtype: int
-        @return: The calculated secret "K" value.
+        :rtype: int
+        :return: The calculated secret "K" value.
         """
 
         return pow(self.A_value, self.b_value, self.p_value)
@@ -138,8 +138,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "a" value.
 
-        @rtype: int
-        @return: The "a" value.
+        :rtype: int
+        :return: The "a" value.
         """
 
         return self.a_value
@@ -148,8 +148,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "a" value.
 
-        @type a_value: int
-        @param a_value: The "a" value.
+        :type a_value: int
+        :param a_value: The "a" value.
         """
 
         self.a_value = a_value
@@ -158,8 +158,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "b" value.
 
-        @rtype: int
-        @return: The "b" value.
+        :rtype: int
+        :return: The "b" value.
         """
 
         return self.b_value
@@ -168,8 +168,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "b" value.
 
-        @type b_value: int
-        @param b_value: The "b" value.
+        :type b_value: int
+        :param b_value: The "b" value.
         """
 
         self.b_value = b_value
@@ -178,8 +178,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "A" value.
 
-        @rtype: int
-        @return: The "A" value.
+        :rtype: int
+        :return: The "A" value.
         """
 
         return self.A_value
@@ -188,8 +188,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "A" value.
 
-        @type A_value: int
-        @param A_value: The "A" value.
+        :type A_value: int
+        :param A_value: The "A" value.
         """
 
         self.A_value = A_value
@@ -198,8 +198,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "B" value.
 
-        @rtype: int
-        @return: The "B" value.
+        :rtype: int
+        :return: The "B" value.
         """
 
         return self.B_value
@@ -208,8 +208,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "B" value.
 
-        @type B_value: int
-        @param B_value: The "B" value.
+        :type B_value: int
+        :param B_value: The "B" value.
         """
 
         self.B_value = B_value
@@ -218,8 +218,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "p" value.
 
-        @rtype: int
-        @return: The "p" value.
+        :rtype: int
+        :return: The "p" value.
         """
 
         return self.p_value
@@ -228,8 +228,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "p" value.
 
-        @type p_value: int
-        @param p_value: The "p" value.
+        :type p_value: int
+        :param p_value: The "p" value.
         """
 
         self.p_value = p_value
@@ -238,8 +238,8 @@ class DiffieHellmanStructure(object):
         """
         Retrieves the "g" value.
 
-        @rtype: int
-        @return: The "g" value.
+        :rtype: int
+        :return: The "g" value.
         """
 
         return self.g_value
@@ -248,8 +248,8 @@ class DiffieHellmanStructure(object):
         """
         Sets the "g" value.
 
-        @type g_value: int
-        @param g_value: The "g" value.
+        :type g_value: int
+        :param g_value: The "g" value.
         """
 
         self.g_value = g_value

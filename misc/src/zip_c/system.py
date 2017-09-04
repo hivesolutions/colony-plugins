@@ -58,10 +58,10 @@ class Zip(colony.System):
         """
         Returns a list with the paths to the directories contained in the specified zip file.
 
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of directory paths.
+        :type path: String
+        :param path: Path to the zip file.
+        :rtype: List
+        :return: List of directory paths.
         """
 
         def length_sorter(first_string, second_string):
@@ -69,12 +69,12 @@ class Zip(colony.System):
             Sorter function that takes into account the
             length of the string.
 
-            @type first_string: String
-            @param first_string: The first string to be compared.
-            @type second_string: String
-            @param second_string: The second string to be compared.
-            @rtype: int
-            @return: The result of the comparison.
+            :type first_string: String
+            :param first_string: The first string to be compared.
+            :type second_string: String
+            :param second_string: The second string to be compared.
+            :rtype: int
+            :return: The result of the comparison.
             """
 
             # returns the result of the comparison of string
@@ -140,10 +140,10 @@ class Zip(colony.System):
         """
         Indicates if the path is pointing to a file.
 
-        @type path: String
-        @param path: File system path.
-        @rtype: bool
-        @return: Boolean indicating if the path is pointing to a file.
+        :type path: String
+        :param path: File system path.
+        :rtype: bool
+        :return: Boolean indicating if the path is pointing to a file.
         """
 
         # splits the path over the slash token
@@ -156,10 +156,10 @@ class Zip(colony.System):
         """
         Returns a list with the paths to the files contained in the specified zip file.
 
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of file paths.
+        :type path: String
+        :param path: Path to the zip file.
+        :rtype: List
+        :return: List of file paths.
         """
 
         def length_sorter(first_string, second_string):
@@ -167,12 +167,12 @@ class Zip(colony.System):
             Sorter function that takes into account the
             length of the string.
 
-            @type first_string: String
-            @param first_string: The first string to be compared.
-            @type second_string: String
-            @param second_string: The second string to be compared.
-            @rtype: int
-            @return: The result of the comparison.
+            :type first_string: String
+            :param first_string: The first string to be compared.
+            :type second_string: String
+            :param second_string: The second string to be compared.
+            :rtype: int
+            :return: The result of the comparison.
             """
 
             # returns the result of the comparison of string
@@ -217,10 +217,10 @@ class Zip(colony.System):
         """
         Creates the directory structure contained in the specified zip file.
 
-        @type file_path: String
-        @param file_path: Full path to the zip file.
-        @type root_directory_path: String
-        @param root_directory_path: Full path to the place where the directory structure will be created.
+        :type file_path: String
+        :param file_path: Full path to the zip file.
+        :type root_directory_path: String
+        :param root_directory_path: Full path to the place where the directory structure will be created.
         """
 
         # retrieves the directory paths list from the file path
@@ -263,10 +263,10 @@ class Zip(colony.System):
         """
         Extracts the files contained in the specified zip file.
 
-        @type file_path: String
-        @param file_path: Full path to the zip file.
-        @type root_directory_path: String
-        @param root_directory_path: Full path to the place where the files will be extracted to.
+        :type file_path: String
+        :param file_path: Full path to the zip file.
+        :type root_directory_path: String
+        :param root_directory_path: Full path to the place where the files will be extracted to.
         """
 
         # opens the zip file for the given file path
@@ -319,13 +319,13 @@ class Zip(colony.System):
         Reads a file from the zip file in the given path.
         The contents of the file are returned.
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type file_name: String
-        @param file_name: The name of the file to retrieve
+        :type zip_file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :type file_name: String
+        :param file_name: The name of the file to retrieve
         the contents.
-        @rtype: String
-        @return: The file that has been read.
+        :rtype: String
+        :return: The file that has been read.
         """
 
         # opens the zip file for the given file path
@@ -345,12 +345,12 @@ class Zip(colony.System):
         """
         Compresses the contents of the provided directory into a zip file.
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type input_directory: String
-        @param input_directory: Full path to the directory one wants to compress.
-        @type file_path_list: List
-        @param file_path_list: Optional list of paths to the files one wants to zip.
+        :type zip_file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :type input_directory: String
+        :param input_directory: Full path to the directory one wants to compress.
+        :type file_path_list: List
+        :param file_path_list: Optional list of paths to the files one wants to zip.
         """
 
         # retrieves the absolute paths for both
@@ -401,10 +401,10 @@ class Zip(colony.System):
         """
         Extracts a zip file to the specified directory.
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type output_directory: String
-        @param output_directory: Full path to the directory where one wants to extract the zip file to.
+        :type zip_file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :type output_directory: String
+        :param output_directory: Full path to the directory where one wants to extract the zip file to.
         """
 
         # retrieves the zip file absolute path
@@ -429,10 +429,10 @@ class Zip(colony.System):
         Retrieves the names that exist in the specified
         zip file.
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @rtype: List
-        @return: The list of names for the specified zip file.
+        :type zip_file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :rtype: List
+        :return: The list of names for the specified zip file.
         """
 
         # retrieves the absolute paths for the
@@ -456,12 +456,12 @@ def get_file_paths(path, returned_path_list = None):
     """
     Returns a list with full paths to all files contained within the specified directory.
 
-    @type path: String
-    @param path: The root path from which all file paths will be retrieved.
-    @type returned_path_list: List
-    @param returned_path_list: The list where all the paths will be stored (used in recursive calls).
-    @rtype: List
-    @return: A list of absolute file paths.
+    :type path: String
+    :param path: The root path from which all file paths will be retrieved.
+    :type returned_path_list: List
+    :param returned_path_list: The list where all the paths will be stored (used in recursive calls).
+    :rtype: List
+    :return: A list of absolute file paths.
     """
 
     # in case the returned path list is not defined

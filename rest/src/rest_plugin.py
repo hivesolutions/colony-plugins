@@ -93,8 +93,8 @@ class RestPlugin(colony.Plugin):
         """
         Tests if the service is active.
 
-        @rtype: bool
-        @return: If the service is active.
+        :rtype: bool
+        :return: If the service is active.
         """
 
         return self.system.is_active()
@@ -103,8 +103,8 @@ class RestPlugin(colony.Plugin):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return self.system.get_handler_name()
@@ -113,8 +113,8 @@ class RestPlugin(colony.Plugin):
         """
         Retrieves the handler port.
 
-        @rtype: int
-        @return: The handler port.
+        :rtype: int
+        :return: The handler port.
         """
 
         return self.system.get_handler_port()
@@ -123,8 +123,8 @@ class RestPlugin(colony.Plugin):
         """
         Retrieves the handler properties.
 
-        @rtype: Dictionary
-        @return: The handler properties.
+        :rtype: Dictionary
+        :return: The handler properties.
         """
 
         return self.system.get_handler_properties()

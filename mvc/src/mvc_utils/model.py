@@ -147,21 +147,21 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     the control of the behavior for the apply operation on
     the model in response to an undefined value.
 
-    @type request: Request
-    @param request: The request to be used in the context
+    :type request: Request
+    :param request: The request to be used in the context
     of the current model, it should enable access to session attributes.
-    @type map: Dictionary
-    @param map: The map of "form" options to be used to create
+    :type map: Dictionary
+    :param map: The map of "form" options to be used to create
     the new model instance.
-    @type permissive: bool
-    @param permissive: If the apply operation should be done using
+    :type permissive: bool
+    :param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
-    @type apply: bool
-    @param apply: If the current data in the request should be
+    :type apply: bool
+    :param apply: If the current data in the request should be
     "automatically" applied to the current model using the various
     strategies defined in the model associated with the current request.
-    @rtype: Model
-    @return: The newly created model with the attributes already
+    :rtype: Model
+    :return: The newly created model with the attributes already
     "populated" with the map contents.
     """
 
@@ -215,17 +215,17 @@ def _class_niw(cls, request = None, map = None, permissive = False):
     This ensures a direct usage without the explicit setting of the apply
     flag, so that a minimal usage is allowed (less coder).
 
-    @type request: Request
-    @param request: The request to be used in the context
+    :type request: Request
+    :param request: The request to be used in the context
     of the current model, it should enable access to session attributes.
-    @type map: Dictionary
-    @param map: The map of "form" options to be used to create
+    :type map: Dictionary
+    :param map: The map of "form" options to be used to create
     the new model instance.
-    @type permissive: bool
-    @param permissive: If the apply operation should be done using
+    :type permissive: bool
+    :param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
-    @rtype: Model
-    @return: The newly created model with the attributes already
+    :rtype: Model
+    :return: The newly created model with the attributes already
     "populated" with the map contents.
     """
 
@@ -239,8 +239,8 @@ def _class_get_system(cls):
     instance, and you should used this one to retrieve the absolute
     related system instance, avoiding problems with inheritance.
 
-    @rtype: Object
-    @return: The system instance associated with the current
+    :rtype: Object
+    :return: The system instance associated with the current
     model class.
     """
 
@@ -254,8 +254,8 @@ def _class_get_plugin(cls):
     instance, and you should used this one to retrieve the absolute
     related system instance, avoiding problems with inheritance.
 
-    @rtype: Plugin
-    @return: The plugin instance associated with the current
+    :rtype: Plugin
+    :return: The plugin instance associated with the current
     model class.
     """
 
@@ -271,11 +271,11 @@ def _class_get_controller_g(cls, request):
     This is the global method equivalent to the instance
     method of the same name.
 
-    @type request: Request
-    @param request: The request that is going to be
+    :type request: Request
+    :param request: The request that is going to be
     used to try to retrieve the controller.
-    @rtype: Controller
-    @return: The controller retrieved from the provided context,
+    :rtype: Controller
+    :return: The controller retrieved from the provided context,
     this value may be unset in case it was not possible to retrieve
     the controller from the current environment/context.
     """
@@ -291,16 +291,16 @@ def _class_get_context_attribute_g(cls, name, context_request, namespace_name = 
     The method is oriented towards defaulting to invalid values, so
     if no value is found an invalid value is returned.
 
-    @type name: String
-    @param name: The name of the context attribute to be retrieved.
-    @type context_request: Request
-    @param context_request: The request to be used for the
+    :type name: String
+    :param name: The name of the context attribute to be retrieved.
+    :type context_request: Request
+    :param context_request: The request to be used for the
     retrieval of the context to be used in attribute retrieval.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used in the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used in the
     context session attribute retrieval, avoids domain name collision.
-    @rtype: Object
-    @return: The retrieves context attribute that may assume any valid
+    :rtype: Object
+    :return: The retrieves context attribute that may assume any valid
     data type.
     """
 
@@ -328,11 +328,11 @@ def _class_get_resource_path(cls, resource_path):
     This method assumes that there is a plugin associated with
     the owner system instance and uses it as reference.
 
-    @type resource_path: String
-    @param resource_path: The (relative) path to the resource
+    :type resource_path: String
+    :param resource_path: The (relative) path to the resource
     to be used for complete path resolution.
-    @rtype: String
-    @return: The complete (and resolved) path to the resource
+    :rtype: String
+    :return: The complete (and resolved) path to the resource
     identified by the provided relative path.
     """
 
@@ -372,11 +372,11 @@ def apply(self, map, permissive = False):
     An optional permissive flag may be set in order to allow undefined
     values to be ignored (avoiding exception raising).
 
-    @type map: Dictionary
-    @param map: The map containing the various "form" values to be used
+    :type map: Dictionary
+    :param map: The map containing the various "form" values to be used
     to "apply" the values in the model.
-    @type permissive: bool
-    @param permissive: If the apply algorithm operation should be
+    :type permissive: bool
+    :param permissive: If the apply algorithm operation should be
     permissive in the sense of ignoring attributes that are not
     defined in the respective entity models.
     """
@@ -539,8 +539,8 @@ def get_system(self):
     reference that can be used to retrieve the plugin
     internal state and global data reference.
 
-    @rtype: Object
-    @return: The system instance associated with the current
+    :rtype: Object
+    :return: The system instance associated with the current
     entity model.
     """
 
@@ -552,8 +552,8 @@ def get_plugin(self):
     reference that can be used to retrieve the plugin
     internal state and global data reference.
 
-    @rtype: Object
-    @return: The plugin instance associated with the current
+    :rtype: Object
+    :return: The plugin instance associated with the current
     entity model.
     """
 
@@ -566,11 +566,11 @@ def get_attribute_name(self, attribute_name):
     The attribute is retrieved using a composite approach
     and the name is separated by dots.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute
     to be retrieved.
-    @rtype: Object
-    @return: The attribute for the given attribute name.
+    :rtype: Object
+    :return: The attribute for the given attribute name.
     """
 
     # splits the attribute name into tokens
@@ -592,11 +592,11 @@ def dumps(self, serializer):
     Serializes (dumps) the current object with
     the given serializer object.
 
-    @type serializer: Serializer
-    @param serializer: The serializer object to be used
+    :type serializer: Serializer
+    :param serializer: The serializer object to be used
     to serialize the current object.
-    @rtype: String
-    @return: The serialized value.
+    :rtype: String
+    :return: The serialized value.
     """
 
     # serializes the object (dumps)
@@ -610,11 +610,11 @@ def loads(self, serializer, data):
     Unserializes (loads) converting and loading
     the given data into the current object.
 
-    @type serializer: Serializer
-    @param serializer: The serializer object to be used
+    :type serializer: Serializer
+    :param serializer: The serializer object to be used
     to unserialize the given data.
-    @rtype: String
-    @return: The serialized data to be loaded.
+    :rtype: String
+    :return: The serialized data to be loaded.
     """
 
     # unserializes the data (loads)
@@ -632,11 +632,11 @@ def _load_value(self, key, value):
     Loads the value with the given key in the
     current object.
 
-    @type key: String
-    @param key: The key to be used to refer to the value
+    :type key: String
+    :param key: The key to be used to refer to the value
     in the current object.
-    @type value: Object
-    @param value: The value to be set in the current object.
+    :type value: Object
+    :param value: The value to be set in the current object.
     """
 
     # in case the current object does not contain
@@ -652,10 +652,10 @@ def is_lazy_loaded(self, attribute_name):
     Indicates if the specified attribute
     is lazy loaded.
 
-    @type attribute_name: String
-    @param attribute_name: The attribute name.
-    @rtype: bool
-    @return: The lazy loaded flag.
+    :type attribute_name: String
+    :param attribute_name: The attribute name.
+    :rtype: bool
+    :return: The lazy loaded flag.
     """
 
     # sets the lazy loaded flag in case
@@ -715,14 +715,14 @@ def get_session_attribute(
     with the given name and for the given namespace.
     Optionally it may be unset from session after retrieval.
 
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be retrieved.
-    @type unset_session_attribute: bool
-    @param unset_session_attribute: If the session attribute should
+    :type unset_session_attribute: bool
+    :param unset_session_attribute: If the session attribute should
     be unset after retrieval.
-    @rtype: Object
-    @return The retrieved session attribute.
+    :rtype: Object
+    :return The retrieved session attribute.
     """
 
     # retrieves the currently available request to try
@@ -760,14 +760,14 @@ def set_session_attribute(
     with the given name and for the given namespace.
     The session attribute value may be of any type.
 
-    @type session_attribute_name: String
-    @param session_attribute_name: The name of the session
+    :type session_attribute_name: String
+    :param session_attribute_name: The name of the session
     attribute to be set.
-    @type session_attribute_value: Object
-    @param session_attribute_value: The value of the session
+    :type session_attribute_value: Object
+    :param session_attribute_value: The value of the session
     attribute to be set.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be set.
     """
 
@@ -797,11 +797,11 @@ def unset_session_attribute(self, session_attribute_name, namespace_name = None)
     Unsets the session attribute from the current request
     with the given name and for the given namespace.
 
-    @type session_attribute_name: String
-    @param session_attribute_name: The name of the session
+    :type session_attribute_name: String
+    :param session_attribute_name: The name of the session
     attribute to be unset.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be unset.
     """
 
@@ -829,11 +829,11 @@ def get_controller(self, request):
     to an invalid (unset)  value in case no controller was
     found for the current environment.
 
-    @type request: Request
-    @param request: The request that is going to be
+    :type request: Request
+    :param request: The request that is going to be
     used to try to retrieve the controller.
-    @rtype: Controller
-    @return: The controller retrieved from the provided context,
+    :rtype: Controller
+    :return: The controller retrieved from the provided context,
     this value may be unset in case it was not possible to retrieve
     the controller from the current environment/context.
     """
@@ -848,14 +848,14 @@ def get_context_attribute(self, context_name, namespace_name = None):
 
     In case no attribute is found a none value is returned.
 
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to retrieve the value.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be retrieved.
-    @rtype: Object
-    @return:  The value of the requested context attribute.
+    :rtype: Object
+    :return:  The value of the requested context attribute.
     """
 
     # retrieves the context defaulting to a new and empty map
@@ -876,13 +876,13 @@ def set_context_attribute(self, context_name, context_value, override = True, na
     possible to override an already present context value
     with the same name (conflict resolution).
 
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to set the value.
-    @type context_value: Obejct
-    @param context_value: The value to be set fot the attribute.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type context_value: Obejct
+    :param context_value: The value to be set fot the attribute.
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be updated.
     """
 
@@ -904,11 +904,11 @@ def unset_context_attribute(self, context_name, namespace_name = None):
     This operation should remove any reference to the context
     attribute in the current session
 
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to be unset.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be updated.
     """
 
@@ -941,17 +941,17 @@ def add_validation(
     arguments, keep in mind that only one type of argument providing is
     allowed (can only use properties or kwargs).
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to "receive" the validation.
-    @type validation_method_name: String
-    @param validation_method_name: The name of the validation method to be added to the attribute.
-    @type validate_null: bool
-    @param validate_null: If the validation method should be applied to
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to "receive" the validation.
+    :type validation_method_name: String
+    :param validation_method_name: The name of the validation method to be added to the attribute.
+    :type validate_null: bool
+    :param validate_null: If the validation method should be applied to
     null attribute values.
-    @type properties: Dictionary
-    @param properties: The properties of the adding of the validation method.
-    @type contexts: Tuple
-    @param contexts: The (validation) contexts for which the the validation
+    :type properties: Dictionary
+    :param properties: The properties of the adding of the validation method.
+    :type contexts: Tuple
+    :param contexts: The (validation) contexts for which the the validation
     method should be applied.
     """
 
@@ -997,17 +997,17 @@ def add_custom_validation(
     This method should be used carefully and should be considered a secondary
     resource for attribute validation.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to "receive" the validation.
-    @type validation_method: Function
-    @param validation_method: The the validation method to be added to the attribute.
-    @type validate_null: bool
-    @param validate_null: If the validation method should be applied to
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to "receive" the validation.
+    :type validation_method: Function
+    :param validation_method: The the validation method to be added to the attribute.
+    :type validate_null: bool
+    :param validate_null: If the validation method should be applied to
     null attribute values.
-    @type properties: Dictionary
-    @param properties: The properties of the adding of the validation method.
-    @type contexts: Tuple
-    @param contexts: The (validation) contexts for which the the validation
+    :type properties: Dictionary
+    :param properties: The properties of the adding of the validation method.
+    :type contexts: Tuple
+    :param contexts: The (validation) contexts for which the the validation
     method should be applied.
     """
 
@@ -1054,14 +1054,14 @@ def remove_validation(
     The set of contexts is respected and only the validation methods
     that are registered for the provided contexts are removed.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute that will have
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute that will have
     the provided validation methods removed from execution.
-    @type validation_method_name: String
-    @param validation_method_name: The name of the validation method
+    :type validation_method_name: String
+    :param validation_method_name: The name of the validation method
     that will be removed from execution for the attribute.
-    @type contexts: Tuple
-    @param contexts: The (validation) contexts for which the the validation
+    :type contexts: Tuple
+    :param contexts: The (validation) contexts for which the the validation
     method should be removed.
     """
 
@@ -1089,14 +1089,14 @@ def remove_custom_validation(
     This method should be used carefully and should be considered a secondary
     resource for attribute validation.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute that will have
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute that will have
     the provided validation methods removed from execution.
-    @type validation_method_name: Function
-    @param validation_method_name: The function with validation method
+    :type validation_method_name: Function
+    :param validation_method_name: The function with validation method
     that will be removed from execution for the attribute.
-    @type contexts: Tuple
-    @param contexts: The (validation) contexts for which the the validation
+    :type contexts: Tuple
+    :param contexts: The (validation) contexts for which the the validation
     method should be removed.
     """
 
@@ -1129,13 +1129,13 @@ def add_error(self, attribute_name, error_message, avoid_duplicates = True):
     Duplicate error message may be avoided in case the extra flag
     is set (default behavior).
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to witch
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to witch
     there is going to be added an error.
-    @type error_message: String
-    @param error_message: The error message to be added.
-    @type avoid_duplicates: bool
-    @param avoid_duplicates: If duplicate error message should be
+    :type error_message: String
+    :param error_message: The error message to be added.
+    :type avoid_duplicates: bool
+    :param avoid_duplicates: If duplicate error message should be
     avoided (this should imply extra resources).
     """
 
@@ -1203,16 +1203,16 @@ def validate(self, checker = None, context = None):
     An optional checker function may be provided so that the
     validation process is controlled/managed by such function.
 
-    @type checker: Function
-    @param checker: Checker function that if existent will be
+    :type checker: Function
+    :param checker: Checker function that if existent will be
     run for each of the model's attribute so that it's possible
     to infer if a validation should be performed for that attribute.
-    @type context: String
-    @param context: The context (a string) for which the current
+    :type context: String
+    :param context: The context (a string) for which the current
     validation is going to be run. Note that the default validation
     context is always used/executed/inherited.
-    @rtype: bool
-    @return: If the model validation was successful or not.
+    :rtype: bool
+    :return: If the model validation was successful or not.
     """
 
     # checks if the current model contains the pre validate
@@ -1276,12 +1276,12 @@ def validate_run(self, checker = None, context_validation_map = {}):
     error structure so that it becomes invalidation in case there's
     an error or valid otherwise.
 
-    @type checker: Function
-    @param checker: Checker function that if existent will be
+    :type checker: Function
+    :param checker: Checker function that if existent will be
     run for each of the model's attribute so that it's possible
     to infer if a validation should be performed for that attribute.
-    @type context_validation_map: Dictionary
-    @param context_validation_map: Map containing the associations
+    :type context_validation_map: Dictionary
+    :param context_validation_map: Map containing the associations
     between the attribute names and the sequence containing the
     various validation functions to be run for that attribute.
     """
@@ -1326,11 +1326,11 @@ def validate_exception(self, exception_message = "validation failed", error_desc
     Validates all the attributes in the current object.
     This method raises an exception in case an error occurs.
 
-    @type exception_message: String
-    @param exception_message: The message to be used in creating
+    :type exception_message: String
+    :param exception_message: The message to be used in creating
     the model validation exception to be raised.
-    @type error_description: String
-    @param error_description: The description to be used in creating
+    :type error_description: String
+    :param error_description: The description to be used in creating
     the model validation exception to be raised.
     """
 
@@ -1358,11 +1358,11 @@ def is_valid(self, recursive = True):
     validation may be verified to be a valid relation in
     case the proper method exists.
 
-    @type recursive: bool
-    @param recursive: If a recursive strategy for evaluation
+    :type recursive: bool
+    :param recursive: If a recursive strategy for evaluation
     of the consistency/validity of the model should be applied.
-    @rtype: bool
-    @return: If the current structure is valid, note that if
+    :rtype: bool
+    :return: If the current structure is valid, note that if
     the recursive value is set the relations are also considered
     to be valid at this point of the workflow
     """
@@ -1411,8 +1411,8 @@ def is_stored(self):
     For the base model it's always considered (by default) to be
     not stored (transient).
 
-    @rtype: bool
-    @return: If the current model is stored in the hypothetical
+    :rtype: bool
+    :return: If the current model is stored in the hypothetical
     secondary storage system, considered always false (no persistence
     layer present).
     """
@@ -1430,8 +1430,8 @@ def set_request(self, request):
     This value is going to be used to access session information
     from the model.
 
-    @type request: Request
-    @param request: The request to be set into the
+    :type request: Request
+    :param request: The request to be set into the
     current model instance.
     """
 
@@ -1446,8 +1446,8 @@ def get_request(self):
     Retrieves the request from the current model instance.
     This value is used to access session information from the model.
 
-    @rtype: Request
-    @return: The retrieve request from the current model instance.
+    :rtype: Request
+    :return: The retrieve request from the current model instance.
     """
 
     # in case the current model contains the scope map defined the request
@@ -1461,8 +1461,8 @@ def get_validation_context(self):
     """
     Retrieves the validation context.
 
-    @rtype: String
-    @return: The validation context.
+    :rtype: String
+    :return: The validation context.
     """
 
     return self.validation_context
@@ -1471,8 +1471,8 @@ def set_validation_context(self, validation_context):
     """
     Sets the validation context.
 
-    @type validation_context: String
-    @param validation_context: The validation context.
+    :type validation_context: String
+    :param validation_context: The validation context.
     """
 
     self.validation_context = validation_context
@@ -1481,12 +1481,12 @@ def not_unset_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not unset.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is "invalid" (unset)
@@ -1498,12 +1498,12 @@ def not_none_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not none.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is none
@@ -1515,12 +1515,12 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not empty.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is empty
@@ -1532,12 +1532,12 @@ def is_stripped_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it has no trailing or leading spaces.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the stripped version of the attribute value
@@ -1552,12 +1552,12 @@ def length_equal_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that its length is equal to the target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1572,12 +1572,12 @@ def length_less_than_validate(self, attribute_name, attribute_value, properties)
     """
     Validates an attribute to ensure that its length is less than target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1593,12 +1593,12 @@ def length_less_than_or_equal_validate(self, attribute_name, attribute_value, pr
     """
     Validates an attribute to ensure that its length is less than or equal to the target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1614,12 +1614,12 @@ def length_greater_than_validate(self, attribute_name, attribute_value, properti
     """
     Validates an attribute to ensure that its length is greater than target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1635,12 +1635,12 @@ def length_greater_than_or_equal_validate(self, attribute_name, attribute_value,
     """
     Validates an attribute to ensure that its length is greater than or equal to the target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1657,12 +1657,12 @@ def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     Validates an attribute to ensure that its value belongs to the
     enumeration defined in the properties values list.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the values from the properties
@@ -1678,12 +1678,12 @@ def not_in_enumeration_validate(self, attribute_name, attribute_value, propertie
     Validates an attribute to ensure that its value is not in the
     enumeration defined in the properties values list.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the values from the properties
@@ -1699,12 +1699,12 @@ def is_equal_validate(self, attribute_name, attribute_value, properties):
     Validates an attribute to ensure that its value is equal
     to another specified attribute.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1720,12 +1720,12 @@ def is_different_validate(self, attribute_name, attribute_value, properties):
     Validates an attribute to ensure that its value is different
     from the other specified attribute.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1740,12 +1740,12 @@ def greater_than_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is greater than the target value.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1761,12 +1761,12 @@ def greater_than_zero_validate(self, attribute_name, attribute_value, properties
     """
     Validates an attribute to ensure that it is greater than zero.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is not greater than zero
@@ -1778,12 +1778,12 @@ def greater_than_or_equal_validate(self, attribute_name, attribute_value, proper
     """
     Validates an attribute to ensure that it is greater than or equal to the target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1799,12 +1799,12 @@ def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value
     """
     Validates an attribute to ensure that it is greater than or equal to zero.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is not greater than or equal to zero
@@ -1816,12 +1816,12 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is less than the target value.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1837,12 +1837,12 @@ def less_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is less than zero.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the attribute value is not less than zero
@@ -1854,12 +1854,12 @@ def less_than_or_equal_validate(self, attribute_name, attribute_value, propertie
     """
     Validates an attribute to ensure that it is less than or equal to the target.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -1875,12 +1875,12 @@ def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, p
     """
     Validates an attribute to ensure that it is less than or equal to zero.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # in case the value is not less than or equal to zero
@@ -1895,12 +1895,12 @@ def is_url_validate(self, attribute_name, attribute_value, properties):
     The validation is performed according to the general url/uri
     regular expression.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # checks if the attribute value matches the regular expression
@@ -1915,12 +1915,12 @@ def is_email_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is an email.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # checks if the attribute value matches the regular expression
@@ -1936,12 +1936,12 @@ def is_country_validate(self, attribute_name, attribute_value, properties):
     Validates an attribute to ensure that the value is a valid
     country according to the local (english based) definition.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # checks if the attribute value is a valid country by verifying
@@ -1958,12 +1958,12 @@ def is_id_number_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is an id number.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the control value
@@ -1984,12 +1984,12 @@ def is_tax_number_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is a tax number.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the control value
@@ -2010,12 +2010,12 @@ def matches_regex_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it matches the provided regular expression.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the "regex" (the "regex" string is
@@ -2042,12 +2042,12 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
     validated, the referenced composite attribute, and the model
     to which the composite attribute belongs.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target
@@ -2129,12 +2129,12 @@ def password_strength_validate(self, attribute_name, attribute_value, properties
     Validates the specified password has a strength
     greater than or equal to the specified value.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the target value from the properties
@@ -2157,12 +2157,12 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
     The target model for the attribute setting is the current instance
     in which the method is being run.
 
-    @type attribute_key: String
-    @param attribute_key: The attribute key in the model.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to set.
-    @type nullify: bool
-    @param nullify: If the data to be processed should be nullified
+    :type attribute_key: String
+    :param attribute_key: The attribute key in the model.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to set.
+    :type nullify: bool
+    :param nullify: If the data to be processed should be nullified
     in case empty string values are found.
     """
 
@@ -2207,8 +2207,8 @@ def _get_model_class_name(self):
 
     This method is a utility for this common task.
 
-    @rtype: String
-    @return: The model class name in the "standard"
+    :rtype: String
+    :return: The model class name in the "standard"
     underscore based form.
     """
 
@@ -2231,16 +2231,16 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     The cast is made in safe mode, if an exception
     occurs the default value is returned.
 
-    @type value: Object
-    @param value: The value to be casted.
-    @type cast_type: Type
-    @param cast_type: The type to be used to cast the retrieved
+    :type value: Object
+    :param value: The value to be casted.
+    :type cast_type: Type
+    :param cast_type: The type to be used to cast the retrieved
     value (this should be a valid type, with constructor).
-    @type default_value: Object
-    @param default_value: The default value to be used
+    :type default_value: Object
+    :param default_value: The default value to be used
     when something wrong (exception raised) occurs.
-    @rtype: Object
-    @return: The value casted to the defined type.
+    :rtype: Object
+    :return: The value casted to the defined type.
     """
 
     # in case the value is none it's a considered special case
@@ -2275,12 +2275,12 @@ def _get_complete_name(name, namespace_name = None):
     The complete name is created using the namespace name as a prefix
     to the final (and complete) value.
 
-    @type name: String
-    @param name: The session attribute name (base name).
-    @type namespace_name: String
-    @param namespace_name: The namespace name to be used as prefix.
-    @rtype: String
-    @return: The complete session attribute name, created through
+    :type name: String
+    :param name: The session attribute name (base name).
+    :type namespace_name: String
+    :param namespace_name: The namespace name to be used as prefix.
+    :rtype: String
+    :return: The complete session attribute name, created through
     the prefix strategy.
     """
 
@@ -2334,12 +2334,12 @@ class ModelProxy(list):
         """
         Constructor of the class.
 
-        @type class_referece: Model
-        @param class_reference: The model class reference
+        :type class_referece: Model
+        :param class_reference: The model class reference
         to be used in the creation of the underlying model
         objects.
-        @type count: int
-        @param count: The number of models to be created
+        :type count: int
+        :param count: The number of models to be created
         and represented by the proxy object.
         """
 
@@ -2372,8 +2372,8 @@ class ModelProxy(list):
         sequence, and returns it in case a valid
         is found or invalid otherwise.
 
-        @rtype: Model
-        @return: The first valid model in enclosed in the
+        :rtype: Model
+        :return: The first valid model in enclosed in the
         current proxy object.
         """
 
@@ -2385,11 +2385,11 @@ class ModelProxy(list):
         Pipes the apply method of the model into
         each of the models contained in the proxy.
 
-        @type map: List
-        @param map: The list of map objects to be used
+        :type map: List
+        :param map: The list of map objects to be used
         in the apply method for each of the models.
-        @type permissive: bool
-        @param permissive: If the apply operation should
+        :type permissive: bool
+        :param permissive: If the apply operation should
         be performed in a permissive way allowing undefined
         values to be ignored.
         """

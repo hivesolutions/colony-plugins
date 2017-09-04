@@ -248,12 +248,12 @@ class Visitor(object):
         """
         Constructor of the class.
 
-        @type owner: Template
-        @param owner: The owner object of the visitor, this object is
+        :type owner: Template
+        :param owner: The owner object of the visitor, this object is
         expected to comply with the template interface as some of the
         visitor operations will change the object with that assumption.
-        @type string_buffer: File
-        @param string_buffer: The file like object that is going to be
+        :type string_buffer: File
+        :param string_buffer: The file like object that is going to be
         used for the underlying buffering of the template process. In
         case no value is provided the default string buffer object is used.
         """
@@ -443,8 +443,8 @@ class Visitor(object):
         In case the resolved value is invalid/none the resulting
         data is printed as an empty string.
 
-        @type node: SingleNode
-        @param node: The single node to be processed as out none.
+        :type node: SingleNode
+        :param node: The single node to be processed as out none.
         """
 
         # retrieves the attributes map for the current node that
@@ -556,8 +556,8 @@ class Visitor(object):
         the required attributes are the item (literal) and the
         value.
 
-        @type node: Node
-        @param node: The single node to be processed as var.
+        :type node: Node
+        :param node: The single node to be processed as var.
         """
 
         # retrieves the map that contains the attributes for the
@@ -956,16 +956,16 @@ class Visitor(object):
         An optional localize flag may be set of the value should
         be localized using the current local bundles.
 
-        @type attribute: Dictionary
-        @param attribute: A map describing the attribute structure.
-        @type localize: bool
-        @param localize: If the value must be localized using the currently
+        :type attribute: Dictionary
+        :param attribute: A map describing the attribute structure.
+        :type localize: bool
+        :param localize: If the value must be localized using the currently
         available locale bundles.
-        @type default: Object
-        @param default: The default (fallback) value to be returned if
+        :type default: Object
+        :param default: The default (fallback) value to be returned if
         no valid attribute is provided or in case it is invalid.
-        @rtype: Object
-        @return: The resolved attribute value.
+        :rtype: Object
+        :return: The resolved attribute value.
         """
 
         # in case the passed attribute is not valid the default must
@@ -1254,14 +1254,14 @@ class Visitor(object):
         This operations takes into account the current system state to
         run the loading process of the template.
 
-        @type node: Node
-        @param node: The node to be used as owner of this operation, it's
+        :type node: Node
+        :param node: The node to be used as owner of this operation, it's
         going to be used in case the operation fails.
-        @type file_path: String
-        @param file_paht: Absolute or relative path to the template file
+        :type file_path: String
+        :param file_paht: Absolute or relative path to the template file
         that is going to be loaded/retrieved.
-        @rtype: Template
-        @return: The loaded template file, resulting from the creation
+        :rtype: Template
+        :return: The loaded template file, resulting from the creation
         of the file path according to the local rules.
         """
 
@@ -1306,15 +1306,15 @@ class Visitor(object):
         Validates the accept node flag in accordance with the if
         specification.
 
-        @type node: Node
-        @param node: The child node to be evaluated, this may either
+        :type node: Node
+        :param node: The child node to be evaluated, this may either
         be a node that is able to be evaluated or not.
-        @type accept_node: bool
-        @param accept_node: The accept node flag value, this is
+        :type accept_node: bool
+        :param accept_node: The accept node flag value, this is
         the fallback value for nodes that are not able (or required)
         to be evaluated for acceptance.
-        @rtype: bool
-        @return: The new value for the accept node flag.
+        :rtype: bool
+        :return: The new value for the accept node flag.
         """
 
         # verifies if the current node is mean to be evaluated and
@@ -1352,10 +1352,10 @@ class Visitor(object):
         Evaluates the given (comparison) node, retrieving
         the result of the evaluation.
 
-        @type node: Node
-        @param node: The comparison node to be evaluated.
-        @rtype: bool
-        @return: The result of the evaluation of the
+        :type node: Node
+        :param node: The comparison node to be evaluated.
+        :rtype: bool
+        :return: The result of the evaluation of the
         comparison node.
         """
 
@@ -1384,10 +1384,10 @@ class Visitor(object):
         Allow the template engine to skip interpretation
         of template tags.
 
-        @type literal_value: String
-        @param literal_value: The literal value to be escaped.
-        @rtype: String
-        @return: The escaped literal value
+        :type literal_value: String
+        :param literal_value: The literal value to be escaped.
+        :rtype: String
+        :return: The escaped literal value
         """
 
         # escapes the literal value
@@ -1405,11 +1405,11 @@ class Visitor(object):
         values, although no exception is raises otherwise, the
         method fails silently.
 
-        @type value: Object
-        @param value: The value to be localized, it may be any
+        :type value: Object
+        :param value: The value to be localized, it may be any
         type of data although only string are localizable.
-        @rtype: String
-        @return: The resolved locale value for the value or the
+        :rtype: String
+        :return: The resolved locale value for the value or the
         original value in case no localization is possible.
         """
 

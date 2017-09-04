@@ -56,8 +56,8 @@ class InvalidAuthentication(ApiTwitterException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiTwitterException.__init__(self)
@@ -67,8 +67,8 @@ class InvalidAuthentication(ApiTwitterException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid authentication - %s" % self.message
@@ -82,8 +82,8 @@ class StatusUpdateProblem(ApiTwitterException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiTwitterException.__init__(self)
@@ -93,8 +93,8 @@ class StatusUpdateProblem(ApiTwitterException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Status update problem - %s" % self.message

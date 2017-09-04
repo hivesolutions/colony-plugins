@@ -62,8 +62,8 @@ class AstNode(object):
         """
         Returns the default representation of the class.
 
-        @rtype: String
-        @return: The default representation of the class.
+        :rtype: String
+        :return: The default representation of the class.
         """
 
         return "<ast_node indent:%s child_nodes:%s>" % (self.indent, len(self.child_nodes))
@@ -72,8 +72,8 @@ class AstNode(object):
         """
         Accepts the visitor running the iteration logic.
 
-        @type visitor: Visitor
-        @param visitor: The visitor object.
+        :type visitor: Visitor
+        :param visitor: The visitor object.
         """
 
         visitor.visit(self)
@@ -86,8 +86,8 @@ class AstNode(object):
         """
         Accepts the visitor running the iteration logic, in post order.
 
-        @type visitor: Visitor
-        @param visitor: The visitor object.
+        :type visitor: Visitor
+        :param visitor: The visitor object.
         """
 
         if visitor.visit_childs:
@@ -100,8 +100,8 @@ class AstNode(object):
         """
         Accepts the visitor running the iteration logic, using double visiting.
 
-        @type visitor: Visitor
-        @param visitor: The visitor object.
+        :type visitor: Visitor
+        :param visitor: The visitor object.
         """
 
         visitor.visit_index = 0
@@ -118,7 +118,7 @@ class AstNode(object):
         """
         Sets the value value.
 
-        @type value: Object
+        :type value: Object
         @para value: The value value.
         """
 
@@ -128,8 +128,8 @@ class AstNode(object):
         """
         Sets the indent value.
 
-        @type indent: int
-        @param indent: The indent value.
+        :type indent: int
+        :param indent: The indent value.
         """
 
         self.indent = indent
@@ -138,8 +138,8 @@ class AstNode(object):
         """
         Adds a child node to the node.
 
-        @type child_node: AstNode
-        @param child_node: The child node to be added.
+        :type child_node: AstNode
+        :param child_node: The child node to be added.
         """
 
         self.child_nodes.append(child_node)
@@ -148,8 +148,8 @@ class AstNode(object):
         """
         Removes a child node from the node.
 
-        @type child_node: AstNode
-        @param child_node: The child node to be removed.
+        :type child_node: AstNode
+        :param child_node: The child node to be removed.
         """
 
         self.child_nodes.remove(child_node)

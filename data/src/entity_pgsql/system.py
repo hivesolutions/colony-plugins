@@ -315,15 +315,15 @@ class PgsqlEngine(object):
         or "inside" a new cursor context in case none is
         provided.
 
-        @type query: String
-        @param query: The query that is going to be executed
+        :type query: String
+        :param query: The query that is going to be executed
         in the current engine.
-        @type cursor: Cursor
-        @param cursor: The cursor that is going to be execute
+        :type cursor: Cursor
+        :param cursor: The cursor that is going to be execute
         the query in the engine, this cursor must have been
         created for this engine.
-        @rtype: Cursor
-        @return: The cursor that was used for the query execution
+        :rtype: Cursor
+        :return: The cursor that was used for the query execution
         it must be closed in the outside context.
         """
 
@@ -434,15 +434,15 @@ class PgsqlEngine(object):
         transaction context that is created "just" for the
         query execution.
 
-        @type query: String
-        @param query: The query that is going to be executed
+        :type query: String
+        :param query: The query that is going to be executed
         in the current engine.
-        @type cursor: Cursor
-        @param cursor: The cursor that is going to be execute
+        :type cursor: Cursor
+        :param cursor: The cursor that is going to be execute
         the query in the engine, this cursor must have been
         created for this engine.
-        @rtype: Cursor
-        @return: The cursor that was used for the query execution
+        :rtype: Cursor
+        :return: The cursor that was used for the query execution
         it must be closed in the outside context.
         """
 

@@ -56,8 +56,8 @@ class RequestNotHandled(ServiceHttpFastCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpFastCgiException.__init__(self)
@@ -67,8 +67,8 @@ class RequestNotHandled(ServiceHttpFastCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Request Not handled - %s" % self.message
@@ -82,8 +82,8 @@ class InvalidFastCgiData(ServiceHttpFastCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpFastCgiException.__init__(self)
@@ -93,8 +93,8 @@ class InvalidFastCgiData(ServiceHttpFastCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid fast cgi data - %s" % self.message
@@ -108,8 +108,8 @@ class InvalidFastCgiHeader(ServiceHttpFastCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpFastCgiException.__init__(self)
@@ -119,8 +119,8 @@ class InvalidFastCgiHeader(ServiceHttpFastCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid fast cgi header - %s" % self.message

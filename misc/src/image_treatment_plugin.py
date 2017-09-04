@@ -73,15 +73,15 @@ class ImageTreatmentPlugin(colony.Plugin):
         to the target width and height.
         The resizing is made stretching it if necessary.
 
-        @type image_path: String/File
-        @param image_path: The image path (or file) to be
+        :type image_path: String/File
+        :param image_path: The image path (or file) to be
         resized according to the specification.
-        @type width: int
-        @param width: The target width to the resize image.
-        @type height: int
-        @param height: The target height to the resize image.
-        @rtype: File
-        @return: The file object containing the buffer information
+        :type width: int
+        :param width: The target width to the resize image.
+        :type height: int
+        :param height: The target height to the resize image.
+        :rtype: File
+        :return: The file object containing the buffer information
         on the resized image.
         """
 
@@ -94,15 +94,15 @@ class ImageTreatmentPlugin(colony.Plugin):
         The resizing is made respecting the original image
         aspect ratio.
 
-        @type image_path: String/File
-        @param image_path: The image path (or file) to be
+        :type image_path: String/File
+        :param image_path: The image path (or file) to be
         resized according to the specification.
-        @type width: int
-        @param width: The target width to the resize image.
-        @type height: int
-        @param height: The target height to the resize image.
-        @rtype: File
-        @return: The file object containing the buffer information
+        :type width: int
+        :param width: The target width to the resize image.
+        :type height: int
+        :param height: The target height to the resize image.
+        :rtype: File
+        :return: The file object containing the buffer information
         on the resized image.
         """
 
@@ -116,15 +116,15 @@ class ImageTreatmentPlugin(colony.Plugin):
         aspect ratio.
         The (unused) background is set as transparent.
 
-        @type image_path: String/File
-        @param image_path: The image path (or file) to be
+        :type image_path: String/File
+        :param image_path: The image path (or file) to be
         resized according to the specification.
-        @type width: int
-        @param width: The target width to the resize image.
-        @type height: int
-        @param height: The target height to the resize image.
-        @rtype: File
-        @return: The file object containing the buffer information
+        :type width: int
+        :param width: The target width to the resize image.
+        :type height: int
+        :param height: The target height to the resize image.
+        :rtype: File
+        :return: The file object containing the buffer information
         on the resized image.
         """
 
@@ -138,11 +138,11 @@ class ImageTreatmentPlugin(colony.Plugin):
         Note that the accuracy of this method is quite limited
         by its simplistic approach.
 
-        @type data: String
-        @param data: The string of bytes containing the data that
+        :type data: String
+        :param data: The string of bytes containing the data that
         is going to be used in the image type detection.
-        @rtype: String
-        @return: The detected mime type string value for the provided
+        :rtype: String
+        :return: The detected mime type string value for the provided
         string of binary data.
         """
 

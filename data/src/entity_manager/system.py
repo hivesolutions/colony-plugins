@@ -171,13 +171,13 @@ class DataEntityManager(colony.System):
         instance in case an entity manager with the same id is
         already loaded.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @type properties: Dictionary
-        @param properties: The properties to be used in the
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :type properties: Dictionary
+        :param properties: The properties to be used in the
         loading of the entity manager.
-        @rtype: EntityManager
-        @return: The loaded entity manager.
+        :rtype: EntityManager
+        :return: The loaded entity manager.
         """
 
         # tries to retrieve the id of the "target" entity manager, falling back to
@@ -240,10 +240,10 @@ class DataEntityManager(colony.System):
         given (entity manager) identifier.
         In case no entity manager instance is found none is retrieved.
 
-        @type id: String
-        @param id: The identifier of the entity manager to be retrieved.
-        @rtype: EntityManager
-        @return: The retrieved entity manager.
+        :type id: String
+        :param id: The identifier of the entity manager to be retrieved.
+        :rtype: EntityManager
+        :return: The retrieved entity manager.
         """
 
         # retrieves the entity manager for the given id from the
@@ -261,8 +261,8 @@ class DataEntityManager(colony.System):
         should inherit from this class in order to provide the appropriate
         interface for entity manager handling.
 
-        @rtype: EntityClass
-        @return: The top level entity class, responsible for the base
+        :rtype: EntityClass
+        :return: The top level entity class, responsible for the base
         methods to be used along all the entity classes.
         """
 
@@ -329,18 +329,18 @@ class EntityManager(object):
         """
         Constructor of the class.
 
-        @type entity_manager_plugin: EntityManagerPlugin
-        @param entity_manager_plugin: The entity manager plugin reference.
-        @type engine_plugin: EntityManagerEnginePlugin
-        @param engine_plugin: The engine entity manager plugin to be used.
-        @type id: String
-        @param id: The identifier to be used to reference the entity manager.
-        @type entities_map: Dictionary
-        @param entities_map: The map associating the various entity class names
+        :type entity_manager_plugin: EntityManagerPlugin
+        :param entity_manager_plugin: The entity manager plugin reference.
+        :type engine_plugin: EntityManagerEnginePlugin
+        :param engine_plugin: The engine entity manager plugin to be used.
+        :type id: String
+        :param id: The identifier to be used to reference the entity manager.
+        :type entities_map: Dictionary
+        :param entities_map: The map associating the various entity class names
         with their respective entity classes, this map is going to be used
         for resolution along the various operations.
-        @type options: Dictionary
-        @param options: The map containing the various options to configure
+        :type options: Dictionary
+        :param options: The map containing the various options to configure
         the entity manager, these options are going to be used in runtime
         execution of the entity manager.
         """
@@ -380,8 +380,8 @@ class EntityManager(object):
         entity manager in situations where defining a new model
         set is very difficult.
 
-        @rtype: module
-        @return: The module containing the set of mock entities
+        :rtype: module
+        :return: The module containing the set of mock entities
         that may be used for testing.
         """
 
@@ -396,11 +396,11 @@ class EntityManager(object):
         entity manager (registered entities) to try to find
         the most appropriate entity class for the request.
 
-        @type entity_name: String
-        @param entity_name: The name of the entity class to
+        :type entity_name: String
+        :param entity_name: The name of the entity class to
         be retrieved.
-        @rtype: EntityClass
-        @return: the entity class reference from the given
+        :rtype: EntityClass
+        :return: the entity class reference from the given
         entity name, reverse lookup.
         """
 
@@ -415,8 +415,8 @@ class EntityManager(object):
         in order to provide the correct (and expected) facade
         of an entity class.
 
-        @rtype: EntityClass
-        @return: The top level entity class to be used in the
+        :rtype: EntityClass
+        :return: The top level entity class to be used in the
         inheritance of all the entity classes.
         """
 
@@ -430,8 +430,8 @@ class EntityManager(object):
         The name of the engine should be related to
         the underlying technology used.
 
-        @rtype: String
-        @return: The engine name for the current
+        :rtype: String
+        :return: The engine name for the current
         connection.
         """
 
@@ -445,8 +445,8 @@ class EntityManager(object):
         The internal version should represent a reference
         to the version of the underlying data source system.
 
-        @rtype: String
-        @return: The internal version for the current
+        :rtype: String
+        :return: The internal version for the current
         connection.
         """
 
@@ -463,8 +463,8 @@ class EntityManager(object):
         This number should only represent an approximate measurement
         of the real size of the database in secondary storage.
 
-        @rtype: int
-        @return: The database size in bytes for the current
+        :rtype: int
+        :return: The database size in bytes for the current
         connection (just reference number).
         """
 
@@ -474,8 +474,8 @@ class EntityManager(object):
         """
         Retrieves the current available connection.
 
-        @rtype: Connection
-        @return: The current available database connection.
+        :rtype: Connection
+        :return: The current available database connection.
         """
 
         # in case the current connection is not set or it's
@@ -518,8 +518,8 @@ class EntityManager(object):
         The connection parameters are used to establish the connection
         with the data source endpoint.
 
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The map containing the connection parameters,
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The map containing the connection parameters,
         to be used to establish the connection with the data source endpoint.
         """
 
@@ -533,11 +533,11 @@ class EntityManager(object):
         The imported data will be loaded in the current data
         source "attached" in the entity manager.
 
-        @type serializer: Serializer
-        @param serializer: The serializer object to be used to
+        :type serializer: Serializer
+        :param serializer: The serializer object to be used to
         unserialize the data (must comply with serializer interface).
-        @type file_path: String
-        @param file_path: the path to the file to be used for
+        :type file_path: String
+        :param file_path: the path to the file to be used for
         the importing of the data from the data file.
         """
 
@@ -592,14 +592,14 @@ class EntityManager(object):
         that is going to be used in the data (json or bson are
         the recommended formats)
 
-        @type serializer: Serializer
-        @param serializer: The serializer object to be used to
+        :type serializer: Serializer
+        :param serializer: The serializer object to be used to
         serialize the data (must comply with serializer interface).
-        @type file_path: String
-        @param file_path: The path to the file to be set with the
+        :type file_path: String
+        :param file_path: The path to the file to be set with the
         exported data file.
-        @type date_range: Tuple
-        @param date_range: The range of dates as timestamp to the
+        :type date_range: Tuple
+        :param date_range: The range of dates as timestamp to the
         the exported data, this is going to be used to filter the
         data in the data source base on the modified time.
         """
@@ -689,23 +689,23 @@ class EntityManager(object):
         An optional include parents mode may be set if the parent
         classes of the entity classes should be included.
 
-        @type serializer: Serializer
-        @param serializer: The serializer object to be used for
+        :type serializer: Serializer
+        :param serializer: The serializer object to be used for
         serialization of the data.
-        @type entity_classes: List
-        @param entity_classes: The list of entity classes to be
+        :type entity_classes: List
+        :param entity_classes: The list of entity classes to be
         imported (the file prefix to be searched).
-        @type directory_path: String
-        @param directory_path: The path to the directory to be used
+        :type directory_path: String
+        :param directory_path: The path to the directory to be used
         for searching for the entity data files.
-        @type full_mode: bool
-        @param full_mode: If the full mode (parent names mode)
+        :type full_mode: bool
+        :param full_mode: If the full mode (parent names mode)
         should be used in the importing process.
-        @type include_parents: bool
-        @param include_parents: If the parent classes should be
+        :type include_parents: bool
+        :param include_parents: If the parent classes should be
         automatically ensured in the entities list.
-        @type encoding: String
-        @param encoding: The encoding to be used for decoding
+        :type encoding: String
+        :param encoding: The encoding to be used for decoding
         the data files.
         """
 
@@ -804,24 +804,24 @@ class EntityManager(object):
         An optional include parents mode may be set if the parent
         classes of the entity classes should be included.
 
-        @type serializer: Serializer
-        @param serializer: The serializer object to be used for
+        :type serializer: Serializer
+        :param serializer: The serializer object to be used for
         serialization of the data.
-        @type entity_classes: List
-        @param entity_classes: The list of entity classes to be
+        :type entity_classes: List
+        :param entity_classes: The list of entity classes to be
         imported (the file prefix to be searched).
-        @type directory_path: String
-        @param directory_path: The path to the directory to be used
+        :type directory_path: String
+        :param directory_path: The path to the directory to be used
         for outputting for the entity data files.
-        @type date_range: Tuple
-        @param date_range: The range of dates (as timestamp) for the
+        :type date_range: Tuple
+        :param date_range: The range of dates (as timestamp) for the
         interval to be used for data retrieval, in case one of the
         limits is as none it's considered to be open.
-        @type entity_count: int
-        @param entity_count: The number of entities to be written
+        :type entity_count: int
+        :param entity_count: The number of entities to be written
         in each of the files representing the entity class.
-        @type include_parents: bool
-        @param include_parents: If the parent classes should be
+        :type include_parents: bool
+        :param include_parents: If the parent classes should be
         automatically ensured in the entities list.
         """
 
@@ -1271,8 +1271,8 @@ class EntityManager(object):
         This process may evolve the creation of the entity mode
         in the data sources (slow).
 
-        @type entity_class: EntityClass
-        @param entity_class: The class to be ensured for definition
+        :type entity_class: EntityClass
+        :param entity_class: The class to be ensured for definition
         in the data source.
         """
 
@@ -1313,8 +1313,8 @@ class EntityManager(object):
         This operation should be avoided to duplicate, in that case
         and exception will be raised from the data source.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be used in he creation
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be used in he creation
         of the indirect relations associative tables.
         """
 
@@ -1442,8 +1442,8 @@ class EntityManager(object):
         This method should end up by removing all the associative
         table definitions.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to have the indirect
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to have the indirect
         relations removed.
         """
 
@@ -1488,8 +1488,8 @@ class EntityManager(object):
         invisible relations (relations no defined in the current
         side of the entity class).
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to have it's constraints
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to have it's constraints
         removed from the associated direct relations
         """
 
@@ -1557,8 +1557,8 @@ class EntityManager(object):
         exists, because the foreign key constraint was not
         removed.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be removed from
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be removed from
         the data source, include (semi) cascading.
         """
 
@@ -1635,11 +1635,11 @@ class EntityManager(object):
         parent classes are already defined in the current
         data source being used.
 
-        @type entity_class: EntityClass
-        @param entity_class: The class to be checked for definition
+        :type entity_class: EntityClass
+        :param entity_class: The class to be checked for definition
         in the current data source.
-        @rtype: bool
-        @return: The result of the test for entity class definition.
+        :rtype: bool
+        :return: The result of the test for entity class definition.
         """
 
         # in case the exists flag is already "cached" in the current
@@ -1697,11 +1697,11 @@ class EntityManager(object):
         entity class is defined in the underlying data
         source.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class that's going
+        :type entity_class: EntityClass
+        :param entity_class: The entity class that's going
         to be verified to be defined in the data source.
-        @rtype: bool
-        @return: The result of the entity definition test.
+        :rtype: bool
+        :return: The result of the entity definition test.
         """
 
         return self.engine.has_definition(entity_class)
@@ -2205,8 +2205,8 @@ class EntityManager(object):
         The unmapped relations include the indirect relations (association table)
         and also the relations mapped in the reverse side of the relation.
 
-        @type entity: Entity
-        @param entity: The entity to have the (unmapped) relation
+        :type entity: Entity
+        :param entity: The entity to have the (unmapped) relation
         mapped in the data source.
         """
 
@@ -2225,13 +2225,13 @@ class EntityManager(object):
         representation or a tuple, in the second case the returned value
         is also a bit tuple in the same order as the provided id values.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be used in the verification
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be used in the verification
         of the entity presence.
-        @type id_value: Object/Tuple
-        @param id_value: The if of the entity to be verified for persistence.
-        @rtype: bool/Tuple
-        @return: The result of the entity verification test.
+        :type id_value: Object/Tuple
+        :param id_value: The if of the entity to be verified for persistence.
+        :rtype: bool/Tuple
+        :return: The result of the entity verification test.
         """
 
         query = self._verify_query(entity_class, id_value)
@@ -2475,8 +2475,8 @@ class EntityManager(object):
         The method is going to execute the queries for the creation
         of the indexed immediately during the execution.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity to be used for the indexing of
+        :type entity_class: EntityClass
+        :param entity_class: The entity to be used for the indexing of
         the decorated fields.
         """
 
@@ -2569,8 +2569,8 @@ class EntityManager(object):
         The generated values are going to be set in the entity
         immediately after the generation of the value.
 
-        @type entity: Entity
-        @param entity: The entity to be used for values generation,
+        :type entity: Entity
+        :param entity: The entity to be used for values generation,
         will be changed during the value generation.
         """
 
@@ -4618,17 +4618,17 @@ class EntityManager(object):
         1. table_name.[attribute_name]
         2. __relation___top_table_name.[attribute_name]
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class that is the current context
+        :type entity_class: EntityClass
+        :param entity_class: The entity class that is the current context
         of the select
-        @type table_name: String
-        @param table_name: The name of the current table context, that
+        :type table_name: String
+        :param table_name: The name of the current table context, that
         may be used as the prefix value for the composed table name.
-        @type name: String
-        @param name: The name of the attribute to be used to resolve
+        :type name: String
+        :param name: The name of the attribute to be used to resolve
         the complete (composed) table name of the current context.
-        @rtype: String
-        @return: The resolved complete table name for the current context.
+        :rtype: String
+        :return: The resolved complete table name for the current context.
         """
 
         # retrieves the names map for the entity class to resolve
@@ -6706,12 +6706,12 @@ class EntityManager(object):
         relation values where a normalization process is also
         required for the associated eager loading relations.
 
-        @type options: Dictionary/Object
-        @param options: The map of options to be normalized.
+        :type options: Dictionary/Object
+        :param options: The map of options to be normalized.
         This value may be a filters value and in that case it
         can assume a different type.
-        @rtype: Dictionary
-        @return: The normalized options map, this map is not
+        :rtype: Dictionary
+        :return: The normalized options map, this map is not
         verified to be the changed version of the input options
         map, due to filters wrapping.
         """
@@ -7029,12 +7029,12 @@ class EntityManager(object):
         appropriate filters that represent the key to value associations
         that are defined in the map.
 
-        @type options: Dictionary
-        @param options: The map containing the various key to value
+        :type options: Dictionary
+        :param options: The map containing the various key to value
         associations that define the options for a "query". This value
         may be changed to have the filters key.
-        @type kwargs: Dictionary
-        @param kwargs: The map that contains the keyword based values
+        :type kwargs: Dictionary
+        :param kwargs: The map that contains the keyword based values
         that are going to be "applied" as filters to the query options.
         """
 
@@ -7067,11 +7067,11 @@ class EntityManager(object):
         Checks if the given options map represents a map
         (or set) of filters instead of the "normal" options map.
 
-        @type options: Dictionary/Object
-        @param options: The map containing the options or
+        :type options: Dictionary/Object
+        :param options: The map containing the options or
         a set of filters in map or in tuple set.
-        @rtype: bool
-        @return: If the given dictionary or object is a
+        :rtype: bool
+        :return: If the given dictionary or object is a
         set of filters.
         """
 
@@ -7116,11 +7116,11 @@ class EntityManager(object):
         range is applied or as a tuple with the defined start\
         and end data range values.
 
-        @type date_range: Tuple
-        @param date_range: The range of dates for which the entries
+        :type date_range: Tuple
+        :param date_range: The range of dates for which the entries
         should be retrieved from the data source.
-        @rtype: List
-        @return: The list of filters that can be used to filter
+        :rtype: List
+        :return: The list of filters that can be used to filter
         the entries in a certain query to the data source.
         """
 
@@ -7192,11 +7192,11 @@ class EntityManager(object):
         provided module into a map indexed by the entity class
         name (useful for extension and shrinking).
 
-        @type module: module
-        @param module: The module to find the set of entity classes
+        :type module: module
+        :param module: The module to find the set of entity classes
         that will constitute the create entities map.
-        @rtype: Dictionary
-        @return: The map containing the various found entity
+        :rtype: Dictionary
+        :return: The map containing the various found entity
         classes index by their class names.
         """
 
@@ -7250,15 +7250,15 @@ class EntityManager(object):
         The usage of this method must be carefully watched because this
         is a quite expensive operation.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be used as reference during
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be used as reference during
         the resolution of the name. It should be the top level entry point for
         the resolution.
-        @type name: String
-        @param name: The name to be resolved (should be in dot notation) into
+        :type name: String
+        :param name: The name to be resolved (should be in dot notation) into
         the full query oriented value.
-        @rtype: String
-        @return: The resolved query oriented name value.
+        :rtype: String
+        :return: The resolved query oriented name value.
         """
 
         # splits the name list, allowing it to retrieve
@@ -7333,14 +7333,14 @@ class EntityManager(object):
         This escaping process avoids many of the existing
         sql injection procedures.
 
-        @type text_value: String
-        @param text_value: The text value to be escaped.
-        @type escape_slash: bool
-        @param escape_slash: If the slash characters should be escaped.
-        @type escape_double_quotes: bool
-        @param escape_double_quotes: If the double quotes should be escaped.
-        @rtype: String
-        @return: The escaped text value, according to the sql
+        :type text_value: String
+        :param text_value: The text value to be escaped.
+        :type escape_slash: bool
+        :param escape_slash: If the slash characters should be escaped.
+        :type escape_double_quotes: bool
+        :param escape_double_quotes: If the double quotes should be escaped.
+        :rtype: String
+        :return: The escaped text value, according to the sql
         standard specification.
         """
 
@@ -7354,11 +7354,11 @@ class EntityManager(object):
         The returned value is a map representing the meta
         information contained in the file.
 
-        @type path: String
-        @param path: The path to the meta information file to
+        :type path: String
+        :param path: The path to the meta information file to
         be loaded into a map.
-        @rtype: Dictionary
-        @return: The map containing the meta information
+        :rtype: Dictionary
+        :return: The map containing the meta information
         representation from the file.
         """
 
@@ -7398,14 +7398,14 @@ class EntityManager(object):
         must be converted into a list and then the names added as the
         first item of it.
 
-        @type result_set: Tuple
-        @param result_set: The result set to have the names added to
+        :type result_set: Tuple
+        :param result_set: The result set to have the names added to
         it (target result set).
-        @type names: List
-        @param names: The list of names for the sequence of values present
+        :type names: List
+        :param names: The list of names for the sequence of values present
         in the various result set lines.
-        @rtype: List
-        @return: The result set with the first line as the names of the
+        :rtype: List
+        :return: The result set with the first line as the names of the
         various values, this result set is represented as a list.
         """
 
@@ -7430,11 +7430,11 @@ class EntityManager(object):
         must be converted into a list and then the various lines are
         also re-constructed with the new values.
 
-        @type result_set: Tuple
-        @param result_set: The result set to have the various line
+        :type result_set: Tuple
+        :param result_set: The result set to have the various line
         string values converted into unicode values.
-        @rtype: List
-        @return: The result set with the various line values that
+        :rtype: List
+        :return: The result set with the various line values that
         are strings converted into unicode values.
         """
 
@@ -7489,11 +7489,11 @@ class EntityManager(object):
         The sorting is performed using the class name as the
         pivot value for the comparison.
 
-        @type item: Tuple
-        @param item: The item tuple value consisting of the
+        :type item: Tuple
+        :param item: The item tuple value consisting of the
         item class and the fields map.
-        @rtype: String
-        @return: The name of the table associated with the class
+        :rtype: String
+        :return: The name of the table associated with the class
         for the current item under evaluation.
         """
 
@@ -7511,14 +7511,14 @@ class EntityManager(object):
         and a fields map and then compares the table name for
         the class against each other.
 
-        @type first: Tuple
-        @param first: The tuple containing the class and the fields
+        :type first: Tuple
+        :param first: The tuple containing the class and the fields
         map to be compared against the second value.
-        @type second: Tuple
-        @param second: The second tuple to be used in the compare
+        :type second: Tuple
+        :param second: The second tuple to be used in the compare
         operation, should have the same structure as the first.
-        @rtype: int
-        @return: The deference (as in distance) between both values
+        :rtype: int
+        :return: The deference (as in distance) between both values
         to be used as a result of comparison.
         """
 

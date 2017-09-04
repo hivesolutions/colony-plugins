@@ -92,10 +92,10 @@ class ServiceUtils(colony.System):
         Generates a new service for the given parameters.
         The generated service includes the creation of a new pool.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for service generation.
-        @rtype: AbstractService
-        @return: The generated service.
+        :type parameters: Dictionary
+        :param parameters: The parameters for service generation.
+        :rtype: AbstractService
+        :return: The generated service.
         """
 
         # retrieves the service type from the parameters in order
@@ -114,10 +114,10 @@ class ServiceUtils(colony.System):
         Generates a new service port for the current
         host, avoiding collisions.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for service port generation.
-        @rtype: int
-        @return: The newly generated port.
+        :type parameters: Dictionary
+        :param parameters: The parameters for service port generation.
+        :rtype: int
+        :return: The newly generated port.
         """
 
         # acquires the port generation lock
@@ -156,8 +156,8 @@ class ServiceUtils(colony.System):
         """
         Loads a socket provider plugin.
 
-        @type socket_provider_plugin: Plugin
-        @param socket_provider_plugin: The socket provider plugin
+        :type socket_provider_plugin: Plugin
+        :param socket_provider_plugin: The socket provider plugin
         to be loaded.
         """
 
@@ -171,8 +171,8 @@ class ServiceUtils(colony.System):
         """
         Unloads a socket provider plugin.
 
-        @type socket_provider_plugin: Plugin
-        @param socket_provider_plugin: The socket provider plugin
+        :type socket_provider_plugin: Plugin
+        :param socket_provider_plugin: The socket provider plugin
         to be unloaded.
         """
 
@@ -186,8 +186,8 @@ class ServiceUtils(colony.System):
         """
         Loads a socket upgrader plugin.
 
-        @type socket_upgrader_plugin: Plugin
-        @param socket_upgrader_plugin: The socket upgrader plugin
+        :type socket_upgrader_plugin: Plugin
+        :param socket_upgrader_plugin: The socket upgrader plugin
         to be loaded.
         """
 
@@ -201,8 +201,8 @@ class ServiceUtils(colony.System):
         """
         Unloads a socket upgrader plugin.
 
-        @type socket_upgrader_plugin: Plugin
-        @param socket_upgrader_plugin: The socket upgrader plugin
+        :type socket_upgrader_plugin: Plugin
+        :param socket_upgrader_plugin: The socket upgrader plugin
         to be unloaded.
         """
 

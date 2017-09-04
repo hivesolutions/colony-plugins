@@ -60,10 +60,10 @@ class PaypalApiError(ApiPaypalException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type long_message: String
-        @param long_message: The longer version of the
+        :type message: String
+        :param message: The message to be printed.
+        :type long_message: String
+        :param long_message: The longer version of the
         error message present by the paypal api.
         """
 
@@ -75,8 +75,8 @@ class PaypalApiError(ApiPaypalException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Paypal api error - %s" % self.message

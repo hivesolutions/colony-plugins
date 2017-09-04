@@ -72,8 +72,8 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return self.system.get_handler_name()
@@ -82,14 +82,14 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
         """
         Handles the given http authentication.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
-        @type properties: Dictionary
-        @param properties: The properties used in the authentication process.
-        @rtype: Dictionary
-        @return: The authentication result.
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
+        :type properties: Dictionary
+        :param properties: The properties used in the authentication process.
+        :rtype: Dictionary
+        :return: The authentication result.
         """
 
         return self.system.handle_authentication(username, password, properties)

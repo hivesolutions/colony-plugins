@@ -84,10 +84,10 @@ class EntityManagerPlugin(colony.Plugin):
         """
         Loads an entity manager for the given engine name.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @rtype: EntityManager
-        @return: The loaded entity manager.
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :rtype: EntityManager
+        :return: The loaded entity manager.
         """
 
         return self.system.load_entity_manager(engine_name)
@@ -96,13 +96,13 @@ class EntityManagerPlugin(colony.Plugin):
         """
         Loads an entity manager for the given engine name.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @type properties: Dictionary
-        @param properties: The properties to be used in the
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :type properties: Dictionary
+        :param properties: The properties to be used in the
         loading of the entity manager
-        @rtype: EntityManager
-        @return: The loaded entity manager.
+        :rtype: EntityManager
+        :return: The loaded entity manager.
         """
 
         return self.system.load_entity_manager(engine_name, properties)
@@ -113,10 +113,10 @@ class EntityManagerPlugin(colony.Plugin):
         given (entity manager) identifier.
         In case no entity manager instance is found none is retrieved.
 
-        @type id: String
-        @param id: The identifier of the entity manager to be retrieved.
-        @rtype: EntityManager
-        @return: The retrieved entity manager.
+        :type id: String
+        :param id: The identifier of the entity manager to be retrieved.
+        :rtype: EntityManager
+        :return: The retrieved entity manager.
         """
 
         return self.system.get_entity_manager(id)
@@ -130,8 +130,8 @@ class EntityManagerPlugin(colony.Plugin):
         should inherit from this class in order to provide the appropriate
         interface for entity manager handling.
 
-        @rtype: EntityClass
-        @return: The top level entity class, responsible for the base
+        :rtype: EntityClass
+        :return: The top level entity class, responsible for the base
         methods to be used along all the entity classes.
         """
 
@@ -142,8 +142,8 @@ class EntityManagerPlugin(colony.Plugin):
         Retrieves the transaction decorator used to decorate
         a method in order to force transaction existence.
 
-        @rtype: Function
-        @return: The transaction decorator function.
+        :rtype: Function
+        :return: The transaction decorator function.
         """
 
         return self.decorators.transaction
@@ -153,8 +153,8 @@ class EntityManagerPlugin(colony.Plugin):
         Retrieves the lock table decorator used to decorate
         a method in order to force locking in table.
 
-        @rtype: Function
-        @return: The lock table decorator function.
+        :rtype: Function
+        :return: The lock table decorator function.
         """
 
         return self.decorators.lock_table

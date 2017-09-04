@@ -118,12 +118,12 @@ class ApiDropbox(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: DropboxClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: DropboxClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -177,14 +177,14 @@ class DropboxClient(object):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type encoding: String
-        @param encoding: The encoding used.
-        @type oauth_structure: OauthStructure
-        @param oauth_structure: The oauth structure
+        :type json_plugin: JsonPlugin
+        :param json_plugin: The json plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type encoding: String
+        :param encoding: The encoding used.
+        :type oauth_structure: OauthStructure
+        :param oauth_structure: The oauth structure
         """
 
         self.json_plugin = json_plugin
@@ -226,26 +226,26 @@ class DropboxClient(object):
         """
         Generates a new oauth structure, for the given parameters.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp.
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
-        @type oauth_version: String
-        @param oauth_version: The version.
-        @type oauth_callback: String
-        @param oauth_callback: The callback.
-        @type set_structure: bool
-        @param set_structure: The set structure flag (if the structure should be set in the client).
-        @rtype: OauthStructure
-        @return: The generated oauth structure.
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
+        :type oauth_version: String
+        :param oauth_version: The version.
+        :type oauth_callback: String
+        :param oauth_callback: The callback.
+        :type set_structure: bool
+        :param set_structure: The set structure flag (if the structure should be set in the client).
+        :rtype: OauthStructure
+        :return: The generated oauth structure.
         """
 
         # constructs a new oauth structure
@@ -270,8 +270,8 @@ class DropboxClient(object):
         """
         Opens the oauth request token.
 
-        @rtype: OauthStructure
-        @return: The current oauth structure.
+        :rtype: OauthStructure
+        :return: The current oauth structure.
         """
 
         # sets the retrieval url
@@ -343,8 +343,8 @@ class DropboxClient(object):
         """
         Opens the oauth access token.
 
-        @rtype: OauthStructure
-        @return: The current oauth structure.
+        :rtype: OauthStructure
+        :return: The current oauth structure.
         """
 
         # sets the retrieval url
@@ -415,8 +415,8 @@ class DropboxClient(object):
         """
         Retrieves the oauth authorize url.
 
-        @rtype: String
-        @return: The oauth authorize url.
+        :rtype: String
+        :return: The oauth authorize url.
         """
 
         # sets the retrieval url
@@ -438,8 +438,8 @@ class DropboxClient(object):
         """
         Retrieves the oauth authenticate url.
 
-        @rtype: String
-        @return: The oauth authenticate url.
+        :rtype: String
+        :return: The oauth authenticate url.
         """
 
         # sets the retrieval url
@@ -460,8 +460,8 @@ class DropboxClient(object):
         """
         Retrieves the account information for the current user.
 
-        @rtype: Dictionary
-        @return: The account information for the current user.
+        :rtype: Dictionary
+        :return: The account information for the current user.
         """
 
         # requires authentication
@@ -491,14 +491,14 @@ class DropboxClient(object):
         In case no target path is provided the base name of the
         file path is used for the root directory.
 
-        @type file_path: String
-        @param file_path: The (local) file path of the file to
+        :type file_path: String
+        :param file_path: The (local) file path of the file to
         be uploaded (the file must exist).
-        @type target_path: String
-        @param target_path: The target (remote) path for the
+        :type target_path: String
+        :param target_path: The target (remote) path for the
         uploading of the file.
-        @rtype: Dictionary
-        @return: The resulting metadata from the upload.
+        :rtype: Dictionary
+        :return: The resulting metadata from the upload.
         """
 
         # requires authentication
@@ -552,8 +552,8 @@ class DropboxClient(object):
         """
         Retrieves the oauth structure.
 
-        @rtype: OauthStructure
-        @return: The oauth structure.
+        :rtype: OauthStructure
+        :return: The oauth structure.
         """
 
         return self.oauth_structure
@@ -562,8 +562,8 @@ class DropboxClient(object):
         """
         Sets the oauth structure.
 
-        @type oauth_structure: OauthStructure
-        @param oauth_structure: The oauth structure.
+        :type oauth_structure: OauthStructure
+        :param oauth_structure: The oauth structure.
         """
 
         self.oauth_structure = oauth_structure
@@ -572,16 +572,16 @@ class DropboxClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @type contents: String
-        @param contents: The contents.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :type contents: String
+        :param contents: The contents.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -620,12 +620,12 @@ class DropboxClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -641,14 +641,14 @@ class DropboxClient(object):
         """
         Builds the oauth arguments encoding them into the oauth message specification.
 
-        @type url: String
-        @param url: The url to be used for the oauth encoding.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for the oauth encoding.
-        @type method: String
-        @param method: The method to be used for the oauth encoding.
-        @rtype: String
-        @return: The oauth arguments encoded in oauth message specification.
+        :type url: String
+        :param url: The url to be used for the oauth encoding.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for the oauth encoding.
+        :type method: String
+        :param method: The method to be used for the oauth encoding.
+        :rtype: String
+        :return: The oauth arguments encoded in oauth message specification.
         """
 
         # retrieves the timestamp
@@ -695,8 +695,8 @@ class DropboxClient(object):
         """
         Escapes the given url text into a valid http get request string.
 
-        @rtype: String
-        @return: the given url text in a valid http get request string.
+        :rtype: String
+        :return: the given url text in a valid http get request string.
         """
 
         # returns the quoted version of the url text
@@ -709,8 +709,8 @@ class DropboxClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary
-        @param data: The data to be checked for dropbox errors.
+        :type data: Dictionary
+        :param data: The data to be checked for dropbox errors.
         """
 
         pass
@@ -719,8 +719,8 @@ class DropboxClient(object):
         """
         Retrieves the current authentication type being used.
 
-        @rtype: int
-        @return: The current authentication type being used.
+        :rtype: int
+        :return: The current authentication type being used.
         """
 
         if self.oauth_structure and self.oauth_structure.oauth_access_token:
@@ -732,8 +732,8 @@ class DropboxClient(object):
         """
         Retrieves the real value for the oauth timestamp.
 
-        @rtype: float
-        @return: The real value for the oauth timestamp.
+        :rtype: float
+        :return: The real value for the oauth timestamp.
         """
 
         if self.oauth_structure.oauth_timestamp:
@@ -747,8 +747,8 @@ class DropboxClient(object):
         """
         Retrieves the real value for the oauth nonce.
 
-        @rtype: int
-        @return: the real value for the oauth nonce.
+        :rtype: int
+        :return: the real value for the oauth nonce.
         """
 
         if self.oauth_structure.oauth_nonce:
@@ -763,8 +763,8 @@ class DropboxClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -838,22 +838,22 @@ class OauthStructure(object):
         """
         Constructor of the class.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp.
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
-        @type oauth_version: String
-        @param oauth_version: The version.
-        @type oauth_callback: Method
-        @param oauth_callback: The callback.
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
+        :type oauth_version: String
+        :param oauth_version: The version.
+        :type oauth_callback: Method
+        :param oauth_callback: The callback.
         """
 
         self.oauth_consumer_key = oauth_consumer_key
@@ -869,8 +869,8 @@ class OauthStructure(object):
         """
         Retrieves the consumer key.
 
-        @rtype: String
-        @return: The consumer key.
+        :rtype: String
+        :return: The consumer key.
         """
 
         return self.oauth_consumer_key
@@ -879,8 +879,8 @@ class OauthStructure(object):
         """
         Sets the consumer key.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
         """
 
         self.oauth_consumer_key = oauth_consumer_key
@@ -889,8 +889,8 @@ class OauthStructure(object):
         """
         Retrieves the consumer secret.
 
-        @rtype: String
-        @return: The consumer secret.
+        :rtype: String
+        :return: The consumer secret.
         """
 
         return self.oauth_consumer_secret
@@ -899,8 +899,8 @@ class OauthStructure(object):
         """
         Sets the consumer secret.
 
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
         """
 
         self.oauth_consumer_secret = oauth_consumer_secret
@@ -909,8 +909,8 @@ class OauthStructure(object):
         """
         Retrieves the signature method.
 
-        @rtype: String
-        @return: The signature method.
+        :rtype: String
+        :return: The signature method.
         """
 
         return self.oauth_signature_method
@@ -919,8 +919,8 @@ class OauthStructure(object):
         """
         Sets the signature method.
 
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
         """
 
         self.oauth_signature_method = oauth_signature_method
@@ -929,8 +929,8 @@ class OauthStructure(object):
         """
         Retrieves the signature.
 
-        @rtype: String
-        @return: The signature.
+        :rtype: String
+        :return: The signature.
         """
 
         return self.oauth_signature
@@ -939,8 +939,8 @@ class OauthStructure(object):
         """
         Sets the signature.
 
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
         """
 
         self.oauth_signature = oauth_signature
@@ -949,8 +949,8 @@ class OauthStructure(object):
         """
         Retrieves the timestamp.
 
-        @rtype: float
-        @return: The timestamp.
+        :rtype: float
+        :return: The timestamp.
         """
 
         return self.oauth_timestamp
@@ -959,8 +959,8 @@ class OauthStructure(object):
         """
         Sets the timestamp.
 
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp
         """
 
         self.oauth_timestamp = oauth_timestamp
@@ -969,8 +969,8 @@ class OauthStructure(object):
         """
         Retrieves the nonce.
 
-        @rtype: int
-        @return: The nonce.
+        :rtype: int
+        :return: The nonce.
         """
 
         return self.oauth_nonce
@@ -979,8 +979,8 @@ class OauthStructure(object):
         """
         Sets the nonce.
 
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
         """
 
         self.oauth_nonce = oauth_nonce
@@ -989,8 +989,8 @@ class OauthStructure(object):
         """
         Retrieves the version.
 
-        @rtype: String
-        @return: The version.
+        :rtype: String
+        :return: The version.
         """
 
         return self.oauth_version
@@ -999,8 +999,8 @@ class OauthStructure(object):
         """
         Sets the version.
 
-        @type oauth_version: String
-        @param oauth_version: The version.
+        :type oauth_version: String
+        :param oauth_version: The version.
         """
 
         self.oauth_version = oauth_version
@@ -1009,8 +1009,8 @@ class OauthStructure(object):
         """
         Retrieves the callback.
 
-        @rtype: String
-        @return: The callback.
+        :rtype: String
+        :return: The callback.
         """
 
         return self.oauth_callback
@@ -1019,8 +1019,8 @@ class OauthStructure(object):
         """
         Sets the callback.
 
-        @type oauth_callback: String
-        @param oauth_callback: The callback.
+        :type oauth_callback: String
+        :param oauth_callback: The callback.
         """
 
         self.oauth_callback = oauth_callback
@@ -1029,8 +1029,8 @@ class OauthStructure(object):
         """
         Retrieves the token.
 
-        @rtype: String
-        @return: The token.
+        :rtype: String
+        :return: The token.
         """
 
         return self.oauth_token
@@ -1039,8 +1039,8 @@ class OauthStructure(object):
         """
         Sets the token.
 
-        @type oauth_token: String
-        @param oauth_token: The token.
+        :type oauth_token: String
+        :param oauth_token: The token.
         """
 
         self.oauth_token = oauth_token
@@ -1049,8 +1049,8 @@ class OauthStructure(object):
         """
         Retrieves the token secret.
 
-        @rtype: String
-        @return: The token secret.
+        :rtype: String
+        :return: The token secret.
         """
 
         return self.oauth_token_secret
@@ -1059,8 +1059,8 @@ class OauthStructure(object):
         """
         Sets the token secret.
 
-        @type oauth_token_secret: String
-        @param oauth_token_secret: The token secret.
+        :type oauth_token_secret: String
+        :param oauth_token_secret: The token secret.
         """
 
         self.oauth_token_secret = oauth_token_secret
@@ -1069,8 +1069,8 @@ class OauthStructure(object):
         """
         Retrieves the verifier.
 
-        @rtype: String
-        @return: The verifier.
+        :rtype: String
+        :return: The verifier.
         """
 
         return self.oauth_verifier
@@ -1079,8 +1079,8 @@ class OauthStructure(object):
         """
         Sets the verifier.
 
-        @type oauth_verifier: String
-        @param oauth_verifier: The verifier.
+        :type oauth_verifier: String
+        :param oauth_verifier: The verifier.
         """
 
         self.oauth_verifier = oauth_verifier
@@ -1089,8 +1089,8 @@ class OauthStructure(object):
         """
         Retrieves the access token.
 
-        @rtype: String
-        @return: The access token.
+        :rtype: String
+        :return: The access token.
         """
 
         return self.oauth_access_token
@@ -1099,8 +1099,8 @@ class OauthStructure(object):
         """
         Sets the access token.
 
-        @type oauth_access_tokken: String
-        @param oauth_access_token: The access token.
+        :type oauth_access_tokken: String
+        :param oauth_access_token: The access token.
         """
 
         self.oauth_access_token = oauth_access_token

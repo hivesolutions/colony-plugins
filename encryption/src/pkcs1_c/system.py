@@ -178,8 +178,8 @@ class Pkcs1Structure:
         """
         Constructor of the class.
 
-        @type ber_plugin: Plugin
-        @param ber_plugin: The ber plugin.
+        :type ber_plugin: Plugin
+        :param ber_plugin: The ber plugin.
         """
 
         self.ber_plugin = ber_plugin
@@ -286,13 +286,13 @@ class Pkcs1Structure:
         Generates the a private key in pem format, using
         the given keys value.
 
-        @type keys: Tuple
-        @param keys: A tuple containing the public, private
+        :type keys: Tuple
+        :param keys: A tuple containing the public, private
         and extra key values.
-        @type version: int
-        @param version: The version of the keys to be generated.
-        @rtype: String
-        @return: The generated private key in pem format.
+        :type version: int
+        :param version: The version of the keys to be generated.
+        :rtype: String
+        :return: The generated private key in pem format.
         """
 
         # retrieves the private key in der format
@@ -330,11 +330,11 @@ class Pkcs1Structure:
         Generates the a public key in pem format, using
         the given keys value.
 
-        @type keys: Tuple
-        @param keys: A tuple containing the public, private
+        :type keys: Tuple
+        :param keys: A tuple containing the public, private
         and extra key values.
-        @rtype: String
-        @return: The generated public key in pem format.
+        :rtype: String
+        :return: The generated public key in pem format.
         """
 
         # retrieves the public key in der format
@@ -420,13 +420,13 @@ class Pkcs1Structure:
         Generates the a private key in der format, using
         the given keys value.
 
-        @type keys: Tuple
-        @param keys: A tuple containing the public, private
+        :type keys: Tuple
+        :param keys: A tuple containing the public, private
         and extra key values.
-        @type version: int
-        @param version: The version of the keys to be generated.
-        @rtype: String
-        @return: The generated private key in der format.
+        :type version: int
+        :param version: The version of the keys to be generated.
+        :rtype: String
+        :return: The generated private key in der format.
         """
 
         # unpacks the keys value
@@ -537,11 +537,11 @@ class Pkcs1Structure:
         Generates the a public key in der format, using
         the given keys value.
 
-        @type keys: Tuple
-        @param keys: A tuple containing the public, private
+        :type keys: Tuple
+        :param keys: A tuple containing the public, private
         and extra key values.
-        @rtype: String
-        @return: The generated public key in der format.
+        :rtype: String
+        :return: The generated public key in der format.
         """
 
         # unpacks the keys value
@@ -1073,10 +1073,10 @@ class Pkcs1Structure:
         Writes the given string value to the file
         in the given file path.
 
-        @type file_path: String
-        @param file_path: The path to the file to write.
-        @type string_value: String
-        @param string_value: The string value to be written
+        :type file_path: String
+        :param file_path: The path to the file to write.
+        :type string_value: String
+        :param string_value: The string value to be written
         in the file.
         """
 
@@ -1095,10 +1095,10 @@ class Pkcs1Structure:
         Reads the contents of the file in the
         given file path.
 
-        @type file_path: String
-        @param file_path: The path to the file to read.
-        @rtype: String
-        @return: The string value read from the file.
+        :type file_path: String
+        :param file_path: The path to the file to read.
+        :rtype: String
+        :return: The string value read from the file.
         """
 
         # opens the file using the provided file path,

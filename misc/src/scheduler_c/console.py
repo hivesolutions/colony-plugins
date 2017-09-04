@@ -58,8 +58,8 @@ class ConsoleScheduler(object):
         """
         Constructor of the class.
 
-        @type scheduler_plugin: SchedulerPlugin
-        @param scheduler_plugin: The scheduler plugin.
+        :type scheduler_plugin: SchedulerPlugin
+        :param scheduler_plugin: The scheduler plugin.
         """
 
         self.scheduler_plugin = scheduler_plugin
@@ -76,14 +76,14 @@ class ConsoleScheduler(object):
         Processes the show all scheduler command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # prints the table top text

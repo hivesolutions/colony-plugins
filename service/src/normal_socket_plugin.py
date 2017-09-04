@@ -70,8 +70,8 @@ class NormalSocketPlugin(colony.Plugin):
         """
         Retrieves the socket provider name.
 
-        @rtype: String
-        @return: The socket provider name.
+        :rtype: String
+        :return: The socket provider name.
         """
 
         return self.system.get_provider_name()
@@ -81,8 +81,8 @@ class NormalSocketPlugin(colony.Plugin):
         Provides a new socket, configured with
         the default parameters.
 
-        @rtype: Socket
-        @return: The provided socket.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         return self.system.provide_socket()
@@ -92,10 +92,10 @@ class NormalSocketPlugin(colony.Plugin):
         Provides a new socket, configured with
         the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for socket configuration.
-        @rtype: Socket
-        @return: The provided socket.
+        :type parameters: Dictionary
+        :param parameters: The parameters for socket configuration.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         return self.system.provide_socket_parameters(parameters)
@@ -108,12 +108,12 @@ class NormalSocketPlugin(colony.Plugin):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type socket: Socket
-        @param socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type socket: Socket
+        :param socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 

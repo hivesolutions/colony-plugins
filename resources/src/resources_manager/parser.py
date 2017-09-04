@@ -62,8 +62,8 @@ class Parser(object):
         """
         Retrieves the result of the parse.
 
-        @rtype: Object
-        @return: The result of the parse.
+        :rtype: Object
+        :return: The result of the parse.
         """
 
         pass
@@ -328,8 +328,8 @@ class UnaryExpressionNode(Expression):
         """
         Constructor of the class.
 
-        @type operand: Expression
-        @param operand: The operand of the binary expression.
+        :type operand: Expression
+        :param operand: The operand of the binary expression.
         """
 
         Expression.__init__(self)
@@ -351,10 +351,10 @@ class BinaryExpression(Expression):
         """
         Constructor of the class.
 
-        @type first_operand: Expression
-        @param first_operand:  The first operand of the binary expression.
-        @type second_operand: Expression
-        @param second_operand:  The second operand of the binary expression.
+        :type first_operand: Expression
+        :param first_operand:  The first operand of the binary expression.
+        :type second_operand: Expression
+        :param second_operand:  The second operand of the binary expression.
         """
 
         Expression.__init__(self)
@@ -377,10 +377,10 @@ class Operand(object):
         """
         Constructor of the class.
 
-        @type name: String
-        @param name:  The operand type.
-        @type data: Expression
-        @param data:  The operand data.
+        :type name: String
+        :param name:  The operand type.
+        :type data: Expression
+        :param data:  The operand data.
         """
 
         self.type = type
@@ -395,10 +395,10 @@ class EqualsExpression(BinaryExpression):
         """
         Constructor of the class.
 
-        @type first_operand: Expression
-        @param first_operand:  The first operand of the equals expression.
-        @type second_operand: Expression
-        @param second_operand:  The second operand of the equals expression.
+        :type first_operand: Expression
+        :param first_operand:  The first operand of the equals expression.
+        :type second_operand: Expression
+        :param second_operand:  The second operand of the equals expression.
         """
 
         BinaryExpression.__init__(self, first_operand, second_operand)
@@ -407,10 +407,10 @@ def valid_node(node):
     """
     Gets if a node is valid or not for parsing.
 
-    @type node: Node
-    @param node: The Xml node to be validated.
-    @rtype: bool
-    @return: The valid or not valid value.
+    :type node: Node
+    :param node: The Xml node to be validated.
+    :rtype: bool
+    :return: The valid or not valid value.
     """
 
     # in case the node is of type element

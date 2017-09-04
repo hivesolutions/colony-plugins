@@ -124,10 +124,10 @@ class Autoloader(colony.System):
         Analyzes the given search directory: loading, unloading or
         reloading the appropriate plugins.
 
-        @type search_directory: String
-        @param search_directory: The search directory to be analyzed.
-        @type operations: List
-        @param operations: The list to hold the various operations that
+        :type search_directory: String
+        :param search_directory: The search directory to be analyzed.
+        :type operations: List
+        :param operations: The list to hold the various operations that
         compose the jounal of operations for the transaction unit.
         """
 
@@ -274,8 +274,8 @@ class Autoloader(colony.System):
         This method is useful for situations where no synchronous
         loading is possible or wanted.
 
-        @type operations: List
-        @param operations: The list of operation tuples to be
+        :type operations: List
+        :param operations: The list of operation tuples to be
         used to perform the concrete actions.
         """
 
@@ -355,12 +355,12 @@ class Autoloader(colony.System):
         Loads a module with the given module name and
         for the given search directory.
 
-        @type search_directory: String
-        @param search_directory: The search directory to be used as base in the module load.
-        @type module_name: String
-        @param module_name: The name of the module to be loaded.
-        @type operations: List
-        @param operations: The list to hold the various operations that
+        :type search_directory: String
+        :param search_directory: The search directory to be used as base in the module load.
+        :type module_name: String
+        :param module_name: The name of the module to be loaded.
+        :type operations: List
+        :param operations: The list to hold the various operations that
         compose the jounal of operations for the transaction unit.
         """
 
@@ -402,10 +402,10 @@ class Autoloader(colony.System):
         """
         Unloads a module with the given module name.
 
-        @type module_name: String
-        @param module_name: The name of the module to be unloaded.
-        @type operations: List
-        @param operations: The list to hold the various operations that
+        :type module_name: String
+        :param module_name: The name of the module to be unloaded.
+        :type operations: List
+        :param operations: The list to hold the various operations that
         compose the jounal of operations for the transaction unit.
         """
 
@@ -435,15 +435,15 @@ class Autoloader(colony.System):
         An optional argument controls if the the plugin loading
         state is restored to the original state.
 
-        @type plugin: Plugin
-        @param plugin: The plugin to have the main modules reloaded.
-        @type module_name: String
-        @param module_name: The name of the module to be reloaded.
-        @type load_plugins: bool
-        @param load_plugins: If the plugins should be loaded again
+        :type plugin: Plugin
+        :param plugin: The plugin to have the main modules reloaded.
+        :type module_name: String
+        :param module_name: The name of the module to be reloaded.
+        :type load_plugins: bool
+        :param load_plugins: If the plugins should be loaded again
         to the original state (this is an expensive operation).
-        @type operations: List
-        @param operations: The list to hold the various operations that
+        :type operations: List
+        :param operations: The list to hold the various operations that
         compose the jounal of operations for the transaction unit.
         """
 
@@ -519,8 +519,8 @@ class Autoloader(colony.System):
         """
         Adds the given paths list to the autoloader search path.
 
-        @type path: String
-        @param path: The paths list to be added to the autoloader
+        :type path: String
+        :param path: The paths list to be added to the autoloader
         search path.
         """
 
@@ -532,8 +532,8 @@ class Autoloader(colony.System):
         Custom sleep function used to be easily (and fast)
         cancel the loading loop.
 
-        @type sleep_time: int
-        @param sleep_time: The amount of time to sleep.
+        :type sleep_time: int
+        :param sleep_time: The amount of time to sleep.
         """
 
         # calculates the number of iterations to be used
@@ -574,12 +574,12 @@ class FileInformation(object):
         """
         Constructor of the class.
 
-        @type filename: String
-        @param filename: The file name.
-        @type file_properties: FileProperties
-        @param file_properties: The file properties.
-        @type exists: bool
-        @param exists: The exists flag.
+        :type filename: String
+        :param filename: The file name.
+        :type file_properties: FileProperties
+        :param file_properties: The file properties.
+        :type exists: bool
+        :param exists: The exists flag.
         """
 
         self.filename = filename
@@ -598,8 +598,8 @@ class FileProperties(object):
         """
         Constructor of the class.
 
-        @type modified_date: Tuple
-        @param modified_date: The modified date time tuple.
+        :type modified_date: Tuple
+        :param modified_date: The modified date time tuple.
         """
 
         self.modified_date = modified_date

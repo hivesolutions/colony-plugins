@@ -57,8 +57,8 @@ class FileZip(colony.System):
         """
         Retrieves the name of the engine.
 
-        @rtype: String
-        @return: The name of the engine.
+        :rtype: String
+        :return: The name of the engine.
         """
 
         return ENGINE_NAME
@@ -68,8 +68,8 @@ class FileZip(colony.System):
         Retrieves the internal database manager oriented
         version of the engine.
 
-        @rtype: String
-        @return: internal database manager oriented
+        :rtype: String
+        :return: internal database manager oriented
         version of the engine.
         """
 
@@ -221,10 +221,10 @@ class ZipConnection(object):
         """
         Constructor of the class.
 
-        @type context_name: String
-        @param context_name: The name of the persistence context.
-        @type base_path: String
-        @param base_path: The base path for persistence.
+        :type context_name: String
+        :param context_name: The name of the persistence context.
+        :type base_path: String
+        :param base_path: The base path for persistence.
         """
 
         self.context_name = context_name

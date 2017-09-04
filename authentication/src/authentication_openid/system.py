@@ -51,8 +51,8 @@ class AuthenticationOpenid(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -61,8 +61,8 @@ class AuthenticationOpenid(colony.System):
         """
         Authenticates a user in the general service.
 
-        @type request: AuthenticationRequest
-        @param request: The authentication request to be handled.
+        :type request: AuthenticationRequest
+        :param request: The authentication request to be handled.
         """
 
         pass

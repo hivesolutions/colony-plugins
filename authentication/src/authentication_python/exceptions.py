@@ -56,8 +56,8 @@ class MissingArgument(AuthenticationPythonHandlerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         AuthenticationPythonHandlerException.__init__(self)
@@ -67,8 +67,8 @@ class MissingArgument(AuthenticationPythonHandlerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Missing argument - %s" % self.message
@@ -82,8 +82,8 @@ class AuthenticationError(AuthenticationPythonHandlerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         AuthenticationPythonHandlerException.__init__(self)
@@ -93,8 +93,8 @@ class AuthenticationError(AuthenticationPythonHandlerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Authentication error - %s" % self.message

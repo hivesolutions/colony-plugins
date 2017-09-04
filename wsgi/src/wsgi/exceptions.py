@@ -56,8 +56,8 @@ class WsgiRuntimeException(WsgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         WsgiException.__init__(self)
@@ -67,8 +67,8 @@ class WsgiRuntimeException(WsgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Wsgi runtime exception - %s" % self.message

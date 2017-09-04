@@ -68,8 +68,8 @@ class ServiceHttpColony(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -78,8 +78,8 @@ class ServiceHttpColony(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # in case the plugin handler value is defined in

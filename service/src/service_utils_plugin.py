@@ -84,10 +84,10 @@ class ServiceUtilsPlugin(colony.Plugin):
         Generates a new service for the given parameters.
         The generated service includes the creation of a new pool.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for service generation.
-        @rtype: AbstractService
-        @return: The generated service.
+        :type parameters: Dictionary
+        :param parameters: The parameters for service generation.
+        :rtype: AbstractService
+        :return: The generated service.
         """
 
         return self.system.generate_service(parameters)
@@ -97,10 +97,10 @@ class ServiceUtilsPlugin(colony.Plugin):
         Generates a new service port for the current
         host, avoiding collisions.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for service port generation.
-        @rtype: int
-        @return: The newly generated port.
+        :type parameters: Dictionary
+        :param parameters: The parameters for service port generation.
+        :rtype: int
+        :return: The newly generated port.
         """
 
         return self.system.generate_service_port(parameters)

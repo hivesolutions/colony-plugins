@@ -76,8 +76,8 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return self.system.get_handler_name()
@@ -86,8 +86,8 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         return self.system.handle_request(request)

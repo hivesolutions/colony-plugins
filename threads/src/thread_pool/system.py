@@ -121,18 +121,18 @@ class ThreadPool(colony.System):
         Creates a new thread pool with the given name, description
         and number of threads.
 
-        @type name: String
-        @param name: The thread pool name.
-        @type description: String
-        @param description: The thread pool description.
-        @type number_threads: int
-        @param number_threads: The thread pool number of threads.
-        @type scheduling_algorithm: int
-        @param scheduling_algorithm: The thread pool scheduling algorithm.
-        @type maximum_number_threads: int
-        @param maximum_number_threads: The thread pool maximum number of threads.
-        @rtype: ThreadPoolImplementation
-        @return: The created thread pool.
+        :type name: String
+        :param name: The thread pool name.
+        :type description: String
+        :param description: The thread pool description.
+        :type number_threads: int
+        :param number_threads: The thread pool number of threads.
+        :type scheduling_algorithm: int
+        :param scheduling_algorithm: The thread pool scheduling algorithm.
+        :type maximum_number_threads: int
+        :param maximum_number_threads: The thread pool maximum number of threads.
+        :rtype: ThreadPoolImplementation
+        :return: The created thread pool.
         """
 
         # retrieves the logger
@@ -158,8 +158,8 @@ class ThreadPool(colony.System):
         """
         Retrieves the thread task descriptor class.
 
-        @rtype: Class
-        @return: The thread task descriptor class.
+        :rtype: Class
+        :return: The thread task descriptor class.
         """
 
         return TaskDescriptor
@@ -169,8 +169,8 @@ class ThreadPool(colony.System):
         Retrieves the system information map, containing structured
         information to be visible using presentation viewers.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         # creates the map to hold the system information (ordered  map)
@@ -288,18 +288,18 @@ class ThreadPoolImplementation(object):
         """
         Constructor of the class.
 
-        @type name: String
-        @param name: The thread pool name.
-        @type description: String
-        @param description: The thread pool description.
-        @type number_threads: int
-        @param number_threads: The thread pool number of threads.
-        @type scheduling_algorithm: int
-        @param scheduling_algorithm: The thread pool scheduling algorithm.
-        @type maximum_number_threads: int
-        @param maximum_number_threads: The thread pool maximum number of threads.
-        @type logger: Log
-        @param logger: The logger used.
+        :type name: String
+        :param name: The thread pool name.
+        :type description: String
+        :param description: The thread pool description.
+        :type number_threads: int
+        :param number_threads: The thread pool number of threads.
+        :type scheduling_algorithm: int
+        :param scheduling_algorithm: The thread pool scheduling algorithm.
+        :type maximum_number_threads: int
+        :param maximum_number_threads: The thread pool maximum number of threads.
+        :type logger: Log
+        :param logger: The logger used.
         """
 
         self.name = name
@@ -399,8 +399,8 @@ class ThreadPoolImplementation(object):
         """
         Notifies the thread pool about the thread destruction.
 
-        @type worker_thread: WorkerThread
-        @param worker_thread: The worker thread to be notified about destruction.
+        :type worker_thread: WorkerThread
+        :param worker_thread: The worker thread to be notified about destruction.
         """
 
         # in case the worker thread exists in the current list of threads
@@ -415,8 +415,8 @@ class ThreadPoolImplementation(object):
         """
         Refreshes the thread pool size, growing it if necessary.
 
-        @type increment_size: bool
-        @param increment_size: The increment of decrement thread pool size value.
+        :type increment_size: bool
+        :param increment_size: The increment of decrement thread pool size value.
         """
 
         # in case the current scheduling algorithm is dynamic scheduling
@@ -480,10 +480,10 @@ class ThreadPoolImplementation(object):
         """
         Inserts a new task into the thread pool.
 
-        @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be inserted.
-        @type start_method_args: List
-        @param start_method_args: The start method arguments.
+        :type task_descriptor: TaskDescriptor
+        :param task_descriptor: The descriptor of the task to be inserted.
+        :type start_method_args: List
+        :param start_method_args: The start method arguments.
         """
 
         # creates a worker thread task to start a task and inserts the
@@ -500,10 +500,10 @@ class ThreadPoolImplementation(object):
         """
         Removes a task from the thread pool.
 
-        @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be removed.
-        @type stop_method_args: List
-        @param stop_method_args: The stop method arguments.
+        :type task_descriptor: TaskDescriptor
+        :param task_descriptor: The descriptor of the task to be removed.
+        :type stop_method_args: List
+        :param stop_method_args: The stop method arguments.
         """
 
         # creates a worker thread task to stop a task and inserts the
@@ -520,10 +520,10 @@ class ThreadPoolImplementation(object):
         """
         Pauses a task from the thread pool.
 
-        @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be paused.
-        @type pause_method_args: List
-        @param pause_method_args: The pause method arguments.
+        :type task_descriptor: TaskDescriptor
+        :param task_descriptor: The descriptor of the task to be paused.
+        :type pause_method_args: List
+        :param pause_method_args: The pause method arguments.
         """
 
         # creates a worker thread task to pause a task and inserts the
@@ -540,10 +540,10 @@ class ThreadPoolImplementation(object):
         """
         Resumes a task from the thread pool.
 
-        @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be resumed.
-        @type resume_method_args: List
-        @param resume_method_args: The resume method arguments.
+        :type task_descriptor: TaskDescriptor
+        :param task_descriptor: The descriptor of the task to be resumed.
+        :type resume_method_args: List
+        :param resume_method_args: The resume method arguments.
         """
 
         # creates a worker thread task to pause a task and inserts the
@@ -560,10 +560,10 @@ class ThreadPoolImplementation(object):
         """
         Cancels a task from the thread pool.
 
-        @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be canceled.
-        @type stop_method_args: List
-        @param stop_method_args: The stop method arguments.
+        :type task_descriptor: TaskDescriptor
+        :param task_descriptor: The descriptor of the task to be canceled.
+        :type stop_method_args: List
+        :param stop_method_args: The stop method arguments.
         """
 
         # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
@@ -579,11 +579,11 @@ class ThreadPoolImplementation(object):
         """
         Inserts a worker thread task into the task queue.
 
-        @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to
+        :type worker_thread_task: WorkerThreadTask
+        :param worker_thread_task: The worker thread task to
         inserted in the task queue.
-        @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be
+        :type insert_at_end: bool
+        :param insert_at_end: If the worker thread task is to be
         inserted at the end of the queue or not.
         """
 
@@ -604,11 +604,11 @@ class ThreadPoolImplementation(object):
         same amount as the current number of active threads
         in the pool).
 
-        @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to
+        :type worker_thread_task: WorkerThreadTask
+        :param worker_thread_task: The worker thread task to
         inserted in the task queue.
-        @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be
+        :type insert_at_end: bool
+        :param insert_at_end: If the worker thread task is to be
         inserted at the end of the queue or not.
         """
 
@@ -626,8 +626,8 @@ class ThreadPoolImplementation(object):
         """
         Removes a worker thread task from the task queue.
 
-        @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to removed
+        :type worker_thread_task: WorkerThreadTask
+        :param worker_thread_task: The worker thread task to removed
         from the task queue.
         """
 
@@ -652,8 +652,8 @@ class WorkerThread(threading.Thread):
         """
         Constructor of the class
 
-        @type thread_pool: ThreadPoolImplementation
-        @param thread_pool: The thread pool to be associated with
+        :type thread_pool: ThreadPoolImplementation
+        :param thread_pool: The thread pool to be associated with
         this worker tread.
         """
 
@@ -777,10 +777,10 @@ class WorkerThreadTask(object):
         """
         Constructor of the class
 
-        @type task_type: String
-        @param task_type: The type of the work thread task.
-        @type task_arguments: List
-        @param task_arguments: The arguments of the work thread task.
+        :type task_type: String
+        :param task_type: The type of the work thread task.
+        :type task_arguments: List
+        :param task_arguments: The arguments of the work thread task.
         """
 
         self.task_type = task_type
@@ -819,18 +819,18 @@ class TaskDescriptor(object):
         """
         Constructor of the class
 
-        @type name: String
-        @param name: The name of task.
-        @type description: String
-        @param description: The description of the task.
-        @type start_method: Method
-        @param start_method: The start method of the task.
-        @type start_method: Method
-        @param start_method: The stop method of the task.
-        @type pause_method: Method
-        @param pause_method: The pause method of the task.
-        @type resume_method: Method
-        @param resume_method: The resume method of the task.
+        :type name: String
+        :param name: The name of task.
+        :type description: String
+        :param description: The description of the task.
+        :type start_method: Method
+        :param start_method: The start method of the task.
+        :type start_method: Method
+        :param start_method: The stop method of the task.
+        :type pause_method: Method
+        :param pause_method: The pause method of the task.
+        :type resume_method: Method
+        :param resume_method: The resume method of the task.
         """
 
         self.name = name
@@ -846,8 +846,8 @@ class TaskDescriptor(object):
         """
         Starts the task represented by this task descriptor.
 
-        @type start_method_args: List
-        @param start_method_args: The arguments for the start method.
+        :type start_method_args: List
+        :param start_method_args: The arguments for the start method.
         """
 
         # in case the task descriptor contains a valid start method
@@ -861,8 +861,8 @@ class TaskDescriptor(object):
         """
         Stops the task represented by this task descriptor.
 
-        @type stop_method_args: List
-        @param stop_method_args: The arguments for the stop method.
+        :type stop_method_args: List
+        :param stop_method_args: The arguments for the stop method.
         """
 
         # in case the task descriptor contains a valid stop method
@@ -876,8 +876,8 @@ class TaskDescriptor(object):
         """
         Pauses the task represented by this task descriptor.
 
-        @type pause_method_args: List
-        @param pause_method_args: The arguments for the pause method.
+        :type pause_method_args: List
+        :param pause_method_args: The arguments for the pause method.
         """
 
         # in case the task descriptor contains a valid pause method
@@ -891,8 +891,8 @@ class TaskDescriptor(object):
         """
         Resumes the task represented by this task descriptor.
 
-        @type resume_method_args: List
-        @param resume_method_args: The arguments for the resume method.
+        :type resume_method_args: List
+        :param resume_method_args: The arguments for the resume method.
         """
 
         # in case the task descriptor contains a valid resume method
@@ -906,8 +906,8 @@ class TaskDescriptor(object):
         """
         Retrieves the worker thread for the task descriptor.
 
-        @rtype: WorkerThread
-        @return: The worker thread for the task.
+        :rtype: WorkerThread
+        :return: The worker thread for the task.
         """
 
         return self.worker_thread
@@ -916,8 +916,8 @@ class TaskDescriptor(object):
         """
         Sets the worker thread for the task descriptor.
 
-        @type worker_thread: WorkerThread
-        @param worker_thread: The worker thread for the task.
+        :type worker_thread: WorkerThread
+        :param worker_thread: The worker thread for the task.
         """
 
         self.worker_thread = worker_thread
@@ -926,8 +926,8 @@ class TaskDescriptor(object):
         """
         Retrieves the current task status for the task descriptor.
 
-        @rtype: int
-        @return: The current task status for the task descriptor.
+        :rtype: int
+        :return: The current task status for the task descriptor.
         """
 
         return self.status
@@ -936,8 +936,8 @@ class TaskDescriptor(object):
         """
         Sets the current task status for the task descriptor.
 
-        @type status: int
-        @param status: The current task status for the task descriptor.
+        :type status: int
+        :param status: The current task status for the task descriptor.
         """
 
         self.status = status

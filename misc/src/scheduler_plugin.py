@@ -131,8 +131,8 @@ class SchedulerPlugin(colony.Plugin):
         Retrieves the class that represents
         a task in the current scope.
 
-        @rtype: Class
-        @return: The task class for the current scope.
+        :rtype: Class
+        :return: The task class for the current scope.
         """
 
         return self.system.get_task_class()

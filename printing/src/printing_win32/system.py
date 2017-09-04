@@ -70,8 +70,8 @@ class PrintingWin32(colony.System):
         """
         Retrieves the printing name.
 
-        @rtype: String
-        @return: The printing name.
+        :rtype: String
+        :return: The printing name.
         """
 
         return PRINTING_NAME
@@ -172,11 +172,11 @@ class PrintingWin32(colony.System):
         Retrieves a new printer handler for the
         given printing options.
 
-        @type printing_options: Dictionary
-        @param printing_options: The printing options to be used
+        :type printing_options: Dictionary
+        :param printing_options: The printing options to be used
         to create the printer handler.
-        @rtype: Tuple
-        @return: The tuple containing the printer handler.
+        :rtype: Tuple
+        :return: The tuple containing the printer handler.
         """
 
         # retrieves the printer name
@@ -210,8 +210,8 @@ class PrintingWin32(colony.System):
         Closes the printer handler for the given printer
         handler context.
 
-        @type handler_device_context: PyCDC
-        @param handler_device_context: The handler to the device (printer) context
+        :type handler_device_context: PyCDC
+        :param handler_device_context: The handler to the device (printer) context
         to be closed.
         """
 
@@ -223,10 +223,10 @@ class PrintingWin32(colony.System):
         Retrieves the default printable area from the given
         device context handler.
 
-        @type handler_device_context: PyCDC
-        @param handler_device_context: The handler to the device context.
-        @rtype: Tuple
-        @return: A tuple containing the printable area.
+        :type handler_device_context: PyCDC
+        :param handler_device_context: The handler to the device context.
+        :rtype: Tuple
+        :return: A tuple containing the printable area.
         """
 
         return handler_device_context.GetDeviceCaps(constants.HORIZONTAL_RESOLUTION), handler_device_context.GetDeviceCaps(constants.VERTICAL_RESOLUTION)

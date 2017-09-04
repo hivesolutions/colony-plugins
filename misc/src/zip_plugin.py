@@ -68,12 +68,12 @@ class ZipPlugin(colony.Plugin):
         """
         Compresses the contents of the provided directory into a zip file.
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type input_directory: String
-        @param input_directory: Full path to the directory one wants to compress.
-        @type file_path_list: List
-        @param file_path_list: List of relative file paths.
+        :type zip_file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :type input_directory: String
+        :param input_directory: Full path to the directory one wants to compress.
+        :type file_path_list: List
+        :param file_path_list: List of relative file paths.
         """
 
         return self.system.zip(zip_file_path, input_directory, file_path_list)
@@ -82,10 +82,10 @@ class ZipPlugin(colony.Plugin):
         """
         Extracts a zip file to the specified directory.
 
-        @type file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type output_directory: String
-        @param output_directory: Full path to the directory where one wants to extract the zip file to.
+        :type file_path: String
+        :param zip_file_path: Full path to the zip file.
+        :type output_directory: String
+        :param output_directory: Full path to the directory where one wants to extract the zip file to.
         """
 
         return self.system.unzip(zip_file_path, output_directory)
@@ -94,10 +94,10 @@ class ZipPlugin(colony.Plugin):
         """
         Returns a list with the paths to the files contained in the specified zip file.
 
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of file paths.
+        :type path: String
+        :param path: Path to the zip file.
+        :rtype: List
+        :return: List of file paths.
         """
 
         return self.system.get_file_paths(file_path)
@@ -106,10 +106,10 @@ class ZipPlugin(colony.Plugin):
         """
         Returns a list with the paths to the directories contained in the specified zip file.
 
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of directory paths.
+        :type path: String
+        :param path: Path to the zip file.
+        :rtype: List
+        :return: List of directory paths.
         """
 
         return self.system.get_directory_paths(file_path)

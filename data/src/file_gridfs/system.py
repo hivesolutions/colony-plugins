@@ -54,8 +54,8 @@ class FileGridfs(colony.System):
         """
         Retrieves the name of the engine.
 
-        @rtype: String
-        @return: The name of the engine.
+        :rtype: String
+        :return: The name of the engine.
         """
 
         return ENGINE_NAME
@@ -65,8 +65,8 @@ class FileGridfs(colony.System):
         Retrieves the internal database manager oriented
         version of the engine.
 
-        @rtype: String
-        @return: internal database manager oriented
+        :rtype: String
+        :return: internal database manager oriented
         version of the engine.
         """
 

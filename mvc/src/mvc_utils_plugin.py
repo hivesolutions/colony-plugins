@@ -149,14 +149,14 @@ class MvcUtilsPlugin(colony.Plugin):
         The created file manager respects the given engine name
         and connection parameters.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used in
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used in
         the file manager.
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The parameters for the connection
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The parameters for the connection
         in the file manager.
-        @rtype: FileManager
-        @return: The created file manager.
+        :rtype: FileManager
+        :return: The created file manager.
         """
 
         return self.system.create_file_manager(engine_name, connection_parameters)

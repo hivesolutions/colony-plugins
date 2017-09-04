@@ -56,10 +56,10 @@ class RequestNotHandled(ServiceHttpColonyException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The integer describing the status
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The integer describing the status
         code that is going to be returned in the request.
         """
 
@@ -71,8 +71,8 @@ class RequestNotHandled(ServiceHttpColonyException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Request Not handled - %s" % self.message

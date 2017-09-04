@@ -62,8 +62,8 @@ class AuthenticationEntityManager(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -72,8 +72,8 @@ class AuthenticationEntityManager(colony.System):
         """
         Authenticates a user in the general service.
 
-        @type request: AuthenticationRequest
-        @param request: The authentication request to be handled.
+        :type request: AuthenticationRequest
+        :param request: The authentication request to be handled.
         """
 
         # retrieves the complete set of values that are going

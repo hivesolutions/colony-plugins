@@ -140,8 +140,8 @@ class ServiceHttpCgi(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -150,8 +150,8 @@ class ServiceHttpCgi(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # reads the request contents

@@ -238,8 +238,8 @@ class ServiceHttpFastCgi(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -248,8 +248,8 @@ class ServiceHttpFastCgi(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # reads the request contents
@@ -452,10 +452,10 @@ class ServiceHttpFastCgi(colony.System):
         """
         Retrieves the connection, creating it if necessary.
 
-        @type connection_type: int
-        @param connection_type: The connection type.
-        @type connection_arguments: Object
-        @param connection_arguments: The connection arguments.
+        :type connection_type: int
+        :param connection_type: The connection type.
+        :type connection_arguments: Object
+        :param connection_arguments: The connection arguments.
         """
 
         # creates the connection id tuple
@@ -509,10 +509,10 @@ class FastCgiConnection(object):
         """
         Constructor of the class.
 
-        @type connection_type: int
-        @param connection_type: The connection type.
-        @type connection_arguments: Object
-        @param connection_arguments: The connection arguments.
+        :type connection_type: int
+        :param connection_type: The connection type.
+        :type connection_arguments: Object
+        :param connection_arguments: The connection arguments.
         """
 
         self.connection_type = connection_type
@@ -552,8 +552,8 @@ class FastCgiConnection(object):
         """
         Retrieves a record for the given request id.
 
-        @type request_id: int
-        @param request_id: The request id to retrieve the record.
+        :type request_id: int
+        :param request_id: The request id to retrieve the record.
         """
 
         # acquire the record lock
@@ -580,10 +580,10 @@ class FastCgiConnection(object):
         """
         Retrieves a record from the socket
 
-        @type target_request_id: int
-        @param target_request_id: The target request id of the record.
-        @rtype: Tuple
-        @return: The record tuple.
+        :type target_request_id: int
+        :param target_request_id: The target request id of the record.
+        :rtype: Tuple
+        :return: The record tuple.
         """
 
         # iterates indefinitely
@@ -639,8 +639,8 @@ class FastCgiConnection(object):
         """
         Retrieves the connection type.
 
-        @rtype: int
-        @return: The connection type.
+        :rtype: int
+        :return: The connection type.
         """
 
         return self.connection_type
@@ -649,8 +649,8 @@ class FastCgiConnection(object):
         """
         Sets the connection type.
 
-        @type connection_type: int
-        @param connection_type: The connection type.
+        :type connection_type: int
+        :param connection_type: The connection type.
         """
 
         self.connection_type = connection_type
@@ -659,8 +659,8 @@ class FastCgiConnection(object):
         """
         Retrieves the connection arguments.
 
-        @rtype: Object
-        @return: The connection arguments.
+        :rtype: Object
+        :return: The connection arguments.
         """
 
         return self.connection_arguments
@@ -669,8 +669,8 @@ class FastCgiConnection(object):
         """
         Sets the connection arguments.
 
-        @type connection_arguments: Object
-        @param connection_arguments: The connection arguments.
+        :type connection_arguments: Object
+        :param connection_arguments: The connection arguments.
         """
 
         self.connection_arguments = connection_arguments
@@ -679,8 +679,8 @@ class FastCgiConnection(object):
         """
         Retrieves the established connection socket.
 
-        @rtype: Socket
-        @return: The established connection socket.
+        :rtype: Socket
+        :return: The established connection socket.
         """
 
         return self.socket
@@ -689,8 +689,8 @@ class FastCgiConnection(object):
         """
         Sets the established connection socket.
 
-        @type socket: Socket
-        @param socket: The established connection socket.
+        :type socket: Socket
+        :param socket: The established connection socket.
         """
 
         self.socket = socket
@@ -699,8 +699,8 @@ class FastCgiConnection(object):
         """
         Retrieves the current request id.
 
-        @rtype: int
-        @return: The current request id.
+        :rtype: int
+        :return: The current request id.
         """
 
         return self.request_id
@@ -709,8 +709,8 @@ class FastCgiConnection(object):
         """
         Sets the current request id.
 
-        @type request_id: int
-        @param request_id: The current request id.
+        :type request_id: int
+        :param request_id: The current request id.
         """
 
         self.request_id = request_id
@@ -719,10 +719,10 @@ class FastCgiConnection(object):
         """
         Inserts a record in buffer, for the given request id.
 
-        @type record: Tuple
-        @param record: The record to be inserted.
-        @type request_id: int
-        @param request_id: The id of the request to be inserted.
+        :type record: Tuple
+        :param record: The record to be inserted.
+        :type request_id: int
+        :param request_id: The id of the request to be inserted.
         """
 
         # in case the request id is not defined in the record

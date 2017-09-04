@@ -83,12 +83,12 @@ def dump_parts(object, current_path):
     Dumps (converts to formcode) the given object parts using the "normal"
     approach.
 
-    @type object: Object
-    @param object: The object to have the parts dumped.
-    @type String: String
-    @param String: The current path value.
-    @rtype: String
-    @return: The dumped formcode string.
+    :type object: Object
+    :param object: The object to have the parts dumped.
+    :type String: String
+    :param String: The current path value.
+    :rtype: String
+    :return: The dumped formcode string.
     """
 
     # retrieves the object type
@@ -169,13 +169,13 @@ def _create_value(value, current_path):
     Creates the value base on the given value (string)
     and for the given current path.
 
-    @type value: String
-    @param value: The string value to be used in the
+    :type value: String
+    :param value: The string value to be used in the
     creation of the value.
-    @type current_path: String
-    @param current_path: The current path to be used.
-    @rtype: String
-    @return: The created value.
+    :type current_path: String
+    :param current_path: The current path to be used.
+    :rtype: String
+    :return: The created value.
     """
 
     return current_path + "=" + value + "&"
@@ -187,17 +187,17 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
     At the end the parent structure is changed and contains the form
     attribute in the correct structure place.
 
-    @type parent_structure: List/Dictionary
-    @param parent_structure: The parent structure to be used to set the
+    :type parent_structure: List/Dictionary
+    :param parent_structure: The parent structure to be used to set the
     attribute.
-    @type current_attribute_name: String
-    @param current_attribute_name: The current attribute name, current
+    :type current_attribute_name: String
+    :param current_attribute_name: The current attribute name, current
     because it's parsed
     recursively using this process method.
-    @type attribute_value: Object
-    @param attribute_value: The attribute value.
-    @type index: int
-    @param index: The index of the current attribute reference.
+    :type attribute_value: Object
+    :param attribute_value: The attribute value.
+    :type index: int
+    :param index: The index of the current attribute reference.
     """
 
     # retrieves the current match result

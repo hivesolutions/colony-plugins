@@ -56,8 +56,8 @@ class UndefinedConsoleInterface(ConsoleInterfaceException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ConsoleInterfaceException.__init__(self)
@@ -67,8 +67,8 @@ class UndefinedConsoleInterface(ConsoleInterfaceException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Undefined console interface - %s" % self.message
@@ -82,8 +82,8 @@ class IncompatibleConsoleInterface(ConsoleInterfaceException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ConsoleInterfaceException.__init__(self)
@@ -93,8 +93,8 @@ class IncompatibleConsoleInterface(ConsoleInterfaceException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Incompatible console interface - %s" % self.message

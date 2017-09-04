@@ -111,12 +111,12 @@ class ApiTwitter(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: TwitterClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: TwitterClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -187,18 +187,18 @@ class TwitterClient(object):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param password: The password.
-        @type encoding: String
-        @param encoding: The encoding used.
-        @type oauth_structure: OauthStructure
-        @param oauth_structure: The oauth structure
+        :type json_plugin: JsonPlugin
+        :param json_plugin: The json plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param password: The password.
+        :type encoding: String
+        :param encoding: The encoding used.
+        :type oauth_structure: OauthStructure
+        :param oauth_structure: The oauth structure
         """
 
         self.json_plugin = json_plugin
@@ -242,27 +242,27 @@ class TwitterClient(object):
         """
         Generates a new oauth structure, for the given parameters.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp.
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
-        @type oauth_version: String
-        @param oauth_version: The version.
-        @type oauth_callback: String
-        @param oauth_callback: The callback.
-        @type set_structure: bool
-        @param set_structure: The set structure flag (if the structure
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
+        :type oauth_version: String
+        :param oauth_version: The version.
+        :type oauth_callback: String
+        :param oauth_callback: The callback.
+        :type set_structure: bool
+        :param set_structure: The set structure flag (if the structure
         should be set in the client).
-        @rtype: OauthStructure
-        @return: The generated oauth structure.
+        :rtype: OauthStructure
+        :return: The generated oauth structure.
         """
 
         # constructs a new oauth structure
@@ -289,8 +289,8 @@ class TwitterClient(object):
         """
         Opens the oauth request token.
 
-        @rtype: OauthStructure
-        @return: The current oauth structure.
+        :rtype: OauthStructure
+        :return: The current oauth structure.
         """
 
         # sets the retrieval url
@@ -366,8 +366,8 @@ class TwitterClient(object):
         """
         Opens the oauth access token.
 
-        @rtype: OauthStructure
-        @return: The current oauth structure.
+        :rtype: OauthStructure
+        :return: The current oauth structure.
         """
 
         # sets the retrieval url
@@ -452,8 +452,8 @@ class TwitterClient(object):
         """
         Retrieves the oauth authorize url.
 
-        @rtype: String
-        @return: The oauth authorize url.
+        :rtype: String
+        :return: The oauth authorize url.
         """
 
         # sets the retrieval url
@@ -474,8 +474,8 @@ class TwitterClient(object):
         """
         Retrieves the oauth authenticate url.
 
-        @rtype: String
-        @return: The oauth authenticate url.
+        :rtype: String
+        :return: The oauth authenticate url.
         """
 
         # sets the retrieval url
@@ -496,10 +496,10 @@ class TwitterClient(object):
         """
         Retrieves the public timeline, since the given date id.
 
-        @type since_id: String
-        @param since_id: The date id from which the timeline should be retrieved.
-        @rtype: Dictionary
-        @return: The public timeline, since the given date id.
+        :type since_id: String
+        :param since_id: The date id from which the timeline should be retrieved.
+        :rtype: Dictionary
+        :return: The public timeline, since the given date id.
         """
 
         # start the parameters map
@@ -527,16 +527,16 @@ class TwitterClient(object):
         Retrieves the home timeline, since the given id, for the given maximum id, with the given count
         and the given page.
 
-        @type since_id: String
-        @param since_id: The date id from which the timeline should be retrieved.
-        @type max_id: String
-        @param max_id: The maximum date if from which the timeline should be retrieved.
-        @type count: int
-        @param count: The number of records to be retrieved.
-        @type page: int
-        @param page: The page to be retrieved.
-        @rtype: Dictionary
-        @return: The home timeline, for the given arguments.
+        :type since_id: String
+        :param since_id: The date id from which the timeline should be retrieved.
+        :type max_id: String
+        :param max_id: The maximum date if from which the timeline should be retrieved.
+        :type count: int
+        :param count: The number of records to be retrieved.
+        :type page: int
+        :param page: The page to be retrieved.
+        :rtype: Dictionary
+        :return: The home timeline, for the given arguments.
         """
 
         # requires authentication
@@ -576,16 +576,16 @@ class TwitterClient(object):
         Retrieves the friends timeline, since the given id, for the given maximum id, with the given count
         and the given page.
 
-        @type since_id: String
-        @param since_id: The date id from which the timeline should be retrieved.
-        @type max_id: String
-        @param max_id: The maximum date if from which the timeline should be retrieved.
-        @type count: int
-        @param count: The number of records to be retrieved.
-        @type page: int
-        @param page: The page to be retrieved.
-        @rtype: Dictionary
-        @return: The friends timeline, for the given arguments.
+        :type since_id: String
+        :param since_id: The date id from which the timeline should be retrieved.
+        :type max_id: String
+        :param max_id: The maximum date if from which the timeline should be retrieved.
+        :type count: int
+        :param count: The number of records to be retrieved.
+        :type page: int
+        :param page: The page to be retrieved.
+        :rtype: Dictionary
+        :return: The friends timeline, for the given arguments.
         """
 
         # requires authentication
@@ -625,16 +625,16 @@ class TwitterClient(object):
         Retrieves the user timeline, since the given id, for the given maximum id, with the given count
         and the given page.
 
-        @type since_id: String
-        @param since_id: The date id from which the timeline should be retrieved.
-        @type max_id: String
-        @param max_id: The maximum date if from which the timeline should be retrieved.
-        @type count: int
-        @param count: The number of records to be retrieved.
-        @type page: int
-        @param page: The page to be retrieved.
-        @rtype: Dictionary
-        @return: The user timeline, for the given arguments.
+        :type since_id: String
+        :param since_id: The date id from which the timeline should be retrieved.
+        :type max_id: String
+        :param max_id: The maximum date if from which the timeline should be retrieved.
+        :type count: int
+        :param count: The number of records to be retrieved.
+        :type page: int
+        :param page: The page to be retrieved.
+        :rtype: Dictionary
+        :return: The user timeline, for the given arguments.
         """
 
         # start the parameters map
@@ -677,16 +677,16 @@ class TwitterClient(object):
         Retrieves the user friends, for the given user, with the given cursor,
         for the given user id and screen name.
 
-        @type user: String
-        @param user: The user for which the friends should be retrieved.
-        @type cursor: int
-        @param cursor: The current cursor for retrieval.
-        @type user_id: String
-        @param user_id: The user id for which the friends should be retrieved.
-        @type screen_name: String
-        @param screen_name: The screen name for which the friends should be retrieved.
-        @rtype: Dictionary
-        @return: The user friends, for the given arguments.
+        :type user: String
+        :param user: The user for which the friends should be retrieved.
+        :type cursor: int
+        :param cursor: The current cursor for retrieval.
+        :type user_id: String
+        :param user_id: The user id for which the friends should be retrieved.
+        :type screen_name: String
+        :param screen_name: The screen name for which the friends should be retrieved.
+        :rtype: Dictionary
+        :return: The user friends, for the given arguments.
         """
 
         # requires authentication
@@ -727,16 +727,16 @@ class TwitterClient(object):
         Retrieves the user followers, for the given user, with the given cursor,
         for the given user id and screen name.
 
-        @type user: String
-        @param user: The user for which the followers should be retrieved.
-        @type cursor: int
-        @param cursor: The current cursor for retrieval.
-        @type user_id: String
-        @param user_id: The user id for which the followers should be retrieved.
-        @type screen_name: String
-        @param screen_name: The screen name for which the followers should be retrieved.
-        @rtype: Dictionary
-        @return: The user followers, for the given arguments.
+        :type user: String
+        :param user: The user for which the followers should be retrieved.
+        :type cursor: int
+        :param cursor: The current cursor for retrieval.
+        :type user_id: String
+        :param user_id: The user id for which the followers should be retrieved.
+        :type screen_name: String
+        :param screen_name: The screen name for which the followers should be retrieved.
+        :rtype: Dictionary
+        :return: The user followers, for the given arguments.
         """
 
         # requires authentication
@@ -776,10 +776,10 @@ class TwitterClient(object):
         """
         Retrieves the user information for the given user.
 
-        @type user: String
-        @param user: The user for which the information should be retrieved.
-        @rtype: Dictionary
-        @return: The user information for the given user.
+        :type user: String
+        :param user: The user for which the information should be retrieved.
+        :rtype: Dictionary
+        :return: The user information for the given user.
         """
 
         # in case the user is not defined
@@ -806,16 +806,16 @@ class TwitterClient(object):
         """
         Posts an update message, with the given arguments.
 
-        @type status: String
-        @param status: The status message to be sent.
-        @type in_reply_to_status_id: bool
-        @param in_reply_to_status_id: If the update is a reply.
-        @type lat: String
-        @param lat: The latitude value to be appended to the status udapte.
-        @type long: String
-        @param long: The longitude value to be appended to the status udapte.
-        @rtype: Dictionary
-        @return: The update result value.
+        :type status: String
+        :param status: The status message to be sent.
+        :type in_reply_to_status_id: bool
+        :param in_reply_to_status_id: If the update is a reply.
+        :type lat: String
+        :param lat: The latitude value to be appended to the status udapte.
+        :type long: String
+        :param long: The longitude value to be appended to the status udapte.
+        :rtype: Dictionary
+        :return: The update result value.
         """
 
         # requires authentication
@@ -863,8 +863,8 @@ class TwitterClient(object):
         """
         Retrieves the oauth structure.
 
-        @rtype: OauthStructure
-        @return: The oauth structure.
+        :rtype: OauthStructure
+        :return: The oauth structure.
         """
 
         return self.oauth_structure
@@ -873,8 +873,8 @@ class TwitterClient(object):
         """
         Sets the oauth structure.
 
-        @type oauth_structure: OauthStructure
-        @param oauth_structure: The oauth structure.
+        :type oauth_structure: OauthStructure
+        :param oauth_structure: The oauth structure.
         """
 
         self.oauth_structure = oauth_structure
@@ -883,14 +883,14 @@ class TwitterClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -927,12 +927,12 @@ class TwitterClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -948,14 +948,14 @@ class TwitterClient(object):
         """
         Builds the oauth arguments encoding them into the oauth message specification.
 
-        @type url: String
-        @param url: The url to be used for the oauth encoding.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for the oauth encoding.
-        @type method: String
-        @param method: The method to be used for the oauth encoding.
-        @rtype: String
-        @return: The oauth arguments encoded in oauth message specification.
+        :type url: String
+        :param url: The url to be used for the oauth encoding.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for the oauth encoding.
+        :type method: String
+        :param method: The method to be used for the oauth encoding.
+        :rtype: String
+        :return: The oauth arguments encoded in oauth message specification.
         """
 
         # retrieves the timestamp
@@ -1002,8 +1002,8 @@ class TwitterClient(object):
         """
         Escapes the given url text into a valid http get request string.
 
-        @rtype: String
-        @return: the given url text in a valid http get request string.
+        :rtype: String
+        :return: the given url text in a valid http get request string.
         """
 
         # returns the quoted version of the url text
@@ -1016,8 +1016,8 @@ class TwitterClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary
-        @param data: The data to be checked for twitter errors.
+        :type data: Dictionary
+        :param data: The data to be checked for twitter errors.
         """
 
         pass
@@ -1026,8 +1026,8 @@ class TwitterClient(object):
         """
         Retrieves the current authentication type being used.
 
-        @rtype: int
-        @return: The current authentication type being used.
+        :rtype: int
+        :return: The current authentication type being used.
         """
 
         if self.oauth_structure and self.oauth_structure.oauth_access_token:
@@ -1041,8 +1041,8 @@ class TwitterClient(object):
         """
         Retrieves the real value for the oauth timestamp.
 
-        @rtype: float
-        @return: The real value for the oauth timestamp.
+        :rtype: float
+        :return: The real value for the oauth timestamp.
         """
 
         if self.oauth_structure.oauth_timestamp:
@@ -1056,8 +1056,8 @@ class TwitterClient(object):
         """
         Retrieves the real value for the oauth nonce.
 
-        @rtype: int
-        @return: the real value for the oauth nonce.
+        :rtype: int
+        :return: the real value for the oauth nonce.
         """
 
         if self.oauth_structure.oauth_nonce:
@@ -1071,8 +1071,8 @@ class TwitterClient(object):
         """
         Retrieves the current user.
 
-        @rtype: String
-        @return: The current user.
+        :rtype: String
+        :return: The current user.
         """
 
         # retrieves the current authentication type
@@ -1092,8 +1092,8 @@ class TwitterClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -1173,22 +1173,22 @@ class OauthStructure(object):
         """
         Constructor of the class.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp.
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
-        @type oauth_version: String
-        @param oauth_version: The version.
-        @type oauth_callback: Method
-        @param oauth_callback: The callback.
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
+        :type oauth_version: String
+        :param oauth_version: The version.
+        :type oauth_callback: Method
+        :param oauth_callback: The callback.
         """
 
         self.oauth_consumer_key = oauth_consumer_key
@@ -1204,8 +1204,8 @@ class OauthStructure(object):
         """
         Retrieves the consumer key.
 
-        @rtype: String
-        @return: The consumer key.
+        :rtype: String
+        :return: The consumer key.
         """
 
         return self.oauth_consumer_key
@@ -1214,8 +1214,8 @@ class OauthStructure(object):
         """
         Sets the consumer key.
 
-        @type oauth_consumer_key: String
-        @param oauth_consumer_key: The consumer key.
+        :type oauth_consumer_key: String
+        :param oauth_consumer_key: The consumer key.
         """
 
         self.oauth_consumer_key = oauth_consumer_key
@@ -1224,8 +1224,8 @@ class OauthStructure(object):
         """
         Retrieves the consumer secret.
 
-        @rtype: String
-        @return: The consumer secret.
+        :rtype: String
+        :return: The consumer secret.
         """
 
         return self.oauth_consumer_secret
@@ -1234,8 +1234,8 @@ class OauthStructure(object):
         """
         Sets the consumer secret.
 
-        @type oauth_consumer_secret: String
-        @param oauth_consumer_secret: The consumer secret.
+        :type oauth_consumer_secret: String
+        :param oauth_consumer_secret: The consumer secret.
         """
 
         self.oauth_consumer_secret = oauth_consumer_secret
@@ -1244,8 +1244,8 @@ class OauthStructure(object):
         """
         Retrieves the signature method.
 
-        @rtype: String
-        @return: The signature method.
+        :rtype: String
+        :return: The signature method.
         """
 
         return self.oauth_signature_method
@@ -1254,8 +1254,8 @@ class OauthStructure(object):
         """
         Sets the signature method.
 
-        @type oauth_signature_method: String
-        @param oauth_signature_method: The signature method.
+        :type oauth_signature_method: String
+        :param oauth_signature_method: The signature method.
         """
 
         self.oauth_signature_method = oauth_signature_method
@@ -1264,8 +1264,8 @@ class OauthStructure(object):
         """
         Retrieves the signature.
 
-        @rtype: String
-        @return: The signature.
+        :rtype: String
+        :return: The signature.
         """
 
         return self.oauth_signature
@@ -1274,8 +1274,8 @@ class OauthStructure(object):
         """
         Sets the signature.
 
-        @type oauth_signature: String
-        @param oauth_signature: The signature.
+        :type oauth_signature: String
+        :param oauth_signature: The signature.
         """
 
         self.oauth_signature = oauth_signature
@@ -1284,8 +1284,8 @@ class OauthStructure(object):
         """
         Retrieves the timestamp.
 
-        @rtype: float
-        @return: The timestamp.
+        :rtype: float
+        :return: The timestamp.
         """
 
         return self.oauth_timestamp
@@ -1294,8 +1294,8 @@ class OauthStructure(object):
         """
         Sets the timestamp.
 
-        @type oauth_timestamp: float
-        @param oauth_timestamp: The timestamp
+        :type oauth_timestamp: float
+        :param oauth_timestamp: The timestamp
         """
 
         self.oauth_timestamp = oauth_timestamp
@@ -1304,8 +1304,8 @@ class OauthStructure(object):
         """
         Retrieves the nonce.
 
-        @rtype: int
-        @return: The nonce.
+        :rtype: int
+        :return: The nonce.
         """
 
         return self.oauth_nonce
@@ -1314,8 +1314,8 @@ class OauthStructure(object):
         """
         Sets the nonce.
 
-        @type oauth_nonce: int
-        @param oauth_nonce: The nonce.
+        :type oauth_nonce: int
+        :param oauth_nonce: The nonce.
         """
 
         self.oauth_nonce = oauth_nonce
@@ -1324,8 +1324,8 @@ class OauthStructure(object):
         """
         Retrieves the version.
 
-        @rtype: String
-        @return: The version.
+        :rtype: String
+        :return: The version.
         """
 
         return self.oauth_version
@@ -1334,8 +1334,8 @@ class OauthStructure(object):
         """
         Sets the version.
 
-        @type oauth_version: String
-        @param oauth_version: The version.
+        :type oauth_version: String
+        :param oauth_version: The version.
         """
 
         self.oauth_version = oauth_version
@@ -1344,8 +1344,8 @@ class OauthStructure(object):
         """
         Retrieves the callback.
 
-        @rtype: String
-        @return: The callback.
+        :rtype: String
+        :return: The callback.
         """
 
         return self.oauth_callback
@@ -1354,8 +1354,8 @@ class OauthStructure(object):
         """
         Sets the callback.
 
-        @type oauth_callback: String
-        @param oauth_callback: The callback.
+        :type oauth_callback: String
+        :param oauth_callback: The callback.
         """
 
         self.oauth_callback = oauth_callback
@@ -1364,8 +1364,8 @@ class OauthStructure(object):
         """
         Retrieves the token.
 
-        @rtype: String
-        @return: The token.
+        :rtype: String
+        :return: The token.
         """
 
         return self.oauth_token
@@ -1374,8 +1374,8 @@ class OauthStructure(object):
         """
         Sets the token.
 
-        @type oauth_token: String
-        @param oauth_token: The token.
+        :type oauth_token: String
+        :param oauth_token: The token.
         """
 
         self.oauth_token = oauth_token
@@ -1384,8 +1384,8 @@ class OauthStructure(object):
         """
         Retrieves the token secret.
 
-        @rtype: String
-        @return: The token secret.
+        :rtype: String
+        :return: The token secret.
         """
 
         return self.oauth_token_secret
@@ -1394,8 +1394,8 @@ class OauthStructure(object):
         """
         Sets the token secret.
 
-        @type oauth_token_secret: String
-        @param oauth_token_secret: The token secret.
+        :type oauth_token_secret: String
+        :param oauth_token_secret: The token secret.
         """
 
         self.oauth_token_secret = oauth_token_secret
@@ -1404,8 +1404,8 @@ class OauthStructure(object):
         """
         Retrieves the verifier.
 
-        @rtype: String
-        @return: The verifier.
+        :rtype: String
+        :return: The verifier.
         """
 
         return self.oauth_verifier
@@ -1414,8 +1414,8 @@ class OauthStructure(object):
         """
         Sets the verifier.
 
-        @type oauth_verifier: String
-        @param oauth_verifier: The verifier.
+        :type oauth_verifier: String
+        :param oauth_verifier: The verifier.
         """
 
         self.oauth_verifier = oauth_verifier
@@ -1424,8 +1424,8 @@ class OauthStructure(object):
         """
         Retrieves the access token.
 
-        @rtype: String
-        @return: The access token.
+        :rtype: String
+        :return: The access token.
         """
 
         return self.oauth_access_token
@@ -1434,8 +1434,8 @@ class OauthStructure(object):
         """
         Sets the access token.
 
-        @type oauth_access_tokken: String
-        @param oauth_access_token: The access token.
+        :type oauth_access_tokken: String
+        :param oauth_access_token: The access token.
         """
 
         self.oauth_access_token = oauth_access_token
@@ -1444,8 +1444,8 @@ class OauthStructure(object):
         """
         Retrieves the user id.
 
-        @rtype: String
-        @return: The user id.
+        :rtype: String
+        :return: The user id.
         """
 
         return self.user_id
@@ -1454,8 +1454,8 @@ class OauthStructure(object):
         """
         Sets the user id.
 
-        @type user_id: String
-        @param user_id: The user id.
+        :type user_id: String
+        :param user_id: The user id.
         """
 
         self.user_id = user_id
@@ -1464,8 +1464,8 @@ class OauthStructure(object):
         """
         Retrieves the screen name.
 
-        @rtype: String
-        @return: The screen name.
+        :rtype: String
+        :return: The screen name.
         """
 
         return self.screen_name
@@ -1474,8 +1474,8 @@ class OauthStructure(object):
         """
         Sets the screen name.
 
-        @type screen_name: String
-        @param screen_name: The screen name.
+        :type screen_name: String
+        :param screen_name: The screen name.
         """
 
         self.screen_name = screen_name

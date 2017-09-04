@@ -51,8 +51,8 @@ class ConsoleAuthentication(object):
         """
         Constructor of the class.
 
-        @type console_plugin: ConsolePlugin
-        @param console_plugin: The console plugin.
+        :type console_plugin: ConsolePlugin
+        :param console_plugin: The console plugin.
         """
 
         self.console_plugin = console_plugin
@@ -61,14 +61,14 @@ class ConsoleAuthentication(object):
         """
         Handles the given console authentication.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
-        @type properties: Dictionary
-        @param properties: The properties used in the authentication process.
-        @rtype: Dictionary
-        @return: The authentication result.
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
+        :type properties: Dictionary
+        :param properties: The properties used in the authentication process.
+        :rtype: Dictionary
+        :return: The authentication result.
         """
 
         # in case the authentication handler property is not defined

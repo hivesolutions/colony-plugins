@@ -56,8 +56,8 @@ class HttpProxyRuntimeException(ServiceHttpProxyException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpProxyException.__init__(self)
@@ -67,8 +67,8 @@ class HttpProxyRuntimeException(ServiceHttpProxyException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http proxy runtime - %s" % self.message
@@ -85,10 +85,10 @@ class HttpClientUnavailableException(ServiceHttpProxyException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         ServiceHttpProxyException.__init__(self)
@@ -99,8 +99,8 @@ class HttpClientUnavailableException(ServiceHttpProxyException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http client unavailable - %s" % self.message

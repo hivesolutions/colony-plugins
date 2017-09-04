@@ -125,8 +125,8 @@ class ServiceHttpFile(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -135,8 +135,8 @@ class ServiceHttpFile(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the plugin manager
@@ -300,10 +300,10 @@ class ServiceHttpFile(colony.System):
         """
         The default directory handler for exception sending.
 
-        @type request: HttpRequest
-        @param request: The request to send the directory list.
-        @type directory_list: List
-        @param directory_list: The list of directory entries.
+        :type request: HttpRequest
+        :param request: The request to send the directory list.
+        :type directory_list: List
+        :param directory_list: The list of directory entries.
         """
 
         # sets the request content type
@@ -334,10 +334,10 @@ class ServiceHttpFile(colony.System):
         Processes a directory request for the given complete
         path and request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
-        @type complete_path: String
-        @param complete_path: The complete path to the directory.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
+        :type complete_path: String
+        :param complete_path: The complete path to the directory.
         """
 
         # retrieves the requested resource base path
@@ -426,10 +426,10 @@ class ServiceHttpFile(colony.System):
         Processes a file request for the given complete
         path and request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
-        @type complete_path: String
-        @param complete_path: The complete path to the file.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
+        :type complete_path: String
+        :param complete_path: The complete path to the file.
         """
 
         # opens the requested file
@@ -500,14 +500,14 @@ class ServiceHttpFile(colony.System):
         """
         Redirects the given request to the target path.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
-        @type target_path: String
-        @param target_path: The target path of the redirection.
-        @type status_code: int
-        @param status_code: The status code to be used.
-        @type quote: bool
-        @param quote: If the target path should be quoted.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
+        :type target_path: String
+        :param target_path: The target path of the redirection.
+        :type status_code: int
+        :param status_code: The status code to be used.
+        :type quote: bool
+        :param quote: If the target path should be quoted.
         """
 
         # quotes the target path
@@ -524,10 +524,10 @@ class ServiceHttpFile(colony.System):
         Processes the ranges for the given request,
         using the given file size.
 
-        @type request: HttpRequest
-        @param request: The http request to used in the processing.
-        @type file_size: int
-        @param file_size: The size of the file to be used.
+        :type request: HttpRequest
+        :param request: The http request to used in the processing.
+        :type file_size: int
+        :param file_size: The size of the file to be used.
         """
 
         # sets the accept ranges header
@@ -604,12 +604,12 @@ class ServiceHttpFile(colony.System):
         Computes the etag for the given file stat and
         modified timestamp.
 
-        @type file_stat: Dictionary
-        @param file_stat: The file stat values dictionary.
-        @type modified_timestamp: int
-        @param modified_timestamp: The last modified timestamp.
-        @rtype: String
-        @return: The etag value.
+        :type file_stat: Dictionary
+        :param file_stat: The file stat values dictionary.
+        :type modified_timestamp: int
+        :param modified_timestamp: The last modified timestamp.
+        :rtype: String
+        :return: The etag value.
         """
 
         # retrieves the md5 builder
@@ -639,10 +639,10 @@ class ServiceHttpFile(colony.System):
         """
         Escapes the relative path values in the given path.
 
-        @type path: String
-        @param path: The path to be escaped.
-        @rtype: String
-        @return: The escaped path.
+        :type path: String
+        :param path: The path to be escaped.
+        :rtype: String
+        :return: The escaped path.
         """
 
         # escapes the paths in the relative paths value
@@ -656,12 +656,12 @@ class ServiceHttpFile(colony.System):
         Converts the given range value to a string value,
         using the given file size as reference.
 
-        @type range_value: Tuple
-        @param range_value: The range value to be converted to string.
-        @type file_size: int
-        @param file_size: The size of the file to be used as reference.
-        @rtype: String
-        @return: The string value for the range.
+        :type range_value: Tuple
+        :param range_value: The range value to be converted to string.
+        :type file_size: int
+        :param file_size: The size of the file to be used as reference.
+        :rtype: String
+        :return: The string value for the range.
         """
 
         # creates a string buffer to hold the range
@@ -699,11 +699,11 @@ class ServiceHttpFile(colony.System):
         Key based comparator based that resolves the provided
         item into the appropriate sorting value for it.
 
-        @type item: Object
-        @param item: The item for which to retrieve the resolution
+        :type item: Object
+        :param item: The item for which to retrieve the resolution
         based value for comparison.
-        @rtype: Object
-        @return: The final resolved value that may be used by an
+        :rtype: Object
+        :return: The final resolved value that may be used by an
         external algorithm to sort items.
         """
 
@@ -716,8 +716,8 @@ class ServiceHttpFile(colony.System):
         The method that is going to be generated is meant to
         be used as key provider comparator.
 
-        @type reference: String
-        @param reference: The reference value to the comparison.
+        :type reference: String
+        :param reference: The reference value to the comparison.
         """
 
         def comparator(item):
@@ -726,11 +726,11 @@ class ServiceHttpFile(colony.System):
             item into the proper value to be compared by an external
             comparison algorithm/resolver.
 
-            @type item: Object
-            @param item: The item to return the key value that is
+            :type item: Object
+            :param item: The item to return the key value that is
             going to be used form comparison.
-            @rtype: Object
-            @return: The key value that is going to be used for the
+            :rtype: Object
+            :return: The key value that is going to be used for the
             comparison operation.
             """
 
@@ -760,12 +760,12 @@ class ChunkHandler(object):
         """
         Constructor of the class.
 
-        @type file: File
-        @param file: The file.
-        @type file_size: int
-        @param file_size: The file size.
-        @type ranges: List
-        @param ranges: The list of ranges.
+        :type file: File
+        :param file: The file.
+        :type file_size: int
+        :param file_size: The file size.
+        :type ranges: List
+        :param ranges: The list of ranges.
         """
 
         self.file = file
@@ -798,10 +798,10 @@ class ChunkHandler(object):
         """
         Encodes the file using the given encoding handler with the given name.
 
-        @type encoding_handler: Method
-        @param encoding_handler: The encoding handler method to be used.
-        @type encoding_name: String
-        @param encoding_name: The name of the encoding to be used.
+        :type encoding_handler: Method
+        :param encoding_handler: The encoding handler method to be used.
+        :type encoding_name: String
+        :param encoding_name: The name of the encoding to be used.
         """
 
         # reads the file contents
@@ -831,8 +831,8 @@ class ChunkHandler(object):
         """
         Retrieves the size of the file being chunked.
 
-        @rtype: int
-        @return: The size of the file being chunked.
+        :rtype: int
+        :return: The size of the file being chunked.
         """
 
         return self.file_size
@@ -841,10 +841,10 @@ class ChunkHandler(object):
         """
         Retrieves the a chunk with the given size.
 
-        @rtype: chunk_size
-        @return: The size of the chunk to be retrieved.
-        @rtype: String
-        @return: A chunk with the given size.
+        :rtype: chunk_size
+        :return: The size of the chunk to be retrieved.
+        :rtype: String
+        :return: A chunk with the given size.
         """
 
         # in case the chunk handler is currently closed

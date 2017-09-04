@@ -60,10 +60,10 @@ class AtApiError(ApiAtException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type error_code: String
-        @param error_code: The code associated with
+        :type message: String
+        :param message: The message to be printed.
+        :type error_code: String
+        :param error_code: The code associated with
         the message contained in this api error.
         """
 
@@ -75,8 +75,8 @@ class AtApiError(ApiAtException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "At api error - %s" % self.message

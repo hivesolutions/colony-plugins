@@ -649,21 +649,21 @@ class TemplateFile(object):
         """
         Constructor of the class.
 
-        @type manager: TemplateEngine
-        @param manager: The manager to be used.
-        @type base_path: String
-        @param base_path: The base file system path that is going to be
+        :type manager: TemplateEngine
+        :param manager: The manager to be used.
+        :type base_path: String
+        :param base_path: The base file system path that is going to be
         used for processing templates in the include and extends operation.
-        @type file_path: String
-        @param file_path: The path to the file to be used, this value may or
+        :type file_path: String
+        :param file_path: The path to the file to be used, this value may or
         may not be defined depending on how the template is created.
-        @type encoding: String
-        @param encoding: The encoding used in the file, in case this value
+        :type encoding: String
+        :param encoding: The encoding used in the file, in case this value
         is not defined the encoding is assumed to be the default one.
-        @type root_node: AstNode
-        @param root_node: The root node to be used.
-        @type eval: bool
-        @param eval: If the evaluation based visitor should be used instead
+        :type root_node: AstNode
+        :param root_node: The root node to be used.
+        :type eval: bool
+        :param eval: If the evaluation based visitor should be used instead
         of the normal (and safe) interpreter based visitor. Care should be
         taking while deciding which visitor to be used.
         """
@@ -687,11 +687,11 @@ class TemplateFile(object):
         a variable set of arguments and formats it according to
         the c definition of string templating.
 
-        @type template: String
-        @param template: The template string to be used in the
+        :type template: String
+        :param template: The template string to be used in the
         c like format operation.
-        @rtype: String
-        @returns: The "final" formated string value.
+        :rtype: String
+        :returns: The "final" formated string value.
         """
 
         try: return template % args
@@ -705,14 +705,14 @@ class TemplateFile(object):
 
         The final converted value should be a "plain" string value.
 
-        @type value: String
-        @param value: The base value that is going to be converted
+        :type value: String
+        :param value: The base value that is going to be converted
         according to the provided/requested mode.
-        @type mode: String
-        @param mode: The mode that described the operation that is
+        :type mode: String
+        :param mode: The mode that described the operation that is
         going to be applied to the "base" value.
-        @rtype: String
-        @return: The final converted value according to the requested
+        :rtype: String
+        :return: The final converted value according to the requested
         mode.
         """
 
@@ -741,10 +741,10 @@ class TemplateFile(object):
         The assigned variable value may assume any given data
         type that is accessible by the template language.
 
-        @type name: String
-        @param name: The name of the variable to assign a value.
-        @type value: Object
-        @param value: The value to be assigned to the variable
+        :type name: String
+        :param name: The name of the variable to assign a value.
+        :type value: Object
+        :param value: The value to be assigned to the variable
         """
 
         self.visitor.set_global(name, value)
@@ -755,8 +755,8 @@ class TemplateFile(object):
         The global map should be used as the support for the variable
         assignment.
 
-        @type global_map: Dictionary
-        @param global_map: The global map containing all the variable values.
+        :type global_map: Dictionary
+        :param global_map: The global map containing all the variable values.
         """
 
         self.visitor.set_global_map(global_map)
@@ -774,8 +774,8 @@ class TemplateFile(object):
         so this method may be very useful for long output generation
         in the template engine.
 
-        @type string_buffer: File
-        @param string_buffer: The file like object that is going to
+        :type string_buffer: File
+        :param string_buffer: The file like object that is going to
         be used by the underlying visitor object.
         """
 
@@ -789,8 +789,8 @@ class TemplateFile(object):
         This will allow for the usage of many more process
         methods that the ones available by default (extension).
 
-        @type process_methods_list: List
-        @param process_methods_list: The list of tuples containing the
+        :type process_methods_list: List
+        :param process_methods_list: The list of tuples containing the
         method name and method (function).
         """
 
@@ -808,8 +808,8 @@ class TemplateFile(object):
         This method also attaches the locale bundles to the current
         instance (for context retrieval).
 
-        @type locale_bundles: List
-        @param locale_bundles: The list of locale bundles to be used
+        :type locale_bundles: List
+        :param locale_bundles: The list of locale bundles to be used
         for resolution in the current context.
         """
 
@@ -822,8 +822,8 @@ class TemplateFile(object):
         file. This variable would allow for access to the
         status of the current manager/system.
 
-        @type name: String
-        @param name: The name of the variable used
+        :type name: String
+        :param name: The name of the variable used
         to retain the system wide information.
         """
 
@@ -892,11 +892,11 @@ class TemplateFile(object):
         flag is not set the buffer is returned, but this option
         should be used carefully to avoid any encoding problems.
 
-        @type get_value: bool
-        @param get_value: If the final string value of
+        :type get_value: bool
+        :param get_value: If the final string value of
         the contents should be retrieved as a result.
-        @rtype: String/Buffer
-        @return: The result value from the visitor or the
+        :rtype: String/Buffer
+        :return: The result value from the visitor or the
         string buffer in case the get value flag was set
         to a false value.
         """
@@ -933,8 +933,8 @@ class TemplateFile(object):
         """
         Retrieves the variable encoding.
 
-        @rtype: String
-        @return: The variable encoding.
+        :rtype: String
+        :return: The variable encoding.
         """
 
         return self.variable_encoding
@@ -943,8 +943,8 @@ class TemplateFile(object):
         """
         Sets the variable encoding.
 
-        @type variable_encoding: String
-        @param variable_encoding: The variable encoding.
+        :type variable_encoding: String
+        :param variable_encoding: The variable encoding.
         """
 
         self.variable_encoding = variable_encoding
@@ -955,8 +955,8 @@ class TemplateFile(object):
         In strict mode, variables referenced but node defined
         raise exceptions.
 
-        @rtype: String
-        @return: The strict mode.
+        :rtype: String
+        :return: The strict mode.
         """
 
         return self.strict_mode
@@ -967,8 +967,8 @@ class TemplateFile(object):
         In strict mode, variables referenced but node defined
         raise exceptions.
 
-        @type strict_mode: bool
-        @param strict_mode: The strict mode.
+        :type strict_mode: bool
+        :param strict_mode: The strict mode.
         """
 
         self.strict_mode = strict_mode
@@ -979,8 +979,8 @@ class TemplateFile(object):
         context, the bundle will be added both
         to the current instance and to the visitor.
 
-        @type bundle: Dictionary
-        @param bundle: The locale bundle to be added to
+        :type bundle: Dictionary
+        :param bundle: The locale bundle to be added to
         the current template processing context.
         """
 
@@ -994,8 +994,8 @@ class TemplateFile(object):
         with the node, this is a relevant operation for the
         inheritance infra-structure.
 
-        @type node: Node
-        @param node: The node that should be indexed under the
+        :type node: Node
+        :param node: The node that should be indexed under the
         current template infra-structure.
         """
 

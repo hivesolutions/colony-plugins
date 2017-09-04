@@ -56,8 +56,8 @@ class CsvEncodeException(CsvException):
         """
         Constructor of the class.
 
-        @type object: Object
-        @param object: The object containing the encoding problems.
+        :type object: Object
+        :param object: The object containing the encoding problems.
         """
 
         CsvException.__init__(self)
@@ -67,8 +67,8 @@ class CsvEncodeException(CsvException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Object not encodable - %s" % self.object
@@ -82,8 +82,8 @@ class CsvDecodeException(CsvException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         CsvException.__init__(self)
@@ -93,8 +93,8 @@ class CsvDecodeException(CsvException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Csv data not decodable - %s" % self.message

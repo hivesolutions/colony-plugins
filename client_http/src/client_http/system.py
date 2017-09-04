@@ -241,11 +241,11 @@ class ClientHttp(colony.System):
         """
         Creates a client object for the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used in creating
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used in creating
         the client object.
-        @rtype: HttpClient
-        @return: The created client object.
+        :rtype: HttpClient
+        :return: The created client object.
         """
 
         # retrieves the various parameters provided for the
@@ -334,21 +334,21 @@ class HttpClient(object):
         """
         Constructor of the class.
 
-        @type client_http: ClientHttp
-        @param client_http: The client http object.
-        @type protocol_version: String
-        @param protocol_version: The version of the http protocol to
+        :type client_http: ClientHttp
+        :param client_http: The client http object.
+        :type protocol_version: String
+        :param protocol_version: The version of the http protocol to
         be used.
-        @type content_type_charset: String
-        @param content_type_charset: The charset to be used by the content.
-        @type key_file_path: String
-        @param key_file_path: The path to the (private) key file to be
+        :type content_type_charset: String
+        :param content_type_charset: The charset to be used by the content.
+        :type key_file_path: String
+        :param key_file_path: The path to the (private) key file to be
         used for a secured connection.
-        @type certificate_file_path:  String
-        @param certificate_file_path: The path to the ssl certificate
+        :type certificate_file_path:  String
+        :param certificate_file_path: The path to the ssl certificate
         file to be used for a secured connection
-        @type ssl_version: String
-        @param ssl_version: The version of the ssl specification to be used
+        :type ssl_version: String
+        :param ssl_version: The version of the ssl specification to be used
         as the based verified one to the connection
         """
 
@@ -395,36 +395,36 @@ class HttpClient(object):
         """
         Fetches the url for the given url, method and (http) parameters.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type method: String
-        @param method: The method to be used.
-        @type parameters: Dictionary
-        @param parameters: The (http) parameters to be used in the fetching.
-        @type protocol_version: String
-        @param protocol_version: The version of the protocol to be used.
-        @type headers: Dictionary
-        @param headers: The (http) headers to be used in the fetching.
-        @type content_type: String
-        @param content_type: The content type of the message.
-        @type content_type_charset: String
-        @param content_type_charset: The content type charset to be used.
-        @type encode_path: bool
-        @param encode_path: If the path should be encoded.
-        @type contents: String
-        @param contents: The contents of the message to be sent.
-        @type save_message: bool
-        @param save_message: If the message part of the response
+        :type url: String
+        :param url: The url to be fetched.
+        :type method: String
+        :param method: The method to be used.
+        :type parameters: Dictionary
+        :param parameters: The (http) parameters to be used in the fetching.
+        :type protocol_version: String
+        :param protocol_version: The version of the protocol to be used.
+        :type headers: Dictionary
+        :param headers: The (http) headers to be used in the fetching.
+        :type content_type: String
+        :param content_type: The content type of the message.
+        :type content_type_charset: String
+        :param content_type_charset: The content type charset to be used.
+        :type encode_path: bool
+        :param encode_path: If the path should be encoded.
+        :type contents: String
+        :param contents: The contents of the message to be sent.
+        :type save_message: bool
+        :param save_message: If the message part of the response
         should be saved (at the expense of memory).
-        @type yield_response: bool
-        @param yield_response: If the response value should be yielded
+        :type yield_response: bool
+        :param yield_response: If the response value should be yielded
         for progressive retrieval. Setting this flag changes the return
         value to an iterator that may be used for response retrieval.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of event handlers for the various
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of event handlers for the various
         client events.
-        @rtype: HttpResponse
-        @return: The retrieved response object.
+        :rtype: HttpResponse
+        :return: The retrieved response object.
         """
 
         # retrieves the associated plugin
@@ -537,16 +537,16 @@ class HttpClient(object):
         Builds the url for the given base url, method
         and parameters.
 
-        @type base_url: String
-        @param base_url: The base url to build the final
+        :type base_url: String
+        :param base_url: The base url to build the final
         url.
-        @type method: String
-        @param method: The method to be used in the url retrieval.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used in the url
+        :type method: String
+        :param method: The method to be used in the url retrieval.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used in the url
         retrieval.
-        @rtype: String
-        @return: The final url value.
+        :rtype: String
+        :return: The final url value.
         """
 
         # in case the request method is not get as the parameters
@@ -599,34 +599,34 @@ class HttpClient(object):
         """
         Sends the request for the given parameters.
 
-        @type host: String
-        @param host: The host to be used by the request.
-        @type port: int
-        @param port: The tcp port to be used.
-        @type path: String
-        @param path: The path to be retrieve via http.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the request.
-        @type operation_type: String
-        @param operation_type: The operation type for the request.
-        @type headers: Dictionary
-        @param headers: The headers to the request.
-        @type protocol_version: String
-        @param protocol_version: The protocol version of the request.
-        @type content_type: String
-        @param content_type: The content type of the message.
-        @type content_type_charset: String
-        @param content_type_charset: The content type charset.
-        @type encode_path: bool
-        @param encode_path: If the path should be encoded.
-        @type contents: String
-        @param contents: The contents of the message to be sent.
-        @type url: String
-        @param url: The complete url of the request.
-        @type base_url: String
-        @param base_url: The base url of the request.
-        @rtype: HttpRequest
-        @return: The sent request for the given parameters.
+        :type host: String
+        :param host: The host to be used by the request.
+        :type port: int
+        :param port: The tcp port to be used.
+        :type path: String
+        :param path: The path to be retrieve via http.
+        :type parameters: Dictionary
+        :param parameters: The parameters to the request.
+        :type operation_type: String
+        :param operation_type: The operation type for the request.
+        :type headers: Dictionary
+        :param headers: The headers to the request.
+        :type protocol_version: String
+        :param protocol_version: The protocol version of the request.
+        :type content_type: String
+        :param content_type: The content type of the message.
+        :type content_type_charset: String
+        :param content_type_charset: The content type charset.
+        :type encode_path: bool
+        :param encode_path: If the path should be encoded.
+        :type contents: String
+        :param contents: The contents of the message to be sent.
+        :type url: String
+        :param url: The complete url of the request.
+        :type base_url: String
+        :param base_url: The base url of the request.
+        :rtype: HttpRequest
+        :return: The sent request for the given parameters.
         """
 
         # creates the http request with the host, the port, the path, the parameters, operation type,
@@ -678,21 +678,21 @@ class HttpClient(object):
         """
         Retrieves the response from the sent request.
 
-        @type request: HttpRequest
-        @param request: The request that originated the response.
-        @type save_message: bool
-        @param save_message: If the message part of the response
+        :type request: HttpRequest
+        :param request: The request that originated the response.
+        :type save_message: bool
+        :param save_message: If the message part of the response
         should be saved (at the expense of memory).
-        @type yield_response: bool
-        @param yield_response: If the response value should be yielded
+        :type yield_response: bool
+        :param yield_response: If the response value should be yielded
         for progressive retrieval.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of event handlers for the various
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of event handlers for the various
         client events.
-        @type response_timeout: int
-        @param response_timeout: The timeout for the response retrieval.
-        @rtype: HttpResponse
-        @return: The response from the sent request.
+        :type response_timeout: int
+        :param response_timeout: The timeout for the response retrieval.
+        :rtype: HttpResponse
+        :return: The response from the sent request.
         """
 
         # creates the string buffer for the message
@@ -1105,8 +1105,8 @@ class HttpClient(object):
         Decodes the response message for the encoding
         specified in the response.
 
-        @type response: HttpResponse
-        @param response: The response to be decoded.
+        :type response: HttpResponse
+        :param response: The response to be decoded.
         """
 
         # in case the content type charset is not defined
@@ -1126,10 +1126,10 @@ class HttpClient(object):
         """
         Sets the authentication values, to be used in the request.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
         """
 
         # sets the authentication flag
@@ -1145,8 +1145,8 @@ class HttpClient(object):
         of the cache in the http request.
 
 
-        @type no_cache: bool
-        @param no_cache: The value controlling the explicit invalidation
+        :type no_cache: bool
+        :param no_cache: The value controlling the explicit invalidation
         of the cache in the http request.
         """
 
@@ -1158,8 +1158,8 @@ class HttpClient(object):
         Sets the value controlling the "auto" redirection to be
         used in the request.
 
-        @type redirect: bool
-        @param redirect: The value controlling the "auto" redirection to be
+        :type redirect: bool
+        :param redirect: The value controlling the "auto" redirection to be
         used in the request.
         """
 
@@ -1172,11 +1172,11 @@ class HttpClient(object):
         map. Should set any of the mandatory parameters in case they
         are not already defined.
 
-        @type parameters: Dictionary
-        @param parameters: The base parameters map to be used to build
+        :type parameters: Dictionary
+        :param parameters: The base parameters map to be used to build
         the final client parameters map.
-        @rtype: Dictionary
-        @return: The client service parameters map.
+        :rtype: Dictionary
+        :return: The client service parameters map.
         """
 
         # creates the default parameters
@@ -1203,10 +1203,10 @@ class HttpClient(object):
         the protocol, the username, the password, the host, the port,
         the path, the base url and the options map for the given url.
 
-        @type url: String
-        @param url: The url to be parsed.
-        @rtype: Tuple
-        @return: A tuple containing the protocol, the username, the password
+        :type url: String
+        :param url: The url to be parsed.
+        :rtype: Tuple
+        :return: A tuple containing the protocol, the username, the password
         the host, the port, the path, the base url and the options map.
         """
 
@@ -1277,14 +1277,14 @@ class HttpClient(object):
         retrieving the new response in case there is a
         redirection defined.
 
-        @type request: HttpRequest
-        @param request: The http request to be used in
+        :type request: HttpRequest
+        :param request: The http request to be used in
         the processing.
-        @type response: HttpResponse
-        @param response: The http response to be used in
+        :type response: HttpResponse
+        :param response: The http response to be used in
         the processing.
-        @rtype: HttpResponse
-        @return: The http response resulting from the
+        :rtype: HttpResponse
+        :return: The http response resulting from the
         redirection (or none if not redirected).
         """
 
@@ -1346,11 +1346,11 @@ class HttpClient(object):
         Tests if the given status code (integer) refers
         to a response with no message body contents.
 
-        @type status_code_integer: int
-        @param status_code_integer: The status code (integer)
+        :type status_code_integer: int
+        :param status_code_integer: The status code (integer)
         to be tested.
-        @rtype: bool
-        @return: If the given status code (integer) refers
+        :rtype: bool
+        :return: If the given status code (integer) refers
         to a response with no message body contents.
         """
 
@@ -1364,14 +1364,14 @@ class HttpClient(object):
         For the calling of this type of handler only the
         response is passed as argument.
 
-        @type event_name: String
-        @param event_name: The name of the event to be used
+        :type event_name: String
+        :param event_name: The name of the event to be used
         to call the handler.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of handlers to be used in
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of handlers to be used in
         the calling of the handler.
-        @type response: HttpResponse
-        @param response: The response object to be passed as argument
+        :type response: HttpResponse
+        :param response: The response object to be passed as argument
         to the handler.
         """
 
@@ -1395,17 +1395,17 @@ class HttpClient(object):
         For the calling of this type of handler both the
         response and the data are passed as arguments.
 
-        @type event_name: String
-        @param event_name: The name of the event to be used
+        :type event_name: String
+        :param event_name: The name of the event to be used
         to call the handler.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of handlers to be used in
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of handlers to be used in
         the calling of the handler.
-        @type response: HttpResponse
-        @param response: The response object to be passed as argument
+        :type response: HttpResponse
+        :param response: The response object to be passed as argument
         to the handler.
-        @type data: String
-        @param data: The data to be to be passed as argument
+        :type data: String
+        :param data: The data to be to be passed as argument
         to the handler.
         """
 
@@ -1505,30 +1505,30 @@ class HttpRequest(object):
         """
         Constructor of the class.
 
-        @type host: String
-        @param host: The host value.
-        @type port: int
-        @param port: The port value.
-        @type path: String
-        @param path: The path.
-        @type attributes_map: Dictionary
-        @param attributes_map: The attributes map.
-        @type operation_type: String
-        @param operation_type: The operation type.
-        @type headers_map: Dictionary
-        @param headers_map: The headers map.
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
-        @type content_type: String
-        @param content_type: The content type.
-        @type content_type_charset: String
-        @param content_type_charset: The content type charset.
-        @type encode_path: bool
-        @param encode_path: If the path should be encoded.
-        @type url: String
-        @param url: The complete url.
-        @type base_url: String
-        @param base_url: The base url.
+        :type host: String
+        :param host: The host value.
+        :type port: int
+        :param port: The port value.
+        :type path: String
+        :param path: The path.
+        :type attributes_map: Dictionary
+        :param attributes_map: The attributes map.
+        :type operation_type: String
+        :param operation_type: The operation type.
+        :type headers_map: Dictionary
+        :param headers_map: The headers map.
+        :type protocol_version: String
+        :param protocol_version: The protocol version.
+        :type content_type: String
+        :param content_type: The content type.
+        :type content_type_charset: String
+        :param content_type_charset: The content type charset.
+        :type encode_path: bool
+        :param encode_path: If the path should be encoded.
+        :type url: String
+        :param url: The complete url.
+        :type base_url: String
+        :param base_url: The base url.
         """
 
         self.host = host
@@ -1566,8 +1566,8 @@ class HttpRequest(object):
         Retrieves the result string (serialized) value of
         the request.
 
-        @rtype: String
-        @return: The result string (serialized) value of
+        :rtype: String
+        :return: The result string (serialized) value of
         the request.
         """
 
@@ -1685,10 +1685,10 @@ class HttpRequest(object):
         """
         Sets the authentication values, to be used in the request.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
         """
 
         # sets the authentication flag
@@ -1710,8 +1710,8 @@ class HttpRequest(object):
         """
         Retrieves the no cache value.
 
-        @rtype: bool
-        @return: The no cache value.
+        :rtype: bool
+        :return: The no cache value.
         """
 
         return self.no_cache
@@ -1720,8 +1720,8 @@ class HttpRequest(object):
         """
         Sets the no cache value.
 
-        @type no_cache: bool
-        @param no_cache: The no cache value.
+        :type no_cache: bool
+        :param no_cache: The no cache value.
         """
 
         self.no_cache = no_cache
@@ -1731,8 +1731,8 @@ class HttpRequest(object):
         Retrieves the "real" host value to be sent
         in http header of the request.
 
-        @rtype: String
-        @return: The "real" host value.
+        :rtype: String
+        :return: The "real" host value.
         """
 
         # in case the port is defined and
@@ -1755,8 +1755,8 @@ class HttpRequest(object):
         """
         Encodes the current path into the current encoding.
 
-        @rtype: String
-        @return: The encoded path string.
+        :rtype: String
+        :return: The encoded path string.
         """
 
         # encodes the path
@@ -1772,8 +1772,8 @@ class HttpRequest(object):
         """
         Encodes the current attributes into url encoding.
 
-        @rtype: String
-        @return: The encoded attributes string.
+        :rtype: String
+        :return: The encoded attributes string.
         """
 
         # creates a string buffer to hold the encoded attribute values
@@ -1816,10 +1816,10 @@ class HttpRequest(object):
         """
         Encodes the given string value to the current encoding.
 
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
+        :type string_value: String
+        :param string_value: The string value to be encoded.
+        :rtype: String
+        :return: The given string value encoded in the current encoding.
         """
 
         # in case the content type charset is not defined
@@ -1878,8 +1878,8 @@ class HttpResponse(object):
         """
         Sets the protocol version.
 
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
+        :type protocol_version: String
+        :param protocol_version: The protocol version.
         """
 
         self.protocol_version = protocol_version
@@ -1888,8 +1888,8 @@ class HttpResponse(object):
         """
         Sets the status code.
 
-        @type status_code: int
-        @param status_code: The status code.
+        :type status_code: int
+        :param status_code: The status code.
         """
 
         self.status_code = status_code
@@ -1898,8 +1898,8 @@ class HttpResponse(object):
         """
         Sets the status message.
 
-        @type status_message: String
-        @param status_message: The status message.
+        :type status_message: String
+        :param status_message: The status message.
         """
 
         self.status_message = status_message

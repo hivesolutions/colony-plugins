@@ -134,8 +134,8 @@ class MvcCommunicationHandler(object):
         """
         Constructor of the class.
 
-        @type mvc_plugin: MvcPlugin
-        @param mvc_plugin: The mvc plugin
+        :type mvc_plugin: MvcPlugin
+        :param mvc_plugin: The mvc plugin
         """
 
         self.mvc_plugin = mvc_plugin
@@ -205,14 +205,14 @@ class MvcCommunicationHandler(object):
         the assigning of the various channels to the connections (private
         message).
 
-        @type connection_name: String
-        @param connection_name: The name of the connection to be used
+        :type connection_name: String
+        :param connection_name: The name of the connection to be used
         to send the message.
-        @type message: String
-        @param message: The message to be sent to the various defined
+        :type message: String
+        :param message: The message to be sent to the various defined
         channels (provided by argument)
-        @type channels: Tuple
-        @param channels: The various channels to be used for sending
+        :type channels: Tuple
+        :param channels: The various channels to be used for sending
         the message.
         """
 
@@ -238,11 +238,11 @@ class MvcCommunicationHandler(object):
         The usage of this method implies that no security measured will
         be applied to the message (public message).
 
-        @type connection_name: String
-        @param connection_name: The name of the connection to be used
+        :type connection_name: String
+        :param connection_name: The name of the connection to be used
         to send the message.
-        @type message: String
-        @param message: The message to be sent in broadcast mode.
+        :type message: String
+        :param message: The message to be sent in broadcast mode.
         """
 
         # retrieves the complete set of (communication) connections for
@@ -263,11 +263,11 @@ class MvcCommunicationHandler(object):
         connection. The connection may assume different forms
         (eg: websockets, long polling, apn, etc.).
 
-        @type connection: CommunicationConnection
-        @param connection: The communication connection to be used
+        :type connection: CommunicationConnection
+        :param connection: The communication connection to be used
         for sending the provided message.
-        @type message: String
-        @param message: The message to be sent to the target connection
+        :type message: String
+        :param message: The message to be sent to the target connection
         it must be correctly serialized.
         """
 
@@ -277,15 +277,15 @@ class MvcCommunicationHandler(object):
         """
         Handles the given request.
 
-        @type request: Request
-        @param request: The http request to be handled.
-        @type delegate: Object
-        @param delegate: The object to be used to delegate
+        :type request: Request
+        :param request: The http request to be handled.
+        :type delegate: Object
+        :param delegate: The object to be used to delegate
         operations associated with the communication changes.
-        @type connection_name: String
-        @param connection_name: The name of the connection.
-        @rtype: bool
-        @return: The result of the handling.
+        :type connection_name: String
+        :param connection_name: The name of the connection.
+        :rtype: bool
+        :return: The result of the handling.
         """
 
         # retrieves the request command, this value should
@@ -446,11 +446,11 @@ class MvcCommunicationHandler(object):
         In case no connections exists or no connection is
         defined an empty structure is returned.
 
-        @type connection_name: String
-        @param connection_name: The connection name to retrieve
+        :type connection_name: String
+        :param connection_name: The connection name to retrieve
         the connections.
-        @rtype: List
-        @return: The connections for the given connection name.
+        :rtype: List
+        :return: The connections for the given connection name.
         """
 
         return self.connections_map.get(connection_name, [])
@@ -522,17 +522,17 @@ class MvcCommunicationHandler(object):
         This method should be used to avoid inappropriate
         serialization of messages.
 
-        @type request: Request
-        @param request: The http request to be used in the
+        :type request: Request
+        :param request: The http request to be used in the
         writing operation to be performed.
-        @type connection: CommunicationConnection
-        @param connection: The communication connection to used
+        :type connection: CommunicationConnection
+        :param connection: The communication connection to used
         in the serialization of the message.
-        @type message: String
-        @param message: The message to be serialized and written
+        :type message: String
+        :param message: The message to be serialized and written
         through the request.
-        @type data: List/Tuple
-        @param data: The optional set of data to be delivered to
+        :type data: List/Tuple
+        :param data: The optional set of data to be delivered to
         the client as resulting meta information.
         """
 
@@ -559,14 +559,14 @@ class MvcCommunicationHandler(object):
         given request (using the id value from it) and
         connection name.
 
-        @type request: HttpRequest
-        @param request: The http request to be used to retrieve
+        :type request: HttpRequest
+        :param request: The http request to be used to retrieve
         the id.
-        @type connection_name: String
-        @param connection_name: The name of the connection to be
+        :type connection_name: String
+        :param connection_name: The name of the connection to be
         retrieved.
-        @rtype: CommunicationConnection
-        @return: The communication connection to be retrieved.
+        :rtype: CommunicationConnection
+        :return: The communication connection to be retrieved.
         """
 
         # retrieves the request connection identifier value to be
@@ -588,8 +588,8 @@ class MvcCommunicationHandler(object):
         of the communication handler, this should update all of the
         structures and activate the connection immediately.
 
-        @type connection: CommunicationConnection
-        @param connection: The communication connection to be added
+        :type connection: CommunicationConnection
+        :param connection: The communication connection to be added
         to the communication handler.
         """
 
@@ -603,8 +603,8 @@ class MvcCommunicationHandler(object):
         of the communication handlers, this should update all of the
         structures and deactivate the connection immediately.
 
-        @type connection: CommunicationConnection
-        @param connection: The communication connection to be removed
+        :type connection: CommunicationConnection
+        :param connection: The communication connection to be removed
         from the communication handler.
         """
 
@@ -795,8 +795,8 @@ class ConnectionProcessingThread(threading.Thread):
         """
         Constructor of the class.
 
-        @type communication_handler: MvcCommunicationHandler
-        @param communication_handler: The communication handler reference.
+        :type communication_handler: MvcCommunicationHandler
+        :param communication_handler: The communication handler reference.
         """
 
         threading.Thread.__init__(self)
@@ -902,8 +902,8 @@ class ConnectionProcessingThread(threading.Thread):
         elements that have overflow their wait time and that so
         a default message should be returned to the client.
 
-        @rtype: List
-        @return: The list of communication elements that represent
+        :rtype: List
+        :return: The list of communication elements that represent
         the overflow connections.
         """
 
@@ -1105,16 +1105,16 @@ class CommunicationConnection(object):
         """
         Constructor of the class.
 
-        @type communication_handler: MvcCommunicationHandler
-        @param communication_handler: The communication handler (manager).
-        @type connection_id: String
-        @param connection_id: The identifier of the connection.
-        @type connection_name: String
-        @param connection_name: The name of the connection.
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection for the connection.
-        @type delegate: Object
-        @param delegate: The delegate object to be used to redirect
+        :type communication_handler: MvcCommunicationHandler
+        :param communication_handler: The communication handler (manager).
+        :type connection_id: String
+        :param connection_id: The identifier of the connection.
+        :type connection_name: String
+        :param connection_name: The name of the connection.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection for the connection.
+        :type delegate: Object
+        :param delegate: The delegate object to be used to redirect
         event calls for connection actions.
         """
 
@@ -1166,14 +1166,14 @@ class CommunicationConnection(object):
         The serialization takes into account the current
         connection information (exposed in the message).
 
-        @type message: String
-        @param message: The message to be serialized, this
+        :type message: String
+        :param message: The message to be serialized, this
         value will be marked as return.
-        @type serializer: Method
-        @param serializer: The serializer method to be used
+        :type serializer: Method
+        :param serializer: The serializer method to be used
         in the serialization.
-        @type data: List/Tuple
-        @param data: The optional data sequence to be set in
+        :type data: List/Tuple
+        :param data: The optional data sequence to be set in
         the message to be serialized (meta information).
         """
 
@@ -1210,8 +1210,8 @@ class CommunicationConnection(object):
         that every time a new message is sent for the current
         connection the handler is "notified" about it.
 
-        @type handler: Function
-        @param handler: The handler function to be called for
+        :type handler: Function
+        :param handler: The handler function to be called for
         every message received in the connection.
         """
 
@@ -1223,8 +1223,8 @@ class CommunicationConnection(object):
         current connection, avoiding any further handling of
         messages from it.
 
-        @type handler: Function
-        @param handler: The handler function to be removed from
+        :type handler: Function
+        :param handler: The handler function to be removed from
         the current connection, no further messages handled.
         """
 
@@ -1246,17 +1246,17 @@ class CommunicationConnection(object):
         connection to be able to handle communication with ios/osx
         devices using the apn protocol.
 
-        @type token_string: String
-        @param token_string: The hexadecimal based string containing the
+        :type token_string: String
+        :param token_string: The hexadecimal based string containing the
         token that identifies the device/app uniquely.
-        @type key_file: String
-        @param key_file: The path to the (private) key file to be used in
+        :type key_file: String
+        :param key_file: The path to the (private) key file to be used in
         the connection to the apn service.
-        @type cert_file: String
-        @param cert_file: The path to the certificate file to be used in
+        :type cert_file: String
+        :param cert_file: The path to the certificate file to be used in
         the connection to the apn service.
-        @type sandbox: bool
-        @param sandbox: If the connection with the apn service should be done
+        :type sandbox: bool
+        :param sandbox: If the connection with the apn service should be done
         using the secure sandboxed approach (default) or the production model.
         """
 
@@ -1282,8 +1282,8 @@ class CommunicationConnection(object):
         """
         Adds a message to the connection message queue.
 
-        @type message: String
-        @param message: The message to be added to the
+        :type message: String
+        :param message: The message to be added to the
         connection message queue.
         """
 
@@ -1306,8 +1306,8 @@ class CommunicationConnection(object):
         Pops the message queue, retrieving all the messages
         from the queue and cleaning the queue after.
 
-        @rtype: List
-        @return: The popped queue.
+        :rtype: List
+        :return: The popped queue.
         """
 
         # acquires the message queue lock
@@ -1341,8 +1341,8 @@ class CommunicationConnection(object):
         Checks if the current connection status is open
         and returns the value.
 
-        @rtype: bool
-        @return: If the status for the current connection
+        :rtype: bool
+        :return: If the status for the current connection
         is open (connection available).
         """
 
@@ -1352,8 +1352,8 @@ class CommunicationConnection(object):
         """
         Checks if the internal message queue is empty.
 
-        @rtype: bool
-        @return: The result of the testing of the internal
+        :rtype: bool
+        :return: The result of the testing of the internal
         message queue.
         """
 
@@ -1371,8 +1371,8 @@ class CommunicationConnection(object):
         both the identifier of the connection and the name
         (domain) of it.
 
-        @rtype: Tuple
-        @return: The connection information.
+        :rtype: Tuple
+        :return: The connection information.
         """
 
         return (
@@ -1384,8 +1384,8 @@ class CommunicationConnection(object):
         """
         Retrieves the connection id.
 
-        @rtype: String
-        @return: The connection id.
+        :rtype: String
+        :return: The connection id.
         """
 
         return self.connection_id
@@ -1394,8 +1394,8 @@ class CommunicationConnection(object):
         """
         Sets the connection name.
 
-        @type connection_id: String
-        @param connection_id: The connection id.
+        :type connection_id: String
+        :param connection_id: The connection id.
         """
 
         self.connection_id = connection_id
@@ -1404,8 +1404,8 @@ class CommunicationConnection(object):
         """
         Retrieves the connection name.
 
-        @rtype: String
-        @return: The connection name.
+        :rtype: String
+        :return: The connection name.
         """
 
         return self.connection_name
@@ -1414,8 +1414,8 @@ class CommunicationConnection(object):
         """
         Sets the connection name.
 
-        @type connection_name: String
-        @param connection_name: The connection name.
+        :type connection_name: String
+        :param connection_name: The connection name.
         """
 
         self.connection_name = connection_name
@@ -1424,8 +1424,8 @@ class CommunicationConnection(object):
         """
         Retrieves the service connection.
 
-        @rtype: ServiceConnection
-        @return: The service connection.
+        :rtype: ServiceConnection
+        :return: The service connection.
         """
 
         return self.service_connection
@@ -1434,8 +1434,8 @@ class CommunicationConnection(object):
         """
         Sets the service connection.
 
-        @type service_connection: ServiceConnection
-        @param service_connection: The service connection.
+        :type service_connection: ServiceConnection
+        :param service_connection: The service connection.
         """
 
         self.service_connection = service_connection

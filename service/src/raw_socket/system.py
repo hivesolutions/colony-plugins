@@ -59,8 +59,8 @@ class RawSocket(colony.System):
         """
         Retrieves the socket provider name.
 
-        @rtype: String
-        @return: The socket provider name.
+        :rtype: String
+        :return: The socket provider name.
         """
 
         return PROVIDER_NAME
@@ -70,8 +70,8 @@ class RawSocket(colony.System):
         Provides a new socket, configured with
         the default parameters.
 
-        @rtype: Socket
-        @return: The provided socket.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         # creates the raw socket
@@ -85,10 +85,10 @@ class RawSocket(colony.System):
         Provides a new socket, configured with
         the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for socket configuration.
-        @rtype: Socket
-        @return: The provided socket.
+        :type parameters: Dictionary
+        :param parameters: The parameters for socket configuration.
+        :rtype: Socket
+        :return: The provided socket.
         """
 
         # prints a debug message
@@ -111,12 +111,12 @@ class RawSocket(colony.System):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type socket: Socket
-        @param socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type socket: Socket
+        :param socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 

@@ -191,8 +191,8 @@ class ServiceHttpProxy(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -201,8 +201,8 @@ class ServiceHttpProxy(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the proxy type
@@ -230,8 +230,8 @@ class ServiceHttpProxy(colony.System):
         The forward proxy is useful for things like traffic tracking
         publicity and other manipulations to the normal web traffic.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the proxy service type
@@ -255,8 +255,8 @@ class ServiceHttpProxy(colony.System):
         Handles the given "forward" request using a
         synchronous strategy (more memory usage).
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the resource base path
@@ -328,8 +328,8 @@ class ServiceHttpProxy(colony.System):
         Handles the given "forward" request using an
         asynchronous strategy (less memory usage).
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the resource base path
@@ -443,8 +443,8 @@ class ServiceHttpProxy(colony.System):
         any additional path and it should think that the communication
         his being made with the current host.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the proxy service type
@@ -468,8 +468,8 @@ class ServiceHttpProxy(colony.System):
         Handles the given "reverse" request using a
         synchronous strategy (more memory usage).
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the (reverse) proxy target
@@ -545,8 +545,8 @@ class ServiceHttpProxy(colony.System):
         Handles the given "reverse" request using an
         asynchronous strategy (less memory usage).
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # retrieves the (reverse) proxy target
@@ -776,11 +776,11 @@ class ServiceHttpProxy(colony.System):
         on the content length header value.
         In case the content length header value is not set
 
-        @type http_response: HttpResponse
-        @param http_response: The http response to retrieve
+        :type http_response: HttpResponse
+        :param http_response: The http response to retrieve
         the (target) message size.
-        @rtype: int
-        @return: The message size for the given http response
+        :rtype: int
+        :return: The message size for the given http response
         measured in bytes.
         """
 
@@ -808,13 +808,13 @@ class ServiceHttpProxy(colony.System):
         Retrieves the generator value for the given generator
         and for the given (target) value type.
 
-        @type generator: Generator
-        @param generator: The generator to be used to
+        :type generator: Generator
+        :param generator: The generator to be used to
         retrieves the "target" value.
-        @type value_type: String
-        @param value_type: The type of the value to be retrieved.
-        @rtype: Object
-        @return: The retrieved object according to the value type.
+        :type value_type: String
+        :param value_type: The type of the value to be retrieved.
+        :rtype: Object
+        :return: The retrieved object according to the value type.
         """
 
         # iterates continuously
@@ -866,14 +866,14 @@ class ChunkHandler(object):
         """
         Constructor of the class.
 
-        @type http_response_generator: Generator
-        @param http_response_generator: The generator to be
+        :type http_response_generator: Generator
+        :param http_response_generator: The generator to be
         used in the http response.
-        @type http_response_size: int
-        @param http_response_size: The size in bytes of the
+        :type http_response_size: int
+        :param http_response_size: The size in bytes of the
         http reponse.
-        @type close_handler: Function
-        @param close_handler: The handler to be called on
+        :type close_handler: Function
+        :param close_handler: The handler to be called on
         closing.
         """
 
@@ -885,8 +885,8 @@ class ChunkHandler(object):
         """
         Retrieves the size of the response being chunked.
 
-        @rtype: int
-        @return: The size of the response being chunked.
+        :rtype: int
+        :return: The size of the response being chunked.
         """
 
         return self.http_response_size
@@ -895,10 +895,10 @@ class ChunkHandler(object):
         """
         Retrieves the a chunk with the given size.
 
-        @rtype: chunk_size
-        @return: The size of the chunk to be retrieved.
-        @rtype: String
-        @return: A chunk with the given size.
+        :rtype: chunk_size
+        :return: The size of the chunk to be retrieved.
+        :rtype: String
+        :return: A chunk with the given size.
         """
 
         # in case the chunk handler is

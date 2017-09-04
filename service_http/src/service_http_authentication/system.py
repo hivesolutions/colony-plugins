@@ -59,8 +59,8 @@ class ServiceHttpAuthentication(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -69,14 +69,14 @@ class ServiceHttpAuthentication(colony.System):
         """
         Handles the given http authentication.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
-        @type properties: Dictionary
-        @param properties: The properties used in the authentication process.
-        @rtype: Dictionary
-        @return: The authentication result.
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
+        :type properties: Dictionary
+        :param properties: The properties used in the authentication process.
+        :rtype: Dictionary
+        :return: The authentication result.
         """
 
         # in case the authentication handler property is not defined

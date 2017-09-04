@@ -79,10 +79,10 @@ class ClientUtilsPlugin(colony.Plugin):
         """
         Generates a new client for the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for client generation.
-        @rtype: AbstractClient
-        @return: The generated client.
+        :type parameters: Dictionary
+        :param parameters: The parameters for client generation.
+        :rtype: AbstractClient
+        :return: The generated client.
         """
 
         return self.system.generate_client(parameters)

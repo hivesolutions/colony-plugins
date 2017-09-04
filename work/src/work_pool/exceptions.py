@@ -56,8 +56,8 @@ class WorkPoolOperationException(WorkPoolException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         WorkPoolException.__init__(self)
@@ -67,8 +67,8 @@ class WorkPoolOperationException(WorkPoolException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Work pool operation exception - %s" % self.message

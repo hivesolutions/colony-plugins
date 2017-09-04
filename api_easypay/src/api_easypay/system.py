@@ -94,12 +94,12 @@ class ApiEasypay(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: EasypayClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: EasypayClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -138,12 +138,12 @@ class EasypayClient(object):
         """
         Constructor of the class.
 
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type easypay_structure: EasypayStructure
-        @param easypay_structure: The easypay structure.
-        @type test_mode: bool
-        @param test_mode: Flag indicating if the client is to
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type easypay_structure: EasypayStructure
+        :param easypay_structure: The easypay structure.
+        :type test_mode: bool
+        :param test_mode: Flag indicating if the client is to
         be run in test mode.
         """
 
@@ -178,23 +178,23 @@ class EasypayClient(object):
         """
         Generates the easypay structure for the given arguments.
 
-        @type username: String
-        @param username: The username.
-        @type cin: String
-        @param cin: The cin.
-        @type country: String
-        @param country: The two letter string representing the
+        :type username: String
+        :param username: The username.
+        :type cin: String
+        :param cin: The cin.
+        :type country: String
+        :param country: The two letter string representing the
         country to be used.
-        @type language: String
-        @param language: The two letter string representing the
+        :type language: String
+        :param language: The two letter string representing the
         language to be used.
-        @type api_version: String
-        @param api_version: The version of the api being used.
-        @type set_structure: bool
-        @param set_structure: If the structure should be
+        :type api_version: String
+        :param api_version: The version of the api being used.
+        :type set_structure: bool
+        :param set_structure: If the structure should be
         set in the easypay client.
-        @rtype: EasypayStructure
-        @return: The generated easypay structure.
+        :rtype: EasypayStructure
+        :return: The generated easypay structure.
         """
 
         # creates a new easypay structure
@@ -433,8 +433,8 @@ class EasypayClient(object):
         with invalid arguments as a no-op, in order to check its exception
         message for the presence of a statement that the credentials are invalid.
 
-        @rtype: bool
-        @return: Flag indicating if the credentials are valid.
+        :rtype: bool
+        :return: Flag indicating if the credentials are valid.
         """
 
         # initializes the valid flag
@@ -454,8 +454,8 @@ class EasypayClient(object):
         """
         Retrieves the easypay structure.
 
-        @rtype: EasypayStructure
-        @return: The easypay structure.
+        :rtype: EasypayStructure
+        :return: The easypay structure.
         """
 
         return self.easypay_structure
@@ -464,8 +464,8 @@ class EasypayClient(object):
         """
         Sets the easypay structure.
 
-        @type easypay_structure: EasypayStructure
-        @param easypay_structure: The easypay structure.
+        :type easypay_structure: EasypayStructure
+        :param easypay_structure: The easypay structure.
         """
 
         self.easypay_structure = easypay_structure
@@ -475,8 +475,8 @@ class EasypayClient(object):
         Sets the base easypay rest request parameters
         in the parameters map.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be used in setting
+        :type parameters: Dictionary
+        :param parameters: The parameters map to be used in setting
         the base parameters.
         """
 
@@ -488,14 +488,14 @@ class EasypayClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # creates the parameters map in case it is not defined
@@ -519,12 +519,12 @@ class EasypayClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -543,8 +543,8 @@ class EasypayClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary
-        @param data: The data to be checked for easypay errors.
+        :type data: Dictionary
+        :param data: The data to be checked for easypay errors.
         """
 
         # retrieves the status and
@@ -564,8 +564,8 @@ class EasypayClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case an http client already exists then returns it
@@ -648,18 +648,18 @@ class EasypayStructure(object):
         """
         Constructor of the class.
 
-        @type username: String
-        @param username: The username.
-        @type cin: String
-        @param cin: The cin value.
-        @type country: String
-        @param country: The two letter string representing the
+        :type username: String
+        :param username: The username.
+        :type cin: String
+        :param cin: The cin value.
+        :type country: String
+        :param country: The two letter string representing the
         country to be used.
-        @type language: String
-        @param language: The two letter string representing the
+        :type language: String
+        :param language: The two letter string representing the
         language to be used.
-        @type api_version: String
-        @param api_version: The version of the api being used.
+        :type api_version: String
+        :param api_version: The version of the api being used.
         """
 
         self.username = username
@@ -672,8 +672,8 @@ class EasypayStructure(object):
         """
         Retrieves the username.
 
-        @rtype: String
-        @return: The username.
+        :rtype: String
+        :return: The username.
         """
 
         return self.username
@@ -682,8 +682,8 @@ class EasypayStructure(object):
         """
         Sets the username.
 
-        @type username: String
-        @param username: The username.
+        :type username: String
+        :param username: The username.
         """
 
         self.username = username
@@ -692,8 +692,8 @@ class EasypayStructure(object):
         """
         Retrieves the cin.
 
-        @rtype: String
-        @return: The cin.
+        :rtype: String
+        :return: The cin.
         """
 
         return self.cin
@@ -702,8 +702,8 @@ class EasypayStructure(object):
         """
         Sets the cin.
 
-        @type cin: String
-        @param cin: The cin.
+        :type cin: String
+        :param cin: The cin.
         """
 
         self.cin = cin
@@ -712,8 +712,8 @@ class EasypayStructure(object):
         """
         Retrieves the country.
 
-        @rtype: String
-        @return: The country.
+        :rtype: String
+        :return: The country.
         """
 
         return self.country
@@ -722,8 +722,8 @@ class EasypayStructure(object):
         """
         Sets the country.
 
-        @type country: String
-        @param country: The country.
+        :type country: String
+        :param country: The country.
         """
 
         self.country = country
@@ -732,8 +732,8 @@ class EasypayStructure(object):
         """
         Retrieves the language.
 
-        @rtype: String
-        @return: The language.
+        :rtype: String
+        :return: The language.
         """
 
         return self.language
@@ -742,8 +742,8 @@ class EasypayStructure(object):
         """
         Sets the language.
 
-        @type language: String
-        @param language: The language.
+        :type language: String
+        :param language: The language.
         """
 
         self.language = language
@@ -752,8 +752,8 @@ class EasypayStructure(object):
         """
         Retrieves the api version.
 
-        @rtype: String
-        @return: The api version.
+        :rtype: String
+        :return: The api version.
         """
 
         return self.api_version
@@ -762,8 +762,8 @@ class EasypayStructure(object):
         """
         Sets the api version.
 
-        @type api_version: String
-        @param api_version: The api version.
+        :type api_version: String
+        :param api_version: The api version.
         """
 
         self.api_version = api_version

@@ -70,8 +70,8 @@ class InvalidNumberArguments(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -81,8 +81,8 @@ class InvalidNumberArguments(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid number of arguments - %s" % self.message
@@ -96,8 +96,8 @@ class InvalidMethod(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -107,8 +107,8 @@ class InvalidMethod(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid Method - %s" % self.message
@@ -122,8 +122,8 @@ class InvalidEncoder(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -133,8 +133,8 @@ class InvalidEncoder(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid Encoder - %s" % self.message
@@ -148,8 +148,8 @@ class RestRequestNotHandled(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -159,8 +159,8 @@ class RestRequestNotHandled(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Rest Request Not handled - %s" % self.message
@@ -174,8 +174,8 @@ class InvalidPath(BadServiceRequest):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         BadServiceRequest.__init__(self)
@@ -185,8 +185,8 @@ class InvalidPath(BadServiceRequest):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid path - %s" % self.message
@@ -200,8 +200,8 @@ class InvalidSession(ServiceException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceException.__init__(self)
@@ -211,8 +211,8 @@ class InvalidSession(ServiceException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid session - %s" % self.message
@@ -226,8 +226,8 @@ class InvalidCookie(ServiceException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceException.__init__(self)
@@ -237,8 +237,8 @@ class InvalidCookie(ServiceException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid cookie - %s" % self.message

@@ -130,8 +130,8 @@ class Console(colony.System):
         """
         Creates a new console context for third party usage.
 
-        @rtype: ConsoleContext
-        @return: The creates console context.
+        :rtype: ConsoleContext
+        :return: The creates console context.
         """
 
         return ConsoleContext(self)
@@ -141,12 +141,12 @@ class Console(colony.System):
         Creates a new console interface character based
         from the given console handler.
 
-        @type console_handler: ConsoleHandler
-        @param console_handler: The console handler to be used.
-        @type console_context: ConsoleContext
-        @param console_context: The console context to be used.
-        @rtype: ConsoleInterfaceCharacter
-        @return: The create console interface character.
+        :type console_handler: ConsoleHandler
+        :param console_handler: The console handler to be used.
+        :type console_context: ConsoleContext
+        :param console_context: The console context to be used.
+        :rtype: ConsoleInterfaceCharacter
+        :return: The create console interface character.
         """
 
         return interfaces.ConsoleInterfaceCharacter(self, console_handler, console_context)
@@ -166,15 +166,15 @@ class Console(colony.System):
         """
         Processes the given command line, with the given output method.
 
-        @type command_line: String
-        @param command_line: The command line to be processed.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context to be used to process
+        :type command_line: String
+        :param command_line: The command line to be processed.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context to be used to process
         the command line.
-        @rtype: bool
-        @return: If the processing of the command line was successful.
+        :rtype: bool
+        :return: If the processing of the command line was successful.
         """
 
         # in case there is no output method defined
@@ -226,8 +226,8 @@ class Console(colony.System):
         """
         Retrieves the default output method.
 
-        @rtype: Method
-        @return: The default output method for console.
+        :rtype: Method
+        :return: The default output method for console.
         """
 
         return self.write
@@ -238,15 +238,15 @@ class Console(colony.System):
         Retrieves the alternative (possible) values for the given command
         and arguments.
 
-        @type command: String
-        @param command: The command to be retrieve the alternatives.
-        @type arguments: String
-        @param arguments: The list of arguments
-        @type console_context: ConsoleContext
-        @param console_context: The console context to be used to retrieve
+        :type command: String
+        :param command: The command to be retrieve the alternatives.
+        :type arguments: String
+        :param arguments: The list of arguments
+        :type console_context: ConsoleContext
+        :param console_context: The console context to be used to retrieve
         the command line alternatives.
-        @rtype: Tuple
-        @return: A tuple containing the list of alternatives for the given
+        :rtype: Tuple
+        :return: A tuple containing the list of alternatives for the given
         command line and the current best match.
         """
 
@@ -276,13 +276,13 @@ class Console(colony.System):
         """
         Splits the given command line into command and arguments.
 
-        @type command_line: String
-        @param command_line: The command line to be splitted.
-        @type include_extra_space: bool
-        @param include_extra_space: If an eventual extra space to the right
+        :type command_line: String
+        :param command_line: The command line to be splitted.
+        :type include_extra_space: bool
+        :param include_extra_space: If an eventual extra space to the right
         should be considered a token.
-        @rtype: Tuple
-        @return: A tuple containing the command and the arguments.
+        :rtype: Tuple
+        :return: A tuple containing the command and the arguments.
         """
 
         # splits the command line arguments
@@ -342,13 +342,13 @@ class Console(colony.System):
         """
         Separates the various command line arguments per space or per quotes.
 
-        @type command_line: String
-        @param command_line: The command line string.
-        @type include_extra_space: bool
-        @param include_extra_space: If an eventual extra space to the right
+        :type command_line: String
+        :param command_line: The command line string.
+        :type include_extra_space: bool
+        :param include_extra_space: If an eventual extra space to the right
         should be considered a token.
-        @rtype: List
-        @return: The list containing the various command line arguments.
+        :rtype: List
+        :return: The list containing the various command line arguments.
         """
 
         # splits the line using the command line regex
@@ -385,10 +385,10 @@ class Console(colony.System):
         Writes the given text to the standard output,
         may use a newline or not.
 
-        @type text: String
-        @param text: The text to be written to the standard output.
-        @type new_line: bool
-        @param new_line: If the text should be suffixed with a newline.
+        :type text: String
+        :param text: The text to be written to the standard output.
+        :type new_line: bool
+        :param new_line: If the text should be suffixed with a newline.
         """
 
         # writes the text contents
@@ -695,8 +695,8 @@ class ConsoleContext(colony.Protected):
         """
         Constructor of the class.
 
-        @type console: Console
-        @param console: The console reference.
+        :type console: Console
+        :param console: The console reference.
         """
 
         self.console = console
@@ -837,11 +837,11 @@ class ConsoleContext(colony.Protected):
         This method falls-back to an unordered strategy in case
         not all the information could be retrieved from the console.
 
-        @type items: List
-        @param items: A list/set of items to output using the given
+        :type items: List
+        :param items: A list/set of items to output using the given
         output method in an ordered fashion.
-        @type output_method: Function
-        @param output_method: Method used to output string to the
+        :type output_method: Function
+        :param output_method: Method used to output string to the
         current output flow.
         """
 
@@ -869,8 +869,8 @@ class ConsoleContext(colony.Protected):
         This method shall preferably use a method that can provide
         feature like: history and cursor movement.
 
-        @rtype: String
-        @return: The string value of the line that has been read.
+        :rtype: String
+        :return: The string value of the line that has been read.
         """
 
         # retrieves the correct get line method according
@@ -887,8 +887,8 @@ class ConsoleContext(colony.Protected):
         Retrieves the current console size using the current
         best match for it.
 
-        @rtype: Tuple
-        @return: A tuple containing the width and the height
+        :rtype: Tuple
+        :return: A tuple containing the width and the height
         of the current console window, or invalid in case it
         could not be retrieved.
         """
@@ -918,8 +918,8 @@ class ConsoleContext(colony.Protected):
         Sets the get line method (method
         to retrieve a line).
 
-        @type get_line: Function
-        @param get_line: The get line method
+        :type get_line: Function
+        :param get_line: The get line method
         (method to retrieve a line).
         """
 
@@ -931,8 +931,8 @@ class ConsoleContext(colony.Protected):
         Sets the get size method (method
         to retrieve the console size).
 
-        @type get_line: Function
-        @param get_line: The get size method (method
+        :type get_line: Function
+        :param get_line: The get size method (method
         to retrieve the console size).
         """
 
@@ -943,8 +943,8 @@ class ConsoleContext(colony.Protected):
         """
         Returns the base name.
 
-        @rtype: String
-        @return: The base name.
+        :rtype: String
+        :return: The base name.
         """
 
         # retrieves the base name
@@ -959,11 +959,11 @@ class ConsoleContext(colony.Protected):
         Returns the full path for the given
         base path value.
 
-        @type base_path: base_path
-        @param base_path: The base path to retrieve
+        :type base_path: base_path
+        :param base_path: The base path to retrieve
         the full path.
-        @rtype: String
-        @return: The full path for the given base path.
+        :rtype: String
+        :return: The full path for the given base path.
         """
 
         # retrieves the value of the is absolute path
@@ -989,8 +989,8 @@ class ConsoleContext(colony.Protected):
         """
         Returns the path.
 
-        @rtype: String
-        @return: The path.
+        :rtype: String
+        :return: The path.
         """
 
         return self.path
@@ -1000,8 +1000,8 @@ class ConsoleContext(colony.Protected):
         """
         Sets the path.
 
-        @rtype: String
-        @return: The path.
+        :rtype: String
+        :return: The path.
         """
 
         self.path = path
@@ -1011,8 +1011,8 @@ class ConsoleContext(colony.Protected):
         """
         Returns the user.
 
-        @rtype: String
-        @return: The user.
+        :rtype: String
+        :return: The user.
         """
 
         return self.user
@@ -1021,8 +1021,8 @@ class ConsoleContext(colony.Protected):
         """
         Sets the user.
 
-        @rtype: String
-        @return: The user.
+        :rtype: String
+        :return: The user.
         """
 
         self.user = user

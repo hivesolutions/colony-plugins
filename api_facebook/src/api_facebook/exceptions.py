@@ -56,8 +56,8 @@ class FacebookApiError(ApiFacebookException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ApiFacebookException.__init__(self)
@@ -67,8 +67,8 @@ class FacebookApiError(ApiFacebookException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Facebook api error - %s" % self.message

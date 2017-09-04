@@ -185,8 +185,8 @@ class ResourcesManager(colony.System):
         """
         Loads the resource file in the given path.
 
-        @type file_path: String
-        @param file_path: The path to the resource file to be
+        :type file_path: String
+        :param file_path: The path to the resource file to be
         loaded.
         """
 
@@ -300,10 +300,10 @@ class ResourcesManager(colony.System):
         The parsing of the file also implies the registering
         of the resources in the internal data structures.
 
-        @type file_path: String
-        @param file_path: The path to the file to be parsed.
-        @type full_resources_path: String
-        @param full_resources_path: The full path to the
+        :type file_path: String
+        :param file_path: The path to the file to be parsed.
+        :type full_resources_path: String
+        :param full_resources_path: The full path to the
         resources path (directory).
         """
 
@@ -579,8 +579,8 @@ class ResourcesManager(colony.System):
         The plugin is properly "notified" about the
         configuration property "registration".
 
-        @type plugin: Plugin
-        @param plugin: The plugin to have the resources registered.
+        :type plugin: Plugin
+        :param plugin: The plugin to have the resources registered.
         """
 
         # retrieves the plugin id
@@ -610,8 +610,8 @@ class ResourcesManager(colony.System):
         The plugin is properly "notified" about the
         configuration property "unregistration".
 
-        @type plugin: Plugin
-        @param plugin: The plugin to have the resources unregistered.
+        :type plugin: Plugin
+        :param plugin: The plugin to have the resources unregistered.
         """
 
         # retrieves the plugin id
@@ -636,12 +636,12 @@ class ResourcesManager(colony.System):
         """
         Processes a resource.
 
-        @type resource: Resource
-        @param resource: The resource to be processed.
-        @type full_resources_path: String
-        @param full_resources_path: The full resources path.
-        @rtype: bool
-        @return: If the resource data was loaded or set for lazy loading.
+        :type resource: Resource
+        :param resource: The resource to be processed.
+        :type full_resources_path: String
+        :param full_resources_path: The full resources path.
+        :rtype: bool
+        :return: If the resource data was loaded or set for lazy loading.
         """
 
         # sets the resource full resources path
@@ -657,10 +657,10 @@ class ResourcesManager(colony.System):
         """
         Parses a resource data value.
 
-        @type resource: Resource
-        @param resource: The resource to have the data processed.
-        @rtype: bool
-        @return: If the resource data was loaded or set for lazy loading.
+        :type resource: Resource
+        :param resource: The resource to have the data processed.
+        :rtype: bool
+        :return: If the resource data was loaded or set for lazy loading.
         """
 
         # retrieves the resource type
@@ -730,10 +730,10 @@ class ResourcesManager(colony.System):
         Retrieves the real string value for the given string value,
         substituting the variable in the string.
 
-        @type string_value: String
-        @param string_value: The string value to be converted.
-        @rtype: String
-        @return: The converted string.
+        :type string_value: String
+        :param string_value: The string value to be converted.
+        :rtype: String
+        :return: The converted string.
         """
 
         # retrieves the plugin manager
@@ -891,8 +891,8 @@ class ResourcesManager(colony.System):
         Constructs and retrieves the base resources path
         for the resources manager plugin.
 
-        @rtype: String
-        @return: The (constructed) base resources path for
+        :rtype: String
+        :return: The (constructed) base resources path for
         the resources manager plugin.
         """
 
@@ -915,10 +915,10 @@ class ResourcesManager(colony.System):
         """
         Processes the given validation retrieving the validation result.
 
-        @type validation: Validation
-        @param validation: The validation to be processed.
-        @rtype: bool
-        @return: The validation result.
+        :type validation: Validation
+        :param validation: The validation to be processed.
+        :rtype: bool
+        :return: The validation result.
         """
 
         # retrieves the validation expression
@@ -934,10 +934,10 @@ class ResourcesManager(colony.System):
         """
         Processes the given expression retrieving the expression result.
 
-        @type expression: Expression
-        @param expression: The expression to be processed.
-        @rtype: bool
-        @return: The expression result.
+        :type expression: Expression
+        :param expression: The expression to be processed.
+        :rtype: bool
+        :return: The expression result.
         """
 
         if expression.__class__ == parser.EqualsExpression:
@@ -950,10 +950,10 @@ class ResourcesManager(colony.System):
         """
         Processes the given equals expression retrieving the equals expression result.
 
-        @type equals_expression: EqualsExpression
-        @param equals_expression: The equals expression to be processed.
-        @rtype: bool
-        @return: The equals expression result.
+        :type equals_expression: EqualsExpression
+        :param equals_expression: The equals expression to be processed.
+        :rtype: bool
+        :return: The equals expression result.
         """
 
         # retrieves both operands, the first and the second
@@ -974,10 +974,10 @@ class ResourcesManager(colony.System):
         """
         Processes the given operand retrieving the value.
 
-        @type operand: Operand
-        @param operand: The operand to be processed.
-        @rtype: Object
-        @return: The operand value.
+        :type operand: Operand
+        :param operand: The operand to be processed.
+        :rtype: Object
+        :return: The operand value.
         """
 
         # parses the operand resource data
@@ -993,14 +993,14 @@ class ResourcesManager(colony.System):
         """
         Registers a resource in the resources manager.
 
-        @type resource_namespace: String
-        @param resource_namespace: The namespace this resource should be included in.
-        @type resource_name: String
-        @param resource_name: The name of the resource.
-        @type resource_type: String
-        @param resource_type: The type of the resource.
-        @type resource_data: Object
-        @param resource_data: The resource one wants to store.
+        :type resource_namespace: String
+        :param resource_namespace: The namespace this resource should be included in.
+        :type resource_name: String
+        :param resource_name: The name of the resource.
+        :type resource_type: String
+        :param resource_type: The type of the resource.
+        :type resource_data: Object
+        :param resource_data: The resource one wants to store.
         """
 
         # acquires the resources lock
@@ -1055,8 +1055,8 @@ class ResourcesManager(colony.System):
         """
         Unregisters the resource with the given id from the resources manager.
 
-        @type resource_id: String
-        @param resource_id: The id of the resource.
+        :type resource_id: String
+        :param resource_id: The id of the resource.
         """
 
         # acquires the resources lcok
@@ -1116,10 +1116,10 @@ class ResourcesManager(colony.System):
         """
         Retrieves the existence (or not) of a resource with the given id.
 
-        @type resource_id: String
-        @param resource_id: The id of the resource to be tested.
-        @rtype: bool
-        @return: The existence (or not) of a resource with the given id.
+        :type resource_id: String
+        :param resource_id: The id of the resource to be tested.
+        :rtype: bool
+        :return: The existence (or not) of a resource with the given id.
         """
 
         # returns if the resource id exists in the resource
@@ -1132,8 +1132,8 @@ class ResourcesManager(colony.System):
         resource file name.
         The validation of the resource name is simple and efficient.
 
-        @rtype: bool
-        @return: If the given resource (file) name represents a valid
+        :rtype: bool
+        :return: If the given resource (file) name represents a valid
         resource file name.
         """
 
@@ -1149,10 +1149,10 @@ class ResourcesManager(colony.System):
         """
         Retrieves the resource with the given resource id.
 
-        @type resource_id: String
-        @param resource_id: The id of the resource to be retrieved.
-        @rtype: Resource
-        @return: The resource with the given id.
+        :type resource_id: String
+        :param resource_id: The id of the resource to be retrieved.
+        :rtype: Resource
+        :return: The resource with the given id.
         """
 
         # returns the resource if for the given resource id, or none
@@ -1164,12 +1164,12 @@ class ResourcesManager(colony.System):
         Retrieves the resources for the given resource namespace, resource name and resource type.
         The given values are not mandatory and work as a filter.
 
-        @type resource_namespace: String
-        @param resource_namespace: The namespace of the resource to be retrieved.
-        @type resource_name: String
-        @param resource_name: The name of the resource to be retrieved.
-        @type resource_type: String
-        @param resource_type: The type of the resource to be retrieved.
+        :type resource_namespace: String
+        :param resource_namespace: The namespace of the resource to be retrieved.
+        :type resource_name: String
+        :param resource_name: The name of the resource to be retrieved.
+        :type resource_type: String
+        :param resource_type: The type of the resource to be retrieved.
         """
 
         # in case none of the filters are defined
@@ -1236,8 +1236,8 @@ class ResourcesManager(colony.System):
         Retrieves the system information map, containing structured
         information to be visible using presentation viewers.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         # creates the map to hold the system base information (ordered  map)
@@ -1399,8 +1399,8 @@ class ResourcesManager(colony.System):
         Loads the resources in the directory with
         the given path.
 
-        @type directory_path: String
-        @param directory_path: The directory path to search for resources.
+        :type directory_path: String
+        :param directory_path: The directory path to search for resources.
         """
 
         # in case the directory path does not exists
@@ -1468,14 +1468,14 @@ class Resource(object):
         """
         Constructor of the class.
 
-        @type namespace: String
-        @param namespace: The namespace of the resource.
-        @type name: String
-        @param name: The name of the resource.
-        @type type: String
-        @param type: The type of the resource.
-        @type data: Object
-        @param data: The data of the resource
+        :type namespace: String
+        :param namespace: The namespace of the resource.
+        :type name: String
+        :param name: The name of the resource.
+        :type type: String
+        :param type: The type of the resource.
+        :type data: Object
+        :param data: The data of the resource
         """
 
         self.namespace = Namespace(namespace)
@@ -1488,8 +1488,8 @@ class Resource(object):
         """
         Retrieves the namespace.
 
-        @rtype: String
-        @return: The namespace.
+        :rtype: String
+        :return: The namespace.
         """
 
         return self.namespace
@@ -1498,8 +1498,8 @@ class Resource(object):
         """
         Sets the namespace.
 
-        @type namespace: String
-        @param namespace: The namespace.
+        :type namespace: String
+        :param namespace: The namespace.
         """
 
         self.namespace = namespace
@@ -1508,8 +1508,8 @@ class Resource(object):
         """
         Retrieves the name.
 
-        @rtype: String
-        @return: The name.
+        :rtype: String
+        :return: The name.
         """
 
         return self.name
@@ -1518,8 +1518,8 @@ class Resource(object):
         """
         Sets the name.
 
-        @type name: String
-        @param name: The name.
+        :type name: String
+        :param name: The name.
         """
 
         self.name = name
@@ -1528,8 +1528,8 @@ class Resource(object):
         """
         Retrieves the type.
 
-        @rtype: String
-        @return: The type.
+        :rtype: String
+        :return: The type.
         """
 
         return self.type
@@ -1538,8 +1538,8 @@ class Resource(object):
         """
         Sets the type.
 
-        @type type: String
-        @param type: The type.
+        :type type: String
+        :param type: The type.
         """
 
         self.type = type
@@ -1548,8 +1548,8 @@ class Resource(object):
         """
         Retrieves the id.
 
-        @rtype: String
-        @return: The id.
+        :rtype: String
+        :return: The id.
         """
 
         return self.id
@@ -1558,8 +1558,8 @@ class Resource(object):
         """
         Sets the id.
 
-        @type id: String
-        @param id: The id.
+        :type id: String
+        :param id: The id.
         """
 
         self.id = id
@@ -1568,8 +1568,8 @@ class Resource(object):
         """
         Retrieves the data.
 
-        @rtype: Object
-        @return: The data.
+        :rtype: Object
+        :return: The data.
         """
 
         return self.data
@@ -1578,8 +1578,8 @@ class Resource(object):
         """
         Sets the data.
 
-        @type data: Object
-        @param data: The data.
+        :type data: Object
+        :param data: The data.
         """
 
         self.data = data
@@ -1588,8 +1588,8 @@ class Resource(object):
         """
         Retrieves the parsed.
 
-        @rtype: bool
-        @return: The parsed.
+        :rtype: bool
+        :return: The parsed.
         """
 
         return self.parsed
@@ -1598,8 +1598,8 @@ class Resource(object):
         """
         Sets the parsed.
 
-        @type parsed: bool
-        @param parsed: The parsed.
+        :type parsed: bool
+        :param parsed: The parsed.
         """
 
         self.parsed = parsed
@@ -1616,8 +1616,8 @@ class Namespace(object):
         """
         Constructor of the class.
 
-        @type string_value: String
-        @param string_value: The string value of the namespace.
+        :type string_value: String
+        :param string_value: The string value of the namespace.
         """
 
         # in case a string value is defined
@@ -1670,10 +1670,10 @@ class Namespace(object):
         """
         Tests if the given namespace is sub namespace.
 
-        @type namespace: Namespace
-        @param namespace: The namespace to be tested.
-        @rtype: bool
-        @return: The result of the is sub namespace test.
+        :type namespace: Namespace
+        :param namespace: The namespace to be tested.
+        :rtype: bool
+        :return: The result of the is sub namespace test.
         """
 
         list_value_self = self.list_value
@@ -1698,10 +1698,10 @@ class Namespace(object):
         """
         Tests if the given namespace is a namespace or sub namespace.
 
-        @type namespace: Namespace
-        @param namespace: The namespace to be tested.
-        @rtype: bool
-        @return: The result of the is namespace or sub namespace test.
+        :type namespace: Namespace
+        :param namespace: The namespace to be tested.
+        :rtype: bool
+        :return: The result of the is namespace or sub namespace test.
         """
 
         if self.__eq__(namespace) or self.is_sub_namespace(namespace):
@@ -1713,8 +1713,8 @@ class Namespace(object):
         """
         Retrieves the list value.
 
-        @rtype: List
-        @return: The list value.
+        :rtype: List
+        :return: The list value.
         """
 
         return self.list_value
@@ -1723,8 +1723,8 @@ class Namespace(object):
         """
         Sets the list value.
 
-        @type list_value: List
-        @param list_value: The list value.
+        :type list_value: List
+        :param list_value: The list value.
         """
 
         self.list_value = list_value

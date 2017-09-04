@@ -68,8 +68,8 @@ class ServiceHttpSystemInformation(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -78,8 +78,8 @@ class ServiceHttpSystemInformation(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # sets the request content type
@@ -137,8 +137,8 @@ class ServiceHttpSystemInformation(colony.System):
         """
         Retrieves the system information map.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         # retrieves the system information plugins
@@ -208,8 +208,8 @@ class ServiceHttpSystemInformation(colony.System):
         Retrieves an information map containing information
         about the framework.
 
-        @rtype: Dictionary
-        @return: An information map containing information
+        :rtype: Dictionary
+        :return: An information map containing information
         about the framework.
         """
 
@@ -282,10 +282,10 @@ class ServiceHttpSystemInformation(colony.System):
         Constructs the various plugin strings from the
         given plugin manager instances.
 
-        @type plugin_manager_instances: List
-        @param plugin_manager_instances: The list of plugin manager instances.
-        @rtype: Tuple
-        @return: A tuple containing the plugin strings.
+        :type plugin_manager_instances: List
+        :param plugin_manager_instances: The list of plugin manager instances.
+        :rtype: Tuple
+        :return: A tuple containing the plugin strings.
         """
 
         # creates the plugin counters

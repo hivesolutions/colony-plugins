@@ -106,8 +106,8 @@ class ServiceHttpWebsocket(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -116,8 +116,8 @@ class ServiceHttpWebsocket(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         # creates a new websocket connection
@@ -170,10 +170,10 @@ class WebSocketConnection(object):
         """
         Constructor of the class.
 
-        @type service_http_websocket_handler: ServiceHttpWebsocketHandler
-        @param service_http_websocket_handler: The service http websocket handler.
-        @type request: HttpRequest
-        @param request: The http request associated with the
+        :type service_http_websocket_handler: ServiceHttpWebsocketHandler
+        :param service_http_websocket_handler: The service http websocket handler.
+        :type request: HttpRequest
+        :param request: The http request associated with the
         opening of the websocket.
         """
 

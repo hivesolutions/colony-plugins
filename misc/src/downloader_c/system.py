@@ -58,12 +58,12 @@ class Downloader(colony.System):
         """
         Downloads a package from the given url address to a target directory.
 
-        @type address: String
-        @param address: The url address of the package to download.
-        @type target_directory: String
-        @param target_directory: The target directory of the download.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of handlers for the execution events.
+        :type address: String
+        :param address: The url address of the package to download.
+        :type target_directory: String
+        :param target_directory: The target directory of the download.
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of handlers for the execution events.
         """
 
         try:
@@ -161,12 +161,12 @@ class Downloader(colony.System):
         """
         Retrieves the download package stream for the given address.
 
-        @type address: String
-        @param address: The address of the download package to retrieve the stream.
-        @type handlers_map: Dictionary
-        @param handlers_map: The map of handlers for the execution events.
-        @rtype: String
-        @return: The download package stream for the given address.
+        :type address: String
+        :param address: The address of the download package to retrieve the stream.
+        :type handlers_map: Dictionary
+        :param handlers_map: The map of handlers for the execution events.
+        :rtype: String
+        :return: The download package stream for the given address.
         """
 
         try:
@@ -216,10 +216,10 @@ class Downloader(colony.System):
         """
         Retrieves the file name for the given url.
 
-        @type url: String
-        @param url: The url to retrieve the file name.
-        @rtype: String
-        @return: The file name for the given url.
+        :type url: String
+        :param url: The url to retrieve the file name.
+        :rtype: String
+        :return: The file name for the given url.
         """
 
         # splits the url
@@ -237,8 +237,8 @@ class Downloader(colony.System):
         The default target directory is the configuration
         path of the downloader plugin
 
-        @rtype: String
-        @return: The default target directory.
+        :rtype: String
+        :return: The default target directory.
         """
 
         # retrieves the plugin manager

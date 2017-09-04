@@ -123,12 +123,12 @@ class ApiFacebook(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: FacebookClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: FacebookClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -173,12 +173,12 @@ class FacebookClient(object):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type facebook_structure: FacebookStructure
-        @param facebook_structure: The facebook structure.
+        :type json_plugin: JsonPlugin
+        :param json_plugin: The json plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type facebook_structure: FacebookStructure
+        :param facebook_structure: The facebook structure.
         """
 
         self.json_plugin = json_plugin
@@ -213,20 +213,20 @@ class FacebookClient(object):
         """
         Generates the facebook structure for the given arguments.
 
-        @type consumer_key: String
-        @param consumer_key: The consumer key.
-        @type consumer_secret: String
-        @param consumer_secret: The consumer secret.
-        @type next: String
-        @param next: The next value from which the facebook request
+        :type consumer_key: String
+        :param consumer_key: The consumer key.
+        :type consumer_secret: String
+        :param consumer_secret: The consumer secret.
+        :type next: String
+        :param next: The next value from which the facebook request
         will be redirecting.
-        @type api_version: String
-        @param api_version: The version of the api being used.
-        @type set_structure: bool
-        @param set_structure: If the structure should be
+        :type api_version: String
+        :param api_version: The version of the api being used.
+        :type set_structure: bool
+        :param set_structure: If the structure should be
         set in the facebook client.
-        @rtype: FacebookStructure
-        @return: The generated facebook structure.
+        :rtype: FacebookStructure
+        :return: The generated facebook structure.
         """
 
         # creates a new facebook structure
@@ -245,8 +245,8 @@ class FacebookClient(object):
         Initializes the process of creating an authentication token
         for the facebook session creation.
 
-        @rtype: FacebookStructure
-        @return: The current facebook structure.
+        :rtype: FacebookStructure
+        :return: The current facebook structure.
         """
 
         # sets the retrieval url
@@ -278,8 +278,8 @@ class FacebookClient(object):
         Retrieves a news session using the created auth token
         obtained from the user login.
 
-        @rtype: FacebookStructure
-        @return: The current facebook structure.
+        :rtype: FacebookStructure
+        :return: The current facebook structure.
         """
 
         # sets the retrieval url
@@ -329,8 +329,8 @@ class FacebookClient(object):
         """
         Retrieves the url used for facebook user login.
 
-        @rtype: String
-        @return: The url used for facebook user login.
+        :rtype: String
+        :return: The url used for facebook user login.
         """
 
         # sets the retrieval url
@@ -359,12 +359,12 @@ class FacebookClient(object):
         Retrieves the user information for the given user identifiers
         and field.
 
-        @type user_id_list: List
-        @param user_id_list: The user id to retrieve the information.
-        @type fields: List
-        @param fields: The field to be retrieve as the user information.
-        @rtype: Dictionary
-        @return: The retrieved user information.
+        :type user_id_list: List
+        :param user_id_list: The user id to retrieve the information.
+        :type fields: List
+        :param fields: The field to be retrieve as the user information.
+        :rtype: Dictionary
+        :return: The retrieved user information.
         """
 
         # sets the retrieval url
@@ -430,8 +430,8 @@ class FacebookClient(object):
         """
         Retrieves the facebook structure.
 
-        @rtype: FacebookStructure
-        @return: The facebook structure.
+        :rtype: FacebookStructure
+        :return: The facebook structure.
         """
 
         return self.facebook_structure
@@ -440,8 +440,8 @@ class FacebookClient(object):
         """
         Sets the facebook structure.
 
-        @type facebook_structure: FacebookStructure
-        @param facebook_structure: The facebook structure.
+        :type facebook_structure: FacebookStructure
+        :param facebook_structure: The facebook structure.
         """
 
         self.facebook_structure = facebook_structure
@@ -451,11 +451,11 @@ class FacebookClient(object):
         Calculates and retrieves the message signature
         for the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The map with the parameters to be used
+        :type parameters: Dictionary
+        :param parameters: The map with the parameters to be used
         to calculate the signature.
-        @rtype: String
-        @return: The calculated signature.
+        :rtype: String
+        :return: The calculated signature.
         """
 
         # creates the message string buffer
@@ -488,10 +488,10 @@ class FacebookClient(object):
         Sets the base facebook rest request parameters
         in the parameters map.
 
-        @type method_name: String
-        @param method_name: The name of the method to be called.
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be used in setting
+        :type method_name: String
+        :param method_name: The name of the method to be called.
+        :type parameters: Dictionary
+        :param parameters: The parameters map to be used in setting
         the authentication parameters.
         """
 
@@ -519,14 +519,14 @@ class FacebookClient(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -550,12 +550,12 @@ class FacebookClient(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -574,8 +574,8 @@ class FacebookClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary/Object
-        @param data: The data to be checked for facebook errors.
+        :type data: Dictionary/Object
+        :param data: The data to be checked for facebook errors.
         """
 
         # retrieves the data type and returns immediately
@@ -599,8 +599,8 @@ class FacebookClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -640,12 +640,12 @@ class FacebookClientOauth(object):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type facebook_structure: FacebookStructure
-        @param facebook_structure: The facebook structure.
+        :type json_plugin: JsonPlugin
+        :param json_plugin: The json plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type facebook_structure: FacebookStructure
+        :param facebook_structure: The facebook structure.
         """
 
         self.json_plugin = json_plugin
@@ -673,24 +673,24 @@ class FacebookClientOauth(object):
         """
         Generates the facebook structure for the given arguments.
 
-        @type consumer_key: String
-        @param consumer_key: The consumer key.
-        @type consumer_secret: String
-        @param consumer_secret: The consumer secret.
-        @type next: String
-        @param next: The next value from which the facebook request
+        :type consumer_key: String
+        :param consumer_key: The consumer key.
+        :type consumer_secret: String
+        :param consumer_secret: The consumer secret.
+        :type next: String
+        :param next: The next value from which the facebook request
         will be redirecting.
-        @type api_version: String
-        @param api_version: The version of the api being used.
-        @type consumer_id: String
-        @param consumer_id: The consumer id.
-        @type scope: String
-        @param scope: The authorized scope.
-        @type set_structure: bool
-        @param set_structure: If the structure should be
+        :type api_version: String
+        :param api_version: The version of the api being used.
+        :type consumer_id: String
+        :param consumer_id: The consumer id.
+        :type scope: String
+        :param scope: The authorized scope.
+        :type set_structure: bool
+        :param set_structure: If the structure should be
         set in the facebook client.
-        @rtype: FacebookStructure
-        @return: The generated facebook structure.
+        :rtype: FacebookStructure
+        :return: The generated facebook structure.
         """
 
         # creates a new facebook structure
@@ -709,8 +709,8 @@ class FacebookClientOauth(object):
         Retrieves the url used to redirect the user to facebook, for user
         authentication and app authorization.
 
-        @rtype: String
-        @return: The url used to redirect the user to facebook, for login.
+        :rtype: String
+        :return: The url used to redirect the user to facebook, for login.
         """
 
         # sets the retrieval url
@@ -739,8 +739,8 @@ class FacebookClientOauth(object):
         Performs app authentication with facebook, using the received
         authorization code available.
 
-        @type authorization_code: String
-        @param authorization_code: The authorization code provided by facebook
+        :type authorization_code: String
+        :param authorization_code: The authorization code provided by facebook
         to the application.
         """
 
@@ -808,8 +808,8 @@ class FacebookClientOauth(object):
         """
         Retrieves the facebook structure.
 
-        @rtype: FacebookStructure
-        @return: The facebook structure.
+        :rtype: FacebookStructure
+        :return: The facebook structure.
         """
 
         return self.facebook_structure
@@ -818,8 +818,8 @@ class FacebookClientOauth(object):
         """
         Sets the facebook structure.
 
-        @type facebook_structure: FacebookStructure
-        @param facebook_structure: The facebook structure.
+        :type facebook_structure: FacebookStructure
+        :param facebook_structure: The facebook structure.
         """
 
         self.facebook_structure = facebook_structure
@@ -828,14 +828,14 @@ class FacebookClientOauth(object):
         """
         Fetches the given url for the given parameters and using the given method.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined
@@ -859,12 +859,12 @@ class FacebookClientOauth(object):
         """
         Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        :type url: String
+        :param url: The base url to be used.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used for url construction.
+        :rtype: String
+        :return: The built url for the given parameters.
         """
 
         # retrieves the http client
@@ -883,8 +883,8 @@ class FacebookClientOauth(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary/Object
-        @param data: The data to be checked for facebook errors.
+        :type data: Dictionary/Object
+        :param data: The data to be checked for facebook errors.
         """
 
         # retrieves the data type and returns immediately
@@ -910,11 +910,11 @@ class FacebookClientOauth(object):
         The values are not unquoted and as such they are
         prone to encoding errors.
 
-        @type query_string: String
-        @param query_string: The query string value to be
+        :type query_string: String
+        :param query_string: The query string value to be
         decoded and parsed into the key values map.
-        @rtype: Dictionary
-        @return: The map resulting from the parsing of the
+        :rtype: Dictionary
+        :return: The map resulting from the parsing of the
         provided query string value.
         """
 
@@ -941,8 +941,8 @@ class FacebookClientOauth(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists
@@ -1008,19 +1008,19 @@ class FacebookStructure(object):
         """
         Constructor of the class.
 
-        @type consumer_key: String
-        @param consumer_key: The consumer key.
-        @type consumer_secret: String
-        @param consumer_secret: The consumer secret.
-        @type next: String
-        @param next: The next value from which the facebook request
+        :type consumer_key: String
+        :param consumer_key: The consumer key.
+        :type consumer_secret: String
+        :param consumer_secret: The consumer secret.
+        :type next: String
+        :param next: The next value from which the facebook request
         will be redirecting.
-        @type api_version: String
-        @param api_version: The version of the api being used.
-        @type consumer_id: String
-        @param consumer_id: The consumer id.
-        @type scope: String
-        @param scope: The authorizated scope.
+        :type api_version: String
+        :param api_version: The version of the api being used.
+        :type consumer_id: String
+        :param consumer_id: The consumer id.
+        :type scope: String
+        :param scope: The authorizated scope.
         """
 
         self.consumer_key = consumer_key
@@ -1034,8 +1034,8 @@ class FacebookStructure(object):
         """
         Retrieves the consumer key.
 
-        @rtype: String
-        @return: The consumer key.
+        :rtype: String
+        :return: The consumer key.
         """
 
         return self.consumer_key
@@ -1044,8 +1044,8 @@ class FacebookStructure(object):
         """
         Sets the consumer key.
 
-        @type consumer_key: String
-        @param consumer_key: The consumer key.
+        :type consumer_key: String
+        :param consumer_key: The consumer key.
         """
 
         self.consumer_key = consumer_key
@@ -1054,8 +1054,8 @@ class FacebookStructure(object):
         """
         Retrieves the consumer secret.
 
-        @rtype: String
-        @return: The consumer secret.
+        :rtype: String
+        :return: The consumer secret.
         """
 
         return self.consumer_secret
@@ -1064,8 +1064,8 @@ class FacebookStructure(object):
         """
         Sets the consumer key.
 
-        @type consumer_secret: String
-        @param consumer_secret: The consumer secret.
+        :type consumer_secret: String
+        :param consumer_secret: The consumer secret.
         """
 
         self.consumer_secret = consumer_secret
@@ -1074,8 +1074,8 @@ class FacebookStructure(object):
         """
         Retrieves the next.
 
-        @rtype: String
-        @return: The next.
+        :rtype: String
+        :return: The next.
         """
 
         return self.next
@@ -1084,8 +1084,8 @@ class FacebookStructure(object):
         """
         Sets the next.
 
-        @type next: String
-        @param next: The next.
+        :type next: String
+        :param next: The next.
         """
 
         self.next = next
@@ -1094,8 +1094,8 @@ class FacebookStructure(object):
         """
         Retrieves the api version.
 
-        @rtype: String
-        @return: The api version.
+        :rtype: String
+        :return: The api version.
         """
 
         return self.api_version
@@ -1104,8 +1104,8 @@ class FacebookStructure(object):
         """
         Sets the api version.
 
-        @type api_version: String
-        @param api_version: The api version.
+        :type api_version: String
+        :param api_version: The api version.
         """
 
         self.api_version = api_version
@@ -1114,8 +1114,8 @@ class FacebookStructure(object):
         """
         Retrieves the token.
 
-        @rtype: String
-        @return: The token.
+        :rtype: String
+        :return: The token.
         """
 
         return self.token
@@ -1124,8 +1124,8 @@ class FacebookStructure(object):
         """
         Sets the token.
 
-        @type token: String
-        @param token: The token.
+        :type token: String
+        :param token: The token.
         """
 
         self.token = token
@@ -1134,8 +1134,8 @@ class FacebookStructure(object):
         """
         Retrieves the session key.
 
-        @rtype: String
-        @return: The session key.
+        :rtype: String
+        :return: The session key.
         """
 
         return self.session_key
@@ -1144,8 +1144,8 @@ class FacebookStructure(object):
         """
         Sets the session key.
 
-        @type session_key: String
-        @param session_key: The session key.
+        :type session_key: String
+        :param session_key: The session key.
         """
 
         self.session_key = session_key
@@ -1154,8 +1154,8 @@ class FacebookStructure(object):
         """
         Retrieves the user id.
 
-        @rtype: String
-        @return: The user id.
+        :rtype: String
+        :return: The user id.
         """
 
         return self.user_id
@@ -1164,8 +1164,8 @@ class FacebookStructure(object):
         """
         Sets the user id.
 
-        @type user_id: String
-        @param user_id: The user id.
+        :type user_id: String
+        :param user_id: The user id.
         """
 
         self.user_id = user_id
@@ -1174,8 +1174,8 @@ class FacebookStructure(object):
         """
         Retrieves the username.
 
-        @rtype: String
-        @return: The username.
+        :rtype: String
+        :return: The username.
         """
 
         return self.username
@@ -1184,8 +1184,8 @@ class FacebookStructure(object):
         """
         Sets the username.
 
-        @type username: String
-        @param username: The username.
+        :type username: String
+        :param username: The username.
         """
 
         self.username = username
@@ -1194,8 +1194,8 @@ class FacebookStructure(object):
         """
         Retrieves the consumer id.
 
-        @rtype: String
-        @return: The consumer id.
+        :rtype: String
+        :return: The consumer id.
         """
 
         return self.consumer_id
@@ -1204,8 +1204,8 @@ class FacebookStructure(object):
         """
         Sets the consumer id.
 
-        @type consumer_id: String
-        @param consumer_id: The consumer id.
+        :type consumer_id: String
+        :param consumer_id: The consumer id.
         """
 
         self.consumer_id = consumer_id
@@ -1214,8 +1214,8 @@ class FacebookStructure(object):
         """
         Retrieves the scope.
 
-        @rtype: String
-        @return: The scope.
+        :rtype: String
+        :return: The scope.
         """
 
         return self.scope
@@ -1224,8 +1224,8 @@ class FacebookStructure(object):
         """
         Sets the scope.
 
-        @type scope: String
-        @param scope: The scope.
+        :type scope: String
+        :param scope: The scope.
         """
 
         self.scope = scope

@@ -56,8 +56,8 @@ class HttpInvalidUrlData(ClientHttpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientHttpException.__init__(self)
@@ -67,8 +67,8 @@ class HttpInvalidUrlData(ClientHttpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http invalid url data - %s" % self.message
@@ -82,8 +82,8 @@ class HttpRuntimeException(ClientHttpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientHttpException.__init__(self)
@@ -93,8 +93,8 @@ class HttpRuntimeException(ClientHttpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http runtime exception - %s" % self.message
@@ -108,8 +108,8 @@ class HttpInvalidDataException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -118,8 +118,8 @@ class HttpInvalidDataException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http invalid data exception - %s" % self.message

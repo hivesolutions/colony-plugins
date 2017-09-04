@@ -80,8 +80,8 @@ class SslSocketUpgrader(colony.System):
         """
         Retrieves the socket upgrader name.
 
-        @rtype: String
-        @return: The socket upgrader name.
+        :rtype: String
+        :return: The socket upgrader name.
         """
 
         return UPGRADER_NAME
@@ -91,10 +91,10 @@ class SslSocketUpgrader(colony.System):
         Upgrades the given socket, configured with
         the default parameters.
 
-        @type socket: Socket
-        @param socket: The socket to be upgraded.
-        @rtype: Socket
-        @return: The upgraded socket.
+        :type socket: Socket
+        :param socket: The socket to be upgraded.
+        :rtype: Socket
+        :return: The upgraded socket.
         """
 
         # upgrades the socket to ssl socket
@@ -108,12 +108,12 @@ class SslSocketUpgrader(colony.System):
         Upgrades the given socket, configured with
         the given parameters.
 
-        @type socket: Socket
-        @param socket: The socket to be upgraded.
-        @type parameters: Dictionary
-        @param parameters: The parameters for socket configuration.
-        @rtype: Socket
-        @return: The upgraded socket.
+        :type socket: Socket
+        :param socket: The socket to be upgraded.
+        :type parameters: Dictionary
+        :param parameters: The parameters for socket configuration.
+        :rtype: Socket
+        :return: The upgraded socket.
         """
 
         # prints a debug message
@@ -174,12 +174,12 @@ class SslSocketUpgrader(colony.System):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type socket: Socket
-        @param socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type socket: Socket
+        :param socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 
@@ -202,21 +202,21 @@ class SslSocketUpgrader(colony.System):
         controlled and in some cases it's required to be controlled
         for security purposes.
 
-        @type base_socket: Socket
-        @param base_socket: The base socket to be used for wrapping.
-        @type key_file_path: String
-        @param key_file_path: The path to the key file.
-        @type certificate_file_path: String
-        @param certificate_file_path: The path to the certificate file.
-        @type server_side: bool
-        @param server_side: If the socket should be created for a server.
-        @type ssl_version: int
-        @param ssl_version: The version  of the ssl protocol stack that
+        :type base_socket: Socket
+        :param base_socket: The base socket to be used for wrapping.
+        :type key_file_path: String
+        :param key_file_path: The path to the key file.
+        :type certificate_file_path: String
+        :param certificate_file_path: The path to the certificate file.
+        :type server_side: bool
+        :param server_side: If the socket should be created for a server.
+        :type ssl_version: int
+        :param ssl_version: The version  of the ssl protocol stack that
         is allowed to be executed for the socket to wrapped.
-        @type do_handshake_on_connect: bool
-        @param do_handshake_on_connect: If a handshake should be done on connect.
-        @rtype: Socket
-        @return: The wrapped (ssl) socket.
+        :type do_handshake_on_connect: bool
+        :param do_handshake_on_connect: If a handshake should be done on connect.
+        :rtype: Socket
+        :return: The wrapped (ssl) socket.
         """
 
         # warps the base socket into an ssl socket
@@ -243,8 +243,8 @@ class SslSocketUpgrader(colony.System):
         Does the handshake for the given ssl socket.
         This method of handshake is proof to non blocking sockets.
 
-        @type ssl_socket: SslSocket
-        @param ssl_socket: The ssl socket to be used in the handshake.
+        :type ssl_socket: SslSocket
+        :param ssl_socket: The ssl socket to be used in the handshake.
         """
 
         # iterates continuously

@@ -72,17 +72,17 @@ class Authentication(colony.System):
         """
         Authenticates a user in the general service.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
-        @type authentication_handler: String
-        @param authentication_handler: The authentication handler to be used
+        :type username: String
+        :param username: The username to be used in the authentication.
+        :type password: String
+        :param password: The password to be used in the authentication.
+        :type authentication_handler: String
+        :param authentication_handler: The authentication handler to be used
         in the authentication.
-        @type arguments: Dictionary
-        @param arguments: The arguments to be used in the authentication.
-        @rtype: Dictionary
-        @return: The authentication return value.
+        :type arguments: Dictionary
+        :param arguments: The arguments to be used in the authentication.
+        :rtype: Dictionary
+        :return: The authentication return value.
         """
 
         # creates the authentication request object
@@ -143,10 +143,10 @@ class Authentication(colony.System):
         """
         Processes the given authentication string.
 
-        @type authentication_string: String
-        @param authentication_string: The string to be used for authentication.
-        @rtype: Dictionary
-        @return: The authentication return value.
+        :type authentication_string: String
+        :param authentication_string: The string to be used for authentication.
+        :rtype: Dictionary
+        :return: The authentication return value.
         """
 
         pass
@@ -156,11 +156,11 @@ class Authentication(colony.System):
         Retrieves the exception map (describing the exception)
         for the given exception.
 
-        @type exception: Exception
-        @param exception: The exception to retrieve the
+        :type exception: Exception
+        :param exception: The exception to retrieve the
         exception map.
-        @rtype: Dicitonary
-        @return: The exception map describing the exception.
+        :rtype: Dicitonary
+        :return: The exception map describing the exception.
         """
 
         # retrieves the execution information
@@ -248,8 +248,8 @@ class AuthenticationRequest(object):
         """
         Retrieves the username.
 
-        @rtype: String
-        @return: The username.
+        :rtype: String
+        :return: The username.
         """
 
         return self.username
@@ -258,8 +258,8 @@ class AuthenticationRequest(object):
         """
         Sets the username.
 
-        @type username: String
-        @rtype: The username.
+        :type username: String
+        :rtype: The username.
         """
 
         self.username = username
@@ -268,8 +268,8 @@ class AuthenticationRequest(object):
         """
         Retrieves the password.
 
-        @rtype: String
-        @return: The password.
+        :rtype: String
+        :return: The password.
         """
 
         return self.password
@@ -278,8 +278,8 @@ class AuthenticationRequest(object):
         """
         Sets the password.
 
-        @type password: String
-        @param password: The password.
+        :type password: String
+        :param password: The password.
         """
 
         self.password = password
@@ -288,8 +288,8 @@ class AuthenticationRequest(object):
         """
         Retrieves the authentication string.
 
-        @rtype: String
-        @return: The authentication string.
+        :rtype: String
+        :return: The authentication string.
         """
 
         return self.authentication_string
@@ -298,8 +298,8 @@ class AuthenticationRequest(object):
         """
         Sets the authentication string.
 
-        @type authentication_string: String
-        @param authentication_string: The authentication string.
+        :type authentication_string: String
+        :param authentication_string: The authentication string.
         """
 
         self.authentication_string = authentication_string
@@ -308,8 +308,8 @@ class AuthenticationRequest(object):
         """
         Retrieves the authentication handler.
 
-        @rtype: String
-        @return: The authentication handler.
+        :rtype: String
+        :return: The authentication handler.
         """
 
         return self.authentication_handler
@@ -318,8 +318,8 @@ class AuthenticationRequest(object):
         """
         Sets the authentication handler.
 
-        @type authentication_handler: String
-        @param authentication_handler: The authentication handler.
+        :type authentication_handler: String
+        :param authentication_handler: The authentication handler.
         """
 
         self.authentication_handler = authentication_handler
@@ -328,8 +328,8 @@ class AuthenticationRequest(object):
         """
         Sets the arguments.
 
-        @type arguments: Dictionary
-        @param arguments: The arguments.
+        :type arguments: Dictionary
+        :param arguments: The arguments.
         """
 
         self.arguments = arguments
@@ -338,8 +338,8 @@ class AuthenticationRequest(object):
         """
         Retrieves the arguments.
 
-        @rtype: Dictionary
-        @return: The arguments.
+        :rtype: Dictionary
+        :return: The arguments.
         """
 
         return self.arguments

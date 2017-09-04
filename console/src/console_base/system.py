@@ -87,14 +87,14 @@ class ConsoleBase(colony.System):
         Processes the help command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         raise colony.PluginSystemException("not implemented")
@@ -104,14 +104,14 @@ class ConsoleBase(colony.System):
         Processes the help all command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         raise colony.PluginSystemException("not implemented")
@@ -121,14 +121,14 @@ class ConsoleBase(colony.System):
         Processes the extensions command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         raise colony.PluginSystemException("not implemented")
@@ -138,14 +138,14 @@ class ConsoleBase(colony.System):
         Processes the status command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager and uses it to retrieve the
@@ -195,14 +195,14 @@ class ConsoleBase(colony.System):
         Processes the python command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager associated with the current
@@ -226,14 +226,14 @@ class ConsoleBase(colony.System):
         Processes the show command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -286,14 +286,14 @@ class ConsoleBase(colony.System):
         Processes the info command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -316,12 +316,12 @@ class ConsoleBase(colony.System):
         Processes the info all command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -335,14 +335,14 @@ class ConsoleBase(colony.System):
         Processes the add command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -364,14 +364,14 @@ class ConsoleBase(colony.System):
         Processes the remove command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -393,14 +393,14 @@ class ConsoleBase(colony.System):
         Processes the load command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -422,14 +422,14 @@ class ConsoleBase(colony.System):
         Processes the unload command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -451,14 +451,14 @@ class ConsoleBase(colony.System):
         Processes the loadall command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -476,14 +476,14 @@ class ConsoleBase(colony.System):
         Processes the unloadall command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -501,14 +501,14 @@ class ConsoleBase(colony.System):
         Processes the exec command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         if len(arguments) < 1:
@@ -541,14 +541,14 @@ class ConsoleBase(colony.System):
         Processes the restart command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -563,14 +563,14 @@ class ConsoleBase(colony.System):
         Processes the exit command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -585,14 +585,14 @@ class ConsoleBase(colony.System):
         Processes the echo command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the echo value
@@ -606,10 +606,10 @@ class ConsoleBase(colony.System):
         Prints the plugin information for the given plugin using
         the given output method.
 
-        @type plugin: Plugin
-        @param plugin: The plugin to have the information printed.
-        @type output_method: Method
-        @param output_method: The output method to be used in the information printing.
+        :type plugin: Plugin
+        :param plugin: The plugin to have the information printed.
+        :type output_method: Method
+        :param output_method: The output method to be used in the information printing.
         """
 
         output_method("id:                   " + plugin.id)
@@ -627,10 +627,10 @@ class ConsoleBase(colony.System):
         """
         Retrieves the plugin id for the given internal id.
 
-        @type id: String
-        @param id: The internal id to retrieves the plugin id.
-        @rtype: String
-        @return: The plugin id for the given internal id.
+        :type id: String
+        :param id: The internal id to retrieves the plugin id.
+        :rtype: String
+        :return: The plugin id for the given internal id.
         """
 
         # retrieves the plugin manager
@@ -667,10 +667,10 @@ class ConsoleBase(colony.System):
         Constructs the various plugin strings from the
         given plugin manager instances.
 
-        @type plugin_manager_instances: List
-        @param plugin_manager_instances: The list of plugin manager instances.
-        @rtype: Tuple
-        @return: A tuple containing the plugin strings.
+        :type plugin_manager_instances: List
+        :param plugin_manager_instances: The list of plugin manager instances.
+        :rtype: Tuple
+        :return: A tuple containing the plugin strings.
         """
 
         # creates the plugin counters

@@ -75,12 +75,12 @@ class ApiAt(colony.System):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @type open_client: bool
-        @param open_client: If the client should be opened.
-        @rtype: OpenidClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: OpenidClient
+        :return: The created client.
         """
 
         # retrieves the client http plugin
@@ -156,23 +156,23 @@ class AtClient(object):
         """
         Constructor of the class.
 
-        @type plugin: Plugin
-        @param plugin: The plugin associated with the at client this
+        :type plugin: Plugin
+        :param plugin: The plugin associated with the at client this
         plugin is considered the owner of the client.
-        @type ssl_plugin: SslPlugin
-        @param ssl_plugin: The ssl plugin.
-        @type client_http_plugin: ClientHttpPlugin
-        @param client_http_plugin: The client http plugin.
-        @type at_structure: AtStructure
-        @param at_structure: The at structure.
-        @type test_mode: bool
-        @param test_mode: Flag indicating if the client is to
+        :type ssl_plugin: SslPlugin
+        :param ssl_plugin: The ssl plugin.
+        :type client_http_plugin: ClientHttpPlugin
+        :param client_http_plugin: The client http plugin.
+        :type at_structure: AtStructure
+        :param at_structure: The at structure.
+        :type test_mode: bool
+        :param test_mode: Flag indicating if the client is to
         be run in test mode.
-        @type key: String
-        @param key: The path to the private key file to be used
+        :type key: String
+        :param key: The path to the private key file to be used
         in the connection with the server.
-        @type certificate: String
-        @param certificate: The path to the certificate file to be used
+        :type certificate: String
+        :param certificate: The path to the certificate file to be used
         in the connection with the server.
         """
 
@@ -204,15 +204,15 @@ class AtClient(object):
         """
         Generates the at structure for the given arguments.
 
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param passwird: The password.
-        @type set_structure: bool
-        @param set_structure: If the structure should be
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param passwird: The password.
+        :type set_structure: bool
+        :param set_structure: If the structure should be
         set in the at client.
-        @rtype: AtStructure
-        @return: The generated at structure.
+        :rtype: AtStructure
+        :return: The generated at structure.
         """
 
         # creates a new at structure
@@ -265,8 +265,8 @@ class AtClient(object):
         This operation is considered a mock for the at client as
         it returns valid, provides api compatibility.
 
-        @rtype: bool
-        @return: Flag indicating if the credentials are valid.
+        :rtype: bool
+        :return: Flag indicating if the credentials are valid.
         """
 
         # returns valid for every request for validation received
@@ -277,8 +277,8 @@ class AtClient(object):
         """
         Retrieves the at structure.
 
-        @rtype: AtStructure
-        @return: The at structure.
+        :rtype: AtStructure
+        :return: The at structure.
         """
 
         return self.at_structure
@@ -287,8 +287,8 @@ class AtClient(object):
         """
         Sets the at structure.
 
-        @type at_structure: AtStructure
-        @param at_structure: The at structure.
+        :type at_structure: AtStructure
+        :param at_structure: The at structure.
         """
 
         self.at_structure = at_structure
@@ -393,16 +393,16 @@ class AtClient(object):
         This method should block while the remote communication
         is on idle or receiving.
 
-        @type url: String
-        @param url: The url to be fetched.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used the fetch.
-        @type method: String
-        @param method: The method to be used in the fetch.
-        @type contents: String
-        @param contents: The contents.
-        @rtype: String
-        @return: The fetched data.
+        :type url: String
+        :param url: The url to be fetched.
+        :type parameters: Dictionary
+        :param parameters: The parameters to be used the fetch.
+        :type method: String
+        :param method: The method to be used in the fetch.
+        :type contents: String
+        :param contents: The contents.
+        :rtype: String
+        :return: The fetched data.
         """
 
         # in case parameters is not defined creates a new parameters
@@ -431,12 +431,12 @@ class AtClient(object):
         The provided xml data should be compliant with
         the pre-defined at soap response.
 
-        @type data: String
-        @param data: The string containing the xml data
+        :type data: String
+        :param data: The string containing the xml data
         to be used for parsing and retrieval of the document
         identifier.
-        @rtype: String
-        @return: The at document id.
+        :rtype: String
+        :return: The at document id.
         """
 
         # parses the xml data and retrieves the entry document
@@ -457,8 +457,8 @@ class AtClient(object):
         This method raises an exception in case an error
         exists in the data to be verified.
 
-        @type data: Dictionary
-        @param data: The data to be checked for at errors.
+        :type data: Dictionary
+        :param data: The data to be checked for at errors.
         """
 
         # parses the xml data and retrieves the entry document
@@ -500,8 +500,8 @@ class AtClient(object):
         Retrieves the http client currently in use (in case it's created)
         if not created creates the http client.
 
-        @rtype: HttpClient
-        @return: The retrieved http client.
+        :rtype: HttpClient
+        :return: The retrieved http client.
         """
 
         # in case no http client exists one must be created
@@ -555,10 +555,10 @@ class AtStructure(object):
         """
         Constructor of the class.
 
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param password: The password.
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param password: The password.
         """
 
         self.username = username
@@ -568,8 +568,8 @@ class AtStructure(object):
         """
         Retrieves the username.
 
-        @rtype: String
-        @return: The username.
+        :rtype: String
+        :return: The username.
         """
 
         return self.username
@@ -578,8 +578,8 @@ class AtStructure(object):
         """
         Sets the username.
 
-        @type username: String
-        @param username: The username.
+        :type username: String
+        :param username: The username.
         """
 
         self.username = username
@@ -588,8 +588,8 @@ class AtStructure(object):
         """
         Retrieves the password.
 
-        @rtype: String
-        @return: The password.
+        :rtype: String
+        :return: The password.
         """
 
         return self.password
@@ -598,8 +598,8 @@ class AtStructure(object):
         """
         Sets the password.
 
-        @type password: String
-        @param password: The password.
+        :type password: String
+        :param password: The password.
         """
 
         self.password = password

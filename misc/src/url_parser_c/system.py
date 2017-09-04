@@ -64,10 +64,10 @@ class UrlParser(colony.System):
         """
         Parses the given url retrieving the url object.
 
-        @type url: String
-        @param url:  The url to be parsed.
-        @rtype: Url
-        @return: The url object representing the url
+        :type url: String
+        :param url:  The url to be parsed.
+        :rtype: Url
+        :return: The url object representing the url
         """
 
         # saves the url reference
@@ -141,24 +141,24 @@ class Url(object):
         """
         Constructor of the class.
 
-        @type protocol: String
-        @param protocol: The protocol.
-        @type username: String
-        @param username: The username.
-        @type password: String
-        @param password: The password.
-        @type base_name: String
-        @param base_name: The base name.
-        @type port: int
-        @param port: The port.
-        @type resource_reference: String
-        @param resource_reference: The resource reference.
-        @type options: String
-        @param options: The options.
-        @type location: String
-        @param location: The location.
-        @type base_url: String
-        @param base_url: The base url.
+        :type protocol: String
+        :param protocol: The protocol.
+        :type username: String
+        :param username: The username.
+        :type password: String
+        :param password: The password.
+        :type base_name: String
+        :param base_name: The base name.
+        :type port: int
+        :param port: The port.
+        :type resource_reference: String
+        :param resource_reference: The resource reference.
+        :type options: String
+        :param options: The options.
+        :type location: String
+        :param location: The location.
+        :type base_url: String
+        :param base_url: The base url.
         """
 
         self.protocol = protocol
@@ -206,8 +206,8 @@ class Url(object):
         """
         Parses the given url retrieving setting url object.
 
-        @type url: String
-        @param url:  The url to be parsed.
+        :type url: String
+        :param url:  The url to be parsed.
         """
 
         # matches the url against the url regex
@@ -294,8 +294,8 @@ class Url(object):
         """
         Adds the given resource reference item to the resource reference list.
 
-        @type resource_reference_item: Object
-        @param resource_reference_item: The resource reference to be added.
+        :type resource_reference_item: Object
+        :param resource_reference_item: The resource reference to be added.
         """
 
         # adds the resource reference item to the resource reference list
@@ -305,8 +305,8 @@ class Url(object):
         """
         Removes the given resource reference item from the resource reference list.
 
-        @type resource_reference_item: Object
-        @param resource_reference_item: The resource reference to be removed.
+        :type resource_reference_item: Object
+        :param resource_reference_item: The resource reference to be removed.
         """
 
         # removes the resource reference item to the resource reference list
@@ -316,10 +316,10 @@ class Url(object):
         """
         Adds the given option to the options map.
 
-        @type option_key: String
-        @param option_key: The option key to be added.
-        @type option_value: Object
-        @param option_value: The option value to be added.
+        :type option_key: String
+        :param option_key: The option key to be added.
+        :type option_value: Object
+        :param option_value: The option value to be added.
         """
 
         # adds the option value to the options map
@@ -329,8 +329,8 @@ class Url(object):
         """
         Removes the given option from the options map.
 
-        @type option_key: String
-        @param option_key: The option key to be removed.
+        :type option_key: String
+        :param option_key: The option key to be removed.
         """
 
         # deletes the option from the options map
@@ -340,8 +340,8 @@ class Url(object):
         """
         Retrieves the protocol.
 
-        @rtype: String
-        @return: The protocol.
+        :rtype: String
+        :return: The protocol.
         """
 
         return self.protocol
@@ -350,8 +350,8 @@ class Url(object):
         """
         Sets the protocol.
 
-        @type protocol: String
-        @param protocol: The protocol.
+        :type protocol: String
+        :param protocol: The protocol.
         """
 
         self.protocol = protocol
@@ -360,8 +360,8 @@ class Url(object):
         """
         Retrieves the base name.
 
-        @rtype: String
-        @return: The base name.
+        :rtype: String
+        :return: The base name.
         """
 
         return self.base_name
@@ -370,8 +370,8 @@ class Url(object):
         """
         Sets the base name.
 
-        @type base_name: String
-        @param base_name: The protocol.
+        :type base_name: String
+        :param base_name: The protocol.
         """
 
         self.base_name = base_name
@@ -380,8 +380,8 @@ class Url(object):
         """
         Retrieves the port.
 
-        @rtype: int
-        @return: The port.
+        :rtype: int
+        :return: The port.
         """
 
         return self.port
@@ -390,8 +390,8 @@ class Url(object):
         """
         Sets the port.
 
-        @type port: int
-        @param port: The port.
+        :type port: int
+        :param port: The port.
         """
 
         self.port = port
@@ -400,8 +400,8 @@ class Url(object):
         """
         Retrieves the resource reference.
 
-        @rtype: String
-        @return: The resource reference.
+        :rtype: String
+        :return: The resource reference.
         """
 
         return self.resource_reference
@@ -410,8 +410,8 @@ class Url(object):
         """
         Sets the resource reference.
 
-        @type resource_reference: String
-        @param resource_reference: The resource reference.
+        :type resource_reference: String
+        :param resource_reference: The resource reference.
         """
 
         self.resource_reference = resource_reference
@@ -420,8 +420,8 @@ class Url(object):
         """
         Retrieves the resource reference list.
 
-        @rtype: String
-        @return: The resource reference list.
+        :rtype: String
+        :return: The resource reference list.
         """
 
         return self.resource_reference_list
@@ -430,8 +430,8 @@ class Url(object):
         """
         Sets the resource reference list.
 
-        @type resource_reference_list: String
-        @param resource_reference_list: The resource reference list.
+        :type resource_reference_list: String
+        :param resource_reference_list: The resource reference list.
         """
 
         self.resource_reference_list = resource_reference_list
@@ -440,8 +440,8 @@ class Url(object):
         """
         Retrieves the options.
 
-        @rtype: String
-        @return: The options.
+        :rtype: String
+        :return: The options.
         """
 
         return self.options
@@ -450,8 +450,8 @@ class Url(object):
         """
         Sets the options.
 
-        @type options: String
-        @param options: The options.
+        :type options: String
+        :param options: The options.
         """
 
         self.options = options
@@ -460,8 +460,8 @@ class Url(object):
         """
         Retrieves the options map.
 
-        @rtype: Dictionary
-        @return: The options map.
+        :rtype: Dictionary
+        :return: The options map.
         """
 
         return self.options_map
@@ -470,8 +470,8 @@ class Url(object):
         """
         Sets the options map.
 
-        @type options_map: Dictionary
-        @param options_map: The options map.
+        :type options_map: Dictionary
+        :param options_map: The options map.
         """
 
         self.options_map = options_map
@@ -480,8 +480,8 @@ class Url(object):
         """
         Retrieves the location.
 
-        @rtype: String
-        @return: The location.
+        :rtype: String
+        :return: The location.
         """
 
         return self.location
@@ -490,8 +490,8 @@ class Url(object):
         """
         Sets the location.
 
-        @type location: String
-        @param location: The location.
+        :type location: String
+        :param location: The location.
         """
 
         self.location = location

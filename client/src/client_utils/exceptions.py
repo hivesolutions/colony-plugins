@@ -56,8 +56,8 @@ class SocketProviderNotFound(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -67,8 +67,8 @@ class SocketProviderNotFound(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Socket provider not found - %s" % self.message
@@ -82,8 +82,8 @@ class SocketUpgraderNotFound(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -93,8 +93,8 @@ class SocketUpgraderNotFound(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Socket upgrader not found - %s" % self.message
@@ -108,8 +108,8 @@ class ClientRequestTimeout(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -119,8 +119,8 @@ class ClientRequestTimeout(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Client request timeout - %s" % self.message
@@ -134,8 +134,8 @@ class ServerRequestTimeout(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -145,8 +145,8 @@ class ServerRequestTimeout(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Server request timeout - %s" % self.message
@@ -160,8 +160,8 @@ class ClientResponseTimeout(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -171,8 +171,8 @@ class ClientResponseTimeout(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Client response timeout - %s" % self.message
@@ -186,8 +186,8 @@ class ServerResponseTimeout(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -197,8 +197,8 @@ class ServerResponseTimeout(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Server response timeout - %s" % self.message
@@ -212,8 +212,8 @@ class RequestClosed(ClientUtilsException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ClientUtilsException.__init__(self)
@@ -223,8 +223,8 @@ class RequestClosed(ClientUtilsException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Request closed - %s" % self.message

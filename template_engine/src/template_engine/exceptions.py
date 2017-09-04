@@ -60,8 +60,8 @@ class RuntimeError(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -71,8 +71,8 @@ class RuntimeError(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Runtime error - %s" % self.message
@@ -86,8 +86,8 @@ class UndefinedVariable(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -97,8 +97,8 @@ class UndefinedVariable(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Undefined variable - %s" % self.message
@@ -112,8 +112,8 @@ class UndefinedReference(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -123,8 +123,8 @@ class UndefinedReference(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Undefined reference - %s" % self.message
@@ -138,8 +138,8 @@ class VariableNotIterable(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -149,8 +149,8 @@ class VariableNotIterable(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Variable not iterable - %s" % self.message
@@ -164,8 +164,8 @@ class InvalidNumberAttributes(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -175,8 +175,8 @@ class InvalidNumberAttributes(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid number attributes - %s" % self.message
@@ -190,8 +190,8 @@ class InvalidBooleanValue(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -201,8 +201,8 @@ class InvalidBooleanValue(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid boolean value - %s" % self.message
@@ -216,8 +216,8 @@ class InvalidSerializer(TemplateEngineException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         TemplateEngineException.__init__(self)
@@ -227,8 +227,8 @@ class InvalidSerializer(TemplateEngineException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid serializer - %s" % self.message

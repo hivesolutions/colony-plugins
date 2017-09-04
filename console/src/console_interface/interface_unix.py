@@ -133,10 +133,10 @@ class ConsoleInterfaceUnix(object):
         """
         Constructor of the class.
 
-        @type console_interface_plugin: ConsoleInterfacePlugin
-        @param console_interface_plugin: The console interface plugin.
-        @type console_interface: ConsoleInterface
-        @param console_interface: The console interface.
+        :type console_interface_plugin: ConsoleInterfacePlugin
+        :param console_interface_plugin: The console interface plugin.
+        :type console_interface: ConsoleInterface
+        :param console_interface: The console interface.
         """
 
         self.console_interface_plugin = console_interface_plugin
@@ -321,8 +321,8 @@ class ConsoleInterfaceUnix(object):
         caller must the cautious in the handling of it.
         On failure this function returns an invalid value (none).
 
-        @rtype: Tuple
-        @return: A tuple containing the width and the height of
+        :rtype: Tuple
+        :return: A tuple containing the width and the height of
         the current console window.
         """
 

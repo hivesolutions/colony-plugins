@@ -56,8 +56,8 @@ class SchedulerCancel(SchedulerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         SchedulerException.__init__(self)
@@ -67,8 +67,8 @@ class SchedulerCancel(SchedulerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Scheduler cancel - %s" % self.message

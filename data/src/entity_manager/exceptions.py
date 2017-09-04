@@ -56,8 +56,8 @@ class RuntimeError(EntityManagerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         EntityManagerException.__init__(self)
@@ -67,8 +67,8 @@ class RuntimeError(EntityManagerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Runtime error - %s" % self.message
@@ -82,8 +82,8 @@ class EntityManagerEngineNotFound(EntityManagerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         EntityManagerException.__init__(self)
@@ -93,8 +93,8 @@ class EntityManagerEngineNotFound(EntityManagerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Engine not found - %s" % self.message
@@ -108,8 +108,8 @@ class MissingRelationMethod(EntityManagerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         EntityManagerException.__init__(self)
@@ -119,8 +119,8 @@ class MissingRelationMethod(EntityManagerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Missing relation method - %s" % self.message
@@ -138,10 +138,10 @@ class ValidationError(EntityManagerException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type context: Object
-        @param context: The context (object) for the validation
+        :type message: String
+        :param message: The message to be printed.
+        :type context: Object
+        :param context: The context (object) for the validation
         issue, this will provide extra information for debug
         purposes allowing for fast context
         """
@@ -154,8 +154,8 @@ class ValidationError(EntityManagerException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Validation error - %s" % self._get_message()
@@ -174,8 +174,8 @@ class RelationValidationError(ValidationError):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Relation validation error - %s" % self._get_message()
@@ -189,8 +189,8 @@ class InvalidSerializerError(ValidationError):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid serializer error - %s" % self._get_message()

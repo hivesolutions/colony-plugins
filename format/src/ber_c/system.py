@@ -618,8 +618,8 @@ class BerStructure(object):
         """
         Retrieves the type alias map.
 
-        @rtype: Dictionary
-        @return: The type alias map.
+        :rtype: Dictionary
+        :return: The type alias map.
         """
 
         return self.type_alias_map
@@ -628,8 +628,8 @@ class BerStructure(object):
         """
         Sets the type alias map.
 
-        @type type_alias_map: Dictionary
-        @param type_alias_map: The type alias map.
+        :type type_alias_map: Dictionary
+        :param type_alias_map: The type alias map.
         """
 
         self.type_alias_map = type_alias_map

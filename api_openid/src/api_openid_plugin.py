@@ -74,10 +74,10 @@ class ApiOpenidPlugin(colony.Plugin):
         """
         Creates a server, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @rtype: OpenidServer
-        @return: The created server.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :rtype: OpenidServer
+        :return: The created server.
         """
 
         return self.system.create_server(api_attributes)
@@ -86,10 +86,10 @@ class ApiOpenidPlugin(colony.Plugin):
         """
         Creates a client, with the given api attributes.
 
-        @type api_attributes: Dictionary
-        @param api_attributes: The api attributes to be used.
-        @rtype: OpenidClient
-        @return: The created client.
+        :type api_attributes: Dictionary
+        :param api_attributes: The api attributes to be used.
+        :rtype: OpenidClient
+        :return: The created client.
         """
 
         return self.system.create_client(api_attributes)

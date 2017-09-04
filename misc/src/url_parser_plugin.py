@@ -68,10 +68,10 @@ class UrlParserPlugin(colony.Plugin):
         """
         Parses the given url retrieving the url object.
 
-        @type url: String
-        @param url:  The url to be parsed.
-        @rtype: Url
-        @return: The url object representing the url
+        :type url: String
+        :param url:  The url to be parsed.
+        :rtype: Url
+        :return: The url object representing the url
         """
 
         return self.system.parse_url(url)

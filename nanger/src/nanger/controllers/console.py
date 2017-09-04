@@ -88,8 +88,8 @@ class ConsoleController(BaseController):
         This request should start an execution instance and
         return the identifier to the caller.
 
-        @type request: Request
-        @param request: The request to be handled.
+        :type request: Request
+        :param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -184,8 +184,8 @@ class ConsoleController(BaseController):
         This request should execute a python command at the
         server side and then return the result of execution.
 
-        @type request: Request
-        @param request: The request to be handled.
+        :type request: Request
+        :param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -300,8 +300,8 @@ class ConsoleController(BaseController):
         This request should try to find a series of results
         that may be used as "tips" for the correct command.
 
-        @type request: Request
-        @param request: The request to be handled.
+        :type request: Request
+        :param request: The request to be handled.
         """
 
         # retrieves the reference to the plugin manager running
@@ -442,14 +442,14 @@ class ConsoleController(BaseController):
         The provided names may also be an object like element
         and in such case the attributes reference will be used.
 
-        @type partials: List
-        @param partials: List of names considered to be the path
+        :type partials: List
+        :param partials: List of names considered to be the path
         until the element to be retrieved.
-        @type names: Dictionary/Object
-        @param names: The map or object used as the basic dictionary
+        :type names: Dictionary/Object
+        :param names: The map or object used as the basic dictionary
         for the resolution of the value.
-        @rtype: Tuple
-        @return: The tuple containing both the names contained in
+        :rtype: Tuple
+        :return: The tuple containing both the names contained in
         the target element defined by the list of partials and the
         "proper" object pointed by the same list of partials.
         """
@@ -493,11 +493,11 @@ class ConsoleController(BaseController):
         The processing of the documentation is an expensive
         task and should be cached whenever possible.
 
-        @type doc: String
-        @param doc: The documentation string to be parsed and
+        :type doc: String
+        :param doc: The documentation string to be parsed and
         processed with the objective of returning a structure.
-        @rtype: Tuple
-        @return: Tuple containing the base documentation string
+        :rtype: Tuple
+        :return: Tuple containing the base documentation string
         the various parameters and the returns value.
         """
 
@@ -566,7 +566,7 @@ class ConsoleController(BaseController):
 
             # in case the current line refers the parameter special token
             # must process the parameter observations
-            if line.startswith(("@param", ":param")):
+            if line.startswith((":param", ":param")):
                 # splits the current line around the separator and then
                 # uses the result to unpack the name and description
                 parts = line[6:].split(":", 1)
@@ -589,7 +589,7 @@ class ConsoleController(BaseController):
 
             # in case the current line refers the type special token
             # must process the parameter type
-            elif line.startswith(("@type", ":type")):
+            elif line.startswith((":type", ":type")):
                 # splits the current line around the separator and then
                 # uses the result to unpack the name and type
                 parts = line[5:].split(":", 1)
@@ -612,7 +612,7 @@ class ConsoleController(BaseController):
 
             # in case the current line refers the return special token
             # must process the return value observations
-            elif line.startswith(("@return", ":return")):
+            elif line.startswith((":return", ":return")):
                 # retrieves the second part of the line as the description
                 # of the return value
                 description = line[8:].strip()
@@ -629,7 +629,7 @@ class ConsoleController(BaseController):
 
             # in case the current line refers the rtype special token
             # must process the return value type
-            elif line.startswith(("@rtype", ":rtype")):
+            elif line.startswith((":rtype", ":rtype")):
                 # retrieves the second part of the line as the type
                 # of the return value
                 _type = line[7:].strip()

@@ -96,8 +96,8 @@ class ConsolePlugin(colony.Plugin):
         """
         Creates a new console context for third party usage.
 
-        @rtype: ConsoleContext
-        @return: The creates console context.
+        :rtype: ConsoleContext
+        :return: The creates console context.
         """
 
         return self.system.create_console_context()
@@ -107,12 +107,12 @@ class ConsolePlugin(colony.Plugin):
         Creates a new console interface character based
         from the given console handler.
 
-        @type console_handler: ConsoleHandler
-        @param console_handler: The console handler to be used.
-        @type console_context: ConsoleContext
-        @param console_context: The console context to be used.
-        @rtype: ConsoleInterfaceCharacter
-        @return: The create console interface character.
+        :type console_handler: ConsoleHandler
+        :param console_handler: The console handler to be used.
+        :type console_context: ConsoleContext
+        :param console_context: The console context to be used.
+        :rtype: ConsoleInterfaceCharacter
+        :return: The create console interface character.
         """
 
         return self.system.create_console_interface_character(console_handler, console_context)
@@ -122,10 +122,10 @@ class ConsolePlugin(colony.Plugin):
         Executes the given command line using the default
         output method.
 
-        @type command_line: String
-        @param command_line: The command line to be executed.
-        @rtype: bool
-        @return: If the execution of the command line was successful.
+        :type command_line: String
+        :param command_line: The command line to be executed.
+        :rtype: bool
+        :return: If the execution of the command line was successful.
         """
 
         return self.system.process_command_line(command_line, None)
@@ -134,12 +134,12 @@ class ConsolePlugin(colony.Plugin):
         """
         Processes the given command line, with the given output method.
 
-        @type command_line: String
-        @param command_line: The command line to be processed.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @rtype: bool
-        @return: If the processing of the command line was successful.
+        :type command_line: String
+        :param command_line: The command line to be processed.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :rtype: bool
+        :return: If the processing of the command line was successful.
         """
 
         return self.system.process_command_line(command_line, output_method)
@@ -148,8 +148,8 @@ class ConsolePlugin(colony.Plugin):
         """
         Retrieves the default output method.
 
-        @rtype: Method
-        @return: The default output method for console.
+        :rtype: Method
+        :return: The default output method for console.
         """
 
         return self.system.get_default_output_method()
@@ -158,8 +158,8 @@ class ConsolePlugin(colony.Plugin):
         """
         Retrieves the test case.
 
-        @rtype: TestCase
-        @return: The test case.
+        :rtype: TestCase
+        :return: The test case.
         """
 
         return self.test

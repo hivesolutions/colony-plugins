@@ -260,15 +260,15 @@ def get_exception_map(self, exception, request = None):
     The exception map does contain deep (and sensitive) information
     about the current environment as so it must be used carefully.
 
-    @type exception: Exception
-    @param exception: The exception to retrieve the
+    :type exception: Exception
+    :param exception: The exception to retrieve the
     exception map.
-    @type request: Request
-    @param request: The (optional) request object
+    :type request: Request
+    :param request: The (optional) request object
     to be used to retrieve additional information for the
     exception (this should be related with the current runtime).
-    @rtype: Dictionary
-    @return: The exception map describing the exception.
+    :rtype: Dictionary
+    :return: The exception map describing the exception.
     """
 
     # retrieves the execution information
@@ -338,11 +338,11 @@ def process_map_model_validation_error(self, exception_map, exception):
     This process method includes the specific information
     of this exception into the exception map.
 
-    @type exception_map: Dictionary
-    @param exception_map: The map containing the exception
+    :type exception_map: Dictionary
+    :param exception_map: The map containing the exception
     information.
-    @type exception: Exception
-    @param exception: The exception to be processed.
+    :type exception: Exception
+    :param exception: The exception to be processed.
     """
 
     # retrieves the model in the exception and then uses it to retrieve
@@ -366,14 +366,14 @@ def get_entity_id_attribute(self, entity, id_attribute_name = "object_id"):
     This method must be used carefully to avoid possible miss conversion
     of id attribute based on an erroneous id attribute name.
 
-    @type entity: Entity
-    @param entity: The entity to retrieve the id attribute, this value
+    :type entity: Entity
+    :param entity: The entity to retrieve the id attribute, this value
     may assume a possible map value.
-    @type id_attribute_name: String
-    @param id_attribute_name: The name of the id attribute, this value
+    :type id_attribute_name: String
+    :param id_attribute_name: The name of the id attribute, this value
     is only used in case the provided entity is a map.
-    @rtype: Object
-    @return: The value of the entity id attribute for the given entity.
+    :rtype: Object
+    :return: The value of the entity id attribute for the given entity.
     """
 
     # retrieves the entity type,
@@ -415,26 +415,26 @@ def get_entity_model(
     The update and create values map(s) provide a way to automatically
     set and update the values of the entity.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The entity manager to be used.
-    @type entity_model: Class
-    @param entity_model: The entity model (class) to be retrieved.
-    @type update_values_map: Dictionary
-    @param update_values_map: The map of values to be set automatically (on update and created).
-    @type create_values_map: Dictionary
-    @param create_values_map: The map of values to be set on creation.
-    @type secure_value_keys_list: List
-    @param secure_value_keys_list: The list of value keys that may be used
+    :type entity_manager: EntityManager
+    :param entity_manager: The entity manager to be used.
+    :type entity_model: Class
+    :param entity_model: The entity model (class) to be retrieved.
+    :type update_values_map: Dictionary
+    :param update_values_map: The map of values to be set automatically (on update and created).
+    :type create_values_map: Dictionary
+    :param create_values_map: The map of values to be set on creation.
+    :type secure_value_keys_list: List
+    :param secure_value_keys_list: The list of value keys that may be used
     while setting the values automatically (update), use this list to control the
     access to the values.
-    @type create: bool
-    @param create: If a new entity should be created in case none is
+    :type create: bool
+    :param create: If a new entity should be created in case none is
     retrieved from the entity manager.
-    @type nullify: bool
-    @param nullify: If the data to be processed should be nullified
+    :type nullify: bool
+    :param nullify: If the data to be processed should be nullified
     in case empty string values are found.
-    @rtype: EntityModel
-    @return: The retrieved entity model.
+    :rtype: EntityModel
+    :return: The retrieved entity model.
     """
 
     # unsets the created entity flag
@@ -549,12 +549,12 @@ def set_entity_relation(self, entity, relation_name, relation_value):
     Sets the given relation value in the given entity.
     This method provides a safety mechanism for setting relations.
 
-    @type entity: Object
-    @param entity: The entity to set the relation.
-    @type relation_name: String
-    @param relation_name: The name of the relation to be set.
-    @type relation_value: Object
-    @param relation_value: The value of the relation to be set.
+    :type entity: Object
+    :param entity: The entity to set the relation.
+    :type relation_name: String
+    :param relation_name: The name of the relation to be set.
+    :type relation_value: Object
+    :param relation_value: The value of the relation to be set.
     """
 
     # retrieves the relation value type
@@ -595,17 +595,17 @@ def save_entity_relations(
     The persist type mask is going to be used to filter some of the attributes
     sent to the underlying layer of relations saving.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity_map: Dictionary
-    @param entity_map: The entity values map.
-    @type entity: Object
-    @param entity: The entity object to be used.
-    @type relations_map: Dictionary
-    @param relations_map: The map containing the description of
+    :type request: Request
+    :param request: The request to be used.
+    :type entity_map: Dictionary
+    :param entity_map: The entity values map.
+    :type entity: Object
+    :param entity: The entity object to be used.
+    :type relations_map: Dictionary
+    :param relations_map: The map containing the description of
     the relation to be set.
-    @type persist_type: int
-    @param persist_type: Mask controlling the permissions of persistence
+    :type persist_type: int
+    :param persist_type: Mask controlling the permissions of persistence
     for the saving of the entity relations.
     """
 
@@ -751,16 +751,16 @@ def validate_entity_relation(self, entity, relation_entity_map, relation_name):
     In case the relation entity map represents an entity that is not
     yet persisted the relation is considered valid.
 
-    @type entity: Entity
-    @param entity: The base entity to be used in the validation.
-    @type relation_entity_map: Dictionary
-    @param relation_entity_map: The map containing the entity
+    :type entity: Entity
+    :param entity: The base entity to be used in the validation.
+    :type relation_entity_map: Dictionary
+    :param relation_entity_map: The map containing the entity
     definition to be validated as relation.
-    @type relation_name: String
-    @param relation_name: The name of the attribute for "joining"
+    :type relation_name: String
+    :param relation_name: The name of the attribute for "joining"
     the relation.
-    @rtype: bool
-    @return: The result of the validation for relation.
+    :rtype: bool
+    :return: The result of the validation for relation.
     """
 
     # retrieves the entity manager from the entity
@@ -798,15 +798,15 @@ def get_field_models(self, request, field_name = None, model = None, data_type =
 
     In case at least one model fails to be retrieved, an error is raised.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type field_name: String
-    @param field_name: The name of the field to be used for the retrieval
+    :type request: Request
+    :param request: The request to be used.
+    :type field_name: String
+    :param field_name: The name of the field to be used for the retrieval
     of the models, should contain the identifiers separated by commas.
-    @type model: Model
-    @param model: The model to be used for the retrieval of the entities.
-    @type data_type: Type
-    @param data_type: The type to be used in the cast operation for the
+    :type model: Model
+    :param model: The model to be used for the retrieval of the entities.
+    :type data_type: Type
+    :param data_type: The type to be used in the cast operation for the
     various identifier values.
     """
 
@@ -842,18 +842,18 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     retrieved (static or the resource path) and the various dynamic arguments
     for the resource retrieval (either arguments or get parameters).
 
-    @type request: Request
-    @param request: The request that is going to be used for the complete set
+    :type request: Request
+    :param request: The request that is going to be used for the complete set
     of context aware operations for url resolution.
-    @type reference: String
-    @param reference: A string describing the resource that is meant to be resolved
+    :type reference: String
+    :param reference: A string describing the resource that is meant to be resolved
     should be static for static resources or a dynamic string describing the
     resource name for dynamic resources.
-    @type filename: String
-    @param filename: Optional name to be used in the resolution of static resources
+    :type filename: String
+    :param filename: Optional name to be used in the resolution of static resources
     this value should be called using a non named strategy.
-    @rtype: String
-    @return: The relative url path value to the resource taking into account the
+    :rtype: String
+    :return: The relative url path value to the resource taking into account the
     base path or the mvc path defined for the current request.
     """
 
@@ -903,28 +903,28 @@ def get_field(
     In case the split flag is set the values are separated
     using the provided token as the separator character.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type field_name: String
-    @param field_name: The name of the field to be retrieved
+    :type request: Request
+    :param request: The request to be used.
+    :type field_name: String
+    :param field_name: The name of the field to be retrieved
     from the form data.
-    @type default: Object
-    @param default: The value to be returned when there is a
+    :type default: Object
+    :param default: The value to be returned when there is a
     field miss match (fallback value).
-    @type cast_type: Type
-    @param cast_type: The type to be used in the optional casting
+    :type cast_type: Type
+    :param cast_type: The type to be used in the optional casting
     of the field value.
-    @type mandatory: bool
-    @param mandatory: If an exception should be raised in case the
+    :type mandatory: bool
+    :param mandatory: If an exception should be raised in case the
     field is not found under the provided request.
-    @type split: bool
-    @param split: Flag indicating if the field value should be
+    :type split: bool
+    :param split: Flag indicating if the field value should be
     divided into multiple values using the token as separator.
-    @type token: String
-    @param token: The token to be used in the split operation in
+    :type token: String
+    :param token: The token to be used in the split operation in
     case the split flag is set.
-    @rtype: Object
-    @return: The value for the field being request from
+    :rtype: Object
+    :return: The value for the field being request from
     the form data.
     """
 
@@ -991,13 +991,13 @@ def set_field(self, request, field_name, field_value):
     Using this method is considered dangerous and should only
     be done when changing the current request's for is allowed.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type field_name: String
-    @param field_name: The name of the field to be used
+    :type request: Request
+    :param request: The request to be used.
+    :type field_name: String
+    :param field_name: The name of the field to be used
     in the update/set operation of the value.
-    @type field_value: Object
-    @param field_value: The value that is going to be set for
+    :type field_value: Object
+    :param field_value: The value that is going to be set for
     the target field, this value may assume any data type.
     """
 
@@ -1023,10 +1023,10 @@ def get_json(self, request):
     method assumes that the request is properly formed and that
     the header information is set in accordance with json.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: Object
-    @return: The object that represents the parsed json information
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: Object
+    :return: The object that represents the parsed json information
     that was passed inside the request data.
     """
 
@@ -1044,16 +1044,16 @@ def get_pattern(self, parameters, pattern_name, pattern_type = None):
     casting it to the appropriate type in case a type
     is provided.
 
-    @type parameters: Dictionary
-    @param parameters: The map of parameters provided to the
+    :type parameters: Dictionary
+    :param parameters: The map of parameters provided to the
     controller's action method.
-    @type pattern_name: String
-    @param pattern_name: The name of the pattern to be retrieved.
-    @type pattern_type: type
-    @param pattern_type: The type to be used to cast the pattern
+    :type pattern_name: String
+    :param pattern_name: The name of the pattern to be retrieved.
+    :type pattern_type: type
+    :param pattern_type: The type to be used to cast the pattern
     value (the cast is done in safe mode).
-    @rtype: Object
-    @return: The retrieved and "casted" pattern value.
+    :rtype: Object
+    :return: The retrieved and "casted" pattern value.
     """
 
     # retrieves the pattern names from the parameters
@@ -1076,13 +1076,13 @@ def set_pattern(self, parameters, pattern_name, pattern_value):
     This method must be used with care in order to avoid unwanted
     behavior in the request handling.
 
-    @type parameters: Dictionary
-    @param parameters: The parameters that are going to be changed
+    :type parameters: Dictionary
+    :param parameters: The parameters that are going to be changed
     so that the pattern is set.
-    @type pattern_name: String
-    @param pattern_name: The name of the patter to be set.
-    @type pattern_value: Object
-    @param pattern_value: The value to be set for the parameter, this
+    :type pattern_name: String
+    :param pattern_name: The name of the patter to be set.
+    :type pattern_value: Object
+    :param pattern_value: The value to be set for the parameter, this
     value may assume any data type.
     """
 
@@ -1099,13 +1099,13 @@ def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     The removal of the parameters is optional and may be
     prevented.
 
-    @type entity_map: Dictionary
-    @param entity_map: The entity map.
-    @type delete_parameters: bool
-    @param delete_parameters: If the parameters value should be
+    :type entity_map: Dictionary
+    :param entity_map: The entity map.
+    :type delete_parameters: bool
+    :param delete_parameters: If the parameters value should be
     removed from the entity map.
-    @rtype: Dictionary
-    @return: The parameters map for the entity.
+    :rtype: Dictionary
+    :return: The parameters map for the entity.
     """
 
     # retrieves the entity parameters
@@ -1126,13 +1126,13 @@ def validate_model_exception(self, model, exception_message, error_description =
     The error descriptor controls if the description of the error
     should include detailed explanation of the validation.
 
-    @type model: Model
-    @param model:The model to be validated.
-    @type exception_message: String
-    @param exception_message: The message to be used when throwing
+    :type model: Model
+    :param model:The model to be validated.
+    :type exception_message: String
+    :param exception_message: The message to be used when throwing
     the exception.
-    @type error_description: bool
-    @param error_description: If a detailed explanation of the validation
+    :type error_description: bool
+    :param error_description: If a detailed explanation of the validation
     error should be put in the exception description.
     """
 
@@ -1147,17 +1147,17 @@ def new_connection(self, parameters, connection_name = "default", channels = ())
     The mvc communication system is used for the creation/registration
     process of the new connection.
 
-    @type parameters: Dictionary
-    @param parameters: A dictionary of parameters.
-    @type connection_name: String
-    @param connection_name: The name of the connection to be used
+    :type parameters: Dictionary
+    :param parameters: A dictionary of parameters.
+    :type connection_name: String
+    :param connection_name: The name of the connection to be used
     to in new connection (default connection is used if not defined).
-    @type channels: Tuple
-    @param channels: The various channels to be used to register the
+    :type channels: Tuple
+    :param channels: The various channels to be used to register the
     connection, this value should be a partial name and not a fully
     qualified name.
-    @rtype: CommunicationConnection
-    @return: The created communication connection that should be ready
+    :rtype: CommunicationConnection
+    :return: The created communication connection that should be ready
     to be used for any operation.
     """
 
@@ -1182,10 +1182,10 @@ def delete_connection(self, parameters, connection):
     The mvc communication system is used for the deletion/unregistration
     process of the connection.
 
-    @type parameters: Dictionary
-    @param parameters: A dictionary of parameters.
-    @type communication: CommunicationConnection
-    @param communication: The communication connection to be deleted
+    :type parameters: Dictionary
+    :param parameters: A dictionary of parameters.
+    :type communication: CommunicationConnection
+    :param communication: The communication connection to be deleted
     from the communication handler internal structures.
     """
 
@@ -1205,16 +1205,16 @@ def send(self, parameters, connection_name = "default", message = "", channels =
     in the the connection with the given name.
     The mvc communication system is used for the unicast sending.
 
-    @type parameters: Dictionary
-    @param parameters: A dictionary of parameters.
-    @type connection_name: String
-    @param connection_name: The name of the connection to be used
+    :type parameters: Dictionary
+    :param parameters: A dictionary of parameters.
+    :type connection_name: String
+    :param connection_name: The name of the connection to be used
     to send the message (default connection is used if not defined).
-    @type message: String
-    @param message: The message to be sent in channels mode (an empty
+    :type message: String
+    :param message: The message to be sent in channels mode (an empty
     message is used in case none is defined).
-    @type channels: Tuple
-    @param channels: The various channels to be used to send the message
+    :type channels: Tuple
+    :param channels: The various channels to be used to send the message
     this value should be a partial name and not a fully qualified name.
     """
 
@@ -1236,13 +1236,13 @@ def send_broadcast(self, parameters, connection_name = "default", message = ""):
     with the given name.
     The mvc communication system is used for the broadcast sending.
 
-    @type parameters: Dictionary
-    @param parameters: A dictionary of parameters.
-    @type connection_name: String
-    @param connection_name: The name of the connection to be used
+    :type parameters: Dictionary
+    :param parameters: A dictionary of parameters.
+    :type connection_name: String
+    :param connection_name: The name of the connection to be used
     to send the message (default connection is used if not defined).
-    @type message: String
-    @param message: The message to be sent in broadcast mode (an empty
+    :type message: String
+    :param message: The message to be sent in broadcast mode (an empty
     message is used in case none is defined).
     """
 
@@ -1262,13 +1262,13 @@ def create_form_data_string(self, request, data_map):
     Converts the data map to a string representation
     in the form data format.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type data_map: Dictionary
-    @param data_map: The map containing the hierarchy of
+    :type request: Request
+    :param request: The request to be used.
+    :type data_map: Dictionary
+    :param data_map: The map containing the hierarchy of
     defined structure for the "form" contents.
-    @rtype: String
-    @return: The string representation of the data map
+    :rtype: String
+    :return: The string representation of the data map
     in the form data format.
     """
 
@@ -1328,16 +1328,16 @@ def create_form_data(self, request, data_map, encoding = "utf-8"):
     Processes the data map, creating a single map with all the
     attributes described in the form data format.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type data_map: Dictionary
-    @param data_map: The map containing the hierarchy of defined structure
+    :type request: Request
+    :param request: The request to be used.
+    :type data_map: Dictionary
+    :param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
-    @type encoding: String
-    @param encoding: The encoding to be used when retrieving
+    :type encoding: String
+    :param encoding: The encoding to be used when retrieving
     the attribute values.
-    @rtype: Dictionary
-    @return: The map representing the data map in a flat format
+    :rtype: Dictionary
+    :return: The map representing the data map in a flat format
     where the data map's depth is expressed in the keys.
     """
 
@@ -1367,16 +1367,16 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     Note that the encoding argument controls the encoding to be used
     while decoding the request data for json loading.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type encoding: String
-    @param encoding: The encoding to be used when decoding the request
+    :type request: Request
+    :param request: The request to be used.
+    :type encoding: String
+    :param encoding: The encoding to be used when decoding the request
     data/payload so that it can be used in json loading operation.
-    @type force: bool
-    @param force: If any cached data should be discarded and the
+    :type force: bool
+    :param force: If any cached data should be discarded and the
     the request information re-parsed if necessary.
-    @rtype: Dictionary
-    @return: The map containing the hierarchy of defined structure
+    :rtype: Dictionary
+    :return: The map containing the hierarchy of defined structure
     for the "json" contents.
     """
 
@@ -1415,23 +1415,23 @@ def process_form_data(
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type encoding: String
-    @param encoding: The encoding to be used when retrieving
+    :type request: Request
+    :param request: The request to be used.
+    :type encoding: String
+    :param encoding: The encoding to be used when retrieving
     the attribute values.
-    @type nullify: bool
-    @param nullify: If the data to be processed should be nullified
+    :type nullify: bool
+    :param nullify: If the data to be processed should be nullified
     in case empty string values are found.
-    @type force: bool
-    @param force: If any cached data should be discarded and the
+    :type force: bool
+    :param force: If any cached data should be discarded and the
     the request information re-parsed if necessary.
-    @type strict: bool
-    @param strict: If a strict approach should be taken while parsing
+    :type strict: bool
+    :param strict: If a strict approach should be taken while parsing
     the form data, meaning that any attribute that is not compliant
     with the form information should raise an exception.
-    @rtype: Dictionary
-    @return: The map containing the hierarchy of defined structure
+    :rtype: Dictionary
+    :return: The map containing the hierarchy of defined structure
     for the "form" contents.
     """
 
@@ -1524,16 +1524,16 @@ def process_form_data_flat(self, request, encoding = "utf-8", nullify = False):
     the hierarchy of defined structure for the "form" contents.
     This method runs in flat mode for hierarchies defined with "dot notation".
 
-    @type request: Request
-    @param request: The request to be used.
-    @type encoding: String
-    @param encoding: The encoding to be used when retrieving
+    :type request: Request
+    :param request: The request to be used.
+    :type encoding: String
+    :param encoding: The encoding to be used when retrieving
     the attribute values.
-    @type nullify: String
-    @param nullify: If the data to be processed should be nullified
+    :type nullify: String
+    :param nullify: If the data to be processed should be nullified
     in case empty string values are found.
-    @rtype: Dictionary
-    @return: The map containing the hierarchy of defined structure
+    :rtype: Dictionary
+    :return: The map containing the hierarchy of defined structure
     for the "form" contents.
     """
 
@@ -1579,21 +1579,21 @@ def process_acl_values(
     Retrieves the lowest value for the given key and takes into account
     the wildcard value for global permission values.
 
-    @type acl_list: List
-    @param acl_list: The list of acl (access control list) to
+    :type acl_list: List
+    :param acl_list: The list of acl (access control list) to
     be used for acl permission value retrieval.
-    @type key: String/List
-    @param key: The key to be used for retrieval of acl permissions
+    :type key: String/List
+    :param key: The key to be used for retrieval of acl permissions
     value (this key is joined with the current wildcard). This value
     may also be a list of keys and the most permissive one will be used.
-    @type wildcard_key: String
-    @param wildcard_key: The wildcard key to be used for retrieval
+    :type wildcard_key: String
+    :param wildcard_key: The wildcard key to be used for retrieval
     of wildcard values.
-    @type maximum_value: int
-    @param maximum_value: The maximum value valid for acl permission
+    :type maximum_value: int
+    :param maximum_value: The maximum value valid for acl permission
     values (this value should be changed carefully).
-    @rtype: int
-    @return: The lowest processed acl permission value for the given key.
+    :rtype: int
+    :return: The lowest processed acl permission value for the given key.
     """
 
     # verifies if the provided key value represents a sequence
@@ -1645,20 +1645,20 @@ def validate_acl_session(
     Validates the current session defined acl against the
     defined key and value.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type key: String/List
-    @param key: The key to be used for retrieval of acl permissions
+    :type request: Request
+    :param request: The request to be used.
+    :type key: String/List
+    :param key: The key to be used for retrieval of acl permissions
     value (this key is joined with the current wildcard). This value
     may also be a list of keys and the most permissive one will be used.
-    @type value: int
-    @param value: The value to be used for testing as minimal
+    :type value: int
+    :param value: The value to be used for testing as minimal
     valid value.
-    @type session_attribute: String
-    @param session_attribute: The name of the session attribute
+    :type session_attribute: String
+    :param session_attribute: The name of the session attribute
     to retrieve the acl list.
-    @rtype: bool
-    @return: If the key is valid for the current session acl.
+    :rtype: bool
+    :return: If the key is valid for the current session acl.
     """
 
     # retrieves the user acl value
@@ -1679,15 +1679,15 @@ def get_mvc_path(self, request, delta_value = 1):
     Retrieves the mvc path according to
     the current request path.
 
-    @type request: Request
-    @param request: The request to be used to retrieve
+    :type request: Request
+    :param request: The request to be used to retrieve
     the mvc path.
-    @type delta_value: int
-    @param delta_value: The integer value that represents
+    :type delta_value: int
+    :param delta_value: The integer value that represents
     the number of partial paths to be removed from the
     original path to get the mvc path.
-    @rtype: String
-    @return: The base path.
+    :rtype: String
+    :return: The base path.
     """
 
     # retrieves the path list length
@@ -1710,11 +1710,11 @@ def get_base_path(self, request):
     Retrieves the base path according to
     the current request path.
 
-    @type request: Request
-    @param request: The request to be used to retrieve
+    :type request: Request
+    :param request: The request to be used to retrieve
     the base path.
-    @rtype: String
-    @return: The base path.
+    :rtype: String
+    :return: The base path.
     """
 
     return self.get_mvc_path(request, BASE_PATH_DELTA_VALUE)
@@ -1724,11 +1724,11 @@ def get_base_path_absolute(self, request):
     Retrieves the base path absolute according to
     the current request path.
 
-    @type request: Request
-    @param request: The request to be used to retrieve
+    :type request: Request
+    :param request: The request to be used to retrieve
     the base path absolute.
-    @rtype: String
-    @return: The base path absolute.
+    :rtype: String
+    :return: The base path absolute.
     """
 
     # retrieves the base path list
@@ -1748,11 +1748,11 @@ def get_base_path_complete(self, request, suffix_path = "", prefix_path = HTTP_P
     The complete base path includes the hostname
     and the full path to the resource.
 
-    @type request: Request
-    @param request: The request to be used to retrieve
+    :type request: Request
+    :param request: The request to be used to retrieve
     the base path complete.
-    @rtype: String
-    @return: The base path absolute.
+    :rtype: String
+    :return: The base path absolute.
     """
 
     # tries retrieves the host value for the base
@@ -1813,27 +1813,27 @@ def set_contents(
     verify mode is enabled this method also handled the proper
     cache verification according to the etag standards.
 
-    @type request: Request
-    @param request: The request to be set with the contents.
-    @type contents: String
-    @param contents: The contents to set in the request.
-    @type content_type: String
-    @param content_type: The content type to be set.
-    @type touch_date: bool
-    @param touch_date: If the (modified) data value should be touched
+    :type request: Request
+    :param request: The request to be set with the contents.
+    :type contents: String
+    :param contents: The contents to set in the request.
+    :type content_type: String
+    :param content_type: The content type to be set.
+    :type touch_date: bool
+    :param touch_date: If the (modified) data value should be touched
     setting it to a time around the current local time, this is useful
     for situations where client cache should be used in a page loading
     scope (for performance issues).
-    @type max_age: int
-    @param max_age: The maximum age field to be used to control the cache
+    :type max_age: int
+    :param max_age: The maximum age field to be used to control the cache
     for the current set of contents, this value provides the resources
     to set cache in the client side for the defined amount of seconds. It
     should be used carefully to avoid unwanted behavior.
-    @type etag: String
-    @param etag: The string based etag value that is going to be used for
+    :type etag: String
+    :param etag: The string based etag value that is going to be used for
     both verification of cache and also to set the associated header value.
-    @type verify: bool
-    @param verify: If the cache invalidation verify mode should be enabled,
+    :type verify: bool
+    :param verify: If the cache invalidation verify mode should be enabled,
     meaning that a not modified value will be returned in case the etag
     value for the contents to be sent has not changed.
     """
@@ -1876,10 +1876,10 @@ def set_status_code(self, request, status_code = 200):
     """
     Sets the given status code in the given request.
 
-    @type request: Request
-    @param request: The request to be set with the status code.
-    @type contents: String
-    @param contents: The status code to set in the request.
+    :type request: Request
+    :param request: The request to be set with the status code.
+    :type contents: String
+    :param contents: The status code to set in the request.
     """
 
     # sets the status code for the request
@@ -1892,10 +1892,10 @@ def get_referer(self, request):
     The referer value shall not be trusted as it may not
     be defined in the request.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: String
-    @return: The retrieved referer value (url).
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: String
+    :return: The retrieved referer value (url).
     """
 
     # retrieves the "referer" header and returns
@@ -1916,20 +1916,20 @@ def redirect(
     Redirects the current request to the given
     target (page).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type target: String
-    @param target: The target (page) of the redirect.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type request: Request
+    :param request: The request to be used.
+    :type target: String
+    :param target: The target (page) of the redirect.
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -1953,23 +1953,23 @@ def redirect_list(
     Redirects the current request to the list action
     of the given entity (instance).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2013,31 +2013,31 @@ def redirect_action(
     An optional id string value may be provided to override
     the normal behavior of id value retrieval.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type action: String
-    @param action: The name of the action to be used for the
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type action: String
+    :param action: The name of the action to be used for the
     redirection process, this value may contain an extension
     (eg: sales.json).
-    @type id_string: String
-    @param id_string: The value to be used in the identifier
+    :type id_string: String
+    :param id_string: The value to be used in the identifier
     part of the url to be generated, in case this value is not
     provided the id value is inferred from the provided entity.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2087,23 +2087,23 @@ def redirect_create(
     Redirects the current request to the create action
     of the given entity (instance).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2142,23 +2142,23 @@ def redirect_show(
     Redirects the current request to the show action
     of the given entity (instance).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2187,23 +2187,23 @@ def redirect_edit(
     Redirects the current request to the edit action
     of the given entity (instance).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2233,23 +2233,23 @@ def redirect_delete(
     Redirects the current request to the delete action
     of the given entity (instance).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type entity: Entity
-    @param entity: The entity to be used for the redirection.
-    @type level: Class
-    @param level: Optional class level to be used to retrieve
+    :type request: Request
+    :param request: The request to be used.
+    :type entity: Entity
+    :param entity: The entity to be used for the redirection.
+    :type level: Class
+    :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2280,20 +2280,20 @@ def redirect_base_path(
     This method updates the target to conform with the
     current base path.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type target: String
-    @param target: The target (page) of the redirect.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type request: Request
+    :param request: The request to be used.
+    :type target: String
+    :param target: The target (page) of the redirect.
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2327,20 +2327,20 @@ def redirect_mvc_path(
     This method updates the target to conform with the
     current mvc path.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type target: String
-    @param target: The target (page) of the redirect.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type request: Request
+    :param request: The request to be used.
+    :type target: String
+    :param target: The target (page) of the redirect.
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2373,20 +2373,20 @@ def redirect_back(
     referred page or to the default target in case the no
     referer page is defined.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type default_target: String
-    @param default_target: The default target (page) of the redirect.
-    @type status_code: int
-    @param status_code: The status code to be used.
-    @type quote: bool
-    @param quote: If the target path should be quoted.
-    @type keep: bool
-    @param keep: If the attributes map from the current request
+    :type request: Request
+    :param request: The request to be used.
+    :type default_target: String
+    :param default_target: The default target (page) of the redirect.
+    :type status_code: int
+    :param status_code: The status code to be used.
+    :type quote: bool
+    :param quote: If the target path should be quoted.
+    :type keep: bool
+    :param keep: If the attributes map from the current request
     should be propagated (as get parameters) to the redirection
     action that is going to be triggered.
-    @type attributes_map: Dictionary
-    @param attributes_map: Map containing the series of
+    :type attributes_map: Dictionary
+    :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
     redirect url.
     """
@@ -2417,12 +2417,12 @@ def set_redirect_to(self, request, target, reason = None):
     so if any quoting must be done it must be done outside
     of the function calling scope.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type target: String
-    @param target: The target (page) of the redirect to operation.
-    @type reason: String
-    @param reason: A string describing the reason for
+    :type request: Request
+    :param request: The request to be used.
+    :type target: String
+    :param target: The target (page) of the redirect to operation.
+    :type reason: String
+    :param reason: A string describing the reason for
     the redirect to operation.
     """
 
@@ -2444,8 +2444,8 @@ def mark_redirect_to(self, request):
     This method should be called in the redirection manager
     method (eg: the showing of the login page)
 
-    @type request: Request
-    @param request: The request to be used.
+    :type request: Request
+    :param request: The request to be used.
     """
 
     # retrieves both the target and the mark session attributes
@@ -2475,10 +2475,10 @@ def redirect_to(self, request, quote = False):
     This method should be used after the setting of
     a redirect to attributes.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type quote: bool
-    @param quote: If the redirect to target path should
+    :type request: Request
+    :param request: The request to be used.
+    :type quote: bool
+    :param quote: If the redirect to target path should
     be quoted, the quoting of this values is dangerous.
     """
 
@@ -2508,9 +2508,9 @@ def redirect_to_base_path(self, request, quote = False):
     This method also updates the target to conform
     with the current base path.
 
-    @type request: Request
-    @param request: The request to be used.
-    @param quote: If the redirect to target path should
+    :type request: Request
+    :param request: The request to be used.
+    :param quote: If the redirect to target path should
     be quoted, the quoting of this values is dangerous.
     """
 
@@ -2550,28 +2550,28 @@ def template(
     of the template file with the dynamic keyword arguments and then sets
     the contents resulting for the template rendering as contents.
 
-    @type request: Request
-    @param request: The request that is going to be used as the target for
+    :type request: Request
+    :param request: The request that is going to be used as the target for
     the setting of the contents (may be any kind of valid request object).
-    @type apply_base_path: bool
-    @param apply_base_path: If the base path should be applied on the template
+    :type apply_base_path: bool
+    :param apply_base_path: If the base path should be applied on the template
     file (for relative path resolution).
-    @type assign_session: bool
-    @param assign_session: If the session variables should be assigned on the
+    :type assign_session: bool
+    :param assign_session: If the session variables should be assigned on the
     template file to be processed.
-    @type assign_flash: bool
-    @param assign_flash: If the flash information should be automatically
+    :type assign_flash: bool
+    :param assign_flash: If the flash information should be automatically
     assigned to the current template variables.
-    @type variable_encoding: String
-    @param variable_encoding: The encoding to be used to encode the variables
+    :type variable_encoding: String
+    :param variable_encoding: The encoding to be used to encode the variables
     in the template file processing.
-    @type content_type: String
-    @param content_type: The content type to be set.
-    @type set_contents: bool
-    @param set_contents: If the contents resulting from the processing of the
+    :type content_type: String
+    :param content_type: The content type to be set.
+    :type set_contents: bool
+    :param set_contents: If the contents resulting from the processing of the
     template file should be set in the current request (default behavior).
-    @rtype: String
-    @return: The data resulting from the processing of the template file, this
+    :rtype: String
+    :return: The data resulting from the processing of the template file, this
     value may be re-used for any other operation, but it is especially relevant
     for operations that don't set the contents in the request.
     """
@@ -2603,12 +2603,12 @@ def template_file(self, template = None, *args, **kwargs):
     This method provided an entry point for the redefinition of
     template file provided (using inheritance).
 
-    @type template: String
-    @param template: The path to the template file that is going
+    :type template: String
+    :param template: The path to the template file that is going
     to be used as based for the template retrieval. This value
     is set as invalid by default.
-    @rtype: TemplateFile
-    @return: The final template file instance that may then be
+    :rtype: TemplateFile
+    :return: The final template file instance that may then be
     used for the proper rendering.
     """
 
@@ -2635,21 +2635,21 @@ def serialize(self, request, contents, serializer = None, lazy = True):
     The resulting data from the serialization is set as the contents
     for the current request and the proper mime type defined.
 
-    @type request: Request
-    @param request: The request object that is going to be used
+    :type request: Request
+    :param request: The request object that is going to be used
     as reference for the retrieval of the serializer object and for
     the setting of the serialization result contents.
-    @type contents: List/Dictionary
-    @param contents: The contents that are going to be serialized using
+    :type contents: List/Dictionary
+    :param contents: The contents that are going to be serialized using
     the context defined in the request.
-    @type serializer: Object
-    @param serializer: The serializer (protocol) compliant object that
+    :type serializer: Object
+    :param serializer: The serializer (protocol) compliant object that
     is going to be used for the "forced" serialization process.
-    @type lazy: bool
-    @param lazy: If a lazy based serialization process should be used
+    :type lazy: bool
+    :param lazy: If a lazy based serialization process should be used
     in case there's such support from the serializer.
-    @rtype: String/Generator
-    @return: The final serialized value that may be used for reference,
+    :rtype: String/Generator
+    :return: The final serialized value that may be used for reference,
     please note that this value should not be set again in the request
     as that may create some unnecessary performance issues.
     """
@@ -2759,29 +2759,29 @@ def process_set_contents(
     An optional parameter controls if the contents resulting from
     the processing of the template file should be set in the request.
 
-    @type request: Request
-    @param request: The request to be set with the contents.
-    @type template_file: TemplateFile
-    @param template_file: The template file to be processed.
-    @type apply_base_path: bool
-    @param apply_base_path: If the base path should be applied on the template
+    :type request: Request
+    :param request: The request to be set with the contents.
+    :type template_file: TemplateFile
+    :param template_file: The template file to be processed.
+    :type apply_base_path: bool
+    :param apply_base_path: If the base path should be applied on the template
     file (for relative path resolution).
-    @type assign_session: bool
-    @param assign_session: If the session variables should be assigned on the
+    :type assign_session: bool
+    :param assign_session: If the session variables should be assigned on the
     template file to be processed.
-    @type assign_flash: bool
-    @param assign_flash: If the flash information should be automatically
+    :type assign_flash: bool
+    :param assign_flash: If the flash information should be automatically
     assigned to the current template variables.
-    @type variable_encoding: String
-    @param variable_encoding: The encoding to be used to encode the variables
+    :type variable_encoding: String
+    :param variable_encoding: The encoding to be used to encode the variables
     in the template file processing.
-    @type content_type: String
-    @param content_type: The content type to be set.
-    @type set_contents: bool
-    @param set_contents: If the contents resulting from the processing of the
+    :type content_type: String
+    :param content_type: The content type to be set.
+    :type set_contents: bool
+    :param set_contents: If the contents resulting from the processing of the
     template file should be set in the current request (default behavior).
-    @rtype: String
-    @return: The string value resulting from the processing of the template
+    :rtype: String
+    :return: The string value resulting from the processing of the template
     file, this is especially important for no setting of contents operations.
     """
 
@@ -2819,16 +2819,16 @@ def process_template_file(self, request, template_file, variable_encoding = None
     Processes the given template file, using the given
     variable encoding.
 
-    @type request: Request
-    @param request: The request to be used in the template
+    :type request: Request
+    :param request: The request to be used in the template
     file processing.
-    @type template_file: Template
-    @param template_file: The template file to be processed.
-    @type variable_encoding: String
-    @param variable_encoding: The encoding to be used to encode the variables
+    :type template_file: Template
+    :param template_file: The template file to be processed.
+    :type variable_encoding: String
+    :param variable_encoding: The encoding to be used to encode the variables
     in the template file processing.
-    @rtype: String
-    @return: The processed template file.
+    :rtype: String
+    :return: The processed template file.
     """
 
     # sets the template file variable encoding
@@ -2874,28 +2874,28 @@ def retrieve_template_file(
     and the locale to be used for the template file
     (if used the file name suffix is used by convention).
 
-    @type file_path: String
-    @param file_path: The relative template file path to
+    :type file_path: String
+    :param file_path: The relative template file path to
     retrieve the template file object.
-    @type encoding: String
-    @param encoding: The encoding charset to be used
-    @type partial_page: String
-    @param partial_page: The path to the partial page to be
+    :type encoding: String
+    :param encoding: The encoding charset to be used
+    :type partial_page: String
+    :param partial_page: The path to the partial page to be
     included as a sub-template in the master template file.
     to decode the template file.
-    @type locale: String
-    @param locale: The locate string that is going to be
+    :type locale: String
+    :param locale: The locate string that is going to be
     used to retrieve the appropriate template file.
-    @type locale_request: Request
-    @param locale_request: The request to be used for
+    :type locale_request: Request
+    :param locale_request: The request to be used for
     correct locale resolution.
-    @type extra: Dictionary
-    @param extra: This value may be used to add some extra
+    :type extra: Dictionary
+    :param extra: This value may be used to add some extra
     values to be assigned to the template file, it's relevant
     for values that are not eligible for safe parameter and so
     they may be provided "inside" this dictionary.
-    @rtype: TemplateFile
-    @return: The "parsed" template file object ready
+    :rtype: TemplateFile
+    :return: The "parsed" template file object ready
     to be used for file generation.
     """
 
@@ -2981,10 +2981,10 @@ def apply_base_path_template_file(self, request, template_file):
     Applies the base path to the template file according to
     the current request path.
 
-    @type request: Request
-    @param request: The request to be used to set the base path.
-    @type template_file: TemplateFile
-    @param template_file: The template to be "applied" with the base path.
+    :type request: Request
+    :param request: The request to be used to set the base path.
+    :type template_file: TemplateFile
+    :param template_file: The template to be "applied" with the base path.
     """
 
     # retrieves both the mvc and the base path and uses these
@@ -3003,11 +3003,11 @@ def assign_instance_template_file(self, request, template_file):
     The instance attributes include the instance itself, the
     associated system, and the associated plugin.
 
-    @type request: Request
-    @param request: The request that is going to be used for the
+    :type request: Request
+    :param request: The request that is going to be used for the
     closure with some of the operations.
-    @type template_file: TemplateFile
-    @param template_file: The template to be "applied" with the
+    :type template_file: TemplateFile
+    :param template_file: The template to be "applied" with the
     various instance attributes.
     """
 
@@ -3051,10 +3051,10 @@ def assign_flash_template_file(self, request, template_file):
     The flash map is set in the template and unset from session
     (to avoid duplicate display).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type template_file: TemplateFile
-    @param template_file: The template to be "applied" with the flash map.
+    :type request: Request
+    :param request: The request to be used.
+    :type template_file: TemplateFile
+    :param template_file: The template to be "applied" with the flash map.
     """
 
     # retrieves the flash map from the session and unsets it
@@ -3071,12 +3071,12 @@ def assign_session_template_file(self, request, template_file, variable_prefix =
     The name of the session attributes is modified replacing
     the dots with underscores.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type template_file: TemplateFile
-    @param template_file: The template to be "applied" with the session attributes.
-    @type variable_prefix: String
-    @param variable_prefix: The variable prefix to be prepended to the variable names.
+    :type request: Request
+    :param request: The request to be used.
+    :type template_file: TemplateFile
+    :param template_file: The template to be "applied" with the session attributes.
+    :type variable_prefix: String
+    :param variable_prefix: The variable prefix to be prepended to the variable names.
     """
 
     # tries to retrieve the session object currently associated
@@ -3149,11 +3149,11 @@ def get_controller(self, name):
     The strategy for the retrieval of the controller is based
     upon the current conventions.
 
-    @type name: String
-    @param name: The name of the controller that should be retrieved,
+    :type name: String
+    :param name: The name of the controller that should be retrieved,
     defined using underscore notation.
-    @rtype: Controller
-    @return: The controller retrieved with the provided name strategy
+    :rtype: Controller
+    :return: The controller retrieved with the provided name strategy
     from the currently associated system instance.
     """
 
@@ -3166,17 +3166,17 @@ def get_session(self, request, name, unset = False):
     This method works as an short name alias for the more
     complex and powerful method.
 
-    @type request: Request
-    @param request: The request that is going to be used for
+    :type request: Request
+    :param request: The request that is going to be used for
     the retrieval of session to be used in the attribute get.
-    @type name: String
-    @param name: The name of the attribute for which the value
+    :type name: String
+    :param name: The name of the attribute for which the value
     currently set in session is meant to be retrieved.
-    @type unset: bool
-    @param unset: If the session attribute should be unset after
+    :type unset: bool
+    :param unset: If the session attribute should be unset after
     the retrieval of the value.
-    @rtype: Object
-    @return: The value of the session attribute with the provided
+    :rtype: Object
+    :return: The value of the session attribute with the provided
     name, returned from the session associated with the request.
     """
 
@@ -3194,14 +3194,14 @@ def set_session(self, request, name, value):
     This method works as an short name alias for the more
     complex and powerful method.
 
-    @type request: Request
-    @param request: The request that is going to be used for
+    :type request: Request
+    :param request: The request that is going to be used for
     the setting of the session attribute.
-    @type name: String
-    @param name: The name to be given to the attribute that is
+    :type name: String
+    :param name: The name to be given to the attribute that is
     going to be set in session.
-    @type value: Object
-    @param value: The value that is going to be set in the session
+    :type value: Object
+    :param value: The value that is going to be set in the session
     attribute with the provided name.
     """
 
@@ -3217,8 +3217,8 @@ def lock_session(self, request):
     subsequent accesses to the session will be blocked until the
     session is released.
 
-    @type request: Request
-    @param request: The request to be used.
+    :type request: Request
+    :param request: The request to be used.
     """
 
     # tries to retrieve the request session
@@ -3241,8 +3241,8 @@ def release_session(self, request):
     Releases the session associated with the provided request,
     allowing further requests to access the session to be passed.
 
-    @type request: Request
-    @param request: The request to be used.
+    :type request: Request
+    :param request: The request to be used.
     """
 
     # tries to retrieve the request session
@@ -3265,16 +3265,16 @@ def start_session(self, request, force = False, set_cookie = True):
     An optional set cookie flag may control if the cookie
     value should be returned to the client side.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type force: bool
-    @param force: If a session must be created even if a previous
+    :type request: Request
+    :param request: The request to be used.
+    :type force: bool
+    :param force: If a session must be created even if a previous
     one is already created and set in the request.
-    @type set_cookie: bool
-    @param set_cookie: If the set cookie header must be set
+    :type set_cookie: bool
+    :param set_cookie: If the set cookie header must be set
     in the request indicating the new session to the client.
-    @rtype: Session
-    @return: The session that has just been created.
+    :rtype: Session
+    :return: The session that has just been created.
     """
 
     # start a session if none is started and then
@@ -3299,8 +3299,8 @@ def reset_session(self, request):
     This method is useful for situation where a new session
     context is required or one is meant to be created always.
 
-    @type request: Request
-    @param request: The request to be used.
+    :type request: Request
+    :param request: The request to be used.
     """
 
     # resets the session removing it from the request
@@ -3316,8 +3316,8 @@ def set_session_short(self, request):
     This method may be used to provide additional
     security.
 
-    @type request: Request
-    @param request: The request to be used.
+    :type request: Request
+    :param request: The request to be used.
     """
 
     # tries to retrieve the request session in case
@@ -3347,19 +3347,19 @@ def get_session_attribute(
     with the given name and for the given namespace.
     Optionally it may be unset from session after retrieval.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type session_attribute_name: String
-    @param session_attribute_name: The name of the session
+    :type request: Request
+    :param request: The request to be used.
+    :type session_attribute_name: String
+    :param session_attribute_name: The name of the session
     attribute to be retrieved.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be retrieved.
-    @type unset_session_attribute: bool
-    @param unset_session_attribute: If the session attribute should
+    :type unset_session_attribute: bool
+    :param unset_session_attribute: If the session attribute should
     be unset after retrieval (read once).
-    @rtype: Object
-    @return The retrieved session attribute.
+    :rtype: Object
+    :return The retrieved session attribute.
     """
 
     # tries to retrieve the request session and in case the request
@@ -3398,16 +3398,16 @@ def set_session_attribute(
     with the given name and for the given namespace.
     The session attribute value may be of any type.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type session_attribute_name: String
-    @param session_attribute_name: The name of the session
+    :type request: Request
+    :param request: The request to be used.
+    :type session_attribute_name: String
+    :param session_attribute_name: The name of the session
     attribute to be set.
-    @type session_attribute_value: Object
-    @param session_attribute_value: The value of the session
+    :type session_attribute_value: Object
+    :param session_attribute_value: The value of the session
     attribute to be set.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be set.
     """
 
@@ -3433,13 +3433,13 @@ def unset_session_attribute(self, request, session_attribute_name, namespace_nam
     Unsets the session attribute from the given request
     with the given name and for the given namespace.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type session_attribute_name: String
-    @param session_attribute_name: The name of the session
+    :type request: Request
+    :param request: The request to be used.
+    :type session_attribute_name: String
+    :param session_attribute_name: The name of the session
     attribute to be unset.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace for the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace for the
     attribute to be unset.
     """
 
@@ -3463,16 +3463,16 @@ def get_context_attribute(self, request, context_name, namespace_name = None):
 
     In case no attribute is found a none value is returned.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type request: Request
+    :param request: The request to be used.
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to retrieve the value.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be retrieved.
-    @rtype: Object
-    @return:  The value of the requested context attribute.
+    :rtype: Object
+    :return:  The value of the requested context attribute.
     """
 
     # retrieves the context defaulting to a new and empty map
@@ -3500,15 +3500,15 @@ def set_context_attribute(
     possible to override an already present context value
     with the same name (conflict resolution).
 
-    @type request: Request
-    @param request: The request to be used.
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type request: Request
+    :param request: The request to be used.
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to set the value.
-    @type context_value: Object
-    @param context_value: The value to be set for the attribute.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type context_value: Object
+    :param context_value: The value to be set for the attribute.
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be updated.
     """
 
@@ -3530,13 +3530,13 @@ def unset_context_attribute(self, request, context_name, namespace_name = None):
     This operation should remove any reference to the context
     attribute in the current session
 
-    @type request: Request
-    @param request: The request to be used.
-    @type context_name: String
-    @param context_name: The name of the of the context attribute
+    :type request: Request
+    :param request: The request to be used.
+    :type context_name: String
+    :param context_name: The name of the of the context attribute
     to be unset.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used
     for the context (session) variable to be updated.
     """
 
@@ -3556,10 +3556,10 @@ def get_session_id(self, request):
     Retrieves the session id for the session that exists
     in the given request.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: String
-    @return: The session id that exists in the given request.
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: String
+    :return: The session id that exists in the given request.
     """
 
     # tries to retrieve the request session
@@ -3585,16 +3585,16 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
     contained in it will be decoded and the structure will
     be re-created.
 
-    @type request: Request
-    @param request: The request to be used to retrieve the
+    :type request: Request
+    :param request: The request to be used to retrieve the
     attribute.
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to retrieve.
-    @type encoding: String
-    @param encoding: The name of the encoding to be used in the retrieving
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to retrieve.
+    :type encoding: String
+    :param encoding: The name of the encoding to be used in the retrieving
     of the attribute.
-    @rtype: Object
-    @return: The decoded attribute.
+    :rtype: Object
+    :return: The decoded attribute.
     """
 
     # retrieves the attribute value from the attribute name
@@ -3674,17 +3674,17 @@ def get_locale(
     The set of locales to be set available may be constrained using
     the available locales list.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type available_locales: Tuple
-    @param available_locales: A tuple containing the available
+    :type request: Request
+    :param request: The request to be used.
+    :type available_locales: Tuple
+    :param available_locales: A tuple containing the available
     and "valid" locales, used to constrain the retrieval.
-    @type alias_locales: Dictionary
-    @param alias_locales: The map to be used for locale alias resolution.
-    @type default_locale: String
-    @param default_locale: The default locale to be used.
-    @rtype: String
-    @return: The current "best" locale"
+    :type alias_locales: Dictionary
+    :param alias_locales: The map to be used for locale alias resolution.
+    :type default_locale: String
+    :param default_locale: The default locale to be used.
+    :rtype: String
+    :return: The current "best" locale"
     """
 
     # creates the get locales method tuple
@@ -3735,11 +3735,11 @@ def locale_value(self, value, locale = None):
     the resulting value should be a string represented in the requested
     locale value.
 
-    @type value: Object
+    :type value: Object
     @poram value: The value to be "localized" into the target locale, this
     value should probably be a string.
-    @rtype: Object
-    @return: The localized value, this value should probably be a string.
+    :rtype: Object
+    :return: The localized value, this value should probably be a string.
     """
 
     # retrieves the global bundle for the locale and then uses it
@@ -3763,10 +3763,10 @@ def set_locale_session(self, request, locale):
     Sets the locale session attribute for later locale
     retrieval.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type locale: String
-    @param locale: The locale to be set in session.
+    :type request: Request
+    :param request: The request to be used.
+    :type locale: String
+    :param locale: The locale to be set in session.
     """
 
     # sets the locale session attribute
@@ -3791,17 +3791,17 @@ def range_d(self, request, default = "day", _datetime = False):
     This is the internal method and should not be used from
     an interface level.
 
-    @type request: Request
-    @param request: The request to be used for the
+    :type request: Request
+    :param request: The request to be used for the
     computation of the date range.
-    @type default: String
-    @param default: The default mode to be used in case no value
+    :type default: String
+    :param default: The default mode to be used in case no value
     is retrieved from the request.
-    @type _datetime: bool
-    @param _datetime: Flag that controls if the returned value
+    :type _datetime: bool
+    :param _datetime: Flag that controls if the returned value
     should be converted to datetime or left as timestamp.
-    @rtype: Tuple
-    @return: Tuple containing either a tuple of timestamps defining
+    :rtype: Tuple
+    :return: Tuple containing either a tuple of timestamps defining
     the date range or a tuple of date time objects.
     """
 
@@ -3823,8 +3823,8 @@ def update_resources_path(self, parameters = {}):
     Updates the resources path, changing the paths
     for the extra and templates references.
 
-    @type parameters: Dictionary
-    @param parameters: The parameters for the updating.
+    :type parameters: Dictionary
+    :param parameters: The parameters for the updating.
     """
 
     # retrieves the extra path values
@@ -3869,17 +3869,17 @@ def set_relative_resources_path(
     Sets the relative resources path for template resolution
     and optionally updates the resources.
 
-    @type relative_resources_path: String
-    @param relative_resources_path: The relative resources path
+    :type relative_resources_path: String
+    :param relative_resources_path: The relative resources path
     to be used for template resolution.
-    @type extra_extras_path: String
-    @param extra_extras_path: The extra extras path to be appended to the
+    :type extra_extras_path: String
+    :param extra_extras_path: The extra extras path to be appended to the
     extras path after resolution.
-    @type extra_templates_path: String
-    @param extra_templates_path: The extra templates path to be appended to the
+    :type extra_templates_path: String
+    :param extra_templates_path: The extra templates path to be appended to the
     templates path after resolution.
-    @type update_resources: bool
-    @param update_resources: If the associated resources
+    :type update_resources: bool
+    :param update_resources: If the associated resources
     should be updated.
     """
 
@@ -3909,12 +3909,12 @@ def resolve_relative_path(self, relative_path, extra_path = None):
     The resolution takes into account an extra path that may
     be added to the resolved path.
 
-    @type relative_path: String
-    @param relative_path: The relative path to be used for resolution.
-    @param extra_extras_path: The extra path to be appended to the
+    :type relative_path: String
+    :param relative_path: The relative path to be used for resolution.
+    :param extra_extras_path: The extra path to be appended to the
     relative resources path after resolution.
-    @rtype: String
-    @return: The resolved relative path as an absolute path.
+    :rtype: String
+    :return: The resolved relative path as an absolute path.
     """
 
     # retrieves the plugin manager
@@ -3943,11 +3943,11 @@ def resolve_resource_path(self, resource_path):
     This resolution implies the previous setting of
     the resources path.
 
-    @type resource_path: String
-    @param resource_path: The relative path to the
+    :type resource_path: String
+    :param resource_path: The relative path to the
     resource, to be converted into absolute path.
-    @rtype: String
-    @return: The resolved absolute path to the resource.
+    :rtype: String
+    :return: The resolved absolute path to the resource.
     """
 
     # joins the current (absolute) resources path
@@ -3963,10 +3963,10 @@ def set_flash_error(self, request, message):
     Sets a flash error message to be displayed in the
     next template file parsing.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type message: String
-    @param message: The message to be displayed as an
+    :type request: Request
+    :param request: The request to be used.
+    :type message: String
+    :param message: The message to be displayed as an
     error in the next template parsing.
     """
 
@@ -3977,10 +3977,10 @@ def set_flash_warning(self, request, message):
     Sets a flash warning message to be displayed in the
     next template file parsing.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type message: String
-    @param message: The message to be displayed as a
+    :type request: Request
+    :param request: The request to be used.
+    :type message: String
+    :param message: The message to be displayed as a
     warning in the next template parsing.
     """
 
@@ -3991,10 +3991,10 @@ def set_flash_success(self, request, message):
     Sets a flash success message to be displayed in the
     next template file parsing.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type message: String
-    @param message: The message to be displayed as a
+    :type request: Request
+    :param request: The request to be used.
+    :type message: String
+    :param message: The message to be displayed as a
     success in the next template parsing.
     """
 
@@ -4005,13 +4005,13 @@ def set_flash(self, request, message, message_type):
     Sets the the flash message to be display in the
     appropriate session attribute.
 
-    @type request: Request
-    @param request: The request to be used to set the
+    :type request: Request
+    :param request: The request to be used to set the
     flash in session.
-    @type message: String
-    @param message: The message to be displayed as flash.
-    @type message_type: String
-    @param message_type: The type of message to be displayed
+    :type message: String
+    :param message: The message to be displayed as flash.
+    :type message_type: String
+    :param message_type: The type of message to be displayed
     as flash (eg: error, warning, success).
     """
 
@@ -4029,8 +4029,8 @@ def get_plugin(self):
     """
     Retrieves the plugin.
 
-    @rtype: Plugin
-    @return: The plugin.
+    :rtype: Plugin
+    :return: The plugin.
     """
 
     return self.plugin
@@ -4039,8 +4039,8 @@ def set_plugin(self, plugin):
     """
     Sets the plugin.
 
-    @type plugin: Plugin
-    @param plugin: The plugin.
+    :type plugin: Plugin
+    :param plugin: The plugin.
     """
 
     self.plugin = plugin
@@ -4049,8 +4049,8 @@ def get_resources_path(self):
     """
     Retrieves the resources path.
 
-    @rtype: String
-    @return: The resources path.
+    :rtype: String
+    :return: The resources path.
     """
 
     return self.resources_path
@@ -4061,13 +4061,13 @@ def set_resources_path(self, resources_path, update_resources = True, parameters
     Optionally an update on all resource related
     path may be triggered.
 
-    @type resources_path: String
-    @param resources_path: The resources path.
-    @type update_resources: bool
-    @param update_resources: If the associated resources
+    :type resources_path: String
+    :param resources_path: The resources path.
+    :type update_resources: bool
+    :param update_resources: If the associated resources
     should be updated.
-    @type parameters: Dictionary
-    @param parameters: The parameters for the setting.
+    :type parameters: Dictionary
+    :param parameters: The parameters for the setting.
     """
 
     # sets the resources path in the current instance for
@@ -4082,8 +4082,8 @@ def get_extras_path(self):
     """
     Retrieves the extras path.
 
-    @rtype: Sring
-    @return: The extras path.
+    :rtype: Sring
+    :return: The extras path.
     """
 
     return self.extras_path
@@ -4092,8 +4092,8 @@ def set_extras_path(self, extras_path):
     """
     Sets the extras path.
 
-    @type extras_path: String
-    @param extras_path: The extras path.
+    :type extras_path: String
+    :param extras_path: The extras path.
     """
 
     self.extras_path = extras_path
@@ -4102,8 +4102,8 @@ def get_templates_path(self):
     """
     Retrieves the templates path.
 
-    @rtype: String
-    @return: The templates path.
+    :rtype: String
+    :return: The templates path.
     """
 
     return self.templates_path
@@ -4112,8 +4112,8 @@ def set_templates_path(self, templates_path):
     """
     Sets the templates path.
 
-    @type templates_path: String
-    @param templates_path: The templates path.
+    :type templates_path: String
+    :param templates_path: The templates path.
     """
 
     self.templates_path = templates_path
@@ -4122,8 +4122,8 @@ def get_locales_path(self):
     """
     Retrieves the locales path.
 
-    @rtype: String
-    @return: The locales path.
+    :rtype: String
+    :return: The locales path.
     """
 
     return self.locales_path
@@ -4132,8 +4132,8 @@ def set_locales_path(self, locales_path):
     """
     Sets the locales path.
 
-    @type locales_path: String
-    @param locales_path: The locales path.
+    :type locales_path: String
+    :param locales_path: The locales path.
     """
 
     self.locales_path = locales_path
@@ -4144,8 +4144,8 @@ def get_global_path(self):
     information and data relative to the global
     configuration and variables in mvc.
 
-    @rtype: String
-    @return: The global path.
+    :rtype: String
+    :return: The global path.
     """
 
     return self.locales_path
@@ -4154,8 +4154,8 @@ def set_global_path(self, global_path):
     """
     Sets the global path.
 
-    @type global_path: String
-    @param global_path: The global path.
+    :type global_path: String
+    :param global_path: The global path.
     """
 
     self.global_path = global_path
@@ -4165,8 +4165,8 @@ def get_default_parameters(self):
     Retrieves the default parameters map to be used in the
     request "workflow".
 
-    @rtype: Dictionary
-    @return: The default parameters map to be used in the
+    :rtype: Dictionary
+    :return: The default parameters map to be used in the
     request "workflow".
     """
 
@@ -4177,8 +4177,8 @@ def set_default_parameters(self, default_parameters):
     Retrieves the default parameters map to be used in the
     request "workflow".
 
-    @type default_parameters: Dictionary
-    @param default_parameters: The default parameters map
+    :type default_parameters: Dictionary
+    :param default_parameters: The default parameters map
     o be used in the request "workflow".
     """
 
@@ -4189,8 +4189,8 @@ def extend_default_parameters(self, extension_parameters):
     Extends the default parameters map with the given
     map of parameters.
 
-    @type extension_parameters: Dictionary
-    @param extension_parameters: The map of parameters to
+    :type extension_parameters: Dictionary
+    :param extension_parameters: The map of parameters to
     extend the default parameters map.
     """
 
@@ -4206,10 +4206,10 @@ def set_default_parameter(self, parameter_name, parameter_value):
     Sets a parameters to be used as default (template) in the
     handling of a request.
 
-    @type parameter_name: String
-    @param parameter_name: The name of the parameter to be set.
-    @type parameter_value: Object
-    @param parameter_value: The value of the parameter to be set
+    :type parameter_name: String
+    :param parameter_name: The name of the parameter to be set.
+    :type parameter_value: Object
+    :param parameter_value: The value of the parameter to be set
     """
 
     self.default_parameters[parameter_name] = parameter_value
@@ -4219,8 +4219,8 @@ def unset_default_parameter(self, parameter_name):
     Unsets (deletes) a parameter from the map of default
     parameters to be used in the request handling.
 
-    @type parameter_name: String
-    @param parameter_name: The name of the parameter to be unset
+    :type parameter_name: String
+    :param parameter_name: The name of the parameter to be unset
     from the default parameter map.
     """
 
@@ -4233,8 +4233,8 @@ def get_template_engine_plugin(self):
     template engine used for the default rendering of files
     corresponding to templates in the controller.
 
-    @rtype: Plugin
-    @return: The template engine plugin that is currently
+    :rtype: Plugin
+    :return: The template engine plugin that is currently
     in used for rendering of templates in the controller.
     """
 
@@ -4246,8 +4246,8 @@ def set_template_engine_plugin(self, template_engine_plugin):
     will define the kind of template engine that is going
     to be used for template rendering in this controller.
 
-    @type template_engine_plugin: Plugin
-    @param template_engine_plugin: The template engine
+    :type template_engine_plugin: Plugin
+    :param template_engine_plugin: The template engine
     manager plugin that is going to be used for the rendering
     of templates for the current controller.
     """
@@ -4260,12 +4260,12 @@ def get_engine(self, name):
     this value is going to be retrieved from the currently
     set map of engines in from the controller.
 
-    @type name: String
-    @param name: The name of the engine that is meant to
+    :type name: String
+    :param name: The name of the engine that is meant to
     be retrieved, this name should be compliant with the
     short name of the associated plugin.
-    @rtype: Plugin
-    @return: The template engine plugin for the requested
+    :rtype: Plugin
+    :return: The template engine plugin for the requested
     short name, may be latter used for the rendering of
     template based files (as defined by each specification).
     """
@@ -4277,8 +4277,8 @@ def set_engines(self, engines):
     Sets the map of engines that is going to be used as reference
     for the retrieval of template engines for the controller.
 
-    @type engines: Dictionary
-    @param engines: The map that contains a key value association
+    :type engines: Dictionary
+    :param engines: The map that contains a key value association
     between the short name of the engine plugin and the proper
     engine plugin object reference.
     """
@@ -4289,8 +4289,8 @@ def set_json_plugin(self, json_plugin):
     """
     Sets the json plugin.
 
-    @type json_plugin: Plugin
-    @param json_plugin: The json plugin.
+    :type json_plugin: Plugin
+    :param json_plugin: The json plugin.
     """
 
     self.json_plugin = json_plugin
@@ -4309,13 +4309,13 @@ def _get_attribute(self, request, attribute_name):
     Retrieves an attribute from the request in a safe
     manner (casting it according to form data).
 
-    @type request: Request
-    @param request: The request to be used to retrieve the
+    :type request: Request
+    :param request: The request to be used to retrieve the
     attribute.
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be retrieved.
-    @rtype: Object
-    @return: The retrieved attribute (safely casted).
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be retrieved.
+    :rtype: Object
+    :return: The retrieved attribute (safely casted).
     """
 
     # retrieves the attribute value from the attribute
@@ -4333,11 +4333,11 @@ def _cast_attribute_value(self, attribute_value):
     This method provides a safe way to use the attribute
     value from the request.
 
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute
     to be "casted".
-    @rtype: Object´
-    @return: The attribute value, safely "casted".
+    :rtype: Object´
+    :return: The attribute value, safely "casted".
     """
 
     # in case the attribute value is
@@ -4394,14 +4394,14 @@ def _get_path(self, request, sanitize = False):
     parameters are removed so that they are not part
     of the canonical path of the request.
 
-    @type request: Request
-    @param request: The request to be used to
+    :type request: Request
+    :param request: The request to be used to
     retrieve the "real" url path.
-    @type sanitize: bool
-    @param sanitize: If the returned path should be sanitized
+    :type sanitize: bool
+    :param sanitize: If the returned path should be sanitized
     by removing some of its (extra) parameters.
-    @rtype: String
-    @return: The "original" base path from the http
+    :rtype: String
+    :return: The "original" base path from the http
     url, taking into account the base path. This value
     is "raw" so it means it's unquoted.
     """
@@ -4430,13 +4430,13 @@ def _get_host(self, request, prefix_path = None):
     Retrieves the host for the current request prepended
     with the given prefix path.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type prefix_path: String
-    @param prefix_path: The prefix path to be prepended to the
+    :type request: Request
+    :param request: The request to be used.
+    :type prefix_path: String
+    :param prefix_path: The prefix path to be prepended to the
     host value.
-    @rtype: String
-    @return: The current host (name) for the given request.
+    :rtype: String
+    :return: The current host (name) for the given request.
     """
 
     # retrieves the host value from the request headers
@@ -4457,16 +4457,16 @@ def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VA
     This should be an absolute url mean to be used in situations
     where no context is defined for the request.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type suffix_path: String
-    @param suffix_path: The suffix path to be appended to the
+    :type request: Request
+    :param request: The request to be used.
+    :type suffix_path: String
+    :param suffix_path: The suffix path to be appended to the
     resolved url (extra relative value).
-    @type prefix_path: String
-    @param prefix_path: The prefix path to be prepended, this
+    :type prefix_path: String
+    :param prefix_path: The prefix path to be prepended, this
     should defined the protocol for most of cases.
-    @rtype: String
-    @return: The complete host path to the current request.
+    :rtype: String
+    :return: The complete host path to the current request.
     """
 
     # tries retrieves the host value
@@ -4509,14 +4509,14 @@ def _range_d(self, request, default):
     This is the internal method and should not be used from
     an interface level.
 
-    @type request: Request
-    @param request: The request to be used for the
+    :type request: Request
+    :param request: The request to be used for the
     computation of the date range.
-    @type default: String
-    @param default: The default mode to be used in case no value
+    :type default: String
+    :param default: The default mode to be used in case no value
     is retrieved from the request.
-    @rtype: Tuple
-    @return: Tuple containing the timestamps defining the date
+    :rtype: Tuple
+    :return: Tuple containing the timestamps defining the date
     range defined in the request.
     """
 
@@ -4615,10 +4615,10 @@ def _parse_date(self, date_string_value):
     Parses a string encoded in date format, converting it
     into a datetime object.
 
-    @type date_string_value: String
-    @param date_string_value: The date encoded string.
-    @rtype: datetime
-    @return: The date time object representing the string value.
+    :type date_string_value: String
+    :param date_string_value: The date encoded string.
+    :rtype: datetime
+    :return: The date time object representing the string value.
     """
 
     # converts the date string value to a date time object
@@ -4632,10 +4632,10 @@ def _parse_date_time(self, date_time_string_value):
     Parses a string encoded in date time format, converting it
     into a datetime object.
 
-    @type date_time_string_value: String
-    @param date_time_string_value: The date time encoded string.
-    @rtype: datetime
-    @return: The date time object representing the string value.
+    :type date_time_string_value: String
+    :param date_time_string_value: The date time encoded string.
+    :rtype: datetime
+    :return: The date time object representing the string value.
     """
 
     # converts the date time string value to a date time object
@@ -4650,10 +4650,10 @@ def _dasherize(self, string_value):
     separated by underscores to a dasherized notation, i.e., different
     words separated by dashes.
 
-    @type string_value: String
-    @param string_value: The string value to dasherize.
-    @rtype: String
-    @return: The dasherized string value.
+    :type string_value: String
+    :param string_value: The string value to dasherize.
+    :rtype: String
+    :return: The dasherized string value.
     """
 
     # inserts underscore between changes of letter cases
@@ -4678,11 +4678,11 @@ def _dasherize_camel_cased(self, string_value):
     Converts a string value with multiple words in camel case to
     a dasherized notation, i.e., different words separated by dashes.
 
-    @type string_value: String
-    @param string_value: The string value to dasherize, in camel case
+    :type string_value: String
+    :param string_value: The string value to dasherize, in camel case
     and without consecutive capitals.
-    @rtype: String
-    @return: The dasherized string value.
+    :rtype: String
+    :return: The dasherized string value.
     """
 
     # inserts underscore between changes of letter cases
@@ -4700,11 +4700,11 @@ def _dasherize_underscored(self, string_value):
     Converts a string value with multiple words in underscore case to
     a dasherized notation, i.e., different words separated by dashes.
 
-    @type string_value: String
-    @param string_value: The string value to dasherize, in underscore
+    :type string_value: String
+    :param string_value: The string value to dasherize, in underscore
     and without consecutive capitals.
-    @rtype: String
-    @return: The dasherized string value.
+    :rtype: String
+    :return: The dasherized string value.
     """
 
     # replaces the underscores for dashes
@@ -4718,19 +4718,19 @@ def _create_form_data(self, request, data_map, form_data_map_key, form_data_map,
     Processes the data map, populating the form data map with all the
     attributes described in the form data format.
 
-    @type request: Request
-    @param request: The request to be used.
-    @type data_map: Dictionary
-    @param data_map: The map containing the hierarchy of defined structure
+    :type request: Request
+    :param request: The request to be used.
+    :type data_map: Dictionary
+    :param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
-    @type form_data_map_key: String
-    @param form_data_map_key: The prefix to all form data map keys,
+    :type form_data_map_key: String
+    :param form_data_map_key: The prefix to all form data map keys,
     which is used to indicate the current context.
-    @type form_data_map: Dictionary
-    @param form_data_map: The map containing the data map's attributes
+    :type form_data_map: Dictionary
+    :param form_data_map: The map containing the data map's attributes
     in the form data format.
-    @type encoding: String
-    @param encoding: The encoding to be used when retrieving
+    :type encoding: String
+    :param encoding: The encoding to be used when retrieving
     the attribute values.
     """
 
@@ -4795,14 +4795,14 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
     At the end the parent structure is changed and contains the form
     attribute in the correct structure place.
 
-    @type parent_structure: Dictionary
-    @param parent_structure: The parent structure to be used to set the
+    :type parent_structure: Dictionary
+    :param parent_structure: The parent structure to be used to set the
     attribute.
-    @type attribute_names_list: List
-    @param attribute_names_list: The list of attribute names currently
+    :type attribute_names_list: List
+    :param attribute_names_list: The list of attribute names currently
     being parsed.
-    @type attribute_value: Object
-    @param attribute_value: The attribute value.
+    :type attribute_value: Object
+    :param attribute_value: The attribute value.
     """
 
     # retrieves the current attribute name from the attribute names list
@@ -4857,20 +4857,20 @@ def _process_form_attribute(
     At the end the parent structure is changed and contains the form
     attribute in the correct structure place.
 
-    @type parent_structure: List/Dictionary
-    @param parent_structure: The parent structure to be used to set the
+    :type parent_structure: List/Dictionary
+    :param parent_structure: The parent structure to be used to set the
     attribute.
-    @type current_attribute_name: String
-    @param current_attribute_name: The current attribute name, current
+    :type current_attribute_name: String
+    :param current_attribute_name: The current attribute name, current
     because it's parsed recursively using this process method.
-    @type attribute_value: Object
-    @param attribute_value: The attribute value.
-    @type strict: bool
-    @param strict: If the strict mode should be used, meaning that an
+    :type attribute_value: Object
+    :param attribute_value: The attribute value.
+    :type strict: bool
+    :param strict: If the strict mode should be used, meaning that an
     exception should be raised whenever a non compliant attribute is
     found or if a return/ignore operation should be performed instead.
-    @type index: int
-    @param index: The index of the current attribute reference.
+    :type index: int
+    :param index: The index of the current attribute reference.
     """
 
     # retrieves the current match for the current attribute
@@ -5030,12 +5030,12 @@ def _get_complete_session_attribute_name(session_attribute_name, namespace_name 
     Retrieves the complete session attribute name from the session
     attribute name and the namespace name.
 
-    @type session_attribute_name: String
-    @param session_attribute_name: The session attribute name.
-    @type namespace_name: String
-    @param namespace_name: The namespace name.
-    @rtype: String
-    @return: The complete session attribute name.
+    :type session_attribute_name: String
+    :param session_attribute_name: The session attribute name.
+    :type namespace_name: String
+    :param namespace_name: The namespace name.
+    :rtype: String
+    :return: The complete session attribute name.
     """
 
     # in case the namespace name is not set
@@ -5057,17 +5057,17 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     The entity to set the attribute is the instance of the entity model
     also sent.
 
-    @type attribute_key: String
-    @param attribute_key: The attribute key in the entity.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to set.
-    @type entity: EntityModel
-    @param entity: The entity to have the attribute set.
-    @type entity_model: Class
-    @param entity_model: The entity model of the entity to have
+    :type attribute_key: String
+    :param attribute_key: The attribute key in the entity.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to set.
+    :type entity: EntityModel
+    :param entity: The entity to have the attribute set.
+    :type entity_model: Class
+    :param entity_model: The entity model of the entity to have
     the attribute set.
-    @type nullify: bool
-    @param nullify: If the data to be processed should be nullified
+    :type nullify: bool
+    :param nullify: If the data to be processed should be nullified
     in case empty string values are found.
     """
 
@@ -5107,10 +5107,10 @@ def _validate_relation_value(self, relation_value):
     Validates the given (entity) relation value, checking
     if it is a valid relation value.
 
-    @type relation_value: Object
-    @param relation_value: The relation value to be checked.
-    @rtype: bool
-    @return: The result of the validation test.
+    :type relation_value: Object
+    :param relation_value: The relation value to be checked.
+    :rtype: bool
+    :return: The result of the validation test.
     """
 
     # in case the relation value is valid and
@@ -5129,16 +5129,16 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     The cast is made in safe mode, if an exception
     occurs the default value is returned.
 
-    @type value: Object
-    @param value: The value to be casted.
-    @type cast_type: Type
-    @param cast_type: The type to be used to cast the retrieved
+    :type value: Object
+    :param value: The value to be casted.
+    :type cast_type: Type
+    :param cast_type: The type to be used to cast the retrieved
     value (this should be a valid type, with constructor).
-    @type default_value: Object
-    @param default_value: The default value to be used
+    :type default_value: Object
+    :param default_value: The default value to be used
     when something wrong (exception raised) occurs.
-    @rtype: Object
-    @return: The value casted to the defined type.
+    :rtype: Object
+    :return: The value casted to the defined type.
     """
 
     # in case the value is none it's a special
@@ -5174,11 +5174,11 @@ def _convert_entity_map(self, entity):
     This conversion is very useful for method that want to be
     proof to entity arguments instead of map.
 
-    @type entity: Entity
-    @param entity: The entity to be converted into a map of
+    :type entity: Entity
+    :param entity: The entity to be converted into a map of
     attribute representing it.
-    @rtype: Dictionary
-    @return: The map representing the given entity.
+    :rtype: Dictionary
+    :return: The map representing the given entity.
     """
 
     # in case the entity object does not contain
@@ -5265,20 +5265,20 @@ def _process_file_path_locale(
 
     In case no locale is given the original file path is returned.
 
-    @type file_path: String
-    @param file_path: The file path to be processed.
-    @type locale: String
-    @param locale: The locale to be used for file path processing,
+    :type file_path: String
+    :param file_path: The file path to be processed.
+    :type locale: String
+    :param locale: The locale to be used for file path processing,
     this value should conform with the current locale standards.
-    @type separator: String
-    @param separator: The  string containing the characters that will
+    :type separator: String
+    :param separator: The  string containing the characters that will
     be used to separate the base name of the file from the locale part.
-    @type fallback: String
-    @param fallback: Text value containing the value that will be used
+    :type fallback: String
+    :param fallback: Text value containing the value that will be used
     as the separator in case it's not possible to find the file path
     resulting from the first try.
-    @rtype: String
-    @return: The processed file path, conforming with the proper
+    :rtype: String
+    :return: The processed file path, conforming with the proper
     localized version of the file path.
     """
 
@@ -5352,11 +5352,11 @@ def _lower_locale(self, locale):
     Converts the given locale string value
     to the lower version of it.
 
-    @type locale: String
-    @param locale: The lower locale string value to
+    :type locale: String
+    :param locale: The lower locale string value to
     be converted.
-    @rtype: String
-    @return: The lower locale string value.
+    :rtype: String
+    :return: The lower locale string value.
     """
 
     # converts the locale to lower, then replaces
@@ -5371,10 +5371,10 @@ def _get_locales_session(self, request):
     Retrieves the locales list value using a
     request session strategy.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: List
-    @return: The retrieved locales list.
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: List
+    :return: The retrieved locales list.
     """
 
     # retrieves the accepted language
@@ -5391,10 +5391,10 @@ def _get_locales_header(self, request):
     Retrieves the locales list value using an
     (http) header strategy.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: List
-    @return: The retrieved locales list.
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: List
+    :return: The retrieved locales list.
     """
 
     # retrieves the accepted language
@@ -5414,10 +5414,10 @@ def _get_locales_default(self, request):
     Retrieves the locales list value using a
     default strategy.
 
-    @type request: Request
-    @param request: The request to be used.
-    @rtype: List
-    @return: The retrieved locales list.
+    :type request: Request
+    :param request: The request to be used.
+    :rtype: List
+    :return: The retrieved locales list.
     """
 
     return (
@@ -5430,10 +5430,10 @@ def _get_locales_map(self, accept_language):
     method converts the values into a map of locale
     key and relative value value.
 
-    @type accept_language: String
-    @param accept_language: The accept language header value.
-    @rtype: Dictionary
-    @return: The map locales for the given language
+    :type accept_language: String
+    :param accept_language: The accept language header value.
+    :rtype: Dictionary
+    :return: The map locales for the given language
     header value.
     """
 
@@ -5475,15 +5475,15 @@ def _get_bundle(self, locale, bundle_name = "global"):
     serialized file, so this is considered to be an expensive
     operation (should be used carefully).
 
-    @type locale: String
-    @param locale: The locale name to retrieve the bundle, this
+    :type locale: String
+    :param locale: The locale name to retrieve the bundle, this
     value must be encoded in bcp47 in the underline notation (eg:
     pt_pt or en_us).
-    @type bundle_name: String
-    @param bundle_name: The name of the bundle to be retrieved this
+    :type bundle_name: String
+    :param bundle_name: The name of the bundle to be retrieved this
     is going to be used in the creation of the bundle file path.
-    @rtype: Dictionary
-    @return: The map containing the bundle with the loaded values
+    :rtype: Dictionary
+    :return: The map containing the bundle with the loaded values
     from the bundle file.
     """
 
@@ -5548,16 +5548,16 @@ def get_process_method(controller, request, process_method_name):
     Retrieves the "real" process method from the given
     process method name.
 
-    @type controller: Controller
-    @param controller: The controller associated with the
+    :type controller: Controller
+    :param controller: The controller associated with the
     current context.
-    @type request: Request
-    @param request: The current request.
-    @type process_method_name: String
-    @param process_method_name: The name of the process
+    :type request: Request
+    :param request: The current request.
+    :type process_method_name: String
+    :param process_method_name: The name of the process
     method to be retrieved.
-    @rtype: Method
-    @return: The "real" process method from the given
+    :rtype: Method
+    :return: The "real" process method from the given
     process method name.
     """
 

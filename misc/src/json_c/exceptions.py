@@ -56,8 +56,8 @@ class JsonEncodeException(JsonException):
         """
         Constructor of the class.
 
-        @type object: Object
-        @param object: The object containing the encoding problems.
+        :type object: Object
+        :param object: The object containing the encoding problems.
         """
 
         JsonException.__init__(self)
@@ -67,8 +67,8 @@ class JsonEncodeException(JsonException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Object not encodeable - %s" % self.object
@@ -82,8 +82,8 @@ class JsonDecodeException(JsonException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         JsonException.__init__(self)
@@ -93,8 +93,8 @@ class JsonDecodeException(JsonException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return self.message

@@ -53,8 +53,8 @@ class PrintingPdf(colony.System):
         """
         Retrieves the printing name.
 
-        @rtype: String
-        @return: The printing name.
+        :rtype: String
+        :return: The printing name.
         """
 
         return PRINTING_NAME

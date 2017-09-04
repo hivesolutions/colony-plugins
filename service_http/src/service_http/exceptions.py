@@ -56,8 +56,8 @@ class EncodingNotFound(ServiceHttpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpException.__init__(self)
@@ -67,8 +67,8 @@ class EncodingNotFound(ServiceHttpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Encoding not found - %s" % self.message
@@ -82,8 +82,8 @@ class ClientRequestSecurityViolation(ServiceHttpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpException.__init__(self)
@@ -93,8 +93,8 @@ class ClientRequestSecurityViolation(ServiceHttpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Client request security violation - %s" % self.message
@@ -108,8 +108,8 @@ class HttpRuntimeException(ServiceHttpException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpException.__init__(self)
@@ -119,8 +119,8 @@ class HttpRuntimeException(ServiceHttpException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http runtime exception - %s" % self.message
@@ -134,8 +134,8 @@ class HttpInvalidDataException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -144,8 +144,8 @@ class HttpInvalidDataException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http invalid data exception - %s" % self.message
@@ -159,8 +159,8 @@ class HttpNoHandlerException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -169,8 +169,8 @@ class HttpNoHandlerException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http no handler exception - %s" % self.message
@@ -184,8 +184,8 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -194,8 +194,8 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http handler not found exception - %s" % self.message
@@ -209,8 +209,8 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -219,8 +219,8 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http authentication handler not found exception - %s" % self.message
@@ -234,8 +234,8 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -244,8 +244,8 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http invalid multipart request exception - %s" % self.message
@@ -259,8 +259,8 @@ class HttpDataRetrievalException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -269,8 +269,8 @@ class HttpDataRetrievalException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http data retrieval exception - %s" % self.message
@@ -284,8 +284,8 @@ class HttpDataSendingException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -294,8 +294,8 @@ class HttpDataSendingException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Http data sending exception - %s" % self.message
@@ -312,10 +312,10 @@ class UnauthorizedException(HttpRuntimeException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
+        :type message: String
+        :param message: The message to be printed.
+        :type status_code: int
+        :param status_code: The http status code.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -325,8 +325,8 @@ class UnauthorizedException(HttpRuntimeException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Unauthorized - %s" % self.message

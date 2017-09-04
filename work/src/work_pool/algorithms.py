@@ -52,8 +52,8 @@ class WorkPoolAlgorithm(object):
         """
         Constructor of the class.
 
-        @type work_pool: WorkPool
-        @param work_pool: The work pool associated with the algorithm.
+        :type work_pool: WorkPool
+        :param work_pool: The work pool associated with the algorithm.
         """
 
         self.work_pool = work_pool
@@ -62,11 +62,11 @@ class WorkPoolAlgorithm(object):
         """
         Called upon new work added to a work task.
 
-        @type work_task: WorkTask
-        @param work_task: The work task that added a new
+        :type work_task: WorkTask
+        :param work_task: The work task that added a new
         work reference.
-        @type work_reference: Object
-        @param work_reference: The added work reference.
+        :type work_reference: Object
+        :param work_reference: The added work reference.
         """
 
         pass
@@ -75,11 +75,11 @@ class WorkPoolAlgorithm(object):
         """
         Called upon new work removed from a work task.
 
-        @type work_task: WorkTask
-        @param work_task: The work task that removed a new
+        :type work_task: WorkTask
+        :param work_task: The work task that removed a new
         work reference.
-        @type work_reference: Object
-        @param work_reference: The removed work reference.
+        :type work_reference: Object
+        :param work_reference: The removed work reference.
         """
 
         pass
@@ -89,8 +89,8 @@ class WorkPoolAlgorithm(object):
         Retrieves the next element of the work
         pool to be retrieved, according to the algorithm.
 
-        @rtype: Object
-        @return: The next element to be retrieved,
+        :rtype: Object
+        :return: The next element to be retrieved,
         according to the algorithm.
         """
 
@@ -109,8 +109,8 @@ class RandomAlgorithm(WorkPoolAlgorithm):
         """
         Constructor of the class.
 
-        @type work_pool: WorkPool
-        @param work_pool: The work pool associated with the algorithm.
+        :type work_pool: WorkPool
+        :param work_pool: The work pool associated with the algorithm.
         """
 
         WorkPoolAlgorithm.__init__(self, work_pool)
@@ -122,8 +122,8 @@ class RandomAlgorithm(WorkPoolAlgorithm):
         Retrieves the next element of the work
         pool to be retrieved, according to the algorithm.
 
-        @rtype: Object
-        @return: The next element to be retrieved,
+        :rtype: Object
+        :return: The next element to be retrieved,
         according to the algorithm.
         """
 
@@ -171,8 +171,8 @@ class RoundRobinAlgorithm(WorkPoolAlgorithm):
         """
         Constructor of the class.
 
-        @type work_pool: WorkPool
-        @param work_pool: The work pool associated with the algorithm.
+        :type work_pool: WorkPool
+        :param work_pool: The work pool associated with the algorithm.
         """
 
         WorkPoolAlgorithm.__init__(self, work_pool)
@@ -184,8 +184,8 @@ class RoundRobinAlgorithm(WorkPoolAlgorithm):
         Retrieves the next element of the work
         pool to be retrieved, according to the algorithm.
 
-        @rtype: Object
-        @return: The next element to be retrieved,
+        :rtype: Object
+        :return: The next element to be retrieved,
         according to the algorithm.
         """
 
@@ -253,8 +253,8 @@ class SmartBusyAlgorithm(WorkPoolAlgorithm):
         """
         Constructor of the class.
 
-        @type work_pool: WorkPool
-        @param work_pool: The work pool associated with the algorithm.
+        :type work_pool: WorkPool
+        :param work_pool: The work pool associated with the algorithm.
         """
 
         WorkPoolAlgorithm.__init__(self, work_pool)
@@ -270,11 +270,11 @@ class SmartBusyAlgorithm(WorkPoolAlgorithm):
         """
         Called upon new work added to a work task.
 
-        @type work_task: WorkTask
-        @param work_task: The work task that added a new
+        :type work_task: WorkTask
+        :param work_task: The work task that added a new
         work reference.
-        @type work_reference: Object
-        @param work_reference: The added work reference.
+        :type work_reference: Object
+        :param work_reference: The added work reference.
         """
 
         # acquires the lock
@@ -296,11 +296,11 @@ class SmartBusyAlgorithm(WorkPoolAlgorithm):
         """
         Called upon new work removed from a work task.
 
-        @type work_task: WorkTask
-        @param work_task: The work task that removed a new
+        :type work_task: WorkTask
+        :param work_task: The work task that removed a new
         work reference.
-        @type work_reference: Object
-        @param work_reference: The removed work reference.
+        :type work_reference: Object
+        :param work_reference: The removed work reference.
         """
 
         # acquires the lock
@@ -323,8 +323,8 @@ class SmartBusyAlgorithm(WorkPoolAlgorithm):
         Retrieves the next element of the work
         pool to be retrieved, according to the algorithm.
 
-        @rtype: Object
-        @return: The next element to be retrieved,
+        :rtype: Object
+        :return: The next element to be retrieved,
         according to the algorithm.
         """
 

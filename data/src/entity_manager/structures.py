@@ -235,8 +235,8 @@ class Connection(object):
         """
         Constructor of the class.
 
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The parameters to be used
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The parameters to be used
         during the connection scope.
         """
 
@@ -268,8 +268,8 @@ class Connection(object):
         if it's open, this is important for correct
         query execution handling.
 
-        @rtype: bool
-        @return: If the current connection is connected or
+        :rtype: bool
+        :return: If the current connection is connected or
         disconnected.
         """
 
@@ -283,11 +283,11 @@ class Connection(object):
         This handler is only going to be called at the
         end of the concrete commit operation.
 
-        @type commit_handler: Function
-        @param commit_handler: The handler to be called
+        :type commit_handler: Function
+        :param commit_handler: The handler to be called
         upon the next commit in the current connection.
-        @type one_time: bool
-        @param one_time: If the handler is only to be called
+        :type one_time: bool
+        :param one_time: If the handler is only to be called
         for the next commit or if should be called recursively.
         """
 
@@ -305,11 +305,11 @@ class Connection(object):
         This handler is only going to be called at the
         end of the concrete rollback operation.
 
-        @type rollback_handler: Function
-        @param rollback_handler: The handler to be called
+        :type rollback_handler: Function
+        :param rollback_handler: The handler to be called
         upon the next rollback in the current connection.
-        @type one_time: bool
-        @param one_time: If the handler is only to be called
+        :type one_time: bool
+        :param one_time: If the handler is only to be called
         for the next rollback or if should be called recursively.
         """
 
@@ -549,19 +549,19 @@ class EntityClass(object):
         This class method is useful for situations where the
         default values of the entity model are not wanted.
 
-        @type entity_manager: EntityManager
-        @param entity_manager: The entity manager to be used
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to be used
         for reference in the newly created instance. By default
         the class level entity manager reference is used.
-        @type entities: Dictionary
-        @param entities: The map containing the various loaded
+        :type entities: Dictionary
+        :param entities: The map containing the various loaded
         entities indexed by class type, this is the cache map
         that may be used for fast access.
-        @type scope: Dictionary
-        @param scope: The (diffusion) scope parameters that
+        :type scope: Dictionary
+        :param scope: The (diffusion) scope parameters that
         should control a series of diffusion related functions.
-        @rtype: Entity
-        @return: The create instance of he entity model.
+        :rtype: Entity
+        :return: The create instance of he entity model.
         """
 
         # creates a new instance of the current class,
@@ -590,8 +590,8 @@ class EntityClass(object):
 
         The conversion process should be quite simple and "fast".
 
-        @rtype: String
-        @return: The name of the associated entity/table reference
+        :rtype: String
+        :return: The name of the associated entity/table reference
         for the current model class.
         """
 
@@ -986,8 +986,8 @@ class EntityClass(object):
         The recursion strategies used to create this map include vertical
         recursion (child to parent) and horizontal (relations).
 
-        @rtype: Dictionary
-        @return: The map containing the various "parent" classes associated
+        :rtype: Dictionary
+        :return: The map containing the various "parent" classes associated
         with their relations information map.
         """
 
@@ -1270,8 +1270,8 @@ class EntityClass(object):
         (mapped using association table) and direct relations (mapped in the
         reverse entity).
 
-        @rtype: Dictionary
-        @return: The map containing the various unmapped relations associated
+        :rtype: Dictionary
+        :return: The map containing the various unmapped relations associated
         with their relations attributes.
         """
 
@@ -1414,11 +1414,11 @@ class EntityClass(object):
         names of relation (in both sides) and ordering it in
         alphabetically order.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation to
+        :type relation_name: String
+        :param relation_name: The name of the relation to
         retrieve the unique identifier.
-        @rtype: String
-        @return: The unique identifier of the relation.
+        :rtype: String
+        :return: The unique identifier of the relation.
         """
 
         # retrieves the reverse (relation name) for
@@ -1620,11 +1620,11 @@ class EntityClass(object):
         to be retrieved (by default) in a find or get operation
         over an entity model.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation to be
+        :type relation_name: String
+        :param relation_name: The name of the relation to be
         verifies for lazy loading.
-        @rtype: bool
-        @return: The result of the is lazy loaded relation test.
+        :rtype: bool
+        :return: The result of the is lazy loaded relation test.
         """
 
         # retrieves the relation attributes for the given
@@ -1653,11 +1653,11 @@ class EntityClass(object):
         Foreign relations are relation fields that are not mapped
         by the current entity.
 
-        @type foreign_relations: bool
-        @param foreign_relations: If the foreign relation items should
+        :type foreign_relations: bool
+        :param foreign_relations: If the foreign relation items should
         also be retrieved along the "normal" items.
-        @rtype: Dictionary
-        @return: The map containing the set of "specific" items for the
+        :rtype: Dictionary
+        :return: The map containing the set of "specific" items for the
         current entity class.
         """
 
@@ -1988,11 +1988,11 @@ class EntityClass(object):
         This method may be used in security sections of the
         code, to provide extra validation on the attribute name.
 
-        @type name: String
-        @param name: The name of the attribute to be verified
+        :type name: String
+        :param name: The name of the attribute to be verified
         for existence in the current entity class.
-        @rtype: bool
-        @return: If an attribute with the given name exists
+        :rtype: bool
+        :return: If an attribute with the given name exists
         in the current entity class.
         """
 
@@ -2016,11 +2016,11 @@ class EntityClass(object):
 
         The associated class may be also called owner class.
 
-        @type name: String
-        @param name: The name of the attribute to retrieve the
+        :type name: String
+        :param name: The name of the attribute to retrieve the
         associated class (owner class).
-        @rtype: EntityClass
-        @return: The class that is considered to be associated with
+        :rtype: EntityClass
+        :return: The class that is considered to be associated with
         the attribute with the provided name.
         """
 
@@ -2046,8 +2046,8 @@ class EntityClass(object):
         an id attribute, the method traverses the upper
         class levels to find id.
 
-        @rtype: String
-        @return: The name of the id attribute of the class
+        :rtype: String
+        :return: The name of the id attribute of the class
         if one is available, otherwise none.
         """
 
@@ -2252,8 +2252,8 @@ class EntityClass(object):
         them against the entity class, so it may be an expensive
         operation.
 
-        @rtype: Class
-        @return: The parent entity class to be considered the primary.
+        :rtype: Class
+        :return: The parent entity class to be considered the primary.
         """
 
         # retrieves "all" the parents from the class
@@ -2276,11 +2276,11 @@ class EntityClass(object):
         them against the entity class, so it may be an expensive
         operation.
 
-        @type abstract_valid: bool
-        @param abstract_valid: If abstract classes should be considered
+        :type abstract_valid: bool
+        :param abstract_valid: If abstract classes should be considered
         valid as valid top parents.
-        @rtype: Class
-        @return: The top parent entity class to be considered the
+        :rtype: Class
+        :return: The top parent entity class to be considered the
         top level entity class.
         """
 
@@ -2359,8 +2359,8 @@ class EntityClass(object):
         with all the requirements for the persistence and are considered
         not ready/available for the persistence context.
 
-        @rtype: bool
-        @return: If the current entity class is ready and available
+        :rtype: bool
+        :return: If the current entity class is ready and available
         for the current persistence context.
         """
 
@@ -2378,8 +2378,8 @@ class EntityClass(object):
         These classes may be used for logical implementation and
         not data oriented ones.
 
-        @rtype: bool
-        @return: If the current entity class is of type abstract.
+        :rtype: bool
+        :return: If the current entity class is of type abstract.
         """
 
         return "abstract" in cls.__dict__ and cls.abstract
@@ -2486,11 +2486,11 @@ class EntityClass(object):
         optimization of its code is a major concert and the performance
         of it is as fast as possible.
 
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to be checked
+        :type attribute_name: String
+        :param attribute_name: The name of the attribute to be checked
         for relation.
-        @rtype: bool
-        @return: If the requested attribute refers a relation attribute
+        :rtype: bool
+        :return: If the requested attribute refers a relation attribute
         or a single (simple) attribute.
         """
 
@@ -2529,11 +2529,11 @@ class EntityClass(object):
         current entitie's table the method is verifying if the
         current entity class is the "mapper" class of the relation.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation (attribute)
+        :type relation_name: String
+        :param relation_name: The name of the relation (attribute)
         name to be tested for "mapping".
-        @rtype: bool
-        @return: The result of the is mapped in current entity
+        :rtype: bool
+        :return: The result of the is mapped in current entity
         test value, for the requested relation.
         """
 
@@ -2615,11 +2615,11 @@ class EntityClass(object):
         In case the reverse name is not defined in the entity model
         heuristics are used to try to deduct a proper name.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation in the current
+        :type relation_name: String
+        :param relation_name: The name of the relation in the current
         entity class.
-        @rtype: String
-        @return: The reverse name of the relation, name of the relation
+        :rtype: String
+        :return: The reverse name of the relation, name of the relation
         in the target class.
         """
 
@@ -2653,11 +2653,11 @@ class EntityClass(object):
         The checking of the relation is a simple an inexpensive
         operation.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation to be
+        :type relation_name: String
+        :param relation_name: The name of the relation to be
         tested for to many relationship.
-        @rtype: bool
-        @return: The result of the to many type relationship
+        :rtype: bool
+        :return: The result of the to many type relationship
         in the requested relation.
         """
 
@@ -2681,11 +2681,11 @@ class EntityClass(object):
         defined for the relation and the target attribute
         is not, the mapped class is the target of the relation.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation to
+        :type relation_name: String
+        :param relation_name: The name of the relation to
         retrieve the target (class).
-        @rtype: Entity
-        @return: The target (class) for the requested relation.
+        :rtype: Entity
+        :return: The target (class) for the requested relation.
         """
 
         # retrieves the relation (attributes) for the
@@ -2707,14 +2707,14 @@ class EntityClass(object):
         The relation attributes should be stored in the appropriate
         static method "inside" the entity class.
 
-        @type relation_name: String
-        @param relation_name: The name of the relation to retrieve
+        :type relation_name: String
+        :param relation_name: The name of the relation to retrieve
         the attributes (map).
-        @type raise_exception: bool
-        @param raise_exception: If an exception should be raised in
+        :type raise_exception: bool
+        :param raise_exception: If an exception should be raised in
         case no relation attributes are present.
-        @rtype: Dictionary
-        @return: The map containing the various attributes for the requested
+        :rtype: Dictionary
+        :return: The map containing the various attributes for the requested
         relation in the class.
         """
 
@@ -2759,8 +2759,8 @@ class EntityClass(object):
         They are useful for situations where loose coupling is
         required, in a modularity fashion.
 
-        @rtype: bool
-        @return: If the current entity model is in fact a "data
+        :rtype: bool
+        :return: If the current entity model is in fact a "data
         reference" entity class.
         """
 
@@ -2793,16 +2793,16 @@ class EntityClass(object):
         Note that in case the instance type is model and the value
         is a lazy load relation the relation will be loaded.
 
-        @type instance: Object/Dictionary
-        @param instance: The object or map structure to be used
+        :type instance: Object/Dictionary
+        :param instance: The object or map structure to be used
         to retrieve the attribute value.
-        @type name: String
-        @param name: The name of the attribute to be retrieved.
-        @type default: Object
-        @param default: The default to be used in case no value
+        :type name: String
+        :param name: The name of the attribute to be retrieved.
+        :type default: Object
+        :param default: The default to be used in case no value
         is retrieved for the provide name.
-        @rtype: Object
-        @return: The value of the attribute to be retrieved.
+        :rtype: Object
+        :return: The value of the attribute to be retrieved.
         """
 
         # verifies if the provided instance is not valid/unset,
@@ -2827,8 +2827,8 @@ class EntityClass(object):
         the current class, this method is safe as it removes any
         class that does not inherit from the entity class.
 
-        @rtype: List/Tuple
-        @return: The set containing the various bases classes for
+        :rtype: List/Tuple
+        :return: The set containing the various bases classes for
         the current class that are considered valid.
         """
 
@@ -2889,8 +2889,8 @@ class EntityClass(object):
         Note that as part of this operation the "hidden" entities map
         will be propagated, meaning that the cache scope is propagated.
 
-        @type scope_entity: Entity
-        @param scope_entity: The entity to be used as the base for the
+        :type scope_entity: Entity
+        :param scope_entity: The entity to be used as the base for the
         diffusion scope. The new entity is going to use the scope entity
         and copy it's entities map and scope map.
         """
@@ -2947,8 +2947,8 @@ class EntityClass(object):
         If such behavior is meant to be ignored the force flag should
         be set to false (enabling the usage of the stack).
 
-        @type force: bool
-        @param force: Flag that controls if the attaching should be
+        :type force: bool
+        :param force: Flag that controls if the attaching should be
         forced or if the stack oriented operation should be respected
         and if the one level is required for attaching.
         """
@@ -2984,12 +2984,12 @@ class EntityClass(object):
         An optional flag controls if the entity should have the relation
         defaulted (reseted) after the detach operation.
 
-        @type force: bool
-        @param force: Flag that controls if the detaching should be
+        :type force: bool
+        :param force: Flag that controls if the detaching should be
         forced or if the stack oriented operation should be respected
         and if the zero level is required for detaching.
-        @type reset: bool
-        @param reset: Flag that controls if the entity should have the
+        :type reset: bool
+        :param reset: Flag that controls if the entity should have the
         relations removed (set as lazy loaded) after the detach operation.
         """
 
@@ -3024,8 +3024,8 @@ class EntityClass(object):
         If such behavior is meant to be ignored the force flag should
         be set to false (enabling the usage of the stack).
 
-        @type force: bool
-        @param force: Flag that controls if the attaching should be
+        :type force: bool
+        :param force: Flag that controls if the attaching should be
         forced or if the stack oriented operation should be respected
         and if the one level is required for attaching.
         """
@@ -3059,12 +3059,12 @@ class EntityClass(object):
         An optional flag controls if the entity should have the relation
         defaulted (reseted) after the detach operation.
 
-        @type force: bool
-        @param force: Flag that controls if the detaching should be
+        :type force: bool
+        :param force: Flag that controls if the detaching should be
         forced or if the stack oriented operation should be respected
         and if the zero level is required for detaching.
-        @type reset: bool
-        @param reset: Flag that controls if the entity should have the
+        :type reset: bool
+        :param reset: Flag that controls if the entity should have the
         relations removed (set as lazy loaded) after the detach operation.
         """
 
@@ -3095,8 +3095,8 @@ class EntityClass(object):
         This method is going to access the scope parameters
         to check for the attached information.
 
-        @rtype: bool
-        @return: If the current entity is attached to the
+        :rtype: bool
+        :return: If the current entity is attached to the
         data source (on-line).
         """
 
@@ -3111,11 +3111,11 @@ class EntityClass(object):
         The retrieved map may contain the complete set
         of relations for the entity or only the first level.
 
-        @type recursive: bool
-        @param recursive: If the entity relations for the
+        :type recursive: bool
+        :param recursive: If the entity relations for the
         current level should be included in the returning map.
-        @rtype: Dictionary
-        @return: The map representation of the current entity
+        :rtype: Dictionary
+        :return: The map representation of the current entity
         including the relation in case the recursion is required.
         """
 
@@ -3199,8 +3199,8 @@ class EntityClass(object):
         This is useful for situations where access to the entity
         class attributes is not the wanted behavior.
 
-        @type recursive: bool
-        @param recursive: Flag controlling if the nullify process
+        :type recursive: bool
+        :param recursive: Flag controlling if the nullify process
         should be run over all the relations in the current entity.
         """
 
@@ -3386,12 +3386,12 @@ class EntityClass(object):
         This is an expensive operation, and so it must be used
         carefully and in localized situations.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be used as
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be used as
         reference for the checking, this should be the parent
         class level to be checked.
-        @rtype: bool
-        @return: If the current entity contains unmapped relation
+        :rtype: bool
+        :return: If the current entity contains unmapped relation
         at the provided entity class parent level.
         """
 
@@ -3512,15 +3512,15 @@ class EntityClass(object):
         value considered invalid the value is retrieved using the
         default value retrieval system present in the entity.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         against the specification.
-        @type value: Object
-        @param value: The optional value that may be used to
+        :type value: Object
+        :param value: The optional value that may be used to
         override the current entity associated value for
         validation.
-        @type force: bool
-        @param force: Flag controlling if the value must be used
+        :type force: bool
+        :param force: Flag controlling if the value must be used
         even if it contains a value considered invalid (none, false,
         or any other evaluating to false).
         """
@@ -3556,14 +3556,14 @@ class EntityClass(object):
         value considered invalid the value is retrieved using the
         default value retrieval system present in the entity.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for set in the current entity.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for set in the current entity.
-        @type force: bool
-        @param force: Flag controlling if the value must be used
+        :type force: bool
+        :param force: Flag controlling if the value must be used
         even if it contains a value considered invalid (none, false,
         or any other evaluating to false).
         """
@@ -3587,11 +3587,11 @@ class EntityClass(object):
         value considered invalid the value is retrieved using the
         default value retrieval system present in the entity.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for relation in the current entity.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for relation in the current entity.
         """
 
@@ -3610,14 +3610,14 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for relation in the current entity class.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for relation in the current entity class.
-        @type force: bool
-        @param force: Flag controlling if the value must be used
+        :type force: bool
+        :param force: Flag controlling if the value must be used
         even if it contains a value considered invalid (none, false,
         or any other evaluating to false).
         """
@@ -3663,17 +3663,17 @@ class EntityClass(object):
         In case none is provided the bottom parent level of the
         current is used.
 
-        @type entity_class: EntityClass
-        @param entity_class: The entity class to be used as
+        :type entity_class: EntityClass
+        :param entity_class: The entity class to be used as
         reference parent level for the map conversion.
-        @type depth: int
-        @param depth: The depth (recursion) level to be used in
+        :type depth: int
+        :param depth: The depth (recursion) level to be used in
         the conversion of relations for the entity.
-        @type special: bool
-        @param special: If the special attributes of the model
+        :type special: bool
+        :param special: If the special attributes of the model
         instance should also be serialized if present.
-        @rtype: Dictionary
-        @return: The map representing the current instance, this
+        :rtype: Dictionary
+        :return: The map representing the current instance, this
         map should be safe to be serialized (no loops).
         """
 
@@ -4197,14 +4197,14 @@ class EntityClass(object):
         This method is useful for situations where a serialization
         processes requires the value to be a string.
 
-        @type name: String
-        @param name: The name of the attribute to be used as
+        :type name: String
+        :param name: The name of the attribute to be used as
         reference to the casting of the values.
-        @type value: String
-        @param value: The string based value to be converted into
+        :type value: String
+        :param value: The string based value to be converted into
         the correct representation for the attribute referred.
-        @rtype: Object
-        @return: The casted value in the type expected by the attribute
+        :rtype: Object
+        :return: The casted value in the type expected by the attribute
         defined by the provided name.
         """
 
@@ -4236,8 +4236,8 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for existence in the current entity class.
         """
 
@@ -4274,14 +4274,14 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for correct type in the current entity class.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for correct type in the current entity class.
-        @type strict: bool
-        @param stroct: If the strict mode of validation should be
+        :type strict: bool
+        :param stroct: If the strict mode of validation should be
         applied meaning more validations.
         """
 
@@ -4345,11 +4345,11 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for set in the current entity class.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for set in the current entity class.
         """
 
@@ -4378,11 +4378,11 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for relation in the current entity class.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for relation in the current entity class.
         """
 
@@ -4416,14 +4416,14 @@ class EntityClass(object):
         This is a helpful method for assertions of security in
         the entity classes.
 
-        @type name: String
-        @param name: The name of the attribute to be validated
+        :type name: String
+        :param name: The name of the attribute to be validated
         for relation in the current entity class.
-        @type value: String
-        @param value: The value of the attribute to be validated
+        :type value: String
+        :param value: The value of the attribute to be validated
         for relation in the current entity class.
-        @type entity_manager: EntityManager
-        @param entity_manager: The entity manager to be used for the possible
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to be used for the possible
         reference class resolution (relation class resolution).
         """
 
@@ -4469,14 +4469,14 @@ class EntityClass(object):
         This escaping process avoids many of the existing
         sql injection procedures.
 
-        @type text_value: String
-        @param text_value: The text value to be escaped.
-        @type escape_slash: bool
-        @param escape_slash: If the slash characters should be escaped.
-        @type escape_double_quotes: bool
-        @param escape_double_quotes: If the double quotes should be escaped.
-        @rtype: String
-        @return: The escaped text value, according to the sql
+        :type text_value: String
+        :param text_value: The text value to be escaped.
+        :type escape_slash: bool
+        :param escape_slash: If the slash characters should be escaped.
+        :type escape_double_quotes: bool
+        :param escape_double_quotes: If the double quotes should be escaped.
+        :rtype: String
+        :return: The escaped text value, according to the sql
         standard specification.
         """
 
@@ -4505,8 +4505,8 @@ class EntityClass(object):
         abstract parent class should have items and their items should be
         passed to the underlying classes.
 
-        @rtype: Dictionary
-        @return: The map containing the complete set of items for the current
+        :rtype: Dictionary
+        :return: The map containing the complete set of items for the current
         class being selected.
         """
 
@@ -4560,11 +4560,11 @@ class EntityClass(object):
         This method accesses the data source so it's considered
         to be an "expensive" operation.
 
-        @type name: String
-        @param name: The name of the relation attribute to be loaded
+        :type name: String
+        :param name: The name of the relation attribute to be loaded
         from the current lazy state.
-        @rtype: Object
-        @return: The loaded relation attribute, retrieved from the
+        :rtype: Object
+        :return: The loaded relation attribute, retrieved from the
         current associated data source.
         """
 
@@ -4646,16 +4646,16 @@ class EntityClass(object):
         This method accesses the data source so it's considered
         to be an "expensive" operation.
 
-        @type name: String
-        @param name: The name of the attribute to be used as reference
+        :type name: String
+        :param name: The name of the attribute to be used as reference
         in the loading of the concrete class (lazy load).
-        @type force: bool
-        @param force: If the setting of attributes should be forced
+        :type force: bool
+        :param force: If the setting of attributes should be forced
         meaning that attributes that are already set in the entity
         may be overriden by new values from data source, this is
         valid for the upper layers of the class hierarchy.
-        @rtype: Object
-        @return: The value for the attribute that triggered the concrete
+        :rtype: Object
+        :return: The value for the attribute that triggered the concrete
         load of the class (lazy load).
         """
 
@@ -4731,11 +4731,11 @@ class EntityClass(object):
         This method assumes to be called inside an exception handler
         to provided proper exception re-raising.
 
-        @type name: String
-        @param name: The name of the attribute that is going to be
+        :type name: String
+        :param name: The name of the attribute that is going to be
         resolved as a calculated attribute.
-        @rtype: Object
-        @return: The resolved value calculated using the proper method.
+        :rtype: Object
+        :return: The resolved value calculated using the proper method.
         """
 
         # retrieves the class reference for the current entity as it's
@@ -4774,8 +4774,8 @@ class EntityClass(object):
         This value should be changed carefully to avoid an overload
         of data to be serialized (could pose performance issues).
 
-        @rtype: int
-        @return: The depth value as an integer to be used in the
+        :rtype: int
+        :return: The depth value as an integer to be used in the
         get state serialization process of the model.
         """
 
@@ -4823,8 +4823,8 @@ class rset(list):
         """
         Constructor of the class.
 
-        @type base: List
-        @param base: The base list to be used as the base
+        :type base: List
+        :param base: The base list to be used as the base
         model for the construction of the new one.
         """
 
@@ -4841,8 +4841,8 @@ class rset(list):
         The order of the header and lines may not be the same
         as a reorder operation will be performed.
 
-        @type set: rset
-        @param set: The set to be joined with the current instance
+        :type set: rset
+        :param set: The set to be joined with the current instance
         may not have the header sorted in the same way.
         """
 
@@ -4865,11 +4865,11 @@ class rset(list):
         The default order is ascending and may be changed
         using the appropriate flag.
 
-        @type name: String
-        @param name: The name of the attribute to be used
+        :type name: String
+        :param name: The name of the attribute to be used
         for the sort operation.
-        @type ascending: bool
-        @param ascending: If the sort operation should be
+        :type ascending: bool
+        :param ascending: If the sort operation should be
         done in an ascending order or descending.
         """
 
@@ -4892,8 +4892,8 @@ class rset(list):
         current result set, this avoid the "unsafe" iteration
         over the header values.
 
-        @rtype: List
-        @return: The list containing the "raw" data for the
+        :rtype: List
+        :return: The list containing the "raw" data for the
         current result set.
         """
 
@@ -4908,8 +4908,8 @@ class rset(list):
         In case the header is set this may be a quite expensive
         operation as the values of all the list will be replaced.
 
-        @type data: List
-        @param data: The "raw" data to replace the currently existing
+        :type data: List
+        :param data: The "raw" data to replace the currently existing
         data in the result set.
         """
 
@@ -4921,8 +4921,8 @@ class rset(list):
         Retrieves the header list for the current result set in case
         no header exists an exception will be raised.
 
-        @rtype: List
-        @return: The list containing the header information (names)
+        :rtype: List
+        :return: The list containing the header information (names)
         for the current result set instance.
         """
 
@@ -4938,11 +4938,11 @@ class rset(list):
         This method provides a way to retrieve header safe values,
         useful for map creation.
 
-        @type replace: String
-        @param replace: The character value to be used to replace the
+        :type replace: String
+        :param replace: The character value to be used to replace the
         "normal" name inheritance separator.
-        @rtype: List
-        @return: The list containing the header information (names)
+        :rtype: List
+        :return: The list containing the header information (names)
         for the current result set instance (transformed mode).
         """
 
@@ -4961,8 +4961,8 @@ class rset(list):
         No operation occurs in case the header provided already
         matched the one set in the result set (safe mode).
 
-        @type header: List
-        @param header: The list containing the various names that
+        :type header: List
+        :param header: The list containing the various names that
         will be part of the new header.
         """
 
@@ -5017,14 +5017,14 @@ class rset(list):
         This method can only be used in case the header for
         the result set is set.
 
-        @type line: List
-        @param line: The line (part of the result set) for
+        :type line: List
+        :param line: The line (part of the result set) for
         which the value at the given name should be returned.
-        @type name: String
-        @param name: The name of the header for which the value
+        :type name: String
+        :param name: The name of the header for which the value
         will be retrieved.
-        @rtype: Object
-        @return: The value for the provided line with the
+        :rtype: Object
+        :return: The value for the provided line with the
         index defined by the requested name.
         """
 
@@ -5047,14 +5047,14 @@ class rset(list):
         This method can only be used in case the header for
         the result set is set.
 
-        @type line: List
-        @param line: The line (part of the result set) for
+        :type line: List
+        :param line: The line (part of the result set) for
         which the value at the given name should be set.
-        @type name: String
-        @param name: The name of the attribute that is going
+        :type name: String
+        :param name: The name of the attribute that is going
         to be set, an index will be resolved using it.
-        @type value: Object
-        @param value: The value that is going to be set in
+        :type value: Object
+        :param value: The value that is going to be set in
         the line field.
         """
 
@@ -5076,8 +5076,8 @@ class rset(list):
         This is an expensive operation as all the lines composing
         the result set data will be replicated as maps.
 
-        @rtype: List
-        @return: The list of maps representing the current result
+        :rtype: List
+        :return: The list of maps representing the current result
         set data, this is replicated information.
         """
 
@@ -5127,11 +5127,11 @@ class rset(list):
         Note that the "new" header is added to the end of the
         current set of headers (default option).
 
-        @type name: String
-        @param name: The name of the header that is going to be
+        :type name: String
+        :param name: The name of the header that is going to be
         added (as a plain string).
-        @type nullify: bool
-        @param nullify: If the values in the data should be set
+        :type nullify: bool
+        :param nullify: If the values in the data should be set
         as invalid for the new header (avoid corruption).
         """
 
@@ -5153,11 +5153,11 @@ class rset(list):
         Renames the provided header name to a new one.
         After this operation the index should be usable.
 
-        @type old: String
-        @param old: The current (old) name of the header
+        :type old: String
+        :param old: The current (old) name of the header
         to be re-named.
-        @type new: String
-        @param old: The target (new) name for which the
+        :type new: String
+        :param old: The target (new) name for which the
         header should be re-named.
         """
 
@@ -5184,11 +5184,11 @@ class rset(list):
         Runs the rename operation of the header using a wildcard
         approach on the beginning of the name (prefix).
 
-        @type old: String
-        @param old: The prefix of the various header name to be
+        :type old: String
+        :param old: The prefix of the various header name to be
         re-named with the new prefix.
-        @type new: String
-        @param new: The prefix to be used on the re-name operation.
+        :type new: String
+        :param new: The prefix to be used on the re-name operation.
         """
 
         # retrieves the list containing the various header name and
@@ -5209,8 +5209,8 @@ class rset(list):
         will replace the header contents maintain a consistent
         state.
 
-        @type names: List
-        @param names: The list of names to be used for header
+        :type names: List
+        :param names: The list of names to be used for header
         information on the result set.
         """
 
@@ -5227,8 +5227,8 @@ class rset(list):
         This operation does not affect the internal data and if
         no change in the lines occurs inconsistent state may occur.
 
-        @type names: List
-        @param names: The list of names to extend the current header
+        :type names: List
+        :param names: The list of names to extend the current header
         for the result set.
         """
 
@@ -5242,8 +5242,8 @@ class rset(list):
         over the complete set of elements in the rset providing
         object like interactions with the contained sequences.
 
-        @rtype: Generator
-        @return: The generator that may be used to percolate over
+        :rtype: Generator
+        :return: The generator that may be used to percolate over
         the rset with an associative interaction with the values.
         """
 

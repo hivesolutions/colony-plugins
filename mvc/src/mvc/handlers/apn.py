@@ -85,7 +85,7 @@ class ApnHandler(handler.Handler):
     The communication with the service is done in a connection
     per message basis (expensive operation).
 
-    @see: http://en.wikipedia.org/wiki/Apple_Push_Notification_Service
+    :see: http://en.wikipedia.org/wiki/Apple_Push_Notification_Service
     """
 
     sockets = {}

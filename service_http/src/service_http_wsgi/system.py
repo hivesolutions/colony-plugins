@@ -150,8 +150,8 @@ class ServiceHttpWsgi(colony.System):
         """
         Retrieves the handler name.
 
-        @rtype: String
-        @return: The handler name.
+        :rtype: String
+        :return: The handler name.
         """
 
         return HANDLER_NAME
@@ -160,22 +160,22 @@ class ServiceHttpWsgi(colony.System):
         """
         Handles the given http request.
 
-        @type request: HttpRequest
-        @param request: The http request to be handled.
+        :type request: HttpRequest
+        :param request: The http request to be handled.
         """
 
         def start_response(status, response_headers):
             """
             Method used to start the response value.
 
-            @type status: String
-            @param status: The status string value, containing the code and the
+            :type status: String
+            :param status: The status string value, containing the code and the
             status message, should be properly parsed for the request.
-            @type response_headers: List
-            @param response_headers: A list containing tuples for the header
+            :type response_headers: List
+            :param response_headers: A list containing tuples for the header
             values, should be properly serialized for the handling.
-            @rtype: Method
-            @return: The method for the writing.
+            :rtype: Method
+            :return: The method for the writing.
             """
 
             # retrieves the status code string and the status message
@@ -325,8 +325,8 @@ class ServiceHttpWsgi(colony.System):
         """
         Processes the base directory path.
 
-        @type base_directory: String
-        @param base_directory: The base directory path to be processed.
+        :type base_directory: String
+        :param base_directory: The base directory path to be processed.
         """
 
         # in case the base directory path does not exist

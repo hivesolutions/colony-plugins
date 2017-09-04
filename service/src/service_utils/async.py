@@ -187,12 +187,12 @@ class AbstractService(object):
         """
         Constructor of the class.
 
-        @type service_utils: ServiceUtils
-        @param service_utils: The service utils.
-        @type service_utils_plugin: ServiceUtilsPlugin
-        @param service_utils_plugin: The service utils plugin.
-        @type parameters: Dictionary
-        @param parameters: The parameters
+        :type service_utils: ServiceUtils
+        :param service_utils: The service utils.
+        :type service_utils_plugin: ServiceUtilsPlugin
+        :param service_utils_plugin: The service utils plugin.
+        :type parameters: Dictionary
+        :param parameters: The parameters
         """
 
         self.service_utils = service_utils
@@ -790,8 +790,8 @@ class Connection(object):
         If the connection is secure the underlying level should
         be using an encrypted channel for communication.
 
-        @rtype: bool
-        @return: If the current connection is being transmitted
+        :rtype: bool
+        :return: If the current connection is being transmitted
         using a secure and encrypted channel.
         """
 
@@ -805,12 +805,12 @@ class Connection(object):
         The provided socket object should comply with typical python
         interface for it.
 
-        @type _socket: Socket
-        @param _socket: The socket to be used in the exception processing.
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type _socket: Socket
+        :param _socket: The socket to be used in the exception processing.
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 
@@ -1191,16 +1191,16 @@ class ClientConnection(Connection):
         This method is useful for avoid blocking the request
         handling method in non critic tasks.
 
-        @type callable: Callable
-        @param callable: The callable to be called in background.
-        @type retries: int
-        @param retries: The number of times to retry executing the
+        :type callable: Callable
+        :param callable: The callable to be called in background.
+        :type retries: int
+        :param retries: The number of times to retry executing the
         callable in case exception is raised.
-        @type timeout: float
-        @param timeout: The time to be set in between calls of the
+        :type timeout: float
+        :param timeout: The time to be set in between calls of the
         callable, used together with the retry value.
-        @type timestamp: float
-        @param timestamp: The unix second based timestamp for the
+        :type timestamp: float
+        :param timestamp: The unix second based timestamp for the
         first execution of the callable.
         """
 
@@ -1229,8 +1229,8 @@ class ClientConnection(Connection):
         Useful to provide conditional execution in the premises
         of the connection type.
 
-        @rtype: bool
-        @return: If the connection is of type asynchronous.
+        :rtype: bool
+        :return: If the connection is of type asynchronous.
         """
 
         return True
@@ -1240,8 +1240,8 @@ class ClientConnection(Connection):
         Adds a chunk of pending data to the pending
         data buffer.
 
-        @type pending_data: String
-        @param pending_data: The pending data to be
+        :type pending_data: String
+        :param pending_data: The pending data to be
         added to the pending data buffer.
         """
 
@@ -1258,8 +1258,8 @@ class ClientConnection(Connection):
         "Pops" the current pending data from the
         service connection.
 
-        @rtype: String
-        @return: The current pending data from the
+        :rtype: String
+        :return: The current pending data from the
         service connection (in case there is one).
         """
 
@@ -1277,8 +1277,8 @@ class ClientConnection(Connection):
         Checks if there is pending data to be "read"
         or interpreted by the client service.
 
-        @rtype: bool
-        @return: If there is pending data to be "read"
+        :rtype: bool
+        :return: If there is pending data to be "read"
         or interpreted by the client service.
         """
 

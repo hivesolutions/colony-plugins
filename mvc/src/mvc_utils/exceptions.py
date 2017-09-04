@@ -56,8 +56,8 @@ class InvalidValidationMethod(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self)
@@ -67,8 +67,8 @@ class InvalidValidationMethod(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid validation method - %s" % self.message
@@ -82,8 +82,8 @@ class InvalidAttributeName(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self)
@@ -93,8 +93,8 @@ class InvalidAttributeName(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid attribute name - %s" % self.message
@@ -108,8 +108,8 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self)
@@ -119,8 +119,8 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Insufficient http information - %s" % self.message
@@ -138,8 +138,8 @@ class NotFoundError(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self, message)
@@ -149,8 +149,8 @@ class NotFoundError(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Not found error - %s" % self.message
@@ -167,10 +167,10 @@ class ValidationError(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type variable: String
-        @param variable: The name of the variable
+        :type message: String
+        :param message: The message to be printed.
+        :type variable: String
+        :param variable: The name of the variable
         associated with the validation error.
         """
 
@@ -182,8 +182,8 @@ class ValidationError(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Validation error - %s" % self.message
@@ -204,10 +204,10 @@ class ModelValidationError(ValidationError):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type model: Model
-        @param model: The model that failed the validation.
+        :type message: String
+        :param message: The message to be printed.
+        :type model: Model
+        :param model: The model that failed the validation.
         """
 
         ValidationError.__init__(self, message)
@@ -218,8 +218,8 @@ class ModelValidationError(ValidationError):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         validation_s = self.get_validation_s()
@@ -231,8 +231,8 @@ class ModelValidationError(ValidationError):
         Retrieves the string that describes the validation
         error defining all of its errors.
 
-        @rtype: String
-        @return: The string that describes the validation
+        :rtype: String
+        :return: The string that describes the validation
         error with all of its components.
         """
 
@@ -281,10 +281,10 @@ class ControllerValidationError(ValidationError):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type controller: Controller
-        @param controller: The controller that failed the validation.
+        :type message: String
+        :param message: The message to be printed.
+        :type controller: Controller
+        :param controller: The controller that failed the validation.
         """
 
         ValidationError.__init__(self, message)
@@ -295,8 +295,8 @@ class ControllerValidationError(ValidationError):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Controller validation error - %s" % self.message
@@ -313,12 +313,12 @@ class ControllerValidationReasonFailed(ControllerValidationError):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
-        @type controller: Controller
-        @param controller: The controller that failed the validation.
-        @type reasons_list: String
-        @param reasons_list: The list of reasons for validation failure.
+        :type message: String
+        :param message: The message to be printed.
+        :type controller: Controller
+        :param controller: The controller that failed the validation.
+        :type reasons_list: String
+        :param reasons_list: The list of reasons for validation failure.
         """
 
         ControllerValidationError.__init__(self, message, controller)
@@ -328,8 +328,8 @@ class ControllerValidationReasonFailed(ControllerValidationError):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Controller validation reason error - %s" % self.message
@@ -343,8 +343,8 @@ class ValidationMethodError(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self)
@@ -354,8 +354,8 @@ class ValidationMethodError(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Validation method error - %s" % self.message
@@ -369,8 +369,8 @@ class ModelApplyException(MvcUtilsExceptionException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         MvcUtilsExceptionException.__init__(self)
@@ -380,8 +380,8 @@ class ModelApplyException(MvcUtilsExceptionException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Model apply exception - %s" % self.message

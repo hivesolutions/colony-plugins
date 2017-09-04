@@ -112,8 +112,8 @@ def _class_get_class_name(cls):
 
     This method is a utility for this common task.
 
-    @rtype: String
-    @return: The entity class name in the "standard"
+    :rtype: String
+    :return: The entity class name in the "standard"
     underscore based form, to be used for routing.
     """
 
@@ -135,14 +135,14 @@ def _class_get_entity(cls, entity_name, entity_manager = None):
     This method should be used with care to avoid performance
     issues and even bad coding practices.
 
-    @type entity_name: String
-    @param entity_name: The name of the entity class that is
+    :type entity_name: String
+    :param entity_name: The name of the entity class that is
     going to be retrieved from the entity manager.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @rtype: Class
-    @return: The entity class registered in the entity manager
+    :rtype: Class
+    :return: The entity class registered in the entity manager
     for the provided name.
     """
 
@@ -156,14 +156,14 @@ def _class_reload_many(cls, models, options = {}, entity_manager = None):
     This method allows the indirect access to the entity
     manager for the usage of the reload many method.
 
-    @type models: List
-    @param models: The list of (entity) models to be reloaded
+    :type models: List
+    :param models: The list of (entity) models to be reloaded
     from the data source.
-    @type options: Dictionary
-    @param options: The map of options for the reloading of the
+    :type options: Dictionary
+    :param options: The map of options for the reloading of the
     various entity models.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -204,37 +204,37 @@ def _class_get(
     An extra attribute may be used to avoid raising an
     exception in case no model is found for the parameters.
 
-    @type id_value: Object
-    @param id_value: The value for the identifier attribute
+    :type id_value: Object
+    :param id_value: The value for the identifier attribute
     of the entity model to be retrieved.
-    @type apply: boolean
-    @param apply: If the model definition should be retrieved
+    :type apply: boolean
+    :param apply: If the model definition should be retrieved
     from the provided context and then applied in the current
     model. Note that this is a fallback operation meaning that
     if it fails nothing will happen (no exception raised).
-    @type apply_name: String
-    @param apply_name: The name of the field attribute that
+    :type apply_name: String
+    :param apply_name: The name of the field attribute that
     is going to be used as the basis for the apply operation,
     in case this value is not defined the (default) model name
     underscore notation value will be used (most of the times).
-    @type options: Dictionary
-    @param options: The map of options for the retrieval
+    :type options: Dictionary
+    :param options: The map of options for the retrieval
     of the entity model.
-    @type context: Request
-    @param context: The request to be used for the context
+    :type context: Request
+    :param context: The request to be used for the context
     retrieval process, will affect filtering.
-    @type namespace: String
-    @param namespace: The namespace prefix to be used in the
+    :type namespace: String
+    :param namespace: The namespace prefix to be used in the
     retrieval of the context session attribute, this field
     is rarely used and must be used carefully.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @type raise_e: boolean
-    @param raise_e: If an exception must be raised in case no
+    :type raise_e: boolean
+    :param raise_e: If an exception must be raised in case no
     model instance is found for the requested parameters.
-    @rtype: Entity
-    @return: The retrieved retrieved entity model.
+    :rtype: Entity
+    :return: The retrieved retrieved entity model.
     """
 
     # retrieves the entity manager to be used or the
@@ -317,20 +317,20 @@ def _class_count(
     This method allows the indirect access to the entity
     manager for the usage of the count method.
 
-    @type options: Dictionary
-    @param options: The map of options for the counting
+    :type options: Dictionary
+    :param options: The map of options for the counting
     of the entity models.
-    @type context: Request
-    @param context: The request to be used for the context
+    :type context: Request
+    :param context: The request to be used for the context
     retrieval process, will affect filtering.
-    @type namespace: String
-    @param namespace: The namespace prefix to be used in the
+    :type namespace: String
+    :param namespace: The namespace prefix to be used in the
     retrieval of the context session attribute.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @rtype: int
-    @return: The number of models in the data source for the
+    :rtype: int
+    :return: The number of models in the data source for the
     current class reference (entity model).
     """
 
@@ -372,20 +372,20 @@ def _class_find(
     This method allows the indirect access to the entity
     manager for the usage of the find method.
 
-    @type options: Dictionary
-    @param options: The map of options for the retrieval
+    :type options: Dictionary
+    :param options: The map of options for the retrieval
     of the set of entity models.
-    @type context: Request
-    @param context: The request to be used for the context
+    :type context: Request
+    :param context: The request to be used for the context
     retrieval process, will affect filtering.
-    @type namespace: String
-    @param namespace: The namespace prefix to be used in the
+    :type namespace: String
+    :param namespace: The namespace prefix to be used in the
     retrieval of the context session attribute.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @rtype: List
-    @return: The retrieved set of entity models.
+    :rtype: List
+    :return: The retrieved set of entity models.
     """
 
     # retrieves the entity manager to be used or the
@@ -447,23 +447,23 @@ def _class_find_one(
     This method allows the indirect access to the entity
     manager for the usage of the find method.
 
-    @type options: Dictionary
-    @param options: The map of options for the retrieval
+    :type options: Dictionary
+    :param options: The map of options for the retrieval
     of the entity model.
-    @type context: Request
-    @param context: The request to be used for the context
+    :type context: Request
+    :param context: The request to be used for the context
     retrieval process, will affect filtering.
-    @type namespace: String
-    @param namespace: The namespace prefix to be used in the
+    :type namespace: String
+    :param namespace: The namespace prefix to be used in the
     retrieval of the context session attribute.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @type raise_e: boolean
-    @param raise_e: If an exception must be raised in case no
+    :type raise_e: boolean
+    :param raise_e: If an exception must be raised in case no
     model instance is found for the requested parameters.
-    @rtype: Entity
-    @return: The retrieved entity model (first retrieval).
+    :rtype: Entity
+    :return: The retrieved entity model (first retrieval).
     """
 
     # retrieves the entity manager to be used or the
@@ -506,14 +506,14 @@ def _class_execute(cls, query, entity_manager = None):
     This method allows the indirect access to the entity
     manager for the usage of the execute method.
 
-    @type query: String
-    @param query: The sql query to be directly executed
+    :type query: String
+    :param query: The sql query to be directly executed
     in the data source.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @rtype: List
-    @return: The retrieved "raw" data set from the data source.
+    :rtype: List
+    :return: The retrieved "raw" data set from the data source.
     """
 
     # retrieves the entity manager to be used or the
@@ -535,11 +535,11 @@ def _class_lock_g(cls, id_value, entity_manager = None):
     This method allows the indirect access to the entity
     manager for the usage of the lock method.
 
-    @type id_value: Object
-    @param id_value: The value for the identifier attribute
+    :type id_value: Object
+    :param id_value: The value for the identifier attribute
     of the entity model to be "locked".
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -558,11 +558,11 @@ def _class_lock_table_g(cls, parameters, entity_manager = None):
     This method allows the indirect access to the entity
     manager for the usage of the lock table method.
 
-    @type parameters: Dictionary
-    @param parameters: The map containing the parameters to be
+    :type parameters: Dictionary
+    :param parameters: The map containing the parameters to be
     used in the lock of the table.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -589,15 +589,15 @@ def _class_lock_row_g(cls, name, value, entity_manager = None):
     Note that only the bottom table hierarchy level can be
     used in the name field (no top naming can be used).
 
-    @type name: String
-    @param name: The name of the attribute to be used in the
+    :type name: String
+    :param name: The name of the attribute to be used in the
     filtering, must belong to the table in the bottom of the
     entity class hierarchy.
-    @type value: Object
-    @param value: The value to be used for the name in the
+    :type value: Object
+    :param value: The value to be used for the name in the
     filter, must be of a valid type for the attribute.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -628,11 +628,11 @@ def _class_valid(cls, entity_manager = None):
     or in case the model is a data reference but the "real" model class
     is defined in the current entity manager context.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
-    @rtype: bool
-    @return: If the current model class is valid for the current context.
+    :rtype: bool
+    :return: If the current model class is valid for the current context.
     """
 
     # checks if the class is not a data reference, in case
@@ -663,8 +663,8 @@ def _class_is_reference(cls):
     The data reference classes are used to refer external components of
     the model, for a loose connection.
 
-    @rtype: bool
-    @return: If the current class is a data reference to an entity model.
+    :rtype: bool
+    :return: If the current class is a data reference to an entity model.
     """
 
     # checks if the class is a data reference, by testing it
@@ -687,12 +687,12 @@ def _class_filter(cls, context, *args, **kwargs):
 
     This filter may be safely used to query the current entity model.
 
-    @type context: Request
-    @param context: The request to be used for the context
+    :type context: Request
+    :param context: The request to be used for the context
     creation of the filter, required for both the retrieving of
     the associated controller and the processing of the form data.
-    @rtype: Dictionary
-    @return: The initial filter object created according to the
+    :rtype: Dictionary
+    :return: The initial filter object created according to the
     predefined syntax rules for the sort and for the filter fields.
     """
 
@@ -709,17 +709,17 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
     The new filter map is created according to the predefined
     syntax rules for the sort and for the filter fields.
 
-    @type data: Dictionary
-    @param data: The form data map, resulting from the processing
+    :type data: Dictionary
+    :param data: The form data map, resulting from the processing
     of the associated request.
-    @type defaults: Dictionary
-    @param defaults: The map of default values to be used in the
+    :type defaults: Dictionary
+    :param defaults: The map of default values to be used in the
     construction of the filter map.
-    @rtype: Dictionary
-    @return: The resulting filter string that can be used in the
+    :rtype: Dictionary
+    :return: The resulting filter string that can be used in the
     entity manager for filtering of a result set.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -970,19 +970,19 @@ def _class_apply_context(
     The context information is (by default) retrieved from the session
     information in the given context request.
 
-    @type options: Dictionary
-    @param options: The map of options for the retrieval operation.
-    @type context_request: Request
-    @param context_request: The request to be used for the
+    :type options: Dictionary
+    :param options: The map of options for the retrieval operation.
+    :type context_request: Request
+    :param context_request: The request to be used for the
     retrieval of the context, in case no context is specified.
-    @type context: Dictionary
-    @param context: The context information map that overrides the one
+    :type context: Dictionary
+    :param context: The context information map that overrides the one
     present in the current request session.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used in the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used in the
     context session attribute retrieval, avoids domain name collision.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1066,11 +1066,11 @@ def delete(
     This method should be "overridden" in case additional
     business logic is necessary in the saving process.
 
-    @type persist_type: int
-    @param persist_type: The type of persist to be used
+    :type persist_type: int
+    :param persist_type: The type of persist to be used
     in the entity.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1121,28 +1121,28 @@ def store(
     This method should be "overridden" in case additional
     business logic is necessary in the saving process.
 
-    @type persist_type: int
-    @param persist_type: The type of persist to be used
+    :type persist_type: int
+    :param persist_type: The type of persist to be used
     in the entity.
-    @type validate: bool
-    @param validate: Flag controlling if a validation should
+    :type validate: bool
+    :param validate: Flag controlling if a validation should
     be run in the model before persisting it.
-    @type immutable: bool
-    @param immutable: Flag that controls/defines if the immutable
+    :type immutable: bool
+    :param immutable: Flag that controls/defines if the immutable
     rules should be respected for update operations, this flag is
     not propagated to the underlying calls (security issues).
-    @type force_persist: bool
-    @param force_persist: Flag controlling if the persistence
+    :type force_persist: bool
+    :param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
     ignored by the persistence engine.
-    @type raise_exception: bool
-    @param raise_exception: If an exception must be raised in case
+    :type raise_exception: bool
+    :param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
-    @type store_relations: bool
-    @param store_relations: If the complete set of relations of the
+    :type store_relations: bool
+    :param store_relations: If the complete set of relations of the
     current entity should also be persisted (chained storage).
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1249,17 +1249,17 @@ def store_f(
     security measures. A typical usage of this method would
     be in localized patched for fixing of schemas.
 
-    @type validate: bool
-    @param validate: Flag controlling if a validation should
+    :type validate: bool
+    :param validate: Flag controlling if a validation should
     be run in the model before persisting it.
-    @type raise_exception: bool
-    @param raise_exception: If an exception must be raised in case
+    :type raise_exception: bool
+    :param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
-    @type store_relations: bool
-    @param store_relations: If the complete set of relations of the
+    :type store_relations: bool
+    :param store_relations: If the complete set of relations of the
     current entity should also be persisted (chained storage).
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1291,8 +1291,8 @@ def preemptive_validate(self, persist_type):
     and all it's child relations (of arbitrary depth) are valid
     (before storage).
 
-    @type persist_type: int
-    @param persist_type: The persist type to be used to check if
+    :type persist_type: int
+    :param persist_type: The persist type to be used to check if
     the associated relations must be validated.
     This value is going to be used in the calculation of the new
     relation persist types.
@@ -1326,24 +1326,24 @@ def store_relations(
     The relations that contain an invalid value or that contain a lazy
     loaded value will not be saved.
 
-    @type persist_type: int
-    @param persist_type: The type of persist to be used
+    :type persist_type: int
+    :param persist_type: The type of persist to be used
     for storing the relations.
-    @type validate: bool
-    @param validate: Flag controlling if a validation should
+    :type validate: bool
+    :param validate: Flag controlling if a validation should
     be run in the relations models before persisting them.
-    @type force_persist: bool
-    @param force_persist: Flag controlling if the persistence
+    :type force_persist: bool
+    :param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
     ignored by the persistence engine.
-    @type raise_exception: bool
-    @param raise_exception: If an exception must be raised in case
+    :type raise_exception: bool
+    :param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
-    @type store_relations: bool
-    @param store_relations: If the complete set of relations of the
+    :type store_relations: bool
+    :param store_relations: If the complete set of relations of the
     current entity should also be persisted (chained storage).
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1409,30 +1409,30 @@ def store_relation(
     of associative permissions and so this method may change
     the current entity relation in case of malicious manipulation.
 
-    @type relation_name: String
-    @param relation_name: The name of the relation to be saved.
+    :type relation_name: String
+    :param relation_name: The name of the relation to be saved.
     This value may refer a lazy loaded relation.
-    @type persist_type: int
-    @param persist_type: The persist type mask that controls the
+    :type persist_type: int
+    :param persist_type: The persist type mask that controls the
     persistence access.
-    @type relation_persist_type: int
-    @param relation_persist_type: The pre-defined (base) persist type mask
+    :type relation_persist_type: int
+    :param relation_persist_type: The pre-defined (base) persist type mask
     that controls the relation persist type.
-    @type validate: bool
-    @param validate: Flag controlling if a validation should
+    :type validate: bool
+    :param validate: Flag controlling if a validation should
     be run in the relation model before persisting it.
-    @type force_persist: bool
-    @param force_persist: Flag controlling if the persistence
+    :type force_persist: bool
+    :param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
     ignored by the persistence engine.
-    @type raise_exception: bool
-    @param raise_exception: If an exception must be raised in case
+    :type raise_exception: bool
+    :param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
-    @type store_relations: bool
-    @param store_relations: If the complete set of relations of the
+    :type store_relations: bool
+    :param store_relations: If the complete set of relations of the
     current entity should also be persisted (chained storage).
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1586,8 +1586,8 @@ def save(self, entity_manager = None):
     This method provides the persistence layer for
     creating an object.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1610,11 +1610,11 @@ def update(self, immutable = True, entity_manager = None):
     This method provides the persistence layer for
     updating an object.
 
-    @type immutable: bool
-    @param immutable: Flag indicating if the immutable field
+    :type immutable: bool
+    :param immutable: Flag indicating if the immutable field
     rules should be respected for the update operations.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1637,8 +1637,8 @@ def remove(self, entity_manager = None):
     This method provides the persistence layer for
     removing an object.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1656,11 +1656,11 @@ def reload(self, options = {}, entity_manager = None):
     This method provides the persistence layer for
     reloading an object.
 
-    @type options: Dictionary
-    @param options: The map of options for the reloading
+    :type options: Dictionary
+    :param options: The map of options for the reloading
     of the entity model.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1681,14 +1681,14 @@ def relation(self, name, options = {}, force = True, entity_manager = None):
     In case the relation is already loaded/set there's
     no reloading if the force flag is not set.
 
-    @type options: Dictionary
-    @param options: The map of options for the (partial) loading
+    :type options: Dictionary
+    :param options: The map of options for the (partial) loading
     of the entity model's relation.
-    @type force: bool
-    @param force: If the reloading of the relation should be forced
+    :type force: bool
+    :param force: If the reloading of the relation should be forced
     even in situations where the relations is already loaded.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1714,8 +1714,8 @@ def save_update(self, entity_manager = None):
     This method provides the persistence layer for
     creating an object.
 
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1746,17 +1746,17 @@ def persist(
     This method provides the persistence layer for
     creating an object.
 
-    @type persist_type: int
-    @param persist_type: The type of persist to be used
+    :type persist_type: int
+    :param persist_type: The type of persist to be used
     in the entity.
-    @type validate: bool
-    @param validate: Flag controlling if a validation should
+    :type validate: bool
+    :param validate: Flag controlling if a validation should
     be run in the model before persisting it.
-    @type immutable: bool
-    @param immutable: Flag indicating if the immutable field
+    :type immutable: bool
+    :param immutable: Flag indicating if the immutable field
     rules should be respected for the update operations.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1802,12 +1802,12 @@ def lock(self, reload = False, entity_manager = None):
     In case the optional reload flag is set the entity is
     reloaded after the lock.
 
-    @type reload: bool
-    @param reload: If the entity should be reloaded after
+    :type reload: bool
+    :param reload: If the entity should be reloaded after
     the lock operation is complete, this way it's possible
     to gather the must updated values.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1836,14 +1836,14 @@ def validate_relation(self, id_attribute_value, relation_name, entity_manager = 
     This is security validation method and must be used with previous
     knowledge of its capabilities.
 
-    @type id_attribute_value: Object
-    @param id_attribute_value: The value of the id of the relation attribute
+    :type id_attribute_value: Object
+    :param id_attribute_value: The value of the id of the relation attribute
     to be validated for previous association.
-    @type relation_name: String
-    @param relation_name: The name of the relation to be validated for
+    :type relation_name: String
+    :param relation_name: The name of the relation to be validated for
     previous association.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager
     reference to be used.
     """
 
@@ -1865,8 +1865,8 @@ def get_relation_names(self):
     This method uses the inner method of the entity manager
     to retrieve the relations names (better performance).
 
-    @rtype: List
-    @return: The list of names for the attribute sof the
+    :rtype: List
+    :return: The list of names for the attribute sof the
     entity describing relations.
     """
 
@@ -1894,8 +1894,8 @@ def get_id_attribute_name(self):
     This method uses the entity manager for the retrieval
     of the identifier attribute, providing reliability.
 
-    @rtype: String
-    @return: The name of the identifier attribute of the
+    :rtype: String
+    :return: The name of the identifier attribute of the
     current entity.
     """
 
@@ -1915,8 +1915,8 @@ def get_id_attribute_value(self):
     This method uses the entity manager for the retrieval
     of the identifier attribute, providing reliability.
 
-    @rtype: Object
-    @return: The value of the identifier attribute of the
+    :rtype: Object
+    :return: The value of the identifier attribute of the
     current entity.
     """
 
@@ -1979,8 +1979,8 @@ def is_persisted(self):
     it assumes the entity id is generated automatically
     on the first save.
 
-    @rtype: bool
-    @return: If the current mode is persisted in the
+    :rtype: bool
+    :return: If the current mode is persisted in the
     target data source, checked through heuristics.
     """
 
@@ -2000,8 +2000,8 @@ def is_saved(self):
     to check if the last operation being made on
     it was a save.
 
-    @rtype: bool
-    @return: If the last operation done in the
+    :rtype: bool
+    :return: If the last operation done in the
     entity was a save.
     """
 
@@ -2024,8 +2024,8 @@ def is_updated(self):
     to check if the last operation being made on
     it was an update.
 
-    @rtype: bool
-    @return: If the last operation done in the
+    :rtype: bool
+    :return: If the last operation done in the
     entity was an update.
     """
 
@@ -2048,8 +2048,8 @@ def is_removed(self):
     to check if the last operation being made on
     it was a remove.
 
-    @rtype: bool
-    @return: If the last operation done in the
+    :rtype: bool
+    :return: If the last operation done in the
     entity was a remove.
     """
 
@@ -2074,11 +2074,11 @@ def is_related(self, name):
     A relation is considered to be valid in case the persist type
     of it is either save or update.
 
-    @type name: String
-    @param name: The name of the relation that is going to be
+    :type name: String
+    :param name: The name of the relation that is going to be
     validated for proper validity.
-    @rtype: bool
-    @return: If the relation with the provided name is considered
+    :rtype: bool
+    :return: If the relation with the provided name is considered
     valid/related under the current model instance.
     """
 
@@ -2098,17 +2098,17 @@ def resolve_to_one(self, map, model_class, permissive):
     The decision on the creation or loading of the entity is done
     by checking if the identifier value is set in the source map.
 
-    @type map: Dictionary
-    @param map: The map that represents the to one relation, this map
+    :type map: Dictionary
+    :param map: The map that represents the to one relation, this map
     will be used in the creation/loading of the corresponding entity.
-    @type model_class: ModelClass
-    @param model_class: The class representing the type of relation to
+    :type model_class: ModelClass
+    :param model_class: The class representing the type of relation to
     be resolved (this should be the target class of the relation).
-    @type permissive: bool
-    @param permissive: If the apply operation should be done using
+    :type permissive: bool
+    :param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
-    @rtype: Model
-    @return: The "resolved" entity model for the given to one
+    :rtype: Model
+    :return: The "resolved" entity model for the given to one
     (map) information.
     """
 
@@ -2183,18 +2183,18 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     done by checking if the identifier value is set in the source
     map.
 
-    @type maps_list: List
-    @param maps_list: The list of maps that represent the to many
+    :type maps_list: List
+    :param maps_list: The list of maps that represent the to many
     relation, these maps will be used in the creation/loading of
     the corresponding entities.
-    @type model_class: ModelClass
-    @param model_class: The class representing the type of relation to
+    :type model_class: ModelClass
+    :param model_class: The class representing the type of relation to
     be resolved (this should be the target class of the relation).
-    @type permissive: bool
-    @param permissive: If the apply operation should be done using
+    :type permissive: bool
+    :param permissive: If the apply operation should be done using
     a permissive approach ignoring the undefined values.
-    @rtype: List
-    @return: The list containing the various resolved entities for
+    :rtype: List
+    :return: The list containing the various resolved entities for
     the given to many information.
     """
 
@@ -2285,14 +2285,14 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     this provides a transparent process for context attributes
     saving (into the data source).
 
-    @type context: Dictionary
-    @param context: The context map to be used to override the
+    :type context: Dictionary
+    :param context: The context map to be used to override the
     one provided by the session attribute.
-    @type namespace_name: String
-    @param namespace_name: The name of the namespace to be used in the
+    :type namespace_name: String
+    :param namespace_name: The name of the namespace to be used in the
     context session attribute retrieval, avoids domain name collision.
-    @type entity_manager: EntityManager
-    @param entity_manager: The optional entity manager reference to
+    :type entity_manager: EntityManager
+    :param entity_manager: The optional entity manager reference to
     be used.
     """
 
@@ -2392,8 +2392,8 @@ def _get_entity_class_name(self):
 
     This method is a utility for this common task.
 
-    @rtype: String
-    @return: The entity class name in the "standard"
+    :rtype: String
+    :return: The entity class name in the "standard"
     underscore based form.
     """
 
@@ -2423,12 +2423,12 @@ def _get_entity_class_pluralized(self, entity_class = None):
 
     This method is a utility for this common task.
 
-    @type entity_class: Class
-    @param entity_class: The class to be used as reference
+    :type entity_class: Class
+    :param entity_class: The class to be used as reference
     for the generation of the name, in case it's not provided,
     the current instance's class is used.
-    @rtype: String
-    @return: The entity class name in pluralized form
+    :rtype: String
+    :return: The entity class name in pluralized form
     and in underscore notation
     """
 
@@ -2455,11 +2455,11 @@ def _load_value(self, key, value):
     This method loads the value taking into account
     the meta information provided by the entity manager.
 
-    @type key: String
-    @param key: The key to be used to refer to the value
+    :type key: String
+    :param key: The key to be used to refer to the value
     in the current object.
-    @type value: Object
-    @param value: The value to be set in the current object.
+    :type value: Object
+    :param value: The value to be set in the current object.
     """
 
     # in case the current object does not contain
@@ -2588,12 +2588,12 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     In case a duplicate entity is found, an error is added to the
     entity in the specified attribute name.
 
-    @type attribute_name: String
-    @param attribute_name: The name of the attribute to be validated.
-    @type attribute_value: Object
-    @param attribute_value: The value of the attribute to be validated.
-    @type properties: Dictionary
-    @param properties: The properties for the validation.
+    :type attribute_name: String
+    :param attribute_name: The name of the attribute to be validated.
+    :type attribute_value: Object
+    :param attribute_value: The value of the attribute to be validated.
+    :type properties: Dictionary
+    :param properties: The properties for the validation.
     """
 
     # retrieves the model request
@@ -2796,12 +2796,12 @@ def _get_complete_name(name, namespace_name = None):
     The complete name is created using the namespace name as a prefix
     to the final (and complete) value.
 
-    @type name: String
-    @param name: The session attribute name (base name).
-    @type namespace_name: String
-    @param namespace_name: The namespace name to be used as prefix.
-    @rtype: String
-    @return: The complete session attribute name, created through
+    :type name: String
+    :param name: The session attribute name (base name).
+    :type namespace_name: String
+    :param namespace_name: The namespace name to be used as prefix.
+    :rtype: String
+    :return: The complete session attribute name, created through
     the prefix strategy.
     """
 

@@ -83,10 +83,10 @@ class SslStructure(object):
         """
         Constructor of the class.
 
-        @type rsa_plugin: RsaPlugin
-        @param rsa_plugin: The rsa plugin.
-        @type pkcs1_plugin: Pkcs1Plugin
-        @param pkcs1_plugin: The pkcs1 plugin.
+        :type rsa_plugin: RsaPlugin
+        :param rsa_plugin: The rsa plugin.
+        :type pkcs1_plugin: Pkcs1Plugin
+        :param pkcs1_plugin: The pkcs1 plugin.
         """
 
         self.rsa_plugin = rsa_plugin

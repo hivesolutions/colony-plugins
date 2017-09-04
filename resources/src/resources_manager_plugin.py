@@ -104,10 +104,10 @@ class ResourcesManagerPlugin(colony.Plugin):
         The parsing of the file also implies the registering
         of the resources in the internal data structures.
 
-        @type file_path: String
-        @param file_path: The path to the file to be parsed.
-        @type full_resources_path: String
-        @param full_resources_path: The full path to the
+        :type file_path: String
+        :param file_path: The path to the file to be parsed.
+        :type full_resources_path: String
+        :param full_resources_path: The full path to the
         resources path (directory).
         """
 
@@ -160,8 +160,8 @@ class ResourcesManagerPlugin(colony.Plugin):
         Retrieves the system information map, containing structured
         information to be visible using presentation viewers.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         return self.system.get_system_information()

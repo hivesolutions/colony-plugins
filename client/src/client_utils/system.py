@@ -96,10 +96,10 @@ class ClientUtils(colony.System):
         """
         Generates a new client for the given parameters.
 
-        @type parameters: Dictionary
-        @param parameters: The parameters for client generation.
-        @rtype: AbstractClient
-        @return: The generated client.
+        :type parameters: Dictionary
+        :param parameters: The parameters for client generation.
+        :rtype: AbstractClient
+        :return: The generated client.
         """
 
         return AbstractClient(self, self.plugin, parameters)
@@ -108,8 +108,8 @@ class ClientUtils(colony.System):
         """
         Loads a socket provider plugin.
 
-        @type socket_provider_plugin: Plugin
-        @param socket_provider_plugin: The socket provider plugin
+        :type socket_provider_plugin: Plugin
+        :param socket_provider_plugin: The socket provider plugin
         to be loaded.
         """
 
@@ -123,8 +123,8 @@ class ClientUtils(colony.System):
         """
         Unloads a socket provider plugin.
 
-        @type socket_provider_plugin: Plugin
-        @param socket_provider_plugin: The socket provider plugin
+        :type socket_provider_plugin: Plugin
+        :param socket_provider_plugin: The socket provider plugin
         to be unloaded.
         """
 
@@ -138,8 +138,8 @@ class ClientUtils(colony.System):
         """
         Loads a socket upgrader plugin.
 
-        @type socket_upgrader_plugin: Plugin
-        @param socket_upgrader_plugin: The socket upgrader plugin
+        :type socket_upgrader_plugin: Plugin
+        :param socket_upgrader_plugin: The socket upgrader plugin
         to be loaded.
         """
 
@@ -153,8 +153,8 @@ class ClientUtils(colony.System):
         """
         Unloads a socket upgrader plugin.
 
-        @type socket_upgrader_plugin: Plugin
-        @param socket_upgrader_plugin: The socket upgrader plugin
+        :type socket_upgrader_plugin: Plugin
+        :param socket_upgrader_plugin: The socket upgrader plugin
         to be unloaded.
         """
 
@@ -206,12 +206,12 @@ class AbstractClient(object):
         """
         Constructor of the class.
 
-        @type client_utils: ClientUtils
-        @param client_utils: The client.
-        @type client_utils_plugin: ClientUtilsPlugin
-        @param client_utils_plugin: The client plugin.
-        @type parameters: Dictionary
-        @param parameters: The parameters
+        :type client_utils: ClientUtils
+        :param client_utils: The client.
+        :type client_utils_plugin: ClientUtilsPlugin
+        :param client_utils_plugin: The client plugin.
+        :type parameters: Dictionary
+        :param parameters: The parameters
         """
 
         self.client_utils = client_utils
@@ -250,14 +250,14 @@ class AbstractClient(object):
         Retrieves the client connection for the given
         connection tuple.
 
-        @type connection_tuple: Tuple
-        @param connection_tuple: The tuple containing
+        :type connection_tuple: Tuple
+        :param connection_tuple: The tuple containing
         the connection reference.
-        @type open_connection: bool
-        @param open_connection: If the connection should be opened
+        :type open_connection: bool
+        :param open_connection: If the connection should be opened
         in case the connection is going to be created.
-        @rtype: ClientConnection
-        @return: The retrieved client connection.
+        :rtype: ClientConnection
+        :return: The retrieved client connection.
         """
 
         # generates an hashable connection tuple from the original
@@ -293,11 +293,11 @@ class AbstractClient(object):
         Creates the client connection for the given
         connection tuple.
 
-        @type connection_tuple: Tuple
-        @param connection_tuple: The tuple containing
+        :type connection_tuple: Tuple
+        :param connection_tuple: The tuple containing
         the connection reference.
-        @rtype: ClientConnection
-        @return: The created client connection.
+        :rtype: ClientConnection
+        :return: The created client connection.
         """
 
         # retrieves the host, the port, the persistent, the socket name and
@@ -336,12 +336,12 @@ class AbstractClient(object):
         Retrieves the socket for the given socket name
         using the socket provider plugins.
 
-        @type socket_name: String
-        @param socket_name: The name of the socket to be retrieved.
-        @type socket_parameters: Dictionary
-        @param socket_parameters: The parameters of the socket to be retrieved.
-        @rtype: Socket
-        @return: The socket for the given socket name.
+        :type socket_name: String
+        :param socket_name: The name of the socket to be retrieved.
+        :type socket_parameters: Dictionary
+        :param socket_parameters: The parameters of the socket to be retrieved.
+        :rtype: Socket
+        :return: The socket for the given socket name.
         """
 
         # retrieves the socket provider plugins map
@@ -374,11 +374,11 @@ class AbstractClient(object):
         Generates an hashable connection tuple from
         the original connection tuple.
 
-        @type connection_tuple: Tuple
-        @param connection_tuple: The connection tuple to be converted
+        :type connection_tuple: Tuple
+        :param connection_tuple: The connection tuple to be converted
         to hashable.
-        @rtype: Tuple
-        @return: The hashable connection tuple.
+        :rtype: Tuple
+        :return: The hashable connection tuple.
         """
 
         # copies the connection tuple as the connection tuple hashable
@@ -474,26 +474,26 @@ class ClientConnection(object):
         """
         Constructor of the class.
 
-        @type client_plugin: Plugin
-        @param client_plugin: The client plugin.
-        @type client: AbstractClient
-        @param client: The client.
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_persistent: bool
-        @param connection_persistent: If the connection meant to be persistent.
-        @type connection_socket_name: String
-        @param connection_socket_name: The connection socket name.
-        @type connection_socket_parameters: String
-        @param connection_socket_parameters: The connection socket parameters.
-        @type connection_request_timeout: float
-        @param connection_request_timeout: The connection request timeout.
-        @type connection_response_timeout: float
-        @param connection_response_timeout: The connection response timeout.
-        @type connection_chunk_size: int
-        @param connection_chunk_size: The connection chunk size.
+        :type client_plugin: Plugin
+        :param client_plugin: The client plugin.
+        :type client: AbstractClient
+        :param client: The client.
+        :type connection_socket: Socket
+        :param connection_socket: The connection socket.
+        :type connection_address: Tuple
+        :param connection_address: The connection address.
+        :type connection_persistent: bool
+        :param connection_persistent: If the connection meant to be persistent.
+        :type connection_socket_name: String
+        :param connection_socket_name: The connection socket name.
+        :type connection_socket_parameters: String
+        :param connection_socket_parameters: The connection socket parameters.
+        :type connection_request_timeout: float
+        :param connection_request_timeout: The connection request timeout.
+        :type connection_response_timeout: float
+        :param connection_response_timeout: The connection response timeout.
+        :type connection_chunk_size: int
+        :param connection_chunk_size: The connection chunk size.
         """
 
         self.client_plugin = client_plugin
@@ -569,8 +569,8 @@ class ClientConnection(object):
         Cancels (closes) the given connection in
         the given amount of seconds.
 
-        @type delta_time: float
-        @param delta_time: The amount of seconds until canceling.
+        :type delta_time: float
+        :param delta_time: The amount of seconds until canceling.
         """
 
         # sets the cancel time
@@ -581,10 +581,10 @@ class ClientConnection(object):
         Upgrades the current connection socket, using
         the the upgrader with the given name and the given parameters.
 
-        @type socket_upgrader: String
-        @param socket_upgrader: The name of the socket upgrader.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the upgrade process.
+        :type socket_upgrader: String
+        :param socket_upgrader: The name of the socket upgrader.
+        :type parameters: Dictionary
+        :param parameters: The parameters to the upgrade process.
         """
 
         # retrieves the client
@@ -612,14 +612,14 @@ class ClientConnection(object):
         Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
 
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data receiving.
-        @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be received.
-        @type retries: int
-        @param retries: The number of retries to be used.
-        @rtype: String
-        @return: The received data.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data receiving.
+        :type chunk_size: int
+        :param chunk_size: The maximum size of the chunk to be received.
+        :type retries: int
+        :param retries: The number of retries to be used.
+        :rtype: String
+        :return: The received data.
         """
 
         self._read_lock.acquire()
@@ -633,12 +633,12 @@ class ClientConnection(object):
         Raises an exception in case there is a problem sending
         the message.
 
-        @type message: String
-        @param message: The message to be sent.
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data sending.
-        @type retries: int
-        @param retries: The number of retries to be used.
+        :type message: String
+        :param message: The message to be sent.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data sending.
+        :type retries: int
+        :param retries: The number of retries to be used.
         """
 
         self._write_lock.acquire()
@@ -650,8 +650,8 @@ class ClientConnection(object):
         Returns the given data to the connection
         internal buffer.
 
-        @type data: String
-        @param data: The data to be returned to the
+        :type data: String
+        :param data: The data to be returned to the
         connection internal buffer.
         """
 
@@ -661,8 +661,8 @@ class ClientConnection(object):
         """
         Retrieves if the current connection is open.
 
-        @rtype: bool
-        @return: If the current connection is open.
+        :rtype: bool
+        :return: If the current connection is open.
         """
 
         return self.connection_status
@@ -671,11 +671,11 @@ class ClientConnection(object):
         """
         Retrieves the connection property for the given name.
 
-        @type property_name: String
-        @param property_name: The name of the property to
+        :type property_name: String
+        :param property_name: The name of the property to
         be retrieved.
-        @rtype: Object
-        @return: The value of the retrieved property.
+        :rtype: Object
+        :return: The value of the retrieved property.
         """
 
         return self.connection_properties.get(property_name, None)
@@ -685,10 +685,10 @@ class ClientConnection(object):
         Sets a connection property, associating the given name
         with the given value.
 
-        @type property_name: String
-        @param property_name: The name of the property to set.
-        @type property_value: Object
-        @param property_value: The value of the property to set.
+        :type property_name: String
+        :param property_name: The name of the property to set.
+        :type property_value: Object
+        :param property_value: The value of the property to set.
         """
 
         self.connection_properties[property_name] = property_value
@@ -698,8 +698,8 @@ class ClientConnection(object):
         Unsets a connection property, removing it from the internal
         structures.
 
-        @type property_name: String
-        @param property_name: The name of the property to unset.
+        :type property_name: String
+        :param property_name: The name of the property to unset.
         """
 
         del self.connection_properties[property_name]
@@ -708,8 +708,8 @@ class ClientConnection(object):
         """
         Returns a tuple representing the connection.
 
-        @rtype: Tuple
-        @return: A tuple representing the connection.
+        :rtype: Tuple
+        :return: A tuple representing the connection.
         """
 
         return (
@@ -722,8 +722,8 @@ class ClientConnection(object):
         """
         Retrieves the connection socket.
 
-        @rtype: Socket
-        @return: The connection socket.
+        :rtype: Socket
+        :return: The connection socket.
         """
 
         return self.connection_socket
@@ -732,8 +732,8 @@ class ClientConnection(object):
         """
         Retrieves the connection address.
 
-        @rtype: Tuple
-        @return: The connection address.
+        :rtype: Tuple
+        :return: The connection address.
         """
 
         return self.connection_address
@@ -742,8 +742,8 @@ class ClientConnection(object):
         """
         Retrieves the base connection socket.
 
-        @rtype: Socket
-        @return: The base connection socket.
+        :rtype: Socket
+        :return: The base connection socket.
         """
 
         return self._connection_socket
@@ -754,14 +754,14 @@ class ClientConnection(object):
         given timeout and with a maximum size given by the chunk size.
         This method is not thread safe.
 
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data receiving.
-        @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be received.
-        @type retries: int
-        @param retries: The number of retries to be used.
-        @rtype: String
-        @return: The received data.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data receiving.
+        :type chunk_size: int
+        :param chunk_size: The maximum size of the chunk to be received.
+        :type retries: int
+        :param retries: The number of retries to be used.
+        :rtype: String
+        :return: The received data.
         """
 
         # retrieves the request timeout
@@ -875,12 +875,12 @@ class ClientConnection(object):
         the message.
         This method is not thread safe.
 
-        @type message: String
-        @param message: The message to be sent.
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data sending.
-        @type retries: int
-        @param retries: The number of retries to be used.
+        :type message: String
+        :param message: The message to be sent.
+        :type request_timeout: float
+        :param request_timeout: The timeout to be used in data sending.
+        :type retries: int
+        :param retries: The number of retries to be used.
         """
 
         # retrieves the response timeout
@@ -1032,10 +1032,10 @@ class ClientConnection(object):
         Processes the exception taking into account the severity of it,
         as for some exception a graceful handling is imposed.
 
-        @type exception: Exception
-        @param exception: The exception that is going to be handled/processed.
-        @rtype: bool
-        @return: The result of the processing, in case it's false a normal
+        :type exception: Exception
+        :param exception: The exception that is going to be handled/processed.
+        :rtype: bool
+        :return: The result of the processing, in case it's false a normal
         exception handling should be performed otherwise a graceful one is used.
         """
 

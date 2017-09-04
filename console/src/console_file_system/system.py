@@ -70,14 +70,14 @@ class ConsoleFileSystem(colony.System):
         Processes the cd command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the path argument
@@ -106,14 +106,14 @@ class ConsoleFileSystem(colony.System):
         Processes the ls command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the path from the arguments
@@ -168,14 +168,14 @@ class ConsoleFileSystem(colony.System):
         Processes the pwd command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the console context path
@@ -189,14 +189,14 @@ class ConsoleFileSystem(colony.System):
         Processes the cat command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the path from the arguments
@@ -223,14 +223,14 @@ class ConsoleFileSystem(colony.System):
         Processes the su command, with the given
         arguments and output method.
 
-        @type arguments: List
-        @param arguments: The arguments for the processing.
-        @type arguments_map: Dictionary
-        @param arguments_map: The map of arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        @type console_context: ConsoleContext
-        @param console_context: The console context for the processing.
+        :type arguments: List
+        :param arguments: The arguments for the processing.
+        :type arguments_map: Dictionary
+        :param arguments_map: The map of arguments for the processing.
+        :type output_method: Method
+        :param output_method: The output method to be used in the processing.
+        :type console_context: ConsoleContext
+        :param console_context: The console context for the processing.
         """
 
         # retrieves the username from the arguments

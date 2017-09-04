@@ -56,8 +56,8 @@ class RequestNotHandled(ServiceHttpCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpCgiException.__init__(self)
@@ -67,8 +67,8 @@ class RequestNotHandled(ServiceHttpCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Request Not handled - %s" % self.message
@@ -82,8 +82,8 @@ class CgiScriptError(ServiceHttpCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpCgiException.__init__(self)
@@ -93,8 +93,8 @@ class CgiScriptError(ServiceHttpCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Cgi script error - %s" % self.message
@@ -108,8 +108,8 @@ class InvalidCgiData(ServiceHttpCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpCgiException.__init__(self)
@@ -119,8 +119,8 @@ class InvalidCgiData(ServiceHttpCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid cgi data - %s" % self.message
@@ -134,8 +134,8 @@ class InvalidCgiHeader(ServiceHttpCgiException):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        :type message: String
+        :param message: The message to be printed.
         """
 
         ServiceHttpCgiException.__init__(self)
@@ -145,8 +145,8 @@ class InvalidCgiHeader(ServiceHttpCgiException):
         """
         Returns the string representation of the class.
 
-        @rtype: String
-        @return: The string representation of the class.
+        :rtype: String
+        :return: The string representation of the class.
         """
 
         return "Invalid cgi header - %s" % self.message

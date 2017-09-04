@@ -83,8 +83,8 @@ class ThreadPoolPlugin(colony.Plugin):
         Retrieves the system information map, containing structured
         information to be visible using presentation viewers.
 
-        @rtype: Dictionary
-        @return: The system information map.
+        :rtype: Dictionary
+        :return: The system information map.
         """
 
         return self.system.get_system_information()

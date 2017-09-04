@@ -63,13 +63,13 @@ class DataFileManager(colony.System):
         instance in case an file manager with the same id is
         already loaded.
 
-        @type engine_name: String
-        @param engine_name: The name of the engine to be used.
-        @type properties: Dictionary
-        @param properties: The properties to be used in the
+        :type engine_name: String
+        :param engine_name: The name of the engine to be used.
+        :type properties: Dictionary
+        :param properties: The properties to be used in the
         loading of the file manager.
-        @rtype: FileManager
-        @return: The loaded file manager.
+        :rtype: FileManager
+        :return: The loaded file manager.
         """
 
         # prints a debug message
@@ -120,8 +120,8 @@ class FileManager(object):
         """
         Constructor of the class.
 
-        @type file_engine_plugin: FileManagerEnginePlugin
-        @param file_engine_plugin: The engine file manager plugin to be used.
+        :type file_engine_plugin: FileManagerEnginePlugin
+        :param file_engine_plugin: The engine file manager plugin to be used.
         """
 
         self.file_engine_plugin = file_engine_plugin
@@ -133,8 +133,8 @@ class FileManager(object):
         Retrieves the engine name for the current
         connection.
 
-        @rtype: String
-        @return: The engine name for the current
+        :rtype: String
+        :return: The engine name for the current
         connection.
         """
 
@@ -145,8 +145,8 @@ class FileManager(object):
         Retrieves the internal version for the current
         connection.
 
-        @rtype: String
-        @return: The internal version for the current
+        :rtype: String
+        :return: The internal version for the current
         connection.
         """
 
@@ -156,8 +156,8 @@ class FileManager(object):
         """
         Retrieves the current available connection.
 
-        @rtype: Connection
-        @return: The current available file connection.
+        :rtype: Connection
+        :return: The current available file connection.
         """
 
         # in case the connection is not defined
@@ -184,8 +184,8 @@ class FileManager(object):
         """
         Retrieves the current available file connection.
 
-        @rtype: Connection
-        @return: The current available file connection.
+        :rtype: Connection
+        :return: The current available file connection.
         """
 
         if not self.file_connection:
@@ -212,8 +212,8 @@ class FileManager(object):
         The connection parameters are used to established the connection
         with the file endpoint.
 
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The map containing the connection parameters.
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The map containing the connection parameters.
         """
 
         self.connection_parameters = connection_parameters
@@ -270,12 +270,12 @@ class Connection(object):
         """
         Constructor of the class.
 
-        @type file_manager: FileManager
-        @param file_manager: The reference to the "owner" file manager.
-        @type file_connection: FileConnection
-        @param file_connection: The file connection object.
-        @type connection_parameters: Dictionary
-        @param connection_parameters: The connection parameters for the connection.
+        :type file_manager: FileManager
+        :param file_manager: The reference to the "owner" file manager.
+        :type file_connection: FileConnection
+        :param file_connection: The file connection object.
+        :type connection_parameters: Dictionary
+        :param connection_parameters: The connection parameters for the connection.
         """
 
         self.file_connection = file_connection
@@ -285,10 +285,10 @@ class Connection(object):
         """
         Adds a parameter to the connection.
 
-        @type key: String
-        @param key: The name of the parameter to be added.
-        @type value: Object
-        @param value: The parameter value to be added.
+        :type key: String
+        :param key: The name of the parameter to be added.
+        :type value: Object
+        :param value: The parameter value to be added.
         """
 
         self.connection_parameters[key] = value
@@ -298,8 +298,8 @@ class Connection(object):
         Removes the parameter with the given name
         from the connection parameters.
 
-        @type key: String
-        @param key: The name of the parameter to be removed.
+        :type key: String
+        :param key: The name of the parameter to be removed.
         """
 
         del self.connection_parameters[key]
@@ -309,11 +309,11 @@ class Connection(object):
         Retrieves the parameter with the given name
         from the connection.
 
-        @type key: String
-        @param key: The name of the parameter to be
+        :type key: String
+        :param key: The name of the parameter to be
         retrieved.
-        @rtype: Object
-        @return: The retrieved parameter.
+        :rtype: Object
+        :return: The retrieved parameter.
         """
 
         return self.connection_parameters.get(key, None)
