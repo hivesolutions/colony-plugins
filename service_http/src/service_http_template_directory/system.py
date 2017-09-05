@@ -52,13 +52,13 @@ DIRECTORY_HANDLER_NAME = "template"
 """ The directory handler name """
 
 HTML_MIME_TYPE = "text/html"
-""" The html mime type """
+""" The HTML mime type """
 
 TEMPLATE_DIRECTORY_RESOURCES_PATH = "service_http_template_directory/resources"
 """ The template directory resources path """
 
 DIRECTORY_HTML_TEMPLATE_FILE_NAME = "directory.html.tpl"
-""" The directory html template file name """
+""" The directory HTML template file name """
 
 FORMATS_MAP = {
     "table" : "",

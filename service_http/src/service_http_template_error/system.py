@@ -53,13 +53,13 @@ ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
 HTML_MIME_TYPE = "text/html"
-""" The html mime type """
+""" The HTML mime type """
 
 TEMPLATE_ERROR_RESOURCES_PATH = "service_http_template_error/resources"
 """ The template error resources path """
 
 ERROR_HTML_TEMPLATE_FILE_NAME = "error.html.tpl"
-""" The error html template file name """
+""" The error HTML template file name """
 
 STATUS_CODE_VALUES = {
     100 : "Continue",

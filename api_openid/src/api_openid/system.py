@@ -1329,7 +1329,7 @@ class OpenidClient(object):
     def _get_yadis_provider_url(self):
         """
         Retrieves the "yadis" provider url, using the two base strategies
-        (the header and the html header strategies).
+        (the header and the HTML header strategies).
 
         :rtype: String
         :return: The "yadis" provider url.
@@ -1353,11 +1353,11 @@ class OpenidClient(object):
             # returns the yadis provider url
             return yadis_provider_url
 
-        # creates a new yadis html parser
+        # creates a new yadis HTML parser
         yadis_html_parser = parser.YadisHtmlParser()
 
         try:
-            # feeds the result to the yadis html parser
+            # feeds the result to the yadis HTML parser
             yadis_html_parser.feed(result)
         except Exception as exception:
             # prints an info message

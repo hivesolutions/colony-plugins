@@ -41,7 +41,7 @@ import colony
 
 class YadisHtmlParser(colony.legacy.HTMLParser.HTMLParser):
     """
-    The yadis html parser, used to retrieve the yadis
+    The yadis HTML parser, used to retrieve the yadis
     provider URL from the HTML code.
     """
 

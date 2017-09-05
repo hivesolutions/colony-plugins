@@ -51,13 +51,13 @@ DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
 HTML_MIME_TYPE = "text/html"
-""" The html mime type """
+""" The HTML mime type """
 
 SYSTEM_INFORMATION_RESOURCES_PATH = "service_http_system_information/resources"
 """ The system information resources path """
 
 SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME = "system_information.html.tpl"
-""" The system information html template file name """
+""" The system information HTML template file name """
 
 class ServiceHttpSystemInformation(colony.System):
     """
