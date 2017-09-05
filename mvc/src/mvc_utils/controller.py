@@ -5389,7 +5389,7 @@ def _get_locales_session(self, request):
 def _get_locales_header(self, request):
     """
     Retrieves the locales list value using an
-    (http) header strategy.
+    (HTTP) header strategy.
 
     :type request: Request
     :param request: The request to be used.

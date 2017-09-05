@@ -393,18 +393,18 @@ class HttpClient(object):
         handlers_map = {}
     ):
         """
-        Fetches the url for the given url, method and (http) parameters.
+        Fetches the url for the given url, method and (HTTP) parameters.
 
         :type url: String
         :param url: The url to be fetched.
         :type method: String
         :param method: The method to be used.
         :type parameters: Dictionary
-        :param parameters: The (http) parameters to be used in the fetching.
+        :param parameters: The (HTTP) parameters to be used in the fetching.
         :type protocol_version: String
         :param protocol_version: The version of the protocol to be used.
         :type headers: Dictionary
-        :param headers: The (http) headers to be used in the fetching.
+        :param headers: The (HTTP) headers to be used in the fetching.
         :type content_type: String
         :param content_type: The content type of the message.
         :type content_type_charset: String
@@ -466,7 +466,7 @@ class HttpClient(object):
             socket_parameters
         )
 
-        # retrieves the corresponding (http) client connection
+        # retrieves the corresponding (HTTP) client connection
         self.client_connection = self._http_client.get_client_connection(connection_parameters)
 
         # acquires the http client lock

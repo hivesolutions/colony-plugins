@@ -273,7 +273,7 @@ class WebSocketConnection(object):
         """
 
         # sets the request handler for the service as the original
-        # (http) request handler, this step "downgrades" the protocol
+        # (HTTP) request handler, this step "downgrades" the protocol
         # interpretation (back to http)
         self.service.unset_service_connection_request_handler(self.service_connection)
 
