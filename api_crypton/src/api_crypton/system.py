@@ -129,7 +129,7 @@ class CryptonClient(object):
         Generates the crypton structure for the given arguments.
 
         :type base_url: String
-        :param base_url: The base url of the crypton provider.
+        :param base_url: The base URL of the crypton provider.
         :type api_key: String
         :param api_key: The key to be used to access the remote api.
         :type key_name: String
@@ -153,7 +153,7 @@ class CryptonClient(object):
         return crypton_structure
 
     def encrypt(self, message):
-        # retrieves the base url
+        # retrieves the base URL
         base_url = self.crypton_structure.base_url
 
         # sets the retrieval url
