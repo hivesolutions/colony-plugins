@@ -65,16 +65,16 @@ DEFAULT_API_VERSION = "1.0"
 """ The default easypay api version """
 
 BASE_REST_URL = "http://www.easypay.pt/_s/"
-""" The base rest url to be used """
+""" The base rest URL to be used """
 
 BASE_REST_SECURE_URL = "https://www.easypay.pt/_s/"
-""" The base rest secure url to be used """
+""" The base rest secure URL to be used """
 
 TEST_BASE_REST_URL = "http://test.easypay.pt/_s/"
-""" The base rest url to be used """
+""" The base rest URL to be used """
 
 TEST_BASE_REST_SECURE_URL = "http://test.easypay.pt/_s/"
-""" The base rest secure url to be used """
+""" The base rest secure URL to be used """
 
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
@@ -217,7 +217,7 @@ class EasypayClient(object):
         mobile = None,
         email = None
     ):
-        # sets the retrieval url, using the test url
+        # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
         retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
 
@@ -243,7 +243,7 @@ class EasypayClient(object):
         if mobile: parameters["o_mobile"] = mobile
         if email: parameters["o_email"] = email
 
-        # fetches the retrieval url with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the xml
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -285,7 +285,7 @@ class EasypayClient(object):
         return data
 
     def cancel_reference(self, entity, reference):
-        # sets the retrieval url, using the test url
+        # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
         retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_00BG.php"
 
@@ -300,7 +300,7 @@ class EasypayClient(object):
         parameters["ep_ref"] = reference
         parameters["ep_delete"] = "yes"
 
-        # fetches the retrieval url with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the xml
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -340,7 +340,7 @@ class EasypayClient(object):
         return data
 
     def get_payment_details(self, document_identifier, reference_key):
-        # sets the retrieval url, using the test url
+        # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
         retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_03AG.php"
 
@@ -354,7 +354,7 @@ class EasypayClient(object):
         parameters["ep_doc"] = document_identifier
         parameters["ep_key"] = reference_key
 
-        # fetches the retrieval url with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the xml
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -486,10 +486,10 @@ class EasypayClient(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -501,7 +501,7 @@ class EasypayClient(object):
         # creates the parameters map in case it is not defined
         if not parameters: parameters = {}
 
-        # retrieves the http client, fethes the url retrieving the
+        # retrieves the http client, fetches the URL retrieving the
         # http response and retrieves the contents from the response
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(
@@ -517,23 +517,20 @@ class EasypayClient(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client, then builds the URL from the
+        # base URL and returns it to the caller method
         http_client = self._get_http_client()
-
-        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
-
-        # returns the url
         return url
 
     def _check_easypay_errors(self, data):

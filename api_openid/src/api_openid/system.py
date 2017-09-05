@@ -180,7 +180,7 @@ class ApiOpenid(colony.System):
     """
 
     nonce_values_map = {}
-    """ The map associating the provider url with the nonce values """
+    """ The map associating the provider URL with the nonce values """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
@@ -254,7 +254,7 @@ class ApiOpenid(colony.System):
         :type nonce_value: String
         :param nonce_value: The nonce value to be verified.
         :type provider_url: String
-        :param provider_url: The provider url to be used in
+        :param provider_url: The provider URL to be used in
         the verification.
         :rtype: bool
         :return: The result of the verification.

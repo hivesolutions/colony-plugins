@@ -92,22 +92,22 @@ HMAC_HASH_MODULES_MAP = {
 """ The map associating the hmac values with the hashlib hash function modules """
 
 BASE_REST_URL = "http://api.dropbox.com/1/"
-""" The base rest url to be used """
+""" The base rest URL to be used """
 
 BASE_REST_SECURE_URL = "https://api.dropbox.com/1/"
-""" The base rest secure url to be used """
+""" The base rest secure URL to be used """
 
 WWW_REST_SECURE_URL = "http://www.dropbox.com/1/"
-""" The www rest url to be used """
+""" The www rest URL to be used """
 
 WWW_REST_SECURE_URL = "https://www.dropbox.com/1/"
-""" The www rest secure url to be used """
+""" The www rest secure URL to be used """
 
 CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
-""" The content rest url to be used """
+""" The content rest URL to be used """
 
 CONTENT_REST_SECURE_URL = "https://api-content.dropbox.com/1/"
-""" The content rest secure url to be used """
+""" The content rest secure URL to be used """
 
 class ApiDropbox(colony.System):
     """
@@ -274,7 +274,7 @@ class DropboxClient(object):
         :return: The current oauth structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/request_token"
 
         # retrieves the timestamp
@@ -318,7 +318,7 @@ class DropboxClient(object):
                 hashlib.sha1
             ).digest().encode("base64")[:-1]
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -347,7 +347,7 @@ class DropboxClient(object):
         :return: The current oauth structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/access_token"
 
         # retrieves the timestamp
@@ -392,7 +392,7 @@ class DropboxClient(object):
                 hashlib.sha1
             ).digest().encode("base64")[:-1]
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -413,13 +413,13 @@ class DropboxClient(object):
 
     def get_oauth_authorize_url(self):
         """
-        Retrieves the oauth authorize url.
+        Retrieves the oauth authorize URL.
 
         :rtype: String
-        :return: The oauth authorize url.
+        :return: The oauth authorize URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = WWW_REST_SECURE_URL + "oauth/authorize"
 
         # creates the authentication parameters
@@ -428,21 +428,21 @@ class DropboxClient(object):
             "oauth_callback" : self.oauth_structure.oauth_callback
         }
 
-        # creates the authentication url from the authentication token
+        # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
 
-        # returns the authentication url
+        # returns the authentication URL
         return authentication_url
 
     def get_oauth_authenticate_url(self):
         """
-        Retrieves the oauth authenticate url.
+        Retrieves the oauth authenticate URL.
 
         :rtype: String
-        :return: The oauth authenticate url.
+        :return: The oauth authenticate URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = WWW_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
@@ -450,10 +450,10 @@ class DropboxClient(object):
             "oauth_token" : self.oauth_structure.oauth_token
         }
 
-        # creates the authentication url from the authentication token
+        # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
 
-        # returns the authentication url
+        # returns the authentication URL
         return authentication_url
 
     def get_account_info(self):
@@ -472,7 +472,7 @@ class DropboxClient(object):
 
         retrieval_url = BASE_REST_SECURE_URL + "account/info"
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
 
         # loads json retrieving the data
@@ -520,11 +520,11 @@ class DropboxClient(object):
         # start the parameters map
         parameters = {}
 
-        # creates the url that will be used for the put of the
+        # creates the URL that will be used for the put of the
         # file on the remove data source
         retrieval_url = CONTENT_REST_SECURE_URL + "files_put/dropbox/" + target_path
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, PUT_METHOD_VALUE, file_contents)
 
         # loads json retrieving the data
@@ -570,10 +570,10 @@ class DropboxClient(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, contents = None):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -601,7 +601,7 @@ class DropboxClient(object):
             # builds the oauth arguments for authentication
             self._build_oauth_arguments(url, parameters, method)
 
-        # fetches the url retrieving the http response
+        # fetches the URL retrieving the http response
         http_response = http_client.fetch_url(
             url,
             method,
@@ -618,23 +618,20 @@ class DropboxClient(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTO client, build the URL from the base URL
+        # and then returns the URL to the caller method
         http_client = self._get_http_client()
-
-        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
-
-        # returns the url
         return url
 
     def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
@@ -642,7 +639,7 @@ class DropboxClient(object):
         Builds the oauth arguments encoding them into the oauth message specification.
 
         :type url: String
-        :param url: The url to be used for the oauth encoding.
+        :param url: The URL to be used for the oauth encoding.
         :type parameters: Dictionary
         :param parameters: The parameters to be used for the oauth encoding.
         :type method: String
@@ -693,13 +690,13 @@ class DropboxClient(object):
 
     def _escape_url(self, url_text):
         """
-        Escapes the given url text into a valid http get request string.
+        Escapes the given URL text into a valid HTTP get request string.
 
         :rtype: String
-        :return: the given url text in a valid http get request string.
+        :return: the given URL text in a valid HTTP get request string.
         """
 
-        # returns the quoted version of the url text
+        # returns the quoted version of the URL text
         return colony.quote_plus(str(url_text), "")
 
     def _check_dropbox_errors(self, data):

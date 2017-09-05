@@ -171,7 +171,7 @@ class CryptonClient(object):
         # sets the message
         parameters["message"] = message_base_64
 
-        # fetches the retrieval url with the given parameters
+        # fetches the retrieval URL with the given parameters
         # retrieving the (encrypted) message
         message_e = self._fetch_url(retrieval_url, parameters)
 
@@ -179,10 +179,10 @@ class CryptonClient(object):
         return message_e
 
     def decrypt(self, message_e):
-        # retrieves the base url
+        # retrieves the base URL
         base_url = self.crypton_structure.base_url
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = base_url + "decrypt"
 
         # encodes the message in base 64
@@ -197,7 +197,7 @@ class CryptonClient(object):
         # sets the message
         parameters["message_e"] = message_base_64
 
-        # fetches the retrieval url with the given parameters
+        # fetches the retrieval URL with the given parameters
         # retrieving the (decrypted) message
         message = self._fetch_url(retrieval_url, parameters)
 
@@ -205,10 +205,10 @@ class CryptonClient(object):
         return message
 
     def sign(self, message, algorithm_name = None):
-        # retrieves the base url
+        # retrieves the base URL
         base_url = self.crypton_structure.base_url
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = base_url + "sign"
 
         # encodes the message in base 64
@@ -228,17 +228,17 @@ class CryptonClient(object):
             # sets the algorithm name
             parameters["algorithm_name"] = algorithm_name
 
-        # fetches the retrieval url with the given parameters retrieving the signature
+        # fetches the retrieval URL with the given parameters retrieving the signature
         signature = self._fetch_url(retrieval_url, parameters)
 
         # returns the signature
         return signature
 
     def verify(self, signature, message):
-        # retrieves the base url
+        # retrieves the base URL
         base_url = self.crypton_structure.base_url
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = base_url + "verify"
 
         # encodes the message in base 64
@@ -256,7 +256,7 @@ class CryptonClient(object):
         # sets the message
         parameters["message"] = message_base_64
 
-        # fetches the retrieval url with the given parameters retrieving the signature
+        # fetches the retrieval URL with the given parameters retrieving the signature
         return_value = self._fetch_url(retrieval_url, parameters)
 
         # returns the return value
@@ -300,10 +300,10 @@ class CryptonClient(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -317,10 +317,9 @@ class CryptonClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client and fetches the URL,
+        # retrieving the HTTP response
         http_client = self._get_http_client()
-
-        # fetches the url retrieving the http response
         http_response = http_client.fetch_url(
             url,
             method,
@@ -328,40 +327,36 @@ class CryptonClient(object):
             content_type_charset = DEFAULT_CHARSET
         )
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response, returning
+        # them to the caller method
         contents = http_response.received_message
-
-        # returns the contents
         return contents
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the http client, builds the URL from the base URL
+        # and returns it to the caller method
         http_client = self._get_http_client()
-
-        # build the url from the base url
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
-
-        # returns the url
         return url
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
         :rtype: HttpClient
-        :return: The retrieved http client.
+        :return: The retrieved HTTP client.
         """
 
         # in case no http client exists
@@ -381,10 +376,10 @@ class CryptonStructure(object):
     """
 
     base_url = None
-    """ The base url of the crypton provider """
+    """ The base URL of the crypton provider """
 
     api_key = None
-    """ The key to be used to access the remote api """
+    """ The key to be used to access the remote API """
 
     key_name = None
     """ The name of the key to be used """
@@ -394,7 +389,7 @@ class CryptonStructure(object):
         Constructor of the class.
 
         :type base_url: String
-        :param base_url: The base url of the crypton provider.
+        :param base_url: The base URL of the crypton provider.
         :type api_key: String
         :param api_key: The key to be used to access the remote api.
         :type key_name: String
@@ -407,20 +402,20 @@ class CryptonStructure(object):
 
     def get_base_url(self):
         """
-        Retrieves the base url.
+        Retrieves the base URL.
 
         :rtype: String
-        :return: The base url.
+        :return: The base URL.
         """
 
         return self.base_url
 
     def set_base_url(self, base_url):
         """
-        Sets the base url.
+        Sets the base URL.
 
         :type base_url: String
-        :param base_url: The base url.
+        :param base_url: The base URL.
         """
 
         self.base_url = base_url

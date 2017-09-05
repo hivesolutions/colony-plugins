@@ -49,21 +49,21 @@ import colony
 from . import exceptions
 
 INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
-""" The base url to be used for invoice
-submission, this is a secure https based url"""
+""" The base URL to be used for invoice
+submission, this is a secure HTTPS based URL"""
 
 INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
-""" The base test url to be used for invoice
-submission, this is a secure https based url
+""" The base test URL to be used for invoice
+submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
 TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
-""" The base url to be used for transport document
-submission, this is a secure https based url"""
+""" The base URL to be used for transport document
+submission, this is a secure HTTPS based URL"""
 
 TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
-""" The base test url to be used for transport document
-submission, this is a secure https based url
+""" The base test URL to be used for transport document
+submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
 class ApiAt(colony.System):
@@ -238,8 +238,8 @@ class AtClient(object):
         return path
 
     def submit_invoice(self, invoice_payload):
-        # retrieves the proper based url according to the current
-        # test mode and uses it to create the complete action url
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
         base_url = self.test_mode and INVOICE_BASE_TEST_URL or INVOICE_BASE_URL
         submit_invoice_url = base_url + "/faturas"
 
@@ -248,8 +248,8 @@ class AtClient(object):
         return result
 
     def submit_transport(self, transport_payload):
-        # retrieves the proper based url according to the current
-        # test mode and uses it to create the complete action url
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
         base_url = self.test_mode and TRANSPORT_BASE_TEST_URL or TRANSPORT_BASE_URL
         submit_transport_url = base_url + "/documentosTransporte"
 
@@ -376,7 +376,7 @@ class AtClient(object):
             document_payload
         )
 
-        # "fetches" the submit invoice url with the message contents
+        # "fetches" the submit invoice URL with the message contents
         # this should post the invoice and create it in the remote
         # data source
         data = self._fetch_url(submit_url, method = "POST", contents = message)
@@ -387,14 +387,14 @@ class AtClient(object):
 
     def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
         """
-        Fetches the given url for the given parameters and using
+        Fetches the given URL for the given parameters and using
         the given method.
 
         This method should block while the remote communication
         is on idle or receiving.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -410,7 +410,7 @@ class AtClient(object):
         if not parameters: parameters = {}
 
         # retrieves the http client and uses it to fetch the provided
-        # url with the provided parameters retrieving the received
+        # URL with the provided parameters retrieving the received
         # message and the contents and returning it to the caller method
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(

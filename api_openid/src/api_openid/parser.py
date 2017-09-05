@@ -42,11 +42,11 @@ import colony
 class YadisHtmlParser(colony.legacy.HTMLParser.HTMLParser):
     """
     The yadis html parser, used to retrieve the yadis
-    provider url from the html code.
+    provider URL from the HTML code.
     """
 
     yadis_provider_url = None
-    """ The yadis provider url """
+    """ The yadis provider URL """
 
     def handle_starttag(self, tag, attributes):
         """
@@ -63,8 +63,8 @@ class YadisHtmlParser(colony.legacy.HTMLParser.HTMLParser):
             # converts the attribute pairs into a map
             attributes_map = dict(attributes)
 
-            # checks if the http equiv reference exists
+            # checks if the HTTP equiv reference exists
             # and is valid
             if attributes_map.get("http-equiv", None).lower() == "x-xrds-location":
-                # sets the yadis provider url
+                # sets the yadis provider URL
                 self.yadis_provider_url = attributes_map.get("content", None)

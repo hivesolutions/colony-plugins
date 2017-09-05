@@ -71,28 +71,28 @@ DEFAULT_SCOPE = ""
 """ The default scope """
 
 BASE_REST_URL = "http://api.facebook.com/restserver.php"
-""" The base rest url to be used """
+""" The base rest URL to be used """
 
 BASE_REST_SECURE_URL = "https://api.facebook.com/restserver.php"
-""" The base rest secure url to be used """
+""" The base rest secure URL to be used """
 
 BASE_HOME_URL = "http://www.facebook.com/"
-""" The base home url """
+""" The base home URL """
 
 BASE_HOME_SECURE_URL = "https://www.facebook.com/"
-""" The base home secure url """
+""" The base home secure URL """
 
 BASE_REST_OAUTH_URL = "http://www.facebook.com/"
-""" The base rest oauth url """
+""" The base rest oauth URL """
 
 BASE_REST_OAUTH_SECURE_URL = "https://www.facebook.com/"
-""" The base rest oauth secure url """
+""" The base rest oauth secure URL """
 
 BASE_REST_GRAPH_URL = "http://graph.facebook.com/"
-""" The base rest graph url """
+""" The base rest graph URL """
 
 BASE_REST_GRAPH_SECURE_URL = "https://graph.facebook.com/"
-""" The base rest graph secure url """
+""" The base rest graph secure URL """
 
 FACEBOOK_CLIENT_TYPE_REST = "rest"
 """ The rest facebook client type """
@@ -249,7 +249,7 @@ class FacebookClient(object):
         :return: The current facebook structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL
 
         # start the parameters map
@@ -258,7 +258,7 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("auth.createToken", parameters)
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
@@ -282,7 +282,7 @@ class FacebookClient(object):
         :return: The current facebook structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL
 
         # start the parameters map
@@ -294,7 +294,7 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("auth.getSession", parameters)
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
@@ -327,13 +327,13 @@ class FacebookClient(object):
 
     def get_login_url(self):
         """
-        Retrieves the url used for facebook user login.
+        Retrieves the URL used for facebook user login.
 
         :rtype: String
-        :return: The url used for facebook user login.
+        :return: The URL used for facebook user login.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_HOME_SECURE_URL + "login.php"
 
         # start the parameters map
@@ -348,10 +348,10 @@ class FacebookClient(object):
         # sets the next web site to redirect
         parameters["next"] = self.facebook_structure.next
 
-        # creates the login url from the parameters
+        # creates the login URL from the parameters
         login_url = self._build_url(retrieval_url, parameters)
 
-        # returns the login url
+        # returns the login URL
         return login_url
 
     def user_get_user_info(self, user_id_list, fields):
@@ -367,7 +367,7 @@ class FacebookClient(object):
         :return: The retrieved user information.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL
 
         # start the parameters map
@@ -382,7 +382,7 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("users.getInfo", parameters)
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
@@ -517,10 +517,10 @@ class FacebookClient(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -548,23 +548,23 @@ class FacebookClient(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the url
+        # returns the URL
         return url
 
     def _check_facebook_errors(self, data):
@@ -706,14 +706,14 @@ class FacebookClientOauth(object):
 
     def get_login_url(self):
         """
-        Retrieves the url used to redirect the user to facebook, for user
+        Retrieves the URL used to redirect the user to facebook, for user
         authentication and app authorization.
 
         :rtype: String
-        :return: The url used to redirect the user to facebook, for login.
+        :return: The URL used to redirect the user to facebook, for login.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_OAUTH_SECURE_URL + "dialog/oauth"
 
         # start the parameters map
@@ -728,10 +728,10 @@ class FacebookClientOauth(object):
         # sets the scope
         parameters["scope"] = self.facebook_structure.scope
 
-        # creates the login url from the parameters
+        # creates the login URL from the parameters
         login_url = self._build_url(retrieval_url, parameters)
 
-        # returns the login url
+        # returns the login URL
         return login_url
 
     def authenticate_application(self, authorization_code):
@@ -744,7 +744,7 @@ class FacebookClientOauth(object):
         to the application.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_GRAPH_SECURE_URL + "oauth/access_token"
 
         # starts the parameters map
@@ -762,7 +762,7 @@ class FacebookClientOauth(object):
         # sets the authentication code
         parameters["code"] = authorization_code
 
-        # fetches the token endpoint url, along with the required parameters
+        # fetches the token endpoint URL, along with the required parameters
         response_text = self._fetch_url(retrieval_url, parameters, GET_METHOD_VALUE)
 
         # tries to retrieve the field map from the response
@@ -783,7 +783,7 @@ class FacebookClientOauth(object):
         self.facebook_structure.session_key = access_token
 
     def get_user_data(self):
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_GRAPH_SECURE_URL + "me"
 
         # starts the parameters map
@@ -792,7 +792,7 @@ class FacebookClientOauth(object):
         # sets the client id
         parameters["access_token"] = self.facebook_structure.session_key
 
-        # fetches the user data url, along with the required parameters
+        # fetches the user data URL, along with the required parameters
         json = self._fetch_url(retrieval_url, parameters, GET_METHOD_VALUE)
 
         # loads json retrieving the data
@@ -826,10 +826,10 @@ class FacebookClientOauth(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -843,13 +843,13 @@ class FacebookClientOauth(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -857,23 +857,23 @@ class FacebookClientOauth(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the url
+        # returns the URL
         return url
 
     def _check_facebook_errors(self, data):
