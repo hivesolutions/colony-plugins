@@ -56,37 +56,37 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
 TWITTER_API_REALM_VALUE = "Twitter API"
-""" The twitter api realm value """
+""" The Twitter API realm value """
 
 TWITTER_CHARACTER_LIMIT_VALUE = 140
-""" The twitter character limit value """
+""" The Twitter character limit value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
-""" The hmac sha1 value """
+""" The HMAC SHA1 value """
 
 RSA_SHA1_VALUE = "RSA-SHA1"
-""" The rsa sha1 value """
+""" The RSA SHA1 value """
 
 PLAINTEXT_VALUE = "PLAINTEXT"
 """ The plaintext value """
 
 OAUTH_AUTHENTICATION_TYPE = 1
-""" The oauth authentication type """
+""" The OAuth authentication type """
 
 BASIC_AUTHENTICATION_TYPE = 2
 """ The basic authentication type """
 
 DEFAULT_OAUTH_SIGNATURE_METHOD = HMAC_SHA1_VALUE
-""" The default oauth signature method """
+""" The default OAuth signature method """
 
 DEFAULT_OAUTH_VERSION = "1.0"
-""" The default oauth version """
+""" The default OAuth version """
 
 GET_METHOD_VALUE = "GET"
-""" The get method value """
+""" The GET method value """
 
 POST_METHOD_VALUE = "POST"
-""" The post method value """
+""" The POST method value """
 
 OUT_OF_BAND_CALLBACK_VALUE = "oob"
 """ The out of band (default) callback value """
@@ -94,35 +94,36 @@ OUT_OF_BAND_CALLBACK_VALUE = "oob"
 HMAC_HASH_MODULES_MAP = {
     HMAC_SHA1_VALUE : hashlib.sha1 #@UndefinedVariable
 }
-""" The map associating the hmac values with the hashlib hash function modules """
+""" The map associating the HMAC values with the hashlib
+hash function modules """
 
 BASE_REST_URL = "http://twitter.com/"
-""" The base rest url to be used """
+""" The base REST URL to be used """
 
 BASE_REST_SECURE_URL = "https://twitter.com/"
-""" The base rest secure url to be used """
+""" The base REST secure URL to be used """
 
 class ApiTwitter(colony.System):
     """
-    The api twitter class.
+    The API Twitter class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: TwitterClient
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the json plugin
+        # retrieves the JSON plugin
         json_plugin = self.plugin.json_plugin
 
         # retrieves the various attribute to be used in the
@@ -148,14 +149,14 @@ class ApiTwitter(colony.System):
 
 class TwitterClient(object):
     """
-    The class that represents a twitter client connection.
+    The class that represents a Twitter client connection.
     """
 
     json_plugin = None
-    """ The json plugin """
+    """ The JSON plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     username = None
     """ The username """
@@ -173,7 +174,7 @@ class TwitterClient(object):
     """ The oauth structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(
         self,
@@ -188,9 +189,9 @@ class TwitterClient(object):
         Constructor of the class.
 
         :type json_plugin: JsonPlugin
-        :param json_plugin: The json plugin.
+        :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :param client_http_plugin: The client HTTP plugin.
         :type username: String
         :param username: The username.
         :type password: String
@@ -198,7 +199,7 @@ class TwitterClient(object):
         :type encoding: String
         :param encoding: The encoding used.
         :type oauth_structure: OauthStructure
-        :param oauth_structure: The oauth structure
+        :param oauth_structure: The OAuth structure
         """
 
         self.json_plugin = json_plugin
@@ -212,20 +213,20 @@ class TwitterClient(object):
 
     def open(self):
         """
-        Opens the twitter client.
+        Opens the Twitter client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the twitter client.
+        Closes the Twitter client.
         """
 
-        # in case an http client is defined
-        if self.http_client:
-            # closes the http client
-            self.http_client.close({})
+        # in case an HTTP client is defined
+        # closes the same HTTP client as it's not
+        # going to be used any longer
+        if self.http_client: self.http_client.close({})
 
     def generate_oauth_structure(
         self,
@@ -240,7 +241,7 @@ class TwitterClient(object):
         set_structure = True
     ):
         """
-        Generates a new oauth structure, for the given parameters.
+        Generates a new OAuth structure, for the given parameters.
 
         :type oauth_consumer_key: String
         :param oauth_consumer_key: The consumer key.
@@ -262,10 +263,10 @@ class TwitterClient(object):
         :param set_structure: The set structure flag (if the structure
         should be set in the client).
         :rtype: OauthStructure
-        :return: The generated oauth structure.
+        :return: The generated OAuth structure.
         """
 
-        # constructs a new oauth structure
+        # constructs a new OAuth structure
         oauth_structure = OauthStructure(
             oauth_consumer_key,
             oauth_consumer_secret,
@@ -278,22 +279,21 @@ class TwitterClient(object):
         )
 
         # in case the structure is meant to be set
-        if set_structure:
-            # sets the oauth structure
-            self.set_oauth_structure(oauth_structure)
+        # sets the OAuth structure
+        if set_structure: self.set_oauth_structure(oauth_structure)
 
-        # returns the oauth structure
+        # returns the OAuth structure
         return oauth_structure
 
     def open_oauth_request_token(self):
         """
-        Opens the oauth request token.
+        Opens the OAuth request token.
 
         :rtype: OauthStructure
-        :return: The current oauth structure.
+        :return: The current OAuth structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/request_token"
 
         # retrieves the timestamp
@@ -364,10 +364,10 @@ class TwitterClient(object):
 
     def open_oauth_access_token(self):
         """
-        Opens the oauth access token.
+        Opens the OAuth access token.
 
         :rtype: OauthStructure
-        :return: The current oauth structure.
+        :return: The current OAuth structure.
         """
 
         # sets the retrieval url
