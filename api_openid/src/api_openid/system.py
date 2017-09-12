@@ -89,22 +89,22 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
 HTTP_URI_VALUE = "http://"
-""" The http uri value """
+""" The HTTP URI value """
 
 HTTPS_URI_VALUE = "https://"
-""" The https uri value """
+""" The HTTPS URI value """
 
 XRI_URI_VALUE = "xri://="
-""" The xri uri value """
+""" The XRI URI value """
 
 XRI_INITIALIZER_VALUE = "="
-""" The xri initializer value """
+""" The XRI initializer value """
 
 OPENID_NAMESPACE_VALUE = "http://specs.openid.net/auth/2.0"
 """ The openid namespace value """
 
 OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE = "http://openid.net/extensions/sreg/1.1"
-""" The openid sreg 1.1 extension namespace value """
+""" The OpenID SREG 1.1 extension namespace value """
 
 OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE = "http://openid.net/srv/ax/1.0"
 """ The openid ax 1.0 extension namespace value """
@@ -125,28 +125,28 @@ HMAC_SHA1_VALUE = "HMAC-SHA1"
 """ The hmac sha1 value """
 
 HMAC_SHA256_VALUE = "HMAC-SHA256"
-""" The hmac sha256 value """
+""" The HMAC SHA256 value """
 
 DH_SHA1_VALUE = "DH-SHA1"
-""" The dh sha1 value """
+""" The DH SHA1 value """
 
 DH_SHA256_VALUE = "DH-SHA256"
-""" The dh sha256 value """
+""" The DH SHA256 value """
 
 NO_ENCRYPTION_VALUE = "no-encryption"
 """ The no encryption value """
 
 XRDS_LOCATION_VALUE = "X-XRDS-Location"
-""" The xrds location value """
+""" The XRDS location value """
 
 XRDS_LOCATION_LOWER_VALUE = "x-xrds-location"
-""" The xrds location lower value """
+""" The XRDS location lower value """
 
 DEFAULT_OPENID_ASSOCIATE_TYPE = HMAC_SHA256_VALUE
-""" The default openid associate type """
+""" The default OpenID associate type """
 
 DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
-""" The default openid session type """
+""" The default OpenID session type """
 
 NONCE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZUNIQUE"
 """ The nonce time format """
@@ -160,7 +160,8 @@ HMAC_HASH_MODULES_MAP = {
     DH_SHA1_VALUE : hashlib.sha1,
     DH_SHA256_VALUE : hashlib.sha1
 }
-""" The map associating the hmac values with the hashlib hash function modules """
+""" The map associating the hmac values with the hashlib
+hash function modules """
 
 DIFFIE_HELLMAN_ASSOCIATION_TYPES = (
     DH_SHA1_VALUE,
@@ -169,7 +170,7 @@ DIFFIE_HELLMAN_ASSOCIATION_TYPES = (
 """ The diffie hellman association types """
 
 DEFAULT_PRIME_VALUE = colony.legacy.LONG(155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443)
-""" The default prime value to be used in diffie hellman """
+""" The default prime value to be used in Diffie Hellman """
 
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
@@ -188,27 +189,32 @@ class ApiOpenid(colony.System):
 
     def create_server(self, api_attributes, open_server = True):
         """
-        Creates a server, with the given api attributes.
+        Creates a server, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_server: bool
         :param open_server: If the server should be opened.
         :rtype: OpenidServer
         :return: The created server.
         """
 
-        # retrieves the diffie hellman plugin
+        # retrieves the Diffie Hellman plugin
         diffie_hellman_plugin = self.plugin.diffie_hellman_plugin
 
         # retrieves the random plugin
         random_plugin = self.plugin.random_plugin
 
-        # retrieves the openid structure (if available)
+        # retrieves the OpenID structure (if available) and uses it
+        # to create the "new" OpenID server
         openid_structure = api_attributes.get("openid_structure", None)
-
-        # creates the openid server
-        openid_server = OpenidServer(self.plugin, diffie_hellman_plugin, random_plugin, self, openid_structure)
+        openid_server = OpenidServer(
+            self.plugin,
+            diffie_hellman_plugin,
+            random_plugin,
+            self,
+            openid_structure
+        )
 
         # in case the server is meant to be open
         # opens the server
