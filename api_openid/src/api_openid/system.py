@@ -235,13 +235,13 @@ class ApiOpenid(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the api yadis plugin
+        # retrieves the api Yadis plugin
         api_yadis_plugin = self.plugin.api_yadis_plugin
 
-        # retrieves the openid structure (if available)
+        # retrieves the OpenID structure (if available)
         openid_structure = api_attributes.get("openid_structure", None)
 
         # creates a new client with the given options, opens
@@ -286,16 +286,16 @@ class ApiOpenid(colony.System):
     def _update_nonce(self, nonce_value, provider_url):
         """
         Updates the nonce database by adding the nonce value
-        to it, using the provider url.
+        to it, using the provider URL.
 
         :type nonce_value: String
         :param nonce_value: The nonce value to be added.
         :type provider_url: String
-        :param provider_url: The provider url to be used in
+        :param provider_url: The provider URL to be used in
         the addition.
         """
 
-        # in case the provider url is not defined
+        # in case the provider URL is not defined
         # in the nonce values map
         if not provider_url in self.nonce_values_map:
             # sets the nonce values map
@@ -384,26 +384,26 @@ class ApiOpenid(colony.System):
 
 class OpenidServer(object):
     """
-    The class that represents an openid server connection.
+    The class that represents an OpenID server connection.
     """
 
     api_openid_plugin = None
-    """ The api openid plugin """
+    """ The API OpenID plugin """
 
     diffie_hellman_plugin = None
-    """ The diffie hellman plugin """
+    """ The Diffie Hellman plugin """
 
     random_plugin = None
     """ The random plugin """
 
     api_openid = None
-    """ The api openid """
+    """ The API OpenID """
 
     openid_structure = None
-    """ The openid structure """
+    """ The OpenID structure """
 
     diffie_hellman = None
-    """ the diffie hellman management structure """
+    """ the Diffie Hellman management structure """
 
     def __init__(
         self,
@@ -418,17 +418,17 @@ class OpenidServer(object):
         Constructor of the class.
 
         :type api_openid_plugin: ApiOpenidPlugin
-        :param api_openid_plugin: The api openid plugin.
+        :param api_openid_plugin: The API OpenID plugin.
         :type diffie_hellman_plugin: DiffieHellmanPlugin
-        :param diffie_hellman_plugin: The diffie hellman plugin.
+        :param diffie_hellman_plugin: The Diffie Hellman plugin.
         :type random_plugin: RandomPlugin
         :param random_plugin: The random plugin.
         :type api_openid: ServiceOpenid
-        :param api_openid: The api openid.
+        :param api_openid: The API OpenID.
         :type openid_structure: OpenidStructure
-        :param openid_structure: The openid structure.
+        :param openid_structure: The OpenID structure.
         :type diffie_hellman: DiffieHellman
-        :param diffie_hellman: The diffie hellman management structure.
+        :param diffie_hellman: The Diffie Hellman management structure.
         """
 
         self.api_openid_plugin = api_openid_plugin
@@ -440,14 +440,14 @@ class OpenidServer(object):
 
     def open(self):
         """
-        Opens the openid server.
+        Opens the OpenID server.
         """
 
         pass
 
     def close(self):
         """
-        Closes the openid server.
+        Closes the OpenID server.
         """
 
         pass
@@ -462,38 +462,41 @@ class OpenidServer(object):
         consumer_public = None,
         set_structure = True
     ):
-        # creates a new openid structure
-        openid_structure = OpenidStructure(provider_url, association_type = association_type, session_type = session_type)
+        # creates a new OpenID structure
+        openid_structure = OpenidStructure(
+            provider_url, 
+            association_type = association_type,
+            session_type = session_type
+        )
 
         # in case the structure is meant to be set
-        if set_structure:
-            # sets the openid structure
-            self.set_openid_structure(openid_structure)
+        # sets the OpenID structure
+        if set_structure: self.set_openid_structure(openid_structure)
 
-        # decodes the diffie hellman values in case they exist
+        # decodes the Diffie Hellman values in case they exist
         prime_value = prime_value and self.api_openid._mklong(base64.b64decode(prime_value)) or None
         base_value = base_value and self.api_openid._mklong(base64.b64decode(base_value)) or None
         consumer_public = consumer_public and self.api_openid._mklong(base64.b64decode(consumer_public)) or None
 
-        # sets the default diffie hellman values
+        # sets the default Diffie Hellman values
         prime_value = prime_value or DEFAULT_PRIME_VALUE
         base_value = base_value or DEFAULT_BASE_VALUE
 
-        # creates the parameters to send to be used in the diffie hellman
+        # creates the parameters to send to be used in the Diffie Hellman
         # structure creation
-        parameters = {
-            "prime_value" : prime_value,
-            "base_value" : base_value
-        }
+        parameters = dict(
+            prime_value = prime_value,
+            base_value = base_value
+        )
 
-        # creates the diffie hellman management structure with the prime
+        # creates the Diffie Hellman management structure with the prime
         # and base values given
         self.diffie_hellman = self.diffie_hellman_plugin.create_structure(parameters)
 
-        # sets the a value in the diffie hellman structure
+        # sets the a value in the Diffie Hellman structure
         self.diffie_hellman.set_A_value(consumer_public)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return openid_structure
 
     def openid_associate(self):
@@ -502,7 +505,7 @@ class OpenidServer(object):
         openid specification.
 
         :rtype: OpenidStructure
-        :return: The current openid structure.
+        :return: The current OpenID structure.
         """
 
         # generates an association handle
