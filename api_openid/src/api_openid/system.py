@@ -464,7 +464,7 @@ class OpenidServer(object):
     ):
         # creates a new OpenID structure
         openid_structure = OpenidStructure(
-            provider_url, 
+            provider_url,
             association_type = association_type,
             session_type = session_type
         )
