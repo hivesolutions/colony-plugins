@@ -124,7 +124,7 @@ class Url(object):
     """ The location """
 
     base_url = None
-    """ The base url """
+    """ The base URL """
 
     def __init__(
         self,
@@ -158,7 +158,7 @@ class Url(object):
         :type location: String
         :param location: The location.
         :type base_url: String
-        :param base_url: The base url.
+        :param base_url: The base URL.
         """
 
         self.protocol = protocol

@@ -928,7 +928,7 @@ class TwitterClient(object):
         Builds the url for the given url and parameters.
 
         :type url: String
-        :param url: The base url to be used.
+        :param url: The base URL to be used.
         :type parameters: Dictionary
         :param parameters: The parameters to be used for url construction.
         :rtype: String

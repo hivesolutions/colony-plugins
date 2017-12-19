@@ -538,7 +538,7 @@ class HttpClient(object):
         and parameters.
 
         :type base_url: String
-        :param base_url: The base url to build the final
+        :param base_url: The base URL to build the final
         url.
         :type method: String
         :param method: The method to be used in the url retrieval.
@@ -624,7 +624,7 @@ class HttpClient(object):
         :type url: String
         :param url: The complete url of the request.
         :type base_url: String
-        :param base_url: The base url of the request.
+        :param base_url: The base URL of the request.
         :rtype: HttpRequest
         :return: The sent request for the given parameters.
         """
@@ -1482,7 +1482,7 @@ class HttpRequest(object):
     """ The complete url """
 
     base_url = None
-    """ The base url """
+    """ The base URL """
 
     content_length = None
     """ The content length """
@@ -1528,7 +1528,7 @@ class HttpRequest(object):
         :type url: String
         :param url: The complete url.
         :type base_url: String
-        :param base_url: The base url.
+        :param base_url: The base URL.
         """
 
         self.host = host

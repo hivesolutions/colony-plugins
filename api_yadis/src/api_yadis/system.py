@@ -204,7 +204,7 @@ class YadisClient(object):
         Builds the url for the given url and parameters.
 
         :type base_url: String
-        :param base_url: The base url to be used.
+        :param base_url: The base URL to be used.
         :type parameters: Dictionary
         :param parameters: The parameters to be used for url construction.
         :rtype: String
