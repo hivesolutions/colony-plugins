@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2017 Hive Solutions Lda.
+# Copyright (c) 2008-2018 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -31,7 +31,7 @@ __revision__ = "$LastChangedRevision$"
 __date__ = "$LastChangedDate$"
 """ The last change date of the module """
 
-__copyright__ = "Copyright (c) 2008-2017 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2018 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -176,7 +176,7 @@ class ServiceHttpSystemInformation(colony.System):
         # sets the framework copyright item values
         framework_copyright_item["type"] = "simple"
         framework_copyright_item["columns"] = []
-        framework_copyright_item["value"] = "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2017 Hive Solutions Lda."
+        framework_copyright_item["value"] = "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2018 Hive Solutions Lda."
 
         # creates the system information framework item
         system_information_framework_item = {}
