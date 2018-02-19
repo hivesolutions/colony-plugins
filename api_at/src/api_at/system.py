@@ -83,7 +83,7 @@ class ApiAt(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
 
@@ -111,7 +111,7 @@ class ApiAt(colony.System):
 class AtClient(object):
     """
     The class that represents a at client connection.
-    Will be used to encapsulate the http request
+    Will be used to encapsulate the HTTP request
     around a locally usable api.
     """
 
@@ -123,7 +123,7 @@ class AtClient(object):
     """ The ssl plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     at_structure = None
     """ The at structure """
@@ -141,7 +141,7 @@ class AtClient(object):
     in the connection with the server """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(
         self,
@@ -162,7 +162,7 @@ class AtClient(object):
         :type ssl_plugin: SslPlugin
         :param ssl_plugin: The ssl plugin.
         :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :param client_http_plugin: The client HTTP plugin.
         :type at_structure: AtStructure
         :param at_structure: The at structure.
         :type test_mode: bool
@@ -409,7 +409,7 @@ class AtClient(object):
         # map instance to be used
         if not parameters: parameters = {}
 
-        # retrieves the http client and uses it to fetch the provided
+        # retrieves the HTTP client and uses it to fetch the provided
         # URL with the provided parameters retrieving the received
         # message and the contents and returning it to the caller method
         http_client = self._get_http_client()

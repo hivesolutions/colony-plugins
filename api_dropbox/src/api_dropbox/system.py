@@ -126,10 +126,10 @@ class ApiDropbox(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the json plugin
+        # retrieves the JSON plugin
         json_plugin = self.plugin.json_plugin
 
         # retrieves the various attributes to be used
@@ -153,7 +153,7 @@ class DropboxClient(object):
     """ The json plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     encoding = None
     """ The encoding used """
@@ -162,10 +162,10 @@ class DropboxClient(object):
     """ The request headers """
 
     oauth_structure = None
-    """ The oauth structure """
+    """ The OAuth structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(
         self,
