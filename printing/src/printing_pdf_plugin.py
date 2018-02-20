@@ -41,12 +41,12 @@ import colony
 
 class PrintingPdfPlugin(colony.Plugin):
     """
-    The main class for the Printing Pdf plugin.
+    The main class for the Printing PDF plugin.
     """
 
     id = "pt.hive.colony.plugins.printing.pdf"
-    name = "Printing Pdf"
-    description = "Printing Pdf Plugin"
+    name = "Printing PDF"
+    description = "Printing PDF Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
