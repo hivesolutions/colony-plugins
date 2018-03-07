@@ -107,7 +107,7 @@ DEFAULT_ENCODER = "utf-8"
 
 SCALE = reportlab.lib.units.cm
 """ The scale value to be used in the conversion
-of the centimeter value into the pdf point """
+of the centimeter value into the PDF point """
 
 TWIP_SCALE = 0.001763889
 """ The scale factor to convert a twip value into
@@ -153,19 +153,19 @@ class Visitor(object):
 
     canvas = None
     """ The reference to the canvas object to be used
-    for manipulating the various pdf elements """
+    for manipulating the various PDF elements """
 
     size = None
     """ The size of the document to be printed, this
-    is the width and height measured in pdf points """
+    is the width and height measured in PDF points """
 
     width = None
     """ The width of the document to be printed, this
-    is the width measured in pdf points """
+    is the width measured in PDF points """
 
     height = None
     """ The height of the document to be printed, this
-    is the height measured in pdf points """
+    is the height measured in PDF points """
 
     single = False
     """ If the document to be parsed is considered to be
@@ -174,7 +174,7 @@ class Visitor(object):
 
     current_position = None
     """ The current position in the document measured
-    as pdf points """
+    as PDF points """
 
     fonts = {}
     """ The map containing the various loaded fonts
@@ -268,7 +268,7 @@ class Visitor(object):
             self.add_context(node)
 
             # retrieves both the file (buffer) to be used for the output
-            # of the pdf file contents and the expected size for the pdf
+            # of the PDF file contents and the expected size for the PDF
             # document, in case no size is provided a default one is used
             file = self.printing_options["file"]
             size = self.printing_options.get("size", PAPER_SIZE)
@@ -296,7 +296,7 @@ class Visitor(object):
             self.size = (self.width, self.height)
 
             # creates the canvas object to be used as the primary
-            # entry point for operation on the pdf
+            # entry point for operation on the PDF
             self.canvas = reportlab.pdfgen.canvas.Canvas(
                 file,
                 pagesize = self.size
@@ -312,7 +312,7 @@ class Visitor(object):
         elif self.visit_index == 1:
             # saves the final canvas structure flushing the data to
             # the associated file object, this is considered the final
-            # operation for the creation of the pdf file
+            # operation for the creation of the PDF file
             self.canvas.save()
 
             # removes the context information
@@ -397,7 +397,7 @@ class Visitor(object):
             block_height = int(self.get_context("height", "0"))
 
             # converts the various block related values from their original
-            # twip based value into the pdf point value to be used in print
+            # twip based value into the PDF point value to be used in print
             position_x = int(position_x * TWIP_SCALE * SCALE)
             position_y = int(position_y * TWIP_SCALE * SCALE)
             block_width = int(block_width * TWIP_SCALE * SCALE)
@@ -431,7 +431,7 @@ class Visitor(object):
 
             # retrieves the proper suffix for the requested font style
             # and uses it to create the complete font name ensuring that
-            # it's currently loaded in the pdf context
+            # it's currently loaded in the PDF context
             suffix = FONT_SUFFIX_MAP.get(font_style, "")
             font_name_c = font_name + suffix
             self.ensure_font(font_name_c)
@@ -536,7 +536,7 @@ class Visitor(object):
             block_height = int(self.get_context("height", "0"))
 
             # converts the various block related values from their original
-            # twip based value into the pdf point value to be used in print
+            # twip based value into the PDF point value to be used in print
             position_x = int(position_x * TWIP_SCALE * SCALE)
             position_y = int(position_y * TWIP_SCALE * SCALE)
             block_width = int(block_width * TWIP_SCALE * SCALE)
@@ -649,7 +649,7 @@ class Visitor(object):
         account the provided offset value.
 
         :type y_position: float
-        :param y_position: The vertical position as a pdf point value
+        :param y_position: The vertical position as a PDF point value
         to be validated against the current page metrics.
         :type offset: float
         :param offset: The vertical offset to be applied to the new's
@@ -692,7 +692,7 @@ class Visitor(object):
     def ensure_font(self, font_name, file_path = None):
         """
         Ensures that the font is present in the current
-        canvas object, loading it into the pdf context
+        canvas object, loading it into the PDF context
         in case it's required.
 
         The provided file path may be an absolute path

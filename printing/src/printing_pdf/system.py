@@ -46,7 +46,7 @@ PRINTING_NAME = "pdf"
 
 class PrintingPdf(colony.System):
     """
-    The printing pdf class.
+    The printing PDF class.
     """
 
     def get_printing_name(self):
@@ -66,7 +66,7 @@ class PrintingPdf(colony.System):
         pass
 
     def print_printing_language(self, printing_document, printing_options = {}):
-        # creates the pdf printing visitor then sets the
+        # creates the PDF printing visitor then sets the
         # provided printing options in the visitor
         _visitor = visitor.Visitor()
         _visitor.set_printing_options(printing_options)

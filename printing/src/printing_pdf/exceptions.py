@@ -41,7 +41,7 @@ import colony
 
 class PrintingPdfException(colony.ColonyException):
     """
-    The printing pdf exception class.
+    The printing PDF exception class.
     """
 
     message = None
