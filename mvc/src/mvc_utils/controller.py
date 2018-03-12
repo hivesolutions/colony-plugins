@@ -2913,7 +2913,7 @@ def retrieve_template_file(
     relative_path = base_list[0]
 
     # processes the file path according to the locale, the resulting file path
-    # will be localized taking into account the exists (or not) of the file
+    # will be localized taking into account the existence (or not) of the file
     # according to the default file construction rules
     file_path = self._process_file_path_locale(
         file_path,
