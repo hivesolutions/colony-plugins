@@ -762,10 +762,9 @@ class HttpClientServiceHandler(object):
             # taking the request information into account
             service_configuration = self._get_service_configuration(request)
 
-            # processes the authentication for the request
+            # processes the authentication and the redirection information
+            # for the current request in handling
             self._process_authentication(request, service_configuration)
-
-            # processes the redirection information in the request
             self._process_redirection(request, service_configuration)
 
             # processes the handler part of the request and retrieves
@@ -862,16 +861,15 @@ class HttpClientServiceHandler(object):
             # sends the request to the client (response)
             self.send_request(service_connection, request)
         except exceptions.HttpRuntimeException as exception:
-            # prints a warning message message
+            # prints a warning message message and returns
+            # an invalid value as there was a problem handling
+            # the current request
             self.service_plugin.warning("Runtime problem: %s, while sending request" % colony.legacy.UNICODE(exception))
-
-            # returns false (connection closed)
             return False
         except exceptions.ServiceHttpException:
-            # prints a debug message
+            # prints a debug message and returns an invalid
+            # return value as the connection has been closed
             self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
-
-            # returns false (connection closed)
             return False
 
         # in case the connection is not meant to be kept alive
@@ -3083,7 +3081,8 @@ class HttpRequest(object):
         if not CACHE_CONTROL_VALUE in headers_ordered_map:
             headers_ordered_map[CACHE_CONTROL_VALUE] = DEFAULT_CACHE_CONTROL_VALUE
 
-        # sets the base response header values
+        # sets the base response header values, that are going to be present
+        # in every single response to be sent from this server
         headers_ordered_map[CONNECTION_VALUE] = self.connection_mode
         headers_ordered_map[DATE_VALUE] = current_date_time_formatted
         headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
