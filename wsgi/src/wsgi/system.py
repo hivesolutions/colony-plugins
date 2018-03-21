@@ -455,17 +455,20 @@ class WsgiRequest(object):
         elif content_type.startswith("multipart/form-data"):
             self.parse_post_multipart()
 
-    def __getattributes__(self, attribute_name):
+    def __getattributes__(self, attribute_name, default = None):
         """
         Retrieves the attribute from the attributes map.
 
         :type attribute_name: String
         :param attribute_name: The name of the attribute to retrieve.
+        :type default: Object
+        :param default: The default object value to be returned in
+        case the attribute is not found.
         :rtype: Object
         :return: The retrieved attribute.
         """
 
-        return self.attributes_map.get(attribute_name, None)
+        return self.attributes_map.get(attribute_name, default)
 
     def __setattributes__(self, attribute_name, attribute_value):
         """
@@ -860,8 +863,8 @@ class WsgiRequest(object):
 
         return colony.legacy.keys(self.attributes_map)
 
-    def get_attribute(self, attribute_name):
-        return self.__getattributes__(attribute_name)
+    def get_attribute(self, attribute_name, default = None):
+        return self.__getattributes__(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
         self.__setattributes__(attribute_name, attribute_value)

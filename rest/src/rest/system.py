@@ -1539,17 +1539,20 @@ class RestRequest(object):
 
         return self.request.get_attributes_list()
 
-    def get_attribute(self, attribute_name):
+    def get_attribute(self, attribute_name, default = None):
         """
         Retrieves the attribute for the given attribute name.
 
         :type attribute_name: String
         :param attribute_name: The name of the attribute to retrieve.
+        :type default: Object
+        :param default: The default value to be returned in
+        case no attribute has been found in the request.
         :rtype: Object
         :return: The value of the retrieved attribute.
         """
 
-        return self.request.get_attribute(attribute_name)
+        return self.request.get_attribute(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
         """
@@ -2215,8 +2218,10 @@ class RestRequest(object):
         cookie = Cookie(cookie_value)
         cookie.parse()
 
-        # retrieves the session id
-        session_id = cookie.get_attribute("session_id")
+        # retrieves the session id from the multiple possible
+        # values from the cookie
+        session_id = cookie.get_attribute("sid")
+        session_id = cookie.get_attribute("session_id", session_id)
 
         # in case there is no session id defined in the
         # current cookie, must return immediately
@@ -2245,7 +2250,9 @@ class RestRequest(object):
         if self._session: return
 
         # retrieves the session id attribute value from the request
-        session_id = self.request.get_attribute("session_id")
+        # using the multiple possible attribute values
+        session_id = self.request.get_attribute("sid")
+        session_id = self.request.get_attribute("session_id", session_id)
 
         # in case there is no valid session id
         # returns immediately
@@ -3025,15 +3032,20 @@ class Cookie(object):
         # of the cookie as per http specification
         return string_value
 
-    def get_attribute(self, attribute_name):
+    def get_attribute(self, attribute_name, default = None):
         """
         Retrieves an attribute using the attribute name.
 
         :type attribute_name: String
         :param attribute_name: The name of the attribute to retrieve.
+        :type default: Object
+        :param default: The default value to be returned in
+        case no attribute with the given name is found.
+        :rtype: Object
+        :return: The attribute value for the provided name.
         """
 
-        return self.attributes_map.get(attribute_name, None)
+        return self.attributes_map.get(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value = None):
         """

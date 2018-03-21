@@ -228,17 +228,20 @@ class Service(object):
         self.types_list = []
         self.attributes_map = {}
 
-    def get_attribute(self, attribute_name):
+    def get_attribute(self, attribute_name, default = None):
         """
         Retrieves an attribute from the attributes map.
 
         :type attribute_name: String
         :param attribute_name: The name of the attribute to retrieve.
+        :type default: Object
+        :param default: The default value to be returned in case an
+        attribute with the given name is not found.
         :rtype: Object
         :return: The retrieved attribute.
         """
 
-        return self.attributes_map.get(attribute_name, None)
+        return self.attributes_map.get(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
         """
