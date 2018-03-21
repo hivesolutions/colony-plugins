@@ -54,6 +54,33 @@ IDENTIFIER_STRING = "Colony Framework / %s (%s)"
 """ The template to be used for the string to be
 returned in diagnostic messages like errors """
 
+ALLOW_ORIGIN = "*"
+""" The default value to be used in the "Access-Control-Allow-Origin"
+header value, this should not be too restrictive """
+
+ALLOW_HEADERS = "*, X-Requested-With"
+""" The default value to be used in the "Access-Control-Allow-Headers"
+header value, this should not be too restrictive """
+
+CONTENT_SECURITY = "default-src * ws://* wss://* data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';"
+""" The default value to be used in the "Content-Security-Policy"
+header value, this should not be too restrictive """
+
+FRAME_OPTIONS = "SAMEORIGIN"
+""" The value to be as the default/original for the "X-Frame-Options"
+header, this should ensure that the same origin is always used when
+trying to embed a dynamic content into a web page """
+
+XSS_PROTECTION = "1; mode=block"
+""" Value to be used as the original one for the "X-XSS-Protection"
+header value, should provide a way of preventing XSS attach under the
+internet explorer browser """
+
+CONTENT_OPTIONS = "nosniff"
+""" Default "X-Content-Type-Options" header value to be used to prevent
+the sniffing of content type values, ensuring that the browser sticks to
+value of content type provided by the server """
+
 PATH_INFO_PREFIX = "/dynamic/rest"
 """ The prefix to be used at the start of the
 path info so that every request uri is inserted
@@ -88,7 +115,14 @@ class Wsgi(colony.System):
     ):
         # retrieves some of the configuration values that are
         # going to control the request handling behaviour
-        cors = colony.conf("WSGI_CORS", True, cast = bool)
+        secure_headers = colony.conf("WSGI_SECURE_HEADERS", True, cast = bool)
+        allow_origin = colony.conf("WSGI_CORS", ALLOW_ORIGIN)
+        allow_origin = colony.conf("WSGI_ALLOW_ORIGIN", allow_origin)
+        allow_headers = colony.conf("WSGI_ALLOW_HEADERS", ALLOW_HEADERS)
+        content_security = colony.conf("WSGI_CONTENT_SECURITY", CONTENT_SECURITY)
+        frame_options = colony.conf("WSGI_FRAME_OPTIONS", FRAME_OPTIONS)
+        xss_protection = colony.conf("WSGI_XSS_PROTECTION", XSS_PROTECTION)
+        content_options = colony.conf("WSGI_CONTENT_OPTIONS", CONTENT_OPTIONS)
 
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
@@ -179,11 +213,20 @@ class Wsgi(colony.System):
             ("Content-Length", str(content_length))
         )
 
-        # in case cross origin request is enabled the headers is set
-        # in accordance with the specification
-        if cors: response_headers.append(
-            ("Access-Control-Allow-Origin", "*")
-        )
+        # in case the secure headers flag is set, runs the setting operation
+        # over the complete set of secure headers
+        if secure_headers and allow_origin:
+            response_headers.append(("Access-Control-Allow-Origin", allow_origin))
+        if secure_headers and allow_headers:
+            response_headers.append(("Access-Control-Allow-Headers", allow_headers))
+        if secure_headers and content_security:
+            response_headers.append(("Content-Security-Policy", content_security))
+        if secure_headers and frame_options:
+            response_headers.append(("X-Frame-Options", frame_options))
+        if secure_headers and xss_protection:
+            response_headers.append(("X-XSS-Protection", xss_protection))
+        if secure_headers and content_options:
+            response_headers.append(("X-Content-Type-Options", content_options))
 
         # extends the current list of response headers with the list
         # retrieved from the request (headers out)
