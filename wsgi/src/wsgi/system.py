@@ -86,6 +86,10 @@ class Wsgi(colony.System):
         alias = None,
         rewrite = None
     ):
+        # retrieves some of the configuration values that are
+        # going to control the request handling behaviour
+        cors = colony.conf("WSGI_CORS", True, cast = bool)
+
         # retrieves the reference to the currently executing
         # plugin manager to be used further ahead
         plugin_manager = self.plugin.manager
@@ -174,6 +178,15 @@ class Wsgi(colony.System):
         if not content_length == -1: response_headers.append(
             ("Content-Length", str(content_length))
         )
+
+        # in case cross origin request is enabled the headers is set
+        # in accordance with the specification
+        if cors: response_headers.append(
+            ("Access-Control-Allow-Origin", "*")
+        )
+
+        # extends the current list of response headers with the list
+        # retrieved from the request (headers out)
         response_headers.extend(headers_out_l)
 
         # runs the initial start response method, part of the WSGI spec
@@ -258,16 +271,6 @@ class WsgiRequest(object):
     """ The service instance associated with the request
     this should be the owner of this request and any
     external object access should be done through this """
-
-    secure_headers = True
-    """ Flag that controls if the security related headers
-    should be set in the response (out headers) associated
-    with the current request """
-
-    allow_origin = "*"
-    """ The value to be used in the allow origin headers,
-    should be used carefully as security implication may
-    apply to this value """
 
     environ = {}
     """ The map containing the various environment
@@ -372,20 +375,12 @@ class WsgiRequest(object):
         content_type_charset = DEFAULT_CHARSET,
         prefix = None,
         alias = None,
-        rewrite = None,
-        secure_headers = True,
-        allow_origin = "*"
+        rewrite = None
     ):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
         # to access external resources
         self.service = service
-
-        # sets the security related attributes for the current
-        # request that is going to be handled, set these values
-        # carefully to avoid security flaws
-        self.secure_headers = secure_headers
-        self.allow_origin = allow_origin
 
         # retrieves the "base" value from the environment
         # map so that the basic request values may be constructed
@@ -543,8 +538,6 @@ class WsgiRequest(object):
 
         if not "Cache-Control" in self.headers_out:
             self.headers_out["Cache-Control"] = "no-cache, must-revalidate"
-        if self.secure_headers and self.allow_origin:
-            self.headers_out["Access-Control-Allow-Origin"] = self.allow_origin
 
     def parse_post_attributes(self):
         """
