@@ -46,9 +46,9 @@ import colony
 from . import exceptions
 
 POWERED_BY_STRING = "colony/%s (%s)"
-""" The string to be used in the powered by http
+""" The string to be used in the powered by HTTP
 header to be sent to the end used as a sign of
-the underlying infra-structure of wsgi """
+the underlying infra-structure of WSGI """
 
 IDENTIFIER_STRING = "Colony Framework / %s (%s)"
 """ The template to be used for the string to be
@@ -72,8 +72,8 @@ knows characters are able to be encoded """
 
 class Wsgi(colony.System):
     """
-    The wsgi class, responsible for the implementation
-    of the colony side of the wsgi specification.
+    The WSGI class, responsible for the implementation
+    of the colony side of the WSGI specification.
 
     :see: http://www.python.org/dev/peps/pep-0333/
     """
@@ -91,7 +91,7 @@ class Wsgi(colony.System):
         plugin_manager = self.plugin.manager
 
         # retrieves the reference to the rest plugin from the
-        # upper level wsgi plugin, this value may not be set
+        # upper level WSGI plugin, this value may not be set
         # in case there was a problem in the manager loading
         rest_plugin = self.plugin.rest_plugin
 
@@ -108,7 +108,7 @@ class Wsgi(colony.System):
         code = 200
         status = "OK"
 
-        # creates a new wsgi request object with the provided
+        # creates a new WSGI request object with the provided
         # environment map (this object should be able to "emulate"
         # the default request) then provides the rest plugin
         # with the request for handling, handling the resulting
@@ -176,7 +176,7 @@ class Wsgi(colony.System):
         )
         response_headers.extend(headers_out_l)
 
-        # runs the initial start response method, part of the wsgi spec
+        # runs the initial start response method, part of the WSGI spec
         # so that the proper initialization of the status code and the
         # headers is provided and the handling of the request started
         start_response(status, response_headers)
@@ -197,7 +197,7 @@ class Wsgi(colony.System):
         :param error: The exception object to be used in the creation
         of the message string to be returned.
         :type code: int
-        :param code: The http status code that should be included in
+        :param code: The HTTP status code that should be included in
         the created message default to internal error (500).
         :rtype: String
         :return: The constructed error message as a string that represents
@@ -247,10 +247,10 @@ class Wsgi(colony.System):
 
 class WsgiRequest(object):
     """
-    Represents an http request to be handled
-    in the wsgi context, this value may be
+    Represents an HTTP request to be handled
+    in the WSGI context, this value may be
     used as a compatibility mock to the internal
-    http request object and as such must comply
+    HTTP request object and as such must comply
     with the same interface (protocol).
     """
 
@@ -261,11 +261,11 @@ class WsgiRequest(object):
 
     environ = {}
     """ The map containing the various environment
-    variables defined in the wsgi specification as
+    variables defined in the WSGI specification as
     the input for processing a certain request """
 
     status_code = 200
-    """ The status code for the http request, this
+    """ The status code for the HTTP request, this
     is considered to be the valid (ok) status code
     by default (optimistic approach) """
 
@@ -275,7 +275,7 @@ class WsgiRequest(object):
     request """
 
     operation_type = None
-    """ The type of operation (http method) for the
+    """ The type of operation (HTTP method) for the
     current request, this value should be capitalized
     so that an uniform version is used """
 
@@ -387,7 +387,7 @@ class WsgiRequest(object):
 
         # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
-        # uri's may be used in wsgi, in case the "extra" prefix variable
+        # uri's may be used in WSGI, in case the "extra" prefix variable
         # is set an "extra" prefix is prepended to the path info
         if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info_r
         else: path_info_r = PATH_INFO_PREFIX + path_info_r
@@ -403,7 +403,7 @@ class WsgiRequest(object):
         path_info_o = self._shorten_path(path_info_o, rewrite)
 
         # sets the various default request values using the "calculated"
-        # wsgi based values as reference
+        # WSGI based values as reference
         self.environ = environ
         self.content_type_charset = content_type_charset
         self.operation_type = request_method
@@ -457,7 +457,7 @@ class WsgiRequest(object):
     def __setattributes__(self, attribute_name, attribute_value):
         """
         Sets the given attribute in the request. The referenced
-        attribute is the http request attribute and the setting takes
+        attribute is the HTTP request attribute and the setting takes
         into account a possible duplication of the values.
 
         :type attribute_name: String
@@ -599,7 +599,7 @@ class WsgiRequest(object):
         """
         Parses the multipart using the currently defined multipart value.
         The processing of multipart is done according the standard
-        specifications and rfqs.
+        specifications and RFQs.
 
         :see: http://en.wikipedia.org/wiki/MIME
         """
@@ -609,7 +609,7 @@ class WsgiRequest(object):
 
         # in case no content type is defined
         if not content_type:
-            # raises the http invalid multipart request exception
+            # raises the HTTP invalid multipart request exception
             raise exceptions.WsgiRuntimeException(
                 "no content type defined"
             )
@@ -683,8 +683,8 @@ class WsgiRequest(object):
     def get_header(self, header_name):
         # normalizes the header name into the uppercase
         # and underscore based version and then adds
-        # the http prefix so that it becomes standard to
-        # the wsgi specification, then uses it to retrieve
+        # the HTTP prefix so that it becomes standard to
+        # the WSGI specification, then uses it to retrieve
         # the value from the environment map
         header_name = header_name.upper()
         header_name = header_name.replace("-", "_")
@@ -1143,7 +1143,7 @@ class WsgiRequest(object):
     def _execute_background_thread(self, callable, retries = 0, timeout = 0.0, timestamp = None):
         """
         Simple implementation of the background execution of
-        a callable for the wsgi request using a thread.
+        a callable for the WSGI request using a thread.
 
         This method should be used as a fallback strategy as
         it represents a huge overhead in creation (thread
