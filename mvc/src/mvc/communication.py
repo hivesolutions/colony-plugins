@@ -261,7 +261,7 @@ class MvcCommunicationHandler(object):
         This methods should be able to abstract the caller method
         from the technical details of sending a message to a certain
         connection. The connection may assume different forms
-        (eg: websockets, long polling, apn, etc.).
+        (eg: websockets, long polling, APN, etc.).
 
         :type connection: CommunicationConnection
         :param connection: The communication connection to be used
@@ -1242,9 +1242,9 @@ class CommunicationConnection(object):
 
     def add_apn_handler(self, token_string, key_file = None, cert_file = None, sandbox = True):
         """
-        Adds an apn (apple push notifications) handler to the current
+        Adds an APN (Apple Push Notifications) handler to the current
         connection to be able to handle communication with ios/osx
-        devices using the apn protocol.
+        devices using the APN protocol.
 
         :type token_string: String
         :param token_string: The hexadecimal based string containing the
@@ -1260,7 +1260,7 @@ class CommunicationConnection(object):
         using the secure sandboxed approach (default) or the production model.
         """
 
-        apn_handler = handlers.ApnHandler(
+        apn_handler = handlers.APNHandler(
             token_string,
             key_file = key_file,
             cert_file = cert_file,

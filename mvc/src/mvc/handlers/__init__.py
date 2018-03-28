@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import apn
 from . import handler
 
-from .apn import ApnHandler
+from .apn import APNHandler
 from .handler import Handler

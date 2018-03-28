@@ -77,10 +77,10 @@ MESSAGE_TEMPLATE = "{\"aps\":{\"alert\":\"%s\",\"sound\":\"%s\",\"badge\":%d}}"
 """ The template to be used to create the message
 in case the json plugin is currently not available """
 
-class ApnHandler(handler.Handler):
+class APNHandler(handler.Handler):
     """
     The communication handler to be used for communications
-    with the apple push notifications (apn) service.
+    with the apple push notifications (APN) service.
 
     The communication with the service is done in a connection
     per message basis (expensive operation).
@@ -136,7 +136,7 @@ class ApnHandler(handler.Handler):
         # the socket from the sockets map for the tuple and in case
         # the retrieval is verified returns it
         key_tuple = (key_file, cert_file)
-        _socket = ApnHandler.sockets.get(key_tuple, None)
+        _socket = APNHandler.sockets.get(key_tuple, None)
         if _socket: return _socket
 
         # in case the ssl module is currently not available
@@ -160,7 +160,7 @@ class ApnHandler(handler.Handler):
 
         # stores the socket in the socket (cache) map to be used
         # in further request and then returns the socket
-        ApnHandler.sockets[key_tuple] = _socket
+        APNHandler.sockets[key_tuple] = _socket
         return _socket
 
     def handle(self, message):
