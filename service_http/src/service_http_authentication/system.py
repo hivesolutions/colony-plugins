@@ -52,7 +52,7 @@ ARGUMENTS_VALUE = "arguments"
 
 class ServiceHttpAuthentication(colony.System):
     """
-    The service http authentication (handler) class.
+    The service HTTP authentication (handler) class.
     """
 
     def get_handler_name(self):
@@ -67,7 +67,7 @@ class ServiceHttpAuthentication(colony.System):
 
     def handle_authentication(self, username, password, properties):
         """
-        Handles the given http authentication.
+        Handles the given HTTP authentication.
 
         :type username: String
         :param username: The username to be used in the authentication.
