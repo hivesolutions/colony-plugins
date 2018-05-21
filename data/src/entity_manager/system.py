@@ -548,10 +548,10 @@ class EntityManager(object):
         try:
             # opens the container file in zip mode for
             # reading all of its contents
-            zip_file = zipfile.ZipFile(file_path, "r")
+            zip_file = zipfile.ZipFile(file_path, mode = "r")
 
             # extracts the containers file contents into the
-            # temporary directory and then closes tht file
+            # temporary directory and then closes the file
             try: zip_file.extractall(directory_path)
             finally: zip_file.close()
 
@@ -623,7 +623,12 @@ class EntityManager(object):
             # opens the (target) file path in zip mode, this is going to
             # be the final container file containing the complete set
             # of entities (includes also the meta data information)
-            zip_file = zipfile.ZipFile(file_path, "w", compression = zipfile.ZIP_DEFLATED)
+            zip_file = zipfile.ZipFile(
+                file_path,
+                mode = "w",
+                compression = zipfile.ZIP_DEFLATED,
+                allowZip64 = True
+            )
 
             try:
                 # iterates over all the file names in the directory to add
