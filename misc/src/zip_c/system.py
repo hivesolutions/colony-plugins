@@ -364,13 +364,18 @@ class Zip(colony.System):
             # returns immediately
             return
 
-        # creates a new zip file for writing in deflated mode
-        zip_file = zipfile.ZipFile(zip_file_path, "w", compression = zipfile.ZIP_DEFLATED)
+        # creates a new zip file for writing in DEFALATED mode
+        zip_file = zipfile.ZipFile(
+            zip_file_path,
+            model = "w",
+            compression = zipfile.ZIP_DEFLATED,
+            allowZip64 = True
+        )
 
         try:
             # in case the file paths list does not exit
             if not file_path_list:
-                # retrieves the fule paths from the input directory
+                # retrieves the file paths from the input directory
                 # as the file path list
                 file_path_list = get_file_paths(input_directory)
 
