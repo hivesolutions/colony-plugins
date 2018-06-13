@@ -521,13 +521,13 @@ class Visitor(object):
         return self.peek_context(context_name)
 
     def add_context(self, node):
-        valid_attributes = [(value, getattr(node, value)) for value in dir(node) if value not in EXCLUSION_LIST]
+        valid_attributes = [(value, getattr(node, value)) for value in dir(node) if not value in EXCLUSION_LIST]
 
         for valid_attribute_name, valid_attribute_value in valid_attributes:
             self.push_context(valid_attribute_name, valid_attribute_value)
 
     def remove_context(self, node):
-        valid_attribute_names = [value for value in dir(node) if value not in EXCLUSION_LIST]
+        valid_attribute_names = [value for value in dir(node) if not value in EXCLUSION_LIST]
 
         for valid_attribute_name in valid_attribute_names:
             self.pop_context(valid_attribute_name)

@@ -1737,7 +1737,7 @@ class HttpRequest(object):
 
         # in case the port is defined and
         # is not a default port
-        if self.port and self.port not in DEFAULT_PORTS:
+        if self.port and not self.port in DEFAULT_PORTS:
             # sets the host appended with the port value
             host = self.host + ":" + str(self.port)
         # in case the port is not defined
