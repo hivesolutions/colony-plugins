@@ -347,7 +347,7 @@ class AtClient(object):
         digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
         digest_hash_encrypted_b64 = colony.legacy.str(digest_hash_encrypted_b64)
 
-        # defines the format of the soap envelope to be submitted to at
+        # defines the format of the SOAP envelope to be submitted to at
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
             <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
@@ -366,7 +366,7 @@ class AtClient(object):
                 </S:Body>
             </S:Envelope>"""
 
-        # applies the attributes to the soap envelope
+        # applies the attributes to the SOAP envelope
         message = envelope % (
             username,
             digest_hash_encrypted_b64,
@@ -429,7 +429,7 @@ class AtClient(object):
         document identifier containing it.
 
         The provided xml data should be compliant with
-        the pre-defined at soap response.
+        the pre-defined at SOAP response.
 
         :type data: String
         :param data: The string containing the xml data
