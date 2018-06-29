@@ -154,11 +154,14 @@ FILTERS = dict(
     default = lambda v, t, default = "", boolean = False:\
         default if boolean and not v or v == None else v,
     double = lambda v, t: v if v == None else v * 2,
+    append = lambda v, t, extra: v + extra,
+    prepend = lambda v, t, extra: extra + v,
     format = lambda v, t, format, default = None:\
         default if v == None else format % v,
     timestamp = lambda v, t, default = "":\
         str(calendar.timegm(v.utctimetuple())) if v else default,
-    range = lambda v, t: range(int(v))
+    range = lambda v, t: range(int(v)),
+    locale = lambda v, t: t._resolve_locale(v)
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
@@ -1017,9 +1020,10 @@ class Visitor(object):
 
         # iterates over the complete set of filter definition to
         # resolve the final value according to the filter
-        for filter in filters: value = self.resolve_many(
-            filter, value, self, global_map = self.filters
-        )
+        for filter in filters:
+            value = self.resolve_many(
+                filter, value, self, global_map = self.filters
+            )
 
         # returns the processed value to the caller method, this is the
         # considered to be the value for the requested attribute

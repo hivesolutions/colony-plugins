@@ -685,11 +685,11 @@ class TemplateFile(object):
         """
         Custom format operation that takes a template value and
         a variable set of arguments and formats it according to
-        the c definition of string templating.
+        the C definition of string templating.
 
         :type template: String
         :param template: The template string to be used in the
-        c like format operation.
+        C like format operation.
         :rtype: String
         :returns: The "final" formated string value.
         """
