@@ -25,7 +25,7 @@ install:
   - pip install colony
 env:
   global:
-    - HTTPBIN=httpbin.stage.hive.pt
+    - HTTPBIN=httpbin.bemisc.com
     - REPO_URL_COLONY="https://colony.bemisc.com/"
     - REPO_USERNAME=root
     - secure: l7gFGuBD1TmMF7nCnkDcsm6LCbOt5s7S6cO6YdXD35HebULtxWbbxNGPehxcZ03AbBX/arLFeowHqNgd9gPnWenzErkUGVu3uF1Q5St46Tb3p9Ga3obnsJPh3bBw8YWElzp6unZy+XpSpqsxTTPqAPC6ZhVAzKNGfcXSeGgAPLE=
