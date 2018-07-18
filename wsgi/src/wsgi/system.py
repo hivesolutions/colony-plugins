@@ -62,6 +62,10 @@ ALLOW_HEADERS = "*, X-Requested-With"
 """ The default value to be used in the "Access-Control-Allow-Headers"
 header value, this should not be too restrictive """
 
+ALLOW_METHODS = "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS"
+""" The default value to be used in the "Access-Control-Allow-Methods"
+header value, this should not be too restrictive """
+
 CONTENT_SECURITY = "default-src * ws://* wss://* data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';"
 """ The default value to be used in the "Content-Security-Policy"
 header value, this should not be too restrictive """
@@ -119,6 +123,7 @@ class Wsgi(colony.System):
         allow_origin = colony.conf("WSGI_CORS", ALLOW_ORIGIN)
         allow_origin = colony.conf("WSGI_ALLOW_ORIGIN", allow_origin)
         allow_headers = colony.conf("WSGI_ALLOW_HEADERS", ALLOW_HEADERS)
+        allow_methods = colony.conf("WSGI_ALLOW_METHODS", ALLOW_METHODS)
         content_security = colony.conf("WSGI_CONTENT_SECURITY", CONTENT_SECURITY)
         frame_options = colony.conf("WSGI_FRAME_OPTIONS", FRAME_OPTIONS)
         xss_protection = colony.conf("WSGI_XSS_PROTECTION", XSS_PROTECTION)
@@ -219,6 +224,8 @@ class Wsgi(colony.System):
             response_headers.append(("Access-Control-Allow-Origin", allow_origin))
         if secure_headers and allow_headers:
             response_headers.append(("Access-Control-Allow-Headers", allow_headers))
+        if secure_headers and allow_methods:
+            response_headers.append(("Access-Control-Allow-Methods", allow_methods))
         if secure_headers and content_security:
             response_headers.append(("Content-Security-Policy", content_security))
         if secure_headers and frame_options:
