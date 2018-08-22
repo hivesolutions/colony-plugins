@@ -124,7 +124,7 @@ SQL_TYPES_MAP = dict(
     metadata = "text"
 )
 """ The map containing the association of the entity types with
-the corresponding sql types to be used during runtime mapping """
+the corresponding SQL types to be used during runtime mapping """
 
 if not isinstance(__builtins__, dict):
     __builtins__ = __builtins__.__dict__
@@ -313,7 +313,7 @@ class EntityManager(object):
 
     types_map = {}
     """ The map containing the associations between the standard
-    entity manager types and the corresponding sql data types that
+    entity manager types and the corresponding SQL data types that
     should be resolved under the current entity manager """
 
     connection_parameters = {}
@@ -359,7 +359,7 @@ class EntityManager(object):
         """
         Applies the "custom" engine specific data types to the
         current data types map. This allows the engines to change
-        the pre-defined sql types to better adapt them to their
+        the pre-defined SQL types to better adapt them to their
         internal specifics.
 
         This method does nothing in case the current engine does
@@ -1387,7 +1387,7 @@ class EntityManager(object):
             target_id = target_class.get_id()
             target_id_value = getattr(target_class, target_id)
 
-            # retrieves the associated sql (data) type for the type
+            # retrieves the associated SQL (data) type for the type
             # of the (target) table id attribute (foreign key)
             target_type = self.types_map[target_id_value.get("type", "integer")]
 
@@ -1798,7 +1798,7 @@ class EntityManager(object):
         if not entity_class.is_ready(): return
 
         # generates the create definition query, general
-        # sql query for the current context and then
+        # SQL query for the current context and then
         # executes it in the appropriate engine, the methods
         # also creates a series of index queries that are used
         # to create indexes in a series of field for fast access
@@ -1812,7 +1812,7 @@ class EntityManager(object):
         if not entity_class.is_ready(): return
 
         # generates the delete definition query, general
-        # sql query for the current context and then
+        # SQL query for the current context and then
         # executes it in the appropriate engine
         query = self._delete_definition_query(entity_class)
         self.execute_query(query)
@@ -2804,7 +2804,7 @@ class EntityManager(object):
 
         # unsets the flag that controls if the id
         # attribute was "already" set in the create
-        # sql query string value
+        # SQL query string value
         id_set = False
 
         # sets the is first flag for the query
@@ -2852,7 +2852,7 @@ class EntityManager(object):
                 table_id = target_class.get_id()
                 table_id_value = getattr(target_class, table_id)
 
-                # retrieves the associated sql (data) type for the type
+                # retrieves the associated SQL (data) type for the type
                 # of the (target) table id attribute (foreign key)
                 sql_type = self.types_map[table_id_value.get("type", "integer")]
 
@@ -2862,7 +2862,7 @@ class EntityManager(object):
                 index_queries.append(index_query)
             # otherwise it's a "normal" attribute
             else:
-                # retrieves the associated sql (data) type for the type
+                # retrieves the associated SQL (data) type for the type
                 # of the current item value
                 sql_type = self.types_map[item_value.get("type", "integer")]
 
@@ -2872,7 +2872,7 @@ class EntityManager(object):
 
             # writes the item information into the current query
             # buffer, this information includes the field name,
-            # sql data type and the primary reference (in case it's
+            # SQL data type and the primary reference (in case it's
             # necessary)
             query_buffer.write(item_name)
             query_buffer.write(" ")
@@ -2915,13 +2915,13 @@ class EntityManager(object):
             table_id = entity_class.get_id()
             table_id_value = getattr(entity_class, table_id)
 
-            # retrieves the associated sql (data) type for the type
+            # retrieves the associated SQL (data) type for the type
             # of the table id (item) value
             table_id_type = self.types_map[table_id_value.get("type", "integer")]
 
             # writes the upper table id information into the current query
             # buffer, this information includes the table id,
-            # sql data type and the primary reference (key)
+            # SQL data type and the primary reference (key)
             query_buffer.write(table_id)
             query_buffer.write(" ")
             query_buffer.write(table_id_type)
@@ -3137,7 +3137,7 @@ class EntityManager(object):
                 # validation)
                 entity.validate_value(field_name, field_value, force = True)
 
-                # retrieves the sql value for the field and writes
+                # retrieves the SQL value for the field and writes
                 # it into the save query
                 sql_value = entity.get_sql_value(field_name, field_value, force = True)
                 query_buffer.write(sql_value)
@@ -3199,7 +3199,7 @@ class EntityManager(object):
         entity.validate_value(table_id, table_id_value, force = True)
 
         # converts the table id value into the appropriate
-        # sql representation for query usage (casting)
+        # SQL representation for query usage (casting)
         table_id_sql_value = entity.get_sql_value(table_id, table_id_value, force = True)
 
         # retrieves the map that associates an entity
@@ -3303,7 +3303,7 @@ class EntityManager(object):
                 entity.validate_value(field_name, field_value, force = True)
 
                 # converts the current field value into the appropriate
-                # sql representation for query usage (casting)
+                # SQL representation for query usage (casting)
                 field_sql_value = entity.get_sql_value(field_name, field_value, force = True)
 
                 # sets the field name associated with the new field
@@ -3359,9 +3359,9 @@ class EntityManager(object):
         # validation)
         entity.validate_value(table_id)
 
-        # retrieves the sql value for the table id from
+        # retrieves the SQL value for the table id from
         # the entity (this is the id value converted into
-        # the proper sql representation)
+        # the proper SQL representation)
         id_sql_value = entity.get_sql_value(table_id)
 
         # creates the list to hold the set of queries
@@ -3434,9 +3434,9 @@ class EntityManager(object):
             # validation)
             entity.validate_value(table_id)
 
-            # retrieves the sql value for the table id from
+            # retrieves the SQL value for the table id from
             # the entity (this is the id value converted into
-            # the proper sql representation)
+            # the proper SQL representation)
             id_sql_value = entity.get_sql_value(table_id)
 
             # iterates over all the indirect relations to create the insert
@@ -3502,7 +3502,7 @@ class EntityManager(object):
                     _relation_value and _relation_value.validate_value(target_id)
                     _relation_value and _relation_value.validate_set(target_id)
 
-                    # retrieves the sql value for the target id from the relation value
+                    # retrieves the SQL value for the target id from the relation value
                     # (entity) sets the value as null in case the relation value is not defined
                     relation_id_sql_value = _relation_value and _relation_value.get_sql_value(target_id) or "null"
 
@@ -3528,9 +3528,9 @@ class EntityManager(object):
             # validation)
             entity.validate_value(table_id)
 
-            # retrieves the sql value for the table id from
+            # retrieves the SQL value for the table id from
             # the entity (this is the id value converted into
-            # the proper sql representation)
+            # the proper SQL representation)
             id_sql_value = entity.get_sql_value(table_id)
 
             # iterates over all the direct relations to create the update
@@ -3605,7 +3605,7 @@ class EntityManager(object):
                     _relation_value and _relation_value.validate_value(target_id)
                     _relation_value and _relation_value.validate_set(target_id)
 
-                    # retrieves the sql value for the target id from the relation value
+                    # retrieves the SQL value for the target id from the relation value
                     # (entity) sets the value as null in case the relation value is not defined
                     relation_id_sql_value = _relation_value and _relation_value.get_sql_value(target_id) or "null"
 
@@ -3662,7 +3662,7 @@ class EntityManager(object):
                 is_first = not is_first and query_buffer.write(", ")
 
                 # converts the current id value into the appropriate
-                # sql representation and write it into the select query
+                # SQL representation and write it into the select query
                 _id_sql_value = entity_class._get_sql_value(table_id, _id_value)
                 query_buffer.write(_id_sql_value)
 
@@ -3676,7 +3676,7 @@ class EntityManager(object):
             # the verify query
             query_buffer.write(" = ")
 
-            # converts the id value into the appropriate sql
+            # converts the id value into the appropriate SQL
             # representation and write it into the select query
             id_sql_value = entity_class._get_sql_value(table_id, id_value)
             query_buffer.write(id_sql_value)
@@ -4710,8 +4710,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name + (is_post and " + 0" or "")
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write(field_name + " = " + filter_field_sql_value)
 
@@ -4755,8 +4755,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write("not " + field_name + " = " + filter_field_sql_value)
 
@@ -4804,8 +4804,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # creates the sql value for the filter field to be used in the in filter
-            # this value is a list of values casted with the proper sql value
+            # creates the SQL value for the filter field to be used in the in filter
+            # this value is a list of values casted with the proper SQL value
             filter_field_sql_value_list = [entity_class._get_sql_value(filter_field_name, value) for value in filter_field_value]
             filter_field_sql_value = "(" + ", ".join(filter_field_sql_value_list) + ")"
 
@@ -4857,8 +4857,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # creates the sql value for the filter field to be used in the in filter
-            # this value is a list of values casted with the proper sql value
+            # creates the SQL value for the filter field to be used in the in filter
+            # this value is a list of values casted with the proper SQL value
             filter_field_sql_value_list = [entity_class._get_sql_value(filter_field_name, value) for value in filter_field_value]
             filter_field_sql_value = "(" + ", ".join(filter_field_sql_value_list) + ")"
 
@@ -5035,8 +5035,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write(field_name + " > " + filter_field_sql_value)
 
@@ -5080,8 +5080,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write(field_name + " >= " + filter_field_sql_value)
 
@@ -5125,8 +5125,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write(field_name + " < " + filter_field_sql_value)
 
@@ -5170,8 +5170,8 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # converts the filter field value into an appropriate sql representation
-            # and writes the filter into the sql query value
+            # converts the filter field value into an appropriate SQL representation
+            # and writes the filter into the SQL query value
             filter_field_sql_value = entity_class._get_sql_value(filter_field_name, filter_field_value)
             query_buffer.write(field_name + " <= " + filter_field_sql_value)
 
@@ -5216,7 +5216,7 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name + (is_post and " + 0" or "")
 
-            # writes the filter into the sql query value (the field name
+            # writes the filter into the SQL query value (the field name
             # is validated as null)
             query_buffer.write(field_name + " is null")
 
@@ -5256,7 +5256,7 @@ class EntityManager(object):
             _table_name = self._process_table_name(entity_class, table_name, filter_field_name)
             field_name = _table_name + "." + filter_field_name
 
-            # writes the filter into the sql query value (the field name
+            # writes the filter into the SQL query value (the field name
             # is validated as null)
             query_buffer.write(field_name + " is not null")
 
@@ -5335,7 +5335,7 @@ class EntityManager(object):
             base_timestamp = str(base_timestamp)
             top_timestamp = str(top_timestamp)
 
-            # creates the sql query using the float base interval range to constrain
+            # creates the SQL query using the float base interval range to constrain
             # the domain of the result to a certain day range
             query_buffer.write("(" + field_name + " > " + base_timestamp + " and " + field_name + " < " + top_timestamp + ")")
 
@@ -5500,7 +5500,7 @@ class EntityManager(object):
         table_id = entity_class.get_id()
 
         # retrieves the database encoding, this is going to
-        # be used in the value conversion from sql
+        # be used in the value conversion from SQL
         database_encoding = self.engine.get_database_encoding()
 
         # iterates over all the results present in the
@@ -5731,9 +5731,9 @@ class EntityManager(object):
                     # the current item
                     continue
 
-                # sets the item value (sql value) in the entity, converting
+                # sets the item value (SQL value) in the entity, converting
                 # it into the correct representation before setting it into
-                # the entity, sql conversion (this is proper setting of value)
+                # the entity, SQL conversion (this is proper setting of value)
                 _entity.set_sql_value(attribute_name, item_value, encoding = database_encoding)
 
         # in case the sort flag is not set no need to
@@ -5792,7 +5792,7 @@ class EntityManager(object):
         _visited_map = {}
 
         # retrieves the database encoding, this is going to
-        # be used in the value conversion from sql
+        # be used in the value conversion from SQL
         database_encoding = self.engine.get_database_encoding()
 
         # "saves" the id provider function for latter usage, this
@@ -7329,12 +7329,12 @@ class EntityManager(object):
 
     def _escape_text(self, text_value, escape_slash = False, escape_double_quotes = False):
         """
-        Escapes the text value in the sql context.
+        Escapes the text value in the SQL context.
         This escaping process is important even for
         security reasons.
 
         This escaping process avoids many of the existing
-        sql injection procedures.
+        SQL injection procedures.
 
         :type text_value: String
         :param text_value: The text value to be escaped.
@@ -7343,7 +7343,7 @@ class EntityManager(object):
         :type escape_double_quotes: bool
         :param escape_double_quotes: If the double quotes should be escaped.
         :rtype: String
-        :return: The escaped text value, according to the sql
+        :return: The escaped text value, according to the SQL
         standard specification.
         """
 
