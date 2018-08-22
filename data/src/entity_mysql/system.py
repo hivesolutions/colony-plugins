@@ -283,7 +283,7 @@ class MysqlEngine(object):
         id_value_valid and entity_class._validate_value(table_id, id_value)
 
         # converts the table id value into the appropriate
-        # sql representation for query usage (casting) this
+        # SQL representation for query usage (casting) this
         # is only done in case the id value is considered valid
         id_sql_value = id_value_valid and entity_class._get_sql_value(table_id, id_value) or None
 
@@ -383,7 +383,7 @@ class MysqlEngine(object):
             # executed under the mysql engine (for debugging purposes)
             self.mysql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
-            # in case the current connections requests that the sql string
+            # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
             if connection._show_sql: self.mysql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
@@ -406,7 +406,7 @@ class MysqlEngine(object):
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow: self.mysql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
-            # triggers a notification about the sql query execution that
+            # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
             colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
         except MySQLdb.OperationalError as exception:

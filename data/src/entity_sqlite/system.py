@@ -260,7 +260,7 @@ class SqliteEngine(object):
             # executed under the pgsql engine (for debugging purposes)
             self.sqlite_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
-            # in case the current connections requests that the sql string
+            # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
             if connection._show_sql: self.sqlite_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
@@ -283,7 +283,7 @@ class SqliteEngine(object):
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow: self.sqlite_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
-            # triggers a notification about the sql query execution that
+            # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
             colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
         except:

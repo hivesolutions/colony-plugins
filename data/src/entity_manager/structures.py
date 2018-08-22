@@ -3633,11 +3633,11 @@ class EntityClass(object):
         # uses the normal value retriever from the entity
         if value == None and not force: value = self.get_value(name)
 
-        # retrieves the sql value for the name and value
+        # retrieves the SQL value for the name and value
         # using the class method (forwarding)
         sql_value = self.__class__._get_sql_value(name, value)
 
-        # returns the converted sql value
+        # returns the converted SQL value
         return sql_value
 
     def set_sql_value(self, name, sql_value, encoding = None):
@@ -3982,8 +3982,8 @@ class EntityClass(object):
     def _get_sql_value(cls, name, value):
         # in case the name is a reserved one, it's considered
         # to be a special case and the value (must be previously
-        # casted according to the sql syntax) is returned as the
-        # valid sql representation
+        # casted according to the SQL syntax) is returned as the
+        # valid SQL representation
         if name in RESERVED_NAMES: return str(value)
 
         # retrieves the (attribute) data type for
@@ -4467,12 +4467,12 @@ class EntityClass(object):
     @classmethod
     def _escape_text(cls, text_value, escape_slash = False, escape_double_quotes = False):
         """
-        Escapes the text value in the sql context.
+        Escapes the text value in the SQL context.
         This escaping process is important even for
         security reasons.
 
         This escaping process avoids many of the existing
-        sql injection procedures.
+        SQL injection procedures.
 
         :type text_value: String
         :param text_value: The text value to be escaped.
@@ -4481,12 +4481,12 @@ class EntityClass(object):
         :type escape_double_quotes: bool
         :param escape_double_quotes: If the double quotes should be escaped.
         :rtype: String
-        :return: The escaped text value, according to the sql
+        :return: The escaped text value, according to the SQL
         standard specification.
         """
 
         # escapes the quote values, repeats them
-        # twice (normal sql escaping sequence)
+        # twice (normal SQL escaping sequence)
         escaped_text_value = text_value.replace("'", "''")
 
         # in case the escape slash flag is set
