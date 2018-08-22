@@ -381,6 +381,10 @@ def apply(self, map, permissive = False):
     defined in the respective entity models.
     """
 
+    # tries to call the pre apply method, in order to notify the
+    # current instance about the starting of the apply procedure
+    if hasattr(self, "pre_apply"): self.pre_apply()
+
     # detaches the current model, to avoid any possible
     # undesired loading of relations, this could cause
     # an infinite loop in latter persistence
@@ -528,10 +532,22 @@ def apply(self, map, permissive = False):
             else:
                 # sets the attribute in the current model
                 self._set_attribute(item_name, item_value)
+    except BaseException as exception:
+        # tries to call the fail apply method, in order to notify the
+        # current instance about the failure of the apply procedure
+        if hasattr(self, "fail_apply"): self.fail_apply(exception)
+
+        # re-raises the exception back in the stack so that it can
+        # be properly handled by the upper layers
+        raise
     finally:
         # attaches the entity back to the data source
         # for correct persistence structures
         self.attach(force = False)
+
+    # tries to call the post apply method, in order to notify the
+    # current instance about the finishing of the apply procedure
+    if hasattr(self, "post_apply"): self.post_apply()
 
 def get_system(self):
     """
