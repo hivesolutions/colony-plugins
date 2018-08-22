@@ -3996,9 +3996,14 @@ class EntityClass(object):
         # null string immediately
         if value == None: return "null"
 
-        # in case the attribute data type is text (or string),
+        # in case the attribute data type is text,
         # normal separators must be applied
         if data_type in ("text", "string", "data"):
+            # for the "special" string data type a truncation operation
+            # must be performed in case it overflows the maximum value
+            # allowed by the underlying SQL data source
+            if data_type == "string" and len(value) > 255: value = value[:255]
+
             # retrieves the escaped attribute value and
             # returns the escaped attribute value with the
             # string separators
@@ -4281,7 +4286,7 @@ class EntityClass(object):
         :param value: The value of the attribute to be validated
         for correct type in the current entity class.
         :type strict: bool
-        :param stroct: If the strict mode of validation should be
+        :param strict: If the strict mode of validation should be
         applied meaning more validations.
         """
 
