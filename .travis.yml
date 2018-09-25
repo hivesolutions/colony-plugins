@@ -2,10 +2,7 @@ sudo: false
 dist: trusty
 language: python
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -14,16 +11,13 @@ python:
   - "pypy-5.4.1"
   - "pypy-5.6.0"
   - "pypy-5.7.1"
-  - "pypy3-2.4.0"
   - "pypy2.7-5.8.0"
   - "pypy3.5-5.8.0"
 before_install:
-  - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]] && [[ $TRAVIS_PYTHON_VERSION != "3.3" ]] && [[ $TRAVIS_PYTHON_VERSION != "pypy3-2.4.0" ]]; then pip install --upgrade pip setuptools; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.2" ]]; then pip install --upgrade "pip<8.0" "setuptools<20.0"; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.3" ]] || [[ $TRAVIS_PYTHON_VERSION == "pypy3-2.4.0" ]]; then pip install --upgrade "pip<10.0" "setuptools<24.0"; fi
+  - pip install --upgrade pip setuptools
 install:
   - pip install -r requirements.txt
-  - pip install "pycparser<2.19" coveralls
+  - pip install coveralls
   - pip install colony
 env:
   global:
@@ -31,7 +25,7 @@ env:
     - REPO_URL_COLONY="https://colony.bemisc.com/"
     - REPO_USERNAME=root
     - secure: l7gFGuBD1TmMF7nCnkDcsm6LCbOt5s7S6cO6YdXD35HebULtxWbbxNGPehxcZ03AbBX/arLFeowHqNgd9gPnWenzErkUGVu3uF1Q5St46Tb3p9Ga3obnsJPh3bBw8YWElzp6unZy+XpSpqsxTTPqAPC6ZhVAzKNGfcXSeGgAPLE=
-script: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test; else PLUGIN_PATH="./*/src;./*/*src" python setup.py test; fi
+script: PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then coveralls; fi
+  - coveralls
   - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then cpm upload "./*/*/*_plugin.py" colony; fi
