@@ -2891,7 +2891,11 @@ class RedisSession(RestSession):
         session = cls(*args, **kwargs)
         remaining = session.get_remaining()
         session_s = colony.legacy.cPickle.dumps(session, protocol = 2)
-        cls.REDIS.setex(session.session_id, session_s, int(remaining))
+        cls.REDIS.setex(
+            session.session_id,
+            value = session_s,
+            time = int(remaining)
+        )
         return session
 
     @classmethod
@@ -2915,7 +2919,11 @@ class RedisSession(RestSession):
         self.mark(dirty = False)
         remaining = self.get_remaining()
         session_s = colony.legacy.cPickle.dumps(self, protocol = 2)
-        cls.REDIS.setex(self.session_id, session_s, int(remaining))
+        cls.REDIS.setex(
+            self.session_id,
+            value = session_s,
+            time = int(remaining)
+        )
         if not cls.BGSAVE: return
         try: cls.REDIS.bgsave()
         except: pass
