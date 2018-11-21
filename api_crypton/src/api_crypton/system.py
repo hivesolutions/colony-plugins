@@ -52,15 +52,15 @@ POST_METHOD_VALUE = "POST"
 
 class ApiCrypton(colony.System):
     """
-    The api crypton class.
+    The API crypton class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: CryptonClient
@@ -131,7 +131,7 @@ class CryptonClient(object):
         :type base_url: String
         :param base_url: The base URL of the crypton provider.
         :type api_key: String
-        :param api_key: The key to be used to access the remote api.
+        :param api_key: The key to be used to access the remote API.
         :type key_name: String
         :param key_name: The name of the key to be used.
         :type set_structure: bool
@@ -292,7 +292,7 @@ class CryptonClient(object):
         the base parameters.
         """
 
-        # sets the api key
+        # sets the API key
         parameters["api_key"] = self.crypton_structure.api_key
 
         # sets the key name
@@ -391,7 +391,7 @@ class CryptonStructure(object):
         :type base_url: String
         :param base_url: The base URL of the crypton provider.
         :type api_key: String
-        :param api_key: The key to be used to access the remote api.
+        :param api_key: The key to be used to access the remote API.
         :type key_name: String
         :param key_name: The name of the key to be used.
         """
@@ -422,20 +422,20 @@ class CryptonStructure(object):
 
     def get_api_key(self):
         """
-        Retrieves the api key.
+        Retrieves the API key.
 
         :rtype: String
-        :return: The api key.
+        :return: The API key.
         """
 
         return self.api_key
 
     def set_api_key(self, api_key):
         """
-        Sets the api key.
+        Sets the API key.
 
         :type api_key: String
-        :param api_key: The api key.
+        :param api_key: The API key.
         """
 
         self.api_key = api_key

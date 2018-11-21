@@ -41,7 +41,7 @@ import colony
 
 class ApiFacebookException(colony.ColonyException):
     """
-    The api facebook exception class.
+    The API Facebook exception class.
     """
 
     message = None
@@ -49,7 +49,7 @@ class ApiFacebookException(colony.ColonyException):
 
 class FacebookApiError(ApiFacebookException):
     """
-    The facebook api error class.
+    The Facebook API error class.
     """
 
     def __init__(self, message):
@@ -71,4 +71,4 @@ class FacebookApiError(ApiFacebookException):
         :return: The string representation of the class.
         """
 
-        return "Facebook api error - %s" % self.message
+        return "Facebook API error - %s" % self.message

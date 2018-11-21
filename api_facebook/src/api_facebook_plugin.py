@@ -45,8 +45,8 @@ class ApiFacebookPlugin(colony.Plugin):
     """
 
     id = "pt.hive.colony.plugins.api.facebook"
-    name = "Facebook Api"
-    description = "The plugin that offers the facebook api"
+    name = "Facebook API"
+    description = "The plugin that offers the Facebook API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -70,10 +70,10 @@ class ApiFacebookPlugin(colony.Plugin):
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :rtype: FacebookClient
         :return: The created client.
         """

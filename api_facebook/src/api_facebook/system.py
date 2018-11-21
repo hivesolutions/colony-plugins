@@ -56,13 +56,13 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
 JSON_FORMAT_VALUE = "json"
-""" The json format value """
+""" The JSON format value """
 
 DEFAULT_FORMAT_VALUE = JSON_FORMAT_VALUE
 """ The default format value """
 
 DEFAULT_API_VERSION = "1.0"
-""" The default facebook api version """
+""" The default Facebook API version """
 
 DEFAULT_CONSUMER_ID = None
 """ The default consumer id """
@@ -95,17 +95,17 @@ BASE_REST_GRAPH_SECURE_URL = "https://graph.facebook.com/"
 """ The base rest graph secure URL """
 
 FACEBOOK_CLIENT_TYPE_REST = "rest"
-""" The rest facebook client type """
+""" The rest Facebook client type """
 
 FACEBOOK_CLIENT_TYPE_OAUTH = "oauth"
-""" The oauth facebook client type """
+""" The oauth Facebook client type """
 
 DEFAULT_FACEBOOK_CLIENT_TYPE = FACEBOOK_CLIENT_TYPE_REST
-""" The default facebook client type is rest """
+""" The default Facebook client type is rest """
 
 class ApiFacebook(colony.System):
     """
-    The api facebook class.
+    The API Facebook class.
     """
 
     facebook_client_map = {}
@@ -121,28 +121,28 @@ class ApiFacebook(colony.System):
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: FacebookClient
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the json plugin
+        # retrieves the JSON plugin
         json_plugin = self.plugin.json_plugin
 
         # retrieves the various attributes to be used in the
-        # construction of the facebook client
+        # construction of the Facebook client
         facebook_structure = api_attributes.get("facebook_structure", None)
         facebook_client_type = api_attributes.get("facebook_client_type", DEFAULT_FACEBOOK_CLIENT_TYPE)
 
-        # retrieves the facebook client (class) for the "requested" type
+        # retrieves the Facebook client (class) for the "requested" type
         facebook_client_class = self.facebook_client_map.get(facebook_client_type, FacebookClient)
 
         # creates a new client with the given options, opens
@@ -154,31 +154,31 @@ class ApiFacebook(colony.System):
 
 class FacebookClient(object):
     """
-    The class that represents a facebook client connection.
+    The class that represents a Facebook client connection.
     """
 
     json_plugin = None
-    """ The json plugin """
+    """ The JSON plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     facebook_structure = None
-    """ The facebook structure """
+    """ The Facebook structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
         """
         Constructor of the class.
 
         :type json_plugin: JsonPlugin
-        :param json_plugin: The json plugin.
+        :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :param client_http_plugin: The client HTTP plugin.
         :type facebook_structure: FacebookStructure
-        :param facebook_structure: The facebook structure.
+        :param facebook_structure: The Facebook structure.
         """
 
         self.json_plugin = json_plugin
@@ -187,19 +187,19 @@ class FacebookClient(object):
 
     def open(self):
         """
-        Opens the facebook client.
+        Opens the Facebook client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the facebook client.
+        Closes the Facebook client.
         """
 
-        # in case an http client is defined
+        # in case an HTTP client is defined
         if self.http_client:
-            # closes the http client
+            # closes the HTTP client
             self.http_client.close({})
 
     def generate_facebook_structure(
@@ -211,42 +211,42 @@ class FacebookClient(object):
         set_structure = True
     ):
         """
-        Generates the facebook structure for the given arguments.
+        Generates the Facebook structure for the given arguments.
 
         :type consumer_key: String
         :param consumer_key: The consumer key.
         :type consumer_secret: String
         :param consumer_secret: The consumer secret.
         :type next: String
-        :param next: The next value from which the facebook request
+        :param next: The next value from which the Facebook request
         will be redirecting.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the facebook client.
+        set in the Facebook client.
         :rtype: FacebookStructure
-        :return: The generated facebook structure.
+        :return: The generated Facebook structure.
         """
 
-        # creates a new facebook structure
+        # creates a new Facebook structure
         facebook_structure = FacebookStructure(consumer_key, consumer_secret, next, api_version)
 
         # in case the structure is meant to be set
         if set_structure:
-            # sets the facebook structure
+            # sets the Facebook structure
             self.set_facebook_structure(facebook_structure)
 
-        # returns the facebook structure
+        # returns the Facebook structure
         return facebook_structure
 
     def auth_create_token(self):
         """
         Initializes the process of creating an authentication token
-        for the facebook session creation.
+        for the Facebook session creation.
 
         :rtype: FacebookStructure
-        :return: The current facebook structure.
+        :return: The current Facebook structure.
         """
 
         # sets the retrieval URL
@@ -258,19 +258,19 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("auth.createToken", parameters)
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for facebook errors
+        # checks for Facebook errors
         self._check_facebook_errors(data)
 
-        # sets the token in the facebook structure
+        # sets the token in the Facebook structure
         self.facebook_structure.token = data
 
-        # returns the facebook structure
+        # returns the Facebook structure
         return self.facebook_structure
 
     def auth_get_session(self):
@@ -279,7 +279,7 @@ class FacebookClient(object):
         obtained from the user login.
 
         :rtype: FacebookStructure
-        :return: The current facebook structure.
+        :return: The current Facebook structure.
         """
 
         # sets the retrieval URL
@@ -294,22 +294,22 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("auth.getSession", parameters)
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for facebook errors
+        # checks for Facebook errors
         self._check_facebook_errors(data)
 
-        # sets the session key in the facebook structure
+        # sets the session key in the Facebook structure
         self.facebook_structure.session_key = data["session_key"]
 
-        # sets the user id in the facebook structure
+        # sets the user id in the Facebook structure
         self.facebook_structure.user_id = data["uid"]
 
-        # returns the facebook structure
+        # returns the Facebook structure
         return self.facebook_structure
 
     def auth_get_info(self):
@@ -319,18 +319,18 @@ class FacebookClient(object):
         # retrieves the user information
         user_info = self.user_get_user_info([user_id], ["username"])
 
-        # sets the username in the facebook structure
+        # sets the username in the Facebook structure
         self.facebook_structure.username = user_info[0]["username"]
 
-        # returns the facebook structure
+        # returns the Facebook structure
         return self.facebook_structure
 
     def get_login_url(self):
         """
-        Retrieves the URL used for facebook user login.
+        Retrieves the URL used for Facebook user login.
 
         :rtype: String
-        :return: The URL used for facebook user login.
+        :return: The URL used for Facebook user login.
         """
 
         # sets the retrieval URL
@@ -339,7 +339,7 @@ class FacebookClient(object):
         # start the parameters map
         parameters = {}
 
-        # sets the api key
+        # sets the API key
         parameters["api_key"] = self.facebook_structure.consumer_key
 
         # sets the version (v)
@@ -382,13 +382,13 @@ class FacebookClient(object):
         # sets the base parameters (including the signature)
         self._set_base_parameters("users.getInfo", parameters)
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for facebook errors
+        # checks for Facebook errors
         self._check_facebook_errors(data)
 
         # reeturns the data
@@ -428,20 +428,20 @@ class FacebookClient(object):
 
     def get_facebook_structure(self):
         """
-        Retrieves the facebook structure.
+        Retrieves the Facebook structure.
 
         :rtype: FacebookStructure
-        :return: The facebook structure.
+        :return: The Facebook structure.
         """
 
         return self.facebook_structure
 
     def set_facebook_structure(self, facebook_structure):
         """
-        Sets the facebook structure.
+        Sets the Facebook structure.
 
         :type facebook_structure: FacebookStructure
-        :param facebook_structure: The facebook structure.
+        :param facebook_structure: The Facebook structure.
         """
 
         self.facebook_structure = facebook_structure
@@ -485,7 +485,7 @@ class FacebookClient(object):
 
     def _set_base_parameters(self, method_name, parameters):
         """
-        Sets the base facebook rest request parameters
+        Sets the base Facebook rest request parameters
         in the parameters map.
 
         :type method_name: String
@@ -498,7 +498,7 @@ class FacebookClient(object):
         # sets the method name
         parameters["method"] = method_name
 
-        # sets the api key
+        # sets the API key
         parameters["api_key"] = self.facebook_structure.consumer_key
 
         # sets the version (v)
@@ -534,13 +534,13 @@ class FacebookClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
+        # fetches the url retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -569,13 +569,13 @@ class FacebookClient(object):
 
     def _check_facebook_errors(self, data):
         """
-        Checks the given data for facebook errors.
+        Checks the given data for Facebook errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary/Object
-        :param data: The data to be checked for facebook errors.
+        :param data: The data to be checked for Facebook errors.
         """
 
         # retrieves the data type and returns immediately
@@ -591,61 +591,61 @@ class FacebookClient(object):
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
-        # raises the facebook api error
+        # raises the Facebook API error
         raise exceptions.FacebookApiError("error in request: " + error_message)
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
         :rtype: HttpClient
-        :return: The retrieved http client.
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class FacebookClientOauth(object):
     """
-    The class that represents a facebook client oauth connection.
+    The class that represents a Facebook client oauth connection.
     """
 
     json_plugin = None
-    """ The json plugin """
+    """ The JSON plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     facebook_structure = None
-    """ The facebook structure """
+    """ The Facebook structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
         """
         Constructor of the class.
 
         :type json_plugin: JsonPlugin
-        :param json_plugin: The json plugin.
+        :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :param client_http_plugin: The client HTTP plugin.
         :type facebook_structure: FacebookStructure
-        :param facebook_structure: The facebook structure.
+        :param facebook_structure: The Facebook structure.
         """
 
         self.json_plugin = json_plugin
@@ -654,63 +654,63 @@ class FacebookClientOauth(object):
 
     def open(self):
         """
-        Opens the facebook client.
+        Opens the Facebook client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the facebook client.
+        Closes the Facebook client.
         """
 
-        # in case an http client is defined
+        # in case an HTTP client is defined
         if self.http_client:
-            # closes the http client
+            # closes the HTTP client
             self.http_client.close({})
 
     def generate_facebook_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, consumer_id = DEFAULT_CONSUMER_ID, scope = DEFAULT_SCOPE, set_structure = True):
         """
-        Generates the facebook structure for the given arguments.
+        Generates the Facebook structure for the given arguments.
 
         :type consumer_key: String
         :param consumer_key: The consumer key.
         :type consumer_secret: String
         :param consumer_secret: The consumer secret.
         :type next: String
-        :param next: The next value from which the facebook request
+        :param next: The next value from which the Facebook request
         will be redirecting.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         :type consumer_id: String
         :param consumer_id: The consumer id.
         :type scope: String
         :param scope: The authorized scope.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the facebook client.
+        set in the Facebook client.
         :rtype: FacebookStructure
-        :return: The generated facebook structure.
+        :return: The generated Facebook structure.
         """
 
-        # creates a new facebook structure
+        # creates a new Facebook structure
         facebook_structure = FacebookStructure(consumer_key, consumer_secret, next, api_version, consumer_id, scope)
 
         # in case the structure is meant to be set
         if set_structure:
-            # sets the facebook structure
+            # sets the Facebook structure
             self.set_facebook_structure(facebook_structure)
 
-        # returns the facebook structure
+        # returns the Facebook structure
         return facebook_structure
 
     def get_login_url(self):
         """
-        Retrieves the URL used to redirect the user to facebook, for user
+        Retrieves the URL used to redirect the user to Facebook, for user
         authentication and app authorization.
 
         :rtype: String
-        :return: The URL used to redirect the user to facebook, for login.
+        :return: The URL used to redirect the user to Facebook, for login.
         """
 
         # sets the retrieval URL
@@ -736,11 +736,11 @@ class FacebookClientOauth(object):
 
     def authenticate_application(self, authorization_code):
         """
-        Performs app authentication with facebook, using the received
+        Performs app authentication with Facebook, using the received
         authorization code available.
 
         :type authorization_code: String
-        :param authorization_code: The authorization code provided by facebook
+        :param authorization_code: The authorization code provided by Facebook
         to the application.
         """
 
@@ -770,16 +770,16 @@ class FacebookClientOauth(object):
 
         # in case the field map was not parsed
         if not field_map:
-            # loads json retrieving the data
+            # loads JSON retrieving the data
             data = self.json_plugin.loads(response_text)
 
-            # checks for facebook errors
+            # checks for Facebook errors
             self._check_facebook_errors(data)
 
         # retrieves the access token from the field map
         access_token = field_map["access_token"]
 
-        # sets the access token in the facebook structure
+        # sets the access token in the Facebook structure
         self.facebook_structure.session_key = access_token
 
     def get_user_data(self):
@@ -795,10 +795,10 @@ class FacebookClientOauth(object):
         # fetches the user data URL, along with the required parameters
         json = self._fetch_url(retrieval_url, parameters, GET_METHOD_VALUE)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for facebook errors
+        # checks for Facebook errors
         self._check_facebook_errors(data)
 
         # returns the parsed data
@@ -806,20 +806,20 @@ class FacebookClientOauth(object):
 
     def get_facebook_structure(self):
         """
-        Retrieves the facebook structure.
+        Retrieves the Facebook structure.
 
         :rtype: FacebookStructure
-        :return: The facebook structure.
+        :return: The Facebook structure.
         """
 
         return self.facebook_structure
 
     def set_facebook_structure(self, facebook_structure):
         """
-        Sets the facebook structure.
+        Sets the Facebook structure.
 
         :type facebook_structure: FacebookStructure
-        :param facebook_structure: The facebook structure.
+        :param facebook_structure: The Facebook structure.
         """
 
         self.facebook_structure = facebook_structure
@@ -867,7 +867,7 @@ class FacebookClientOauth(object):
         :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
         # build the URL from the base URL
@@ -878,13 +878,13 @@ class FacebookClientOauth(object):
 
     def _check_facebook_errors(self, data):
         """
-        Checks the given data for facebook errors.
+        Checks the given data for Facebook errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary/Object
-        :param data: The data to be checked for facebook errors.
+        :param data: The data to be checked for Facebook errors.
         """
 
         # retrieves the data type and returns immediately
@@ -900,7 +900,7 @@ class FacebookClientOauth(object):
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
-        # raises the facebook api error
+        # raises the Facebook API error
         raise exceptions.FacebookApiError("error in request: " + error_message)
 
     def _parse_query_string(self, query_string):
@@ -938,32 +938,32 @@ class FacebookClientOauth(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
         :rtype: HttpClient
-        :return: The retrieved http client.
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class FacebookStructure(object):
     """
-    The facebook structure class.
+    The Facebook structure class.
     """
 
     consumer_key = None
@@ -973,10 +973,10 @@ class FacebookStructure(object):
     """ The consumer secret """
 
     next = None
-    """ The next value from which the facebook request will be redirecting """
+    """ The next value from which the Facebook request will be redirecting """
 
     api_version = None
-    """ The version of the api being used """
+    """ The version of the API being used """
 
     consumer_id = None
     """ The consumer id """
@@ -1013,10 +1013,10 @@ class FacebookStructure(object):
         :type consumer_secret: String
         :param consumer_secret: The consumer secret.
         :type next: String
-        :param next: The next value from which the facebook request
+        :param next: The next value from which the Facebook request
         will be redirecting.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         :type consumer_id: String
         :param consumer_id: The consumer id.
         :type scope: String
@@ -1092,20 +1092,20 @@ class FacebookStructure(object):
 
     def get_api_version(self):
         """
-        Retrieves the api version.
+        Retrieves the API version.
 
         :rtype: String
-        :return: The api version.
+        :return: The API version.
         """
 
         return self.api_version
 
     def set_api_version(self, api_version):
         """
-        Sets the api version.
+        Sets the API version.
 
         :type api_version: String
-        :param api_version: The api version.
+        :param api_version: The API version.
         """
 
         self.api_version = api_version
