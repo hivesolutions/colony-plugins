@@ -171,7 +171,7 @@ class TwitterClient(object):
     """ The request headers """
 
     oauth_structure = None
-    """ The oauth structure """
+    """ The OAuth structure """
 
     http_client = None
     """ The HTTP client for the connection """
@@ -341,7 +341,7 @@ class TwitterClient(object):
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -353,13 +353,13 @@ class TwitterClient(object):
         # converts the values list into a map
         values_map = dict(values_list)
 
-        # retrieves the oauth token from the values map
+        # retrieves the OAuth token from the values map
         self.oauth_structure.oauth_token = values_map["oauth_token"]
 
-        # retrieves the oauth token secret from the values map
+        # retrieves the OAuth token secret from the values map
         self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
 
-        # returns the oauth structure
+        # returns the OAuth structure
         return self.oauth_structure
 
     def open_oauth_access_token(self):
@@ -370,7 +370,7 @@ class TwitterClient(object):
         :return: The current OAuth structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/access_token"
 
         # retrieves the timestamp
@@ -421,7 +421,7 @@ class TwitterClient(object):
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -433,10 +433,10 @@ class TwitterClient(object):
         # converts the values list into a map
         values_map = dict(values_list)
 
-        # retrieves the oauth access token from the values map
+        # retrieves the OAuth access token from the values map
         self.oauth_structure.oauth_access_token = values_map["oauth_token"]
 
-        # retrieves the oauth token secret from the values map
+        # retrieves the OAuth token secret from the values map
         self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
 
         # retrieves the user id from the values map
@@ -445,18 +445,18 @@ class TwitterClient(object):
         # retrieves the screen name from the values map
         self.oauth_structure.screen_name = values_map["screen_name"]
 
-        # returns the oauth structure
+        # returns the OAuth structure
         return self.oauth_structure
 
     def get_oauth_authorize_url(self):
         """
-        Retrieves the oauth authorize url.
+        Retrieves the OAuth authorize URL.
 
         :rtype: String
-        :return: The oauth authorize url.
+        :return: The OAuth authorize URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authorize"
 
         # creates the authentication parameters
@@ -464,21 +464,21 @@ class TwitterClient(object):
             "oauth_token" : self.oauth_structure.oauth_token
         }
 
-        # creates the authentication url from the authentication token
+        # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
 
-        # returns the authentication url
+        # returns the authentication URL
         return authentication_url
 
     def get_oauth_authenticate_url(self):
         """
-        Retrieves the oauth authenticate url.
+        Retrieves the OAuth authenticate URL.
 
         :rtype: String
-        :return: The oauth authenticate url.
+        :return: The OAuth authenticate URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
@@ -486,10 +486,10 @@ class TwitterClient(object):
             "oauth_token" : self.oauth_structure.oauth_token
         }
 
-        # creates the authentication url from the authentication token
+        # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
 
-        # returns the authentication url
+        # returns the authentication URL
         return authentication_url
 
     def get_public_timeline(self, since_id = None):
@@ -510,10 +510,10 @@ class TwitterClient(object):
 
         retrieval_url = BASE_REST_URL + "statuses/public_timeline.json"
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -559,10 +559,10 @@ class TwitterClient(object):
 
         retrieval_url = BASE_REST_URL + "statuses/home_timeline.json"
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -608,10 +608,10 @@ class TwitterClient(object):
 
         retrieval_url = BASE_REST_URL + "statuses/friends_timeline.json"
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -660,10 +660,10 @@ class TwitterClient(object):
 
             retrieval_url = BASE_REST_URL + "statuses/user_timeline.json"
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -710,10 +710,10 @@ class TwitterClient(object):
         else:
             retrieval_url = BASE_REST_URL + "statuses/friends.json"
 
-        # fetches the retrieval url retrieving the json
+        # fetches the retrieval URL retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -760,10 +760,10 @@ class TwitterClient(object):
         else:
             retrieval_url = BASE_REST_URL + "statuses/followers.json"
 
-        # fetches the retrieval url retrieving the json
+        # fetches the retrieval URL retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -787,13 +787,13 @@ class TwitterClient(object):
             # sets the user as the current user
             user = self._get_current_user()
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_URL + "users/show/%s.json" % user
 
-        # fetches the retrieval url retrieving the json
+        # fetches the retrieval URL retrieving the JSON
         json = self._fetch_url(retrieval_url)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -832,13 +832,13 @@ class TwitterClient(object):
         if in_reply_to_status_id:
             parameters["in_reply_to_status_id"] = in_reply_to_status_id
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = BASE_REST_URL + "statuses/update.json"
 
-        # fetches the retrieval url retrieving the json
+        # fetches the retrieval URL retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for twitter errors
@@ -854,37 +854,37 @@ class TwitterClient(object):
         are available.
         """
 
-        # in case the username and the password are not defined and the oauth access token is not available
+        # in case the username and the password are not defined and the OAuth access token is not available
         if (not self.username or not self.password) and not self.oauth_structure.oauth_access_token:
             # raises the invalid authentication exception
             raise exceptions.InvalidAuthentication("user not authenticated")
 
     def get_oauth_structure(self):
         """
-        Retrieves the oauth structure.
+        Retrieves the OAuth structure.
 
         :rtype: OauthStructure
-        :return: The oauth structure.
+        :return: The OAuth structure.
         """
 
         return self.oauth_structure
 
     def set_oauth_structure(self, oauth_structure):
         """
-        Sets the oauth structure.
+        Sets the OAuth structure.
 
         :type oauth_structure: OauthStructure
-        :param oauth_structure: The oauth structure.
+        :param oauth_structure: The OAuth structure.
         """
 
         self.oauth_structure = oauth_structure
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -898,26 +898,26 @@ class TwitterClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
         # in case the username and the password are defined
         if self.username and self.password:
-            # sets the authentication in the http client
+            # sets the authentication in the HTTP client
             http_client.set_authentication(self.username, self.password)
 
         # retrieves the current authentication type
         authentication_type = self._get_authentication_type()
 
-        # in case oauth authentication is in use
+        # in case OAuth authentication is in use
         if authentication_type == OAUTH_AUTHENTICATION_TYPE:
-            # builds the oauth arguments, for authentication
+            # builds the OAuth arguments, for authentication
             self._build_oauth_arguments(url, parameters, method)
 
-        # fetches the url retrieving the http response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -925,37 +925,37 @@ class TwitterClient(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
         :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the url
+        # returns the URL
         return url
 
     def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
         """
-        Builds the oauth arguments encoding them into the oauth message specification.
+        Builds the OAuth arguments encoding them into the OAuth message specification.
 
         :type url: String
-        :param url: The url to be used for the oauth encoding.
+        :param url: The URL to be used for the OAuth encoding.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for the oauth encoding.
+        :param parameters: The parameters to be used for the OAuth encoding.
         :type method: String
-        :param method: The method to be used for the oauth encoding.
+        :param method: The method to be used for the OAuth encoding.
         :rtype: String
-        :return: The oauth arguments encoded in oauth message specification.
+        :return: The OAuth arguments encoded in OAuth message specification.
         """
 
         # retrieves the timestamp
@@ -1000,13 +1000,13 @@ class TwitterClient(object):
 
     def _escape_url(self, url_text):
         """
-        Escapes the given url text into a valid http get request string.
+        Escapes the given URL text into a valid HTTP get request string.
 
         :rtype: String
-        :return: the given url text in a valid http get request string.
+        :return: the given URL text in a valid HTTP get request string.
         """
 
-        # returns the quoted version of the url text
+        # returns the quoted version of the URL text
         return colony.quote_plus(str(url_text), "")
 
     def _check_twitter_errors(self, data):
@@ -1039,10 +1039,10 @@ class TwitterClient(object):
 
     def _get_oauth_timestamp(self):
         """
-        Retrieves the real value for the oauth timestamp.
+        Retrieves the real value for the OAuth timestamp.
 
         :rtype: float
-        :return: The real value for the oauth timestamp.
+        :return: The real value for the OAuth timestamp.
         """
 
         if self.oauth_structure.oauth_timestamp:
@@ -1054,10 +1054,10 @@ class TwitterClient(object):
 
     def _get_oauth_nonce(self):
         """
-        Retrieves the real value for the oauth nonce.
+        Retrieves the real value for the OAuth nonce.
 
         :rtype: int
-        :return: the real value for the oauth nonce.
+        :return: the real value for the OAuth nonce.
         """
 
         if self.oauth_structure.oauth_nonce:
@@ -1078,9 +1078,9 @@ class TwitterClient(object):
         # retrieves the current authentication type
         authentication_type = self._get_authentication_type()
 
-        # in case oauth is in use
+        # in case OAuth is in use
         if authentication_type == OAUTH_AUTHENTICATION_TYPE:
-            # returns the oauth structure screen name
+            # returns the OAuth structure screen name
             return self.oauth_structure.screen_name
         # in case basic authentication is in use
         elif authentication_type == BASIC_AUTHENTICATION_TYPE:
@@ -1089,32 +1089,32 @@ class TwitterClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
         :rtype: HttpClient
-        :return: The retrieved http client.
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class OauthStructure(object):
     """
-    The oauth structure class.
+    The OAuth structure class.
     """
 
     oauth_consumer_key = None
@@ -1142,7 +1142,7 @@ class OauthStructure(object):
     """ The callback """
 
     oauth_token = None
-    """ The oauth token """
+    """ The OAuth token """
 
     oauth_token_secret = None
     """ The token secret """
@@ -1151,7 +1151,7 @@ class OauthStructure(object):
     """ The verifier """
 
     oauth_access_token = None
-    """ The oauth access token """
+    """ The OAuth access token """
 
     user_id = None
     """ The user id """
