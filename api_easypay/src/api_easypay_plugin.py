@@ -41,12 +41,12 @@ import colony
 
 class ApiEasypayPlugin(colony.Plugin):
     """
-    The main class for the Easypay Api plugin.
+    The main class for the Easypay API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.easypay"
-    name = "Easypay Api"
-    description = "The plugin that offers the easypay api"
+    name = "Easypay API"
+    description = "The plugin that offers the easypay API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -69,10 +69,10 @@ class ApiEasypayPlugin(colony.Plugin):
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :rtype: EasypayClient
         :return: The created client.
         """
