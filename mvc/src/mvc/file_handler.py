@@ -85,10 +85,10 @@ class MvcFileHandler(object):
 
     def handle_request(self, request, file_path):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         :rtype: bool
         :return: The result of the handling.
         """
@@ -103,7 +103,7 @@ class MvcFileHandler(object):
         mime_type = mime_plugin.get_mime_type_file_name(file_path)
 
         # in case the file path does not exist, raises file not
-        # found exception with 404 http error code indicating that
+        # found exception with 404 HTTP error code indicating that
         # there was a problem in the retrieval of the file
         if not os.path.exists(file_path):
             raise exceptions.FileNotFoundException(file_path, 404)
