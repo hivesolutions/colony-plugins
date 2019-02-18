@@ -150,18 +150,21 @@ COMPARISION_FUNCTIONS = {
 are going to be used "inside" the visitor execution logic """
 
 FILTERS = dict(
-    e = lambda v, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
-    default = lambda v, t, default = "", boolean = False:\
+    e = lambda v, a, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
+    s = lambda v, a, t: a.update(xml_escape = False) or v,
+    escape = lambda v, a, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
+    safe = lambda v, a, t: a.update(xml_escape = False) or v,
+    default = lambda v, a, t, default = "", boolean = False:\
         default if boolean and not v or v == None else v,
-    double = lambda v, t: v if v == None else v * 2,
-    append = lambda v, t, extra: v + extra,
-    prepend = lambda v, t, extra: extra + v,
-    format = lambda v, t, format, default = None:\
+    double = lambda v, a, t: v if v == None else v * 2,
+    append = lambda v, a, t, extra: v + extra,
+    prepend = lambda v, a, t, extra: extra + v,
+    format = lambda v, a, t, format, default = None:\
         default if v == None else format % v,
-    timestamp = lambda v, t, default = "":\
+    timestamp = lambda v, a, t, default = "":\
         str(calendar.timegm(v.utctimetuple())) if v else default,
-    range = lambda v, t: range(int(v)),
-    locale = lambda v, t: t._resolve_locale(v)
+    range = lambda v, a, t: range(int(v)),
+    locale = lambda v, a, t: t._resolve_locale(v)
 )
 """ The dictionary containing the complete set
 of base filters to be exposed to the visitor,
@@ -465,7 +468,7 @@ class Visitor(object):
         # defined for the current node, it's an extensive list and
         # the range of usage and data types are vast
         value = attributes["value"]
-        value = self.get_value(value, localize = localize)
+        value = self.get_value(value, meta = attributes, localize = localize)
         prefix = attributes.get("prefix", None)
         prefix = self.get_value(prefix, localize = localize, default = "")
         format = attributes.get("format", None)
@@ -555,7 +558,7 @@ class Visitor(object):
     def process_var(self, node):
         """
         Processes the var node, this is the operation that
-        allow the attribute of a value in the current context
+        allows the attribute of a value in the current context
         the required attributes are the item (literal) and the
         value.
 
@@ -950,7 +953,7 @@ class Visitor(object):
         timestamp_s = str(timestamp)
         self.write(timestamp_s)
 
-    def get_value(self, attribute, localize = False, default = None):
+    def get_value(self, attribute, meta = None, localize = False, default = None):
         """
         Retrieves the value (variable or literal) of the given
         value. The process of retrieving the variable value is
@@ -961,6 +964,9 @@ class Visitor(object):
 
         :type attribute: Dictionary
         :param attribute: A map describing the attribute structure.
+        :type meta: Dictionary
+        :param meta: The map containing the meta-information related with
+        the attribute in question (eg: xml escaping).
         :type localize: bool
         :param localize: If the value must be localized using the currently
         available locale bundles.
@@ -1022,7 +1028,7 @@ class Visitor(object):
         # resolve the final value according to the filter
         for filter in filters:
             value = self.resolve_many(
-                filter, value, self, global_map = self.filters
+                filter, value, meta, self, global_map = self.filters
             )
 
         # returns the processed value to the caller method, this is the
@@ -1157,7 +1163,7 @@ class Visitor(object):
             # parsed from the string (as expected by specification)
             result = result(*args, **kwargs)
 
-        # retrieves the current rsults's class and in case the class is of
+        # retrieves the current results's class and in case the class is of
         # type file reference the contents should be read (the file is closed properly)
         # and set as the current variable (as the new result of it)
         result_class = result.__class__ if hasattr(result, "__class__") else None
