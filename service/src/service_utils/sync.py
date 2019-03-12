@@ -305,10 +305,9 @@ class AbstractService(object):
                 # runs the loop for connectionless type
                 self._loop_connectionless()
         except BaseException as exception:
-            # prints a warning message message
-            self.service_plugin.warning("Runtime problem: %s, while starting the service" % colony.legacy.UNICODE(exception))
-
+            # prints a warning message message and then
             # sets the service connection active flag as false
+            self.service_plugin.warning("Runtime problem: %s, while starting the service" % colony.legacy.UNICODE(exception))
             self.service_connection_active = False
         finally:
             # disables the service sockets
@@ -503,11 +502,10 @@ class AbstractService(object):
 
             # returns the selected values read
             return selected_values_read
-        except BaseException as exception:
-            # prints info message about connection
+        except Exception as exception:
+            # prints info message about connection and then
+            # returns an invalid value
             self.service_utils_plugin.info("The socket is not valid for selection of the pool: " + colony.legacy.UNICODE(exception))
-
-            # returns invalid
             return None
 
     def _accept_service_socket(self, service_socket):
@@ -1143,7 +1141,7 @@ class AbstractServiceConnectionHandler(object):
             try:
                 # handles the current request, retrieving the return value
                 return_value = self.client_service.handle_request(ready_service_connection)
-            except BaseException as exception:
+            except Exception as exception:
                 # prints an error message about the problem handling the request
                 self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
 
@@ -1181,7 +1179,7 @@ class AbstractServiceConnectionHandler(object):
         try:
             # executes the callable with retry support
             colony.execute_retries(callable)
-        except BaseException as exception:
+        except Exception as exception:
             # raises the connection change failure exception
             raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + colony.legacy.UNICODE(exception))
 
@@ -1198,7 +1196,7 @@ class AbstractServiceConnectionHandler(object):
         try:
             # executes the callable with retry support
             colony.execute_retries(callable)
-        except BaseException as exception:
+        except Exception as exception:
             # raises the connection change failure exception
             raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + colony.legacy.UNICODE(exception))
 
@@ -1570,7 +1568,7 @@ class AbstractServiceConnectionlessHandler(object):
             try:
                 # handles the current request
                 self.client_service.handle_request(service_connection)
-            except BaseException as exception:
+            except Exception as exception:
                 # prints an error message about the problem handling the request
                 self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
 
@@ -2096,7 +2094,7 @@ class ServiceConnection(object):
                     if not data:
                         # breaks the loop
                         break
-            except BaseException as exception:
+            except Exception as exception:
                 # in case there was at least one
                 # successful read
                 if read_flag:
@@ -2167,7 +2165,7 @@ class ServiceConnection(object):
             try:
                 # sends the data in chunks
                 number_bytes_sent = self.connection_socket.send(message)
-            except BaseException as exception:
+            except Exception as exception:
                 # in case the number of retries (available)
                 # is greater than zero
                 if retries > 0:

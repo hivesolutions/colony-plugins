@@ -313,7 +313,7 @@ class AbstractService(object):
                 # calls the handler with the socket, this will handle
                 # the new event that has been received
                 handler(socket)
-            except BaseException as exception:
+            except Exception as exception:
                 # prints a warning message message using the service
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
@@ -567,7 +567,8 @@ class AbstractService(object):
 
             # pops the processes elements from the time events
             # list (deferred popping, avoids list corruption)
-            for _index in colony.legacy.xrange(expired_count): heapq.heappop(self.time_events)
+            for _index in colony.legacy.xrange(expired_count):
+                heapq.heappop(self.time_events)
 
     def _disable_service_sockets(self):
         """

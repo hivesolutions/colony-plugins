@@ -732,7 +732,7 @@ class ConsoleContext(colony.Protected):
             # sets the authentication information with the authentication
             # result value
             self.authentication_information = authentication_result
-        except BaseException as exception:
+        except Exception as exception:
             # prints a debug message
             self.console.plugin.debug("Problem authenticating user: %s" % colony.legacy.UNICODE(exception))
 

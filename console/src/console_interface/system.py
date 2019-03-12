@@ -154,7 +154,7 @@ class ConsoleInterface(colony.System):
             # sets the console interface get line method
             # as the console interface method
             console_interface_method = self.console_interface.get_line
-        except BaseException as exception:
+        except Exception as exception:
             # prints a info message about the issue while starting the
             # console interface (nor critical) and then sets the read line
             # method as the console interface method as a method for fallback

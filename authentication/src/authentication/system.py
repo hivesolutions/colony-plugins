@@ -114,11 +114,10 @@ class Authentication(colony.System):
             try:
                 # handles the authentication request retrieving the return value
                 return_value = authentication_handler_plugin.handle_request(authentication_request)
-            except BaseException as exception:
+            except Exception as exception:
                 # retrieves the exception map for the exception
+                # and then sets the return value to invalid
                 exception_map = self.get_exception_map(exception)
-
-                # sets the return value to invalid
                 return_value = {
                     VALID_VALUE : False,
                     EXCEPTION_VALUE : exception_map

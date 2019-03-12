@@ -504,7 +504,7 @@ class Scheduler(colony.System):
             # calls the task method with the task method arguments, this
             # os the execution of the schedule task itself
             item_task_method(*task_method_arguments)
-        except BaseException as exception:
+        except Exception as exception:
             # prints an error message
             self.plugin.error(
                 "Problem executing scheduler task: " + item_id_string +\

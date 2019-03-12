@@ -826,7 +826,7 @@ class ClientConnection(object):
                     # must break the current loop
                     if not data: break
 
-            except BaseException as exception:
+            except Exception as exception:
                 # in case there was at least one successful read
                 # breaks the current loop (read complete)
                 if read_flag: break
@@ -856,6 +856,11 @@ class ClientConnection(object):
                     raise exceptions.ClientRequestTimeout(
                         "problem receiving data: " + colony.legacy.UNICODE(exception)
                     )
+            except:
+                # closes the current client and then raises the exception
+                # to the upper layers for proper processing
+                self.close()
+                raise
 
             # breaks the loop
             break
@@ -935,7 +940,7 @@ class ClientConnection(object):
                         # into the queue to be handled latter
                         self.client_plugin.debug("Received extra data, returning it")
                         self.return_data(data)
-                except BaseException as exception:
+                except Exception as exception:
                     # prints a debug message and then reconnects the connection socket
                     self.client_plugin.debug("Problem while receiving pending data: " + colony.legacy.UNICODE(exception))
                     self._reconnect_connection_socket()
@@ -965,7 +970,7 @@ class ClientConnection(object):
                         # sends the data in chunks, the send to command is used for
                         # a non connection oriented connection
                         number_bytes_sent = self.connection_socket.sendto(message, self.connection_address)
-                except BaseException as exception:
+                except Exception as exception:
                     # tries to process the exception, meaning that the
                     # exception is going to be tested against a series
                     # of validation and in case it's considered valid
