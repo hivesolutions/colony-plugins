@@ -5161,7 +5161,7 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
         # returns the value casted to the caller method as
         # expected by the cast safe operation
         return value_casted
-    except:
+    except Exception:
         # returns the default value, this is the fallback
         # operation because it was not possible to cast
         # the value properly (safe operation)
