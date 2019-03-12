@@ -1593,7 +1593,7 @@ class Visitor(object):
             # to the removal list otherwise sets the serializer
             # in the associated map
             try: object = __import__(name)
-            except: removal.append(name)
+            except ImportError: removal.append(name)
             else: SERIALIZERS_MAP[name] = object
 
         # iterates over all the (serializer) names to be

@@ -695,7 +695,7 @@ class TemplateFile(object):
         """
 
         try: return template % args
-        except: return None
+        except Exception: return None
 
     @classmethod
     def convert(cls, value, mode):
@@ -719,7 +719,7 @@ class TemplateFile(object):
         conversion_method = visitor.CONVERSION_MAP.get(mode, None)
         if not conversion_method: return value
         try: return conversion_method(value)
-        except: return None
+        except Exception: return None
 
     def index_nodes(self):
         """
