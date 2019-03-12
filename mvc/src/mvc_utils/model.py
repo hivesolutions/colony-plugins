@@ -2093,7 +2093,7 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
         # in case retrieving the attribute name
         # caused and error when attempting to
         # access an attribute in an undefined model
-        except:
+        except Exception:
             # continues to the next model
             continue
 
@@ -2279,7 +2279,7 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
 
         # returns the value casted
         return value_casted
-    except:
+    except Exception:
         # returns the default value
         return default_value
 

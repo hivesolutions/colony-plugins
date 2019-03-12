@@ -196,8 +196,9 @@ class Rest(colony.System):
         # assigned session class in case it fails the session
         # class is changed to the fallback value and the proper
         # loading strategy is re-started for that session
-        try: self.session_c.load()
-        except:
+        try:
+            self.session_c.load()
+        except Exception:
             self.debug("Falling back to %s session" % RestSession.__name__)
             self.session_c = RestSession
             self.session_c.load()
@@ -1733,7 +1734,7 @@ class RestRequest(object):
 
         if self._session: return self._session
         try: self.update_session()
-        except: self._session = None
+        except Exception: self._session = None
         return self._session
 
     def get_session(self, block = True):
@@ -2926,7 +2927,7 @@ class RedisSession(RestSession):
         )
         if not cls.BGSAVE: return
         try: cls.REDIS.bgsave()
-        except: pass
+        except Exception: pass
 
 class Cookie(object):
     """

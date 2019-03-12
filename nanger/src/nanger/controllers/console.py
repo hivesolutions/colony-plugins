@@ -244,12 +244,12 @@ class ConsoleController(BaseController):
             # so that the return value is printed to the standard output, this
             # may fail in case a multiple line command is present
             command_code = code.compile_command(command, symbol = file and "exec" or "single")
-        except:
+        except Exception:
             # compiles the provided command into the appropriate code representation
             # using the "exec" strategy, this operation should return an invalid value
             # in case the provided code is not complete (spans multiple lines)
             try: command_code = code.compile_command(command, symbol = "exec")
-            except: command_code = None; exception = True
+            except Exception: command_code = None; exception = True
             else: exception = False
         else:
             # unsets the exception flag because no exception occurred while compiling

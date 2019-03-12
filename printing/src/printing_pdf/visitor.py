@@ -740,8 +740,11 @@ class Visitor(object):
                 # metrics (to be used in further operations)
                 font = reportlab.pdfbase.ttfonts.TTFont(font_name, file_path_f)
                 reportlab.pdfbase.pdfmetrics.registerFont(font)
-            except: continue
-            else: error = False; break
+            except Exception:
+                continue
+            else:
+                error = False
+                break
 
         # in case the error flag is set raises the invalid font
         # exception, indicating that it was not possible to load

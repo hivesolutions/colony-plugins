@@ -805,7 +805,7 @@ class Mvc(colony.System):
         for name, type_r in colony.legacy.iteritems(names):
             value = pattern_names.get(name, None)
             try: value = type_r(value)
-            except: value = value
+            except Exception: value = value
             pattern_names[name] = value
 
         # verifies if the handler method is either a method (received
@@ -1250,7 +1250,7 @@ class Mvc(colony.System):
             # tries to cast the attribute value using the constraint
             # type in case it fails returns in error
             try: attribute_value_c = contraint_value_t(attribute_value)
-            except: return None
+            except Exception: return None
 
             # in case the attribute value (casted) is not equals
             # to the handler constraint value must return in error

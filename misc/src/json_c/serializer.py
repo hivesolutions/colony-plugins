@@ -1088,5 +1088,5 @@ def loads(data):
 
 def loads_f(data):
     try: import json
-    except: return loads(data)
+    except ImportError: return loads(data)
     return json.loads(data)

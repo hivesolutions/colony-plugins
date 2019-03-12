@@ -100,7 +100,7 @@ class ResourcesAutoloader(colony.System):
                 # in the file path modified time map
                 modified_time = os.path.getmtime(file_path)
                 self.file_path_modified_time_map[file_path] = modified_time
-            except:
+            except Exception:
                 # sets the invalid modified time for the current
                 # file path (file is not valid)
                 self.file_path_modified_time_map[file_path] = 0

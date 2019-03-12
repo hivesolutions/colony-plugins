@@ -65,7 +65,7 @@ class Guid(colony.System):
             self.ip = socket.getaddrinfo(socket.gethostname(), 0)[-1][-1][0]
             self.hexadecimal_ip = make_hexadecimal_ip(self.ip)
         # in case there is no ip, defaults to something in the 10.x.x.x private range
-        except:
+        except Exception:
             self.ip = "10"
             rand = random.Random()
             for _index in colony.legacy.xrange(3):
