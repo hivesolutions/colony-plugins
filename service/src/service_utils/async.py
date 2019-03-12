@@ -921,7 +921,7 @@ class ServiceConnection(Connection):
                     # disables the pending connection, no more need to listen
                     # to the changes on it for enabling
                     self._disable_pending(service_connection, service_address, socket_fd); return
-            except:
+            except Exception:
                 # disables the pending connection, no more need to listen
                 # to the changes on it for enabling (meant to be discarded)
                 self._disable_pending(service_connection, service_address, socket_fd); return

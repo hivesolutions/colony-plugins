@@ -1281,7 +1281,7 @@ class AbstractServiceConnectionHandler(object):
         try:
             # retrieves the connection socket file descriptor
             connection_socket_file_descriptor = connection_socket.fileno()
-        except:
+        except Exception:
             # retrieves the connection socket file descriptor from the map
             connection_socket_file_descriptor = self.connection_socket_connection_socket_file_descriptor_map[connection_socket]
 
@@ -2073,7 +2073,7 @@ class ServiceConnection(object):
             try:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
-            except:
+            except Exception:
                 # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
 
@@ -2157,7 +2157,7 @@ class ServiceConnection(object):
             try:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([], [self.connection_socket], [], response_timeout)
-            except:
+            except Exception:
                 # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
 

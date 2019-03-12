@@ -1343,7 +1343,7 @@ class HttpClientServiceHandler(object):
         try:
             # decodes the message value into unicode using the given charset
             request.received_message = received_message_value.decode(content_type_charset)
-        except:
+        except Exception:
             # sets the received message as the original one (fallback procedure)
             request.received_message = received_message_value
 
@@ -1541,10 +1541,9 @@ class HttpClientServiceHandler(object):
                     self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
                     raise exceptions.HttpDataSendingException("problem sending data")
             except:
-                # closes the mediated handler
-                request.mediated_handler.close()
-
+                # closes the mediated handler and then
                 # re-raises the exception
+                request.mediated_handler.close()
                 raise
 
     def send_request_chunked(self, service_connection, request):
@@ -3458,7 +3457,7 @@ class HttpRequest(object):
                 # as the if modified header date time (no modification)
                 # must return false as there was no modification
                 if modified_date_time <= if_modified_header_data_time: return False
-            except:
+            except Exception:
                 # prints a warning for not being able to check the modification date
                 self.service.service_plugin.warning("Problem while checking modification date")
 

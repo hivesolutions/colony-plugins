@@ -60,7 +60,7 @@ CHUNK_SIZE = 4096
 """ The chunk size """
 
 HTTP_PREFIX_VALUE = "http://"
-""" The http prefix value """
+""" The HTTP prefix value """
 
 HTTPS_PREFIX_VALUE = "https://"
 """ The https prefix value """
@@ -111,7 +111,7 @@ CONTENT_LENGTH_LOWER_VALUE = "Content-length"
 """ The content length lower value """
 
 HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
-""" The http protocol prefix value """
+""" The HTTP protocol prefix value """
 
 REMOVAL_HEADERS = (
     HOST_VALUE,
@@ -128,7 +128,7 @@ REMOVAL_RESPONSE_HEADERS = (
 
 class ServiceHttpProxy(colony.System):
     """
-    The service http proxy (handler) class.
+    The service HTTP proxy (handler) class.
     """
 
     request_handler_methods_map = {}
@@ -141,7 +141,7 @@ class ServiceHttpProxy(colony.System):
     """ The reverse handler method map """
 
     http_clients_pool = None
-    """ The the pool http clients to be used """
+    """ The the pool HTTP clients to be used """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
@@ -169,14 +169,14 @@ class ServiceHttpProxy(colony.System):
         # retrieves the element pool manager plugin
         element_pool_manager_plugin = self.plugin.element_pool_manager_plugin
 
-        # creates a new http clients pool
+        # creates a new HTTP clients pool
         self.http_clients_pool = element_pool_manager_plugin.create_new_element_pool(
             self._create_http_client,
             self._destroy_http_client,
             DEFAULT_ELEMENT_POOL_SIZE
         )
 
-        # starts the http clients pool
+        # starts the HTTP clients pool
         self.http_clients_pool.start({})
 
     def unload_handler(self):
@@ -184,7 +184,7 @@ class ServiceHttpProxy(colony.System):
         Handler called upon unload.
         """
 
-        # stops the http clients pool
+        # stops the HTTP clients pool
         self.http_clients_pool.stop({})
 
     def get_handler_name(self):
@@ -199,10 +199,10 @@ class ServiceHttpProxy(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the proxy type
@@ -214,7 +214,7 @@ class ServiceHttpProxy(colony.System):
         # in case the request handler method is not
         # defined (invalid proxy type)
         if not request_handler_method:
-            # raises an invalid http proxy runtime exception
+            # raises an invalid HTTP proxy runtime exception
             raise exceptions.HttpProxyRuntimeException("invalid proxy type")
 
         # calls the request handler method
@@ -231,7 +231,7 @@ class ServiceHttpProxy(colony.System):
         publicity and other manipulations to the normal web traffic.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the proxy service type
@@ -244,7 +244,7 @@ class ServiceHttpProxy(colony.System):
         # in case the forward handler method is not
         # defined (invalid proxy type)
         if not forward_handler_method:
-            # raises an invalid http proxy runtime exception
+            # raises an invalid HTTP proxy runtime exception
             raise exceptions.HttpProxyRuntimeException("invalid proxy service type (for forward proxy)")
 
         # calls the forward handler method
@@ -256,7 +256,7 @@ class ServiceHttpProxy(colony.System):
         synchronous strategy (more memory usage).
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the resource base path
@@ -277,12 +277,12 @@ class ServiceHttpProxy(colony.System):
         # creates the complete path from the proxy path
         complete_path = path
 
-        # retrieves the http client from the http clients pool
+        # retrieves the HTTP client from the HTTP clients pool
         http_client = self.http_clients_pool.pop(True)
 
-        # in case no http client is available an http client
+        # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
+        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -296,19 +296,19 @@ class ServiceHttpProxy(colony.System):
                 contents = request_contents
             )
         finally:
-            # puts the http client back into the http clients pool
+            # puts the HTTP client back into the HTTP clients pool
             self.http_clients_pool.put(http_client)
 
-        # retrieves the status code form the http response
+        # retrieves the status code form the HTTP response
         status_code = http_response.status_code
 
-        # retrieves the status message from the http response
+        # retrieves the status message from the HTTP response
         status_message = http_response.status_message
 
-        # retrieves the data from the http response
+        # retrieves the data from the HTTP response
         data = http_response.received_message
 
-        # retrieves the headers map from the http response
+        # retrieves the headers map from the HTTP response
         headers_map = http_response.headers_map
 
         # sets the request status code
@@ -329,7 +329,7 @@ class ServiceHttpProxy(colony.System):
         asynchronous strategy (less memory usage).
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the resource base path
@@ -350,12 +350,12 @@ class ServiceHttpProxy(colony.System):
         # creates the complete path from the proxy path
         complete_path = path
 
-        # retrieves the http client from the http clients pool
+        # retrieves the HTTP client from the HTTP clients pool
         http_client = self.http_clients_pool.pop(True)
 
-        # in case no http client is available an http client
+        # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
+        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -375,16 +375,16 @@ class ServiceHttpProxy(colony.System):
             generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
 
             # unpacks the generator value into the value type
-            # and the http response
+            # and the HTTP response
             _generator_value_type, http_response = generator_value
 
-            # retrieves the status code form the http response
+            # retrieves the status code form the HTTP response
             status_code = http_response.status_code
 
-            # retrieves the status message from the http response
+            # retrieves the status message from the HTTP response
             status_message = http_response.status_message
 
-            # creates the headers map from the http response
+            # creates the headers map from the HTTP response
             headers_map = http_response.headers_map
 
             # sets the request status code
@@ -397,18 +397,18 @@ class ServiceHttpProxy(colony.System):
             request.response_headers_map = headers_map
 
             # creates the handler to be used to close the sending of the response
-            # this handler ensures that the client is put back to the http clients
+            # this handler ensures that the client is put back to the HTTP clients
             # pool and that the connection is kept clean (avoids pipe pollution)
             def close_handler(empty_connection):
-                # closes the client connection in the http
+                # closes the client connection in the HTTP
                 # client (avoids pipe pollution)
                 http_client.client_connection.close()
 
-                # puts the http client back into the http
+                # puts the HTTP client back into the HTTP
                 # clients pool
                 self.http_clients_pool.put(http_client)
 
-            # retrieves the http response size by casting
+            # retrieves the HTTP response size by casting
             # the content length value (if possible)
             http_response_size = self._get_http_response_size(http_response)
 
@@ -422,12 +422,12 @@ class ServiceHttpProxy(colony.System):
             # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
         except:
-            # closes the http client connection, there's
+            # closes the HTTP client connection, there's
             # probably data pending in the connection
             # (avoids pipe pollution)
             http_client.client_connection.close()
 
-            # puts the http client back into the http clients pool
+            # puts the HTTP client back into the HTTP clients pool
             self.http_clients_pool.put(http_client)
 
             # re-raises the exception
@@ -444,7 +444,7 @@ class ServiceHttpProxy(colony.System):
         his being made with the current host.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the proxy service type
@@ -457,7 +457,7 @@ class ServiceHttpProxy(colony.System):
         # in case the reverse handler method is not
         # defined (invalid proxy type)
         if not reverse_handler_method:
-            # raises an invalid http proxy runtime exception
+            # raises an invalid HTTP proxy runtime exception
             raise exceptions.HttpProxyRuntimeException("invalid proxy service type (for reverse proxy)")
 
         # calls the reverse handler method
@@ -469,7 +469,7 @@ class ServiceHttpProxy(colony.System):
         synchronous strategy (more memory usage).
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the (reverse) proxy target
@@ -494,12 +494,12 @@ class ServiceHttpProxy(colony.System):
         # target and the path
         complete_path = proxy_target + path
 
-        # retrieves the http client from the http clients pool
+        # retrieves the HTTP client from the HTTP clients pool
         http_client = self.http_clients_pool.pop(True)
 
-        # in case no http client is available an http client
+        # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
+        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -513,19 +513,19 @@ class ServiceHttpProxy(colony.System):
                 contents = request_contents
             )
         finally:
-            # puts the http client back into the http clients pool
+            # puts the HTTP client back into the HTTP clients pool
             self.http_clients_pool.put(http_client)
 
-        # retrieves the status code form the http response
+        # retrieves the status code form the HTTP response
         status_code = http_response.status_code
 
-        # retrieves the status message from the http response
+        # retrieves the status message from the HTTP response
         status_message = http_response.status_message
 
-        # retrieves the data from the http response
+        # retrieves the data from the HTTP response
         data = http_response.received_message
 
-        # creates the headers map from the http response
+        # creates the headers map from the HTTP response
         headers_map = self._create_headers_map(request, http_response, REMOVAL_RESPONSE_HEADERS)
 
         # sets the request status code
@@ -546,7 +546,7 @@ class ServiceHttpProxy(colony.System):
         asynchronous strategy (less memory usage).
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the (reverse) proxy target
@@ -571,12 +571,12 @@ class ServiceHttpProxy(colony.System):
         # target and the path
         complete_path = proxy_target + path
 
-        # retrieves the http client from the http clients pool
+        # retrieves the HTTP client from the HTTP clients pool
         http_client = self.http_clients_pool.pop(True)
 
-        # in case no http client is available an http client
+        # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("http clients pool depleted", 503)
+        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -596,16 +596,16 @@ class ServiceHttpProxy(colony.System):
             generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
 
             # unpacks the generator value into the value type
-            # and the http response
+            # and the HTTP response
             _generator_value_type, http_response = generator_value
 
-            # retrieves the status code form the http response
+            # retrieves the status code form the HTTP response
             status_code = http_response.status_code
 
-            # retrieves the status message from the http response
+            # retrieves the status message from the HTTP response
             status_message = http_response.status_message
 
-            # creates the headers map from the http response
+            # creates the headers map from the HTTP response
             headers_map = self._create_headers_map(request, http_response)
 
             # sets the request status code
@@ -618,18 +618,18 @@ class ServiceHttpProxy(colony.System):
             request.response_headers_map = headers_map
 
             # creates the handler to be used to close the sending of the response
-            # this handler ensures that the client is put back to the http clients
+            # this handler ensures that the client is put back to the HTTP clients
             # pool and that the connection is kept clean (avoids pipe pollution)
             def close_handler(empty_connection):
-                # closes the client connection in the http
+                # closes the client connection in the HTTP
                 # client (avoids pipe pollution)
                 http_client.client_connection.close()
 
-                # puts the http client back into the http
+                # puts the HTTP client back into the HTTP
                 # clients pool
                 self.http_clients_pool.put(http_client)
 
-            # retrieves the http response size by casting
+            # retrieves the HTTP response size by casting
             # the content length value (if possible)
             http_response_size = self._get_http_response_size(http_response)
 
@@ -643,35 +643,35 @@ class ServiceHttpProxy(colony.System):
             # sets the mediated handler in the request
             request.mediated_handler = chunk_handler
         except:
-            # closes the http client connection, there's
+            # closes the HTTP client connection, there's
             # probably data pending in the connection
             # (avoids pipe pollution)
             http_client.client_connection.close()
 
-            # puts the http client back into the http clients pool
+            # puts the HTTP client back into the HTTP clients pool
             self.http_clients_pool.put(http_client)
 
             # re-raises the exception
             raise
 
     def _create_http_client(self, arguments):
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # creates the http client
+        # creates the HTTP client
         http_client = client_http_plugin.create_client({})
 
-        # opens the http client
+        # opens the HTTP client
         http_client.open(arguments)
 
-        # disables the "auto" redirect in the http client
+        # disables the "auto" redirect in the HTTP client
         http_client.set_redirect(False)
 
-        # returns the http client
+        # returns the HTTP client
         return http_client
 
     def _destroy_http_client(self, http_client, arguments):
-        # closes the http client
+        # closes the HTTP client
         http_client.close(arguments)
 
     def _create_request_headers(self, request):
@@ -731,7 +731,7 @@ class ServiceHttpProxy(colony.System):
             # sets the valid handler path based on the length of the path
             handler_path = not handler_path == "/" and handler_path or ""
 
-            # in case the location starts with the http prefix or
+            # in case the location starts with the HTTP prefix or
             # with the https prefix (absolute path)
             if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(HTTPS_PREFIX_VALUE):
                 # replaces the proxy target for the handler path
@@ -777,14 +777,14 @@ class ServiceHttpProxy(colony.System):
         In case the content length header value is not set
 
         :type http_response: HttpResponse
-        :param http_response: The http response to retrieve
+        :param http_response: The HTTP response to retrieve
         the (target) message size.
         :rtype: int
-        :return: The message size for the given http response
+        :return: The message size for the given HTTP response
         measured in bytes.
         """
 
-        # retrieves the headers map from the http response
+        # retrieves the headers map from the HTTP response
         headers_map = http_response.headers_map
 
         # in case the content length is defined in the headers map
@@ -800,7 +800,7 @@ class ServiceHttpProxy(colony.System):
             # sets the message size as undefined
             http_response_size = None
 
-        # returns the http response size
+        # returns the HTTP response size
         return http_response_size
 
     def _get_generator_value(self, generator, value_type):
@@ -848,10 +848,10 @@ class ChunkHandler(object):
     """
 
     http_response_generator = None
-    """ The generator to be used to progressively retrieve the http response """
+    """ The generator to be used to progressively retrieve the HTTP response """
 
     http_response_size = 0
-    """ The size of the http response """
+    """ The size of the HTTP response """
 
     close_handler = None
     """ The handler to be called on closing """
@@ -868,10 +868,10 @@ class ChunkHandler(object):
 
         :type http_response_generator: Generator
         :param http_response_generator: The generator to be
-        used in the http response.
+        used in the HTTP response.
         :type http_response_size: int
         :param http_response_size: The size in bytes of the
-        http reponse.
+        HTTP reponse.
         :type close_handler: Function
         :param close_handler: The handler to be called on
         closing.

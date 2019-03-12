@@ -133,7 +133,7 @@ WINDOWS_CONTENT_HANDLERS_MAP = {
 
 class ServiceHttpCgi(colony.System):
     """
-    The service http cgi (handler) class.
+    The service HTTP CGI (handler) class.
     """
 
     def get_handler_name(self):
@@ -148,10 +148,10 @@ class ServiceHttpCgi(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         # reads the request contents
@@ -169,7 +169,7 @@ class ServiceHttpCgi(colony.System):
         # retrieves the request file name
         request_filename = request.filename
 
-        # retrieves the request http service connection
+        # retrieves the request HTTP service connection
         request_service_connection = request.service_connection
 
         # retrieves the request operation type
@@ -239,7 +239,7 @@ class ServiceHttpCgi(colony.System):
             # retrieves the environment map
             environment_map = os.environ
 
-            # sets the cgi properties in the environment map
+            # sets the CGI properties in the environment map
             environment_map[SERVER_SOFTWARE_VALUE] = request_server_identifier
             environment_map[SERVER_NAME_VALUE] = ""
             environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
@@ -302,7 +302,7 @@ class ServiceHttpCgi(colony.System):
 
             # in case there is a return code different than zero and contents in the standard error data
             if return_code and stderr_data:
-                # raises the cgi script error exception
+                # raises the CGI script error exception
                 raise exceptions.CgiScriptError(stderr_data)
 
             try:
@@ -316,9 +316,9 @@ class ServiceHttpCgi(colony.System):
                 # retrieves the contents joining the second part
                 # of the splitted standard output data
                 contents = "".join(stdout_data_splitted[1:])
-            except:
-                # raises the invalid cgi data exception
-                raise exceptions.InvalidCgiData("problem parsing the cgi data")
+            except Exception:
+                # raises the invalid CGI data exception
+                raise exceptions.InvalidCgiData("problem parsing the CGI data")
 
             try:
                 # splits the header string retrieving the headers list
@@ -340,9 +340,9 @@ class ServiceHttpCgi(colony.System):
 
                     # sets the header value in the headers map
                     headers_map[header_name_stripped] = header_value_stripped
-            except:
-                # raises the invalid cgi header exception
-                raise exceptions.InvalidCgiHeader("problem parsing the cgi header")
+            except Exception:
+                # raises the invalid CGI header exception
+                raise exceptions.InvalidCgiHeader("problem parsing the CGI header")
 
             # retrieves the content type
             content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
@@ -363,4 +363,4 @@ class ServiceHttpCgi(colony.System):
             return
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no cgi handler could handle the request")
+        raise exceptions.RequestNotHandled("no CGI handler could handle the request")

@@ -224,7 +224,7 @@ DEFAULT_CONNECTION_ARGUMENTS = (
 
 class ServiceHttpFastCgi(colony.System):
     """
-    The service http fast cgi (handler) class.
+    The service http fast CGI (handler) class.
     """
 
     connection_map = {}
@@ -310,7 +310,7 @@ class ServiceHttpFastCgi(colony.System):
         # creates the environment map
         environment_map = {}
 
-        # sets the cgi properties in the environment map
+        # sets the CGI properties in the environment map
         environment_map[SERVER_SOFTWARE_VALUE] = request_server_identifier
         environment_map[SERVER_NAME_VALUE] = ""
         environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
@@ -402,9 +402,9 @@ class ServiceHttpFastCgi(colony.System):
             # retrieves the contents joining the second part
             # of the splitted standard output data
             contents = "".join(stdout_data_splitted[1:])
-        except:
-            # raises the invalid cgi data exception
-            raise exceptions.InvalidFastCgiData("problem parsing the fast cgi data")
+        except Exception:
+            # raises the invalid CGI data exception
+            raise exceptions.InvalidFastCgiData("problem parsing the fast CGI data")
 
         try:
             # splits the header string retrieving the headers list
@@ -426,9 +426,9 @@ class ServiceHttpFastCgi(colony.System):
 
                 # sets the header value in the headers map
                 headers_map[header_name_stripped] = header_value_stripped
-        except:
-            # raises the invalid cgi header exception
-            raise exceptions.InvalidFastCgiHeader("problem parsing the fast cgi header")
+        except Exception:
+            # raises the invalid CGI header exception
+            raise exceptions.InvalidFastCgiHeader("problem parsing the fast CGI header")
 
         # retrieves the content type
         content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
@@ -446,7 +446,7 @@ class ServiceHttpFastCgi(colony.System):
         request.status_code = status
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no fast cgi handler could handle the request")
+        raise exceptions.RequestNotHandled("no fast CGI handler could handle the request")
 
     def _get_connection(self, connection_type, connection_arguments):
         """
@@ -467,7 +467,7 @@ class ServiceHttpFastCgi(colony.System):
         # in case the connection id tuples does not exists
         # in the connection map
         if not connection_id_tuple in self.connection_map:
-            # creates a new fast cgi connection
+            # creates a new fast CGI connection
             connection = FastCgiConnection(connection_type, connection_arguments)
 
             # establishes the connection
@@ -484,7 +484,7 @@ class ServiceHttpFastCgi(colony.System):
 
 class FastCgiConnection(object):
     """
-    The fast cgi connection class.
+    The fast CGI connection class.
     """
 
     connection_type = INTERNET_CONNECTION_TYPE
