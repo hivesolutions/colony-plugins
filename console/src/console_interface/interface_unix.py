@@ -338,7 +338,7 @@ class ConsoleInterfaceUnix(object):
             # creates the size tuple from the
             # width and the height of the console
             size_tuple = (width, height)
-        except:
+        except Exception:
             # in case the retrieval of the size fails
             # the size tuple is invalidated
             size_tuple = None

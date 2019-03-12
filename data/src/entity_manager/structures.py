@@ -4180,7 +4180,7 @@ class EntityClass(object):
                 name, value = value.split(":", 1)
                 serializer, _name = cls.get_serializer(name)
                 metadata_value = serializer.loads(value)
-            except:
+            except Exception:
                 # sets the metadata value as invalid in case
                 # an error occurred while unpacking the metadata
                 metadata_value = None

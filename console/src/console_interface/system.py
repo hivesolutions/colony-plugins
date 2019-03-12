@@ -49,14 +49,14 @@ try:
     if not console_interface_class:
         import interface_win32
         console_interface_class = interface_win32.ConsoleInterfaceWin32
-except:
+except ImportError:
     pass
 
 try:
     if not console_interface_class:
         import interface_unix
         console_interface_class = interface_unix.ConsoleInterfaceUnix
-except:
+except ImportError:
     pass
 
 CARET = "$"

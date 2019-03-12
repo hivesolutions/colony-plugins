@@ -801,18 +801,16 @@ class ClientConnection(object):
             try:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
-            except:
-                # closes the connection
+            except Exception:
+                # closes the connection and then raises the
+                # request closed exception
                 self.close()
-
-                # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
-                # closes the connection
+                # closes the connection and then raises the
+                # server request timeout exception
                 self.close()
-
-                # raises the server request timeout exception
                 raise exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
                 # iterates continuously
@@ -911,7 +909,7 @@ class ClientConnection(object):
                     [],
                     response_timeout
                 )
-            except:
+            except Exception:
                 # closes the connection and raises a request closed exception
                 # meaning that there was a problem in the connection selection
                 self.close()

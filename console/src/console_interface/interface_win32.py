@@ -211,7 +211,7 @@ class ConsoleInterfaceWin32:
             # it using the get console screen buffer info function
             console_buffer_info = ctypes.create_string_buffer(22)
             result = ctypes.windll.kernel32.GetConsoleScreenBufferInfo(stdout_handle, console_buffer_info) #@UndefinedVariable
-        except:
+        except Exception:
             # returns an invalid value
             return None
 

@@ -518,7 +518,7 @@ class PaypalClient(object):
         # supposed to succeed in case the credentials are valid,
         # otherwise returns true in case it succeeds
         try: self.get_balance()
-        except: return False
+        except Exception: return False
         else: return True
 
     def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
