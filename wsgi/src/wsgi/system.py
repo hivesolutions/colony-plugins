@@ -168,7 +168,7 @@ class Wsgi(colony.System):
             has_code = hasattr(exception, "status_code")
             code = exception.status_code if has_code else 500
             try: code = int(code)
-            except: code = 500
+            except Exception: code = 500
             status = "Not OK"
             message = self.error_message(exception, code = code)
             is_unicode = colony.legacy.is_unicode(message)
@@ -987,7 +987,7 @@ class WsgiRequest(object):
                 # as the if modified header date time (no modification)
                 # must return false as there was no modification
                 if modified_date_time <= if_modified_header_data_time: return False
-            except:
+            except Exception:
                 # prints a warning for not being able to check the modification date
                 self.service.plugin.warning("Problem while checking modification date")
 
