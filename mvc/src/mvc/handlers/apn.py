@@ -43,9 +43,9 @@ import socket
 import binascii
 
 try: import ssl
-except: ssl = None
+except ImportError: ssl = None
 try: import json
-except: json = None
+except ImportError: json = None
 
 from . import handler
 

@@ -4762,7 +4762,7 @@ class EntityClass(object):
         # value setting the error flag in case an exception occurs, otherwise
         # sets the value in the current instance (no more delayed resolution)
         try: value = method(self)
-        except: error = True
+        except Exception: error = True
         else: setattr(self, name, value)
 
         # in case the error flag is set re-raise the current exception in
@@ -5321,7 +5321,7 @@ def load_serializers():
         # to the removal list otherwise sets the serializer
         # in the associated map
         try: object = __import__(name)
-        except: removal.append(name)
+        except ImportError: removal.append(name)
         else: SERIALIZERS_MAP[name] = object
 
     # iterates over all the (serializer) names to be

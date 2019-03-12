@@ -42,9 +42,9 @@ import time
 import colony
 
 try: import pgdb
-except:
+except ImportError:
     try: import psycopg2; pgdb = psycopg2
-    except: import psycopg2cffi; pgdb = psycopg2cffi
+    except ImportError: import psycopg2cffi; pgdb = psycopg2cffi
 
 ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution
@@ -840,7 +840,7 @@ class PgsqlConnection(object):
         # then closes the cursor avoid the leak of
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
-        except: cursor.close()
+        except: cursor.close(); raise
 
         # returns the cursor that has just been created for
         # the execution of the requested query

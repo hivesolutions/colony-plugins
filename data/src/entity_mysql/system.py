@@ -43,7 +43,7 @@ import threading
 import colony
 
 try: import MySQLdb
-except: import pymysql; MySQLdb = pymysql
+except ImportError: import pymysql; MySQLdb = pymysql
 
 ENGINE_NAME = "mysql"
 """ The name of the engine currently in execution
@@ -961,7 +961,7 @@ class MysqlConnection(object):
         # then closes the cursor avoid the leak of
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
-        except: cursor.close()
+        except: cursor.close(); raise
 
         # returns the cursor that has just been created for
         # the execution of the requested query

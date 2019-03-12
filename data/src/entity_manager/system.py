@@ -6324,7 +6324,7 @@ class EntityManager(object):
         for name, _class in colony.legacy.iteritems(attr_methods):
             method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(map)
-            except: pass
+            except Exception: pass
             else: map[name] = attribute
 
     def calc_attr_e(self, entity_class, entity):
@@ -6339,7 +6339,7 @@ class EntityManager(object):
         for name, _class in colony.legacy.iteritems(attr_methods):
             method = getattr(entity_class, "_attr_" + name)
             try: attribute = method(entity)
-            except: pass
+            except Exception: pass
             else: setattr(entity, name, attribute)
 
     def _export_class(self, entity_class, serializer, depth = 1, range = None, filters = None):
