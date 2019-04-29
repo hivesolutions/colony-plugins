@@ -41,7 +41,7 @@ import colony
 
 class ApiAtException(colony.ColonyException):
     """
-    The api at exception class.
+    The API AT exception class.
     """
 
     message = None
@@ -49,12 +49,12 @@ class ApiAtException(colony.ColonyException):
 
 class AtApiError(ApiAtException):
     """
-    The at api error class.
+    The AT API error class.
     """
 
     error_code = None
     """ The code associated with the message contained
-    in this api error """
+    in this API error """
 
     def __init__(self, message, error_code):
         """
@@ -64,7 +64,7 @@ class AtApiError(ApiAtException):
         :param message: The message to be printed.
         :type error_code: String
         :param error_code: The code associated with
-        the message contained in this api error.
+        the message contained in this API error.
         """
 
         ApiAtException.__init__(self)
@@ -79,4 +79,4 @@ class AtApiError(ApiAtException):
         :return: The string representation of the class.
         """
 
-        return "At api error - %s" % self.message
+        return "AT API error - %s" % self.message
