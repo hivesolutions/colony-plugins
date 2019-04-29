@@ -1020,11 +1020,15 @@ class WsgiRequest(object):
             if not mediated_value: return
             else: yield mediated_value
 
-    def _resolve_path(self, path_info, alias):
+    def _resolve_path(self, path_info, alias, separator = "/"):
         """
         Resolves the provided path info string using the provided
         alias list, if there's a match at beginning of the string in
         the path info the value is replaced.
+
+        If the separator string is set then the `/` separator is ensured
+        to be present in between the matching and the next token, this is
+        considered the default alias resolution behaviour.
 
         :type path_info: String
         :param path_info: The path information string containing the
@@ -1032,6 +1036,9 @@ class WsgiRequest(object):
         :type alias: List
         :param alias: The list containing prefix to resolution values
         associations that will be used in the resolution.
+        :type separator: String
+        :param separator: The separator to be ensured to be present
+        in between the matching alias token and the remainder string.
         :rtype: String
         :return: The resolved path string resulting from the resolution
         of the path info string according to the provided list.
@@ -1046,6 +1053,8 @@ class WsgiRequest(object):
         # in case it does happen the value is replaced
         for key, value in alias:
             if not path_info.startswith(key): continue
+            if separator and not len(path_info) == len(key) and\
+               not path_info[len(key)] == separator: continue
             key_l = len(key)
             path_info = value + path_info[key_l:]
             break
