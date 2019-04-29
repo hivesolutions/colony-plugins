@@ -163,7 +163,9 @@ class Wsgi(colony.System):
             alias = alias,
             rewrite = rewrite
         )
-        try: rest_plugin.handle_request(request); request.finish()
+        try:
+            rest_plugin.handle_request(request)
+            request.finish()
         except Exception as exception:
             has_code = hasattr(exception, "status_code")
             code = exception.status_code if has_code else 500

@@ -253,7 +253,7 @@ class Rest(colony.System):
         # to be set in the rest request that is going to be created
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
-        # retrieves the request filename as the uri of the provided
+        # retrieves the request filename as the URI of the provided
         # (native) request object
         request_filename = request.uri
 
