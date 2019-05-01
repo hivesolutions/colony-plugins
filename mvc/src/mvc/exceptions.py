@@ -117,7 +117,7 @@ class RuntimeRequestException(BadServiceRequest):
 
 class MvcRequestNotHandled(BadServiceRequest):
     """
-    The mvc request not handled class.
+    The MVC request not handled class.
     """
 
     def __init__(self, message, status_code = 404):
@@ -143,7 +143,7 @@ class MvcRequestNotHandled(BadServiceRequest):
         :return: The string representation of the class.
         """
 
-        return "Mvc Request Not handled - %s" % self.message
+        return "MVC Request Not handled - %s" % self.message
 
 class FileNotFoundException(MvcRequestNotHandled):
     """
