@@ -89,15 +89,15 @@ to the proper type value to be used in casting """
 
 class Mvc(colony.System):
     """
-    The mvc class, responsible for the management of the
-    mvc routes and all the services related with mvc.
+    The MVC class, responsible for the management of the
+    MVC routes and all the services related with MVC.
     """
 
     mvc_file_handler = None
-    """ The mvc file handler """
+    """ The MVC file handler """
 
     mvc_communication_handler = None
-    """ The mvc communication handler """
+    """ The MVC communication handler """
 
     clear_pending = False
     """ Flag that controls if the rest sessions should be
@@ -183,9 +183,9 @@ class Mvc(colony.System):
 
     def start_system(self):
         """
-        Starts the mvc system structures.
+        Starts the MVC system structures.
         This method starts all the persistent and
-        background execution tasks for mvc.
+        background execution tasks for MVC.
 
         Note that the execution og background tasks
         is conditioned to the current thread execution
@@ -201,9 +201,9 @@ class Mvc(colony.System):
 
     def stop_system(self):
         """
-        Stops the mvc system structures.
+        Stops the MVC system structures.
         This method stops all the persistent and
-        background execution tasks for mvc.
+        background execution tasks for MVC.
         """
 
         # retrieves the plugin manager to recall the option to load or not
@@ -239,7 +239,7 @@ class Mvc(colony.System):
         :type rest_request: RestRequest
         :param rest_request: The rest request to be handled, this
         value is going to be encapsulated into an abstract request
-        interface to be handled by the underlying mvc services.
+        interface to be handled by the underlying MVC services.
         """
 
         # in case the clear pending flag is set must remove
@@ -328,19 +328,19 @@ class Mvc(colony.System):
             # returns immediately
             return
 
-        # raises the mvc request not handled exception, because no mvc
+        # raises the MVC request not handled exception, because no MVC
         # service was found for the current request constraints
-        raise exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
+        raise exceptions.MvcRequestNotHandled("no MVC service plugin could handle the request")
 
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """
-        Loads the given mvc service plugin, this process is focused
+        Loads the given MVC service plugin, this process is focused
         on the extraction of the patterns from the plugin and in
-        the correct update of the internal structures of the mvc
+        the correct update of the internal structures of the MVC
         to handling these "new" patterns.
 
         :type mvc_service_plugin: Plugin
-        :param mvc_service_plugin: The mvc service plugin to be loaded.
+        :param mvc_service_plugin: The MVC service plugin to be loaded.
         """
 
         # verifies the existence of all the method in the facade of the plugin
@@ -351,7 +351,7 @@ class Mvc(colony.System):
         has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
 
         # retrieves the complete set of patterns from the
-        # mvc service plugin to load them into the internal structures
+        # MVC service plugin to load them into the internal structures
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
         communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
         resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
@@ -401,7 +401,7 @@ class Mvc(colony.System):
             # in the patterns map must add it to the structures
             if not pattern_key_escaped in self.patterns_map:
                 # creates a new (pattern attributes) list for the pattern key in the
-                # mvc service patterns map and then add the escaped pattern key
+                # MVC service patterns map and then add the escaped pattern key
                 # to the list of patterns
                 self.patterns_map[pattern_key_escaped] = []
                 self.patterns_list.append(pattern_key_escaped)
@@ -440,15 +440,15 @@ class Mvc(colony.System):
 
     def unload_mvc_service_plugin(self, mvc_service_plugin):
         """
-        Unloads the given mvc service plugin, this should remove
+        Unloads the given MVC service plugin, this should remove
         any reference of the various patterns contained in the
-        mvc service plugin from the current internal structures.
+        MVC service plugin from the current internal structures.
 
-        Any further mvc request should not be able to be handled
+        Any further MVC request should not be able to be handled
         by the plugins's patterns.
 
         :type mvc_service_plugin: Plugin
-        :param mvc_service_plugin: The mvc service plugin to be unloaded.
+        :param mvc_service_plugin: The MVC service plugin to be unloaded.
         """
 
         # retrieves the reference to the plugin manager and verifies
@@ -467,7 +467,7 @@ class Mvc(colony.System):
         has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
 
         # retrieves the complete set of patterns from the
-        # mvc service plugin to unload them from the internal structures
+        # MVC service plugin to unload them from the internal structures
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
         communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
         resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
@@ -513,7 +513,7 @@ class Mvc(colony.System):
                     pattern_value
                 )
 
-                # retrieves the pattern attributes list from the mvc service
+                # retrieves the pattern attributes list from the MVC service
                 # patterns map and then removes the pattern attributes
                 # from the pattern attributes list
                 pattern_attributes_list = self.patterns_map[pattern_key_escaped]
@@ -557,17 +557,17 @@ class Mvc(colony.System):
         self._update_resource_matching_regex()
 
     def process_mvc_patterns_reload_event(self, event_name, plugin):
-        # unloads the mvc service plugin and then load it again
+        # unloads the MVC service plugin and then load it again
         # this should reflect a reloading event
         self.unload_mvc_service_plugin(plugin)
         self.load_mvc_service_plugin(plugin)
 
     def process_mvc_patterns_load_event(self, event_name, plugin):
-        # loads the mvc service plugin
+        # loads the MVC service plugin
         self.load_mvc_service_plugin(plugin)
 
     def process_mvc_patterns_unload_event(self, event_name, plugin):
-        # unloads the mvc service plugin
+        # unloads the MVC service plugin
         self.unload_mvc_service_plugin(plugin)
 
     def process_mvc_communication_event(self, event_name, connection_name, message):
@@ -677,7 +677,7 @@ class Mvc(colony.System):
         # retrieves the group index from the resource path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base index,
+        # calculates the MVC service index from the base index,
         # the group index and subtracts one value and uses it
         # to retrieves the resource pattern
         mvc_service_index = base_index + group_index - 1
@@ -701,7 +701,7 @@ class Mvc(colony.System):
         file_path = base_path + "/" + resource_path[initial_token_l + 1:]
         if rest_request.encoder_name: file_path += "." + rest_request.encoder_name
 
-        # handles the given request by the mvc file handler
+        # handles the given request by the MVC file handler
         self.mvc_file_handler.handle_request(
             rest_request.request,
             file_path
@@ -715,7 +715,7 @@ class Mvc(colony.System):
         # retrieves the group index from the communication path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base index,
+        # calculates the MVC service index from the base index,
         # the group index and subtracts one value and uses it to
         # retrieves the communication pattern
         mvc_service_index = base_index + group_index - 1
@@ -726,7 +726,7 @@ class Mvc(colony.System):
         information = self.communication_patterns_map[pattern]
         delegate, connection_name = information
 
-        # handles the given request by the mvc communication handler
+        # handles the given request by the MVC communication handler
         self.mvc_communication_handler.handle_request(
             rest_request,
             delegate,
@@ -741,14 +741,14 @@ class Mvc(colony.System):
         # retrieves the group index from the resource path match
         group_index = path_match.lastindex
 
-        # calculates the mvc service index from the base index,
+        # calculates the MVC service index from the base index,
         # the group index and subtracts one value and uses it to
         # retrieve the pattern
         mvc_service_index = base_index + group_index - 1
         pattern = self.patterns_list[mvc_service_index]
 
         # retrieves the pattern attributes list from the
-        # mvc service patterns map
+        # MVC service patterns map
         pattern_attributes_list = self.patterns_map[pattern]
 
         # starts the return value
@@ -830,7 +830,7 @@ class Mvc(colony.System):
         # be used during the life time of the request
         rest_request.resolve = self.resolve
 
-        # in case there's an encoder name defined and the current (mvc)
+        # in case there's an encoder name defined and the current (MVC)
         # plugin references an encoding plugin that candidates for that
         # type of encoding it's set as the current serialized, this is
         # used as the default serialization process and may be overriden
@@ -859,7 +859,7 @@ class Mvc(colony.System):
             controller.get_default_parameters() or {}
         colony.map_extend(parameters, default_parameters, copy_base_map = False)
 
-        # handles the mvc request to the handler method (rest
+        # handles the MVC request to the handler method (rest
         # request flow) note that the call is done using the safe
         # call method so that only the valid arguments are passed
         # to the handler method (pattern names validation)
@@ -1260,7 +1260,7 @@ class Mvc(colony.System):
         validation_match_groups_map = validation_match.groupdict()
 
         # creates the map containing the various parameters to be
-        # "pushed" to the lower layer of the mvc stack
+        # "pushed" to the lower layer of the MVC stack
         parameters = dict(
             file_handler = self.mvc_file_handler,
             communication_handler = self.mvc_communication_handler,
