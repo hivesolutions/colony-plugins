@@ -34,19 +34,19 @@ __copyright__ = "Copyright (c) 2008-2019 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import async
+from . import asynchronous
 from . import exceptions
-from . import sync
+from . import synchronous
 from . import system
 from . import threads
 
-from .async import SelectPolling, EpollPolling, KqueuePolling, Connection
+from .asynchronous import SelectPolling, EpollPolling, KqueuePolling, Connection
 from .exceptions import ServiceUtilsException, SocketProviderNotFound, SocketUpgraderNotFound,\
     ServerRequestTimeout, ClientRequestTimeout, ServerResponseTimeout, ClientResponseTimeout,\
     RequestClosed, PortStarvationReached, ConnectionChangeFailure
-from .sync import AbstractServiceConnectionHandler, AbstractServiceConnectionlessHandler
+from .synchronous import AbstractServiceConnectionHandler, AbstractServiceConnectionlessHandler
 from .system import ServiceUtils
 from .threads import ServiceAcceptingThread, ServiceExecutionThread
 
-from .async import AbstractService as AbstractServiceAsync
-from .sync import AbstractService as AbstractServiceSync
+from .asynchronous import AbstractService as AbstractServiceAsync
+from .synchronous import AbstractService as AbstractServiceSync

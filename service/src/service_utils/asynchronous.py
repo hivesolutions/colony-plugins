@@ -119,10 +119,10 @@ class AbstractService(object):
     """
 
     service_utils = None
-    """ The service utils """
+    """ The service utils system reference """
 
     service_utils_plugin = None
-    """ The service utils plugin """
+    """ The service utils plugin reference """
 
     stop_flag = False
     """ The flag that controls the execution of the main loop
