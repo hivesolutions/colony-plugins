@@ -59,10 +59,6 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
-DEAD_LOCK_RETRY_TIME = 1
-""" The amount of time (in seconds) to be used in the sleep
-between query retries related with dead locks """
-
 IGNORE_ERRORS = (1112,)
 """ The list of errors that are considered warning only
 and that should be ignores, but a warning log message
@@ -343,7 +339,7 @@ class MysqlEngine(object):
         finally: cursor.close()
         return result
 
-    def execute_query(self, query, cursor = None, retries = 3, retry_sleep = None):
+    def execute_query(self, query, cursor = None, retries = 3):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -364,9 +360,6 @@ class MysqlEngine(object):
         :param retries: The current number of retries pending
         for the execution of the query. This is used to solve
         the reconnection related issues.
-        :type retry_sleep: int
-        :param retry_sleep: The amount of time in seconds to
-        be used in the possible wait in between query retries.
         :rtype: Cursor
         :return: The cursor that was used for the query execution
         it must be closed in the outside context.
@@ -444,8 +437,7 @@ class MysqlEngine(object):
                 return self.execute_query(
                     query,
                     cursor = cursor,
-                    retries = retries - 1,
-                    retry_sleep = retry_sleep
+                    retries = retries - 1
                 )
             else:
                 cursor.close()
