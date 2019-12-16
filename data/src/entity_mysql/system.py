@@ -70,9 +70,9 @@ CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
 considered to be connection related and for which the
 connection should be reset and a reconnection attempted """
 
-DEAD_LOCK_ERRORS = (1213,)
+LOCK_TIMEOUT_ERRORS = (1205,)
 """ The sequence that defines the codes describing errors
-related with possible deadlocks """
+related with possible lock timeout operation (no rollback) """
 
 class EntityMysql(colony.System):
     """
@@ -429,6 +429,11 @@ class MysqlEngine(object):
             # related value and in case it's tries to reconnect
             if code in CONNECTION_ERRORS:
                 self.reconnect()
+
+            # in case the error code is related with a lock timeout
+            # then a retry operation must be performed
+            if code in LOCK_TIMEOUT_ERRORS:
+                is_valid = True
 
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
