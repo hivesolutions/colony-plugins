@@ -366,7 +366,7 @@ class MysqlEngine(object):
         the reconnection related issues.
         :type retry_sleep: int
         :param retry_sleep: The amount of time in seconds to
-        be used in the possible wait between retries.
+        be used in the possible wait in between query retries.
         :rtype: Cursor
         :return: The cursor that was used for the query execution
         it must be closed in the outside context.
