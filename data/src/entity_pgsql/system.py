@@ -144,8 +144,8 @@ class PgsqlEngine(object):
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
         isolation = colony.conf("DB_ISOLATION", isolation)
-        show_sql = colony.conf("SHOW_SQL", False)
-        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True)
+        show_sql = colony.conf("SHOW_SQL", False, cast = bool)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
         connection._connection = PgsqlConnection(
             host = host,
             user = user,

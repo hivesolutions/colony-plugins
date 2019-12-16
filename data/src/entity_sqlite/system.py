@@ -116,8 +116,8 @@ class SqliteEngine(object):
         file_path = parameters.get("file_path", None)
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
-        show_sql = colony.conf("SHOW_SQL", False)
-        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True)
+        show_sql = colony.conf("SHOW_SQL", False, cast = bool)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
         connection._connection = SqliteConnection(
