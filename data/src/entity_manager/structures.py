@@ -600,7 +600,7 @@ class EntityClass(object):
 
         safe_character = safe_character or ""
         return safe_character + colony.to_underscore(cls.__name__)
-    
+
     @classmethod
     def get_plain_name(cls):
         return cls.get_name(safe_character = None)

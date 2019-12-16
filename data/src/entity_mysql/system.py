@@ -59,6 +59,10 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
+DEAD_LOCK_RETRY_TIME = 1
+""" The amount of time (in seconds) to be used in the sleep
+between query retries related with dead locks """
+
 IGNORE_ERRORS = (1112,)
 """ The list of errors that are considered warning only
 and that should be ignores, but a warning log message
@@ -69,6 +73,10 @@ CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
 """ The sequence containing the list of error that are
 considered to be connection related and for which the
 connection should be reset and a reconnection attempted """
+
+DEAD_LOCK_ERRORS = (1213,)
+""" The sequence that defines the codes describing errors
+related with possible deadlocks """
 
 class EntityMysql(colony.System):
     """
@@ -419,19 +427,32 @@ class MysqlEngine(object):
             # transaction is currently open)
             code, _message = exception.args
             is_empty = self.is_empty_transaction()
+            is_valid = True
 
             # verifies if the code is defined as a connection
             # related value and in case it's tries to reconnect
-            # then in case there's no transaction pending (in the
-            # middle of execution) tries to re-execute the query
-            # otherwise raises an error
-            if code in CONNECTION_ERRORS: self.reconnect()
-            if is_empty and retries: return self.execute_query(
-                query,
-                cursor = cursor,
-                retries = retries - 1
-            )
-            else: cursor.close(); raise
+            if code in CONNECTION_ERRORS:
+                self.reconnect()
+                is_valid = is_empty
+
+            # in case the error code is related with a dead lock
+            # then wait a bit of time, and then retries
+            if code in DEAD_LOCK_ERRORS:
+                time.sleep(DEAD_LOCK_RETRY_TIME)
+                is_valid = True
+
+            # in case there's no transaction pending (in the middle of
+            # execution) tries to re-execute the query otherwise raises
+            # an error, indicating the issue with the query
+            if is_valid and retries:
+                return self.execute_query(
+                    query,
+                    cursor = cursor,
+                    retries = retries - 1
+                )
+            else:
+                cursor.close()
+                raise
         except MySQLdb.ProgrammingError as exception:
             # unpacks the message and the code from the exception and
             # then verifies if this error is meant to be ignored and in
