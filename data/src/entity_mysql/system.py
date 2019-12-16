@@ -343,7 +343,7 @@ class MysqlEngine(object):
         finally: cursor.close()
         return result
 
-    def execute_query(self, query, cursor = None, retries = 3):
+    def execute_query(self, query, cursor = None, retries = 3, retry_sleep = None):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -364,6 +364,9 @@ class MysqlEngine(object):
         :param retries: The current number of retries pending
         for the execution of the query. This is used to solve
         the reconnection related issues.
+        :type retry_sleep: int
+        :param retry_sleep: The amount of time in seconds to
+        be used in the possible wait between retries.
         :rtype: Cursor
         :return: The cursor that was used for the query execution
         it must be closed in the outside context.
@@ -436,10 +439,14 @@ class MysqlEngine(object):
                 is_valid = is_empty
 
             # in case the error code is related with a dead lock
-            # then wait a bit of time, and then retries
+            # then wait a bit of time, and then retries, notice that
+            # the retry sleep is multiplied by three so that the next
+            # rety will wait more time if required
             if code in DEAD_LOCK_ERRORS:
-                time.sleep(DEAD_LOCK_RETRY_TIME)
+                retry_sleep = retry_sleep or DEAD_LOCK_RETRY_TIME
+                time.sleep(retry_sleep)
                 is_valid = True
+                retry_sleep *= 3
 
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
@@ -448,7 +455,8 @@ class MysqlEngine(object):
                 return self.execute_query(
                     query,
                     cursor = cursor,
-                    retries = retries - 1
+                    retries = retries - 1,
+                    retry_sleep = retry_sleep
                 )
             else:
                 cursor.close()
