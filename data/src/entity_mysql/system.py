@@ -439,6 +439,8 @@ class MysqlEngine(object):
                     cursor = cursor,
                     retries = retries - 1
                 )
+            # otherwise closes the current cursor and re-raises the exception
+            # to the upper layer (for proper handling)
             else:
                 cursor.close()
                 raise
