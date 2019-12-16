@@ -430,13 +430,12 @@ class MysqlEngine(object):
             # transaction is currently open)
             code, _message = exception.args
             is_empty = self.is_empty_transaction()
-            is_valid = True
+            is_valid = is_empty
 
             # verifies if the code is defined as a connection
             # related value and in case it's tries to reconnect
             if code in CONNECTION_ERRORS:
                 self.reconnect()
-                is_valid = is_empty
 
             # in case the error code is related with a dead lock
             # then wait a bit of time, and then retries, notice that
