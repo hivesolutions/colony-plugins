@@ -441,7 +441,7 @@ class MysqlEngine(object):
             # in case the error code is related with a dead lock
             # then wait a bit of time, and then retries, notice that
             # the retry sleep is multiplied by three so that the next
-            # rety will wait more time if required
+            # retry will wait more time if required
             if code in DEAD_LOCK_ERRORS:
                 retry_sleep = retry_sleep or DEAD_LOCK_RETRY_TIME
                 time.sleep(retry_sleep)
