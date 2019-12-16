@@ -338,10 +338,7 @@ def transaction(
 
                 # in case the raise exception flag is set the
                 # exception must be re-raise to the top layers
-                if raise_exception:
-                    # re-raises the exception to be handled
-                    # by the top layers
-                    raise
+                if raise_exception: raise
             else:
                 # commits the transaction, no problems occurred and
                 # so all the pending operations may be persisted
