@@ -583,19 +583,23 @@ class EntityClass(object):
         return self
 
     @classmethod
-    def get_name(cls):
+    def get_name(cls, safe_character = SAFE_CHARACTER):
         """
         Retrieves the name of the associated entity/table reference
         for the current model class.
 
         The conversion process should be quite simple and "fast".
 
+        :type safe_character: String
+        :param safe_character: The safe character that is going to be used as
+        a prefix for the generation of the "table" name.
         :rtype: String
         :return: The name of the associated entity/table reference
         for the current model class.
         """
 
-        return SAFE_CHARACTER + colony.to_underscore(cls.__name__)
+        safe_character = safe_character or ""
+        return safe_character + colony.to_underscore(cls.__name__)
 
     @classmethod
     def get_attr_methods(cls):
