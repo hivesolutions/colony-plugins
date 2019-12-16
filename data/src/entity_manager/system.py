@@ -1908,7 +1908,7 @@ class EntityManager(object):
 
             # in case the lock flag is set, locks the
             # data source for the current entity
-            lock and self.lock(entity_class, id_value)
+            if lock: self.lock(entity_class, id_value)
 
             # generates the query for the updating operation and
             # executes it in the context for the data source
@@ -1949,7 +1949,7 @@ class EntityManager(object):
 
             # in case the lock flag is set, locks the
             # data source for the current entity
-            lock and self.lock(entity_class, id_value)
+            if lock: self.lock(entity_class, id_value)
 
             # generates the query for the removal operation and
             # executes it in the context for the data source
@@ -2291,7 +2291,7 @@ class EntityManager(object):
             # in case the lock flag is set the entity class with
             # the requested id value is locked until the transaction
             # is "committed" or "rollbacked"
-            lock and self.lock(entity_class, id_value)
+            if lock: self.lock(entity_class, id_value)
 
             # "finds" the various entities that respect the created
             # options map, this should return either a list of size
@@ -2374,7 +2374,7 @@ class EntityManager(object):
             # in case the lock flag is set the entity class with
             # is completely locked (this blocks the data source
             # information on the data for the entity class)
-            lock and self.lock(entity_class)
+            if lock: self.lock(entity_class)
 
             # normalizes the options, this is going to expand the
             # options map into a larger and easily accessible
