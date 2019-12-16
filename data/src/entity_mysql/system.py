@@ -437,19 +437,6 @@ class MysqlEngine(object):
             if code in CONNECTION_ERRORS:
                 self.reconnect()
 
-            # in case the error code is related with a dead lock
-            # then wait a bit of time, and then retries, notice that
-            # the retry sleep is multiplied by three so that the next
-            # retry will wait more time if required
-            if code in DEAD_LOCK_ERRORS:
-                retry_sleep = retry_sleep or DEAD_LOCK_RETRY_TIME
-                time.sleep(retry_sleep)
-                is_valid = True
-                retry_sleep *= 3
-                if True: #@todo check if this is safe
-                    cursor.close()
-                    raise
-
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
             # an error, indicating the issue with the query
