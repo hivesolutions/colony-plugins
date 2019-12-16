@@ -117,6 +117,7 @@ class SqliteEngine(object):
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
         show_sql = colony.conf("SHOW_SQL", False)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
         connection._connection = SqliteConnection(
@@ -125,6 +126,7 @@ class SqliteEngine(object):
             synchronous = synchronous
         )
         connection._show_sql = show_sql
+        connection._show_slow_sql = show_slow_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -281,7 +283,8 @@ class SqliteEngine(object):
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.sqlite_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
+            if is_slow and connection._show_slow_sql:
+                self.sqlite_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
             # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)

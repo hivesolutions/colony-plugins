@@ -158,6 +158,7 @@ class MysqlEngine(object):
         database = colony.conf("DB_NAME", database)
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True)
         connection._connection = MysqlConnection(
             host = host,
             user = user,
@@ -171,6 +172,7 @@ class MysqlEngine(object):
         connection._database = database
         connection._isolation = isolation
         connection._show_sql = show_sql
+        connection._show_slow_sql = show_slow_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -404,7 +406,8 @@ class MysqlEngine(object):
             # message as this may condition the way the system behaves
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
-            if is_slow: self.mysql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
+            if is_slow and connection._show_slow_sql:
+                self.mysql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
 
             # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
