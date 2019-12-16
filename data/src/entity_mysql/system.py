@@ -446,6 +446,9 @@ class MysqlEngine(object):
                 time.sleep(retry_sleep)
                 is_valid = True
                 retry_sleep *= 3
+                if True: #@todo check if this is safe
+                    cursor.close()
+                    raise
 
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
