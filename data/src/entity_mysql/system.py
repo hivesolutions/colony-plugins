@@ -59,6 +59,10 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
+DEAD_LOCK_DELAY = 2.5
+""" The delay (in seconds) in between restarting operations
+due to possible dead locks in the data source transaction """
+
 IGNORE_ERRORS = (1112,)
 """ The list of errors that are considered warning only
 and that should be ignores, but a warning log message
@@ -436,7 +440,10 @@ class MysqlEngine(object):
             if code in DEAD_LOCK_ERRORS:
                 self.mysql_system.warning("[%s] [%s] [dead lock] %s" % (ENGINE_NAME, database, query))
                 cursor.close()
-                raise colony.OperationRestart("MySQL dead lock, restart transaction")
+                raise colony.OperationRestart(
+                    "MySQL dead lock, restarting transaction",
+                    delay = DEAD_LOCK_DELAY
+                )
 
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
