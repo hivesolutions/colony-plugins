@@ -41,12 +41,12 @@ import colony
 
 class ServiceHTTPWelcomePlugin(colony.Plugin):
     """
-    The main class for the Http Service Welcome plugin.
+    The main class for the HTTP Service Welcome plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.welcome"
-    name = "Http Service Welcome"
-    description = "The plugin that offers the http service welcome"
+    name = "HTTP Service Welcome"
+    description = "The plugin that offers the HTTP service welcome"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
