@@ -46,7 +46,7 @@ class PKCS1Plugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.encryption.pkcs1"
     name = "PKCS1 Encryption"
-    description = "The plugin that offers the pkcs1 support"
+    description = "The plugin that offers the PKCS1 support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
