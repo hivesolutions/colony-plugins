@@ -101,7 +101,7 @@ DEFAULT_CHARSET = "utf-8"
 this value is defined in such a way that all the
 knows characters are able to be encoded """
 
-class Wsgi(colony.System):
+class WSGI(colony.System):
     """
     The WSGI class, responsible for the implementation
     of the colony side of the WSGI specification.
@@ -156,7 +156,7 @@ class Wsgi(colony.System):
         # the default request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WsgiRequest(
+        request = WSGIRequest(
             self,
             environ,
             prefix = prefix,
@@ -310,7 +310,7 @@ class Wsgi(colony.System):
         lines = traceback.format_exc().splitlines()
         for line in lines: yield line
 
-class WsgiRequest(object):
+class WSGIRequest(object):
     """
     Represents an HTTP request to be handled
     in the WSGI context, this value may be
@@ -345,7 +345,7 @@ class WsgiRequest(object):
     so that an uniform version is used """
 
     path = None
-    """ The (url) path created by joining the joining
+    """ The (URL) path created by joining the joining
     the prefix value and the provided path info, this
     is the virtual value to be used by colony """
 
@@ -357,15 +357,15 @@ class WsgiRequest(object):
 
     uri = None
     """ The "partial" domain name relative part of
-    the url that reference the resource """
+    the URL that reference the resource """
 
     query_string = None
-    """ The string containing the query part of the url
+    """ The string containing the query part of the URL
     that may be parsed for arguments """
 
     arguments = None
     """ The arguments part of the query or post data if
-    it's an url encoded value """
+    it's an URL encoded value """
 
     multipart = None
     """ The multipart string value (contents) of a message
@@ -373,7 +373,7 @@ class WsgiRequest(object):
 
     attributes_map = {}
     """ The map containing the various attributes resulting
-    from the parsing of the url encoded part of the get parameters
+    from the parsing of the URL encoded part of the get parameters
     or from the content of a post message """
 
     headers_out = {}
@@ -646,7 +646,7 @@ class WsgiRequest(object):
             if attribute_field_splitted_length == 2:
                 # retrieves the attribute name and the attribute value,
                 # from the attribute field splitted, then "unquotes" the
-                # attribute value from the url encoding
+                # attribute value from the URL encoding
                 attribute_name, attribute_value = attribute_field_splitted
                 attribute_value = colony.unquote_plus(attribute_value)
 
@@ -658,7 +658,7 @@ class WsgiRequest(object):
                 attribute_name, = attribute_field_splitted
                 attribute_value = None
 
-            # "unquotes" the attribute name from the url encoding and sets
+            # "unquotes" the attribute name from the URL encoding and sets
             # the attribute for the current name in the current instance
             attribute_name = colony.unquote_plus(attribute_name)
             self.__setattributes__(attribute_name, attribute_value)
@@ -678,7 +678,7 @@ class WsgiRequest(object):
         # in case no content type is defined
         if not content_type:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.WsgiRuntimeException(
+            raise exceptions.WSGIRuntimeException(
                 "no content type defined"
             )
 
@@ -690,7 +690,7 @@ class WsgiRequest(object):
         # in case the content type value is not valid raises an
         # exception indicating the error
         if not content_type_value == "multipart/form-data":
-            raise exceptions.WsgiRuntimeException(
+            raise exceptions.WSGIRuntimeException(
                 "invalid content type defined: " + content_type_value
             )
 
@@ -703,7 +703,7 @@ class WsgiRequest(object):
         # in case the length of the boundary is not two (invalid)
         # this is considered invalid and an exception is raised
         if not len(boundary_splitted) == 2:
-            raise exceptions.WsgiRuntimeException(
+            raise exceptions.WSGIRuntimeException(
                 "invalid boundary value: " + boundary
             )
 
@@ -898,7 +898,7 @@ class WsgiRequest(object):
         channel (secure request).
         """
 
-        # retrieves the url scheme for the current request and returns
+        # retrieves the URL scheme for the current request and returns
         # the result of the comparison of it against the secure scheme
         url_scheme = self.environ.get("wsgi.url_scheme", None)
         return url_scheme == "https"
@@ -1168,7 +1168,7 @@ class WsgiRequest(object):
         # in case no content disposition is defined must raise an
         # exception because the header field is required
         if not content_disposition:
-            raise exceptions.WsgiRuntimeException(
+            raise exceptions.WSGIRuntimeException(
                 "missing content disposition in multipart value"
             )
 
@@ -1208,7 +1208,7 @@ class WsgiRequest(object):
             # otherwise it's an invalid value and an exception must
             # be raised indicating the error
             else:
-                raise exceptions.WsgiRuntimeException(
+                raise exceptions.WSGIRuntimeException(
                     "invalid content disposition value in multipart value: " +
                     content_disposition_attribute_stripped
                 )

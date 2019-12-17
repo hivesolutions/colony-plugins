@@ -41,13 +41,13 @@ import colony
 
 class WsgiPlugin(colony.Plugin):
     """
-    The main class for the Wsgi plugin.
+    The main class for the WSGI plugin.
     """
 
     id = "pt.hive.colony.plugins.wsgi"
     name = "Wsgi"
     description = "Provides the basic mechanism to integrate\
-    colony into an wsgi based infra-structure"
+    colony into an WSGI based infra-structure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -68,7 +68,7 @@ class WsgiPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import wsgi
-        self.system = wsgi.Wsgi(self)
+        self.system = wsgi.WSGI(self)
 
     def handle(self, environ, start_response, prefix, alias, rewrite):
         return self.system.handle(environ, start_response, prefix, alias, rewrite)

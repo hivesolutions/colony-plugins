@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class WsgiException(colony.ColonyException):
+class WSGIException(colony.ColonyException):
     """
-    The service wsgi exception class.
+    The service WSGI exception class.
     """
 
     message = None
     """ The exception's message """
 
-class WsgiRuntimeException(WsgiException):
+class WSGIRuntimeException(WSGIException):
     """
-    The wsgi runtime exception class.
+    The WSGI runtime exception class.
     """
 
     def __init__(self, message):
@@ -60,7 +60,7 @@ class WsgiRuntimeException(WsgiException):
         :param message: The message to be printed.
         """
 
-        WsgiException.__init__(self)
+        WSGIException.__init__(self)
         self.message = message
 
     def __str__(self):
