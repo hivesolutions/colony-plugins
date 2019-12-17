@@ -50,7 +50,7 @@ AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
 
-class ServiceHttpAuthentication(colony.System):
+class ServiceHTTPAuthentication(colony.System):
     """
     The service HTTP authentication (handler) class.
     """

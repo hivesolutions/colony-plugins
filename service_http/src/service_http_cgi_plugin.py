@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpCgiPlugin(colony.Plugin):
+class ServiceHTTPCGIPlugin(colony.Plugin):
     """
     The main class for the HTTP Service CGI plugin.
     """
@@ -67,7 +67,7 @@ class ServiceHttpCgiPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_cgi
-        self.system = service_http_cgi.ServiceHttpCgi(self)
+        self.system = service_http_cgi.ServiceHTTPCGI(self)
 
     def get_handler_name(self):
         """

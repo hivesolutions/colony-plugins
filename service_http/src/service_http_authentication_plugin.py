@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpAuthenticationPlugin(colony.Plugin):
+class ServiceHTTPAuthenticationPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Authentication plugin.
     """
@@ -66,7 +66,7 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_authentication
-        self.system = service_http_authentication.ServiceHttpAuthentication(self)
+        self.system = service_http_authentication.ServiceHTTPAuthentication(self)
 
     def get_handler_name(self):
         """

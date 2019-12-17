@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpCgiException(colony.ColonyException):
+class ServiceHTTPCGIException(colony.ColonyException):
     """
     The service HTTP CGI exception class.
     """
@@ -47,7 +47,7 @@ class ServiceHttpCgiException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class RequestNotHandled(ServiceHttpCgiException):
+class RequestNotHandled(ServiceHTTPCGIException):
     """
     The request not handled class.
     """
@@ -60,7 +60,7 @@ class RequestNotHandled(ServiceHttpCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpCgiException.__init__(self)
+        ServiceHTTPCGIException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class RequestNotHandled(ServiceHttpCgiException):
 
         return "Request Not handled - %s" % self.message
 
-class CgiScriptError(ServiceHttpCgiException):
+class CGIScriptError(ServiceHTTPCGIException):
     """
     The CGI script error class.
     """
@@ -86,7 +86,7 @@ class CgiScriptError(ServiceHttpCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpCgiException.__init__(self)
+        ServiceHTTPCGIException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class CgiScriptError(ServiceHttpCgiException):
 
         return "CGI script error - %s" % self.message
 
-class InvalidCgiData(ServiceHttpCgiException):
+class InvalidCGIData(ServiceHTTPCGIException):
     """
     The invalid CGI data class.
     """
@@ -112,7 +112,7 @@ class InvalidCgiData(ServiceHttpCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpCgiException.__init__(self)
+        ServiceHTTPCGIException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class InvalidCgiData(ServiceHttpCgiException):
 
         return "Invalid CGI data - %s" % self.message
 
-class InvalidCgiHeader(ServiceHttpCgiException):
+class InvalidCGIHeader(ServiceHTTPCGIException):
     """
     The invalid CGI header class.
     """
@@ -138,7 +138,7 @@ class InvalidCgiHeader(ServiceHttpCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpCgiException.__init__(self)
+        ServiceHTTPCGIException.__init__(self)
         self.message = message
 
     def __str__(self):

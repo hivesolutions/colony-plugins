@@ -131,7 +131,7 @@ WINDOWS_CONTENT_HANDLERS_MAP = {
 }
 """ The windows content handlers map """
 
-class ServiceHttpCgi(colony.System):
+class ServiceHTTPCGI(colony.System):
     """
     The service HTTP CGI (handler) class.
     """
@@ -303,7 +303,7 @@ class ServiceHttpCgi(colony.System):
             # in case there is a return code different than zero and contents in the standard error data
             if return_code and stderr_data:
                 # raises the CGI script error exception
-                raise exceptions.CgiScriptError(stderr_data)
+                raise exceptions.CGIScriptError(stderr_data)
 
             try:
                 # splits the standard output data
@@ -318,7 +318,7 @@ class ServiceHttpCgi(colony.System):
                 contents = "".join(stdout_data_splitted[1:])
             except Exception:
                 # raises the invalid CGI data exception
-                raise exceptions.InvalidCgiData("problem parsing the CGI data")
+                raise exceptions.InvalidCGIData("problem parsing the CGI data")
 
             try:
                 # splits the header string retrieving the headers list
@@ -342,7 +342,7 @@ class ServiceHttpCgi(colony.System):
                     headers_map[header_name_stripped] = header_value_stripped
             except Exception:
                 # raises the invalid CGI header exception
-                raise exceptions.InvalidCgiHeader("problem parsing the CGI header")
+                raise exceptions.InvalidCGIHeader("problem parsing the CGI header")
 
             # retrieves the content type
             content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)

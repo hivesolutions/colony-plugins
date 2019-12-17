@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceHttpAuthenticationException, MissingProperty
-from .system import ServiceHttpAuthentication
+from .exceptions import ServiceHTTPAuthenticationException, MissingProperty
+from .system import ServiceHTTPAuthentication

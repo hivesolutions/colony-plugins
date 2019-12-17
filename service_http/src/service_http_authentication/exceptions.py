@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpAuthenticationException(colony.ColonyException):
+class ServiceHTTPAuthenticationException(colony.ColonyException):
     """
     The service HTTP authentication exception class.
     """
@@ -47,7 +47,7 @@ class ServiceHttpAuthenticationException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class MissingProperty(ServiceHttpAuthenticationException):
+class MissingProperty(ServiceHTTPAuthenticationException):
     """
     The missing property class.
     """
@@ -60,7 +60,7 @@ class MissingProperty(ServiceHttpAuthenticationException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpAuthenticationException.__init__(self)
+        ServiceHTTPAuthenticationException.__init__(self)
         self.message = message
 
     def __str__(self):
