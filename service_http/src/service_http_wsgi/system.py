@@ -64,22 +64,22 @@ COLONY_PLUGIN_MANAGER_VALUE = "colony.plugin_manager"
 """ The colony plugin manager value """
 
 WSGI_INPUT_VALUE = "wsgi.input"
-""" The wsgi input value """
+""" The WSGI input value """
 
 WSGI_ERRORS_VALUE = "wsgi.errors"
-""" The wsgi errors value """
+""" The WSGI errors value """
 
 WSGI_VERSION_VALUE = "wsgi.version"
-""" The wsgi version value """
+""" The WSGI version value """
 
 WSGI_MULTITHREAD_VALUE = "wsgi.multithread"
-""" The wsgi multithread value """
+""" The WSGI multithread value """
 
 WSGI_MULTIPROCESS_VALUE = "wsgi.multiprocess"
-""" The wsgi multiprocess value """
+""" The WSGI multiprocess value """
 
 WSGI_RUN_ONCE_VALUE = "wsgi.run_once"
-""" The wsgi run once value """
+""" The WSGI run once value """
 
 SERVER_SOFTWARE_VALUE = "SERVER_SOFTWARE"
 """ The server software value """
@@ -143,7 +143,7 @@ DEFAULT_APPLICATION_NAME = "application"
 
 class ServiceHttpWsgi(colony.System):
     """
-    The service http wsgi (handler) class.
+    The service HTTP WSGI (handler) class.
     """
 
     def get_handler_name(self):
@@ -158,10 +158,10 @@ class ServiceHttpWsgi(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         def start_response(status, response_headers):
@@ -213,7 +213,7 @@ class ServiceHttpWsgi(colony.System):
         # retrieves the request file name
         request_filename = request.filename
 
-        # retrieves the request http service connection
+        # retrieves the request HTTP service connection
         request_service_connection = request.service_connection
 
         # retrieves the request operation type
@@ -271,12 +271,12 @@ class ServiceHttpWsgi(colony.System):
         # sets the colony attributes in the environment map
         environment_map[COLONY_PLUGIN_MANAGER_VALUE] = plugin_manager
 
-        # define sthe wsgi version
+        # define the WSGI version
         wsgi_version = (
             1, 0
         )
 
-        # sets the wsgi attributes in the environment map
+        # sets the WSGI attributes in the environment map
         environment_map[WSGI_INPUT_VALUE] = request
         environment_map[WSGI_ERRORS_VALUE] = request
         environment_map[WSGI_VERSION_VALUE] = wsgi_version
