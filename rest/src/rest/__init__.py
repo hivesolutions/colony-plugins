@@ -38,6 +38,6 @@ from . import exceptions
 from . import system
 
 from .exceptions import ServiceException, ServiceRequestNotTranslatable, BadServiceRequest,\
-    InvalidNumberArguments, InvalidMethod, InvalidEncoder, RestRequestNotHandled, InvalidPath,\
-    InvalidSession, InvalidCookie
+    InvalidNumberArguments, InvalidMethod, InvalidEncoder, RestRequestError, RestRequestNotHandled,\
+    InvalidPath, InvalidSession, InvalidCookie
 from .system import Rest

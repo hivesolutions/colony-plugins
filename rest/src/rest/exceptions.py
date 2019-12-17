@@ -139,6 +139,32 @@ class InvalidEncoder(BadServiceRequest):
 
         return "Invalid Encoder - %s" % self.message
 
+class RestRequestError(BadServiceRequest):
+    """
+    The REST request error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        BadServiceRequest.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "REST Request Error - %s" % self.message
+
 class RestRequestNotHandled(BadServiceRequest):
     """
     The REST request not handled class.

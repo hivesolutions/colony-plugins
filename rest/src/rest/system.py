@@ -236,7 +236,7 @@ class Rest(colony.System):
         if request_filename.find(HANDLER_BASE_FILENAME) == 0: return True
         else: return False
 
-    def handle_request(self, request):
+    def handle_request(self, request, retries = 3):
         """
         Handles the given request, this is the main entry point
         for the handling of the request and the responsible for
@@ -247,6 +247,10 @@ class Rest(colony.System):
 
         :type request: Request
         :param request: The request to be handled.
+        :type retries: int
+        :param retries: The number of retries to be used for the REST
+        request execution of operation, so that it's possible to handle
+        the operation restart exception.
         """
 
         # retrieves the REST encoder plugins, these values are going
@@ -301,46 +305,72 @@ class Rest(colony.System):
         # constructs the REST path list
         path_list = middle_path_name + [last_path_initial_name]
 
-        # creates the REST request object that is going to be used
-        # for the REST level handling this object encapsulates the
-        # underlying server oriented object
-        rest_request = RestRequest(self, request)
+        # iterates continuously while there are retries pending to be
+        # done for the current REST request execution
+        while retries > 0:
+            # decrements the number of pending retries as we're going
+            # to perform one more retries in the current loop cycle
+            retries -= 1
 
-        # sets a series of attributes in the REST request that may be
-        # used latter for a series of operations
-        rest_request.set_resource_name(resource_name)
-        rest_request.set_path_list(path_list)
-        rest_request.set_encoder_name(encoder_name)
-        rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
+            # creates the REST request object that is going to be used
+            # for the REST level handling this object encapsulates the
+            # underlying server oriented object
+            rest_request = RestRequest(self, request)
 
-        # in case the request is meant to be handled by services a
-        # special case is selected and a special handling is performed
-        if resource_name == "services":
-            # handles the request with the services request handler,
-            # note that proper callback are called before and after
-            # and then returns immediately as the request is handled
-            rest_request.pre_handle()
-            try: self.handle_rest_request_services(rest_request)
-            except BaseException as exception:
-                rest_request.except_handle(exception)
-                raise
-            else: rest_request.post_handle()
-            return
+            # sets a series of attributes in the REST request that may be
+            # used latter for a series of operations
+            rest_request.set_resource_name(resource_name)
+            rest_request.set_path_list(path_list)
+            rest_request.set_encoder_name(encoder_name)
+            rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
 
-        # otherwise it's a "general" request and the typical handling
-        # strategy is going to be performed (as usual)
-        else:
-            # tries to run the classical request handling (routing)
-            # strategy to find a proper plugin handler in case it
-            # successes returns the controls flow (avoid exception)
-            result = self.try_rest_request_plugin(rest_request, resource_path)
-            if result: return
+            # in case the request is meant to be handled by services a
+            # special case is selected and a special handling is performed
+            if resource_name == "services":
+                # handles the request with the services request handler,
+                # note that proper callback are called before and after
+                # and that the operation restart exception is handled
+                rest_request.pre_handle()
+                try:
+                    self.handle_rest_request_services(rest_request)
+                except colony.OperationRestart:
+                    rest_request.post_handle()
+                    continue
+                except BaseException as exception:
+                    rest_request.except_handle(exception)
+                    raise
+                else:
+                    rest_request.post_handle()
 
-        # raises the REST request not handled exception, because of the control
-        # flow has reached this place no matching regex has able to handle the
-        # request and so no service plugin was able to handle it
-        raise exceptions.RestRequestNotHandled(
-            "no REST service plugin could handle the request"
+                # returns the control flow immediately as the operation has
+                # been handled as expected for the services case
+                return
+
+            # otherwise it's a "general" request and the typical handling
+            # strategy is going to be performed (as usual)
+            else:
+                # tries to run the classical request handling (routing)
+                # strategy to find a proper plugin handler in case it
+                # successes returns the controls flow (avoid exception)
+                try:
+                    result = self.try_rest_request_plugin(rest_request, resource_path)
+                    if result: return
+                except colony.OperationRestart:
+                    continue
+
+            # raises the REST request not handled exception, because if the control
+            # flow has reached this place no matching regex has able to handle the
+            # request and so no service plugin was able to handle it
+            raise exceptions.RestRequestNotHandled(
+                "no REST service plugin could handle the request"
+            )
+
+        # raises the REST request error exception, because if the control flow
+        # has reached this parts of the code the maximum number of retry operations
+        # have been performed for the current request and a low level exception
+        # should be raised to better serialize the error
+        raise exceptions.RestRequestError(
+            "no more REST operation retries left"
         )
 
     def handle_rest_request_services(self, rest_request):
@@ -473,6 +503,8 @@ class Rest(colony.System):
             rest_request.pre_handle()
             try: not rest_request.redirected and\
                 rest_service_plugin.handle_rest_request(rest_request)
+            except colony.OperationRestart:
+                raise
             except BaseException as exception:
                 rest_request.except_handle(exception)
                 raise

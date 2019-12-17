@@ -458,9 +458,20 @@ def serialized(serialization_parameters = None, default_success = True):
             parameters = request.parameters
 
             try:
-                # calls the callback function,
-                # retrieving the return value
+                # calls the callback function, retrieving the return value
+                # to be sent up in the call stack
                 return_value = colony.call_safe(function, *args, **kwargs)
+            except colony.OperationRestart as exception:
+                # prints a small warning message about the restart operation
+                # that has been request (it's an abnormal situation)
+                self.warning(
+                    "Operation restart request for controller (%s): " %\
+                    exception.__class__.__name__ + colony.legacy.UNICODE(exception)
+                )
+
+                # raises the exception to the top levels indicating that
+                # a re-start on the current operation is required
+                raise
             except BaseException as exception:
                 # logs a warning message because if an exception reached
                 # this area it must be considered not handled gracefully
