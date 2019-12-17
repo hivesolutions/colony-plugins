@@ -117,10 +117,10 @@ avoids an exhaustion on flushing the session data """
 
 class Rest(colony.System):
     """
-    The rest (manager) class, the top level system class
-    that handles the incoming rest requests.
+    The REST (manager) class, the top level system class
+    that handles the incoming REST requests.
 
-    The current rest infra-structure supports both the service
+    The current REST infra-structure supports both the service
     mode (remote method calls) and the typical routing.
     """
 
@@ -135,7 +135,7 @@ class Rest(colony.System):
     to retrieve the base index in each partial resolution """
 
     rest_service_routes_map = {}
-    """ The rest service routes map that associates the plugin
+    """ The REST service routes map that associates the plugin
     identifier with a list containing the complete set of routes
     for it (used for the master regex construction) """
 
@@ -240,7 +240,7 @@ class Rest(colony.System):
         """
         Handles the given request, this is the main entry point
         for the handling of the request and the responsible for
-        the creation and routing of the rest request.
+        the creation and routing of the REST request.
 
         Multiple types of handling are possible ranging from remote
         procedure call ones to simple service ones.
@@ -249,8 +249,8 @@ class Rest(colony.System):
         :param request: The request to be handled.
         """
 
-        # retrieves the rest encoder plugins, these values are going
-        # to be set in the rest request that is going to be created
+        # retrieves the REST encoder plugins, these values are going
+        # to be set in the REST request that is going to be created
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
         # retrieves the request filename as the URI of the provided
@@ -264,7 +264,7 @@ class Rest(colony.System):
         resource_path = request_filename[handler_base_filename_length:]
         resource_path_splitted = resource_path.split("/")
 
-        # retrieves the rest resource name and path name and then
+        # retrieves the REST resource name and path name and then
         # splits the last name into its own components
         resource_name = resource_path_splitted[0]
         middle_path_name = resource_path_splitted[1:-1]
@@ -298,15 +298,15 @@ class Rest(colony.System):
         # retrieves the encoder name
         encoder_name = last_path_initial_extension
 
-        # constructs the rest path list
+        # constructs the REST path list
         path_list = middle_path_name + [last_path_initial_name]
 
-        # creates the rest request object that is going to be used
-        # for the rest level handling this object encapsulates the
+        # creates the REST request object that is going to be used
+        # for the REST level handling this object encapsulates the
         # underlying server oriented object
         rest_request = RestRequest(self, request)
 
-        # sets a series of attributes in the rest request that may be
+        # sets a series of attributes in the REST request that may be
         # used latter for a series of operations
         rest_request.set_resource_name(resource_name)
         rest_request.set_path_list(path_list)
@@ -336,16 +336,16 @@ class Rest(colony.System):
             result = self.try_rest_request_plugin(rest_request, resource_path)
             if result: return
 
-        # raises the rest request not handled exception, because of the control
+        # raises the REST request not handled exception, because of the control
         # flow has reached this place no matching regex has able to handle the
         # request and so no service plugin was able to handle it
         raise exceptions.RestRequestNotHandled(
-            "no rest service plugin could handle the request"
+            "no REST service plugin could handle the request"
         )
 
     def handle_rest_request_services(self, rest_request):
         """
-        Handles the rest request meant for services, these
+        Handles the REST request meant for services, these
         are special requests where the path of the request
         should be considered to be a method name and the
         parameter of the request arguments to the remote
@@ -353,7 +353,7 @@ class Rest(colony.System):
         and it's not recommended.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be handled,
+        :param rest_request: The REST request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
         the proper parameters/arguments into it.
@@ -364,7 +364,7 @@ class Rest(colony.System):
         if rest_request.redirected: return
 
         # retrieves the (underlying) request for the current
-        # rest request, this value may be used latter for the
+        # REST request, this value may be used latter for the
         # access to internal structures and then retrieves the
         # name of the "encoder" for the current request
         request = rest_request.get_request()
@@ -428,13 +428,13 @@ class Rest(colony.System):
     def try_rest_request_plugin(self, rest_request, resource_path):
         """
         Tries to run the request handling strategy (regex matching)
-        for the complete set of rest request handling plugins.
+        for the complete set of REST request handling plugins.
 
         This should be an expensive operation (routing) and should
         be used with proper care.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be handled,
+        :param rest_request: The REST request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
         the proper parameters/arguments into it.
@@ -460,14 +460,14 @@ class Rest(colony.System):
 
             # retrieves the base value for the matching regex and uses
             # the value together with the group regex to calculates the
-            # rest service plugin index to be used in the plugin id retrieval
+            # REST service plugin index to be used in the plugin id retrieval
             base_value = self.matching_regex_base_values_map[matching_regex]
             group_index = resource_path_match.lastindex
             rest_service_plugin_index = base_value + group_index - 1
             plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
             rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
 
-            # handles the rest request using the rest service plugin,
+            # handles the REST request using the REST service plugin,
             # note that proper callback are called before and after and
             # returns the control flow to the caller method immediately
             rest_request.pre_handle()
@@ -535,16 +535,16 @@ class Rest(colony.System):
 
     def load_rest_service_plugin(self, rest_service_plugin):
         """
-        Loads the rest service plugin, in the rest manager.
+        Loads the REST service plugin, in the REST manager.
 
         :type rest_service_plugin: Plugin
-        :param rest_service_plugin: The rest service plugin to be loaded.
+        :param rest_service_plugin: The REST service plugin to be loaded.
         """
 
-        # retrieves the rest service plugin id
+        # retrieves the REST service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
-        # retrieves the rest service plugin routes and registers them
+        # retrieves the REST service plugin routes and registers them
         # under the proper routes map setting then the plugin in the
         # proper identifier to instance resolution map
         routes_list = rest_service_plugin.get_routes()
@@ -557,13 +557,13 @@ class Rest(colony.System):
 
     def unload_rest_service_plugin(self, rest_service_plugin):
         """
-        Unloads the rest service plugin, from the rest manager.
+        Unloads the REST service plugin, from the REST manager.
 
         :type rest_service_plugin: Plugin
-        :param rest_service_plugin: The rest service plugin to be unloaded.
+        :param rest_service_plugin: The REST service plugin to be unloaded.
         """
 
-        # retrieves the rest service plugin id
+        # retrieves the REST service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
         # deletes the route list associated with the plugin to be unloaded
@@ -711,7 +711,7 @@ class Rest(colony.System):
         Translates the given python result into the encoding defined.
 
         This method will try to find the correct encoder according to
-        the requested name failing with an exception in case no rest
+        the requested name failing with an exception in case no REST
         encoder plugin is loaded for the requested naming.
 
         :type result: Any
@@ -722,23 +722,23 @@ class Rest(colony.System):
         :return: The content type and the translated data.
         """
 
-        # retrieves the rest encoder plugins
+        # retrieves the REST encoder plugins
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
         # in case no encoder name is defined the default result is
         # returns as a plain string of the provided result
         if not encoder_name: "text/plain", str(result)
 
-        # iterates over all the complete set of rest encoder plugins
+        # iterates over all the complete set of REST encoder plugins
         # trying to find the encoder for the requested name
         for rest_encoder_plugin in rest_encoder_plugins:
-            # verifies if the current rest encoder is the valid one and in
+            # verifies if the current REST encoder is the valid one and in
             # case it's not skips the current loop, not found
             is_valid = rest_encoder_plugin.get_encoder_name() == encoder_name
             if not is_valid: continue
 
             # retries the content type that is going to be returned from
-            # the rest encoder plugin and then runs the encoding process
+            # the REST encoder plugin and then runs the encoding process
             # returning then a tuple containing both the content type and
             # the result data for the request that is being processed
             content_type = rest_encoder_plugin.get_content_type()
@@ -753,7 +753,7 @@ class Rest(colony.System):
         """
         Removes all the sessions from the current internal
         structures, this is equivalent to the invalidation
-        of all the sessions in the rest manager.
+        of all the sessions in the REST manager.
         """
 
         self.session_c.clear()
@@ -803,7 +803,7 @@ class Rest(colony.System):
         index = 0
         current_base_value = 0
 
-        # iterates over all the items in the rest service routes map in
+        # iterates over all the items in the REST service routes map in
         # order to populate and create the matching regex
         for rest_service_plugin_id, routes_list in colony.legacy.items(self.rest_service_routes_map):
             # in case it's the first plugin to be used in
@@ -832,7 +832,7 @@ class Rest(colony.System):
             # closes the matching regex value group
             matching_regex_value_buffer.write(")")
 
-            # sets the rest service plugin id in the regex index
+            # sets the REST service plugin id in the regex index
             # plugin id map, so that the reverse resolution may be used
             self.regex_index_plugin_id_map[index] = rest_service_plugin_id
 
@@ -873,15 +873,15 @@ class Rest(colony.System):
 
 class RestRequest(object):
     """
-    The rest request class, responsible for the representation
-    of a request coming through the rest layer system.
+    The REST request class, responsible for the representation
+    of a request coming through the REST layer system.
 
     This class should also be able to provide method for the
     interaction with the output stream to be returned.
     """
 
     rest = None
-    """ The reference to the owner rest system object
+    """ The reference to the owner REST system object
     used to access utility functions """
 
     request = None
@@ -894,19 +894,19 @@ class RestRequest(object):
     underlying stream """
 
     redirected = False
-    """ Flags that controls if the current (rest) request has
+    """ Flags that controls if the current (REST) request has
     been redirected, meaning that a proper code has been set
     and a location value has been defined (as expected) """
 
     resource_name = None
     """ The resource name, considered to be the "driver" for the
-    proper rest plugin handler (eg: mvc) """
+    proper REST plugin handler (eg: mvc) """
 
     path_list = None
     """ The path list, considered to be the remainder of the
     provided path without the resource name, this value is
-    going to be provided to the "target" rest handler, through
-    the rest request object """
+    going to be provided to the "target" REST handler, through
+    the REST request object """
 
     encoder_name = None
     """ The encoder name, as the name of the encoder that is
@@ -925,11 +925,11 @@ class RestRequest(object):
     the current request (extra pre handling operation) """
 
     rest_encoder_plugins = []
-    """ The rest encoder plugins that are going to be used
+    """ The REST encoder plugins that are going to be used
     in the translation process of the request workflow """
 
     rest_encoder_plugins_map = []
-    """ The rest encoder plugins map that contains the various
+    """ The REST encoder plugins map that contains the various
     "translation" plugins associated with their "names" """
 
     parameters_map = {}
@@ -948,11 +948,11 @@ class RestRequest(object):
     avoid the multiple unnecessary retries for loading the session """
 
     _generation_time = None
-    """ The original time of generation of the rest request
+    """ The original time of generation of the REST request
     measured as seconds since the epoch """
 
     _generation_clock = None
-    """ The original time of generation of the rest request
+    """ The original time of generation of the REST request
     measured as seconds since the start of the system process """
 
     def __init__(self, rest, request):
@@ -960,7 +960,7 @@ class RestRequest(object):
         Constructor of the class.
 
         :type rest: MainRestManager
-        :param rest: The rest manager that should control the handling
+        :param rest: The REST manager that should control the handling
         workflow for the request to be created (owner).
         :type request: Request
         :param request: The associated request, should be compatible
@@ -1036,7 +1036,7 @@ class RestRequest(object):
             random_plugin = self.rest.plugin.random_plugin
             session_id = random_plugin.generate_random_md5_string()
 
-        # creates a new rest session and sets
+        # creates a new REST session and sets
         # it as the current session (uses the timeout information)
         self._session = self.rest.session_c.new(
             session_id,
@@ -1081,13 +1081,13 @@ class RestRequest(object):
 
     def clear_sessions(self):
         """
-        Removes all the sessions from the rest manager internal
+        Removes all the sessions from the REST manager internal
         structures, this is equivalent to the invalidation
-        of all the sessions in the rest manager.
+        of all the sessions in the REST manager.
         """
 
         # clears the session related structures, removing all
-        # the sessions from the rest manager and then invalidate
+        # the sessions from the REST manager and then invalidate
         # the current session
         self.rest.clear_sessions()
         self._session = None
@@ -1183,12 +1183,12 @@ class RestRequest(object):
     def read(self):
         """
         Reads the contents of the request associated with this
-        rest request, this operation may take some performance
+        REST request, this operation may take some performance
         impact as the complete data is stored in memory.
 
         :rtype: String
         :return: The complete data contents of the request associated
-        with the current rest request.
+        with the current REST request.
         """
 
         return self.request.read()
@@ -1268,7 +1268,7 @@ class RestRequest(object):
         :param minimum_level: The minimum level to be used for verbosity.
         """
 
-        # retrieves the rest plugin
+        # retrieves the REST plugin
         rest_plugin = self.rest.plugin
 
         # retrieves the resources manager plugin
@@ -1284,14 +1284,14 @@ class RestRequest(object):
 
     def is_flushed(self):
         """
-        Checks if the current rest request has already been flushed
+        Checks if the current REST request has already been flushed
         meaning that the data has already been sent to the output stream.
 
         In case the data has been already flushed, care should be taken
         to avoid any inconsistent state (double data flush).
 
         :rtype: bool
-        :return: If the current rest request has already been flushed and
+        :return: If the current REST request has already been flushed and
         the data sent to the output stream.
         """
 
@@ -1299,7 +1299,7 @@ class RestRequest(object):
 
     def is_redirected(self):
         """
-        Verifies if the current rest request represented a response
+        Verifies if the current REST request represented a response
         that is a redirect (to other location).
 
         Only normal (through interface) redirect operations will be
@@ -1315,7 +1315,7 @@ class RestRequest(object):
 
     def flush(self):
         """
-        Flushes the rest request buffer, this operation should
+        Flushes the REST request buffer, this operation should
         generate all the required information (partial generation)
         and send it to the underlying request object.
 
@@ -1326,7 +1326,7 @@ class RestRequest(object):
         # in case there is a session available, must try to update the
         # cookie associated information in the response
         if self._session:
-            # "touches" the rest request updating it's internal timing
+            # "touches" the REST request updating it's internal timing
             # structures, note that this operation is mandatory in order
             # to properly extend the current session's lifetime
             self._session.update_expire_time()
@@ -1618,14 +1618,14 @@ class RestRequest(object):
     def get_plugin_manager(self):
         """
         Retrieves the plugin manager for the context
-        of the rest request.
+        of the REST request.
 
         :rtype: PluginManager
         :return: The plugin manager for the context
-        of the rest request.
+        of the REST request.
         """
 
-        # retrieves the rest plugin and then
+        # retrieves the REST plugin and then
         # uses it to retrieve the plugin manager
         rest_plugin = self.rest.plugin
         plugin_manager = rest_plugin.manager
@@ -1820,8 +1820,8 @@ class RestRequest(object):
 
     def reset_session(self):
         """
-        Resets the session present in the current rest request,
-        to reset the session is to unset it from the rest request.
+        Resets the session present in the current REST request,
+        to reset the session is to unset it from the REST request.
 
         This method is useful for situation where a new session
         context is required or one is meant to be created always.
@@ -1838,7 +1838,7 @@ class RestRequest(object):
 
         try:
             # resets the session in the current
-            # rest request (removes it from request)
+            # REST request (removes it from request)
             self.session = None
         finally:
             # releases the session lock allowing
@@ -1872,7 +1872,7 @@ class RestRequest(object):
 
     def get_type(self):
         """
-        Retrieves the content type for the current rest request
+        Retrieves the content type for the current REST request
         using the associated header and processing it.
 
         :rtype: String
@@ -1880,7 +1880,7 @@ class RestRequest(object):
         current request.
         """
 
-        # retrieves the content type header from the current rest request
+        # retrieves the content type header from the current REST request
         # the treats it in case it's a valid content type and returns it
         # to the caller method
         content_type = self.get_header("Content-Type")
@@ -1996,40 +1996,40 @@ class RestRequest(object):
 
     def get_rest_encoder_plugins(self):
         """
-        Retrieves the rest encoder plugins.
+        Retrieves the REST encoder plugins.
 
         :rtype: List
-        :return: The rest encoder plugins.
+        :return: The REST encoder plugins.
         """
 
         return self.rest_encoder_plugins
 
     def set_rest_encoder_plugins(self, rest_encoder_plugins):
         """
-        Sets the rest encoder plugins.
+        Sets the REST encoder plugins.
 
         :type rest_encoder_plugins: List
-        :param rest_encoder_plugins: The rest encoder plugins.
+        :param rest_encoder_plugins: The REST encoder plugins.
         """
 
         self.rest_encoder_plugins = rest_encoder_plugins
 
     def get_rest_encoder_plugins_map(self):
         """
-        Retrieves the rest encoder plugins map.
+        Retrieves the REST encoder plugins map.
 
         :rtype: Dictionary
-        :return: The rest encoder plugins map.
+        :return: The REST encoder plugins map.
         """
 
         return self.set_rest_encoder_plugins_map
 
     def set_rest_encoder_plugins_map(self, set_rest_encoder_plugins_map):
         """
-        Sets the rest encoder plugins.
+        Sets the REST encoder plugins.
 
         :type set_rest_encoder_plugins_map: Dictionary
-        :param set_rest_encoder_plugins_map: The rest encoder plugins map.
+        :param set_rest_encoder_plugins_map: The REST encoder plugins map.
         """
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
@@ -2112,7 +2112,7 @@ class RestRequest(object):
     def get_address(self):
         """
         Retrieves the (ip) address of the service connection
-        associated with the rest request.
+        associated with the REST request.
 
         :rtype: String
         :return: The (ip) address of the service connection.
@@ -2127,7 +2127,7 @@ class RestRequest(object):
     def get_port(self):
         """
         Retrieves the (tcp) port of the service connection
-        associated with the rest request.
+        associated with the REST request.
 
         :rtype: String
         :return: The (tcp) port of the service connection.
@@ -2204,7 +2204,7 @@ class RestRequest(object):
         """
 
         # in case there's already a loaded session for
-        # the current rest request returns immediately
+        # the current REST request returns immediately
         if self._session: return
 
         # retrieves the cookie value from the request
@@ -2247,7 +2247,7 @@ class RestRequest(object):
         """
 
         # in case there's already a loaded session for
-        # the current rest request returns immediately
+        # the current REST request returns immediately
         if self._session: return
 
         # retrieves the session id attribute value from the request
@@ -2310,7 +2310,7 @@ class RestRequest(object):
 
 class RestSession(object):
     """
-    The rest session class, defining the abstract interfaces
+    The REST session class, defining the abstract interfaces
     that should be used by any of the concrete session
     implementations that are going to be created at runtime.
     """
@@ -2760,7 +2760,7 @@ class RestSession(object):
 
 class ShelveSession(RestSession):
     """
-    Shelve based implementation of the rest session, meant
+    Shelve based implementation of the REST session, meant
     to provide a minimal and simple persistence layer for
     the sessions to be created.
 
