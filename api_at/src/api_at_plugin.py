@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiAtPlugin(colony.Plugin):
+class APIATPlugin(colony.Plugin):
     """
-    The main class for the At Api plugin.
+    The main class for the AT API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.at"
-    name = "At Api"
-    description = "The plugin that offers the at api"
+    name = "AT API"
+    description = "The plugin that offers the AT API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -66,15 +66,15 @@ class ApiAtPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_at
-        self.system = api_at.system.ApiAt(self)
+        self.system = api_at.system.APIAT(self)
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
-        :rtype: AtClient
+        :param api_attributes: The API attributes to be used.
+        :rtype: ATClient
         :return: The created client.
         """
 

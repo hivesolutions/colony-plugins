@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiAtException(colony.ColonyException):
+class APIATException(colony.ColonyException):
     """
     The API AT exception class.
     """
@@ -47,7 +47,7 @@ class ApiAtException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class AtApiError(ApiAtException):
+class ATAPIError(APIATException):
     """
     The AT API error class.
     """
@@ -67,7 +67,7 @@ class AtApiError(ApiAtException):
         the message contained in this API error.
         """
 
-        ApiAtException.__init__(self)
+        APIATException.__init__(self)
         self.message = message
         self.error_code = error_code
 

@@ -66,17 +66,17 @@ TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
-class ApiAt(colony.System):
+class APIAT(colony.System):
     """
-    The api at class.
+    The API AT class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: OpenidClient
@@ -87,7 +87,7 @@ class ApiAt(colony.System):
         ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the at structure and test mode (if available)
+        # retrieves the AT structure and test mode (if available)
         at_structure = api_attributes.get("at_structure", None)
         test_mode = api_attributes.get("test_mode", False)
         key = api_attributes.get("key", False)
@@ -96,7 +96,7 @@ class ApiAt(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        at_client = AtClient(
+        at_client = ATClient(
             self.plugin,
             ssl_plugin,
             client_http_plugin,
@@ -108,15 +108,15 @@ class ApiAt(colony.System):
         open_client and at_client.open()
         return at_client
 
-class AtClient(object):
+class ATClient(object):
     """
-    The class that represents a at client connection.
+    The class that represents a AT client connection.
     Will be used to encapsulate the HTTP request
-    around a locally usable api.
+    around a locally usable API.
     """
 
     plugin = None
-    """ The plugin associated with the at client this
+    """ The plugin associated with the AT client this
     plugin is considered the owner of the client """
 
     ssl_plugin = None
@@ -126,11 +126,11 @@ class AtClient(object):
     """ The client HTTP plugin """
 
     at_structure = None
-    """ The at structure """
+    """ The AT structure """
 
     test_mode = None
     """ Flag indicating the client is supposed to
-    run in test mode (uses different api urls) """
+    run in test mode (uses different API urls) """
 
     key = None
     """ The path to the private key file to be used
@@ -157,14 +157,14 @@ class AtClient(object):
         Constructor of the class.
 
         :type plugin: Plugin
-        :param plugin: The plugin associated with the at client this
+        :param plugin: The plugin associated with the AT client this
         plugin is considered the owner of the client.
         :type ssl_plugin: SSLPlugin
         :param ssl_plugin: The SSL plugin.
-        :type client_http_plugin: ClientHttpPlugin
+        :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
-        :type at_structure: AtStructure
-        :param at_structure: The at structure.
+        :type at_structure: ATStructure
+        :param at_structure: The AT structure.
         :type test_mode: bool
         :param test_mode: Flag indicating if the client is to
         be run in test mode.
@@ -186,43 +186,43 @@ class AtClient(object):
 
     def open(self):
         """
-        Opens the at client.
+        Opens the AT client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the at client.
+        Closes the AT client.
         """
 
-        # in case an http client is defined closes it
+        # in case an HTTP client is defined closes it
         # (flushing its internal structures
         if self.http_client: self.http_client.close({})
 
     def generate_at_structure(self, username, password, set_structure = True):
         """
-        Generates the at structure for the given arguments.
+        Generates the AT structure for the given arguments.
 
         :type username: String
         :param username: The username.
         :type password: String
-        :param passwird: The password.
+        :param password: The password.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the at client.
-        :rtype: AtStructure
-        :return: The generated at structure.
+        set in the AT client.
+        :rtype: ATStructure
+        :return: The generated AT structure.
         """
 
-        # creates a new at structure
-        at_structure = AtStructure(username, password)
+        # creates a new AT structure
+        at_structure = ATStructure(username, password)
 
         # in case the structure is meant to be set
         # sets it accordingly (in the current object)
         if set_structure: self.set_at_structure(at_structure)
 
-        # returns the at structure
+        # returns the AT structure
         return at_structure
 
     def get_resource(self, path):
@@ -262,8 +262,8 @@ class AtClient(object):
         Validates that the credentials are valid, returning a flag
         indicating the result.
 
-        This operation is considered a mock for the at client as
-        it returns valid, provides api compatibility.
+        This operation is considered a mock for the AT client as
+        it returns valid, provides API compatibility.
 
         :rtype: bool
         :return: Flag indicating if the credentials are valid.
@@ -275,20 +275,20 @@ class AtClient(object):
 
     def get_at_structure(self):
         """
-        Retrieves the at structure.
+        Retrieves the AT structure.
 
-        :rtype: AtStructure
-        :return: The at structure.
+        :rtype: ATStructure
+        :return: The AT structure.
         """
 
         return self.at_structure
 
     def set_at_structure(self, at_structure):
         """
-        Sets the at structure.
+        Sets the AT structure.
 
-        :type at_structure: AtStructure
-        :param at_structure: The at structure.
+        :type at_structure: ATStructure
+        :param at_structure: The AT structure.
         """
 
         self.at_structure = at_structure
@@ -312,7 +312,7 @@ class AtClient(object):
         aes = colony.AesCipher()
         secret = aes.get_key()
 
-        # retrieves the path to the at public key to be used
+        # retrieves the path to the AT public key to be used
         # in the encryption of the secret value (as nonce)
         public_key_path = self.get_resource("api_at/resources/at.pem")
 
@@ -347,7 +347,7 @@ class AtClient(object):
         digest_hash_encrypted_b64 = base64.b64encode(digest_hash_encrypted)
         digest_hash_encrypted_b64 = colony.legacy.str(digest_hash_encrypted_b64)
 
-        # defines the format of the SOAP envelope to be submitted to at
+        # defines the format of the SOAP envelope to be submitted to AT
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
             <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
@@ -429,21 +429,21 @@ class AtClient(object):
         document identifier containing it.
 
         The provided xml data should be compliant with
-        the pre-defined at SOAP response.
+        the pre-defined AT SOAP response.
 
         :type data: String
         :param data: The string containing the xml data
         to be used for parsing and retrieval of the document
         identifier.
         :rtype: String
-        :return: The at document id.
+        :return: The AT document id.
         """
 
         # parses the xml data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
-        # retrieves the at document id from the document,
+        # retrieves the AT document id from the document,
         # and returns it, returning none in case it the
         # document id was not found in the document
         at_doc_code_ids = document.getElementsByTagName("ATDocCodeID")
@@ -452,13 +452,13 @@ class AtClient(object):
 
     def _check_at_errors(self, data):
         """
-        Checks the given data for at errors.
+        Checks the given data for AT errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary
-        :param data: The data to be checked for at errors.
+        :param data: The data to be checked for AT errors.
         """
 
         # parses the xml data and retrieves the entry document
@@ -491,21 +491,21 @@ class AtClient(object):
         # (this is a successful request) must return immediately
         if return_code == 0: return
 
-        # raises the at api error exception associated with the error
+        # raises the AT API error exception associated with the error
         # that has just been "parsed"
-        raise exceptions.AtApiError(return_message, return_code)
+        raise exceptions.ATAPIError(return_message, return_code)
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists one must be created
-        # for the interaction with the api service
+        # in case no HTTP client exists one must be created
+        # for the interaction with the API service
         if not self.http_client:
             # retrieves the base values for both the key and the
             # certificate files and retrieves the (final) key and
@@ -516,7 +516,7 @@ class AtClient(object):
             certificate_path = self.test_mode and base_certificate_path or self.certificate
 
             # defines the client parameters to be used in the
-            # creation of the http client
+            # creation of the HTTP client
             client_parameters = dict(
                 content_type_charset = "utf-8",
                 key_file_path = key_path,
@@ -524,12 +524,12 @@ class AtClient(object):
                 ssl_version = "tls1"
             )
 
-            # creates the http client to be used for the api
+            # creates the HTTP client to be used for the API
             # operation and opens it with the default configuration
             self.http_client = self.client_http_plugin.create_client(client_parameters)
             self.http_client.open()
 
-        # returns the created/existing http client
+        # returns the created/existing HTTP client
         return self.http_client
 
     def _text(self, node):
@@ -538,10 +538,10 @@ class AtClient(object):
             return _node.data
         return None
 
-class AtStructure(object):
+class ATStructure(object):
     """
-    The at structure class used to store
-    the various at dependent attributes
+    The AT structure class used to store
+    the various AT dependent attributes
     placed there over the course of a session.
     """
 
