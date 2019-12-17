@@ -109,17 +109,17 @@ CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
 CONTENT_REST_SECURE_URL = "https://api-content.dropbox.com/1/"
 """ The content rest secure URL to be used """
 
-class ApiDropbox(colony.System):
+class APIDropbox(colony.System):
     """
-    The api dropbox class.
+    The API Dropbox class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: DropboxClient
@@ -133,7 +133,7 @@ class ApiDropbox(colony.System):
         json_plugin = self.plugin.json_plugin
 
         # retrieves the various attributes to be used
-        # in the construction of the dropbox client
+        # in the construction of the Dropbox client
         encoding = api_attributes.get("encoding", None)
         oauth_structure = api_attributes.get("oauth_structure", None)
 
@@ -146,7 +146,7 @@ class ApiDropbox(colony.System):
 
 class DropboxClient(object):
     """
-    The class that represents a dropbox client connection.
+    The class that represents a Dropbox client connection.
     """
 
     json_plugin = None
@@ -196,14 +196,14 @@ class DropboxClient(object):
 
     def open(self):
         """
-        Opens the dropbox client.
+        Opens the Dropbox client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the dropbox client.
+        Closes the Dropbox client.
         """
 
         # in case an http client is defined
@@ -478,7 +478,7 @@ class DropboxClient(object):
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for dropbox errors
+        # checks for Dropbox errors
         self._check_dropbox_errors(data)
 
         # returns the data
@@ -530,7 +530,7 @@ class DropboxClient(object):
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for dropbox errors
+        # checks for Dropbox errors
         self._check_dropbox_errors(data)
 
         # returns the data
@@ -701,13 +701,13 @@ class DropboxClient(object):
 
     def _check_dropbox_errors(self, data):
         """
-        Checks the given data for dropbox errors.
+        Checks the given data for Dropbox errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary
-        :param data: The data to be checked for dropbox errors.
+        :param data: The data to be checked for Dropbox errors.
         """
 
         pass

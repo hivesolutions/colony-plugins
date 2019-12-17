@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiDropboxException(colony.ColonyException):
+class APIDropboxException(colony.ColonyException):
     """
-    The api dropbox exception class.
+    The API Dropbox exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidAuthentication(ApiDropboxException):
+class InvalidAuthentication(APIDropboxException):
     """
     The invalid authentication class.
     """
@@ -60,7 +60,7 @@ class InvalidAuthentication(ApiDropboxException):
         :param message: The message to be printed.
         """
 
-        ApiDropboxException.__init__(self)
+        APIDropboxException.__init__(self)
         self.message = message
 
     def __str__(self):
