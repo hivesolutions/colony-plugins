@@ -92,22 +92,22 @@ HMAC_HASH_MODULES_MAP = {
 """ The map associating the hmac values with the hashlib hash function modules """
 
 BASE_REST_URL = "http://api.dropbox.com/1/"
-""" The base rest URL to be used """
+""" The base REST URL to be used """
 
 BASE_REST_SECURE_URL = "https://api.dropbox.com/1/"
-""" The base rest secure URL to be used """
+""" The base REST secure URL to be used """
 
 WWW_REST_SECURE_URL = "http://www.dropbox.com/1/"
-""" The www rest URL to be used """
+""" The www REST URL to be used """
 
 WWW_REST_SECURE_URL = "https://www.dropbox.com/1/"
-""" The www rest secure URL to be used """
+""" The www REST secure URL to be used """
 
 CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
-""" The content rest URL to be used """
+""" The content REST URL to be used """
 
 CONTENT_REST_SECURE_URL = "https://api-content.dropbox.com/1/"
-""" The content rest secure URL to be used """
+""" The content REST secure URL to be used """
 
 class APIDropbox(colony.System):
     """

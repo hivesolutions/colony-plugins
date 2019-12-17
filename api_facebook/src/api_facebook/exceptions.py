@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiFacebookException(colony.ColonyException):
+class APIFacebookException(colony.ColonyException):
     """
     The API Facebook exception class.
     """
@@ -47,7 +47,7 @@ class ApiFacebookException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class FacebookApiError(ApiFacebookException):
+class FacebookAPIError(APIFacebookException):
     """
     The Facebook API error class.
     """
@@ -60,7 +60,7 @@ class FacebookApiError(ApiFacebookException):
         :param message: The message to be printed.
         """
 
-        ApiFacebookException.__init__(self)
+        APIFacebookException.__init__(self)
         self.message = message
 
     def __str__(self):

@@ -71,10 +71,10 @@ DEFAULT_SCOPE = ""
 """ The default scope """
 
 BASE_REST_URL = "http://api.facebook.com/restserver.php"
-""" The base rest URL to be used """
+""" The base REST URL to be used """
 
 BASE_REST_SECURE_URL = "https://api.facebook.com/restserver.php"
-""" The base rest secure URL to be used """
+""" The base REST secure URL to be used """
 
 BASE_HOME_URL = "http://www.facebook.com/"
 """ The base home URL """
@@ -83,27 +83,27 @@ BASE_HOME_SECURE_URL = "https://www.facebook.com/"
 """ The base home secure URL """
 
 BASE_REST_OAUTH_URL = "http://www.facebook.com/"
-""" The base rest oauth URL """
+""" The base REST OAuth URL """
 
 BASE_REST_OAUTH_SECURE_URL = "https://www.facebook.com/"
-""" The base rest oauth secure URL """
+""" The base REST OAuth secure URL """
 
 BASE_REST_GRAPH_URL = "http://graph.facebook.com/"
-""" The base rest graph URL """
+""" The base REST graph URL """
 
 BASE_REST_GRAPH_SECURE_URL = "https://graph.facebook.com/"
-""" The base rest graph secure URL """
+""" The base REST graph secure URL """
 
 FACEBOOK_CLIENT_TYPE_REST = "rest"
-""" The rest Facebook client type """
+""" The REST Facebook client type """
 
 FACEBOOK_CLIENT_TYPE_OAUTH = "oauth"
-""" The oauth Facebook client type """
+""" The OAuth Facebook client type """
 
 DEFAULT_FACEBOOK_CLIENT_TYPE = FACEBOOK_CLIENT_TYPE_REST
-""" The default Facebook client type is rest """
+""" The default Facebook client type is REST """
 
-class ApiFacebook(colony.System):
+class APIFacebook(colony.System):
     """
     The API Facebook class.
     """
@@ -485,7 +485,7 @@ class FacebookClient(object):
 
     def _set_base_parameters(self, method_name, parameters):
         """
-        Sets the base Facebook rest request parameters
+        Sets the base Facebook REST request parameters
         in the parameters map.
 
         :type method_name: String
@@ -592,7 +592,7 @@ class FacebookClient(object):
         error_message = data.get("error_msg", None)
 
         # raises the Facebook API error
-        raise exceptions.FacebookApiError("error in request: " + error_message)
+        raise exceptions.FacebookAPIError("error in request: " + error_message)
 
     def _get_http_client(self):
         """
@@ -621,7 +621,7 @@ class FacebookClient(object):
 
 class FacebookClientOauth(object):
     """
-    The class that represents a Facebook client oauth connection.
+    The class that represents a Facebook client OAuth connection.
     """
 
     json_plugin = None
@@ -901,7 +901,7 @@ class FacebookClientOauth(object):
         error_message = data.get("error_msg", None)
 
         # raises the Facebook API error
-        raise exceptions.FacebookApiError("error in request: " + error_message)
+        raise exceptions.FacebookAPIError("error in request: " + error_message)
 
     def _parse_query_string(self, query_string):
         """

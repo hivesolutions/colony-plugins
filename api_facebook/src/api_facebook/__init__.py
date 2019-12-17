@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ApiFacebookException, FacebookApiError
-from .system import ApiFacebook
+from .exceptions import APIFacebookException, FacebookAPIError
+from .system import APIFacebook

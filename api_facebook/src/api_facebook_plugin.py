@@ -39,9 +39,9 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiFacebookPlugin(colony.Plugin):
+class APIFacebookPlugin(colony.Plugin):
     """
-    The main class for the Facebook Api plugin.
+    The main class for the Facebook API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.facebook"
@@ -66,7 +66,7 @@ class ApiFacebookPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_facebook
-        self.system = api_facebook.ApiFacebook(self)
+        self.system = api_facebook.APIFacebook(self)
 
     def create_client(self, api_attributes):
         """
