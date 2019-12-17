@@ -428,6 +428,7 @@ class MysqlEngine(object):
             # verifies if the code is defined as a connection
             # related value and in case it's tries to reconnect
             if code in CONNECTION_ERRORS:
+                self.mysql_system.warning("[%s] [%s] [connection lost] %s" % (ENGINE_NAME, database, query))
                 self.reconnect()
 
             # in case the error code is related with a lock timeout
