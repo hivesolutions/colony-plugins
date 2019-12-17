@@ -116,7 +116,7 @@ the currently running environment  """
 SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (python-" +\
     sys.platform + " " + ENVIRONMENT_VERSION + ")"
 """ The server identifier, this value will be presented
-in the server's identification areas (eg: http headers) """
+in the server's identification areas (eg: HTTP headers) """
 
 NUMBER_THREADS = 15
 """ The number of threads """
@@ -308,29 +308,29 @@ UPGRADE_MESSAGE_SIZE_MAP = {
 
 class ServiceHttp(colony.System):
     """
-    The service http class.
+    The service HTTP class.
     """
 
     http_service_handler_plugins_map = {}
-    """ The http service handler plugins map """
+    """ The HTTP service handler plugins map """
 
     http_service_encoding_plugins_map = {}
-    """ The http service encoding plugins map """
+    """ The HTTP service encoding plugins map """
 
     http_service_authentication_handler_plugins_map = {}
-    """ The http service authentication handler plugins map """
+    """ The HTTP service authentication handler plugins map """
 
     http_service_error_handler_plugins_map = {}
-    """ The http service error handler plugins map """
+    """ The HTTP service error handler plugins map """
 
     http_service = None
-    """ The http service reference """
+    """ The HTTP service reference """
 
     http_log_file = None
     """ The log file """
 
     http_service_configuration = {}
-    """ The http service configuration """
+    """ The HTTP service configuration """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
@@ -354,10 +354,10 @@ class ServiceHttp(colony.System):
         # generates the parameters
         service_parameters = self._generate_service_parameters(parameters)
 
-        # generates the http service using the given service parameters
+        # generates the HTTP service using the given service parameters
         self.http_service = service_utils_plugin.generate_service(service_parameters)
 
-        # starts the http service
+        # starts the HTTP service
         self.http_service.start_service()
 
     def stop_service(self, parameters):
@@ -371,7 +371,7 @@ class ServiceHttp(colony.System):
         # destroys the parameters
         self._destroy_service_parameters(parameters)
 
-        # starts the http service
+        # starts the HTTP service
         self.http_service.stop_service()
 
     def http_service_handler_load(self, http_service_handler_plugin):
@@ -466,14 +466,14 @@ class ServiceHttp(colony.System):
             regex = re.compile(regex_value)
             resolution_order_item_value[RESOLUTION_ORDER_REGEX_VALUE] = regex
 
-        # cleans the http service configuration
+        # cleans the HTTP service configuration
         colony.map_clean(self.http_service_configuration)
 
-        # copies the service configuration to the http service configuration
+        # copies the service configuration to the HTTP service configuration
         colony.map_copy(service_configuration, self.http_service_configuration)
 
     def unset_service_configuration_property(self):
-        # cleans the http service configuration
+        # cleans the HTTP service configuration
         colony.map_clean(self.http_service_configuration)
 
     def _get_service_configuration(self):
@@ -491,12 +491,12 @@ class ServiceHttp(colony.System):
         # to the caller method (could not find anything)
         if not encoding: return None
 
-        # in case the encoding is not found in the http service
+        # in case the encoding is not found in the HTTP service
         # encoding handler plugins map raises an exception
         if not encoding in self.http_service_encoding_plugins_map:
             raise exceptions.EncodingNotFound("encoding %s not found" % encoding)
 
-        # retrieves the http service encoding handler plugin
+        # retrieves the HTTP service encoding handler plugin
         http_service_encoding_plugin = self.http_service_encoding_plugins_map[encoding]
 
         # retrieves the encode contents method as the encoding handler
@@ -582,8 +582,8 @@ class ServiceHttp(colony.System):
 
         # creates the pool configuration map
         pool_configuration = dict(
-            name = "http pool",
-            description = "pool to support http client connections",
+            name = "HTTP pool",
+            description = "pool to support HTTP client connections",
             number_threads = number_threads,
             scheduling_algorithm = scheduling_algorithm,
             maximum_number_threads = maximum_number_threads,

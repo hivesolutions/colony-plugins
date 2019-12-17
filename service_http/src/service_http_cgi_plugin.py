@@ -46,7 +46,7 @@ class ServiceHttpCgiPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.service.http.cgi"
     name = "Http Service Cgi"
-    description = "The plugin that offers the http service cgi"
+    description = "The plugin that offers the HTTP service CGI"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -81,10 +81,10 @@ class ServiceHttpCgiPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

@@ -46,7 +46,7 @@ class ServiceHttpColonyPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.service.http.colony"
     name = "Http Service Colony"
-    description = "The plugin that offers the http service colony"
+    description = "The plugin that offers the HTTP service colony"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -89,10 +89,10 @@ class ServiceHttpColonyPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
         :type request: HttpRequest
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

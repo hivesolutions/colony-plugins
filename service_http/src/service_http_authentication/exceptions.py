@@ -41,7 +41,7 @@ import colony
 
 class ServiceHttpAuthenticationException(colony.ColonyException):
     """
-    The service http authentication exception class.
+    The service HTTP authentication exception class.
     """
 
     message = None

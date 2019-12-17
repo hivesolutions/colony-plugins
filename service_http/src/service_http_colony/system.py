@@ -91,7 +91,7 @@ class ServiceHttpColony(colony.System):
             # retrieves the http handler plugin
             http_handler_plugin = self.http_handler_plugin_map.get(plugin_handler_id, None)
 
-            # handles the request by the http handler plugin and
+            # handles the request by the HTTP handler plugin and
             # retrieves the return value
             http_handler_plugin.handle_request(request)
 
@@ -102,9 +102,9 @@ class ServiceHttpColony(colony.System):
             # returns immediately
             return
         else:
-            # iterates over all the http handler plugins
+            # iterates over all the HTTP handler plugins
             for http_handler_plugin in self.plugin.http_handler_plugins:
-                # checks if the current http handler plugin
+                # checks if the current HTTP handler plugin
                 # is request handler for the current request
                 is_request_handler = http_handler_plugin.is_request_handler(request)
 
@@ -112,7 +112,7 @@ class ServiceHttpColony(colony.System):
                 # the current loop, nothing to handler
                 if not is_request_handler: continue
 
-                # handles the request by the http handler plugin and
+                # handles the request by the HTTP handler plugin and
                 # retrieves the return value then sets the status code in
                 # the request in case it's defined or default to the error
                 # status in case the handler did not set any status code

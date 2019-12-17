@@ -41,12 +41,12 @@ import colony
 
 class ServiceHttpAuthenticationPlugin(colony.Plugin):
     """
-    The main class for the http Service Authentication plugin.
+    The main class for the HTTP Service Authentication plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.authentication"
     name = "Http Service Authentication"
-    description = "The plugin that offers the http service authentication"
+    description = "The plugin that offers the HTTP service authentication"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -80,7 +80,7 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
 
     def handle_authentication(self, username, password, properties):
         """
-        Handles the given http authentication.
+        Handles the given HTTP authentication.
 
         :type username: String
         :param username: The username to be used in the authentication.

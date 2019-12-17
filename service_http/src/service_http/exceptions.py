@@ -41,7 +41,7 @@ import colony
 
 class ServiceHttpException(colony.ColonyException):
     """
-    The service http exception class.
+    The service HTTP exception class.
     """
 
     message = None
@@ -101,7 +101,7 @@ class ClientRequestSecurityViolation(ServiceHttpException):
 
 class HttpRuntimeException(ServiceHttpException):
     """
-    The http runtime exception class.
+    The HTTP runtime exception class.
     """
 
     def __init__(self, message):
@@ -127,7 +127,7 @@ class HttpRuntimeException(ServiceHttpException):
 
 class HttpInvalidDataException(HttpRuntimeException):
     """
-    The http invalid data exception class.
+    The HTTP invalid data exception class.
     """
 
     def __init__(self, message):
@@ -152,7 +152,7 @@ class HttpInvalidDataException(HttpRuntimeException):
 
 class HttpNoHandlerException(HttpRuntimeException):
     """
-    The http no handler exception.
+    The HTTP no handler exception.
     """
 
     def __init__(self, message):
@@ -177,7 +177,7 @@ class HttpNoHandlerException(HttpRuntimeException):
 
 class HttpHandlerNotFoundException(HttpRuntimeException):
     """
-    The http handler not found exception.
+    The HTTP handler not found exception.
     """
 
     def __init__(self, message):
@@ -202,7 +202,7 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
 
 class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
     """
-    The http authentication handler not found exception.
+    The HTTP authentication handler not found exception.
     """
 
     def __init__(self, message):
@@ -227,7 +227,7 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
 
 class HttpInvalidMultipartRequestException(HttpRuntimeException):
     """
-    The http invalid multipart request exception.
+    The HTTP invalid multipart request exception.
     """
 
     def __init__(self, message):
@@ -252,7 +252,7 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
 
 class HttpDataRetrievalException(HttpRuntimeException):
     """
-    The http data retrieval exception.
+    The HTTP data retrieval exception.
     """
 
     def __init__(self, message):
@@ -277,7 +277,7 @@ class HttpDataRetrievalException(HttpRuntimeException):
 
 class HttpDataSendingException(HttpRuntimeException):
     """
-    The http data sending exception.
+    The HTTP data sending exception.
     """
 
     def __init__(self, message):
@@ -315,7 +315,7 @@ class UnauthorizedException(HttpRuntimeException):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
         HttpRuntimeException.__init__(self, message)

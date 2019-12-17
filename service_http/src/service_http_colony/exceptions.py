@@ -41,7 +41,7 @@ import colony
 
 class ServiceHttpColonyException(colony.ColonyException):
     """
-    The service http colony exception class.
+    The service HTTP colony exception class.
     """
 
     message = None

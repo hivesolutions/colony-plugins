@@ -41,7 +41,7 @@ import colony
 
 class ServiceHttpCgiException(colony.ColonyException):
     """
-    The service http cgi exception class.
+    The service HTTP CGI exception class.
     """
 
     message = None
