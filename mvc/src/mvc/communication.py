@@ -57,11 +57,11 @@ stays "waiting" for a response for the server """
 VALID_STATUS_CODE = 200
 """ The valid status code """
 
-class MvcCommunicationHandler(object):
+class MVCCommunicationHandler(object):
     """
-    The mvc communication (handler) class.
+    The MVC communication (handler) class.
 
-    The concept of communication in the mvc context is expressed
+    The concept of communication in the MVC context is expressed
     through long polling. Other systems may exist on top of the
     infra-structure using the modular approach.
 
@@ -88,7 +88,7 @@ class MvcCommunicationHandler(object):
     """
 
     mvc_plugin = None
-    """ The reference to the mvc plugin that own the
+    """ The reference to the MVC plugin that own the
     current communication handler """
 
     connections_map = {}
@@ -134,8 +134,8 @@ class MvcCommunicationHandler(object):
         """
         Constructor of the class.
 
-        :type mvc_plugin: MvcPlugin
-        :param mvc_plugin: The mvc plugin
+        :type mvc_plugin: MVCPlugin
+        :param mvc_plugin: The MVC plugin
         """
 
         self.mvc_plugin = mvc_plugin
@@ -795,7 +795,7 @@ class ConnectionProcessingThread(threading.Thread):
         """
         Constructor of the class.
 
-        :type communication_handler: MvcCommunicationHandler
+        :type communication_handler: MVCCommunicationHandler
         :param communication_handler: The communication handler reference.
         """
 
@@ -1105,7 +1105,7 @@ class CommunicationConnection(object):
         """
         Constructor of the class.
 
-        :type communication_handler: MvcCommunicationHandler
+        :type communication_handler: MVCCommunicationHandler
         :param communication_handler: The communication handler (manager).
         :type connection_id: String
         :param connection_id: The identifier of the connection.

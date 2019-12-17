@@ -115,7 +115,7 @@ class RuntimeRequestException(BadServiceRequest):
 
         return "Runtime request exception - %s" % self.message
 
-class MvcRequestNotHandled(BadServiceRequest):
+class MVCRequestNotHandled(BadServiceRequest):
     """
     The MVC request not handled class.
     """
@@ -145,7 +145,7 @@ class MvcRequestNotHandled(BadServiceRequest):
 
         return "MVC Request Not handled - %s" % self.message
 
-class FileNotFoundException(MvcRequestNotHandled):
+class FileNotFoundException(MVCRequestNotHandled):
     """
     The file not found exception class.
     """
@@ -163,7 +163,7 @@ class FileNotFoundException(MvcRequestNotHandled):
         :param status_code: The http status code.
         """
 
-        MvcRequestNotHandled.__init__(self, message)
+        MVCRequestNotHandled.__init__(self, message)
         self.status_code = status_code
 
     def __str__(self):
@@ -176,7 +176,7 @@ class FileNotFoundException(MvcRequestNotHandled):
 
         return "File not found - %s" % self.message
 
-class InvalidCommunicationCommandException(MvcRequestNotHandled):
+class InvalidCommunicationCommandException(MVCRequestNotHandled):
     """
     The invalid communication command exception class.
     """
@@ -194,7 +194,7 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         :param status_code: The http status code.
         """
 
-        MvcRequestNotHandled.__init__(self, message)
+        MVCRequestNotHandled.__init__(self, message)
         self.status_code = status_code
 
     def __str__(self):
@@ -207,7 +207,7 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
 
         return "Invalid communication command - %s" % self.message
 
-class CommunicationCommandException(MvcRequestNotHandled):
+class CommunicationCommandException(MVCRequestNotHandled):
     """
     The communication command exception class.
     """
@@ -220,7 +220,7 @@ class CommunicationCommandException(MvcRequestNotHandled):
         :param message: The message to be printed.
         """
 
-        MvcRequestNotHandled.__init__(self, message)
+        MVCRequestNotHandled.__init__(self, message)
 
     def __str__(self):
         """

@@ -41,10 +41,10 @@ from . import file_handler
 from . import system
 
 from .handlers import *
-from .communication import MvcCommunicationHandler, ConnectionProcessingThread,\
+from .communication import MVCCommunicationHandler, ConnectionProcessingThread,\
     CommunicationConnection
 from .exceptions import ServiceException, ServiceRequestNotTranslatable, BadServiceRequest,\
-    InvalidTokenValue, RuntimeRequestException, MvcRequestNotHandled, FileNotFoundException,\
+    InvalidTokenValue, RuntimeRequestException, MVCRequestNotHandled, FileNotFoundException,\
     InvalidCommunicationCommandException, CommunicationCommandException
-from .file_handler import MvcFileHandler, ChunkHandler
-from .system import Mvc
+from .file_handler import MVCFileHandler, ChunkHandler
+from .system import MVC

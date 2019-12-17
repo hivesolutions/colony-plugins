@@ -64,21 +64,21 @@ RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 """ The relative paths regex """
 
-class MvcFileHandler(object):
+class MVCFileHandler(object):
     """
-    The mvc file handler class, responsible for the low level
+    The MVC file handler class, responsible for the low level
     handling of static files under a filesystem structure.
     """
 
     mvc_plugin = None
-    """ The mvc plugin """
+    """ The MVC plugin """
 
     def __init__(self, mvc_plugin):
         """
         Constructor of the class.
 
-        :type mvc_plugin: MvcPlugin
-        :param mvc_plugin: The mvc plugin
+        :type mvc_plugin: MVCPlugin
+        :param mvc_plugin: The MVC plugin
         """
 
         self.mvc_plugin = mvc_plugin

@@ -87,7 +87,7 @@ TYPES_R = dict(
 """ Map that resolves a data type from the string representation
 to the proper type value to be used in casting """
 
-class Mvc(colony.System):
+class MVC(colony.System):
     """
     The MVC class, responsible for the management of the
     MVC routes and all the services related with MVC.
@@ -178,8 +178,8 @@ class Mvc(colony.System):
         self.resource_patterns_list = []
         self.patterns_index = {}
 
-        self.mvc_file_handler = file_handler.MvcFileHandler(plugin)
-        self.mvc_communication_handler = communication.MvcCommunicationHandler(plugin)
+        self.mvc_file_handler = file_handler.MVCFileHandler(plugin)
+        self.mvc_communication_handler = communication.MVCCommunicationHandler(plugin)
 
     def start_system(self):
         """
@@ -330,7 +330,7 @@ class Mvc(colony.System):
 
         # raises the MVC request not handled exception, because no MVC
         # service was found for the current request constraints
-        raise exceptions.MvcRequestNotHandled("no MVC service plugin could handle the request")
+        raise exceptions.MVCRequestNotHandled("no MVC service plugin could handle the request")
 
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """

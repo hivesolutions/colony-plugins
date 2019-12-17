@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class MvcPlugin(colony.Plugin):
+class MVCPlugin(colony.Plugin):
     """
-    The main class for the Mvc plugin.
+    The main class for the MVC plugin.
     """
 
     id = "pt.hive.colony.plugins.mvc"
-    name = "Mvc"
-    description = "The plugin that offers a strategy abstraction for mvc management"
+    name = "MVC"
+    description = "The plugin that offers a strategy abstraction for MVC management"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -79,7 +79,7 @@ class MvcPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mvc
-        self.system = mvc.Mvc(self)
+        self.system = mvc.MVC(self)
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
