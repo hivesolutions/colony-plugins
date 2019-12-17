@@ -122,7 +122,7 @@ ID_RES_VALUE = "id_res"
 """ The id res value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
-""" The hmac sha1 value """
+""" The hmac SHA1 value """
 
 HMAC_SHA256_VALUE = "HMAC-SHA256"
 """ The HMAC SHA256 value """
@@ -511,10 +511,10 @@ class OpenidServer(object):
         # generates an association handle
         association_handle = self._generate_handle()
 
-        # retrieves the mac key type to be used
+        # retrieves the MAC key type to be used
         mac_key_type = self._get_mac_key_type()
 
-        # generates the mac key
+        # generates the MAC key
         mac_key = self._generate_mac_key(mac_key_type)
 
         # sets the association handle in the OpenID structure
@@ -523,7 +523,7 @@ class OpenidServer(object):
         # sets the expires in in the OpenID structure
         self.openid_structure.expires_in = DEFAULT_EXPIRES_IN
 
-        # sets the mac key in the OpenID structure
+        # sets the MAC key in the OpenID structure
         self.openid_structure.mac_key = mac_key
 
         # in case the current session type is of type diffie hellman
@@ -623,7 +623,7 @@ class OpenidServer(object):
 
         # in case the current session type is of type diffie hellman
         if self.openid_structure.session_type in DIFFIE_HELLMAN_ASSOCIATION_TYPES:
-            # retrieves the mac key type to be used
+            # retrieves the MAC key type to be used
             mac_key_type = self._get_mac_key_type()
 
             # generates the "B" value
@@ -632,7 +632,7 @@ class OpenidServer(object):
             # calculates the shared key value
             key_value = self.diffie_hellman.calculate_Kb()
 
-            # decodes the mac key using base64
+            # decodes the MAC key using Base64
             decoded_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
             # retrieves the hash module from the hmac hash modules map
@@ -641,19 +641,19 @@ class OpenidServer(object):
             # encodes the key value in order to be used in the xor operation
             encoded_key_value = hash_module(self.api_openid._btwoc(key_value)).digest()
 
-            # calculates the encoded mac key value and retrieves the digest
+            # calculates the encoded MAC key value and retrieves the digest
             encoded_mac_key = colony.xor_string_value(decoded_mac_key, encoded_key_value)
 
-            # encodes the encoded mac key into base64
+            # encodes the encoded MAC key into Base64
             encoded_mac_key = base64.b64encode(encoded_mac_key)
 
-            # sets the dh server public
+            # sets the DH server public
             parameters["dh_server_public"] = base64.b64encode(self.api_openid._btwoc(B_value))
 
-            # sets the encoded mac key
+            # sets the encoded MAC key
             parameters["enc_mac_key"] = encoded_mac_key
         else:
-            # sets the mac key
+            # sets the MAC key
             parameters["mac_key"] = self.openid_structure.mac_key
 
         # returns the parameters
@@ -743,21 +743,21 @@ class OpenidServer(object):
     def _get_mac_key_type(self):
         """
         Retrieves the type of hashing to be used in the
-        mac key.
+        MAC key.
 
         :rtype: String
-        :return: The type of hashing to be used in the mac key.
+        :return: The type of hashing to be used in the MAC key.
         """
 
         # in case the current session is of type no encryption
         if self.openid_structure.session_type == NO_ENCRYPTION_VALUE:
             # returns the current association type
             return self.openid_structure.association_type
-        # in case the current session is of type dh sha1
+        # in case the current session is of type DH SHA1
         elif self.openid_structure.session_type == DH_SHA1_VALUE:
-            # returns the hmac sha1 value
+            # returns the hmac SHA1 value
             return HMAC_SHA1_VALUE
-        # in case the current session is of type dh sha256
+        # in case the current session is of type DH sha256
         elif self.openid_structure.session_type == DH_SHA256_VALUE:
             # returns the hmac sha256 value
             return HMAC_SHA256_VALUE
@@ -792,7 +792,7 @@ class OpenidServer(object):
         # retrieves the value from the message string buffer
         message = message_string_buffer.get_value()
 
-        # decodes the signature mac key from base64
+        # decodes the signature MAC key from Base64
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
         # retrieves the hash module from the hmac hash modules map
@@ -806,42 +806,42 @@ class OpenidServer(object):
         # calculates the signature value and retrieves the digest
         signature = hmac.new(signature_mac_key, message, hash_module).digest()
 
-        # encodes the signature into base64
+        # encodes the signature into Base64
         signature = base64.b64encode(signature)
 
         # returns the signature
         return signature
 
     def _generate_handle(self):
-        # generates a random sha1
+        # generates a random SHA1
         random_sha1 = self.random_plugin.generate_random_sha1()
 
-        # retrieves the random sha1 value
+        # retrieves the random SHA1 value
         random_sha1_value = random_sha1.digest()
 
-        # encodes the random sha1 value into base64
+        # encodes the random SHA1 value into Base64
         handle = base64.b64encode(random_sha1_value)
 
         # returns the handle
         return handle
 
     def _generate_mac_key(self, mac_key_type = HMAC_SHA1_VALUE):
-        # in case the key type is sha1
+        # in case the key type is SHA1
         if mac_key_type == HMAC_SHA1_VALUE:
-            # generates a mac key with the sha1 random value
+            # generates a MAC key with the SHA1 random value
             mac_key = self.random_plugin.generate_random_sha1()
         # in case the key type is sha256
         elif mac_key_type == HMAC_SHA256_VALUE:
-            # generates a mac key with the sha256 random value
+            # generates a MAC key with the sha256 random value
             mac_key = self.random_plugin.generate_random_sha256()
 
-        # retrieves the mac key value
+        # retrieves the MAC key value
         mac_key_value = mac_key.digest()
 
-        # encodes the mac key into base64
+        # encodes the MAC key into Base64
         mac_key_value_encoded = base64.b64encode(mac_key_value)
 
-        # returns the encoded mac key value
+        # returns the encoded MAC key value
         return mac_key_value_encoded
 
     def _generate_private_key(self):
@@ -1147,7 +1147,7 @@ class OpenidClient(object):
         # retrieves the association handle from the values map
         self.openid_structure.association_handle = values_map.get("assoc_handle", None)
 
-        # retrieves the mac key from the values map
+        # retrieves the MAC key from the values map
         self.openid_structure.mac_key = values_map.get("mac_key", None)
 
         # returns the OpenID structure
@@ -1202,7 +1202,7 @@ class OpenidClient(object):
         # retrieves the value from the message string buffer
         message = message_string_buffer.get_value()
 
-        # decodes the signature mac key from base64
+        # decodes the signature MAC key from Base64
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
         # retrieves the hash module from the hmac hash modules map
@@ -1216,7 +1216,7 @@ class OpenidClient(object):
         # calculates the signature value and retrieves the digest
         signature = hmac.new(signature_mac_key, message, hash_module).digest()
 
-        # encodes the signature into base64
+        # encodes the signature into Base64
         signature = base64.b64encode(signature)
 
         # in case there is a signature mismatch
@@ -1535,7 +1535,7 @@ class OpenidStructure(object):
     """ The invalidate handle """
 
     mac_key = None
-    """ The mac key """
+    """ The MAC key """
 
     signed = None
     """ The current type of signature being used """
@@ -1878,20 +1878,20 @@ class OpenidStructure(object):
 
     def get_mac_key(self):
         """
-        Retrieves the mac key.
+        Retrieves the MAC key.
 
         :rtype: String
-        :return: The mac key.
+        :return: The MAC key.
         """
 
         return self.mac_key
 
     def set_mac_key(self, mac_key):
         """
-        Sets the mac key.
+        Sets the MAC key.
 
         :type mac_key: String
-        :param mac_key: The mac key.
+        :param mac_key: The MAC key.
         """
 
         self.mac_key = mac_key
