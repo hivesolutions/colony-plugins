@@ -39,13 +39,13 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class SslPlugin(colony.Plugin):
+class SSLPlugin(colony.Plugin):
     """
-    The main class for the Ssl plugin.
+    The main class for the SSL plugin.
     """
 
     id = "pt.hive.colony.plugins.encryption.ssl"
-    name = "Ssl"
+    name = "SSL"
     description = "The plugin that offers the ssl support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -68,8 +68,8 @@ class SslPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_c
-        self.system = ssl_c.Ssl(self)
-        self.test = ssl_c.SslTest(self)
+        self.system = ssl_c.SSL(self)
+        self.test = ssl_c.SSLTest(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

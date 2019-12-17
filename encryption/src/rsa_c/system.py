@@ -45,24 +45,24 @@ import colony
 
 from . import exceptions
 
-class Rsa(colony.System):
+class RSA(colony.System):
     """
-    The rsa class.
+    The RSA class.
     """
 
     def create_structure(self, parameters):
         # retrieves the keys (if available)
         keys = parameters.get("keys", None)
 
-        # creates the rsa structure
+        # creates the RSA structure
         rsa_structure = RsaStructure(keys)
 
-        # returns the rsa structure
+        # returns the RSA structure
         return rsa_structure
 
 class RsaStructure(object):
     """
-    Class representing the rsa,
+    Class representing the RSA,
     cryptographic protocol structure.
     """
 
@@ -217,10 +217,10 @@ class RsaStructure(object):
         Signs the given message using the given private key.
 
         This method should encrypt the provided message (with the
-        private key) and return it, in compliance with the rsa
+        private key) and return it, in compliance with the RSA
         specification.
 
-        Note that this method is part of the sign standard for rsa
+        Note that this method is part of the sign standard for RSA
         that involves the inversion of responsibilities of public/private
         keys, in this case private key encrypts the message and the
         public key decrypts it.
@@ -254,10 +254,10 @@ class RsaStructure(object):
         Verifies the given signed message using the given public key.
 
         This method should decrypt the provided message (with the
-        public key) and returns it, in compliance with the rsa
+        public key) and returns it, in compliance with the RSA
         specification.
 
-        Note that this method is part of the sign standard for rsa
+        Note that this method is part of the sign standard for RSA
         that involves the inversion of responsibilities of public/private
         keys, in this case private key encrypts the message and the
         public key decrypts it.
@@ -369,13 +369,13 @@ class RsaStructure(object):
         modulus_size_bytes = colony.ceil_integer(math.log(modulus, 256))
 
         # converts the message to integer, then uses this integer
-        # value to encrypt it using the rsa algorithm and converts
+        # value to encrypt it using the RSA algorithm and converts
         # the resulting encrypted integer back to a string
         message_integer = self._string_to_integer(message)
         message_integer_encrypted = self._encrypt_integer(message_integer, key, modulus)
         message_encrypted = self._integer_to_string(message_integer_encrypted, modulus_size_bytes)
 
-        # returns the resulting message encrypted using the rsa
+        # returns the resulting message encrypted using the RSA
         # algorithm for cryptographic purposes
         return message_encrypted
 
@@ -386,7 +386,7 @@ class RsaStructure(object):
         """
         Encrypts a message (integer mode) using the given exponent
         and modulus values. This is the main encryption step and
-        the basis for the rsa cryptosystem.
+        the basis for the RSA cryptosystem.
 
         :type message: int
         :param message: The message represented as an integer.
@@ -411,7 +411,7 @@ class RsaStructure(object):
 
     def _generate_keys(self, number_bits):
         """
-        Generates the rsa keys with the given number
+        Generates the RSA keys with the given number
         of bits.
         This method is very processor intensive.
 
@@ -419,7 +419,7 @@ class RsaStructure(object):
         :param number_bits: The number of bits to be used
         in the keys generation.
         :rtype: Tuple
-        :return: A tuple containing the various rsa keys.
+        :return: A tuple containing the various RSA keys.
         """
 
         # iterates continuously

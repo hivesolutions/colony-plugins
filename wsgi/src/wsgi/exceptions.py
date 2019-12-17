@@ -71,4 +71,4 @@ class WSGIRuntimeException(WSGIException):
         :return: The string representation of the class.
         """
 
-        return "Wsgi runtime exception - %s" % self.message
+        return "WSGI runtime exception - %s" % self.message

@@ -45,7 +45,7 @@ class WSGIPlugin(colony.Plugin):
     """
 
     id = "pt.hive.colony.plugins.wsgi"
-    name = "Wsgi"
+    name = "WSGI"
     description = "Provides the basic mechanism to integrate\
     colony into an WSGI based infra-structure"
     version = "1.0.0"

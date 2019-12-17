@@ -44,7 +44,7 @@ import tempfile
 
 import colony
 
-class SslTest(colony.Test):
+class SSLTest(colony.Test):
     """
     The ssl infra-structure test class, responsible
     for the returning of the associated tests.
@@ -52,7 +52,7 @@ class SslTest(colony.Test):
 
     def get_bundle(self):
         return (
-            SslBaseTestCase,
+            SSLBaseTestCase,
         )
 
     def set_up(self, test_case):
@@ -76,7 +76,7 @@ class SslTest(colony.Test):
         test_case.public_path = None
         test_case.ssl = None
 
-class SslBaseTestCase(colony.ColonyTestCase):
+class SSLBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():

@@ -38,6 +38,6 @@ from . import exceptions
 from . import system
 from . import test
 
-from .exceptions import RsaException, KeyGenerationError
-from .system import Rsa
-from .test import RsaTest, RsaBaseTestCase
+from .exceptions import RSAException, KeyGenerationError
+from .system import RSA
+from .test import RSATest, RSABaseTestCase

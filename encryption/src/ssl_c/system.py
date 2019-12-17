@@ -47,30 +47,30 @@ BASE_64_ENCODED_MAXIMUM_SIZE = 64
 DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits """
 
-class Ssl(colony.System):
+class SSL(colony.System):
     """
-    The ssl class, responsible for the creation of
+    The SSL class, responsible for the creation of
     the associated structure for manipulation.
     """
 
     def create_structure(self, parameters):
         # retrieves the required plugins for the creation
-        # of the associated (ssl) structure
+        # of the associated (SSL) structure
         rsa_plugin = self.plugin.rsa_plugin
         pkcs1_plugin = self.plugin.pkcs1_plugin
 
-        # creates the ssl structure with the provided plugins
+        # creates the SSL structure with the provided plugins
         # and then returns it to the caller method
-        ssl_structure = SslStructure(rsa_plugin, pkcs1_plugin)
+        ssl_structure = SSLStructure(rsa_plugin, pkcs1_plugin)
         return ssl_structure
 
-class SslStructure(object):
+class SSLStructure(object):
     """
-    Class representing the ssl, cryptographic
+    Class representing the SSL, cryptographic
     protocol structure.
 
     Should provide a top level interface for the
-    cryptographic operation used in the ssl protocol.
+    cryptographic operation used in the SSL protocol.
     """
 
     rsa_plugin = None
@@ -83,7 +83,7 @@ class SslStructure(object):
         """
         Constructor of the class.
 
-        :type rsa_plugin: RsaPlugin
+        :type rsa_plugin: RSAPlugin
         :param rsa_plugin: The RSA plugin.
         :type pkcs1_plugin: PKCS1Plugin
         :param pkcs1_plugin: The PKCS1 plugin.

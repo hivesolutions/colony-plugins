@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class RsaException(colony.ColonyException):
+class RSAException(colony.ColonyException):
     """
-    The rsa exception class.
+    The RSA exception class.
     """
 
     message = None
     """ The exception's message """
 
-class KeyGenerationError(RsaException):
+class KeyGenerationError(RSAException):
     """
     The key generation error class.
     """
@@ -60,7 +60,7 @@ class KeyGenerationError(RsaException):
         :param message: The message to be printed.
         """
 
-        RsaException.__init__(self)
+        RSAException.__init__(self)
         self.message = message
 
     def __str__(self):

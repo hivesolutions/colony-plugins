@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class RsaTest(colony.Test):
+class RSATest(colony.Test):
     """
-    The rsa infra-structure test class, responsible
+    The RSA infra-structure test class, responsible
     for the returning of the associated tests.
     """
 
     def get_bundle(self):
         return (
-            RsaBaseTestCase,
+            RSABaseTestCase,
         )
 
     def set_up(self, test_case):
@@ -56,11 +56,11 @@ class RsaTest(colony.Test):
         system = self.plugin.system
         test_case.rsa = system.create_structure({})
 
-class RsaBaseTestCase(colony.ColonyTestCase):
+class RSABaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Rsa Base test case"
+        return "RSA Base test case"
 
     def test__relatively_prime(self):
         result = self.rsa._relatively_prime(3, 1)

@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import system
 from . import test
 
-from .system import Ssl
-from .test import SslTest, SslBaseTestCase
+from .system import SSL
+from .test import SSLTest, SSLBaseTestCase

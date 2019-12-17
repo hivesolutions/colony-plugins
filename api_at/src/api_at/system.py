@@ -120,7 +120,7 @@ class AtClient(object):
     plugin is considered the owner of the client """
 
     ssl_plugin = None
-    """ The ssl plugin """
+    """ The SSL plugin """
 
     client_http_plugin = None
     """ The client HTTP plugin """
@@ -159,8 +159,8 @@ class AtClient(object):
         :type plugin: Plugin
         :param plugin: The plugin associated with the at client this
         plugin is considered the owner of the client.
-        :type ssl_plugin: SslPlugin
-        :param ssl_plugin: The ssl plugin.
+        :type ssl_plugin: SSLPlugin
+        :param ssl_plugin: The SSL plugin.
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type at_structure: AtStructure

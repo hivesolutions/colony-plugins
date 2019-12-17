@@ -41,12 +41,12 @@ import colony
 
 class RsaPlugin(colony.Plugin):
     """
-    The main class for the Rsa plugin.
+    The main class for the RSA plugin.
     """
 
     id = "pt.hive.colony.plugins.encryption.rsa"
-    name = "Rsa"
-    description = "The plugin that offers the rsa support"
+    name = "RSA"
+    description = "The plugin that offers the RSA support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -64,8 +64,8 @@ class RsaPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import rsa_c
-        self.system = rsa_c.Rsa(self)
-        self.test = rsa_c.RsaTest(self)
+        self.system = rsa_c.RSA(self)
+        self.test = rsa_c.RSATest(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)
