@@ -78,7 +78,7 @@ JPEG_VALUE = "jpeg"
 
 class Captcha(colony.System):
     """
-    The captcha class.
+    The Captcha class.
     """
 
     def generate_captcha(self, string_value, properties):
