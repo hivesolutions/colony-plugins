@@ -141,7 +141,7 @@ DEFAULT_MODULE_NAME = "server"
 DEFAULT_APPLICATION_NAME = "application"
 """ The default application name """
 
-class ServiceHttpWsgi(colony.System):
+class ServiceHTTPWSGI(colony.System):
     """
     The service HTTP WSGI (handler) class.
     """

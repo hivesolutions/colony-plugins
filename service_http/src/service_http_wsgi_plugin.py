@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpWsgiPlugin(colony.Plugin):
+class ServiceHTTPWSGIPlugin(colony.Plugin):
     """
     The main class for the HTTP Service WSGI plugin.
     """
@@ -67,7 +67,7 @@ class ServiceHttpWsgiPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_wsgi
-        self.system = service_http_wsgi.ServiceHttpWsgi(self)
+        self.system = service_http_wsgi.ServiceHTTPWSGI(self)
 
     def get_handler_name(self):
         """
