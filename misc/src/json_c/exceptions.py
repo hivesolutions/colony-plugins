@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class JsonException(colony.ColonyException):
+class JSONException(colony.ColonyException):
     """
-    The json exception class.
+    The JSON exception class.
     """
 
     message = None
     """ The exception's message """
 
-class JsonEncodeException(JsonException):
+class JSONEncodeException(JSONException):
     """
-    The json encode exception class.
+    The JSON encode exception class.
     """
 
     def __init__(self, object):
@@ -60,7 +60,7 @@ class JsonEncodeException(JsonException):
         :param object: The object containing the encoding problems.
         """
 
-        JsonException.__init__(self)
+        JSONException.__init__(self)
         self.object = object
 
     def __str__(self):
@@ -71,11 +71,11 @@ class JsonEncodeException(JsonException):
         :return: The string representation of the class.
         """
 
-        return "Object not encodeable - %s" % self.object
+        return "Object not encodable - %s" % self.object
 
-class JsonDecodeException(JsonException):
+class JSONDecodeException(JSONException):
     """
-    The json decode exception class.
+    The JSON decode exception class.
     """
 
     def __init__(self, message):
@@ -86,7 +86,7 @@ class JsonDecodeException(JsonException):
         :param message: The message to be printed.
         """
 
-        JsonException.__init__(self)
+        JSONException.__init__(self)
         self.message = message
 
     def __str__(self):

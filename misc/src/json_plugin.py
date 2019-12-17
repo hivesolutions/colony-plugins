@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class JsonPlugin(colony.Plugin):
+class JSONPlugin(colony.Plugin):
     """
-    The main class for the Json plugin.
+    The main class for the JSON plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.json"
-    name = "Json"
-    description = "A plugin to serialize and unserialize json files"
+    name = "JSON"
+    description = "A plugin to serialize and unserialize JSON files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -63,7 +63,7 @@ class JsonPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import json_c
-        self.system = json_c.Json(self)
+        self.system = json_c.JSON(self)
 
     def dumps(self, object):
         return self.system.dumps(object)

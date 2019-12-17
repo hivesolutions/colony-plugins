@@ -71,7 +71,7 @@ class BencodeEncodeException(BencodeException):
         :return: The string representation of the class.
         """
 
-        return "Object not encodeable - %s" % self.object
+        return "Object not encodable - %s" % self.object
 
 class BencodeDecodeException(BencodeException):
     """

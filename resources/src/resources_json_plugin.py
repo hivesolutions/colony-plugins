@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ResourcesJsonPlugin(colony.Plugin):
+class ResourcesJSONPlugin(colony.Plugin):
     """
     The main class for the Resources Json plugin.
     """

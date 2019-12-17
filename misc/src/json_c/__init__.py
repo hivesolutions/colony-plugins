@@ -38,6 +38,6 @@ from . import exceptions
 from . import serializer
 from . import system
 
-from .exceptions import JsonException, JsonEncodeException, JsonDecodeException
+from .exceptions import JSONException, JSONEncodeException, JSONDecodeException
 from .serializer import escape_character, dumps, dumps_pretty, dumps_buffer, loads
-from .system import Json
+from .system import JSON

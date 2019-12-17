@@ -163,7 +163,7 @@ def escape_character(match):
 
 def dumps(object):
     """
-    Dumps (converts to json) the given object using the "normal"
+    Dumps (converts to JSON) the given object using the "normal"
     approach. The return value of this operation should always
     be a plain buffer/string and so special attention to memory
     usage should be considered a concern.
@@ -171,7 +171,7 @@ def dumps(object):
     :type object: Object
     :param object: The object to be dumped.
     :rtype: String
-    :return: The dumped/serialized json string.
+    :return: The dumped/serialized JSON string.
     """
 
     parts = dump_parts(object)
@@ -190,34 +190,34 @@ def dumps_lazy(object):
     :param object: The object to be dumped.
     :rtype: Generator
     :return: The resulting generator that may be used to lazy
-    evaluated the various components of the json data.
+    evaluated the various components of the JSON data.
     """
 
     return dump_parts(object)
 
 def dumps_pretty(object):
     """
-    Dumps (converts to json) the given object using the "normal"
+    Dumps (converts to JSON) the given object using the "normal"
     approach.
-    This dumps method prints the json in "pretty" mode
+    This dumps method prints the JSON in "pretty" mode
 
     :type object: Object
     :param object: The object to be dumped.
     :rtype: String
-    :return: The dumped json string (pretty).
+    :return: The dumped JSON string (pretty).
     """
 
     return "".join([part for part in dump_parts_pretty(object)])
 
 def dumps_buffer(object):
     """
-    Dumps (converts to json) the given object using the "buffered"
+    Dumps (converts to JSON) the given object using the "buffered"
     approach.
 
     :type object: Object
     :param object: The object to be dumped.
     :rtype: String
-    :return: The dumped json string.
+    :return: The dumped JSON string.
     """
 
     # creates the string buffer
@@ -234,7 +234,7 @@ def dumps_buffer(object):
 
 def dump_parts(object, objects = None, cycles = False):
     """
-    Dumps (converts to json) the given object parts using the "normal"
+    Dumps (converts to JSON) the given object parts using the "normal"
     approach, note that the construction of the final string must be
     performed using a generator based strategy.
 
@@ -247,11 +247,11 @@ def dump_parts(object, objects = None, cycles = False):
     :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
     :rtype: Generator
-    :return: The generator from which a proper json string
+    :return: The generator from which a proper JSON string
     may be constructed using a lazy approach.
     """
 
-    # in case the current object contains the json value
+    # in case the current object contains the JSON value
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
@@ -322,7 +322,7 @@ def dump_parts(object, objects = None, cycles = False):
                 yield ","
 
             # converts the key into the string representation
-            # to conform with the current json specification
+            # to conform with the current JSON specification
             key_s = str(key)
 
             # iterates over all the parts of the key
@@ -423,8 +423,8 @@ def dump_parts(object, objects = None, cycles = False):
         yield "}"
     # in case a different type is set
     else:
-        # raises the json encode exception
-        raise exceptions.JsonEncodeException(object)
+        # raises the JSON encode exception
+        raise exceptions.JSONEncodeException(object)
 
     # removes the current object identifier from
     # the map of object already serialized
@@ -432,7 +432,7 @@ def dump_parts(object, objects = None, cycles = False):
 
 def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     """
-    Dumps (converts to json) the given object parts using the "normal"
+    Dumps (converts to JSON) the given object parts using the "normal"
     approach.
 
     :type object: Object
@@ -446,10 +446,10 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
     :rtype: String
-    :return: The dumped json string.
+    :return: The dumped JSON string.
     """
 
-    # in case the current object contains the json value
+    # in case the current object contains the JSON value
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
@@ -528,7 +528,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
                 yield INDENTATION_VALUE
 
             # converts the key into the string representation
-            # to conform with the current json specification
+            # to conform with the current JSON specification
             key_s = str(key)
 
             # iterates over all the parts of the key
@@ -651,8 +651,8 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
         yield "}"
     # in case a different type is set
     else:
-        # raises the json encode exception
-        raise exceptions.JsonEncodeException(object)
+        # raises the JSON encode exception
+        raise exceptions.JSONEncodeException(object)
 
     # removes the current object identifier from
     # the map of object already serialized
@@ -660,7 +660,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
 
 def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     """
-    Dumps (converts to json) the given object parts using the "buffered"
+    Dumps (converts to JSON) the given object parts using the "buffered"
     approach.
 
     :type object: Object
@@ -675,10 +675,10 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     :param cycles: Flag that controls if cycles should be detected
     and avoided (gracefully handled).
     :rtype: String
-    :return: The dumped json string.
+    :return: The dumped JSON string.
     """
 
-    # in case the current object contains the json value
+    # in case the current object contains the JSON value
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
@@ -750,7 +750,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
                 string_buffer.write(",")
 
             # converts the key into the string representation
-            # to conform with the current json specification
+            # to conform with the current JSON specification
             key_s = str(key)
 
             # dumps the key parts
@@ -841,8 +841,8 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
         string_buffer.write("}")
     # in case a different type is set
     else:
-        # raises a json encode exception
-        raise exceptions.JsonEncodeException(object)
+        # raises a JSON encode exception
+        raise exceptions.JSONEncodeException(object)
 
     # removes the current object identifier from
     # the map of object already serialized
@@ -904,16 +904,16 @@ def loads(data):
                                     hex_code = next(characters) + next(characters) + next(characters) + next(characters)
                                     value += colony.legacy.unichr(int(hex_code, 16))
                                 else:
-                                    # raises the json decode exception
-                                    raise exceptions.JsonDecodeException("Bad Escape Sequence Found")
+                                    # raises the JSON decode exception
+                                    raise exceptions.JSONDecodeException("Bad Escape Sequence Found")
                         else:
                             value += character
 
                         # retrieves the next character
                         character = next(characters)
                 except StopIteration:
-                    # raises the json decode exception
-                    raise exceptions.JsonDecodeException("Expected end of String")
+                    # raises the JSON decode exception
+                    raise exceptions.JSONDecodeException("Expected end of String")
             elif character == "{":
                 # creates a new map
                 _map = {}
@@ -991,7 +991,7 @@ def loads(data):
                                     digits.append(character)
                                     character = next(characters)
                             else:
-                                raise exceptions.JsonDecodeException("Expected + or -")
+                                raise exceptions.JSONDecodeException("Expected + or -")
                 except StopIteration:
                     pass
 
@@ -1009,11 +1009,11 @@ def loads(data):
                 elif kw == "fals" and next(characters) == "e":
                     value = False
                 else:
-                    # raises the json decode exception
-                    raise exceptions.JsonDecodeException("Expected Null, False or True")
+                    # raises the JSON decode exception
+                    raise exceptions.JSONDecodeException("Expected Null, False or True")
             else:
-                # raises the json decode exception
-                raise exceptions.JsonDecodeException("Expected []{},\" or Number, Null, False or True")
+                # raises the JSON decode exception
+                raise exceptions.JSONDecodeException("Expected []{},\" or Number, Null, False or True")
 
             if not skip:
                 if len(stack):
@@ -1027,8 +1027,8 @@ def loads(data):
                         # in case the top id is not present
                         # in the valid map
                         if not top_id in valid_map:
-                            # raises the json decode exception
-                            raise exceptions.JsonDecodeException("Expected list structure")
+                            # raises the JSON decode exception
+                            raise exceptions.JSONDecodeException("Expected list structure")
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -1038,8 +1038,8 @@ def loads(data):
                             # sets the top as invalid
                             valid_map[top_id] = False
                         else:
-                            # raises the json decode exception
-                            raise exceptions.JsonDecodeException("Expected list separator ','")
+                            # raises the JSON decode exception
+                            raise exceptions.JSONDecodeException("Expected list separator ','")
                     elif type(top) is dict:
                         # appends the value to the stack
                         stack.append(value)
@@ -1050,8 +1050,8 @@ def loads(data):
                         # in case the top id is not present
                         # in the valid map
                         if not top_id in valid_map:
-                            # raises the json decode exception
-                            raise exceptions.JsonDecodeException("Expected dictionary structure")
+                            # raises the JSON decode exception
+                            raise exceptions.JSONDecodeException("Expected dictionary structure")
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -1072,19 +1072,19 @@ def loads(data):
                             # sets the top as invalid
                             valid_map[top_id] = False
                         else:
-                            # raises the json decode exception
-                            raise exceptions.JsonDecodeException("Expected dictionary separator ':'")
+                            # raises the JSON decode exception
+                            raise exceptions.JSONDecodeException("Expected dictionary separator ':'")
                     # otherwise
                     else:
-                        # raises the json decode exception
-                        raise exceptions.JsonDecodeException("Expected dictionary key, or start of a value")
+                        # raises the JSON decode exception
+                        raise exceptions.JSONDecodeException("Expected dictionary key, or start of a value")
                 # otherwise
                 else:
                     # returns the value
                     return value
     except StopIteration:
-        # raises the json decode exception
-        raise exceptions.JsonDecodeException("Unexpected end of Json source")
+        # raises the JSON decode exception
+        raise exceptions.JSONDecodeException("Unexpected end of JSON source")
 
 def loads_f(data):
     try: import json

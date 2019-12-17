@@ -173,7 +173,7 @@ class FacebookClient(object):
         """
         Constructor of the class.
 
-        :type json_plugin: JsonPlugin
+        :type json_plugin: JSONPlugin
         :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client HTTP plugin.
@@ -640,7 +640,7 @@ class FacebookClientOauth(object):
         """
         Constructor of the class.
 
-        :type json_plugin: JsonPlugin
+        :type json_plugin: JSONPlugin
         :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client HTTP plugin.
