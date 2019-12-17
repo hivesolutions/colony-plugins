@@ -299,10 +299,12 @@ class REST(colony.System):
                 str(last_path_name_splitted_length)
             )
 
-        # retrieves the encoder name
+        # retrieves the encoder name from the extension provided
+        # from the base URI
         encoder_name = last_path_initial_extension
 
-        # constructs the REST path list
+        # constructs the REST path list using the partial names
+        # that have been build from the base URI
         path_list = middle_path_name + [last_path_initial_name]
 
         # iterates continuously while there are retries pending to be
@@ -366,6 +368,14 @@ class REST(colony.System):
             raise exceptions.RESTRequestNotHandled(
                 "no REST service plugin could handle the request"
             )
+
+        # prints a simple informational message about the fact that there
+        # are no more retries left for the execution of the REST request,
+        # this is considered to be an abnormal situation
+        self.info(
+            "No more REST request handling operation retries left, aborting handling of '%s %s'" %\
+            (request.get_method(), request.uri)
+        )
 
         # raises the REST request error exception, because if the control flow
         # has reached this parts of the code the maximum number of retry operations
