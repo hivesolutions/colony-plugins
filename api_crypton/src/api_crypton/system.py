@@ -50,9 +50,9 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
-class ApiCrypton(colony.System):
+class APICrypton(colony.System):
     """
-    The API crypton class.
+    The API Crypton class.
     """
 
     def create_client(self, api_attributes, open_client = True):
@@ -70,7 +70,7 @@ class ApiCrypton(colony.System):
         # retrieves the client http plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the crypton structure (if available)
+        # retrieves the Crypton structure (if available)
         crypton_structure = api_attributes.get("crypton_structure", None)
 
         # creates a new client with the given options, opens
@@ -82,14 +82,14 @@ class ApiCrypton(colony.System):
 
 class CryptonClient(object):
     """
-    The class that represents a crypton client connection.
+    The class that represents a Crypton client connection.
     """
 
     client_http_plugin = None
     """ The client http plugin """
 
     crypton_structure = None
-    """ The crypton structure """
+    """ The Crypton structure """
 
     http_client = None
     """ The http client for the connection """
@@ -101,7 +101,7 @@ class CryptonClient(object):
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client http plugin.
         :type crypton_structure: CryptonStructure
-        :param crypton_structure: The crypton structure.
+        :param crypton_structure: The Crypton structure.
         """
 
         self.client_http_plugin = client_http_plugin
@@ -109,14 +109,14 @@ class CryptonClient(object):
 
     def open(self):
         """
-        Opens the crypton client.
+        Opens the Crypton client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the crypton client.
+        Closes the Crypton client.
         """
 
         # in case an http client is defined
@@ -126,30 +126,30 @@ class CryptonClient(object):
 
     def generate_crypton_structure(self, base_url, api_key, key_name, set_structure = True):
         """
-        Generates the crypton structure for the given arguments.
+        Generates the Crypton structure for the given arguments.
 
         :type base_url: String
-        :param base_url: The base URL of the crypton provider.
+        :param base_url: The base URL of the Crypton provider.
         :type api_key: String
         :param api_key: The key to be used to access the remote API.
         :type key_name: String
         :param key_name: The name of the key to be used.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the crypton client.
+        set in the Crypton client.
         :rtype: CryptonStructure
-        :return: The generated crypton structure.
+        :return: The generated Crypton structure.
         """
 
-        # creates a new crypton structure
+        # creates a new Crypton structure
         crypton_structure = CryptonStructure(base_url, api_key, key_name)
 
         # in case the structure is meant to be set
         if set_structure:
-            # sets the crypton structure
+            # sets the Crypton structure
             self.set_crypton_structure(crypton_structure)
 
-        # returns the crypton structure
+        # returns the Crypton structure
         return crypton_structure
 
     def encrypt(self, message):
@@ -264,27 +264,27 @@ class CryptonClient(object):
 
     def get_crypton_structure(self):
         """
-        Retrieves the crypton structure.
+        Retrieves the Crypton structure.
 
         :rtype: CryptonStructure
-        :return: The crypton structure.
+        :return: The Crypton structure.
         """
 
         return self.crypton_structure
 
     def set_crypton_structure(self, crypton_structure):
         """
-        Sets the crypton structure.
+        Sets the Crypton structure.
 
         :type crypton_structure: CryptonStructure
-        :param crypton_structure: The crypton structure.
+        :param crypton_structure: The Crypton structure.
         """
 
         self.crypton_structure = crypton_structure
 
     def _set_base_parameters(self, parameters):
         """
-        Sets the base crypton rest request parameters
+        Sets the base Crypton REST request parameters
         in the parameters map.
 
         :type parameters: Dictionary
@@ -372,11 +372,11 @@ class CryptonClient(object):
 
 class CryptonStructure(object):
     """
-    The crypton structure class.
+    The Crypton structure class.
     """
 
     base_url = None
-    """ The base URL of the crypton provider """
+    """ The base URL of the Crypton provider """
 
     api_key = None
     """ The key to be used to access the remote API """
@@ -389,7 +389,7 @@ class CryptonStructure(object):
         Constructor of the class.
 
         :type base_url: String
-        :param base_url: The base URL of the crypton provider.
+        :param base_url: The base URL of the Crypton provider.
         :type api_key: String
         :param api_key: The key to be used to access the remote API.
         :type key_name: String
