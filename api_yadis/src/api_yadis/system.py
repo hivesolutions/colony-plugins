@@ -53,17 +53,17 @@ POST_METHOD_VALUE = "POST"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
-class ApiYadis(colony.System):
+class APIYadis(colony.System):
     """
-    The api yadis class.
+    The API Yadis class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: YadisClient
@@ -73,7 +73,7 @@ class ApiYadis(colony.System):
         # retrieves the client http plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the yadis structure (if available)
+        # retrieves the Yadis structure (if available)
         yadis_structure = api_attributes.get("yadis_structure", None)
 
         # creates a new client with the given options, opens
@@ -85,14 +85,14 @@ class ApiYadis(colony.System):
 
 class YadisClient(object):
     """
-    The class that represents a yadis client connection.
+    The class that represents a Yadis client connection.
     """
 
     client_http_plugin = None
     """ The client http plugin """
 
     yadis_structure = None
-    """ The yadis structure """
+    """ The Yadis structure """
 
     http_client = None
     """ The http client for the connection """
@@ -104,7 +104,7 @@ class YadisClient(object):
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client http plugin.
         :type yadis_structure: YadisStructure
-        :param yadis_structure: The yadis structure.
+        :param yadis_structure: The Yadis structure.
         """
 
         self.client_http_plugin = client_http_plugin
@@ -112,14 +112,14 @@ class YadisClient(object):
 
     def open(self):
         """
-        Opens the yadis client.
+        Opens the Yadis client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the yadis client.
+        Closes the Yadis client.
         """
 
         # in case an http client is defined
@@ -129,103 +129,103 @@ class YadisClient(object):
 
     def generate_yadis_structure(self, provider_url, set_structure = True):
         """
-        Generates a new yadis structure, for the given parameters.
+        Generates a new Yadis structure, for the given parameters.
 
         :type provider_url: String
-        :param provider_url: The url of the yadis provider.
+        :param provider_url: The URL of the Yadis provider.
         """
 
-        # constructs a new yadis structure
+        # constructs a new Yadis structure
         yadis_structure = YadisStructure(provider_url)
 
         # in case the structure is meant to be set
         # sets the structure in the current instance
         if set_structure: self.set_yadis_structure(yadis_structure)
 
-        # returns the yadis structure
+        # returns the Yadis structure
         return yadis_structure
 
     def get_resource_descriptor(self):
         """
-        Retrieves the yadis resource descriptor for the current
-        provider url.
+        Retrieves the Yadis resource descriptor for the current
+        provider URL.
 
         :rtype: YadisResourceDescriptor
-        :return: The yadis resource descriptor for the current
-        provider url.
+        :return: The Yadis resource descriptor for the current
+        provider URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = self.yadis_structure.provider_url
 
         # start the parameters map
         parameters = {}
 
-        # fetches the retrieval url with the given parameters retrieving the xml response
+        # fetches the retrieval URL with the given parameters retrieving the xml response
         result = self._fetch_url(retrieval_url, parameters)
 
         # creates a new resource descriptor parser
         resource_descriptor_parser = parser.ResourceDescriptorParser()
 
-        # loads the yadis contents
+        # loads the Yadis contents
         resource_descriptor_parser.load_yadis_contents(result)
 
         # retrieves the resources list
         resources_list = resource_descriptor_parser.get_value()
 
-        # creates the yadis resource descriptor
+        # creates the Yadis resource descriptor
         resource_descriptor = YadisResourceDescriptor(resources_list)
 
-        # returns the yadis resource descriptor
+        # returns the Yadis resource descriptor
         return resource_descriptor
 
     def get_yadis_structure(self):
         """
-        Retrieves the yadis structure.
+        Retrieves the Yadis structure.
 
         :rtype: YadisStructure
-        :return: The yadis structure.
+        :return: The Yadis structure.
         """
 
         return self.yadis_structure
 
     def set_yadis_structure(self, yadis_structure):
         """
-        Sets the yadis structure.
+        Sets the Yadis structure.
 
         :type yadis_structure: YadisStructure
-        :param yadis_structure: The yadis structure.
+        :param yadis_structure: The Yadis structure.
         """
 
         self.yadis_structure = yadis_structure
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type base_url: String
         :param base_url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the built url
+        # returns the built URL
         return url
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -242,7 +242,7 @@ class YadisClient(object):
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
+        # fetches the URL retrieving the http response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
         # retrieves the contents from the http response
@@ -278,76 +278,76 @@ class YadisClient(object):
 
 class YadisStructure(object):
     """
-    The yadis structure class.
+    The Yadis structure class.
     """
 
     provider_url = None
-    """ The url of the openid provider """
+    """ The URL of the openid provider """
 
     def __init__(self, provider_url):
         """
         Constructor of the class.
 
         :type provider_url: String
-        :param provider_url: The url of the yadis provider.
+        :param provider_url: The URL of the Yadis provider.
         """
 
         self.provider_url = provider_url
 
     def get_provider_url(self):
         """
-        Retrieves the provider url.
+        Retrieves the provider URL.
 
         :rtype: String
-        :return: The provider url.
+        :return: The provider URL.
         """
 
         return self.provider_url
 
     def set_provider_url(self, provider_url):
         """
-        Sets the provider url.
+        Sets the provider URL.
 
         :type provider_url: String
-        :param provider_url: The provider url.
+        :param provider_url: The provider URL.
         """
 
         self.provider_url = provider_url
 
 class YadisResourceDescriptor(object):
     """
-    The yadis resource descriptor class.
+    The Yadis resource descriptor class.
     """
 
     resources_list = []
-    """ The list of yadis resources """
+    """ The list of Yadis resources """
 
     def __init__(self, resources_list):
         """
         Constructor of the class.
 
         :type resources_list: List
-        :param resources_list: The list of yadis resources.
+        :param resources_list: The list of Yadis resources.
         """
 
         self.resources_list = resources_list
 
     def get_resources_list(self):
         """
-        Retrieves the list of yadis resources.
+        Retrieves the list of Yadis resources.
 
         :rtype: List
-        :return: The list of yadis resources.
+        :return: The list of Yadis resources.
         """
 
         return self.resources_list
 
     def set_resources_list(self, resources_list):
         """
-        Sets the list of yadis resources.
+        Sets the list of Yadis resources.
 
         :type resources_list: List
-        :param resources_list: The list of yadis resources.
+        :param resources_list: The list of Yadis resources.
         """
 
         self.resources_list = resources_list

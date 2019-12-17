@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class FileFsPlugin(colony.Plugin):
+class FileFSPlugin(colony.Plugin):
     """
     The main class for the File File System Engine plugin.
     """
@@ -62,7 +62,7 @@ class FileFsPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import file_fs
-        self.system = file_fs.FileFs(self)
+        self.system = file_fs.FileFS(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

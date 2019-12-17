@@ -39,9 +39,9 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiYadisException(colony.ColonyException):
+class APIYadisException(colony.ColonyException):
     """
-    The api yadis exception class.
+    The API Yadis exception class.
     """
 
     message = None

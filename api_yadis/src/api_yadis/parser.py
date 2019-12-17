@@ -203,7 +203,7 @@ class Resource(object):
 
 class Service(object):
     """
-    The service class, describing a yadis service.
+    The service class, describing a Yadis service.
     """
 
     priority = None

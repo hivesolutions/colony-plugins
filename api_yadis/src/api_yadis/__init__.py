@@ -38,6 +38,6 @@ from . import exceptions
 from . import parser
 from . import system
 
-from .exceptions import ApiYadisException
+from .exceptions import APIYadisException
 from .parser import Parser, Resource, Service, valid_node
-from .system import ApiYadis
+from .system import APIYadis

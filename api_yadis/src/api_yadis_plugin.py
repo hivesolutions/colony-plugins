@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiYadisPlugin(colony.Plugin):
+class APIYadisPlugin(colony.Plugin):
     """
-    The main class for the Yadis Service plugin.
+    The main class for the Yadis API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.yadis"
-    name = "Yadis Api"
-    description = "The plugin that offers the yadis api"
+    name = "Yadis API"
+    description = "The plugin that offers the Yadis API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -69,10 +69,10 @@ class ApiYadisPlugin(colony.Plugin):
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :rtype: YadisClient
         :return: The created client.
         """

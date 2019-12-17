@@ -50,9 +50,9 @@ is relevant for the performance of that operation as
 a small value would imply many operations and a large
 value may require a large amount of memory"""
 
-class FileFs(colony.System):
+class FileFS(colony.System):
     """
-    The file fs class.
+    The File FS class.
     """
 
     def get_engine_name(self):
@@ -94,11 +94,11 @@ class FileFs(colony.System):
         # file system persistence
         if not os.path.isdir(base_path): os.makedirs(base_path)
 
-        # creates the fs connection with the given
+        # creates the (FS) connection with the given
         # context name and base path
         fs_connection = FsConnection(context_name, base_path)
 
-        # returns the created (fs) connection
+        # returns the created (FS) connection
         return fs_connection
 
     def close_connection(self, connection):
@@ -315,7 +315,7 @@ class FileFs(colony.System):
 class FsConnection(object):
     """
     The connection that holds the information, regarding
-    the connection to the file system (fs) engine.
+    the connection to the file system (FS) engine.
     """
 
     context_name = None
