@@ -39,6 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class CryptonPlugin(colony.Plugin):
     """
     The main class for the Crypton plugin.
@@ -46,7 +47,7 @@ class CryptonPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.crypton"
     name = "Crypton"
-    description = "The plugin that offers the crypton base infrastructure"
+    description = "The plugin that offers the Crypton base infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [

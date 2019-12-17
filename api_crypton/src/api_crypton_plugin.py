@@ -45,7 +45,7 @@ class APICryptonPlugin(colony.Plugin):
     """
 
     id = "pt.hive.colony.plugins.api.crypton"
-    name = "Crypton Api"
+    name = "Crypton API"
     description = "The plugin that offers the Crypton API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
