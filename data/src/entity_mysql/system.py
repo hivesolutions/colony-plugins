@@ -70,13 +70,13 @@ CONNECTION_ERRORS = (2000, 2006, 2013, 2027)
 considered to be connection related and for which the
 connection should be reset and a reconnection attempted """
 
-LOCK_TIMEOUT_ERRORS = (1205,)
+DEAD_LOCK_ERRORS = (1213,)
 """ The sequence that defines the codes describing errors
-related with possible lock timeout operation (no rollback) """
+related with possible dead lock situations (rollback) """
 
 class EntityMysql(colony.System):
     """
-    The entity mysql class.
+    The entity MySQL class.
     """
 
     def get_engine_name(self):
@@ -377,7 +377,7 @@ class MysqlEngine(object):
         database = str(database)
 
         # encodes the provided query into the appropriate
-        # representation for mysql execution
+        # representation for MySQL execution
         query = self._encode_query(query)
 
         # creates a new cursor to be used in case one
@@ -386,7 +386,7 @@ class MysqlEngine(object):
 
         try:
             # prints a debug message about the query that is going to be
-            # executed under the mysql engine (for debugging purposes)
+            # executed under the MySQL engine (for debugging purposes)
             self.mysql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the SQL string
@@ -431,12 +431,12 @@ class MysqlEngine(object):
                 self.mysql_system.warning("[%s] [%s] [connection lost] %s" % (ENGINE_NAME, database, query))
                 self.reconnect()
 
-            # in case the error code is related with a lock timeout
-            # then a retry operation must be performed, but a proper
-            # warning information should be printed (performance issue)
-            if code in LOCK_TIMEOUT_ERRORS:
-                self.mysql_system.warning("[%s] [%s] [lock timeout] %s" % (ENGINE_NAME, database, query))
-                is_valid = True
+            # in case the error code is related with a dead lock
+            # then the current transaction should be re-started
+            if code in DEAD_LOCK_ERRORS:
+                self.mysql_system.warning("[%s] [%s] [dead lock] %s" % (ENGINE_NAME, database, query))
+                cursor.close()
+                raise colony.OperationRestart("MySQL dead lock, restart transaction")
 
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
@@ -514,7 +514,7 @@ class MysqlEngine(object):
         """
 
         # encodes the provided query into the appropriate
-        # representation for mysql execution
+        # representation for MySQL execution
         query = self._encode_query(query)
 
         # begins a new transaction context for the
@@ -691,17 +691,17 @@ class MysqlEngine(object):
     def _encode_query(self, query):
         """
         Encodes the provided query into the appropriate format
-        to be used by the database engine (mysql) for processing.
+        to be used by the database engine (MySQL) for processing.
 
         The encoding process is required to avoid possible problems
-        with the automatic decoding of the mysql library.
+        with the automatic decoding of the MySQL library.
 
         :type query: String/Unicode
         :param query: The query to be encoded into the appropriate
-        data type for execution in mysql.
+        data type for execution in MySQL.
         :rtype: String
         :return: The query string encoded in to the appropriate data
-        format for mysql execution.
+        format for MySQL execution.
         """
 
         # in case the current query is not encoded in an unicode
@@ -739,7 +739,7 @@ class MysqlEngine(object):
 class MysqlConnection(object):
     """
     Class representing an abstraction on top of
-    the mysql connection, to provide necessary
+    the MySQL connection, to provide necessary
     abstraction features.
     This features include: thread connection abstraction
     transaction stack retrieval, etc.
@@ -765,7 +765,7 @@ class MysqlConnection(object):
     for the connection, may be changed at run-time """
 
     transaction_level_map = {}
-    """ The map associating the mysql connection with the
+    """ The map associating the MySQL connection with the
     transaction depth (nesting) level """
 
     connections_map = {}
