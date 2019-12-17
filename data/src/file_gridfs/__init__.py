@@ -36,4 +36,4 @@ __license__ = "Apache License, Version 2.0"
 
 from . import system
 
-from .system import FileGridfs
+from .system import FileGridFS

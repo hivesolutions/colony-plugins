@@ -45,9 +45,9 @@ import colony
 ENGINE_NAME = "gridfs"
 """ The engine name """
 
-class FileGridfs(colony.System):
+class FileGridFS(colony.System):
     """
-    The file gridfs class.
+    The file GridFS class.
     """
 
     def get_engine_name(self):
@@ -83,14 +83,14 @@ class FileGridfs(colony.System):
         # database from it (as the connection)
         is_new = int(pymongo.version[0]) >= 3
         if is_new: connection = pymongo.MongoClient(hostname, port)
-        else: connection = pymongo.Connection(hostname, port)
+        else: connection = pymongo.Connection(hostname, port) #@UndefinedVariable
         connection_database = connection[database]
 
-        # creates the gridfs system from the connection
+        # creates the GridFS system from the connection
         # database reference
         gridfs_sytem = gridfs.GridFS(connection_database)
 
-        # returns the gridfs system as the connection
+        # returns the GridFS system as the connection
         return gridfs_sytem
 
     def close_connection(self, connection):
@@ -98,7 +98,7 @@ class FileGridfs(colony.System):
 
     def get(self, connection, file_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the file name
@@ -106,7 +106,7 @@ class FileGridfs(colony.System):
         file_name = file_name.startswith("/") and file_name or "/" + file_name
 
         # retrieves the (last version) target file from the
-        # given file name, from the gridfs system
+        # given file name, from the GridFS system
         target_file = gridfs_sytem.get_last_version(file_name)
 
         # returns the target file
@@ -114,7 +114,7 @@ class FileGridfs(colony.System):
 
     def put(self, connection, file_path, file_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the file name
@@ -128,7 +128,7 @@ class FileGridfs(colony.System):
         try:
             # reads the contents from the source file
             # and writes them to the target file in the
-            # gridfs system
+            # GridFS system
             source_contents = source_file.read()
             gridfs_sytem.put(source_contents, filename = file_name)
         finally:
@@ -137,7 +137,7 @@ class FileGridfs(colony.System):
 
     def put_file(self, connection, file, file_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the file name
@@ -146,13 +146,13 @@ class FileGridfs(colony.System):
 
         # reads the contents from the (source) file
         # and writes them to the target file in the
-        # gridfs system
+        # GridFS system
         source_contents = file.read()
         gridfs_sytem.put(source_contents, filename = file_name)
 
     def put_data(self, connection, data, file_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the file name
@@ -160,12 +160,12 @@ class FileGridfs(colony.System):
         file_name = file_name.startswith("/") and file_name or "/" + file_name
 
         # writes the data to the target file in the
-        # gridfs system
+        # GridFS system
         gridfs_sytem.put(data, filename = file_name)
 
     def delete(self, connection, file_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the file name
@@ -182,7 +182,7 @@ class FileGridfs(colony.System):
 
     def list(self, connection, directory_name):
         # retrieves the base file connection as the
-        # gridfs system
+        # GridFS system
         gridfs_sytem = connection.file_connection
 
         # adds the path separator value to the directory name
@@ -193,7 +193,7 @@ class FileGridfs(colony.System):
         directory_name = directory_name.endswith("/") and directory_name or directory_name + "/"
 
         # retrieves the file name list from the
-        # gridfs system and filters the values
+        # GridFS system and filters the values
         # based on the directory name prefix
         file_name_list = gridfs_sytem.list()
         file_name_list = [value[len(directory_name):] for value in file_name_list if value.startswith(directory_name)]

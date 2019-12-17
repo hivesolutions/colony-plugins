@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class FileGridfsPlugin(colony.Plugin):
+class FileGridFSPlugin(colony.Plugin):
     """
-    The main class for the File Gridfs plugin.
+    The main class for the File GridFS plugin.
     """
 
     id = "pt.hive.colony.plugins.data.file.gridfs"
-    name = "File Gridfs"
-    description = "File Gridfs Plugin"
+    name = "File GridFS"
+    description = "File GridFS Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -67,7 +67,7 @@ class FileGridfsPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import file_gridfs
-        self.system = file_gridfs.FileGridfs(self)
+        self.system = file_gridfs.FileGridFS(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
