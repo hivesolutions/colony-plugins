@@ -41,11 +41,11 @@ import colony
 
 class ServiceHttpCgiPlugin(colony.Plugin):
     """
-    The main class for the Http Service Cgi plugin.
+    The main class for the HTTP Service CGI plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.cgi"
-    name = "Http Service Cgi"
+    name = "HTTP Service CGI"
     description = "The plugin that offers the HTTP service CGI"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

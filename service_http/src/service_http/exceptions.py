@@ -123,7 +123,7 @@ class HttpRuntimeException(ServiceHttpException):
         :return: The string representation of the class.
         """
 
-        return "Http runtime exception - %s" % self.message
+        return "HTTP runtime exception - %s" % self.message
 
 class HttpInvalidDataException(HttpRuntimeException):
     """
@@ -148,7 +148,7 @@ class HttpInvalidDataException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http invalid data exception - %s" % self.message
+        return "HTTP invalid data exception - %s" % self.message
 
 class HttpNoHandlerException(HttpRuntimeException):
     """
@@ -173,7 +173,7 @@ class HttpNoHandlerException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http no handler exception - %s" % self.message
+        return "HTTP no handler exception - %s" % self.message
 
 class HttpHandlerNotFoundException(HttpRuntimeException):
     """
@@ -198,7 +198,7 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http handler not found exception - %s" % self.message
+        return "HTTP handler not found exception - %s" % self.message
 
 class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
     """
@@ -223,7 +223,7 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http authentication handler not found exception - %s" % self.message
+        return "HTTP authentication handler not found exception - %s" % self.message
 
 class HttpInvalidMultipartRequestException(HttpRuntimeException):
     """
@@ -248,7 +248,7 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http invalid multipart request exception - %s" % self.message
+        return "HTTP invalid multipart request exception - %s" % self.message
 
 class HttpDataRetrievalException(HttpRuntimeException):
     """
@@ -273,7 +273,7 @@ class HttpDataRetrievalException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http data retrieval exception - %s" % self.message
+        return "HTTP data retrieval exception - %s" % self.message
 
 class HttpDataSendingException(HttpRuntimeException):
     """
@@ -298,7 +298,7 @@ class HttpDataSendingException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http data sending exception - %s" % self.message
+        return "HTTP data sending exception - %s" % self.message
 
 class UnauthorizedException(HttpRuntimeException):
     """

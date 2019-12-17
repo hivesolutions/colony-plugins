@@ -75,7 +75,7 @@ class RequestNotHandled(ServiceHttpCgiException):
 
 class CgiScriptError(ServiceHttpCgiException):
     """
-    The cgi script error class.
+    The CGI script error class.
     """
 
     def __init__(self, message):
@@ -97,11 +97,11 @@ class CgiScriptError(ServiceHttpCgiException):
         :return: The string representation of the class.
         """
 
-        return "Cgi script error - %s" % self.message
+        return "CGI script error - %s" % self.message
 
 class InvalidCgiData(ServiceHttpCgiException):
     """
-    The invalid cgi data class.
+    The invalid CGI data class.
     """
 
     def __init__(self, message):
@@ -123,11 +123,11 @@ class InvalidCgiData(ServiceHttpCgiException):
         :return: The string representation of the class.
         """
 
-        return "Invalid cgi data - %s" % self.message
+        return "Invalid CGI data - %s" % self.message
 
 class InvalidCgiHeader(ServiceHttpCgiException):
     """
-    The invalid cgi header class.
+    The invalid CGI header class.
     """
 
     def __init__(self, message):
@@ -149,4 +149,4 @@ class InvalidCgiHeader(ServiceHttpCgiException):
         :return: The string representation of the class.
         """
 
-        return "Invalid cgi header - %s" % self.message
+        return "Invalid CGI header - %s" % self.message

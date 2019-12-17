@@ -41,11 +41,11 @@ import colony
 
 class ServiceHttpColonyPlugin(colony.Plugin):
     """
-    The main class for the Http Service Colony plugin.
+    The main class for the HTTP Service Colony plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.colony"
-    name = "Http Service Colony"
+    name = "HTTP Service Colony"
     description = "The plugin that offers the HTTP service colony"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

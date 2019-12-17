@@ -141,7 +141,7 @@ class InvalidEncoder(BadServiceRequest):
 
 class RestRequestNotHandled(BadServiceRequest):
     """
-    The rest request not handled class.
+    The REST request not handled class.
     """
 
     def __init__(self, message):
@@ -163,7 +163,7 @@ class RestRequestNotHandled(BadServiceRequest):
         :return: The string representation of the class.
         """
 
-        return "Rest Request Not handled - %s" % self.message
+        return "REST Request Not handled - %s" % self.message
 
 class InvalidPath(BadServiceRequest):
     """

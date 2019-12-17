@@ -41,12 +41,12 @@ import colony
 
 class RestPlugin(colony.Plugin):
     """
-    The main class for the Rest plugin.
+    The main class for the REST plugin.
     """
 
     id = "pt.hive.colony.plugins.rest"
-    name = "Rest"
-    description = "Rest Plugin"
+    name = "REST"
+    description = "REST Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
