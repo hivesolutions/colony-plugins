@@ -39,7 +39,7 @@ from . import serializer
 from . import system
 from . import test
 
-from .exceptions import CsvException, CsvEncodeException, CsvDecodeException
+from .exceptions import CSVException, CSVEncodeException, CSVDecodeException
 from .serializer import dumps, loads
-from .system import Csv
-from .test import CsvTest, CsvBaseTestCase
+from .system import CSV
+from .test import CSVTest, CSVBaseTestCase

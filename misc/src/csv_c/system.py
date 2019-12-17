@@ -46,14 +46,14 @@ DEFAULT_ENCODING = "Cp1252"
 to the most used case """
 
 MIME_TYPE = "text/csv"
-""" The mime type for the csv format as defined
-by the proper iso organizations  """
+""" The mime type for the CSV format as defined
+by the proper ISO organizations  """
 
-class Csv(colony.System):
+class CSV(colony.System):
     """
-    Provides functions to interact with csv.
+    Provides functions to interact with CSV.
     These operations should include at least
-    the dumping and loading of csv.
+    the dumping and loading of CSV.
     """
 
     def dumps(self, object, encoding = DEFAULT_ENCODING):
@@ -66,9 +66,9 @@ class Csv(colony.System):
         return serializer.loads(csv_string, header)
 
     def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
-        # reads the csv file and decodes the file using
+        # reads the CSV file and decodes the file using
         # the defined (by parameter encoding) then runs
-        # the load process for the csv bytes buffer,
+        # the load process for the CSV bytes buffer,
         # returning the resulting value to the caller
         csv_file_contents = csv_file.read()
         csv_file_contents_decoded = csv_file_contents.decode(encoding)

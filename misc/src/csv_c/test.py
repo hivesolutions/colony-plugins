@@ -41,22 +41,22 @@ import colony
 
 from . import mocks
 
-class CsvTest(colony.Test):
+class CSVTest(colony.Test):
     """
-    The csv serializer class, responsible for the
+    The CSV serializer class, responsible for the
     management of the associated test cases.
     """
 
     def get_bundle(self):
         return (
-            CsvBaseTestCase,
+            CSVBaseTestCase,
         )
 
-class CsvBaseTestCase(colony.ColonyTestCase):
+class CSVBaseTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Csv Base test case"
+        return "CSV Base test case"
 
     def test_dumps(self):
         result = self.system.dumps(mocks.SIMPLE_OBJECT, encoding = None)

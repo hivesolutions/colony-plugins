@@ -45,17 +45,17 @@ import colony
 from . import exceptions
 
 DEFAULT_ENCODING = "Cp1252"
-""" The default encoding for csv files, this
+""" The default encoding for CSV files, this
 is defined according to the mostly used version
-of the csv in the computer industry """
+of the CSV in the computer industry """
 
 NEWLINE_CHARACTER = "\n"
 """ The newline character, that should
-be present at the end of each csv row """
+be present at the end of each CSV row """
 
 SEPARATOR_CHARACTER = ";"
 """ The separator character separating
-each of the item columns in a csv file """
+each of the item columns in a CSV file """
 
 SPECIAL_SEQUENCE = ("\n", "\r", ";")
 """ The sequence string that defines the various
@@ -106,7 +106,7 @@ def _chunk(object, flatten = True, empty = True):
     # instance nor a list it's considered not
     # valid and an exception should be raised
     elif not object_type in LIST_TYPES and not isinstance(object, LIST_TYPES):
-        raise exceptions.CsvEncodeException("invalid object type")
+        raise exceptions.CSVEncodeException("invalid object type")
 
     # in case the object is not set, is invalid
     # or is empty there is no need to codify it
@@ -291,7 +291,7 @@ def _dechunk(chunks, header):
     object_list = []
 
     # retrieves the header value and unpacks it retrieving its complete
-    # set of names, considering them to be the header of the csv
+    # set of names, considering them to be the header of the CSV
     header_value = chunks[0]
     header_names = [value.strip() for value in header_value.split(SEPARATOR_CHARACTER)]
 
@@ -308,7 +308,7 @@ def _dechunk(chunks, header):
     # iterates over all the content
     # in the content values
     for content in content_values:
-        # creates a new (csv) object (map)
+        # creates a new (CSV) object (map)
         object = {}
 
         # retrieves the various object attributes

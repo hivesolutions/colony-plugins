@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class CsvException(colony.ColonyException):
+class CSVException(colony.ColonyException):
     """
-    The csv exception class.
+    The CSV exception class.
     """
 
     message = None
     """ The exception's message """
 
-class CsvEncodeException(CsvException):
+class CSVEncodeException(CSVException):
     """
-    The csv encode exception class.
+    The CSV encode exception class.
     """
 
     def __init__(self, object):
@@ -60,7 +60,7 @@ class CsvEncodeException(CsvException):
         :param object: The object containing the encoding problems.
         """
 
-        CsvException.__init__(self)
+        CSVException.__init__(self)
         self.object = object
 
     def __str__(self):
@@ -73,9 +73,9 @@ class CsvEncodeException(CsvException):
 
         return "Object not encodable - %s" % self.object
 
-class CsvDecodeException(CsvException):
+class CSVDecodeException(CSVException):
     """
-    The csv decode exception class.
+    The CSV decode exception class.
     """
 
     def __init__(self, message):
@@ -86,7 +86,7 @@ class CsvDecodeException(CsvException):
         :param message: The message to be printed.
         """
 
-        CsvException.__init__(self)
+        CSVException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -97,4 +97,4 @@ class CsvDecodeException(CsvException):
         :return: The string representation of the class.
         """
 
-        return "Csv data not decodable - %s" % self.message
+        return "CSV data not decodable - %s" % self.message

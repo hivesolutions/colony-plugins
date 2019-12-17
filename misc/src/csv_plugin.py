@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class CsvPlugin(colony.Plugin):
+class CSVPlugin(colony.Plugin):
     """
-    The main class for the Csv plugin.
+    The main class for the CSV plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.csv"
-    name = "Csv"
-    description = "A plugin to serialize and unserialize csv files"
+    name = "CSV"
+    description = "A plugin to serialize and unserialize CSV files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -64,8 +64,8 @@ class CsvPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import csv_c
-        self.system = csv_c.Csv(self)
-        self.test = csv_c.CsvTest(self)
+        self.system = csv_c.CSV(self)
+        self.test = csv_c.CSVTest(self)
 
     def dumps(self, object):
         return self.system.dumps(object)
