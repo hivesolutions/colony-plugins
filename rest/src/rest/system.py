@@ -115,7 +115,7 @@ considered valid as an interval to mark a session as
 dirty for the new calculus of expire time, this value
 avoids an exhaustion on flushing the session data """
 
-class Rest(colony.System):
+class REST(colony.System):
     """
     The REST (manager) class, the top level system class
     that handles the incoming REST requests.
@@ -199,8 +199,8 @@ class Rest(colony.System):
         try:
             self.session_c.load()
         except Exception:
-            self.debug("Falling back to %s session" % RestSession.__name__)
-            self.session_c = RestSession
+            self.debug("Falling back to %s session" % RESTSession.__name__)
+            self.session_c = RESTSession
             self.session_c.load()
 
         # prints a message about the success in the loading of the session
@@ -315,7 +315,7 @@ class Rest(colony.System):
             # creates the REST request object that is going to be used
             # for the REST level handling this object encapsulates the
             # underlying server oriented object
-            rest_request = RestRequest(self, request)
+            rest_request = RESTRequest(self, request)
 
             # sets a series of attributes in the REST request that may be
             # used latter for a series of operations
@@ -333,8 +333,9 @@ class Rest(colony.System):
                 rest_request.pre_handle()
                 try:
                     self.handle_rest_request_services(rest_request)
-                except colony.OperationRestart:
+                except colony.OperationRestart as exception:
                     rest_request.post_handle()
+                    time.sleep(exception.delay)
                     continue
                 except BaseException as exception:
                     rest_request.except_handle(exception)
@@ -355,13 +356,14 @@ class Rest(colony.System):
                 try:
                     result = self.try_rest_request_plugin(rest_request, resource_path)
                     if result: return
-                except colony.OperationRestart:
+                except colony.OperationRestart as exception:
+                    time.sleep(exception.delay)
                     continue
 
             # raises the REST request not handled exception, because if the control
             # flow has reached this place no matching regex has able to handle the
             # request and so no service plugin was able to handle it
-            raise exceptions.RestRequestNotHandled(
+            raise exceptions.RESTRequestNotHandled(
                 "no REST service plugin could handle the request"
             )
 
@@ -369,7 +371,7 @@ class Rest(colony.System):
         # has reached this parts of the code the maximum number of retry operations
         # have been performed for the current request and a low level exception
         # should be raised to better serialize the error
-        raise exceptions.RestRequestError(
+        raise exceptions.RESTRequestError(
             "no more REST operation retries left"
         )
 
@@ -382,7 +384,7 @@ class Rest(colony.System):
         method. This is considered legacy operation mode
         and it's not recommended.
 
-        :type rest_request: RestRequest
+        :type rest_request: RESTRequest
         :param rest_request: The REST request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
@@ -463,7 +465,7 @@ class Rest(colony.System):
         This should be an expensive operation (routing) and should
         be used with proper care.
 
-        :type rest_request: RestRequest
+        :type rest_request: RESTRequest
         :param rest_request: The REST request to be handled,
         this request is going to be used for the resolution
         process of the remote method and for the passing of
@@ -798,7 +800,7 @@ class Rest(colony.System):
 
         :type session_id: String
         :param session_id: The id of the session to retrieve.
-        :rtype: RestSession
+        :rtype: RESTSession
         :return: The session that has been loaded from memory
         or an invalid value in case no session was found
         """
@@ -903,7 +905,7 @@ class Rest(colony.System):
         self.matching_regex_list.append(matching_regex)
         self.matching_regex_base_values_map[matching_regex] = current_base_value
 
-class RestRequest(object):
+class RESTRequest(object):
     """
     The REST request class, responsible for the representation
     of a request coming through the REST layer system.
@@ -991,7 +993,7 @@ class RestRequest(object):
         """
         Constructor of the class.
 
-        :type rest: MainRestManager
+        :type rest: REST
         :param rest: The REST manager that should control the handling
         workflow for the request to be created (owner).
         :type request: Request
@@ -1050,7 +1052,7 @@ class RestRequest(object):
         :param timeout: The timeout to be used in the session.
         :type maximum_timeout: float
         :param maximum_timeout: The maximum timeout to be used in the session.
-        :rtype: RestSession
+        :rtype: RESTSession
         :return: The session that has just be started/created or
         the already created session in case no "force" is required.
         """
@@ -1777,7 +1779,7 @@ class RestRequest(object):
         :type block: bool
         :param block: If the lock should be used while
         accessing the session.
-        :rtype: RestSession
+        :rtype: RESTSession
         :return: The associated session.
         """
 
@@ -1816,7 +1818,7 @@ class RestRequest(object):
         """
         Sets the associated session.
 
-        :type session: RestSession
+        :type session: RESTSession
         :param session: The associated session.
         """
 
@@ -2340,7 +2342,7 @@ class RestRequest(object):
         # returns the domain
         return domain
 
-class RestSession(object):
+class RESTSession(object):
     """
     The REST session class, defining the abstract interfaces
     that should be used by any of the concrete session
@@ -2790,7 +2792,7 @@ class RestSession(object):
         self.expire_time = expire_time if self._maximum_expire_time > expire_time\
             else self._maximum_expire_time
 
-class ShelveSession(RestSession):
+class ShelveSession(RESTSession):
     """
     Shelve based implementation of the REST session, meant
     to provide a minimal and simple persistence layer for
@@ -2870,7 +2872,7 @@ class ShelveSession(RestSession):
         self.mark(dirty = False)
         cls.SHELVE.sync()
 
-class RedisSession(RestSession):
+class RedisSession(RESTSession):
     """
     Redis based session that uses a redis server to store a
     serialized version of the session associated with string

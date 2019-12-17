@@ -139,7 +139,7 @@ class InvalidEncoder(BadServiceRequest):
 
         return "Invalid Encoder - %s" % self.message
 
-class RestRequestError(BadServiceRequest):
+class RESTRequestError(BadServiceRequest):
     """
     The REST request error class.
     """
@@ -165,7 +165,7 @@ class RestRequestError(BadServiceRequest):
 
         return "REST Request Error - %s" % self.message
 
-class RestRequestNotHandled(BadServiceRequest):
+class RESTRequestNotHandled(BadServiceRequest):
     """
     The REST request not handled class.
     """

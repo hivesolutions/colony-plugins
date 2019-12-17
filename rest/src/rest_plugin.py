@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class RestPlugin(colony.Plugin):
+class RESTPlugin(colony.Plugin):
     """
     The main class for the REST plugin.
     """
@@ -73,7 +73,7 @@ class RestPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import rest
-        self.system = rest.Rest(self)
+        self.system = rest.REST(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
