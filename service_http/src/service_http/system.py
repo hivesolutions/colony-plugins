@@ -1010,7 +1010,7 @@ class HttpClientServiceHandler(object):
             # in case no valid data was received
             if not data:
                 # raises the HTTP invalid data exception
-                raise exceptions.HttpInvalidDataException("empty data received")
+                raise exceptions.HTTPInvalidDataException("empty data received")
 
             # tries to retrieve the request using the retrieved data
             request = self.retrieve_request_data(service_connection, data)
@@ -1109,7 +1109,7 @@ class HttpClientServiceHandler(object):
                 # in case the length of the splitted line is not valid
                 if not start_line_splitted_length == 3:
                     # raises the HTTP invalid data exception
-                    raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+                    raise exceptions.HTTPInvalidDataException("invalid data received: " + start_line)
 
                 # retrieve the operation type the path and the protocol version
                 # from the start line splitted and then sets these various values

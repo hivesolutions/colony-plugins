@@ -38,7 +38,7 @@ from . import exceptions
 from . import system
 from . import test
 
-from .exceptions import ClientHttpException, HttpInvalidUrlData, HttpRuntimeException,\
-    HttpInvalidDataException
-from .system import ClientHttp
-from .test import ClientHttpTest, ClientHttpTestCase
+from .exceptions import ClientHTTPException, HTTPInvalidURLData, HTTPRuntimeException,\
+    HTTPInvalidDataException
+from .system import ClientHTTP
+from .test import ClientHTTPTest, ClientHTTPTestCase

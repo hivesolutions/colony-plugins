@@ -38,7 +38,7 @@ from . import exceptions
 from . import system
 
 from .exceptions import ServiceHttpException, EncodingNotFound, ClientRequestSecurityViolation,\
-    HttpRuntimeException, HttpInvalidDataException, HttpNoHandlerException,\
+    HttpRuntimeException, HTTPInvalidDataException, HttpNoHandlerException,\
     HttpHandlerNotFoundException, HttpAuthenticationHandlerNotFoundException,\
     HttpInvalidMultipartRequestException, HttpDataRetrievalException, HttpDataSendingException,\
     UnauthorizedException

@@ -125,7 +125,7 @@ class HttpRuntimeException(ServiceHttpException):
 
         return "HTTP runtime exception - %s" % self.message
 
-class HttpInvalidDataException(HttpRuntimeException):
+class HTTPInvalidDataException(HttpRuntimeException):
     """
     The HTTP invalid data exception class.
     """

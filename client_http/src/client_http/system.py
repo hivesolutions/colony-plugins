@@ -46,10 +46,10 @@ import colony
 from . import exceptions
 
 HTTP_PREFIX_VALUE = "http://"
-""" The http prefix value """
+""" The HTTP prefix value """
 
 HTTPS_PREFIX_VALUE = "https://"
-""" The https prefix value """
+""" The HTTPS prefix value """
 
 GET_METHOD_VALUE = "GET"
 """ The get method value """
@@ -61,7 +61,7 @@ PUT_METHOD_VALUE = "PUT"
 """ The put method value """
 
 HTTP_1_1_VERSION = "HTTP/1.1"
-""" The http 1.1 protocol version """
+""" The HTTP 1.1 protocol version """
 
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
@@ -140,7 +140,7 @@ STATUS_CODE_VALUES = {
     505 : "HTTP Version Not Supported"
 }
 """ The status code values map, mapping the standard
-http error codes with their descriptive value """
+HTTP error codes with their descriptive value """
 
 CHUNKED_VALUE = "chunked"
 """ The chunked value """
@@ -221,20 +221,20 @@ PROTOCOL_SOCKET_NAME_MAP = {
     HTTP_PREFIX_VALUE : "normal",
     HTTPS_PREFIX_VALUE : "ssl"
 }
-""" The map associating the http protocol prefixed with the name of the socket """
+""" The map associating the HTTP protocol prefixed with the name of the socket """
 
 PROTOCOL_DEFAULT_PORT_MAP = {
     HTTP_PREFIX_VALUE : 80,
     HTTPS_PREFIX_VALUE : 443
 }
-""" The map associating the http protocol prefixed with the port number """
+""" The map associating the HTTP protocol prefixed with the port number """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
-class ClientHttp(colony.System):
+class ClientHTTP(colony.System):
     """
-    The client http class.
+    The client HTTP class.
     """
 
     def create_client(self, parameters):
@@ -244,21 +244,21 @@ class ClientHttp(colony.System):
         :type parameters: Dictionary
         :param parameters: The parameters to be used in creating
         the client object.
-        :rtype: HttpClient
+        :rtype: HTTPClient
         :return: The created client object.
         """
 
         # retrieves the various parameters provided for the
-        # creation of the http client
+        # creation of the HTTP client
         protocol_version = parameters.get(PROTOCOL_VERSION_VALUE, None)
         content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
         key_file_path = parameters.get(KEY_FILE_PATH_VALUE, None)
         certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH_VALUE, None)
         ssl_version = parameters.get(SSL_VERSION_VALUE, None)
 
-        # creates the http client with the provided parameters
+        # creates the HTTP client with the provided parameters
         # and returns the created client
-        http_client = HttpClient(
+        http_client = HTTPClient(
             self,
             protocol_version,
             content_type_charset = content_type_charset,
@@ -271,17 +271,17 @@ class ClientHttp(colony.System):
     def create_request(self, parameters):
         pass
 
-class HttpClient(object):
+class HTTPClient(object):
     """
-    The http client class, representing
-    a client connection in the http protocol.
+    The HTTP client class, representing
+    a client connection in the HTTP protocol.
     """
 
     client_http = None
-    """ The client http object """
+    """ The client HTTP object """
 
     protocol_version = "none"
-    """ The version of the http protocol """
+    """ The version of the HTTP protocol """
 
     content_type_charset = None
     """ The content type charset """
@@ -317,7 +317,7 @@ class HttpClient(object):
     """ The current client connection """
 
     _http_client = None
-    """ The http client object used to provide connections """
+    """ The HTTP client object used to provide connections """
 
     _http_client_lock = None
     """ Lock to control the fetching of the queries """
@@ -334,10 +334,10 @@ class HttpClient(object):
         """
         Constructor of the class.
 
-        :type client_http: ClientHttp
-        :param client_http: The client http object.
+        :type client_http: ClientHTTP
+        :param client_http: The client HTTP object.
         :type protocol_version: String
-        :param protocol_version: The version of the http protocol to
+        :param protocol_version: The version of the HTTP protocol to
         be used.
         :type content_type_charset: String
         :param content_type_charset: The charset to be used by the content.
@@ -368,7 +368,7 @@ class HttpClient(object):
         parameters = parameters or {}
         client_parameters = self._generate_client_parameters(parameters)
 
-        # creates the http client, generating the internal structures
+        # creates the HTTP client, generating the internal structures
         # and uses it to start the client
         self._http_client = self.client_http.plugin.client_utils_plugin.generate_client(client_parameters)
         self._http_client.start_client()
@@ -423,7 +423,7 @@ class HttpClient(object):
         :type handlers_map: Dictionary
         :param handlers_map: The map of event handlers for the various
         client events.
-        :rtype: HttpResponse
+        :rtype: HTTPResponse
         :return: The retrieved response object.
         """
 
@@ -469,7 +469,7 @@ class HttpClient(object):
         # retrieves the corresponding (HTTP) client connection
         self.client_connection = self._http_client.get_client_connection(connection_parameters)
 
-        # acquires the http client lock
+        # acquires the HTTP client lock
         self._http_client_lock.acquire()
 
         # saves the old authentication
@@ -526,7 +526,7 @@ class HttpClient(object):
             self.username = _username
             self.password = _password
 
-            # releases the http client lock
+            # releases the HTTP client lock
             self._http_client_lock.release()
 
         # returns the response
@@ -553,8 +553,8 @@ class HttpClient(object):
         # are not meant to be encoded as url parameters
         if not method == GET_METHOD_VALUE: return base_url
 
-        # creates the http request to build the url
-        request = HttpRequest(attributes_map = parameters)
+        # creates the HTTP request to build the url
+        request = HTTPRequest(attributes_map = parameters)
 
         # encodes the request attributes
         encoded_attributes = request._encode_attributes()
@@ -604,7 +604,7 @@ class HttpClient(object):
         :type port: int
         :param port: The tcp port to be used.
         :type path: String
-        :param path: The path to be retrieve via http.
+        :param path: The path to be retrieve via HTTP.
         :type parameters: Dictionary
         :param parameters: The parameters to the request.
         :type operation_type: String
@@ -625,14 +625,14 @@ class HttpClient(object):
         :param url: The complete url of the request.
         :type base_url: String
         :param base_url: The base URL of the request.
-        :rtype: HttpRequest
+        :rtype: HTTPRequest
         :return: The sent request for the given parameters.
         """
 
-        # creates the http request with the host, the port, the path, the parameters, operation type,
+        # creates the HTTP request with the host, the port, the path, the parameters, operation type,
         # the headers, the protocol version, the content type, the content type charset, the encode path,
         # the url and the base url
-        request = HttpRequest(
+        request = HTTPRequest(
             host = host,
             port = port,
             path = path,
@@ -678,7 +678,7 @@ class HttpClient(object):
         """
         Retrieves the response from the sent request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request that originated the response.
         :type save_message: bool
         :param save_message: If the message part of the response
@@ -691,7 +691,7 @@ class HttpClient(object):
         client events.
         :type response_timeout: int
         :param response_timeout: The timeout for the response retrieval.
-        :rtype: HttpResponse
+        :rtype: HTTPResponse
         :return: The response from the sent request.
         """
 
@@ -700,10 +700,10 @@ class HttpClient(object):
 
         # creates a response object, that will be populated
         # during the iteration to retrieve the data
-        response = HttpResponse(request)
+        response = HTTPResponse(request)
 
         # creates the various flags that will "control" the
-        # parsing of the http response
+        # parsing of the HTTP response
         start_line_loaded = False
         header_loaded = False
         message_loaded = False
@@ -721,7 +721,7 @@ class HttpClient(object):
         # (internal control flag)
         undefined_content_length_finished = False
 
-        # runs the loop to parse the complete http message
+        # runs the loop to parse the complete HTTP message
         # to be received
         while True:
             # receives the data for the current iteration cycle
@@ -738,7 +738,7 @@ class HttpClient(object):
                 if message_size == UNDEFINED_CONTENT_LENGTH:
                     undefined_content_length_finished = True
                 else:
-                    raise exceptions.HttpInvalidDataException("empty data received")
+                    raise exceptions.HTTPInvalidDataException("empty data received")
 
             # retrieves the data length and increments the
             # received data size (counter) with such value
@@ -796,9 +796,9 @@ class HttpClient(object):
                     start_line_splitted_length = len(start_line_splitted)
 
                     # in case the length of the splitted line is not valid
-                    # raises the http invalid data exception
+                    # raises the HTTP invalid data exception
                     if start_line_splitted_length < 3:
-                        raise exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+                        raise exceptions.HTTPInvalidDataException("invalid data received: " + start_line)
 
                     # retrieve the protocol version the status code and the status message
                     # from the start line splitted, converts some of the values into their
@@ -988,8 +988,8 @@ class HttpClient(object):
 
                 # in case no valid data was received
                 if data == "":
-                    # raises the http invalid data exception
-                    raise exceptions.HttpInvalidDataException("empty data received")
+                    # raises the HTTP invalid data exception
+                    raise exceptions.HTTPInvalidDataException("empty data received")
 
                 # retrieves the data length
                 data_length = len(data)
@@ -1049,8 +1049,8 @@ class HttpClient(object):
 
                 # in case no valid data was received
                 if data == "":
-                    # raises the http invalid data exception
-                    raise exceptions.HttpInvalidDataException("empty data received")
+                    # raises the HTTP invalid data exception
+                    raise exceptions.HTTPInvalidDataException("empty data received")
 
                 # retrieves the data length
                 data_length = len(data)
@@ -1105,7 +1105,7 @@ class HttpClient(object):
         Decodes the response message for the encoding
         specified in the response.
 
-        :type response: HttpResponse
+        :type response: HTTPResponse
         :param response: The response to be decoded.
         """
 
@@ -1142,12 +1142,12 @@ class HttpClient(object):
     def set_no_cache(self, no_cache):
         """
         Sets the value controlling the explicit invalidation
-        of the cache in the http request.
+        of the cache in the HTTP request.
 
 
         :type no_cache: bool
         :param no_cache: The value controlling the explicit invalidation
-        of the cache in the http request.
+        of the cache in the HTTP request.
         """
 
         # sets the no cache flag
@@ -1220,7 +1220,7 @@ class HttpClient(object):
         # protocol with the value in lower case (normalized) otherwise
         # raises an exception alerting for the missing protocol information
         if url_structure.protocol: protocol = url_structure.protocol.lower()
-        else: raise exceptions.HttpInvalidUrlData("missing protocol information: " + url)
+        else: raise exceptions.HTTPInvalidURLData("missing protocol information: " + url)
 
         # in case the url structure contains both the username
         # and the password information must set it, otherwise
@@ -1234,7 +1234,7 @@ class HttpClient(object):
         # as the host field otherwise raises an exception indicating
         # the missing of the host information
         if url_structure.base_name: host = url_structure.base_name
-        else: raise exceptions.HttpInvalidUrlData("missing host information: " + url)
+        else: raise exceptions.HTTPInvalidURLData("missing host information: " + url)
 
         # in case the url structure contains the port (pre defined port)
         # must use it as it's enforced otherwise uses the map associating
@@ -1277,14 +1277,14 @@ class HttpClient(object):
         retrieving the new response in case there is a
         redirection defined.
 
-        :type request: HttpRequest
-        :param request: The http request to be used in
+        :type request: HTTPRequest
+        :param request: The HTTP request to be used in
         the processing.
-        :type response: HttpResponse
-        :param response: The http response to be used in
+        :type response: HTTPResponse
+        :param response: The HTTP response to be used in
         the processing.
-        :rtype: HttpResponse
-        :return: The http response resulting from the
+        :rtype: HTTPResponse
+        :return: The HTTP response resulting from the
         redirection (or none if not redirected).
         """
 
@@ -1307,7 +1307,7 @@ class HttpClient(object):
         # retrieves the status code
         status_code = response.status_code
 
-        # in case the location does not start with the http prefix
+        # in case the location does not start with the HTTP prefix
         # it's not an absolute path but a relative one
         if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
             # in case the location starts with the slash value
@@ -1370,7 +1370,7 @@ class HttpClient(object):
         :type handlers_map: Dictionary
         :param handlers_map: The map of handlers to be used in
         the calling of the handler.
-        :type response: HttpResponse
+        :type response: HTTPResponse
         :param response: The response object to be passed as argument
         to the handler.
         """
@@ -1401,7 +1401,7 @@ class HttpClient(object):
         :type handlers_map: Dictionary
         :param handlers_map: The map of handlers to be used in
         the calling of the handler.
-        :type response: HttpResponse
+        :type response: HTTPResponse
         :param response: The response object to be passed as argument
         to the handler.
         :type data: String
@@ -1422,9 +1422,9 @@ class HttpClient(object):
         # as first argument and the data as second
         handler_method(response, data)
 
-class HttpRequest(object):
+class HTTPRequest(object):
     """
-    The http request class.
+    The HTTP request class.
     """
 
     host = "none"
@@ -1617,7 +1617,7 @@ class HttpRequest(object):
         # message content itself
         self.content_length = len(message)
 
-        # writes the http command in the string buffer (version, status code and status value)
+        # writes the HTTP command in the string buffer (version, status code and status value)
         result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
 
         # creates the ordered map to hold the header values
@@ -1729,7 +1729,7 @@ class HttpRequest(object):
     def _get_real_host(self):
         """
         Retrieves the "real" host value to be sent
-        in http header of the request.
+        in HTTP header of the request.
 
         :rtype: String
         :return: The "real" host value.
@@ -1835,9 +1835,9 @@ class HttpRequest(object):
         unicode_value_encoded = unicode_value.encode(self.content_type_charset)
         return unicode_value_encoded
 
-class HttpResponse(object):
+class HTTPResponse(object):
     """
-    The http response class.
+    The HTTP response class.
     """
 
     request = None

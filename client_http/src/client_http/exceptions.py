@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ClientHttpException(colony.ColonyException):
+class ClientHTTPException(colony.ColonyException):
     """
-    The client http exception class.
+    The client HTTP exception class.
     """
 
     message = None
     """ The exception's message """
 
-class HttpInvalidUrlData(ClientHttpException):
+class HTTPInvalidURLData(ClientHTTPException):
     """
     The invalid url data class.
     """
@@ -60,7 +60,7 @@ class HttpInvalidUrlData(ClientHttpException):
         :param message: The message to be printed.
         """
 
-        ClientHttpException.__init__(self)
+        ClientHTTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -71,11 +71,11 @@ class HttpInvalidUrlData(ClientHttpException):
         :return: The string representation of the class.
         """
 
-        return "Http invalid url data - %s" % self.message
+        return "HTTP invalid url data - %s" % self.message
 
-class HttpRuntimeException(ClientHttpException):
+class HTTPRuntimeException(ClientHTTPException):
     """
-    The http runtime exception class.
+    The HTTP runtime exception class.
     """
 
     def __init__(self, message):
@@ -86,7 +86,7 @@ class HttpRuntimeException(ClientHttpException):
         :param message: The message to be printed.
         """
 
-        ClientHttpException.__init__(self)
+        ClientHTTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -97,11 +97,11 @@ class HttpRuntimeException(ClientHttpException):
         :return: The string representation of the class.
         """
 
-        return "Http runtime exception - %s" % self.message
+        return "HTTP runtime exception - %s" % self.message
 
-class HttpInvalidDataException(HttpRuntimeException):
+class HTTPInvalidDataException(HTTPRuntimeException):
     """
-    The http invalid data exception class.
+    The HTTP invalid data exception class.
     """
 
     def __init__(self, message):
@@ -112,7 +112,7 @@ class HttpInvalidDataException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -122,4 +122,4 @@ class HttpInvalidDataException(HttpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Http invalid data exception - %s" % self.message
+        return "HTTP invalid data exception - %s" % self.message

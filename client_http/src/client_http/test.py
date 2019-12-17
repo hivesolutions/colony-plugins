@@ -41,15 +41,15 @@ import json
 
 import colony
 
-class ClientHttpTest(colony.Test):
+class ClientHTTPTest(colony.Test):
     """
-    The client http infra-structure test class, responsible
+    The client HTTP infra-structure test class, responsible
     for the returning of the associated tests.
     """
 
     def get_bundle(self):
         return (
-            ClientHttpTestCase,
+            ClientHTTPTestCase,
         )
 
     def set_up(self, test_case):
@@ -64,7 +64,7 @@ class ClientHttpTest(colony.Test):
 
         test_case.http.close()
 
-class ClientHttpTestCase(colony.ColonyTestCase):
+class ClientHTTPTestCase(colony.ColonyTestCase):
 
     def setUp(self):
         colony.ColonyTestCase.setUp(self)
@@ -72,7 +72,7 @@ class ClientHttpTestCase(colony.ColonyTestCase):
 
     @staticmethod
     def get_description():
-        return "Client Http test case"
+        return "Client HTTP test case"
 
     def test_create_client(self):
         response = self.http.fetch_url("http://%s/image/png" % self.httpbin)

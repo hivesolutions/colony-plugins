@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ClientHttpPlugin(colony.Plugin):
+class ClientHTTPPlugin(colony.Plugin):
     """
-    The main class for the Http Client plugin.
+    The main class for the HTTP Client plugin.
     """
 
     id = "pt.hive.colony.plugins.client.http"
-    name = "Http Client"
-    description = "The plugin that offers the http client"
+    name = "HTTP Client"
+    description = "The plugin that offers the HTTP client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -68,8 +68,8 @@ class ClientHttpPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import client_http
-        self.system = client_http.ClientHttp(self)
-        self.test = client_http.ClientHttpTest(self)
+        self.system = client_http.ClientHTTP(self)
+        self.test = client_http.ClientHTTPTest(self)
 
     def create_client(self, parameters):
         return self.system.create_client(parameters)
