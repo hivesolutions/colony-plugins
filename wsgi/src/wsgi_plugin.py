@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class WsgiPlugin(colony.Plugin):
+class WSGIPlugin(colony.Plugin):
     """
     The main class for the WSGI plugin.
     """
