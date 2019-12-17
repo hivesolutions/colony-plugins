@@ -431,8 +431,10 @@ class MysqlEngine(object):
                 self.reconnect()
 
             # in case the error code is related with a lock timeout
-            # then a retry operation must be performed
+            # then a retry operation must be performed, but a proper
+            # warning information should be printed (performance issue)
             if code in LOCK_TIMEOUT_ERRORS:
+                self.mysql_system.warning("[%s] [%s] [lock timeout] %s" % (ENGINE_NAME, database, query))
                 is_valid = True
 
             # in case there's no transaction pending (in the middle of
