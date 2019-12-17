@@ -303,7 +303,8 @@ class ControllerValidationError(ValidationError):
 
 class ControllerValidationReasonFailed(ControllerValidationError):
     """
-    The controller validation reason failed class.
+    The controller validation reason failed class, to be used
+    to encapsulate the multiple reasons for the validation failure.
     """
 
     reasons_list = []
