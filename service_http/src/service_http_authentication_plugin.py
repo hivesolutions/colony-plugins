@@ -45,7 +45,7 @@ class ServiceHttpAuthenticationPlugin(colony.Plugin):
     """
 
     id = "pt.hive.colony.plugins.service.http.authentication"
-    name = "Http Service Authentication"
+    name = "HTTP Service Authentication"
     description = "The plugin that offers the HTTP service authentication"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
