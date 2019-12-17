@@ -152,22 +152,22 @@ TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
 }
 """ The map associating the tuples with the hash object identifiers """
 
-class Pkcs1(colony.System):
+class PKCS1(colony.System):
     """
-    The pkcs1 class.
+    The PKCS1 class.
     """
 
     def create_structure(self, parameters):
         # retrieves the ber plugin and uses it to create the requested
-        # pkcs1 structure that may be then be used for cryptographic
+        # PKCS1 structure that may be then be used for cryptographic
         # based operations on the provided buffers
         ber_plugin = self.plugin.ber_plugin
-        pkcs1_structure = Pkcs1Structure(ber_plugin)
+        pkcs1_structure = PKCS1Structure(ber_plugin)
         return pkcs1_structure
 
-class Pkcs1Structure:
+class PKCS1Structure:
     """
-    Class representing the pkcs1,
+    Class representing the PKCS1,
     cryptographic standards structure.
     """
 
@@ -262,7 +262,7 @@ class Pkcs1Structure:
         # verifies the signature verified, retrieving
         # the hash algorithm name and the digest value
         # this is considered the unpack operation and
-        # should be compliant with the pkcs1 specification
+        # should be compliant with the PKCS1 specification
         hash_algorithm_name, digest_value = self._verify(signature_verified)
 
         # ensures that the provided string value is encoded

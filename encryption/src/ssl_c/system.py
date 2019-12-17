@@ -85,7 +85,7 @@ class SslStructure(object):
 
         :type rsa_plugin: RsaPlugin
         :param rsa_plugin: The rsa plugin.
-        :type pkcs1_plugin: Pkcs1Plugin
+        :type pkcs1_plugin: PKCS1Plugin
         :param pkcs1_plugin: The pkcs1 plugin.
         """
 

@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import Pkcs1Exception, InvalidFormatException
-from .system import Pkcs1
+from .exceptions import PKCS1Exception, InvalidFormatException
+from .system import PKCS1

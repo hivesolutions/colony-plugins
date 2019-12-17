@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class Pkcs1Exception(colony.ColonyException):
+class PKCS1Exception(colony.ColonyException):
     """
-    The pkcs1 exception class.
+    The PKCS1 exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidFormatException(Pkcs1Exception):
+class InvalidFormatException(PKCS1Exception):
     """
     The invalid format exception class.
     """
@@ -60,7 +60,7 @@ class InvalidFormatException(Pkcs1Exception):
         :param message: The message to be printed.
         """
 
-        Pkcs1Exception.__init__(self)
+        PKCS1Exception.__init__(self)
         self.message = message
 
     def __str__(self):
