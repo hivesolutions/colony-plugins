@@ -435,6 +435,17 @@ class MysqlEngine(object):
                 self.mysql_system.warning("[%s] [%s] [connection lost] %s" % (ENGINE_NAME, database, query))
                 self.reconnect()
 
+            # verifies if the code is defined as a dead lock
+            # related value and if that's the case cancels the current
+            # cursor and raises an request for operation restart
+            if code in DEAD_LOCK_ERRORS:
+                self.mysql_system.warning("[%s] [%s] [dead lock] %s" % (ENGINE_NAME, database, query))
+                cursor.close()
+                raise colony.OperationRestart(
+                    "MySQL dead lock, restarting top-level operation",
+                    delay = DEAD_LOCK_DELAY
+                )
+
             # in case there's no transaction pending (in the middle of
             # execution) tries to re-execute the query otherwise raises
             # an error, indicating the issue with the query

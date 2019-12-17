@@ -67,6 +67,11 @@ PERSIST_ALL = PERSIST_UPDATE | PERSIST_SAVE | PERSIST_ASSOCIATE
 """ The persist all persist type resulting from the association
 of the complete set of persist type values """
 
+IGNORED_EXCEPTIONS = (exceptions.ControllerValidationReasonFailed,)
+""" The sequence that contains the complete set of exception that
+are considered fo low priority and for which a more reduced logging
+operation should be performed """
+
 def validated(
     validation_parameters = None,
     validation_method = None,
@@ -473,10 +478,16 @@ def serialized(serialization_parameters = None, default_success = True):
                 # a re-start on the current operation is required
                 raise
             except BaseException as exception:
-                # logs a warning message because if an exception reached
-                # this area it must be considered not handled gracefully
-                # and must be considered an anomaly
-                self.warning(
+                # determines if the exception is considered to be ignored and then
+                # taking that into consideration decides the proper logging level
+                # to be used for the log operation of the exception        
+                is_ignored = isinstance(exception, IGNORED_EXCEPTIONS)
+                logging_method = self.debug if is_ignored else self.warning
+
+                # logs a proper verbosity message because if an exception
+                # reached this area it must be considered not handled
+                # gracefully and must be considered an anomaly
+                logging_method(
                     "There was an exception in controller (%s): " %\
                     exception.__class__.__name__ + colony.legacy.UNICODE(exception)
                 )
@@ -513,8 +524,8 @@ def serialized(serialization_parameters = None, default_success = True):
                 message = exception.get("message")
                 traceback = exception.get("traceback")
 
-                # in case the serializer is set (uses it as it
-                # is has priority)
+                # in case the serializer is set, then uses it as it is has priority
+                # over the default error/exception handler
                 if serializer:
                     # dumps the exception map to the serialized form ant then
                     # sets the serialized map as the request contents with
