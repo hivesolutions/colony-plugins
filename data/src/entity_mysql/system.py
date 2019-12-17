@@ -461,6 +461,10 @@ class MysqlEngine(object):
                     "MySQL dead lock, restarting top-level operation",
                     delay = DEAD_LOCK_DELAY
                 )
+
+            # by default runs the typical cursor closing operation and
+            # then re-raises the exception to the top levels
+            cursor.close()
             raise
         except MySQLdb.ProgrammingError as exception:
             # unpacks the message and the code from the exception and
@@ -468,8 +472,11 @@ class MysqlEngine(object):
             # case it's prints a warning message but does not fails, otherwise
             # raises the exception as this should break the current code
             code, _message = exception.args
-            if code in IGNORE_ERRORS: self.mysql_system.warning(_message)
-            else: raise
+            if code in IGNORE_ERRORS:
+                self.mysql_system.warning(_message)
+            else:
+                cursor.close()
+                raise
         except:
             # closes the cursor (safe closing) and re-raises
             # the exception, to the top layers so that the
