@@ -836,7 +836,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     """
     Resolves the relative url to a request resource (either static or dynamic)
     the details of the resolution process should be described in the lower layer
-    of the mvc system.
+    of the MVC system.
 
     The provided values should include the reference to that is meant to be
     retrieved (static or the resource path) and the various dynamic arguments
@@ -854,7 +854,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     this value should be called using a non named strategy.
     :rtype: String
     :return: The relative url path value to the resource taking into account the
-    base path or the mvc path defined for the current request.
+    base path or the MVC path defined for the current request.
     """
 
     # retrieves the base path for the current request
@@ -1144,7 +1144,7 @@ def new_connection(self, parameters, connection_name = "default", channels = ())
     """
     Creates a new connection for the communication sub-system, the
     new connection is initially registered for the provided channels.
-    The mvc communication system is used for the creation/registration
+    The MVC communication system is used for the creation/registration
     process of the new connection.
 
     :type parameters: Dictionary
@@ -1179,7 +1179,7 @@ def delete_connection(self, parameters, connection):
     """
     Deletes the provided connection from the communication sub-system,
     the connection should no longer handle messages.
-    The mvc communication system is used for the deletion/unregistration
+    The MVC communication system is used for the deletion/unregistration
     process of the connection.
 
     :type parameters: Dictionary
@@ -1203,7 +1203,7 @@ def send(self, parameters, connection_name = "default", message = "", channels =
     """
     Sends a message to the clients registered for the provided channels
     in the the connection with the given name.
-    The mvc communication system is used for the unicast sending.
+    The MVC communication system is used for the unicast sending.
 
     :type parameters: Dictionary
     :param parameters: A dictionary of parameters.
@@ -1234,7 +1234,7 @@ def send_broadcast(self, parameters, connection_name = "default", message = ""):
     """
     Sends a broadcast message to all the clients in the connection
     with the given name.
-    The mvc communication system is used for the broadcast sending.
+    The MVC communication system is used for the broadcast sending.
 
     :type parameters: Dictionary
     :param parameters: A dictionary of parameters.
@@ -1676,16 +1676,16 @@ def validate_acl_session(
 
 def get_mvc_path(self, request, delta_value = 1):
     """
-    Retrieves the mvc path according to
+    Retrieves the MVC path according to
     the current request path.
 
     :type request: Request
     :param request: The request to be used to retrieve
-    the mvc path.
+    the MVC path.
     :type delta_value: int
     :param delta_value: The integer value that represents
     the number of partial paths to be removed from the
-    original path to get the mvc path.
+    original path to get the MVC path.
     :rtype: String
     :return: The base path.
     """
@@ -2325,7 +2325,7 @@ def redirect_mvc_path(
     Redirects the current request to the given
     target (page).
     This method updates the target to conform with the
-    current mvc path.
+    current MVC path.
 
     :type request: Request
     :param request: The request to be used.
@@ -2345,8 +2345,8 @@ def redirect_mvc_path(
     redirect url.
     """
 
-    # retrieves the mvc path and uses it to crate
-    # the target mvc path using the provided target
+    # retrieves the MVC path and uses it to crate
+    # the target MVC path using the provided target
     # then redirects the agent to it
     mvc_path = self.get_mvc_path(request)
     target_mvc_path = mvc_path + target
@@ -2987,7 +2987,7 @@ def apply_base_path_template_file(self, request, template_file):
     :param template_file: The template to be "applied" with the base path.
     """
 
-    # retrieves both the mvc and the base path and uses these
+    # retrieves both the MVC and the base path and uses these
     # values to assign them to the provided template file as
     # expected by the call to this method
     mvc_path = self.get_mvc_path(request)
@@ -3598,7 +3598,7 @@ def get_attribute_decoded(self, request, attribute_name, encoding = "utf-8"):
     """
 
     # retrieves the attribute value from the attribute name
-    # using the mvc (sub) system
+    # using the MVC (sub) system
     attribute_value = self._get_attribute(request, attribute_name)
 
     # in case the attribute value is not valid returns an empty
@@ -4142,7 +4142,7 @@ def get_global_path(self):
     """
     Retrieves the global path, that should contain
     information and data relative to the global
-    configuration and variables in mvc.
+    configuration and variables in MVC.
 
     :rtype: String
     :return: The global path.
@@ -5497,7 +5497,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
     bundle_file = bundle_name + "." + locale + ".json"
 
     # builds the base locales path from which to try to load the
-    # underlying base resources (from mvc) then uses it to construct
+    # underlying base resources (from MVC) then uses it to construct
     # the inner loading path value for base resources, this is going
     # to be used in case a project wide value is not "loadable"
     locales_path = os.path.join(self.global_path, "locales")

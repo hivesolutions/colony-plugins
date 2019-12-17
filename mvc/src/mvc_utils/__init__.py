@@ -41,9 +41,9 @@ from . import model
 from . import system
 from . import utils
 
-from .exceptions import MvcUtilsExceptionException, InvalidValidationMethod, InvalidAttributeName,\
+from .exceptions import MVCUtilsExceptionException, InvalidValidationMethod, InvalidAttributeName,\
     InsufficientHttpInformation, NotFoundError, ValidationError, ModelValidationError,\
     ControllerValidationError, ControllerValidationReasonFailed, ValidationMethodError,\
     ModelApplyException
-from .system import MvcUtils
+from .system import MVCUtils
 from .utils import validated, transaction, eager, serialized, Controller

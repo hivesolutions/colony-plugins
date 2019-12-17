@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class MvcUtilsPlugin(colony.Plugin):
+class MVCUtilsPlugin(colony.Plugin):
     """
-    The main class for the Mvc Utils plugin.
+    The main class for the MVC Utils plugin.
     """
 
     id = "pt.hive.colony.plugins.mvc.utils"
-    name = "Mvc Utils"
-    description = "The plugin that offers the top-level abstractions for mvc processing"
+    name = "MVC Utils"
+    description = "The plugin that offers the top-level abstractions for MVC processing"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -73,7 +73,7 @@ class MvcUtilsPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mvc_utils
-        self.system = mvc_utils.MvcUtils(self)
+        self.system = mvc_utils.MVCUtils(self)
 
     def assign_models(
         self,

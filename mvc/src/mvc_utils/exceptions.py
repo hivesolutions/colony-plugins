@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class MvcUtilsExceptionException(colony.ColonyException):
+class MVCUtilsExceptionException(colony.ColonyException):
     """
-    The mvc utils exception class.
+    The MVC utils exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidValidationMethod(MvcUtilsExceptionException):
+class InvalidValidationMethod(MVCUtilsExceptionException):
     """
     The invalid validation method class.
     """
@@ -60,7 +60,7 @@ class InvalidValidationMethod(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class InvalidValidationMethod(MvcUtilsExceptionException):
 
         return "Invalid validation method - %s" % self.message
 
-class InvalidAttributeName(MvcUtilsExceptionException):
+class InvalidAttributeName(MVCUtilsExceptionException):
     """
     The invalid attribute name class.
     """
@@ -86,7 +86,7 @@ class InvalidAttributeName(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class InvalidAttributeName(MvcUtilsExceptionException):
 
         return "Invalid attribute name - %s" % self.message
 
-class InsufficientHttpInformation(MvcUtilsExceptionException):
+class InsufficientHttpInformation(MVCUtilsExceptionException):
     """
     The insufficient http information error class.
     """
@@ -112,7 +112,7 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class InsufficientHttpInformation(MvcUtilsExceptionException):
 
         return "Insufficient http information - %s" % self.message
 
-class NotFoundError(MvcUtilsExceptionException):
+class NotFoundError(MVCUtilsExceptionException):
     """
     The not found error class.
     """
@@ -142,7 +142,7 @@ class NotFoundError(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self, message)
+        MVCUtilsExceptionException.__init__(self, message)
         self.message = message
 
     def __str__(self):
@@ -155,7 +155,7 @@ class NotFoundError(MvcUtilsExceptionException):
 
         return "Not found error - %s" % self.message
 
-class ValidationError(MvcUtilsExceptionException):
+class ValidationError(MVCUtilsExceptionException):
     """
     The validation error class.
     """
@@ -174,7 +174,7 @@ class ValidationError(MvcUtilsExceptionException):
         associated with the validation error.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
         self.variable = variable
 
@@ -335,7 +335,7 @@ class ControllerValidationReasonFailed(ControllerValidationError):
 
         return "Controller validation reason error - %s" % self.message
 
-class ValidationMethodError(MvcUtilsExceptionException):
+class ValidationMethodError(MVCUtilsExceptionException):
     """
     The validation method error class.
     """
@@ -348,7 +348,7 @@ class ValidationMethodError(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -361,7 +361,7 @@ class ValidationMethodError(MvcUtilsExceptionException):
 
         return "Validation method error - %s" % self.message
 
-class ModelApplyException(MvcUtilsExceptionException):
+class ModelApplyException(MVCUtilsExceptionException):
     """
     The model apply exception class.
     """
@@ -374,7 +374,7 @@ class ModelApplyException(MvcUtilsExceptionException):
         :param message: The message to be printed.
         """
 
-        MvcUtilsExceptionException.__init__(self)
+        MVCUtilsExceptionException.__init__(self)
         self.message = message
 
     def __str__(self):

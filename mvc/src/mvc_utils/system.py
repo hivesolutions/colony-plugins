@@ -105,9 +105,9 @@ SYMBOLS_LIST = (
 )
 """ The list of symbols to be used for pattern generation """
 
-class MvcUtils(colony.System):
+class MVCUtils(colony.System):
     """
-    The mvc utils class.
+    The MVC utils class.
     """
 
     models_modules_map = {}
@@ -192,8 +192,8 @@ class MvcUtils(colony.System):
             # for latter reference
             globals_map[symbol_name] = symbol
 
-        # sets the mvc utils in the globals map, this is useful
-        # allow later reference of the mvc utils in the created
+        # sets the MVC utils in the globals map, this is useful
+        # allow later reference of the MVC utils in the created
         # module (export of symbols)
         globals_map["mvc_utils"] = utils
         globals_map["controllers"] = utils
@@ -798,7 +798,7 @@ class MvcUtils(colony.System):
         # so that it may be referred latter by any controller logic
         if models_module: setattr(system_instance, "models", models_module)
 
-        # imports the controllers module with the mvc utils support
+        # imports the controllers module with the MVC utils support
         # this should allow the exporting of the various packages
         # included in the utils structure (extra import)
         controllers_module = self.import_module_mvc_utils(
