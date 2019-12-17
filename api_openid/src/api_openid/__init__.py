@@ -38,7 +38,7 @@ from . import exceptions
 from . import parser
 from . import system
 
-from .exceptions import ApiOpenidException, InvalidData, ProviderError, VerificationFailed,\
+from .exceptions import APIOpenidException, InvalidData, ProviderError, VerificationFailed,\
     InvalidHashFunction, InvalidClaimedId
-from .parser import YadisHtmlParser
-from .system import ApiOpenid
+from .parser import YadisHTMLParser
+from .system import APIOpenid

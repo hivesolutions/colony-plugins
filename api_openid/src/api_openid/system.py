@@ -101,13 +101,13 @@ XRI_INITIALIZER_VALUE = "="
 """ The XRI initializer value """
 
 OPENID_NAMESPACE_VALUE = "http://specs.openid.net/auth/2.0"
-""" The openid namespace value """
+""" The OpenID namespace value """
 
 OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE = "http://openid.net/extensions/sreg/1.1"
 """ The OpenID SREG 1.1 extension namespace value """
 
 OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE = "http://openid.net/srv/ax/1.0"
-""" The openid ax 1.0 extension namespace value """
+""" The OpenID ax 1.0 extension namespace value """
 
 ASSOCIATE_MODE_VALUE = "associate"
 """ The associate mode value """
@@ -175,9 +175,9 @@ DEFAULT_PRIME_VALUE = colony.legacy.LONG(155172898181473697471232257763715539915
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
 
-class ApiOpenid(colony.System):
+class APIOpenid(colony.System):
     """
-    The api openid class.
+    The API OpenID class.
     """
 
     nonce_values_map = {}
@@ -220,15 +220,15 @@ class ApiOpenid(colony.System):
         # opens the server
         open_server and openid_server.open()
 
-        # returns the openid server
+        # returns the OpenID server
         return openid_server
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: OpenidClient
@@ -238,7 +238,7 @@ class ApiOpenid(colony.System):
         # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the api Yadis plugin
+        # retrieves the API Yadis plugin
         api_yadis_plugin = self.plugin.api_yadis_plugin
 
         # retrieves the OpenID structure (if available)
@@ -255,7 +255,7 @@ class ApiOpenid(colony.System):
         """
         Verifies if the nonce value does not exists in the current
         nonce values database. The validation is made in accordance
-        with the openid specification.
+        with the OpenID specification.
 
         :type nonce_value: String
         :param nonce_value: The nonce value to be verified.
@@ -266,7 +266,7 @@ class ApiOpenid(colony.System):
         :return: The result of the verification.
         """
 
-        # in case the provider url does not exists in the
+        # in case the provider URL does not exists in the
         # global nonce values map
         if not provider_url in self.nonce_values_map:
             return True
@@ -417,7 +417,7 @@ class OpenidServer(object):
         """
         Constructor of the class.
 
-        :type api_openid_plugin: ApiOpenidPlugin
+        :type api_openid_plugin: APIOpenidPlugin
         :param api_openid_plugin: The API OpenID plugin.
         :type diffie_hellman_plugin: DiffieHellmanPlugin
         :param diffie_hellman_plugin: The Diffie Hellman plugin.
@@ -502,7 +502,7 @@ class OpenidServer(object):
     def openid_associate(self):
         """
         Requests an association (associate mode) according to the
-        openid specification.
+        OpenID specification.
 
         :rtype: OpenidStructure
         :return: The current OpenID structure.
@@ -517,13 +517,13 @@ class OpenidServer(object):
         # generates the mac key
         mac_key = self._generate_mac_key(mac_key_type)
 
-        # sets the association handle in the openid structure
+        # sets the association handle in the OpenID structure
         self.openid_structure.association_handle = association_handle
 
-        # sets the expires in in the openid structure
+        # sets the expires in in the OpenID structure
         self.openid_structure.expires_in = DEFAULT_EXPIRES_IN
 
-        # sets the mac key in the openid structure
+        # sets the mac key in the OpenID structure
         self.openid_structure.mac_key = mac_key
 
         # in case the current session type is of type diffie hellman
@@ -534,7 +534,7 @@ class OpenidServer(object):
             # sets the "b" value in the diffie hellman management structure
             self.diffie_hellman.set_b_value(private_key)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return self.openid_structure
 
     def openid_request(self):
@@ -554,36 +554,36 @@ class OpenidServer(object):
         # to the random handle
         response_nonce = current_date_time_string + random_handle
 
-        # sets the mode in the openid structure
+        # sets the mode in the OpenID structure
         self.openid_structure.mode = ID_RES_VALUE
 
-        # sets the invalidate handle in the openid structure
+        # sets the invalidate handle in the OpenID structure
         self.openid_structure.invalidate_handle = invalidate_handle
 
-        # sets the response nonce in the openid structure
+        # sets the response nonce in the OpenID structure
         self.openid_structure.response_nonce = response_nonce
 
-        # sets the signed in the openid structure
+        # sets the signed in the OpenID structure
         self.openid_structure.signed = ",".join(DEFAULT_SIGNED_NAMES)
 
         # generates the signature
         signature = self._generate_signature()
 
-        # sets the signature in the openid structure
+        # sets the signature in the OpenID structure
         self.openid_structure.signature = signature
 
     def openid_check_authentication(self, return_openid_structure, strict = True):
         """
-        Verifies the given return openid structure (verification)
-        according to the openid specification.
+        Verifies the given return OpenID structure (verification)
+        according to the OpenID specification.
 
         :type return_openid_structure: OpenidStructure
-        :param return_openid_structure: The return openid structure
+        :param return_openid_structure: The return OpenID structure
         to be verified.
         :type strict: bool
         :param strict: Flag to control if the verification should be strict.
         :rtype: OpenidStructure
-        :return: The current openid structure.
+        :return: The current OpenID structure.
         """
 
         # in case the verification is strict and any of the base information items mismatches
@@ -599,7 +599,7 @@ class OpenidServer(object):
             # raises a verification failed exception
             raise exceptions.VerificationFailed("invalid discovered information")
 
-        # returns the openid structure
+        # returns the OpenID structure
         return self.openid_structure
 
     def get_response_parameters(self):
@@ -696,11 +696,11 @@ class OpenidServer(object):
         return encoded_check_authentication_parameters
 
     def get_return_url(self):
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = self.openid_structure.return_to
 
         # start the parameters map and sets the complete set of
-        # parameters associated with the return url, these values
+        # parameters associated with the return URL, these values
         # are taken from the current structure instance
         parameters = {}
         parameters["openid.ns"] = self.openid_structure.ns
@@ -715,27 +715,27 @@ class OpenidServer(object):
         parameters["openid.signed"] = self.openid_structure.signed
         parameters["openid.sig"] = self.openid_structure.signature
 
-        # creates the request (get) url from the parameters and returns
+        # creates the request (get) URL from the parameters and returns
         # the value to the caller method
         request_url = self._build_get_url(retrieval_url, parameters)
         return request_url
 
     def get_openid_structure(self):
         """
-        Retrieves the openid structure.
+        Retrieves the OpenID structure.
 
         :rtype: OpenidStructure
-        :return: The openid structure.
+        :return: The OpenID structure.
         """
 
         return self.openid_structure
 
     def set_openid_structure(self, openid_structure):
         """
-        Sets the openid structure.
+        Sets the OpenID structure.
 
         :type openid_structure: OpenidStructure
-        :param openid_structure: The openid structure.
+        :param openid_structure: The OpenID structure.
         """
 
         self.openid_structure = openid_structure
@@ -777,7 +777,7 @@ class OpenidServer(object):
 
         # iterates over all the signed items
         for signed_item_name in signed_items_list:
-            # retrieves the signed item value from the return openid structure
+            # retrieves the signed item value from the return OpenID structure
             signed_item_value = getattr(self.openid_structure, signed_item_name)
 
             # retrieves the signed item real name
@@ -864,32 +864,32 @@ class OpenidServer(object):
 
     def _build_get_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
-        The url is valid only for a get request.
+        Builds the URL for the given URL and parameters.
+        The URL is valid only for a get request.
 
         :type base_url: String
         :param base_url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # encodes the parameters with the url encode
+        # encodes the parameters with the URL encode
         parameters_encoded = colony.url_encode(parameters)
 
-        # in case the base url does not contain any parameters
+        # in case the base URL does not contain any parameters
         if base_url.find("?") == -1:
-            # creates the url value by appending the base url with
+            # creates the URL value by appending the base URL with
             # the parameters encoded (new parameters)
             url = base_url + "?" + parameters_encoded
         # otherwise
         else:
-            # creates the url value by appending the base url with
+            # creates the URL value by appending the base URL with
             # the parameters encoded (existing parameters)
             url = base_url + "&" + parameters_encoded
 
-        # returns the built url
+        # returns the built URL
         return url
 
     def _encode_key_value(self, values_map):
@@ -908,29 +908,29 @@ class OpenidServer(object):
 
 class OpenidClient(object):
     """
-    The class that represents an openid client connection.
+    The class that represents an OpenID client connection.
     """
 
     api_openid_plugin = None
-    """ The api openid plugin """
+    """ The API OpenID plugin """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     api_yadis_plugin = None
-    """ The api yadis plugin """
+    """ The API Yadis plugin """
 
     api_openid = None
-    """ The api openid """
+    """ The API OpenID """
 
     openid_structure = None
-    """ The openid structure """
+    """ The OpenID structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     yadis_client = None
-    """ The yadis (remote) client for the connection """
+    """ The Yadis (remote) client for the connection """
 
     def __init__(
         self,
@@ -943,16 +943,16 @@ class OpenidClient(object):
         """
         Constructor of the class.
 
-        :type api_openid_plugin: ApiOpenidPlugin
-        :param api_openid_plugin: The api openid plugin.
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
-        :type api_yadis_plugin: ApiYadisPlugin
-        :param api_yadis_plugin: The api yadis plugin.
+        :type api_openid_plugin: APIOpenidPlugin
+        :param api_openid_plugin: The API OpenID plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
+        :type api_yadis_plugin: APIYadisPlugin
+        :param api_yadis_plugin: The API Yadis plugin.
         :type api_openid: ServiceOpenid
-        :param api_openid: The api openid.
+        :param api_openid: The API OpenID.
         :type openid_structure: OpenidStructure
-        :param openid_structure: The openid structure.
+        :param openid_structure: The OpenID structure.
         """
 
         self.api_openid_plugin = api_openid_plugin
@@ -963,21 +963,21 @@ class OpenidClient(object):
 
     def open(self):
         """
-        Opens the openid client.
+        Opens the OpenID client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the openid client.
+        Closes the OpenID client.
         """
 
-        # in case an http client is defined, must close
-        # it to avoid any leak in http associated resources
+        # in case an HTTP client is defined, must close
+        # it to avoid any leak in HTTP associated resources
         if self.http_client: self.http_client.close({})
 
-        # in case an yadis (remote) client is defined, must
+        # in case an Yadis (remote) client is defined, must
         # close it to avoid any leak in resources
         if self.yadis_client: self.yadis_client.close()
 
@@ -992,21 +992,21 @@ class OpenidClient(object):
         session_type = DEFAULT_OPENID_SESSION_TYPE,
         set_structure = True
     ):
-        # creates a new openid structure
+        # creates a new OpenID structure
         openid_structure = OpenidStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
 
         # in case the structure is meant to be set
         if set_structure:
-            # sets the openid structure
+            # sets the OpenID structure
             self.set_openid_structure(openid_structure)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return openid_structure
 
     def normalize_claimed_id(self, claimed_id):
         """
         Normalizes the claimed id according to the
-        openid specification.
+        OpenID specification.
 
         :type claimed_id: String
         :param claimed_id: The claimed id to be normalized.
@@ -1023,14 +1023,14 @@ class OpenidClient(object):
             if claimed_id.startswith(XRI_URI_VALUE):
                 # removes the xri uri from the claimed id
                 claimed_id = claimed_id[6:]
-        # in case the claimed id is of type url
+        # in case the claimed id is of type URL
         else:
-            # in case the clamed id (url) does not start with the correct uri value
+            # in case the clamed id (URL) does not start with the correct uri value
             if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE):
-                # adds the http uri to the claimed id
+                # adds the HTTP uri to the claimed id
                 claimed_id = HTTP_URI_VALUE + claimed_id
 
-            # in case the claimed id (url) is missing
+            # in case the claimed id (URL) is missing
             # the trailing slash
             if not claimed_id[-1] == "/":
                 # in case the claimed id is an empty
@@ -1045,16 +1045,16 @@ class OpenidClient(object):
     def openid_discover(self):
         """
         Initializes the discovery process according to the
-        openid specification.
+        OpenID specification.
 
         :rtype: OpenidStructure
-        :return: The current openid structure.
+        :return: The current OpenID structure.
         """
 
-        # retrieves the yadis provider url
+        # retrieves the Yadis provider URL
         yadis_provider_url = self._get_yadis_provider_url()
 
-        # retrieves the yadis (remote) client and then used it to
+        # retrieves the Yadis (remote) client and then used it to
         # generate the proper structure and retrieves the resource
         # descriptor using it as the basis
         yadis_client = self._get_yadis_client()
@@ -1067,7 +1067,7 @@ class OpenidClient(object):
         # retrieves the first service from the resources list
         first_service = resources_list[0].services_list[0]
 
-        # retrieves the provider url
+        # retrieves the provider URL
         provider_url = first_service.get_attribute("URI")
 
         # retrieves the local id
@@ -1076,37 +1076,37 @@ class OpenidClient(object):
         # retrieves the types list
         types_list = first_service.types_list
 
-        # sets the provider url in the openid structure
+        # sets the provider URL in the OpenID structure
         self.openid_structure.provider_url = provider_url
 
-        # sets the local id in the openid structure
+        # sets the local id in the OpenID structure
         self.openid_structure.local_id = local_id
 
-        # sets the types list in the openid structure
+        # sets the types list in the OpenID structure
         self.openid_structure.types_list = types_list
 
         # prints a debug message
-        self.api_openid_plugin.debug("Found openid provider url '%s'" % provider_url)
+        self.api_openid_plugin.debug("Found OpenID provider URL '%s'" % provider_url)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return self.openid_structure
 
     def openid_associate(self):
         """
         Requests an association (associate mode) according to the
-        openid specification.
+        OpenID specification.
 
         :rtype: OpenidStructure
-        :return: The current openid structure.
+        :return: The current OpenID structure.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = self.openid_structure.provider_url
 
         # start the parameters map
         parameters = {}
 
-        # sets the namespace as the openid default namespace
+        # sets the namespace as the OpenID default namespace
         parameters["openid.ns"] = OPENID_NAMESPACE_VALUE
 
         # sets the mode as associate
@@ -1118,7 +1118,7 @@ class OpenidClient(object):
         # sets the session type
         parameters["openid.session_type"] = self.openid_structure.session_type
 
-        # fetches the retrieval url with the given parameters retrieving the result
+        # fetches the retrieval URL with the given parameters retrieving the result
         result = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
 
         # strips the result value
@@ -1150,21 +1150,21 @@ class OpenidClient(object):
         # retrieves the mac key from the values map
         self.openid_structure.mac_key = values_map.get("mac_key", None)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return self.openid_structure
 
     def openid_verify(self, return_openid_structure, strict = True):
         """
-        Verifies the given return openid structure (verification)
-        according to the openid specification.
+        Verifies the given return OpenID structure (verification)
+        according to the OpenID specification.
 
         :type return_openid_structure: OpenidStructure
-        :param return_openid_structure: The return openid structure
+        :param return_openid_structure: The return OpenID structure
         to be verified.
         :type strict: bool
         :param strict: Flag to control if the verification should be strict.
         :rtype: OpenidStructure
-        :return: The current openid structure.
+        :return: The current OpenID structure.
         """
 
         # in case the verification is strict and any of the base information items mismatches
@@ -1193,7 +1193,7 @@ class OpenidClient(object):
 
         # iterates over all the signed items
         for signed_item_name in signed_items_list:
-            # retrieves the signed item value from the return openid structure
+            # retrieves the signed item value from the return OpenID structure
             signed_item_value = getattr(return_openid_structure, signed_item_name)
 
             # adds the key value pair to the message string buffer
@@ -1227,25 +1227,25 @@ class OpenidClient(object):
         # updates the nonce value
         self.api_openid._update_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
 
-        # returns the openid structure
+        # returns the OpenID structure
         return self.openid_structure
 
     def get_request_url(self):
         """
-        Retrieves the request (authentication) url according to the
-        openid specification.
+        Retrieves the request (authentication) URL according to the
+        OpenID specification.
 
         :rtype: String
-        :return: The request url.
+        :return: The request URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = self.openid_structure.provider_url
 
         # start the parameters map
         parameters = {}
 
-        # sets the namespace as the openid default namespace
+        # sets the namespace as the OpenID default namespace
         parameters["openid.ns"] = OPENID_NAMESPACE_VALUE
 
         # sets the mode as checkid setup
@@ -1269,29 +1269,29 @@ class OpenidClient(object):
         # processes the extensions
         self.process_extensions(parameters)
 
-        # creates the request url from the parameters
+        # creates the request URL from the parameters
         request_url = self._build_url(retrieval_url, parameters)
 
-        # returns the request url
+        # returns the request URL
         return request_url
 
     def process_extensions(self, parameters):
         """
-        Processes the extensions part of the openid
+        Processes the extensions part of the OpenID
         get request method.
 
         :type parameters: Dictionary
         :param parameters: The parameters to be processed.
         """
 
-        # in case the sreg 1.1 extension exists in the current openid
+        # in case the sreg 1.1 extension exists in the current OpenID
         # context information
         if OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
             parameters["openid.ns.sreg"] = OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE
             parameters["openid.sreg.required"] = ""
             parameters["openid.sreg.optional"] = "nickname,email,fullname,dob,gender"
 
-        # in case the ax 1.0 extension exists in the current openid
+        # in case the ax 1.0 extension exists in the current OpenID
         # context information
         if OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
             parameters["openid.ns.ax"] = OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE
@@ -1307,7 +1307,7 @@ class OpenidClient(object):
     def get_preferred_claimed_id(self):
         """
         Retrieves the preferred claimed id
-        for the current openid structure.
+        for the current OpenID structure.
 
         :rtype: String
         :return: The preferred claimed id value.
@@ -1317,105 +1317,105 @@ class OpenidClient(object):
 
     def get_openid_structure(self):
         """
-        Retrieves the openid structure.
+        Retrieves the OpenID structure.
 
         :rtype: OpenidStructure
-        :return: The openid structure.
+        :return: The OpenID structure.
         """
 
         return self.openid_structure
 
     def set_openid_structure(self, openid_structure):
         """
-        Sets the openid structure.
+        Sets the OpenID structure.
 
         :type openid_structure: OpenidStructure
-        :param openid_structure: The openid structure.
+        :param openid_structure: The OpenID structure.
         """
 
         self.openid_structure = openid_structure
 
     def _get_yadis_provider_url(self):
         """
-        Retrieves the "yadis" provider url, using the two base strategies
+        Retrieves the "Yadis" provider URL, using the two base strategies
         (the header and the HTML header strategies).
 
         :rtype: String
-        :return: The "yadis" provider url.
+        :return: The "Yadis" provider URL.
         """
 
-        # sets the retrieval url
+        # sets the retrieval URL
         retrieval_url = self.openid_structure.claimed_id
 
         # start the parameters map
         parameters = {}
 
-        # fetches the retrieval url with the given parameters retrieving the result
+        # fetches the retrieval URL with the given parameters retrieving the result
         result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
 
-        # tries to retrieve the yadis provider url
+        # tries to retrieve the Yadis provider URL
         yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, headers_map.get(XRDS_LOCATION_LOWER_VALUE, None))
 
-        # in case a valid yadis provider
-        # url was discovered
+        # in case a valid Yadis provider
+        # URL was discovered
         if yadis_provider_url:
-            # returns the yadis provider url
+            # returns the Yadis provider URL
             return yadis_provider_url
 
-        # creates a new yadis HTML parser
-        yadis_html_parser = parser.YadisHtmlParser()
+        # creates a new Yadis HTML parser
+        yadis_html_parser = parser.YadisHTMLParser()
 
         try:
-            # feeds the result to the yadis HTML parser
+            # feeds the result to the Yadis HTML parser
             yadis_html_parser.feed(result)
         except Exception as exception:
             # prints an info message
             self.api_openid_plugin.info(
-                "There was a problem parsing yadis html: %s" %\
+                "There was a problem parsing Yadis HTML: %s" %\
                 colony.legacy.UNICODE(exception)
             )
 
-        # retrieves the yadis provider url
+        # retrieves the Yadis provider URL
         yadis_provider_url = yadis_html_parser.yadis_provider_url
 
-        # in case a valid yadis provider
-        # url was discovered
+        # in case a valid Yadis provider
+        # URL was discovered
         if yadis_provider_url:
-            # returns the yadis provider url
+            # returns the Yadis provider URL
             return yadis_provider_url
 
-        # in case no valid yadis provider url is set
+        # in case no valid Yadis provider URL is set
         if not yadis_provider_url:
             # raises the invalid data exception
-            raise exceptions.InvalidData("no valid yadis provider url found")
+            raise exceptions.InvalidData("no valid Yadis provider URL found")
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type base_url: String
         :param base_url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the built url
+        # returns the built URL
         return url
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, headers = False):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -1431,16 +1431,16 @@ class OpenidClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
-        # retrieves the headers map from the http response
+        # retrieves the headers map from the HTTP response
         headers_map = http_response.headers_map
 
         # in case the headers flag is set
@@ -1453,53 +1453,53 @@ class OpenidClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
     def _get_yadis_client(self):
         """
-        Retrieves the yadis (remote) client currently in use (in case it's created)
-        if not created creates the yadis (remote) client.
+        Retrieves the Yadis (remote) client currently in use (in case it's created)
+        if not created creates the Yadis (remote) client.
 
         :rtype: YadisClient
-        :return: The retrieved yadis (remote) client.
+        :return: The retrieved Yadis (remote) client.
         """
 
-        # in case no yadis client exists, creates the yadis
+        # in case no Yadis client exists, creates the Yadis
         # (remote) client, this is a singleton operation
         if not self.yadis_client:
             self.yadis_client = self.api_yadis_plugin.create_client({})
 
-        # returns the yadis remote client
+        # returns the Yadis remote client
         return self.yadis_client
 
 class OpenidStructure(object):
     """
-    The openid structure class.
+    The OpenID structure class.
     """
 
     provider_url = None
-    """ The url of the openid provider """
+    """ The URL of the OpenID provider """
 
     claimed_id = None
     """ The id being claimed """
@@ -1508,7 +1508,7 @@ class OpenidStructure(object):
     """ The identity of the authentication """
 
     return_to = None
-    """ The return to url to be used after authentication """
+    """ The return to URL to be used after authentication """
 
     realm = None
     """ The realm to be used during the authentication """
@@ -1566,13 +1566,13 @@ class OpenidStructure(object):
         Constructor of the class.
 
         :type provider_url: String
-        :param provider_url: The url of the openid provider.
+        :param provider_url: The URL of the OpenID provider.
         :type claimed_id: String
         :param claimed_id: The id being claimed.
         :type identity: String
         :param identity: The identity of the authentication.
         :type return_to: String
-        :param return_to: The return to url to be used after authentication.
+        :param return_to: The return to URL to be used after authentication.
         :type realm: String
         :param realm: The realm to be used during the authentication.
         :type association_type: String
@@ -1594,7 +1594,7 @@ class OpenidStructure(object):
     def get_preferred_claimed_id(self):
         """
         Retrieves the preferred claimed id
-        for the current openid structure.
+        for the current OpenID structure.
 
         :rtype: String
         :return: The preferred claimed id value.
@@ -1638,20 +1638,20 @@ class OpenidStructure(object):
 
     def get_provider_url(self):
         """
-        Retrieves the provider url.
+        Retrieves the provider URL.
 
         :rtype: String
-        :return: The provider url.
+        :return: The provider URL.
         """
 
         return self.provider_url
 
     def set_provider_url(self, provider_url):
         """
-        Sets the provider url.
+        Sets the provider URL.
 
         :type provider_url: String
-        :param provider_url: The provider url.
+        :param provider_url: The provider URL.
         """
 
         self.provider_url = provider_url

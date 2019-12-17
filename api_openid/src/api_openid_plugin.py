@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiOpenidPlugin(colony.Plugin):
+class APIOpenidPlugin(colony.Plugin):
     """
-    The main class for the Openid Api plugin.
+    The main class for the OpenID API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.openid"
-    name = "Openid Api"
-    description = "The plugin that offers the openid api"
+    name = "OpenID API"
+    description = "The plugin that offers the OpenID API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -68,15 +68,15 @@ class ApiOpenidPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_openid
-        self.system = api_openid.ApiOpenid(self)
+        self.system = api_openid.APIOpenid(self)
 
     def create_server(self, api_attributes):
         """
-        Creates a server, with the given api attributes.
+        Creates a server, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
-        :rtype: OpenidServer
+        :param api_attributes: The API attributes to be used.
+        :rtype: OpenIDServer
         :return: The created server.
         """
 
@@ -84,11 +84,11 @@ class ApiOpenidPlugin(colony.Plugin):
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
-        :rtype: OpenidClient
+        :param api_attributes: The API attributes to be used.
+        :rtype: OpenIDClient
         :return: The created client.
         """
 
