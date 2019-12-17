@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiEasypayException(colony.ColonyException):
+class APIEasypayException(colony.ColonyException):
     """
-    The api easypay exception class.
+    The API Easypay exception class.
     """
 
     message = None
     """ The exception's message """
 
-class EasypayApiError(ApiEasypayException):
+class EasypayAPIError(APIEasypayException):
     """
-    The easypay api error class.
+    The Easypay API error class.
     """
 
     def __init__(self, message):
@@ -60,7 +60,7 @@ class EasypayApiError(ApiEasypayException):
         :param message: The message to be printed.
         """
 
-        ApiEasypayException.__init__(self)
+        APIEasypayException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -71,4 +71,4 @@ class EasypayApiError(ApiEasypayException):
         :return: The string representation of the class.
         """
 
-        return "Easypay api error - %s" % self.message
+        return "Easypay API error - %s" % self.message

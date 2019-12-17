@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ApiEasypayException, EasypayApiError
-from .system import ApiEasypay
+from .exceptions import APIEasypayException, EasypayAPIError
+from .system import APIEasypay

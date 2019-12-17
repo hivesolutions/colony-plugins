@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiEasypayPlugin(colony.Plugin):
+class APIEasypayPlugin(colony.Plugin):
     """
     The main class for the Easypay API plugin.
     """
@@ -65,7 +65,7 @@ class ApiEasypayPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_easypay
-        self.system = api_easypay.ApiEasypay(self)
+        self.system = api_easypay.APIEasypay(self)
 
     def create_client(self, api_attributes):
         """

@@ -62,19 +62,19 @@ ERROR_STATUS = "err"
 """ The error status """
 
 DEFAULT_API_VERSION = "1.0"
-""" The default easypay api version """
+""" The default Easypay API version """
 
 BASE_REST_URL = "http://www.easypay.pt/_s/"
-""" The base rest URL to be used """
+""" The base REST URL to be used """
 
 BASE_REST_SECURE_URL = "https://www.easypay.pt/_s/"
-""" The base rest secure URL to be used """
+""" The base REST secure URL to be used """
 
 TEST_BASE_REST_URL = "http://test.easypay.pt/_s/"
-""" The base rest URL to be used """
+""" The base REST URL to be used """
 
 TEST_BASE_REST_SECURE_URL = "http://test.easypay.pt/_s/"
-""" The base rest secure URL to be used """
+""" The base REST secure URL to be used """
 
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
@@ -85,17 +85,17 @@ DEFAULT_COUNTRY = "PT"
 DEFAULT_LANGUAGE = "PT"
 """ The default language """
 
-class ApiEasypay(colony.System):
+class APIEasypay(colony.System):
     """
-    The api easypay class.
+    The API Easypay class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: EasypayClient
@@ -105,7 +105,7 @@ class ApiEasypay(colony.System):
         # retrieves the client http plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the easypay structure and test mode (if available)
+        # retrieves the Easypay structure and test mode (if available)
         easypay_structure = api_attributes.get("easypay_structure", None)
         test_mode = api_attributes.get("test_mode", False)
 
@@ -118,18 +118,18 @@ class ApiEasypay(colony.System):
 
 class EasypayClient(object):
     """
-    The class that represents a easypay client connection.
+    The class that represents a Easypay client connection.
     """
 
     client_http_plugin = None
     """ The client http plugin """
 
     easypay_structure = None
-    """ The easypay structure """
+    """ The Easypay structure """
 
     test_mode = None
     """ Flag indicating the client is supposed to
-    run in test mode (uses different api urls) """
+    run in test mode (uses different API urls) """
 
     http_client = None
     """ The http client for the connection """
@@ -141,7 +141,7 @@ class EasypayClient(object):
         :type client_http_plugin: ClientHttpPlugin
         :param client_http_plugin: The client http plugin.
         :type easypay_structure: EasypayStructure
-        :param easypay_structure: The easypay structure.
+        :param easypay_structure: The Easypay structure.
         :type test_mode: bool
         :param test_mode: Flag indicating if the client is to
         be run in test mode.
@@ -153,14 +153,14 @@ class EasypayClient(object):
 
     def open(self):
         """
-        Opens the easypay client.
+        Opens the Easypay client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the easypay client.
+        Closes the Easypay client.
         """
 
         # closes the http client in case it is defined
@@ -176,7 +176,7 @@ class EasypayClient(object):
         set_structure = True
     ):
         """
-        Generates the easypay structure for the given arguments.
+        Generates the Easypay structure for the given arguments.
 
         :type username: String
         :param username: The username.
@@ -189,21 +189,21 @@ class EasypayClient(object):
         :param language: The two letter string representing the
         language to be used.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the easypay client.
+        set in the Easypay client.
         :rtype: EasypayStructure
-        :return: The generated easypay structure.
+        :return: The generated Easypay structure.
         """
 
-        # creates a new easypay structure
+        # creates a new Easypay structure
         easypay_structure = EasypayStructure(username, cin, country, language, api_version)
 
-        # sets the easypay structure in case it is to be set
+        # sets the Easypay structure in case it is to be set
         if set_structure: self.set_easypay_structure(easypay_structure)
 
-        # returns the easypay structure
+        # returns the Easypay structure
         return easypay_structure
 
     def generate_reference(
@@ -278,7 +278,7 @@ class EasypayClient(object):
             "link" : get_reference_link
         }
 
-        # checks for easypay errors
+        # checks for Easypay errors
         self._check_easypay_errors(data)
 
         # returns the data
@@ -333,7 +333,7 @@ class EasypayClient(object):
             "key" : get_reference_key
         }
 
-        # checks for easypay errors
+        # checks for Easypay errors
         self._check_easypay_errors(data)
 
         # returns the data
@@ -382,7 +382,7 @@ class EasypayClient(object):
             "document" : get_payment_details_doc
         }
 
-        # checks for easypay errors
+        # checks for Easypay errors
         self._check_easypay_errors(data)
 
         # retrieves the remaining payment details
@@ -418,7 +418,7 @@ class EasypayClient(object):
         data["date_read"] = get_payment_details_date_read
         data["status_read"] = get_payment_details_status_read
 
-        # checks for easypay errors
+        # checks for Easypay errors
         self._check_easypay_errors(data)
 
         # returns the data
@@ -452,27 +452,27 @@ class EasypayClient(object):
 
     def get_easypay_structure(self):
         """
-        Retrieves the easypay structure.
+        Retrieves the Easypay structure.
 
         :rtype: EasypayStructure
-        :return: The easypay structure.
+        :return: The Easypay structure.
         """
 
         return self.easypay_structure
 
     def set_easypay_structure(self, easypay_structure):
         """
-        Sets the easypay structure.
+        Sets the Easypay structure.
 
         :type easypay_structure: EasypayStructure
-        :param easypay_structure: The easypay structure.
+        :param easypay_structure: The Easypay structure.
         """
 
         self.easypay_structure = easypay_structure
 
     def _set_base_parameters(self, parameters):
         """
-        Sets the base easypay rest request parameters
+        Sets the base Easypay REST request parameters
         in the parameters map.
 
         :type parameters: Dictionary
@@ -535,13 +535,13 @@ class EasypayClient(object):
 
     def _check_easypay_errors(self, data):
         """
-        Checks the given data for easypay errors.
+        Checks the given data for Easypay errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary
-        :param data: The data to be checked for easypay errors.
+        :param data: The data to be checked for Easypay errors.
         """
 
         # retrieves the status and
@@ -553,8 +553,8 @@ class EasypayClient(object):
         # status does not start with an error
         if not status.startswith(ERROR_STATUS): return
 
-        # raises the easypay api error
-        raise exceptions.EasypayApiError("error in request: " + message)
+        # raises the Easypay API error
+        raise exceptions.EasypayAPIError("error in request: " + message)
 
     def _get_http_client(self):
         """
@@ -616,7 +616,7 @@ class EasypayClient(object):
 
 class EasypayStructure(object):
     """
-    The easypay structure class.
+    The Easypay structure class.
     """
 
     username = None
@@ -632,7 +632,7 @@ class EasypayStructure(object):
     """ The two letter string representing the language to be used """
 
     api_version = None
-    """ The version of the api being used """
+    """ The version of the API being used """
 
     def __init__(
         self,
@@ -656,7 +656,7 @@ class EasypayStructure(object):
         :param language: The two letter string representing the
         language to be used.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         """
 
         self.username = username
@@ -747,20 +747,20 @@ class EasypayStructure(object):
 
     def get_api_version(self):
         """
-        Retrieves the api version.
+        Retrieves the API version.
 
         :rtype: String
-        :return: The api version.
+        :return: The API version.
         """
 
         return self.api_version
 
     def set_api_version(self, api_version):
         """
-        Sets the api version.
+        Sets the API version.
 
         :type api_version: String
-        :param api_version: The api version.
+        :param api_version: The API version.
         """
 
         self.api_version = api_version
