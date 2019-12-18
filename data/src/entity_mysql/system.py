@@ -406,7 +406,7 @@ class MysqlEngine(object):
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
             try: cursor.execute(query)
-            except: self.mysql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query)); raise
+            except Exception: self.mysql_system.info("[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)); raise
             final = time.time()
 
             # verifies if the timing for the current executing query
