@@ -65,7 +65,7 @@ class APIYadisPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_yadis
-        self.system = api_yadis.ApiYadis(self)
+        self.system = api_yadis.APIYadis(self)
 
     def create_client(self, api_attributes):
         """
