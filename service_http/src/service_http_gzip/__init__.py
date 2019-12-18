@@ -36,4 +36,4 @@ __license__ = "Apache License, Version 2.0"
 
 from . import system
 
-from .system import ServiceHttpGzip
+from .system import ServiceHTTPGzip

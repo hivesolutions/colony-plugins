@@ -151,9 +151,9 @@ STATUS_CODE_IMAGES = {
 }
 """ The status code images map """
 
-class ServiceHttpTemplateError(colony.System):
+class ServiceHTTPTemplateError(colony.System):
     """
-    The service http template error (handler) class.
+    The service HTTP template error (handler) class.
     """
 
     def get_error_handler_name(self):

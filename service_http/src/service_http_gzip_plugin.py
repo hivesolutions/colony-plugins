@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpGzipPlugin(colony.Plugin):
+class ServiceHTTPGzipPlugin(colony.Plugin):
     """
-    The main class for the Http Service Gzip plugin.
+    The main class for the HTTP Service Gzip plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.gzip"
-    name = "Http Service Gzip"
-    description = "The plugin that offers the http service gzip"
+    name = "HTTP Service Gzip"
+    description = "The plugin that offers the HTTP service gzip"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -66,7 +66,7 @@ class ServiceHttpGzipPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_gzip
-        self.system = service_http_gzip.ServiceHttpGzip(self)
+        self.system = service_http_gzip.ServiceHTTPGzip(self)
 
     def get_encoding_name(self):
         return self.system.get_encoding_name()

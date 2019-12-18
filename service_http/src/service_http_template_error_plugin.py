@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpTemplateErrorPlugin(colony.Plugin):
+class ServiceHTTPTemplateErrorPlugin(colony.Plugin):
     """
-    The main class for the Http Service Template Error plugin.
+    The main class for the HTTP Service Template Error plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.template_error"
-    name = "Http Service Template Error"
-    description = "The plugin that offers the http service template error"
+    name = "HTTP Service Template Error"
+    description = "The plugin that offers the HTTP service template error"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -67,7 +67,7 @@ class ServiceHttpTemplateErrorPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_template_error
-        self.system = service_http_template_error.ServiceHttpTemplateError(self)
+        self.system = service_http_template_error.ServiceHTTPTemplateError(self)
 
     def get_error_handler_name(self):
         return self.system.get_error_handler_name()
