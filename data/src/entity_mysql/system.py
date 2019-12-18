@@ -443,7 +443,8 @@ class MysqlEngine(object):
                 cursor.close()
                 raise colony.OperationRestart(
                     "MySQL dead lock, restarting top-level operation",
-                    delay = DEAD_LOCK_DELAY
+                    delay = DEAD_LOCK_DELAY,
+                    exception = exception
                 )
 
             # in case there's no transaction pending (in the middle of
