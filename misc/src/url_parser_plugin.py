@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class UrlParserPlugin(colony.Plugin):
+class URLParserPlugin(colony.Plugin):
     """
-    The main class for the Url Parser plugin.
+    The main class for the URL Parser plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.url_parser"
-    name = "Url Parser"
-    description = "A plugin to parse url for agile interpretation"
+    name = "URL Parser"
+    description = "A plugin to parse URL for agile interpretation"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -62,16 +62,16 @@ class UrlParserPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import url_parser_c
-        self.system = url_parser_c.UrlParser(self)
+        self.system = url_parser_c.URLParser(self)
 
     def parse_url(self, url):
         """
-        Parses the given url retrieving the url object.
+        Parses the given URL retrieving the URL object.
 
         :type url: String
-        :param url:  The url to be parsed.
-        :rtype: Url
-        :return: The url object representing the url
+        :param url:  The URL to be parsed.
+        :rtype: URL
+        :return: The URL object representing the URL.
         """
 
         return self.system.parse_url(url)

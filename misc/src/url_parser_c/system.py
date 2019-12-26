@@ -44,10 +44,10 @@ import colony
 from . import exceptions
 
 URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
-""" The url regex value """
+""" The URL regex value """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)
-""" The url regex """
+""" The URL regex """
 
 DEFAULT_PROTOCOL_VALUE = "http://"
 """ The default protocol value """
@@ -55,28 +55,28 @@ DEFAULT_PROTOCOL_VALUE = "http://"
 DEFAULT_PORT_VALUE = None
 """ The default port value """
 
-class UrlParser(colony.System):
+class URLParser(colony.System):
     """
-    The url parser class.
+    The URL parser class.
     """
 
     def parse_url(self, url):
         """
-        Parses the given url retrieving the url object.
+        Parses the given URL retrieving the URL object.
 
         :type url: String
-        :param url:  The url to be parsed.
-        :rtype: Url
-        :return: The url object representing the url
+        :param url:  The URL to be parsed.
+        :rtype: URL
+        :return: The URL object representing the URL.
         """
 
-        # saves the url reference
+        # saves the URL reference
         url_reference = url
 
-        # creates the url object
-        url = Url()
+        # creates the URL object
+        url = URL()
 
-        # parses the url (reference)
+        # parses the URL (reference)
         url.parse_url(url_reference)
 
         # generates the resource reference list
@@ -85,12 +85,12 @@ class UrlParser(colony.System):
         # generates the options map
         url._generate_options_map()
 
-        # returns the url
+        # returns the URL
         return url
 
-class Url(object):
+class URL(object):
     """
-    The url class.
+    The URL class.
     """
 
     protocol = DEFAULT_PROTOCOL_VALUE
@@ -176,7 +176,7 @@ class Url(object):
 
     def build_url(self):
         """
-        Builds the url for the current options.
+        Builds the URL for the current options.
         """
 
         # generates the resource reference
@@ -185,38 +185,38 @@ class Url(object):
         # generates the options
         self._generate_options()
 
-        # creates the url
+        # creates the URL
         url = self.protocol + self.base_name
 
         # in case the protocol port is not the default one
         if not self.protocol == DEFAULT_PROTOCOL_VALUE or not self.port == DEFAULT_PORT_VALUE:
             url += ":" + str(self.port)
 
-        # adds the resource reference to the url
+        # adds the resource reference to the URL
         url += self.resource_reference
 
         # in case options is defined
         if self.options:
             url += "?" + self.options
 
-        # returns the url
+        # returns the URL
         return url
 
     def parse_url(self, url):
         """
-        Parses the given url retrieving setting url object.
+        Parses the given URL retrieving setting URL object.
 
         :type url: String
-        :param url:  The url to be parsed.
+        :param url: The URL to be parsed.
         """
 
-        # matches the url against the url regex
+        # matches the URL against the URL regex
         url_match = URL_REGEX.match(url)
 
         # in case there was no match
         if not url_match:
-            # raises the url parser exception
-            raise exceptions.UrlParserException("invalid url value: %s" % url)
+            # raises the URL parser exception
+            raise exceptions.URLParserException("invalid URL value: %s" % url)
 
         # retrieves the protocol
         protocol = url_match.group("protocol")
@@ -287,7 +287,7 @@ class Url(object):
             # sets the location
             self.location = location
 
-        # creates the base url from the protocol, authentication, base name and port
+        # creates the base URL from the protocol, authentication, base name and port
         self.base_url = (protocol or "") + (authentication and authentication + "@" or "") + (base_name or "") + (port and ":" + port or "")
 
     def add_resource_reference_item(self, resource_reference_item):
