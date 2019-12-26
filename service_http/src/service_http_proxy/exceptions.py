@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpProxyException(colony.ColonyException):
+class ServiceHTTPProxyException(colony.ColonyException):
     """
-    The service http proxy exception class.
+    The service HTTP proxy exception class.
     """
 
     message = None
     """ The exception's message """
 
-class HttpProxyRuntimeException(ServiceHttpProxyException):
+class HTTPProxyRuntimeException(ServiceHTTPProxyException):
     """
-    The http proxy runtime exception class.
+    The HTTP proxy runtime exception class.
     """
 
     def __init__(self, message):
@@ -60,7 +60,7 @@ class HttpProxyRuntimeException(ServiceHttpProxyException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpProxyException.__init__(self)
+        ServiceHTTPProxyException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -71,11 +71,11 @@ class HttpProxyRuntimeException(ServiceHttpProxyException):
         :return: The string representation of the class.
         """
 
-        return "Http proxy runtime - %s" % self.message
+        return "HTTP proxy runtime - %s" % self.message
 
-class HttpClientUnavailableException(ServiceHttpProxyException):
+class HTTPClientUnavailableException(ServiceHTTPProxyException):
     """
-    The http client unavailable exception class.
+    The HTTP client unavailable exception class.
     """
 
     status_code = None
@@ -88,10 +88,10 @@ class HttpClientUnavailableException(ServiceHttpProxyException):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
-        ServiceHttpProxyException.__init__(self)
+        ServiceHTTPProxyException.__init__(self)
         self.message = message
         self.status_code = status_code
 
@@ -103,4 +103,4 @@ class HttpClientUnavailableException(ServiceHttpProxyException):
         :return: The string representation of the class.
         """
 
-        return "Http client unavailable - %s" % self.message
+        return "HTTP client unavailable - %s" % self.message

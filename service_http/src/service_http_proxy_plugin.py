@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpProxyPlugin(colony.Plugin):
+class ServiceHTTPProxyPlugin(colony.Plugin):
     """
-    The main class for the Http Service Main Proxy plugin.
+    The main class for the HTTP Service Main Proxy plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.proxy"
-    name = "Http Service Proxy"
-    description = "The plugin that offers the http service proxy"
+    name = "HTTP Service Proxy"
+    description = "The plugin that offers the HTTP service proxy"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -72,7 +72,7 @@ class ServiceHttpProxyPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_proxy
-        self.system = service_http_proxy.ServiceHttpProxy(self)
+        self.system = service_http_proxy.ServiceHTTPProxy(self)
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
@@ -94,10 +94,10 @@ class ServiceHttpProxyPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

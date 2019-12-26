@@ -63,7 +63,7 @@ HTTP_PREFIX_VALUE = "http://"
 """ The HTTP prefix value """
 
 HTTPS_PREFIX_VALUE = "https://"
-""" The https prefix value """
+""" The HTTPS prefix value """
 
 DEFAULT_HOST_VALUE = "unknown"
 """ The default host value """
@@ -126,7 +126,7 @@ REMOVAL_RESPONSE_HEADERS = (
 )
 """ The removal response headers list """
 
-class ServiceHttpProxy(colony.System):
+class ServiceHTTPProxy(colony.System):
     """
     The service HTTP proxy (handler) class.
     """
@@ -201,7 +201,7 @@ class ServiceHttpProxy(colony.System):
         """
         Handles the given HTTP request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -215,7 +215,7 @@ class ServiceHttpProxy(colony.System):
         # defined (invalid proxy type)
         if not request_handler_method:
             # raises an invalid HTTP proxy runtime exception
-            raise exceptions.HttpProxyRuntimeException("invalid proxy type")
+            raise exceptions.HTTPProxyRuntimeException("invalid proxy type")
 
         # calls the request handler method
         request_handler_method(request)
@@ -230,7 +230,7 @@ class ServiceHttpProxy(colony.System):
         The forward proxy is useful for things like traffic tracking
         publicity and other manipulations to the normal web traffic.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -245,7 +245,7 @@ class ServiceHttpProxy(colony.System):
         # defined (invalid proxy type)
         if not forward_handler_method:
             # raises an invalid HTTP proxy runtime exception
-            raise exceptions.HttpProxyRuntimeException("invalid proxy service type (for forward proxy)")
+            raise exceptions.HTTPProxyRuntimeException("invalid proxy service type (for forward proxy)")
 
         # calls the forward handler method
         forward_handler_method(request)
@@ -255,7 +255,7 @@ class ServiceHttpProxy(colony.System):
         Handles the given "forward" request using a
         synchronous strategy (more memory usage).
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -282,7 +282,7 @@ class ServiceHttpProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -328,7 +328,7 @@ class ServiceHttpProxy(colony.System):
         Handles the given "forward" request using an
         asynchronous strategy (less memory usage).
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -355,7 +355,7 @@ class ServiceHttpProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -443,7 +443,7 @@ class ServiceHttpProxy(colony.System):
         any additional path and it should think that the communication
         his being made with the current host.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -458,7 +458,7 @@ class ServiceHttpProxy(colony.System):
         # defined (invalid proxy type)
         if not reverse_handler_method:
             # raises an invalid HTTP proxy runtime exception
-            raise exceptions.HttpProxyRuntimeException("invalid proxy service type (for reverse proxy)")
+            raise exceptions.HTTPProxyRuntimeException("invalid proxy service type (for reverse proxy)")
 
         # calls the reverse handler method
         reverse_handler_method(request)
@@ -468,7 +468,7 @@ class ServiceHttpProxy(colony.System):
         Handles the given "reverse" request using a
         synchronous strategy (more memory usage).
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -499,7 +499,7 @@ class ServiceHttpProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -545,7 +545,7 @@ class ServiceHttpProxy(colony.System):
         Handles the given "reverse" request using an
         asynchronous strategy (less memory usage).
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
@@ -576,7 +576,7 @@ class ServiceHttpProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HttpClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
             # fetches the contents from the url
@@ -732,7 +732,7 @@ class ServiceHttpProxy(colony.System):
             handler_path = not handler_path == "/" and handler_path or ""
 
             # in case the location starts with the HTTP prefix or
-            # with the https prefix (absolute path)
+            # with the HTTPS prefix (absolute path)
             if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(HTTPS_PREFIX_VALUE):
                 # replaces the proxy target for the handler path
                 location = location.replace(proxy_target, handler_path)
@@ -776,7 +776,7 @@ class ServiceHttpProxy(colony.System):
         on the content length header value.
         In case the content length header value is not set
 
-        :type http_response: HttpResponse
+        :type http_response: HTTPResponse
         :param http_response: The HTTP response to retrieve
         the (target) message size.
         :rtype: int
