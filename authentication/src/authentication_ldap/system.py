@@ -90,9 +90,9 @@ PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
 MD5_CRYPT_SALT_VALUE_REGEX = re.compile(MD5_CRYPT_SALT_VALUE_REGEX_VALUE)
 """ The md5 crypt salt value regex """
 
-class AuthenticationLdap(colony.System):
+class AuthenticationLDAP(colony.System):
     """
-    The authentication ldap class.
+    The authentication LDAP class.
     """
 
     def get_handler_name(self):
@@ -113,7 +113,7 @@ class AuthenticationLdap(colony.System):
         :param request: The authentication request to be handled.
         """
 
-        # retrieves the client ldap plugin
+        # retrieves the client LDAP plugin
         client_ldap_plugin = self.plugin.client_ldap_plugin
 
         # retrieves the request username
@@ -142,17 +142,17 @@ class AuthenticationLdap(colony.System):
             # raises an authentication error
             raise exceptions.AuthenticationError("an username and a password must be provided")
 
-        # creates a new ldap client
+        # creates a new LDAP client
         ldap_client = client_ldap_plugin.create_client({})
 
-        # opens the ldap client
+        # opens the LDAP client
         ldap_client.open({})
 
         try:
-            # connects the ldap client
+            # connects the LDAP client
             ldap_client.connect(host, name = root_dn, password = root_password)
 
-            # retrieves the user password searching in the ldap client
+            # retrieves the user password searching in the LDAP client
             user_password = ldap_client.search(search_dn, username, password)
 
             # tries to match the user password
@@ -191,10 +191,10 @@ class AuthenticationLdap(colony.System):
                 # raises the authentication error
                 raise exceptions.AuthenticationError("password mismatch")
 
-            # disconnects from the ldap client
+            # disconnects from the LDAP client
             ldap_client.disconnect()
         finally:
-            # closes the ldap client
+            # closes the LDAP client
             ldap_client.close({})
 
         # returns the return value

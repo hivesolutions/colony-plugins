@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import AuthenticationLdapHandlerException, AuthenticationError
-from .system import AuthenticationLdap
+from .exceptions import AuthenticationLDAPHandlerException, AuthenticationError
+from .system import AuthenticationLDAP

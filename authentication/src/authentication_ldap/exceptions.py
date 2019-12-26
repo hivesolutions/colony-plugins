@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class AuthenticationLdapHandlerException(colony.ColonyException):
+class AuthenticationLDAPHandlerException(colony.ColonyException):
     """
-    The authentication ldap handler exception class.
+    The authentication LDAP handler exception class.
     """
 
     message = None
     """ The exception's message """
 
-class AuthenticationError(AuthenticationLdapHandlerException):
+class AuthenticationError(AuthenticationLDAPHandlerException):
     """
     The authentication error class.
     """
@@ -60,7 +60,7 @@ class AuthenticationError(AuthenticationLdapHandlerException):
         :param message: The message to be printed.
         """
 
-        AuthenticationLdapHandlerException.__init__(self)
+        AuthenticationLDAPHandlerException.__init__(self)
         self.message = message
 
     def __str__(self):
