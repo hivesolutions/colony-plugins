@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ClientSmtpException(colony.ColonyException):
+class ClientSMTPException(colony.ColonyException):
     """
-    The client smtp exception class.
+    The client SMTP exception class.
     """
 
     message = None
     """ The exception's message """
 
-class SmtpRuntimeException(ClientSmtpException):
+class SMTPRuntimeException(ClientSMTPException):
     """
-    The smtp runtime exception class.
+    The SMTP runtime exception class.
     """
 
     def __init__(self, message):
@@ -60,7 +60,7 @@ class SmtpRuntimeException(ClientSmtpException):
         :param message: The message to be printed.
         """
 
-        ClientSmtpException.__init__(self)
+        ClientSMTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -71,36 +71,11 @@ class SmtpRuntimeException(ClientSmtpException):
         :return: The string representation of the class.
         """
 
-        return "Smtp runtime exception - %s" % self.message
+        return "SMTP runtime exception - %s" % self.message
 
-class SmtpInvalidDataException(SmtpRuntimeException):
+class SMTPInvalidDataException(SMTPRuntimeException):
     """
-    The smtp invalid data exception class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        :type message: String
-        :param message: The message to be printed.
-        """
-
-        SmtpRuntimeException.__init__(self, message)
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        :rtype: String
-        :return: The string representation of the class.
-        """
-
-        return "Smtp invalid data exception - %s" % self.message
-
-class SmtpResponseError(SmtpRuntimeException):
-    """
-    The smtp response error.
+    The SMTP invalid data exception class.
     """
 
     def __init__(self, message):
@@ -111,7 +86,7 @@ class SmtpResponseError(SmtpRuntimeException):
         :param message: The message to be printed.
         """
 
-        SmtpRuntimeException.__init__(self, message)
+        SMTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -121,4 +96,29 @@ class SmtpResponseError(SmtpRuntimeException):
         :return: The string representation of the class.
         """
 
-        return "Smtp response error - %s" % self.message
+        return "SMTP invalid data exception - %s" % self.message
+
+class SMTPResponseError(SMTPRuntimeException):
+    """
+    The SMTP response error.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        SMTPRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "SMTP response error - %s" % self.message

@@ -77,9 +77,9 @@ END_TOKEN_VALUE = b"\r\n"
 AUTHENTICATION_METHOD_VALUE = "authentication_method"
 """ The authentication method value """
 
-class ClientSmtp(colony.System):
+class ClientSMTP(colony.System):
     """
-    The client smtp class.
+    The client SMTP class.
     """
 
     def create_client(self, parameters):
@@ -89,35 +89,35 @@ class ClientSmtp(colony.System):
         :type parameters: Dictionary
         :param parameters: The parameters to be used in creating
         the client object.
-        :rtype: SmtpClient
+        :rtype: SMTPClient
         :return: The created client object.
         """
 
-        # creates the smtp client
-        smtp_client = SmtpClient(self)
+        # creates the SMTP client
+        smtp_client = SMTPClient(self)
 
-        # returns the smtp client
+        # returns the SMTP client
         return smtp_client
 
     def create_request(self, parameters):
         pass
 
-class SmtpClient(object):
+class SMTPClient(object):
     """
-    The smtp client class, representing
-    a client connection in the smtp protocol.
+    The SMTP client class, representing
+    a client connection in the SMTP protocol.
     """
 
     client_smtp = None
-    """ The client smtp object, considered to be
-    the refernece to the parent object """
+    """ The client SMTP object, considered to be
+    the reference to the parent object """
 
     client_connection = None
     """ The current client connection as a connection
     object that encapsulate the underlying (socket) logic """
 
     _smtp_client = None
-    """ The smtp client object used to provide connections """
+    """ The SMTP client object used to provide connections """
 
     _smtp_client_lock = None
     """ Lock to control the fetching of the queries """
@@ -126,10 +126,10 @@ class SmtpClient(object):
         """
         Constructor of the class.
 
-        :type client_smtp: ClientSmtp
-        :param client_smtp: The client smtp object.
+        :type client_smtp: ClientSMTP
+        :param client_smtp: The client SMTP object.
         :type protocol_version: String
-        :param protocol_version: The version of the smtp protocol to
+        :param protocol_version: The version of the SMTP protocol to
         be used.
         :type content_type_charset: String
         :param content_type_charset: The charset to be used by the content.
@@ -143,14 +143,14 @@ class SmtpClient(object):
         # generates the parameters
         client_parameters = self._generate_client_parameters(parameters)
 
-        # creates the smtp client, generating the internal structures
+        # creates the SMTP client, generating the internal structures
         self._smtp_client = self.client_smtp.plugin.client_utils_plugin.generate_client(client_parameters)
 
-        # starts the smtp client
+        # starts the SMTP client
         self._smtp_client.start_client()
 
     def close(self, parameters):
-        # stops the smtp client
+        # stops the SMTP client
         self._smtp_client.stop_client()
 
     def send_mail(
@@ -174,15 +174,15 @@ class SmtpClient(object):
             socket_parameters
         )
 
-        # retrieves the corresponding (smtp) client connection
+        # retrieves the corresponding (SMTP) client connection
         self.client_connection = self._smtp_client.get_client_connection(connection_parameters)
 
-        # acquires the smtp client lock
+        # acquires the SMTP client lock
         self._smtp_client_lock.acquire()
 
         try:
             # creates the session object
-            session = SmtpSession()
+            session = SMTPSession()
 
             # runs the initial login process and
             # then runs the initial ehlo command
@@ -229,7 +229,7 @@ class SmtpClient(object):
             # runs the quit command
             self.quit(session, parameters)
         finally:
-            # releases the smtp client lock
+            # releases the SMTP client lock
             self._smtp_client_lock.release()
 
             # closes the client connection explicitly
@@ -243,16 +243,16 @@ class SmtpClient(object):
         :param command: The command to be sent.
         :type message: String
         :param message: The message to be sent.
-        :type session: SmtpSession
-        :param session: The current smtp session.
+        :type session: SMTPSession
+        :param session: The current SMTP session.
         :type parameters: Dictionary
         :param parameters: The parameters to the request.
-        :rtype: SmtpRequest
+        :rtype: SMTPRequest
         :return: The sent request for the given parameters.
         """
 
-        # creates the smtp request
-        request = SmtpRequest()
+        # creates the SMTP request
+        request = SMTPRequest()
 
         # sets the session object in the request
         request.set_session(session)
@@ -278,16 +278,16 @@ class SmtpClient(object):
 
         :type data: String
         :param data: The string containing the data to be sent.
-        :type session: SmtpSession
-        :param session: The current smtp session.
+        :type session: SMTPSession
+        :param session: The current SMTP session.
         :type parameters: Dictionary
         :param parameters: The parameters to the request.
-        :rtype: SmtpRequest
+        :rtype: SMTPRequest
         :return: The sent request for the given parameters.
         """
 
-        # creates the smtp request
-        request = SmtpRequest()
+        # creates the SMTP request
+        request = SMTPRequest()
 
         # writes the data to the request
         request.write(data)
@@ -305,13 +305,13 @@ class SmtpClient(object):
         """
         Retrieves the response from the sent request.
 
-        :type request: SmtpRequest
+        :type request: SMTPRequest
         :param request: The request that originated the response.
-        :type session: SmtpSession
-        :param session: The current smtp session.
+        :type session: SMTPSession
+        :param session: The current SMTP session.
         :type response_timeout: int
         :param response_timeout: The timeout for the response retrieval.
-        :rtype: SmtpResponse
+        :rtype: SMTPResponse
         :return: The response from the sent request.
         """
 
@@ -319,7 +319,7 @@ class SmtpClient(object):
         message = colony.StringBuffer()
 
         # creates a response object
-        response = SmtpResponse(request)
+        response = SMTPResponse(request)
 
         # continuous loop
         while True:
@@ -328,7 +328,7 @@ class SmtpClient(object):
 
             # in case no valid data was received
             if data == "":
-                raise exceptions.SmtpInvalidDataException("empty data received")
+                raise exceptions.SMTPInvalidDataException("empty data received")
 
             # writes the data to the string buffer
             message.write(data)
@@ -370,9 +370,9 @@ class SmtpClient(object):
                 if comparison_character == b"-":
                     continue
                 elif not comparison_character == b" ":
-                    raise exceptions.SmtpInvalidDataException("invalid comparison character")
+                    raise exceptions.SMTPInvalidDataException("invalid comparison character")
 
-                # retrieves the smtp message, by extracting the content
+                # retrieves the SMTP message, by extracting the content
                 # until the end token value and then splits the message
                 # contents by each of the lines and retrieves the size
                 # of such lines list (going to be used as reference)
@@ -383,37 +383,37 @@ class SmtpClient(object):
                 # starts the index counter
                 index = 1
 
-                # iterates over all the smtp message lines
+                # iterates over all the SMTP message lines
                 for smtp_message_line in smtp_message_lines:
                     # in case it's the last line
                     if index == smtp_message_lines_length:
-                        # splits the smtp message line
+                        # splits the SMTP message line
                         smtp_message_line_splitted = smtp_message_line.split(b" ", 1)
 
-                        # retrieves the smtp code
+                        # retrieves the SMTP code
                         smtp_code = int(smtp_message_line_splitted[0])
 
-                        # retrieves the smtp message
+                        # retrieves the SMTP message
                         smtp_message = smtp_message_line_splitted[1]
 
-                        # sets the smtp code in the response
+                        # sets the SMTP code in the response
                         response.set_code(smtp_code)
 
-                        # sets the smtp message in the response
+                        # sets the SMTP message in the response
                         response.set_message(smtp_message)
 
-                        # adds the smtp message to the list of
+                        # adds the SMTP message to the list of
                         # messages in response
                         response.add_message(smtp_message)
                     # in case it's not the last line
                     else:
-                        # splits the smtp message line
+                        # splits the SMTP message line
                         smtp_message_line_splitted = smtp_message_line.split(b"-", 1)
 
-                        # retrieves the smtp message
+                        # retrieves the SMTP message
                         smtp_message = smtp_message_line_splitted[1]
 
-                        # adds the smtp message to the list of
+                        # adds the SMTP message to the list of
                         # messages in response
                         response.add_message(smtp_message)
 
@@ -462,8 +462,8 @@ class SmtpClient(object):
 
         # in case no verification user is defined
         if not verification_user:
-            # raises an smtp runtime exception
-            raise exceptions.SmtpRuntimeException("invalid verification user")
+            # raises an SMTP runtime exception
+            raise exceptions.SMTPRuntimeException("invalid verification user")
 
         # sends the verify request
         request = self.send_request("vrfy", verification_user, session, parameters)
@@ -489,8 +489,8 @@ class SmtpClient(object):
 
         # in case the authentication method is not defined in the current object
         if not hasattr(self, authentication_method_name):
-            # raises the smtp runtime exception
-            raise exceptions.SmtpRuntimeException("authentication method not found: " + authentication_method)
+            # raises the SMTP runtime exception
+            raise exceptions.SMTPRuntimeException("authentication method not found: " + authentication_method)
 
         # retrieves the authentication method from the object
         authentication_method = getattr(self, authentication_method_name)
@@ -534,7 +534,7 @@ class SmtpClient(object):
         # retrieves the data length
         data_length = len(data)
 
-        # "stuffes" the data according to smtp specification
+        # "stuffes" the data according to SMTP specification
         data_stuffed = data.replace("\r\n.", "\r\n..")
 
         # sends the data in raw format
@@ -638,7 +638,7 @@ class SmtpClient(object):
         value for checking. In case of error it raises an exception with the
         given message as prefix.
 
-        :type response: SmtpResponse
+        :type response: SMTPResponse
         :param response: The response
         :type accepted_codes: List
         :param accepted_codes: The list of accepted codes.
@@ -651,8 +651,8 @@ class SmtpClient(object):
 
         # in case the response code is not "accepted"
         if not response_code in accepted_codes:
-            # raises the smtp response error
-            raise exceptions.SmtpResponseError(message + str(response))
+            # raises the SMTP response error
+            raise exceptions.SMTPResponseError(message + str(response))
 
     def _generate_client_parameters(self, parameters):
         """
@@ -679,9 +679,9 @@ class SmtpClient(object):
         # returns the parameters
         return parameters
 
-class SmtpRequest(object):
+class SMTPRequest(object):
     """
-    The smtp request class.
+    The SMTP request class.
     """
 
     message = None
@@ -875,9 +875,9 @@ class SmtpRequest(object):
 
         self.properties = properties
 
-class SmtpResponse(object):
+class SMTPResponse(object):
     """
-    The smtp response class.
+    The SMTP response class.
     """
 
     request = None
@@ -928,7 +928,7 @@ class SmtpResponse(object):
         """
         Retrieves the request.
 
-        :rtype: SmtpRequest
+        :rtype: SMTPRequest
         :return: The request.
         """
 
@@ -938,7 +938,7 @@ class SmtpResponse(object):
         """
         Sets the request.
 
-        :type request: SmtpRequest
+        :type request: SMTPRequest
         :param request:  The request.
         """
 
@@ -1044,9 +1044,9 @@ class SmtpResponse(object):
 
         self.properties = properties
 
-class SmtpSession(object):
+class SMTPSession(object):
     """
-    The smtp session class.
+    The SMTP session class.
     """
 
     client_hostname = "none"
@@ -1079,7 +1079,7 @@ class SmtpSession(object):
 
     def generate_message(self, set_current_message = True):
         # creates the new message
-        message = SmtpMessage()
+        message = SMTPMessage()
 
         # adds the message to the messages list
         self.add_message(message)
@@ -1095,7 +1095,7 @@ class SmtpSession(object):
         Adds a message to the list of messages
         of the current session.
 
-        :type message: SmtpMessage
+        :type message: SMTPMessage
         :param message: The message to be added
         to the session.
         """
@@ -1186,7 +1186,7 @@ class SmtpSession(object):
         """
         Retrieves the current message.
 
-        :rtype: SmtpMessage
+        :rtype: SMTPMessage
         :return: The current message.
         """
 
@@ -1196,7 +1196,7 @@ class SmtpSession(object):
         """
         Sets the current message.
 
-        :type current_message: SmtpMessage
+        :type current_message: SMTPMessage
         :param current_message: The current message.
         """
 
@@ -1242,10 +1242,10 @@ class SmtpSession(object):
 
         self.properties = properties
 
-class SmtpMessage(object):
+class SMTPMessage(object):
     """
-    The smtp message class that represents
-    a message to be sent through smtp.
+    The SMTP message class that represents
+    a message to be sent through SMTP.
     """
 
     contents = "none"

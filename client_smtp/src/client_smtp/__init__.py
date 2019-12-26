@@ -37,6 +37,6 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ClientSmtpException, SmtpRuntimeException, SmtpInvalidDataException,\
-    SmtpResponseError
-from .system import ClientSmtp
+from .exceptions import ClientSMTPException, SMTPRuntimeException, SMTPInvalidDataException,\
+    SMTPResponseError
+from .system import ClientSMTP
