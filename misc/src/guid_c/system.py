@@ -47,9 +47,12 @@ import colony
 MAX_COUNTER = 0xfffffffe
 """ The max counter value """
 
-class Guid(colony.System):
+class GUID(colony.System):
     """
-    The guid class.
+    The GUID class responsible for the generation and
+    management of globally unique identifiers.
+
+    :see: https://en.wikipedia.org/wiki/Universally_unique_identifier
     """
 
     def __init__(self, plugin):
@@ -75,16 +78,16 @@ class Guid(colony.System):
 
     def generate_guid(self):
         """
-        Generates a guid (unique in space and time) number.
+        Generates a GUID (unique in space and time) number.
 
         :rtype: String
-        :return: The unique guid.
+        :return: The unique GUID.
         """
 
-        # acquires the lock, only one guid at the same time
+        # acquires the lock, only one GUID at the same time
         self.lock.acquire()
         try:
-            # the list that represents the various parts of the guid
+            # the list that represents the various parts of the GUID
             parts = []
 
             # do we need to wait for the next millisecond (are we out of counters?)
@@ -117,7 +120,7 @@ class Guid(colony.System):
             # put all the parts together
             return "".join(parts)
         finally:
-            # releases the lock, more guid can be generated now
+            # releases the lock, more GUID can be generated now
             self.lock.release()
 
 make_hexadecimal_ip = lambda ip: "".join(["%04x" % colony.legacy.LONG(index) for index in ip.split(".")])

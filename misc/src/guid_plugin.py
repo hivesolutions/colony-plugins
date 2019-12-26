@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class GuidPlugin(colony.Plugin):
+class GUIDPlugin(colony.Plugin):
     """
-    The main class for the Guid plugin.
+    The main class for the GUID plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid"
-    description = "A plugin to generate guid numbers"
+    name = "GUID"
+    description = "A plugin to generate GUID numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -62,7 +62,7 @@ class GuidPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import guid_c
-        self.system = guid_c.Guid(self)
+        self.system = guid_c.GUID(self)
 
     def generate_guid(self):
         return self.system.generate_guid()
