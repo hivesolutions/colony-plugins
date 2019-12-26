@@ -41,12 +41,12 @@ import colony
 
 class ResourcesJSONPlugin(colony.Plugin):
     """
-    The main class for the Resources Json plugin.
+    The main class for the Resources JSON plugin.
     """
 
     id = "pt.hive.colony.plugins.resources.json"
-    name = "Resources Json"
-    description = "A plugin to parse json resources"
+    name = "Resources JSON"
+    description = "A plugin to parse JSON resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -65,7 +65,7 @@ class ResourcesJSONPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import resources_json
-        self.system = resources_json.ResourcesJson(self)
+        self.system = resources_json.ResourcesJSON(self)
 
     def get_resources_parser_name(self):
         return self.system.get_resources_parser_name()
