@@ -54,10 +54,10 @@ blocking connection is not able to read/write more, this
 error should be raised constantly in no blocking connections """
 
 SSL_ERROR_WANT_READ = 2
-""" The ssl error want read value """
+""" The SSL error want read value """
 
 SSL_ERROR_WANT_WRITE = 3
-""" The ssl error want write value """
+""" The SSL error want write value """
 
 SSL_VERSIONS = {
     "ssl2" : ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,
@@ -66,14 +66,14 @@ SSL_VERSIONS = {
     "tls1" : ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1
 }
 """ The map associating the string based description
-values for the various ssl protocols with the corresponding
-constants in the ssl infra-structure, note that the map
+values for the various SSL protocols with the corresponding
+constants in the SSL infra-structure, note that the map
 is constructed taking into account the existence of the
-constants in the ssl module defaulting to invalid otherwise """
+constants in the SSL module defaulting to invalid otherwise """
 
-class SslSocketUpgrader(colony.System):
+class SSLSocketUpgrader(colony.System):
     """
-    The ssl socket upgrader class.
+    The SSL socket upgrader class.
     """
 
     def get_upgrader_name(self):
@@ -97,10 +97,10 @@ class SslSocketUpgrader(colony.System):
         :return: The upgraded socket.
         """
 
-        # upgrades the socket to ssl socket
+        # upgrades the socket to SSL socket
         ssl_socket = self.upgrade_socket_parameters(socket)
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
     def upgrade_socket_parameters(self, socket, parameters = {}):
@@ -117,7 +117,7 @@ class SslSocketUpgrader(colony.System):
         """
 
         # prints a debug message
-        self.plugin.debug("Upgrading a socket to ssl")
+        self.plugin.debug("Upgrading a socket to SSL")
 
         # retrieves the plugin manager
         manager = self.plugin.manager
@@ -127,7 +127,7 @@ class SslSocketUpgrader(colony.System):
         plugin_path = manager.get_plugin_path_by_id(self.plugin.id)
         plugin_resources_path = plugin_path + "/ssl_socket_upgrader/resources"
 
-        # retrieves the dummy ssl key and certificate paths
+        # retrieves the dummy SSL key and certificate paths
         # so that they can be used as the default values
         dummy_ssl_key_path = plugin_resources_path + "/dummy.key"
         dummy_ssl_certificate_path = plugin_resources_path + "/dummy.crt"
@@ -153,7 +153,7 @@ class SslSocketUpgrader(colony.System):
         ssl_version = parameters.get("ssl_version", None)
         ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
 
-        # warps the socket into an ssl socket
+        # warps the socket into an SSL socket
         ssl_socket = self._wrap_socket(
             socket,
             key_file_path,
@@ -163,7 +163,7 @@ class SslSocketUpgrader(colony.System):
             do_handshake_on_connect = do_handshake_on_connect
         )
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
     def process_exception(self, socket, exception):
@@ -195,10 +195,10 @@ class SslSocketUpgrader(colony.System):
         do_handshake_on_connect = True
     ):
         """
-        Wraps the base socket into an ssl socket using the given
+        Wraps the base socket into an SSL socket using the given
         key file, certificate file and attributes.
 
-        Note that the version of the ssl implementation may be
+        Note that the version of the SSL implementation may be
         controlled and in some cases it's required to be controlled
         for security purposes.
 
@@ -211,15 +211,15 @@ class SslSocketUpgrader(colony.System):
         :type server_side: bool
         :param server_side: If the socket should be created for a server.
         :type ssl_version: int
-        :param ssl_version: The version  of the ssl protocol stack that
+        :param ssl_version: The version  of the SSL protocol stack that
         is allowed to be executed for the socket to wrapped.
         :type do_handshake_on_connect: bool
         :param do_handshake_on_connect: If a handshake should be done on connect.
         :rtype: Socket
-        :return: The wrapped (ssl) socket.
+        :return: The wrapped (SSL) socket.
         """
 
-        # warps the base socket into an ssl socket
+        # warps the base socket into an SSL socket
         ssl_socket = ssl.wrap_socket(
             base_socket,
             key_file_path,
@@ -232,25 +232,25 @@ class SslSocketUpgrader(colony.System):
         # does the handshake (on connect)
         do_handshake_on_connect and self._do_handshake(ssl_socket)
 
-        # wraps the ssl socket with new methods
+        # wraps the SSL socket with new methods
         wrap_socket(ssl_socket)
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
     def _do_handshake(self, ssl_socket):
         """
-        Does the handshake for the given ssl socket.
+        Does the handshake for the given SSL socket.
         This method of handshake is proof to non blocking sockets.
 
-        :type ssl_socket: SslSocket
-        :param ssl_socket: The ssl socket to be used in the handshake.
+        :type ssl_socket: SSLSocket
+        :param ssl_socket: The SSL socket to be used in the handshake.
         """
 
         # iterates continuously
         while True:
             try:
-                # does the ssl socket handshake
+                # does the SSL socket handshake
                 ssl_socket.do_handshake()
 
                 # breaks the loop
@@ -259,13 +259,13 @@ class SslSocketUpgrader(colony.System):
                 # retrieves the exception value
                 exception_value = exception[0]
 
-                # in case it's an ssl want read exception
+                # in case it's an SSL want read exception
                 if exception_value == ssl.SSL_ERROR_WANT_READ:
-                    # select the ssl socket for read
+                    # select the SSL socket for read
                     select.select([ssl_socket], [], [])
-                # in case it's an ssl want write exception
+                # in case it's an SSL want write exception
                 elif exception_value == ssl.SSL_ERROR_WANT_WRITE:
-                    # select the ssl socket for write
+                    # select the SSL socket for write
                     select.select([], [ssl_socket], [])
                 # otherwise it must be a different kind of exception
                 else:
@@ -273,24 +273,24 @@ class SslSocketUpgrader(colony.System):
                     raise
 
 def wrap_socket(ssl_socket):
-    # creates the bound accept method for the ssl socket
+    # creates the bound accept method for the SSL socket
     _accept = types.MethodType(accept, ssl_socket)
 
-    # creates the bound process exception method for the ssl socket
+    # creates the bound process exception method for the SSL socket
     _process_exception = types.MethodType(process_exception, ssl_socket)
 
-    # sets the old accept method in the ssl socket with
+    # sets the old accept method in the SSL socket with
     # a different name
     ssl_socket._accept = ssl_socket.accept
 
-    # sets the new accept bound method in the ssl socket
+    # sets the new accept bound method in the SSL socket
     ssl_socket.accept = _accept
 
     # sets the extra secure attribute, to indicate
     # that this socket is of type secure
     ssl_socket._secure = True
 
-    # sets the new process exception bound method in the ssl socket
+    # sets the new process exception bound method in the SSL socket
     ssl_socket.process_exception = _process_exception
 
 def accept(self):
@@ -302,7 +302,7 @@ def accept(self):
     # connection and address
     connection, _address = return_value
 
-    # wraps the (ssl) connection with new methods
+    # wraps the (SSL) connection with new methods
     wrap_socket(connection)
 
     # returns the return value
@@ -322,8 +322,8 @@ def process_exception(self, exception):
         ):
         return True
 
-    # in case the exception is of type ssl error and the error
-    # number is ssl error want read or write, the exception must
+    # in case the exception is of type SSL error and the error
+    # number is SSL error want read or write, the exception must
     # be ignored as it means that an operation could not be immediately
     # performed and must be delayed
     if isinstance(exception, ssl.SSLError) and\

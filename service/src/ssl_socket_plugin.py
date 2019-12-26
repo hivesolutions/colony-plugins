@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class SslSocketPlugin(colony.Plugin):
+class SSLSocketPlugin(colony.Plugin):
     """
-    The main class for the Ssl Socket plugin.
+    The main class for the SSL Socket plugin.
     """
 
     id = "pt.hive.colony.plugins.service.ssl_socket"
-    name = "Ssl Socket"
-    description = "The plugin that offers the ssl socket"
+    name = "SSL Socket"
+    description = "The plugin that offers the SSL socket"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -65,7 +65,7 @@ class SslSocketPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_socket
-        self.system = ssl_socket.SslSocket(self)
+        self.system = ssl_socket.SSLSocket(self)
 
     def get_provider_name(self):
         """

@@ -48,10 +48,10 @@ PROVIDER_NAME = "ssl"
 """ The provider name """
 
 SSL_ERROR_WANT_READ = 2
-""" The ssl error want read value """
+""" The SSL error want read value """
 
 SSL_ERROR_WANT_WRITE = 3
-""" The ssl error want write value """
+""" The SSL error want write value """
 
 WSAEWOULDBLOCK = 10035
 """ Windows based value for the error raised when a non
@@ -65,14 +65,14 @@ SSL_VERSIONS = {
     "tls1" : ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1
 }
 """ The map associating the string based description
-values for the various ssl protocols with the corresponding
-constants in the ssl infra-structure, note that the map
+values for the various SSL protocols with the corresponding
+constants in the SSL infra-structure, note that the map
 is constructed taking into account the existence of the
-constants in the ssl module defaulting to invalid otherwise """
+constants in the SSL module defaulting to invalid otherwise """
 
-class SslSocket(colony.System):
+class SSLSocket(colony.System):
     """
-    The ssl socket (provider) class.
+    The SSL socket (provider) class.
     """
 
     def get_provider_name(self):
@@ -94,10 +94,10 @@ class SslSocket(colony.System):
         :return: The provided socket.
         """
 
-        # creates the ssl socket
+        # creates the SSL socket
         ssl_socket = self.provide_socket_parameters()
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
     def provide_socket_parameters(self, parameters = {}):
@@ -112,7 +112,7 @@ class SslSocket(colony.System):
         """
 
         # prints a debug message
-        self.plugin.debug("Providing an ssl socket")
+        self.plugin.debug("Providing an SSL socket")
 
         # retrieves the plugin manager
         manager = self.plugin.manager
@@ -128,7 +128,7 @@ class SslSocket(colony.System):
         # creates the normal socket
         normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
 
-        # retrieves the dummy ssl key and certificate paths
+        # retrieves the dummy SSL key and certificate paths
         # so that they can be used as the default values
         dummy_ssl_key_path = plugin_resources_path + "/dummy.key"
         dummy_ssl_certificate_path = plugin_resources_path + "/dummy.crt"
@@ -154,7 +154,7 @@ class SslSocket(colony.System):
         ssl_version = parameters.get("ssl_version", None)
         ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
 
-        # warps the normal socket into an ssl socket, providing
+        # warps the normal socket into an SSL socket, providing
         # the extra security layer on top of the normal socket
         ssl_socket = self._wrap_socket(
             normal_socket,
@@ -165,7 +165,7 @@ class SslSocket(colony.System):
             do_handshake_on_connect = do_handshake_on_connect
         )
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
     def process_exception(self, socket, exception):
@@ -197,10 +197,10 @@ class SslSocket(colony.System):
         do_handshake_on_connect = False
     ):
         """
-        Wraps the base socket into an ssl socket using the given
+        Wraps the base socket into an SSL socket using the given
         key file, certificate file and attributes.
 
-        Note that the version of the ssl implementation may be
+        Note that the version of the SSL implementation may be
         controlled and in some cases it's required to be controlled
         for security purposes.
 
@@ -213,15 +213,15 @@ class SslSocket(colony.System):
         :type server_side: bool
         :param server_side: If the socket should be created for a server.
         :type ssl_version: int
-        :param ssl_version: The version  of the ssl protocol stack that
+        :param ssl_version: The version  of the SSL protocol stack that
         is allowed to be executed for the socket to wrapped.
         :type do_handshake_on_connect: bool
         :param do_handshake_on_connect: If a handshake should be done on connect.
         :rtype: Socket
-        :return: The wrapped (ssl) socket.
+        :return: The wrapped (SSL) socket.
         """
 
-        # warps the base socket into an ssl socket
+        # warps the base socket into an SSL socket
         ssl_socket = ssl.wrap_socket(
             base_socket,
             key_file_path,
@@ -231,28 +231,28 @@ class SslSocket(colony.System):
             do_handshake_on_connect = do_handshake_on_connect
         )
 
-        # wraps the ssl socket with new methods
+        # wraps the SSL socket with new methods
         wrap_socket(ssl_socket)
 
-        # returns the ssl socket
+        # returns the SSL socket
         return ssl_socket
 
 def wrap_socket(ssl_socket):
     # creates the bound accept and handshake methods for
-    # the ssl socket
+    # the SSL socket
     _accept = types.MethodType(accept, ssl_socket)
     _handshake = types.MethodType(handshake, ssl_socket)
     _set_option = types.MethodType(set_option, ssl_socket)
 
-    # creates the bound process exception method for the ssl socket
+    # creates the bound process exception method for the SSL socket
     _process_exception = types.MethodType(process_exception, ssl_socket)
 
-    # sets the old accept method in the ssl socket with
+    # sets the old accept method in the SSL socket with
     # a different name
     ssl_socket._accept = ssl_socket.accept
 
     # sets the new accept and handshake bound methods in
-    # the ssl socket
+    # the SSL socket
     ssl_socket.accept = _accept
     ssl_socket.handshake = _handshake
     ssl_socket.set_option = _set_option
@@ -261,7 +261,7 @@ def wrap_socket(ssl_socket):
     # that this socket is of type secure
     ssl_socket._secure = True
 
-    # sets the new process exception bound method in the ssl socket
+    # sets the new process exception bound method in the SSL socket
     ssl_socket.process_exception = _process_exception
 
 def accept(self):
@@ -274,14 +274,14 @@ def accept(self):
     connection, address = return_value
 
     try:
-        # wraps the (ssl) connection with new methods
+        # wraps the (SSL) connection with new methods
         wrap_socket(connection)
 
         # sets the connection to non blocking mode in case
         # the blocking flag is not set in the current socket
         hasattr(self, "blocking") and not self.blocking and connection.setblocking(0)
 
-        # tries to archive the proper handshake on the ssl
+        # tries to archive the proper handshake on the SSL
         # connection, asynchronous handshake
         connection.do_handshake()
     except socket.error as error:
@@ -340,8 +340,8 @@ def process_exception(self, exception):
         ):
         return True
 
-    # in case the exception is of type ssl error and the error
-    # number is ssl error want read or write, the exception must
+    # in case the exception is of type SSL error and the error
+    # number is SSL error want read or write, the exception must
     # be ignored as it means that an operation could not be immediately
     # performed and must be delayed
     if isinstance(exception, ssl.SSLError) and\
