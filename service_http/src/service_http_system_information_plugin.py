@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpSystemInformationPlugin(colony.Plugin):
+class ServiceHTTPSystemInformationPlugin(colony.Plugin):
     """
-    The main class for the Http Service Main System Information Handler plugin.
+    The main class for the HTTP Service Main System Information Handler plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.system_information"
-    name = "Http Service System Information"
-    description = "The plugin that offers the http service system information handler"
+    name = "HTTP Service System Information"
+    description = "The plugin that offers the HTTP service system information handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -70,7 +70,7 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_system_information
-        self.system = service_http_system_information.ServiceHttpSystemInformation(self)
+        self.system = service_http_system_information.ServiceHTTPSystemInformation(self)
 
     def get_handler_name(self):
         """
@@ -84,10 +84,10 @@ class ServiceHttpSystemInformationPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

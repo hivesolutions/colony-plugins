@@ -67,9 +67,9 @@ FORMATS_MAP = {
 }
 """ The formats map """
 
-class ServiceHttpTemplateDirectory(colony.System):
+class ServiceHTTPTemplateDirectory(colony.System):
     """
-    The service http template directory (handler) class.
+    The service HTTP template directory (handler) class.
     """
 
     def get_directory_handler_name(self):

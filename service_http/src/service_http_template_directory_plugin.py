@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpTemplateDirectoryPlugin(colony.Plugin):
+class ServiceHTTPTemplateDirectoryPlugin(colony.Plugin):
     """
-    The main class for the Http Service Template Directory plugin.
+    The main class for the HTTP Service Template Directory plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.template_directory"
-    name = "Http Service Template Directory"
-    description = "The plugin that offers the http service template directory"
+    name = "HTTP Service Template Directory"
+    description = "The plugin that offers the HTTP service template directory"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -67,7 +67,7 @@ class ServiceHttpTemplateDirectoryPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_template_directory
-        self.system = service_http_template_directory.ServiceHttpTemplateDirectory(self)
+        self.system = service_http_template_directory.ServiceHTTPTemplateDirectory(self)
 
     def get_directory_handler_name(self):
         return self.system.get_directory_handler_name()

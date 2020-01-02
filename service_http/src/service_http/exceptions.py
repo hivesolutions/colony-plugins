@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpException(colony.ColonyException):
+class ServiceHTTPException(colony.ColonyException):
     """
     The service HTTP exception class.
     """
@@ -47,7 +47,7 @@ class ServiceHttpException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class EncodingNotFound(ServiceHttpException):
+class EncodingNotFound(ServiceHTTPException):
     """
     The encoding not found class.
     """
@@ -60,7 +60,7 @@ class EncodingNotFound(ServiceHttpException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpException.__init__(self)
+        ServiceHTTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class EncodingNotFound(ServiceHttpException):
 
         return "Encoding not found - %s" % self.message
 
-class ClientRequestSecurityViolation(ServiceHttpException):
+class ClientRequestSecurityViolation(ServiceHTTPException):
     """
     The client request security violation request timeout class.
     """
@@ -86,7 +86,7 @@ class ClientRequestSecurityViolation(ServiceHttpException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpException.__init__(self)
+        ServiceHTTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class ClientRequestSecurityViolation(ServiceHttpException):
 
         return "Client request security violation - %s" % self.message
 
-class HttpRuntimeException(ServiceHttpException):
+class HTTPRuntimeException(ServiceHTTPException):
     """
     The HTTP runtime exception class.
     """
@@ -112,7 +112,7 @@ class HttpRuntimeException(ServiceHttpException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpException.__init__(self)
+        ServiceHTTPException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class HttpRuntimeException(ServiceHttpException):
 
         return "HTTP runtime exception - %s" % self.message
 
-class HTTPInvalidDataException(HttpRuntimeException):
+class HTTPInvalidDataException(HTTPRuntimeException):
     """
     The HTTP invalid data exception class.
     """
@@ -138,7 +138,7 @@ class HTTPInvalidDataException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -150,7 +150,7 @@ class HTTPInvalidDataException(HttpRuntimeException):
 
         return "HTTP invalid data exception - %s" % self.message
 
-class HttpNoHandlerException(HttpRuntimeException):
+class HTTPNoHandlerException(HTTPRuntimeException):
     """
     The HTTP no handler exception.
     """
@@ -163,7 +163,7 @@ class HttpNoHandlerException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -175,7 +175,7 @@ class HttpNoHandlerException(HttpRuntimeException):
 
         return "HTTP no handler exception - %s" % self.message
 
-class HttpHandlerNotFoundException(HttpRuntimeException):
+class HTTPHandlerNotFoundException(HTTPRuntimeException):
     """
     The HTTP handler not found exception.
     """
@@ -188,7 +188,7 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -200,7 +200,7 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
 
         return "HTTP handler not found exception - %s" % self.message
 
-class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
+class HTTPAuthenticationHandlerNotFoundException(HTTPRuntimeException):
     """
     The HTTP authentication handler not found exception.
     """
@@ -213,7 +213,7 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -225,7 +225,7 @@ class HttpAuthenticationHandlerNotFoundException(HttpRuntimeException):
 
         return "HTTP authentication handler not found exception - %s" % self.message
 
-class HttpInvalidMultipartRequestException(HttpRuntimeException):
+class HTTPInvalidMultipartRequestException(HTTPRuntimeException):
     """
     The HTTP invalid multipart request exception.
     """
@@ -238,7 +238,7 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -250,7 +250,7 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
 
         return "HTTP invalid multipart request exception - %s" % self.message
 
-class HttpDataRetrievalException(HttpRuntimeException):
+class HTTPDataRetrievalException(HTTPRuntimeException):
     """
     The HTTP data retrieval exception.
     """
@@ -263,7 +263,7 @@ class HttpDataRetrievalException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -275,7 +275,7 @@ class HttpDataRetrievalException(HttpRuntimeException):
 
         return "HTTP data retrieval exception - %s" % self.message
 
-class HttpDataSendingException(HttpRuntimeException):
+class HTTPDataSendingException(HTTPRuntimeException):
     """
     The HTTP data sending exception.
     """
@@ -288,7 +288,7 @@ class HttpDataSendingException(HttpRuntimeException):
         :param message: The message to be printed.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -300,7 +300,7 @@ class HttpDataSendingException(HttpRuntimeException):
 
         return "HTTP data sending exception - %s" % self.message
 
-class UnauthorizedException(HttpRuntimeException):
+class UnauthorizedException(HTTPRuntimeException):
     """
     The unauthorized exception class.
     """
@@ -318,7 +318,7 @@ class UnauthorizedException(HttpRuntimeException):
         :param status_code: The HTTP status code.
         """
 
-        HttpRuntimeException.__init__(self, message)
+        HTTPRuntimeException.__init__(self, message)
         self.status_code = status_code
 
     def __str__(self):

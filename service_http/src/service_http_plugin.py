@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpPlugin(colony.Plugin):
+class ServiceHTTPPlugin(colony.Plugin):
     """
-    The main class for the Http Service plugin.
+    The main class for the HTTP Service plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http"
-    name = "Http Service"
-    description = "The plugin that offers the http service"
+    name = "HTTP Service"
+    description = "The plugin that offers the HTTP service"
     version = "1.0.1"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -73,7 +73,7 @@ class ServiceHttpPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http
-        self.system = service_http.ServiceHttp(self)
+        self.system = service_http.ServiceHTTP(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

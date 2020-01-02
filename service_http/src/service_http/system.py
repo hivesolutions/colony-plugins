@@ -306,7 +306,7 @@ UPGRADE_MESSAGE_SIZE_MAP = {
 }
 """ The upgrade message size map """
 
-class ServiceHttp(colony.System):
+class ServiceHTTP(colony.System):
     """
     The service HTTP class.
     """
@@ -602,7 +602,7 @@ class ServiceHttp(colony.System):
         parameters = dict(
             type = CONNECTION_TYPE,
             service_plugin = self.plugin,
-            service_handling_task_class = HttpClientServiceHandler,
+            service_handling_task_class = HTTPClientServiceHandler,
             end_points = end_points,
             socket_provider = socket_provider,
             bind_host = bind_host,
@@ -635,7 +635,7 @@ class ServiceHttp(colony.System):
         # closes the HTTP log file
         self.http_log_file and self.http_log_file.close()
 
-class HttpClientServiceHandler(object):
+class HTTPClientServiceHandler(object):
     """
     The HTTP client service handler class, responsible
     for the handling of incoming client connection and
@@ -743,7 +743,7 @@ class HttpClientServiceHandler(object):
         try:
             # retrieves the request
             request = request or self.retrieve_request(service_connection)
-        except exceptions.ServiceHttpException:
+        except exceptions.ServiceHTTPException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
 
@@ -787,12 +787,12 @@ class HttpClientServiceHandler(object):
             # in case no handler name is defined (request not handled)
             if not handler_name:
                 # raises an HTTP no handler exception
-                raise exceptions.HttpNoHandlerException("no handler defined for current request")
+                raise exceptions.HTTPNoHandlerException("no handler defined for current request")
 
             # in case the handler is not found in the handler plugins map
             if not handler_name in http_service_handler_plugins_map:
                 # raises an HTTP handler not found exception
-                raise exceptions.HttpHandlerNotFoundException("no handler found for current request: " + handler_name)
+                raise exceptions.HTTPHandlerNotFoundException("no handler found for current request: " + handler_name)
 
             # retrieves the HTTP service handler plugin
             http_service_handler_plugin = http_service_handler_plugins_map[handler_name]
@@ -860,13 +860,13 @@ class HttpClientServiceHandler(object):
         try:
             # sends the request to the client (response)
             self.send_request(service_connection, request)
-        except exceptions.HttpRuntimeException as exception:
+        except exceptions.HTTPRuntimeException as exception:
             # prints a warning message message and returns
             # an invalid value as there was a problem handling
             # the current request
             self.service_plugin.warning("Runtime problem: %s, while sending request" % colony.legacy.UNICODE(exception))
             return False
-        except exceptions.ServiceHttpException:
+        except exceptions.ServiceHTTPException:
             # prints a debug message and returns an invalid
             # return value as the connection has been closed
             self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
@@ -902,7 +902,7 @@ class HttpClientServiceHandler(object):
         try:
             # sends the exception
             self.send_exception(service_connection, request, exception)
-        except exceptions.ServiceHttpException:
+        except exceptions.ServiceHTTPException:
             # prints a debug message
             self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
 
@@ -987,7 +987,7 @@ class HttpClientServiceHandler(object):
 
         :type service_connection: ServiceConnection
         :param service_connection: The service connection to be used.
-        :rtype: HttpRequest
+        :rtype: HTTPRequest
         :return: The request from the received message.
         """
 
@@ -1005,7 +1005,7 @@ class HttpClientServiceHandler(object):
                     data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the HTTP data retrieval exception
-                raise exceptions.HttpDataRetrievalException("problem retrieving data")
+                raise exceptions.HTTPDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
             if not data:
@@ -1035,7 +1035,7 @@ class HttpClientServiceHandler(object):
         :param service_connection: The service connection to be used.
         :type String: data
         :param String: The data to be used in processing the request.
-        :rtype: HttpRequest
+        :rtype: HTTPRequest
         :return: The request from the received message.
         """
 
@@ -1048,7 +1048,7 @@ class HttpClientServiceHandler(object):
         # creates a request object
         request = service_connection.request_data.get(
             "request",
-            HttpRequest(self, service_connection, self.content_type_charset)
+            HTTPRequest(self, service_connection, self.content_type_charset)
         )
 
         # retrieves the various values from the request data that are going
@@ -1277,7 +1277,7 @@ class HttpClientServiceHandler(object):
         Decodes the request message for the encoding
         specified in the request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be decoded.
         """
 
@@ -1353,7 +1353,7 @@ class HttpClientServiceHandler(object):
 
         :type service_connection: ServiceConnection
         :param service_connection: The service connection to be used.
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to send the exception.
         :type exception: Exception
         :param exception: The exception to be sent.
@@ -1424,7 +1424,7 @@ class HttpClientServiceHandler(object):
             # client side and the re-raises the exception to the
             # various upper levels so that is properly handled
             self.service_plugin.error("Problem sending request simple: " + colony.legacy.UNICODE(exception))
-            raise exceptions.HttpDataSendingException("problem sending data")
+            raise exceptions.HTTPDataSendingException("problem sending data")
 
     def send_request_mediated(self, service_connection, request):
         # checks if the service connection is of type asynchronous
@@ -1473,7 +1473,7 @@ class HttpClientServiceHandler(object):
                     # prints an error message about the error in the client side and then
                     # raises the HTTP data sending exception to the upper layers
                     self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
-                    raise exceptions.HttpDataSendingException("problem sending data")
+                    raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the mediated handler and then re-raises
                 # the exception to the top level layers
@@ -1495,7 +1495,7 @@ class HttpClientServiceHandler(object):
             request.mediated_handler.close()
 
             # raises the HTTP data sending exception
-            raise exceptions.HttpDataSendingException("problem sending data")
+            raise exceptions.HTTPDataSendingException("problem sending data")
 
     def send_request_mediated_sync(self, service_connection, request):
         # retrieves the result value
@@ -1512,7 +1512,7 @@ class HttpClientServiceHandler(object):
             request.mediated_handler.close()
 
             # raises the HTTP data sending exception
-            raise exceptions.HttpDataSendingException("problem sending data")
+            raise exceptions.HTTPDataSendingException("problem sending data")
 
         # continuous loop
         while True:
@@ -1539,7 +1539,7 @@ class HttpClientServiceHandler(object):
                     # prints the error message about the error in the client
                     # side and then raises the HTTP data sending exception
                     self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
-                    raise exceptions.HttpDataSendingException("problem sending data")
+                    raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the mediated handler and then
                 # re-raises the exception
@@ -1586,7 +1586,7 @@ class HttpClientServiceHandler(object):
                         # logs the error coming from the client side and then raises
                         # a proper exception indicating the problem in sending data
                         self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
-                        raise exceptions.HttpDataSendingException("problem sending data")
+                        raise exceptions.HTTPDataSendingException("problem sending data")
 
                     # returns immediately
                     return
@@ -1608,7 +1608,7 @@ class HttpClientServiceHandler(object):
                     # logs the error information about the client side error and then
                     # raises the HTTP data sending exception to the upper levels
                     self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
-                    raise exceptions.HttpDataSendingException("problem sending data")
+                    raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the chunk handler reference and then
                 # re-raises the exception to the top stack
@@ -1627,7 +1627,7 @@ class HttpClientServiceHandler(object):
             # closes the chunk(ed) handler and raises a new exception
             self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
             request.chunk_handler.close()
-            raise exceptions.HttpDataSendingException("problem sending data")
+            raise exceptions.HTTPDataSendingException("problem sending data")
 
     def send_request_chunked_sync(self, service_connection, request):
         # retrieves the result value
@@ -1644,7 +1644,7 @@ class HttpClientServiceHandler(object):
             request.chunk_handler.close()
 
             # raises the HTTP data sending exception
-            raise exceptions.HttpDataSendingException("problem sending data")
+            raise exceptions.HTTPDataSendingException("problem sending data")
 
         # continuous loop
         while True:
@@ -1666,7 +1666,7 @@ class HttpClientServiceHandler(object):
                         self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
 
                         # raises the HTTP data sending exception
-                        raise exceptions.HttpDataSendingException("problem sending data")
+                        raise exceptions.HTTPDataSendingException("problem sending data")
 
                     # breaks the cycle
                     break
@@ -1688,7 +1688,7 @@ class HttpClientServiceHandler(object):
                     self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
 
                     # raises the HTTP data sending exception
-                    raise exceptions.HttpDataSendingException("problem sending data")
+                    raise exceptions.HTTPDataSendingException("problem sending data")
             finally:
                 # closes the chunk handler
                 request.chunk_handler.close()
@@ -1700,7 +1700,7 @@ class HttpClientServiceHandler(object):
         """
         Retrieves the value of the keep alive for the given request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to retrieve the keep alive value.
         :rtype: bool
         :return: The value of the keep alive for the given request.
@@ -1730,7 +1730,7 @@ class HttpClientServiceHandler(object):
         """
         The default error handler for exception sending.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to send the error.
         :type exception: Exception
         :param exception: The error to be sent.
@@ -1839,7 +1839,7 @@ class HttpClientServiceHandler(object):
         rules, and then changing the "target" path in accordance
         with matched rule.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be processed.
         :type service_configuration: Dictionary
         :param service_configuration: The service configuration map.
@@ -1921,7 +1921,7 @@ class HttpClientServiceHandler(object):
         domain, running this method allows the connection to be redirected
         to a certain domain in case such behavior is required.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be processed.
         :type service_connection: ServiceConnection
         :param service_connection: The service connection currently in use.
@@ -1978,7 +1978,7 @@ class HttpClientServiceHandler(object):
         this method allows the connection to be redirected to a secure
         channel in case such behavior is required.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be processed.
         :type service_connection: ServiceConnection
         :param service_connection: The service connection currently in use.
@@ -2105,7 +2105,7 @@ class HttpClientServiceHandler(object):
         Processing handler implies matching the path against the
         various handler rules defined to retrieve the valid handler.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be processed.
         :type service_configuration: Dictionary
         :param service_configuration: The service configuration map.
@@ -2205,7 +2205,7 @@ class HttpClientServiceHandler(object):
         # handler plugins map
         if not authentication_handler in http_service_authentication_handler_plugins_map:
             # raises the HTTP authentication handler not found exception
-            raise exceptions.HttpAuthenticationHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler)
+            raise exceptions.HTTPAuthenticationHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler)
 
         # retrieves the HTTP service authentication handler plugin
         http_service_authentication_handler_plugin = http_service_authentication_handler_plugins_map[authentication_handler]
@@ -2229,7 +2229,7 @@ class HttpClientServiceHandler(object):
         Verifies the request information, checking if there is
         any possible security problems associated.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be verified.
         """
 
@@ -2281,7 +2281,7 @@ class HttpClientServiceHandler(object):
         This retrieval takes into account the request target and characteristics
         to merge the virtual servers configurations.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to be used in the resolution
         of the service configuration.
         :rtype: Dictionary
@@ -2435,7 +2435,7 @@ class HttpClientServiceHandler(object):
         # returns the final map
         return final_map
 
-class HttpRequest(object):
+class HTTPRequest(object):
     """
     The HTTP request class.
     """
@@ -2770,7 +2770,7 @@ class HttpRequest(object):
         # in case no content type is defined
         if not content_type:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HttpInvalidMultipartRequestException("no content type defined")
+            raise exceptions.HTTPInvalidMultipartRequestException("no content type defined")
 
         # splits the content type
         content_type_splitted = content_type.split(";")
@@ -2781,7 +2781,7 @@ class HttpRequest(object):
         # in case the content type value is not valid
         if not content_type_value == MULTIPART_FORM_DATA_VALUE:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HttpInvalidMultipartRequestException("invalid content type defined: " + content_type_value)
+            raise exceptions.HTTPInvalidMultipartRequestException("invalid content type defined: " + content_type_value)
 
         # retrieves the boundary value
         boundary = content_type_splitted[1].strip()
@@ -2792,7 +2792,7 @@ class HttpRequest(object):
         # in case the length of the boundary is not two (invalid)
         if not len(boundary_splitted) == 2:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HttpInvalidMultipartRequestException("invalid boundary value: " + boundary)
+            raise exceptions.HTTPInvalidMultipartRequestException("invalid boundary value: " + boundary)
 
         # retrieves the boundary reference and the boundary value,
         # ensures byte compatibility and calculates it's length
@@ -3125,7 +3125,7 @@ class HttpRequest(object):
         # checks if the request contains a status code
         if not self.status_code:
             # raises the HTTP runtime exception
-            raise exceptions.HttpRuntimeException("status code not defined")
+            raise exceptions.HTTPRuntimeException("status code not defined")
 
     def get_server_identifier(self):
         """
@@ -3542,7 +3542,7 @@ class HttpRequest(object):
         # in case no content disposition is defined
         if not content_disposition:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HttpInvalidMultipartRequestException("missing content disposition in multipart value")
+            raise exceptions.HTTPInvalidMultipartRequestException("missing content disposition in multipart value")
 
         # splits the content disposition to obtain the attributes
         content_disposition_attributes = content_disposition.split(";")
@@ -3584,7 +3584,7 @@ class HttpRequest(object):
             # invalid state
             else:
                 # raises the HTTP invalid multipart request exception
-                raise exceptions.HttpInvalidMultipartRequestException(
+                raise exceptions.HTTPInvalidMultipartRequestException(
                     "invalid content disposition value in multipart value: " +\
                     content_disposition_attribute_stripped
                 )

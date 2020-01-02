@@ -59,9 +59,9 @@ SYSTEM_INFORMATION_RESOURCES_PATH = "service_http_system_information/resources"
 SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME = "system_information.html.tpl"
 """ The system information HTML template file name """
 
-class ServiceHttpSystemInformation(colony.System):
+class ServiceHTTPSystemInformation(colony.System):
     """
-    The service http system information (handler) class.
+    The service HTTP system information (handler) class.
     """
 
     def get_handler_name(self):
@@ -76,10 +76,10 @@ class ServiceHttpSystemInformation(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         # sets the request content type

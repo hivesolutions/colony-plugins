@@ -37,9 +37,9 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceHttpException, EncodingNotFound, ClientRequestSecurityViolation,\
-    HttpRuntimeException, HTTPInvalidDataException, HttpNoHandlerException,\
-    HttpHandlerNotFoundException, HttpAuthenticationHandlerNotFoundException,\
-    HttpInvalidMultipartRequestException, HttpDataRetrievalException, HttpDataSendingException,\
+from .exceptions import ServiceHTTPException, EncodingNotFound, ClientRequestSecurityViolation,\
+    HTTPRuntimeException, HTTPInvalidDataException, HTTPNoHandlerException,\
+    HTTPHandlerNotFoundException, HTTPAuthenticationHandlerNotFoundException,\
+    HTTPInvalidMultipartRequestException, HTTPDataRetrievalException, HTTPDataSendingException,\
     UnauthorizedException
-from .system import ServiceHttp
+from .system import ServiceHTTP
