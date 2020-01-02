@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpStarterPlugin(colony.Plugin):
+class ServiceHTTPStarterPlugin(colony.Plugin):
     """
-    The main class for the Http Service Starter plugin.
+    The main class for the HTTP Service Starter plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.starter"
-    name = "Http Service Starter"
-    description = "The plugin that starts the http service"
+    name = "HTTP Service Starter"
+    description = "The plugin that starts the HTTP service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [

@@ -39,9 +39,9 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpStarter(colony.System):
+class ServiceHTTPStarter(colony.System):
     """
-    The service http starter class.
+    The service HTTP starter class.
     """
 
     pass
