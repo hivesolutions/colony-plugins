@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpWebsocketPlugin(colony.Plugin):
+class ServiceHTTPWebsocketPlugin(colony.Plugin):
     """
-    The main class for the Http Service Websocket plugin.
+    The main class for the HTTP Service Websocket plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.websocket"
-    name = "Http Service Websocket"
-    description = "The plugin that offers the http service websocket"
+    name = "HTTP Service Websocket"
+    description = "The plugin that offers the HTTP service websocket"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -65,7 +65,7 @@ class ServiceHttpWebsocketPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_websocket
-        self.system = service_http_websocket.ServiceHttpWebsocket(self)
+        self.system = service_http_websocket.ServiceHTTPWebsocket(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
@@ -87,10 +87,10 @@ class ServiceHttpWebsocketPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

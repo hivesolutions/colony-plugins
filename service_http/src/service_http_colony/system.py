@@ -52,13 +52,13 @@ DEFAULT_ERROR_STATUS_CODE = 500
 is going to be set in the request in case no
 valid status code is set in it """
 
-class ServiceHttpColony(colony.System):
+class ServiceHTTPColony(colony.System):
     """
-    The service http colony (handler) class.
+    The service HTTP colony (handler) class.
     """
 
     http_handler_plugin_map = {}
-    """ The http handler plugin map """
+    """ The HTTP handler plugin map """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
@@ -76,10 +76,10 @@ class ServiceHttpColony(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         # in case the plugin handler value is defined in
@@ -88,7 +88,7 @@ class ServiceHttpColony(colony.System):
             # retrieves the plugin handler id for the plugin handler value
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
-            # retrieves the http handler plugin
+            # retrieves the HTTP handler plugin
             http_handler_plugin = self.http_handler_plugin_map.get(plugin_handler_id, None)
 
             # handles the request by the HTTP handler plugin and

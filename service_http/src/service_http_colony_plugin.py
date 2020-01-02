@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpColonyPlugin(colony.Plugin):
+class ServiceHTTPColonyPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Colony plugin.
     """
@@ -67,7 +67,7 @@ class ServiceHttpColonyPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_colony
-        self.system = service_http_colony.ServiceHttpColony(self)
+        self.system = service_http_colony.ServiceHTTPColony(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
@@ -91,7 +91,7 @@ class ServiceHttpColonyPlugin(colony.Plugin):
         """
         Handles the given HTTP request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 

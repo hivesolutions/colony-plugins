@@ -37,6 +37,6 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceHttpWebsocketException, InvalidHandshakeData,\
+from .exceptions import ServiceHTTPWebsocketException, InvalidHandshakeData,\
     WebsocketHandlerNotFoundException
-from .system import ServiceHttpWebsocket
+from .system import ServiceHTTPWebsocket

@@ -90,9 +90,9 @@ DIGITS_REGEX = re.compile(DIGITS_REGEX_VALUE)
 SPACE_REGEX = re.compile(SPACE_REGEX_VALUE)
 """ The spaces regex """
 
-class ServiceHttpWebsocket(colony.System):
+class ServiceHTTPWebsocket(colony.System):
     """
-    The service http websocket (handler) class.
+    The service HTTP websocket (handler) class.
     """
 
     websocket_handler_plugins_map = {}
@@ -114,10 +114,10 @@ class ServiceHttpWebsocket(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         # creates a new websocket connection
@@ -148,10 +148,10 @@ class WebSocketConnection(object):
     """
 
     service_http_websocket_handler = None
-    """ The service http websocket handler """
+    """ The service HTTP websocket handler """
 
     request = None
-    """ The http request object """
+    """ The HTTP request object """
 
     service = None
     """ The service that was used to handle the
@@ -170,10 +170,10 @@ class WebSocketConnection(object):
         """
         Constructor of the class.
 
-        :type service_http_websocket_handler: ServiceHttpWebsocketHandler
-        :param service_http_websocket_handler: The service http websocket handler.
-        :type request: HttpRequest
-        :param request: The http request associated with the
+        :type service_http_websocket_handler: ServiceHTTPWebsocketHandler
+        :param service_http_websocket_handler: The service HTTP websocket handler.
+        :type request: HTTPRequest
+        :param request: The HTTP request associated with the
         opening of the websocket.
         """
 
@@ -274,7 +274,7 @@ class WebSocketConnection(object):
 
         # sets the request handler for the service as the original
         # (HTTP) request handler, this step "downgrades" the protocol
-        # interpretation (back to http)
+        # interpretation (back to HTTP)
         self.service.unset_service_connection_request_handler(self.service_connection)
 
     def websocket_service_connection_handler(self, service_connection):

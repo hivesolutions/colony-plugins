@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpWebsocketException(colony.ColonyException):
+class ServiceHTTPWebsocketException(colony.ColonyException):
     """
-    The service http websocket exception class.
+    The service HTTP websocket exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidHandshakeData(ServiceHttpWebsocketException):
+class InvalidHandshakeData(ServiceHTTPWebsocketException):
     """
     The invalid handshake data class.
     """
@@ -60,7 +60,7 @@ class InvalidHandshakeData(ServiceHttpWebsocketException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpWebsocketException.__init__(self)
+        ServiceHTTPWebsocketException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class InvalidHandshakeData(ServiceHttpWebsocketException):
 
         return "Invalid handshake data - %s" % self.message
 
-class WebsocketHandlerNotFoundException(ServiceHttpWebsocketException):
+class WebsocketHandlerNotFoundException(ServiceHTTPWebsocketException):
     """
     The websocket handler not found exception class.
     """
@@ -86,7 +86,7 @@ class WebsocketHandlerNotFoundException(ServiceHttpWebsocketException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpWebsocketException.__init__(self)
+        ServiceHTTPWebsocketException.__init__(self)
         self.message = message
 
     def __str__(self):
