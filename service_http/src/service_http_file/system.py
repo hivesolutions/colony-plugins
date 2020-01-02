@@ -105,9 +105,9 @@ ITEM_SORT_MAP = {
 }
 """ Map used for list sorting """
 
-class ServiceHttpFile(colony.System):
+class ServiceHTTPFile(colony.System):
     """
-    The service http file (handler) class.
+    The service HTTP file (handler) class.
     """
 
     directory_handler_plugins_map = {}
@@ -133,10 +133,10 @@ class ServiceHttpFile(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         # retrieves the plugin manager
@@ -181,7 +181,7 @@ class ServiceHttpFile(colony.System):
         # in case the real base directory was not resolved
         # (file was not found using the plugin system)
         if not real_base_directory:
-            # raises file not found exception with 404 http error code
+            # raises file not found exception with 404 HTTP error code
             raise exceptions.FileNotFoundException(resource_path, 404)
 
         # in case the relative paths are disabled
@@ -218,7 +218,7 @@ class ServiceHttpFile(colony.System):
 
         # in case the paths does not exist
         if not os.path.exists(complete_path):
-            # raises file not found exception with 404 http error code
+            # raises file not found exception with 404 HTTP error code
             raise exceptions.FileNotFoundException(resource_path, 404)
 
         # retrieves the file stat
@@ -300,7 +300,7 @@ class ServiceHttpFile(colony.System):
         """
         The default directory handler for exception sending.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The request to send the directory list.
         :type directory_list: List
         :param directory_list: The list of directory entries.
@@ -334,8 +334,8 @@ class ServiceHttpFile(colony.System):
         Processes a directory request for the given complete
         path and request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         :type complete_path: String
         :param complete_path: The complete path to the directory.
         """
@@ -426,8 +426,8 @@ class ServiceHttpFile(colony.System):
         Processes a file request for the given complete
         path and request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         :type complete_path: String
         :param complete_path: The complete path to the file.
         """
@@ -484,7 +484,7 @@ class ServiceHttpFile(colony.System):
                 # breaks the loop
                 break
             else:
-                # in case the preferred directory handler exist in the http service
+                # in case the preferred directory handler exist in the HTTP service
                 # directory handler plugins map
                 if preferred_directory_handler in directory_handler_plugins_map:
                     # retrieves the directory handler plugin
@@ -500,8 +500,8 @@ class ServiceHttpFile(colony.System):
         """
         Redirects the given request to the target path.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         :type target_path: String
         :param target_path: The target path of the redirection.
         :type status_code: int
@@ -524,8 +524,8 @@ class ServiceHttpFile(colony.System):
         Processes the ranges for the given request,
         using the given file size.
 
-        :type request: HttpRequest
-        :param request: The http request to used in the processing.
+        :type request: HTTPRequest
+        :param request: The HTTP request to used in the processing.
         :type file_size: int
         :param file_size: The size of the file to be used.
         """

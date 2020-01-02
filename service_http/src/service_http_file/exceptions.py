@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpFileException(colony.ColonyException):
+class ServiceHTTPFileException(colony.ColonyException):
     """
-    The service http file exception class.
+    The service HTTP file exception class.
     """
 
     message = None
     """ The exception's message """
 
-class FileNotFoundException(ServiceHttpFileException):
+class FileNotFoundException(ServiceHTTPFileException):
     """
     The file not found exception class.
     """
@@ -62,10 +62,10 @@ class FileNotFoundException(ServiceHttpFileException):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
-        ServiceHttpFileException.__init__(self)
+        ServiceHTTPFileException.__init__(self)
         self.message = message
         self.status_code = status_code
 
@@ -79,7 +79,7 @@ class FileNotFoundException(ServiceHttpFileException):
 
         return "File not found - %s" % self.message
 
-class NotImplementedException(ServiceHttpFileException):
+class NotImplementedException(ServiceHTTPFileException):
     """
     The not implemented exception class.
     """
@@ -94,10 +94,10 @@ class NotImplementedException(ServiceHttpFileException):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
-        ServiceHttpFileException.__init__(self)
+        ServiceHTTPFileException.__init__(self)
         self.message = message
         self.status_code = status_code
 
