@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpFastCgiPlugin(colony.Plugin):
+class ServiceHTTPFastCGIPlugin(colony.Plugin):
     """
-    The main class for the Http Service Fast Cgi plugin.
+    The main class for the HTTP Service FastCGI plugin.
     """
 
     id = "pt.hive.colony.plugins.service.http.fast_cgi"
-    name = "Http Service Fast Cgi"
-    description = "The plugin that offers the http service fast cgi"
+    name = "HTTP Service FastCGI"
+    description = "The plugin that offers the HTTP service FastCGI"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -67,7 +67,7 @@ class ServiceHttpFastCgiPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_fast_cgi
-        self.system = service_http_fast_cgi.ServiceHttpFastCgi(self)
+        self.system = service_http_fast_cgi.ServiceHTTPFastCGI(self)
 
     def get_handler_name(self):
         """
@@ -81,10 +81,10 @@ class ServiceHttpFastCgiPlugin(colony.Plugin):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         return self.system.handle_request(request)

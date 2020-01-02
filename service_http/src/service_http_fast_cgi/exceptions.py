@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ServiceHttpFastCgiException(colony.ColonyException):
+class ServiceHTTPFastCGIException(colony.ColonyException):
     """
-    The service http fast cgi exception class.
+    The service HTTP FastCGI exception class.
     """
 
     message = None
     """ The exception's message """
 
-class RequestNotHandled(ServiceHttpFastCgiException):
+class RequestNotHandled(ServiceHTTPFastCGIException):
     """
     The request not handled class.
     """
@@ -60,7 +60,7 @@ class RequestNotHandled(ServiceHttpFastCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpFastCgiException.__init__(self)
+        ServiceHTTPFastCGIException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,35 +73,9 @@ class RequestNotHandled(ServiceHttpFastCgiException):
 
         return "Request Not handled - %s" % self.message
 
-class InvalidFastCgiData(ServiceHttpFastCgiException):
+class InvalidFastCGIData(ServiceHTTPFastCGIException):
     """
-    The invalid fast cgi data class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        :type message: String
-        :param message: The message to be printed.
-        """
-
-        ServiceHttpFastCgiException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        :rtype: String
-        :return: The string representation of the class.
-        """
-
-        return "Invalid fast cgi data - %s" % self.message
-
-class InvalidFastCgiHeader(ServiceHttpFastCgiException):
-    """
-    The invalid fast cgi header class.
+    The invalid FastCGI data class.
     """
 
     def __init__(self, message):
@@ -112,7 +86,7 @@ class InvalidFastCgiHeader(ServiceHttpFastCgiException):
         :param message: The message to be printed.
         """
 
-        ServiceHttpFastCgiException.__init__(self)
+        ServiceHTTPFastCGIException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -123,4 +97,30 @@ class InvalidFastCgiHeader(ServiceHttpFastCgiException):
         :return: The string representation of the class.
         """
 
-        return "Invalid fast cgi header - %s" % self.message
+        return "Invalid FastCGI data - %s" % self.message
+
+class InvalidFastCGIHeader(ServiceHTTPFastCGIException):
+    """
+    The invalid FastCGI header class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        ServiceHTTPFastCGIException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "Invalid FastCGI header - %s" % self.message

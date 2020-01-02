@@ -37,6 +37,6 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceHttpFastCgiException, RequestNotHandled, InvalidFastCgiData,\
-    InvalidFastCgiHeader
-from .system import ServiceHttpFastCgi
+from .exceptions import ServiceHTTPFastCGIException, RequestNotHandled, InvalidFastCGIData,\
+    InvalidFastCGIHeader
+from .system import ServiceHTTPFastCGI

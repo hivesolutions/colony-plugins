@@ -130,73 +130,73 @@ DEFAULT_STATUS = 200
 """ The default status """
 
 FCGI_VERSION_1_VALUE = 1
-""" The fcgi version one value """
+""" The FastCGI version one value """
 
 FCGI_BEGIN_REQUEST_VALUE = 1
-""" The fcgi begin request value """
+""" The FastCGI begin request value """
 
 FCGI_ABORT_REQUEST_VALUE = 2
-""" The fcgi abort request value """
+""" The FastCGI abort request value """
 
 FCGI_END_REQUEST_VALUE = 3
-""" The fcgi end request value """
+""" The FastCGI end request value """
 
 FCGI_PARAMS_VALUE = 4
-""" The fcgi params value """
+""" The FastCGI params value """
 
 FCGI_STDIN_VALUE = 5
-""" The fcgi stdin value """
+""" The FastCGI stdin value """
 
 FCGI_STDOUT_VALUE = 6
-""" The fcgi stdout value """
+""" The FastCGI stdout value """
 
 FCGI_STDERR_VALUE = 7
-""" The fcgi stderr value """
+""" The FastCGI stderr value """
 
 FCGI_DATA_VALUE = 8
-""" The fcgi data value """
+""" The FastCGI data value """
 
 FCGI_GET_VALUES_VALUE = 9
-""" The fcgi get values value """
+""" The FastCGI get values value """
 
 FCGI_GET_VALUES_RESULT_VALUE = 10
-""" The fcgi get values result value """
+""" The FastCGI get values result value """
 
 FCGI_UNKNOWN_TYPE_VALUE = 11
-""" The fcgi unknown type value """
+""" The FastCGI unknown type value """
 
 FCGI_MAXTYPE_VALUE = FCGI_UNKNOWN_TYPE_VALUE
-""" The fcgi maxtype value """
+""" The FastCGI maxtype value """
 
 FCGI_KEEP_CONN_VALUE = 1
-""" The fcgi keep conn value """
+""" The FastCGI keep conn value """
 
 FCGI_RESPONDER_VALUE = 1
-""" The fcgi responder value """
+""" The FastCGI responder value """
 
 FCGI_AUTHORIZER_VALUE = 2
-""" The fcgi authorizer value """
+""" The FastCGI authorizer value """
 
 FCGI_FILTER_VALUE = 3
-""" The fcgi filter value """
+""" The FastCGI filter value """
 
 FCGI_HEADER_LENGTH = 8
-""" The fcgi header length """
+""" The FastCGI header length """
 
 FCGI_HEADER_STRUCT = "!BBHHBx"
-""" The fcgi header struct """
+""" The FastCGI header struct """
 
 FCGI_BEGIN_REQUEST_BODY_STRUCT = "!HB5x"
-""" The fcgi begin header body struct """
+""" The FastCGI begin header body struct """
 
 FCGI_END_REQUEST_BODY_STRUCT = "!LB3x"
-""" The fcgi request body struct """
+""" The FastCGI request body struct """
 
 FCGI_UNKNOWN_TYPE_BODY_STRUCT = "!B7x"
-""" The fcgi unknown type body struct """
+""" The FastCGI unknown type body struct """
 
 FCGI_PARAMS_LENGTH_STRUCT = "!II"
-""" The fcgi params length struct """
+""" The FastCGI params length struct """
 
 INTERNET_CONNECTION_TYPE = 1
 """ The internet connection type """
@@ -222,9 +222,9 @@ DEFAULT_CONNECTION_ARGUMENTS = (
 )
 """ The default connection arguments type """
 
-class ServiceHttpFastCgi(colony.System):
+class ServiceHTTPFastCGI(colony.System):
     """
-    The service http fast CGI (handler) class.
+    The service HTTP FastCGI (handler) class.
     """
 
     connection_map = {}
@@ -246,10 +246,10 @@ class ServiceHttpFastCgi(colony.System):
 
     def handle_request(self, request):
         """
-        Handles the given http request.
+        Handles the given HTTP request.
 
-        :type request: HttpRequest
-        :param request: The http request to be handled.
+        :type request: HTTPRequest
+        :param request: The HTTP request to be handled.
         """
 
         # reads the request contents
@@ -261,7 +261,7 @@ class ServiceHttpFastCgi(colony.System):
         # retrieves the request file name
         request_filename = request.filename
 
-        # retrieves the request http service connection
+        # retrieves the request HTTP service connection
         request_service_connection = request.service_connection
 
         # retrieves the request operation type
@@ -404,7 +404,7 @@ class ServiceHttpFastCgi(colony.System):
             contents = "".join(stdout_data_splitted[1:])
         except Exception:
             # raises the invalid CGI data exception
-            raise exceptions.InvalidFastCgiData("problem parsing the fast CGI data")
+            raise exceptions.InvalidFastCGIData("problem parsing the FastCGI data")
 
         try:
             # splits the header string retrieving the headers list
@@ -427,8 +427,8 @@ class ServiceHttpFastCgi(colony.System):
                 # sets the header value in the headers map
                 headers_map[header_name_stripped] = header_value_stripped
         except Exception:
-            # raises the invalid CGI header exception
-            raise exceptions.InvalidFastCgiHeader("problem parsing the fast CGI header")
+            # raises the invalid FastCGI header exception
+            raise exceptions.InvalidFastCGIHeader("problem parsing the FastCGI header")
 
         # retrieves the content type
         content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
@@ -446,7 +446,7 @@ class ServiceHttpFastCgi(colony.System):
         request.status_code = status
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no fast CGI handler could handle the request")
+        raise exceptions.RequestNotHandled("no FastCGI handler could handle the request")
 
     def _get_connection(self, connection_type, connection_arguments):
         """
@@ -467,8 +467,8 @@ class ServiceHttpFastCgi(colony.System):
         # in case the connection id tuples does not exists
         # in the connection map
         if not connection_id_tuple in self.connection_map:
-            # creates a new fast CGI connection
-            connection = FastCgiConnection(connection_type, connection_arguments)
+            # creates a new FastCGI connection
+            connection = FastCGIConnection(connection_type, connection_arguments)
 
             # establishes the connection
             connection.establish_connection()
@@ -482,9 +482,9 @@ class ServiceHttpFastCgi(colony.System):
         # returns the connection
         return connection
 
-class FastCgiConnection(object):
+class FastCGIConnection(object):
     """
-    The fast CGI connection class.
+    The FastCGI connection class.
     """
 
     connection_type = INTERNET_CONNECTION_TYPE
