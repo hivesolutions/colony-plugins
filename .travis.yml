@@ -23,9 +23,6 @@ matrix:
   - python: pypy
     dist: xenial
     sudo: true
-  - python: pypy3
-    dist: xenial
-    sudo: true
 before_install:
   - pip install --upgrade pip setuptools
 install:
@@ -38,7 +35,7 @@ env:
     - REPO_URL_COLONY="https://colony.bemisc.com/"
     - REPO_USERNAME=root
     - secure: l7gFGuBD1TmMF7nCnkDcsm6LCbOt5s7S6cO6YdXD35HebULtxWbbxNGPehxcZ03AbBX/arLFeowHqNgd9gPnWenzErkUGVu3uF1Q5St46Tb3p9Ga3obnsJPh3bBw8YWElzp6unZy+XpSpqsxTTPqAPC6ZhVAzKNGfcXSeGgAPLE=
-script: PLUGIN_PATH="./*/src;./*/*src" coverage run --source=colony setup.py test
+script: PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test
 after_success:
   - coveralls
   - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then cpm upload "./*/*/*_plugin.py" colony; fi
