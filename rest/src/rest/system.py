@@ -1044,8 +1044,8 @@ class RESTRequest(object):
         self,
         force = False,
         session_id = None,
-        timeout = DEFAULT_TIMEOUT,
-        maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT
+        timeout = None,
+        maximum_timeout = None
     ):
         """
         Starts the session for the given session id,
@@ -1072,13 +1072,28 @@ class RESTRequest(object):
         # must return immediately
         if self._session and not force: return self._session
 
-        # in case no session id is defined, must generate a new
+        # in case no session ID is defined, must generate a new
         # one using a secure algorithm for it (avoid corruption)
-        if not session_id:
+        if session_id == None:
             # retrieves the random plugin and uses it to generate
             # a new random based session identifier to be used
             random_plugin = self.rest.plugin.random_plugin
             session_id = random_plugin.generate_random_md5_string()
+
+        # "calculates" the basic timeout and maximum timeout values
+        # in case they have not been provided, these values are going
+        # to be calculated using configuration variables or static
+        # "hardcoded" values otherwise
+        if timeout == None:
+            timeout = colony.conf("SESSION_TIMEOUT", DEFAULT_TIMEOUT, cast = int)
+        if maximum_timeout == None:
+            factor = colony.conf("SESSION_FACTOR", None, cast = int)
+            maximum_timeout = colony.conf(
+                "SESSION_MAX_TIMEOUT",
+                DEFAULT_MAXIMUM_TIMEOUT,
+                cast = int
+            )
+            if factor: maximum_timeout = timeout * factor
 
         # creates a new REST session and sets
         # it as the current session (uses the timeout information)
@@ -1744,14 +1759,7 @@ class RESTRequest(object):
         """
 
         session = self.get_session()
-        if not session:
-            timeout = colony.conf("SESSION_TIMEOUT", DEFAULT_TIMEOUT, cast = int)
-            factor = colony.conf("SESSION_FACTOR", 64, cast = int)
-            maximum_timeout = timeout * factor
-            session = self.start_session(
-                timeout = timeout,
-                maximum_timeout = maximum_timeout
-            )
+        if not session: session = self.start_session()
         session.set_attribute(name, value)
 
     def unset_s(self, name):
