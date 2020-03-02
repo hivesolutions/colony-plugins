@@ -92,9 +92,9 @@ DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 is going to be used in the cookie to "notify" the client
 about the expiration of it """
 
-DEFAULT_TIMEOUT = 604800
-""" The default timeout (seven days of life) to be used,
-note that a "touch" operation on the session will
+DEFAULT_TIMEOUT = 2419200
+""" The default timeout (twenty eight days of life) to be
+used, note that a "touch" operation on the session will
 extend the session lifetime and ensure that there's
 always the same time until expiration """
 
@@ -1744,7 +1744,14 @@ class RESTRequest(object):
         """
 
         session = self.get_session()
-        if not session: session = self.start_session()
+        if not session:
+            timeout = colony.conf("SESSION_TIMEOUT", DEFAULT_TIMEOUT, cast = int)
+            factor = colony.conf("SESSION_FACTOR", 64, cast = int)
+            maximum_timeout = timeout * factor
+            session = self.start_session(
+                timeout = timeout,
+                maximum_timeout = maximum_timeout
+            )
         session.set_attribute(name, value)
 
     def unset_s(self, name):
