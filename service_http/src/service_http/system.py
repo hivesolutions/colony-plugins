@@ -2587,7 +2587,7 @@ class HTTPRequest(object):
 
     allow_cookies = True
     """ If the setting of cookies through the set cookie header
-    is allowed for the current rest request context """
+    is allowed for the current REST request context """
 
     properties = {}
     """ The properties """
