@@ -70,7 +70,7 @@ class APIYadis(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
         # retrieves the Yadis structure (if available)
@@ -89,20 +89,20 @@ class YadisClient(object):
     """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     yadis_structure = None
     """ The Yadis structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, client_http_plugin = None, yadis_structure = None):
         """
         Constructor of the class.
 
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
         :type yadis_structure: YadisStructure
         :param yadis_structure: The Yadis structure.
         """
@@ -122,9 +122,9 @@ class YadisClient(object):
         Closes the Yadis client.
         """
 
-        # in case an http client is defined
+        # in case an HTTP client is defined
         if self.http_client:
-            # closes the http client
+            # closes the HTTP client
             self.http_client.close({})
 
     def generate_yadis_structure(self, provider_url, set_structure = True):
@@ -211,7 +211,7 @@ class YadisClient(object):
         :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
         # build the URL from the base URL
@@ -239,13 +239,13 @@ class YadisClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the URL retrieving the http response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -253,27 +253,27 @@ class YadisClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class YadisStructure(object):
