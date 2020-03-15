@@ -87,7 +87,7 @@ class MVCFileHandler(object):
         """
         Handles the given HTTP request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         :rtype: bool
         :return: The result of the handling.

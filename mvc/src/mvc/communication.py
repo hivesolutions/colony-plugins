@@ -69,7 +69,7 @@ class MVCCommunicationHandler(object):
     a domain for which messages are diffused (diffusion scope).
 
     A communication connection is a virtual connection created
-    between peers through various http requests or any other proxy
+    between peers through various HTTP requests or any other proxy
     communication infra-structure. The communication connection may
     be identified by the connection name and the id of the connection,
     this value is considered the connection information.
@@ -97,7 +97,7 @@ class MVCCommunicationHandler(object):
 
     service_connections_map = {}
     """ The map associating the service connection
-    (http connection) with the connections belonging
+    (HTTP connection) with the connections belonging
     to the it (multiplexing may exist) """
 
     connection_informations_map = {}
@@ -278,7 +278,7 @@ class MVCCommunicationHandler(object):
         Handles the given request.
 
         :type request: Request
-        :param request: The http request to be handled.
+        :param request: The HTTP request to be handled.
         :type delegate: Object
         :param delegate: The object to be used to delegate
         operations associated with the communication changes.
@@ -523,7 +523,7 @@ class MVCCommunicationHandler(object):
         serialization of messages.
 
         :type request: Request
-        :param request: The http request to be used in the
+        :param request: The HTTP request to be used in the
         writing operation to be performed.
         :type connection: CommunicationConnection
         :param connection: The communication connection to used
@@ -559,8 +559,8 @@ class MVCCommunicationHandler(object):
         given request (using the id value from it) and
         connection name.
 
-        :type request: HttpRequest
-        :param request: The http request to be used to retrieve
+        :type request: HTTPRequest
+        :param request: The HTTP request to be used to retrieve
         the id.
         :type connection_name: String
         :param connection_name: The name of the connection to be
@@ -1101,7 +1101,14 @@ class CommunicationConnection(object):
     """ The event about the new message operation
     in the message queue """
 
-    def __init__(self, communication_handler, connection_id, connection_name, service_connection = None, delegate = None):
+    def __init__(
+        self,
+        communication_handler,
+        connection_id,
+        connection_name,
+        service_connection = None,
+        delegate = None
+    ):
         """
         Constructor of the class.
 
