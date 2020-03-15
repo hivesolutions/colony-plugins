@@ -100,7 +100,7 @@ class MVC(colony.System):
     """ The MVC communication handler """
 
     clear_pending = False
-    """ Flag that controls if the rest sessions should be
+    """ Flag that controls if the REST sessions should be
     cleared at the next tick of handling """
 
     matching_regex_list = []
@@ -215,11 +215,11 @@ class MVC(colony.System):
     def get_routes(self):
         """
         Retrieves the list of regular expressions to be used as route,
-        to the rest service.
+        to the REST service.
 
         :rtype: List
         :return: The list of regular expressions to be used as route,
-        to the rest service.
+        to the REST service.
         """
 
         return [
@@ -228,7 +228,7 @@ class MVC(colony.System):
 
     def handle_rest_request(self, rest_request):
         """
-        Handles the given rest request, the method starts by
+        Handles the given REST request, the method starts by
         trying to match any of the regular expression in the
         various areas, in case it matches handles it accordingly
         and processes the request (post request execution).
@@ -237,13 +237,13 @@ class MVC(colony.System):
         and at last normal (dynamic) handling.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be handled, this
+        :param rest_request: The REST request to be handled, this
         value is going to be encapsulated into an abstract request
         interface to be handled by the underlying MVC services.
         """
 
         # in case the clear pending flag is set must remove
-        # (clear) all the current sessions from the rest manager
+        # (clear) all the current sessions from the REST manager
         # this is a global reset (side problems may occur with
         # different structures for the same class colliding)
         if self.clear_pending:
@@ -757,7 +757,7 @@ class MVC(colony.System):
         # iterates over all the pattern attributes (handler attributes)
         # in the pattern attributes list
         for handler_attributes in pattern_attributes_list:
-            # tries to validation the match using the rest request,
+            # tries to validation the match using the REST request,
             # handler attributes and the resource path
             return_value = self.__validate_match(rest_request, handler_attributes, resource_path)
 
@@ -781,7 +781,7 @@ class MVC(colony.System):
         of "dispatching" for the request.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be "handled".
+        :param rest_request: The REST request to be "handled".
         :type handler_tuple: Tuple
         :param handler_tuple: The tuple containing the handler method
         and the parameters to be used for handling.
@@ -811,7 +811,7 @@ class MVC(colony.System):
         # verifies if the handler method is either a method (received
         # the self context as first argument) or a plain function so
         # that if it is a method the context will be considered the
-        # controller and so it must be set in the rest request for
+        # controller and so it must be set in the REST request for
         # context based diffusion (may be used to retrieve controller
         # inside a model context) as defined in specification, this
         # operation is considered to be the controller injection
@@ -819,7 +819,7 @@ class MVC(colony.System):
         controller = handler_method.__self__ if has_self else None
         rest_request.controller = controller
 
-        # injects the parameters in the rest request so that any
+        # injects the parameters in the REST request so that any
         # underlying method is able to recover the parameters without
         # the proper parameters passing (useful for simplifications)
         rest_request.parameters = parameters
@@ -843,7 +843,7 @@ class MVC(colony.System):
         # in case there's an encoder name defined and the controller
         # plugin references an encoding plugin that candidates for that
         # type of encoding the same plugin is set as the serializer for
-        # the current rest request being handled
+        # the current REST request being handled
         if encoder and hasattr(controller.plugin, encoder + "_plugin"):
             encoder_plugin = getattr(controller.plugin, encoder + "_plugin")
             parameters["serializer"] = encoder_plugin
@@ -859,7 +859,7 @@ class MVC(colony.System):
             controller.get_default_parameters() or {}
         colony.map_extend(parameters, default_parameters, copy_base_map = False)
 
-        # handles the MVC request to the handler method (rest
+        # handles the MVC request to the handler method (REST
         # request flow) note that the call is done using the safe
         # call method so that only the valid arguments are passed
         # to the handler method (pattern names validation)
@@ -872,17 +872,17 @@ class MVC(colony.System):
 
     def _process_request(self, rest_request):
         """
-        Processes the given rest request, changing its
-        attributes to provide a valid rest request.
+        Processes the given REST request, changing its
+        attributes to provide a valid REST request.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be "processed".
+        :param rest_request: The REST request to be "processed".
         """
 
-        # retrieves the rest request status code
+        # retrieves the REST request status code
         rest_request_status_code = rest_request.get_status_code()
 
-        # checks if the status code is set in the rest request
+        # checks if the status code is set in the REST request
         # and in case it's not sets the default code (no error)
         is_set_status_code = rest_request_status_code and True or False
         not is_set_status_code and rest_request.set_status_code(DEFAULT_STATUS_CODE)
@@ -1137,7 +1137,7 @@ class MVC(colony.System):
 
         # runs the regex based replacement chain that should translate
         # the expression from a simplified domain into a regex based domain
-        # that may be correctly compiled into the rest environment, then sets
+        # that may be correctly compiled into the REST environment, then sets
         # the new expression value as the first element of the pattern
         expression = INT_REGEX.sub(r"(?P[\1>[\\d]+)", expression)
         expression = REGEX_REGEX.sub(r"(?P[\2>\1)", expression)
@@ -1215,12 +1215,12 @@ class MVC(colony.System):
         operation_types = self.__cast_tuple(operation_types)
         encoders = self.__cast_tuple(encoders)
 
-        # retrieves the request from the rest request to be used
+        # retrieves the request from the REST request to be used
         # in the retrieval of some attributes
         request = rest_request.get_request()
 
         # retrieves the various attributes associated with both the
-        # request and the rest request that are going to be used in
+        # request and the REST request that are going to be used in
         # the validation process
         operation_type_r = request.operation_type
         operation_type_r = operation_type_r.lower()

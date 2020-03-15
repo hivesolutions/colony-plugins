@@ -104,21 +104,21 @@ class MVCPlugin(colony.Plugin):
     def get_routes(self):
         """
         Retrieves the list of regular expressions to be used as route,
-        to the rest service.
+        to the REST service.
 
         :rtype: List
         :return: The list of regular expressions to be used as route,
-        to the rest service.
+        to the REST service.
         """
 
         return self.system.get_routes()
 
     def handle_rest_request(self, rest_request):
         """
-        Handles the given rest request.
+        Handles the given REST request.
 
         :type rest_request: RestRequest
-        :param rest_request: The rest request to be handled.
+        :param rest_request: The REST request to be handled.
         :rtype: bool
         :return: The result of the handling.
         """
