@@ -42,7 +42,7 @@ from . import system
 from . import utils
 
 from .exceptions import MVCUtilsExceptionException, InvalidValidationMethod, InvalidAttributeName,\
-    InsufficientHttpInformation, NotFoundError, ValidationError, ModelValidationError,\
+    InsufficientHTTPInformation, NotFoundError, ValidationError, ModelValidationError,\
     ControllerValidationError, ControllerValidationReasonFailed, ValidationMethodError,\
     ModelApplyException
 from .system import MVCUtils

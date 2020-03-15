@@ -99,9 +99,9 @@ class InvalidAttributeName(MVCUtilsExceptionException):
 
         return "Invalid attribute name - %s" % self.message
 
-class InsufficientHttpInformation(MVCUtilsExceptionException):
+class InsufficientHTTPInformation(MVCUtilsExceptionException):
     """
-    The insufficient http information error class.
+    The insufficient HTTP information error class.
     """
 
     def __init__(self, message):
@@ -123,7 +123,7 @@ class InsufficientHttpInformation(MVCUtilsExceptionException):
         :return: The string representation of the class.
         """
 
-        return "Insufficient http information - %s" % self.message
+        return "Insufficient HTTP information - %s" % self.message
 
 class NotFoundError(MVCUtilsExceptionException):
     """
@@ -131,7 +131,7 @@ class NotFoundError(MVCUtilsExceptionException):
     """
 
     status_code = 404
-    """ The http based status code to be used when
+    """ The HTTP based status code to be used when
     raising this exception through the pipeline """
 
     def __init__(self, message):
@@ -274,7 +274,7 @@ class ControllerValidationError(ValidationError):
     """ The controller that failed the validation """
 
     status_code = 403
-    """ The http based status code to be used when
+    """ The HTTP based status code to be used when
     raising this exception through the pipeline """
 
     def __init__(self, message, controller = None):

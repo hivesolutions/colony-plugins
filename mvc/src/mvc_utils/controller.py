@@ -79,7 +79,7 @@ MAX_TIMESTAMP = 10000000000 if os.name == "nt" else 2147483647
 system to return pseudo open ranges """
 
 HTTP_PREFIX_VALUE = "http://"
-""" The http prefix value """
+""" The HTTP prefix value """
 
 HTTPS_PREFIX_VALUE = "https://"
 """ The https prefix value """
@@ -834,7 +834,7 @@ def get_field_models(self, request, field_name = None, model = None, data_type =
 
 def url_for(self, request, reference, filename = None, *args, **kwargs):
     """
-    Resolves the relative url to a request resource (either static or dynamic)
+    Resolves the relative URL to a request resource (either static or dynamic)
     the details of the resolution process should be described in the lower layer
     of the MVC system.
 
@@ -844,7 +844,7 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
 
     :type request: Request
     :param request: The request that is going to be used for the complete set
-    of context aware operations for url resolution.
+    of context aware operations for URL resolution.
     :type reference: String
     :param reference: A string describing the resource that is meant to be resolved
     should be static for static resources or a dynamic string describing the
@@ -853,14 +853,14 @@ def url_for(self, request, reference, filename = None, *args, **kwargs):
     :param filename: Optional name to be used in the resolution of static resources
     this value should be called using a non named strategy.
     :rtype: String
-    :return: The relative url path value to the resource taking into account the
+    :return: The relative URL path value to the resource taking into account the
     base path or the MVC path defined for the current request.
     """
 
     # retrieves the base path for the current request
     # so that the complete path may be constructor, keep
     # in mind that the generated location is always a
-    # relative one and never an absolute url
+    # relative one and never an absolute URL
     base_path = self.get_base_path(request)
     mvc_path = self.get_mvc_path(request)
     location = ""
@@ -1756,12 +1756,12 @@ def get_base_path_complete(self, request, suffix_path = "", prefix_path = HTTP_P
     """
 
     # tries retrieves the host value for the base
-    # value of the url construction
+    # value of the URL construction
     host = self._get_host(request)
 
     # in case no host is defined, must raise the
-    # insufficient http information exception
-    if not host: raise exceptions.InsufficientHttpInformation("no host value defined")
+    # insufficient HTTP information exception
+    if not host: raise exceptions.InsufficientHTTPInformation("no host value defined")
 
     # retrieves the path, removes the arguments part
     # of it and the splits it in the separator value
@@ -1780,7 +1780,7 @@ def get_base_path_complete(self, request, suffix_path = "", prefix_path = HTTP_P
 
     # calculates the base path list length as the difference
     # between the path list length and the request path list length
-    # (the remaining part of the url excluding the request part)
+    # (the remaining part of the URL excluding the request part)
     base_path_list_length = path_list_length - request_path_list_length
 
     # calculates the complete length for the path list and then
@@ -1895,7 +1895,7 @@ def get_referer(self, request):
     :type request: Request
     :param request: The request to be used.
     :rtype: String
-    :return: The retrieved referer value (url).
+    :return: The retrieved referer value (URL).
     """
 
     # retrieves the "referer" header and returns
@@ -1931,7 +1931,7 @@ def redirect(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # redirects the request to the target and sets the contents in
@@ -1971,7 +1971,7 @@ def redirect_list(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the appropriate level value, defaulting to the class
@@ -1981,7 +1981,7 @@ def redirect_list(
     level = level or entity.__class__
 
     # converts the entity class name to pluralized version, then
-    # creates the target (list url) from the pluralized entity name
+    # creates the target (list URL) from the pluralized entity name
     # and redirects the request to the defined target
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized
@@ -2023,7 +2023,7 @@ def redirect_action(
     (eg: sales.json).
     :type id_string: String
     :param id_string: The value to be used in the identifier
-    part of the url to be generated, in case this value is not
+    part of the URL to be generated, in case this value is not
     provided the id value is inferred from the provided entity.
     :type level: Class
     :param level: Optional class level to be used to retrieve
@@ -2039,7 +2039,7 @@ def redirect_action(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the appropriate level value, defaulting to the class
@@ -2059,7 +2059,7 @@ def redirect_action(
         entity_id_attribute_value_string = str(entity_id_attribute_value)
         id_string = entity_id_attribute_value_string
 
-    # creates the target (edit url) from the pluralized entity name
+    # creates the target (edit URL) from the pluralized entity name
     # and the entity id attribute value string and redirects the
     # request to the target (path)
     target = entity_class_pluralized + "/" + id_string +\
@@ -2105,7 +2105,7 @@ def redirect_create(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the appropriate level value, defaulting to the class
@@ -2115,7 +2115,7 @@ def redirect_create(
     level = level or entity.__class__
 
     # converts the entity class name to pluralized version then
-    # creates the target (create url) from the pluralized entity name
+    # creates the target (create URL) from the pluralized entity name
     # and redirects the request to the target (path)
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class = level)
     target = entity_class_pluralized + "/new"
@@ -2160,7 +2160,7 @@ def redirect_show(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     self.redirect_action(
@@ -2205,7 +2205,7 @@ def redirect_edit(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     self.redirect_action(
@@ -2251,7 +2251,7 @@ def redirect_delete(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     self.redirect_action(
@@ -2295,7 +2295,7 @@ def redirect_base_path(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the base path and uses it to crate
@@ -2342,7 +2342,7 @@ def redirect_mvc_path(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the MVC path and uses it to crate
@@ -2388,7 +2388,7 @@ def redirect_back(
     :type attributes_map: Dictionary
     :param attributes_map: Map containing the series of
     attributes to be sent over the target path in the
-    redirect url.
+    redirect URL.
     """
 
     # retrieves the "referer" header
@@ -4384,7 +4384,7 @@ def _get_path(self, request, sanitize = False):
     """
     Retrieves the "real" path from the request
     this method takes into account the base path.
-    In case a redirection is made by rules in the http
+    In case a redirection is made by rules in the HTTP
     server the "original" path is not the one present
     in the path attribute, in this situation the base
     path attribute must be used to retrieve the "real"
@@ -4396,13 +4396,13 @@ def _get_path(self, request, sanitize = False):
 
     :type request: Request
     :param request: The request to be used to
-    retrieve the "real" url path.
+    retrieve the "real" URL path.
     :type sanitize: bool
     :param sanitize: If the returned path should be sanitized
     by removing some of its (extra) parameters.
     :rtype: String
-    :return: The "original" base path from the http
-    url, taking into account the base path. This value
+    :return: The "original" base path from the HTTP
+    URL, taking into account the base path. This value
     is "raw" so it means it's unquoted.
     """
 
@@ -4454,14 +4454,14 @@ def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VA
     """
     Retrieves the complete/absolute host path to the current request.
 
-    This should be an absolute url mean to be used in situations
+    This should be an absolute URL mean to be used in situations
     where no context is defined for the request.
 
     :type request: Request
     :param request: The request to be used.
     :type suffix_path: String
     :param suffix_path: The suffix path to be appended to the
-    resolved url (extra relative value).
+    resolved URL (extra relative value).
     :type prefix_path: String
     :param prefix_path: The prefix path to be prepended, this
     should defined the protocol for most of cases.
@@ -4473,22 +4473,22 @@ def _get_host_path(self, request, suffix_path = "", prefix_path = HTTP_PREFIX_VA
     host = self._get_host(request)
 
     # in case no host is defined must raise the insufficient
-    # http information exception
-    if not host: raise exceptions.InsufficientHttpInformation("no host value defined")
+    # HTTP information exception
+    if not host: raise exceptions.InsufficientHTTPInformation("no host value defined")
 
     # retrieves the path for the current request and then removes
     # the query part from it (obtains only the path part)
     path = self._get_path(request)
     path = path.split("?")[0]
 
-    # creates the base url value to be used in case no global
+    # creates the base URL value to be used in case no global
     # wide value has been defined or selected, the value to be
     # created is a generic/deducted one and may create issues
     base_url = colony.conf("BASE_URL", None)
     if base_url: base_url += "/"
     else: base_url = prefix_path + host + path.rsplit("/", 1)[0]
 
-    # creates the (final) host path from the resolved base url
+    # creates the (final) host path from the resolved base URL
     # and the provided suffix value to be appended
     host_path = base_url + suffix_path
     return host_path
