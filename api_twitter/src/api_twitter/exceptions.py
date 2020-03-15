@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiTwitterException(colony.ColonyException):
+class APITwitterException(colony.ColonyException):
     """
-    The api twitter exception class.
+    The API Titter exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidAuthentication(ApiTwitterException):
+class InvalidAuthentication(APITwitterException):
     """
     The invalid authentication class.
     """
@@ -60,7 +60,7 @@ class InvalidAuthentication(ApiTwitterException):
         :param message: The message to be printed.
         """
 
-        ApiTwitterException.__init__(self)
+        APITwitterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class InvalidAuthentication(ApiTwitterException):
 
         return "Invalid authentication - %s" % self.message
 
-class StatusUpdateProblem(ApiTwitterException):
+class StatusUpdateProblem(APITwitterException):
     """
     The status update problem class.
     """
@@ -86,7 +86,7 @@ class StatusUpdateProblem(ApiTwitterException):
         :param message: The message to be printed.
         """
 
-        ApiTwitterException.__init__(self)
+        APITwitterException.__init__(self)
         self.message = message
 
     def __str__(self):

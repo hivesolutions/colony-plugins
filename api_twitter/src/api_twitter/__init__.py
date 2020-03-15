@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ApiTwitterException, InvalidAuthentication, StatusUpdateProblem
-from .system import ApiTwitter
+from .exceptions import APITwitterException, InvalidAuthentication, StatusUpdateProblem
+from .system import APITwitter

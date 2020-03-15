@@ -103,7 +103,7 @@ BASE_REST_URL = "http://twitter.com/"
 BASE_REST_SECURE_URL = "https://twitter.com/"
 """ The base REST secure URL to be used """
 
-class ApiTwitter(colony.System):
+class APITwitter(colony.System):
     """
     The API Twitter class.
     """
@@ -127,7 +127,7 @@ class ApiTwitter(colony.System):
         json_plugin = self.plugin.json_plugin
 
         # retrieves the various attribute to be used in the
-        # construction of the twitter client
+        # construction of the Twitter client
         username = api_attributes.get("username", None)
         password = api_attributes.get("password", None)
         encoding = api_attributes.get("encoding", None)
@@ -190,7 +190,7 @@ class TwitterClient(object):
 
         :type json_plugin: JSONPlugin
         :param json_plugin: The JSON plugin.
-        :type client_http_plugin: ClientHttpPlugin
+        :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type username: String
         :param username: The username.
@@ -516,7 +516,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -565,7 +565,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -614,7 +614,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -666,7 +666,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -716,7 +716,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -766,7 +766,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -796,7 +796,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -821,7 +821,7 @@ class TwitterClient(object):
         # requires authentication
         self.require_authentication()
 
-        # in case the length of the status message is greater than the twitter
+        # in case the length of the status message is greater than the Twitter
         # character limit value
         if len(status) > TWITTER_CHARACTER_LIMIT_VALUE:
             raise exceptions.StatusUpdateProblem("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
@@ -841,7 +841,7 @@ class TwitterClient(object):
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
-        # checks for twitter errors
+        # checks for Twitter errors
         self._check_twitter_errors(data)
 
         # returns the data
@@ -1011,13 +1011,13 @@ class TwitterClient(object):
 
     def _check_twitter_errors(self, data):
         """
-        Checks the given data for twitter errors.
+        Checks the given data for Twitter errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary
-        :param data: The data to be checked for twitter errors.
+        :param data: The data to be checked for Twitter errors.
         """
 
         pass
@@ -1092,7 +1092,7 @@ class TwitterClient(object):
         Retrieves the HTTP client currently in use (in case it's created)
         if not created creates the HTTP client.
 
-        :rtype: HttpClient
+        :rtype: HTTPClient
         :return: The retrieved HTTP client.
         """
 

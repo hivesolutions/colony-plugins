@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiTwitterPlugin(colony.Plugin):
+class APITwitterPlugin(colony.Plugin):
     """
-    The main class for the Twitter Api plugin.
+    The main class for the Twitter API plugin.
     """
 
     id = "pt.hive.colony.plugins.api.twitter"
-    name = "Twitter Api"
-    description = "The plugin that offers the twitter api"
+    name = "Twitter API"
+    description = "The plugin that offers the Twitter API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -66,14 +66,14 @@ class ApiTwitterPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_twitter
-        self.system = api_twitter.ApiTwitter(self)
+        self.system = api_twitter.APITwitter(self)
 
     def create_client(self, api_attributes):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :rtype: TwitterClient
         :return: The created client.
         """
