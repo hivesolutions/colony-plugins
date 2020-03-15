@@ -57,56 +57,56 @@ REQUEST_TIMEOUT_VALUE = "request_timeout"
 """ The request timeout value """
 
 DEFAULT_API_VERSION = "64.0"
-""" The default paypal api version """
+""" The default PayPal API version """
 
 BASE_REST_URL = "http://api-3t.paypal.com/nvp"
-""" The base rest url to be used """
+""" The base REST URL to be used """
 
 BASE_REST_SECURE_URL = "https://api-3t.paypal.com/nvp"
-""" The base rest secure url to be used """
+""" The base REST secure URL to be used """
 
 BASE_SANDBOX_REST_URL = "http://api-3t.sandbox.paypal.com/nvp"
-""" The base sandbox rest url to be used """
+""" The base sandbox REST URL to be used """
 
 BASE_SANDBOX_REST_SECURE_URL = "https://api-3t.sandbox.paypal.com/nvp"
-""" The base sandbox rest secure url to be used """
+""" The base sandbox REST secure URL to be used """
 
 BASE_WEB_URL = "http://www.paypal.com/webscr"
-""" The base web url to be used """
+""" The base web URL to be used """
 
 BASE_WEB_SECURE_URL = "https://www.paypal.com/webscr"
-""" The base web secure url to be used """
+""" The base web secure URL to be used """
 
 BASE_SANDBOX_WEB_URL = "http://www.sandbox.paypal.com/webscr"
-""" The base sandbox web url to be used """
+""" The base sandbox web URL to be used """
 
 BASE_SANDBOX_WEB_SECURE_URL = "https://www.sandbox.paypal.com/webscr"
-""" The base sandbox web secure url to be used """
+""" The base sandbox web secure URL to be used """
 
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
 
-class ApiPaypal(colony.System):
+class APIPaypal(colony.System):
     """
-    The api paypal class.
+    The API PayPal class.
     """
 
     def create_client(self, api_attributes, open_client = True):
         """
-        Creates a client, with the given api attributes.
+        Creates a client, with the given API attributes.
 
         :type api_attributes: Dictionary
-        :param api_attributes: The api attributes to be used.
+        :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
         :rtype: OpenidClient
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
-        # retrieves the paypal structure and test mode (if available)
+        # retrieves the PayPal structure and test mode (if available)
         paypal_structure = api_attributes.get("paypal_structure", None)
         test_mode = api_attributes.get("test_mode", False)
 
@@ -119,7 +119,7 @@ class ApiPaypal(colony.System):
 
 class PaypalClient(object):
     """
-    The class that represents a paypal client connection.
+    The class that represents a PayPal client connection.
     """
 
     REFUND_TYPE_FULL = "Full"
@@ -147,26 +147,26 @@ class PaypalClient(object):
     """ The echeck refund source """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     paypal_structure = None
-    """ The paypal structure """
+    """ The PayPal structure """
 
     test_mode = None
     """ Flag indicating the client is supposed to
-    run in test mode (uses different api urls) """
+    run in test mode (uses different API urls) """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, client_http_plugin = None, paypal_structure = None, test_mode = False):
         """
         Constructor of the class.
 
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
         :type paypal_structure: PaypalStructure
-        :param paypal_structure: The paypal structure.
+        :param paypal_structure: The PayPal structure.
         :type test_mode: bool
         :param test_mode: Flag indicating if the client is to
         be run in test mode.
@@ -178,54 +178,54 @@ class PaypalClient(object):
 
     def open(self):
         """
-        Opens the paypal client.
+        Opens the PayPal client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the paypal client.
+        Closes the PayPal client.
         """
 
-        # in case an http client is defined closes it
+        # in case an HTTP client is defined closes it
         # (flushing its internal structures
         if self.http_client: self.http_client.close({})
 
     def generate_paypal_structure(self, username, password, signature, api_version = DEFAULT_API_VERSION, set_structure = True):
         """
-        Generates the paypal structure for the given arguments.
+        Generates the PayPal structure for the given arguments.
 
         :type username: String
         :param username: The username.
         :type password: String
-        :param passwird: The password.
+        :param password: The password.
         :type country: String
         :param country: The signature value unique by client.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         :type set_structure: bool
         :param set_structure: If the structure should be
-        set in the paypal client.
+        set in the PayPal client.
         :rtype: PaypalStructure
-        :return: The generated paypal structure.
+        :return: The generated PayPal structure.
         """
 
-        # creates a new paypal structure
+        # creates a new PayPal structure
         paypal_structure = PaypalStructure(username, password, signature, api_version)
 
         # in case the structure is meant to be set
         # sets it accordingly (in the current object)
         if set_structure: self.set_paypal_structure(paypal_structure)
 
-        # returns the paypal structure
+        # returns the PayPal structure
         return paypal_structure
 
     def do_direct_payment(self, ip_address, amount, card, payer, address, order = None, shipping_address = {}):
         """
-        Directly performs payment by issuing a request to paypal with the specified information.
+        Directly performs payment by issuing a request to PayPal with the specified information.
 
-        This method is synchronous, and paypal will directly reply with the information stating
+        This method is synchronous, and PayPal will directly reply with the information stating
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
@@ -242,10 +242,10 @@ class PaypalClient(object):
         :type shipping_address: Dictionary
         :param shipping_address: The address details of where the order is to be shipped.
         :rtype: Dictionary
-        :return: The paypal response data.
+        :return: The PayPal response data.
         """
 
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -324,7 +324,7 @@ class PaypalClient(object):
             parameters["SHIPTOCOUNTRY"] = shipping_address["country"]
             if "phone_number" in shipping_address: parameters["SHIPTOPHONENUM"] = shipping_address["phone_number"]
 
-        # fetches the retrieval url with the given parameters retrieving
+        # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
         response_text = self._fetch_url(retrieval_url, parameters)
@@ -335,10 +335,10 @@ class PaypalClient(object):
         self._check_paypal_errors(data)
 
         # retrieves the various attributes from the data to be used
-        # to update the current paypal structure
+        # to update the current PayPal structure
         transaction_id = data["TRANSACTIONID"]
 
-        # updates the current paypal structure according to the attributes
+        # updates the current PayPal structure according to the attributes
         # that have just been retrieved from the data structure
         self.paypal_structure.transaction_id = transaction_id
 
@@ -358,12 +358,12 @@ class PaypalClient(object):
         """
         Refunds the specified transaction, with the specified amount and refund source.
 
-        This method is synchronous, and paypal will directly reply with the information stating
+        This method is synchronous, and PayPal will directly reply with the information stating
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
         :type transaction_id: String
-        :param transaction_id: The unique identifier of the paypal transaction that is to be
+        :param transaction_id: The unique identifier of the PayPal transaction that is to be
         refunded.
         :type refund_type: String
         :param refund_type: The type of refund to be performed: Full, Partial, ExternalDispute,
@@ -381,10 +381,10 @@ class PaypalClient(object):
         :type note: String
         :param note: Optional notes about the refund.
         :rtype: Dictionary
-        :return: The paypal response data.
+        :return: The PayPal response data.
         """
 
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -406,7 +406,7 @@ class PaypalClient(object):
         if refund_item_details: parameters["REFUNDITEMDETAILS"] = refund_item_details
         if note: parameters["NOTE"] = note
 
-        # fetches the retrieval url with the given parameters retrieving
+        # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
         response_text = self._fetch_url(retrieval_url, parameters)
@@ -423,18 +423,18 @@ class PaypalClient(object):
         """
         Retrieves details about the specified transaction.
 
-        This method is synchronous, and paypal will directly reply with the information stating
+        This method is synchronous, and PayPal will directly reply with the information stating
         if the payment was processed correctly or not (an exception will be raised in case it
         isn't).
 
         :type transaction_id: String
-        :param transaction_id: The unique identifier of the paypal transaction whose details
+        :param transaction_id: The unique identifier of the PayPal transaction whose details
         are to be retrieved.
         :rtype: Dictionary
-        :return: The paypal response data.
+        :return: The PayPal response data.
         """
 
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -450,7 +450,7 @@ class PaypalClient(object):
         parameters["METHOD"] = "GetTransactionDetails"
         parameters["TRANSACTIONID"] = transaction_id
 
-        # fetches the retrieval url with the given parameters retrieving
+        # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
         response_text = self._fetch_url(retrieval_url, parameters)
@@ -468,10 +468,10 @@ class PaypalClient(object):
         Retrieves the user's balance.
 
         :rtype: Dictionary
-        :return: The paypal response data.
+        :return: The PayPal response data.
         """
 
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -486,7 +486,7 @@ class PaypalClient(object):
         # sets the refund details in the parameters map
         parameters["METHOD"] = "GetBalance"
 
-        # fetches the retrieval url with the given parameters retrieving
+        # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
         response_text = self._fetch_url(retrieval_url, parameters)
@@ -522,7 +522,7 @@ class PaypalClient(object):
         else: return True
 
     def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -555,7 +555,7 @@ class PaypalClient(object):
             parameters["L_PAYMENTREQUEST_0_AMT%d" % index] = item["cost"]
             index += 1
 
-        # fetches the retrieval url with the given parameters retrieving
+        # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
         # them as a "normal" query string
         response_text = self._fetch_url(retrieval_url, parameters)
@@ -566,24 +566,24 @@ class PaypalClient(object):
         self._check_paypal_errors(data)
 
         # retrieves the various attributes from the data to be used
-        # to update the current paypal structure
+        # to update the current PayPal structure
         token = data["TOKEN"]
 
-        # updates the current paypal structure according to the attributes
+        # updates the current PayPal structure according to the attributes
         # that have just been retrieved from the data structure
         self.paypal_structure.token = token
 
     def get_express_checkout_url(self):
         """
-        Retrieves the url used to redirect the user to the payment page
-        in the paypal api in the express checkout mode.
+        Retrieves the URL used to redirect the user to the payment page
+        in the PayPal API in the express checkout mode.
 
         :rtype: String
-        :return: the url used to redirect the user to the payment page
-        in the paypal api in the express checkout mode.
+        :return: the URL used to redirect the user to the payment page
+        in the PayPal API in the express checkout mode.
         """
 
-        # sets the retrieval url (using the sandbox url in
+        # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
         retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
@@ -592,39 +592,39 @@ class PaypalClient(object):
         parameters = {}
 
         # populates the parameters map with the required parameters
-        # for the generation of the url
+        # for the generation of the URL
         parameters["cmd"] = "_express-checkout"
         parameters["token"] = self.paypal_structure.token
 
-        # creates the express checkout url from the parameters
+        # creates the express checkout URL from the parameters
         express_checkout_url = self._build_url(retrieval_url, parameters)
 
-        # returns the express checkout url
+        # returns the express checkout URL
         return express_checkout_url
 
     def get_paypal_structure(self):
         """
-        Retrieves the paypal structure.
+        Retrieves the PayPal structure.
 
         :rtype: PaypalStructure
-        :return: The paypal structure.
+        :return: The PayPal structure.
         """
 
         return self.paypal_structure
 
     def set_paypal_structure(self, paypal_structure):
         """
-        Sets the paypal structure.
+        Sets the PayPal structure.
 
         :type paypal_structure: PaypalStructure
-        :param paypal_structure: The paypal structure.
+        :param paypal_structure: The PayPal structure.
         """
 
         self.paypal_structure = paypal_structure
 
     def _set_base_parameters(self, parameters):
         """
-        Sets the base paypal rest request parameters
+        Sets the base PayPal REST request parameters
         in the parameters map.
 
         These are considered to be the base values used for the
@@ -645,10 +645,10 @@ class PaypalClient(object):
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters and using the given method.
+        Fetches the given URL for the given parameters and using the given method.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type parameters: Dictionary
         :param parameters: The parameters to be used the fetch.
         :type method: String
@@ -661,13 +661,18 @@ class PaypalClient(object):
         # creates a new parameters map
         if not parameters: parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        # fetches the URL retrieving the HTTP response
+        http_response = http_client.fetch_url(
+            url,
+            method,
+            parameters,
+            content_type_charset = DEFAULT_CHARSET
+        )
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -675,34 +680,34 @@ class PaypalClient(object):
 
     def _build_url(self, base_url, parameters):
         """
-        Builds the url for the given url and parameters.
+        Builds the URL for the given URL and parameters.
 
         :type url: String
         :param url: The base URL to be used.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for url construction.
+        :param parameters: The parameters to be used for URL construction.
         :rtype: String
-        :return: The built url for the given parameters.
+        :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # build the url from the base url
+        # build the URL from the base URL
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-        # returns the url
+        # returns the URL
         return url
 
     def _check_paypal_errors(self, data):
         """
-        Checks the given data for paypal errors.
+        Checks the given data for PayPal errors.
 
         This method raises an exception in case an error
         exists in the data to be verified.
 
         :type data: Dictionary
-        :param data: The data to be checked for paypal errors.
+        :param data: The data to be checked for PayPal errors.
         """
 
         # retrieves the message value and returns immediately
@@ -714,8 +719,8 @@ class PaypalClient(object):
         # in depth diagnostics of the problem
         long_message = data.get("L_LONGMESSAGE0", None)
 
-        # raises the paypal api error
-        raise exceptions.PaypalApiError("error in request: " + message, long_message)
+        # raises the PayPal API error
+        raise exceptions.PaypalAPIError("error in request: " + message, long_message)
 
     def _parse_query_string(self, query_string):
         """
@@ -750,21 +755,21 @@ class PaypalClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # defines the open parameters
@@ -772,16 +777,16 @@ class PaypalClient(object):
                 REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT
             }
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open(open_parameters)
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class PaypalStructure(object):
     """
-    The paypal structure class used to store
-    the various paypal dependent attributes
+    The PayPal structure class used to store
+    the various PayPal dependent attributes
     placed there over the course of a session.
     """
 
@@ -795,7 +800,7 @@ class PaypalStructure(object):
     """ The signature value unique by client """
 
     api_version = None
-    """ The version of the api being used """
+    """ The version of the API being used """
 
     token = None
     """ The current token id value used in the session """
@@ -814,7 +819,7 @@ class PaypalStructure(object):
         :type signature: String
         :param signature: The signature value unique by client.
         :type api_version: String
-        :param api_version: The version of the api being used.
+        :param api_version: The version of the API being used.
         """
 
         self.username = username
@@ -884,20 +889,20 @@ class PaypalStructure(object):
 
     def get_api_version(self):
         """
-        Retrieves the api version.
+        Retrieves the API version.
 
         :rtype: String
-        :return: The api version.
+        :return: The API version.
         """
 
         return self.api_version
 
     def set_api_version(self, api_version):
         """
-        Sets the api version.
+        Sets the API version.
 
         :type api_version: String
-        :param api_version: The api version.
+        :param api_version: The API version.
         """
 
         self.api_version = api_version

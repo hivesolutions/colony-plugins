@@ -39,17 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class ApiPaypalException(colony.ColonyException):
+class APIPaypalException(colony.ColonyException):
     """
-    The api paypal exception class.
+    The API PayPal exception class.
     """
 
     message = None
     """ The exception's message """
 
-class PaypalApiError(ApiPaypalException):
+class PaypalAPIError(APIPaypalException):
     """
-    The paypal api error class.
+    The PayPal API error class.
     """
 
     long_message = None
@@ -67,7 +67,7 @@ class PaypalApiError(ApiPaypalException):
         error message present by the paypal api.
         """
 
-        ApiPaypalException.__init__(self)
+        APIPaypalException.__init__(self)
         self.message = message
         self.long_message = long_message
 
@@ -79,4 +79,4 @@ class PaypalApiError(ApiPaypalException):
         :return: The string representation of the class.
         """
 
-        return "Paypal api error - %s" % self.message
+        return "PayPal API error - %s" % self.message
