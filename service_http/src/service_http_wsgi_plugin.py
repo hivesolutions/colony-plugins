@@ -83,7 +83,7 @@ class ServiceHTTPWSGIPlugin(colony.Plugin):
         """
         Handles the given HTTP request.
 
-        :type request: HttpRequest
+        :type request: HTTPRequest
         :param request: The HTTP request to be handled.
         """
 
