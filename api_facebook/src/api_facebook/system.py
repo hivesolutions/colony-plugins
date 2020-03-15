@@ -175,7 +175,7 @@ class FacebookClient(object):
 
         :type json_plugin: JSONPlugin
         :param json_plugin: The JSON plugin.
-        :type client_http_plugin: ClientHttpPlugin
+        :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type facebook_structure: FacebookStructure
         :param facebook_structure: The Facebook structure.
@@ -599,7 +599,7 @@ class FacebookClient(object):
         Retrieves the HTTP client currently in use (in case it's created)
         if not created creates the HTTP client.
 
-        :rtype: HttpClient
+        :rtype: HTTPClient
         :return: The retrieved HTTP client.
         """
 
@@ -642,7 +642,7 @@ class FacebookClientOauth(object):
 
         :type json_plugin: JSONPlugin
         :param json_plugin: The JSON plugin.
-        :type client_http_plugin: ClientHttpPlugin
+        :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type facebook_structure: FacebookStructure
         :param facebook_structure: The Facebook structure.
@@ -941,7 +941,7 @@ class FacebookClientOauth(object):
         Retrieves the HTTP client currently in use (in case it's created)
         if not created creates the HTTP client.
 
-        :rtype: HttpClient
+        :rtype: HTTPClient
         :return: The retrieved HTTP client.
         """
 

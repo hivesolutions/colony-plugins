@@ -67,7 +67,7 @@ class APICrypton(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
         # retrieves the Crypton structure (if available)
@@ -86,20 +86,20 @@ class CryptonClient(object):
     """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     crypton_structure = None
     """ The Crypton structure """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, client_http_plugin = None, crypton_structure = None):
         """
         Constructor of the class.
 
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
         :type crypton_structure: CryptonStructure
         :param crypton_structure: The Crypton structure.
         """
@@ -119,9 +119,9 @@ class CryptonClient(object):
         Closes the Crypton client.
         """
 
-        # in case an http client is defined
+        # in case an HTTP client is defined
         if self.http_client:
-            # closes the http client
+            # closes the HTTP client
             self.http_client.close({})
 
     def generate_crypton_structure(self, base_url, api_key, key_name, set_structure = True):
@@ -344,7 +344,7 @@ class CryptonClient(object):
         :return: The built URL for the given parameters.
         """
 
-        # retrieves the http client, builds the URL from the base URL
+        # retrieves the HTTP client, builds the URL from the base URL
         # and returns it to the caller method
         http_client = self._get_http_client()
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
@@ -355,19 +355,19 @@ class CryptonClient(object):
         Retrieves the HTTP client currently in use (in case it's created)
         if not created creates the HTTP client.
 
-        :rtype: HttpClient
+        :rtype: HTTPClient
         :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
-            # creates the http client
+            # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client({})
 
-            # opens the http client
+            # opens the HTTP client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class CryptonStructure(object):

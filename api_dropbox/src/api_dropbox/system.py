@@ -179,8 +179,8 @@ class DropboxClient(object):
 
         :type json_plugin: JSONPlugin
         :param json_plugin: The json plugin.
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
         :type encoding: String
         :param encoding: The encoding used.
         :type oauth_structure: OauthStructure
@@ -206,9 +206,9 @@ class DropboxClient(object):
         Closes the Dropbox client.
         """
 
-        # in case an http client is defined
+        # in case an HTTP client is defined
         if self.http_client:
-            # closes the http client
+            # closes the HTTP client
             self.http_client.close({})
 
     def generate_oauth_structure(
@@ -589,7 +589,7 @@ class DropboxClient(object):
             # creates a new parameters map
             parameters = {}
 
-        # retrieves the http client
+        # retrieves the HTTP client
         http_client = self._get_http_client()
 
         # retrieves the current authentication type
@@ -601,7 +601,7 @@ class DropboxClient(object):
             # builds the oauth arguments for authentication
             self._build_oauth_arguments(url, parameters, method)
 
-        # fetches the URL retrieving the http response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(
             url,
             method,
@@ -610,7 +610,7 @@ class DropboxClient(object):
             contents = contents
         )
 
-        # retrieves the contents from the http response
+        # retrieves the contents from the HTTP response
         contents = http_response.received_message
 
         # returns the contents
@@ -757,27 +757,26 @@ class DropboxClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case no http client exists
+        # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
             client_parameters = {
                 CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
             }
 
-            # creates the http client
+            # creates the HTTP client and opens the client
+            # with empty options (default)
             self.http_client = self.client_http_plugin.create_client(client_parameters)
-
-            # opens the http client
             self.http_client.open({})
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
 class OauthStructure(object):

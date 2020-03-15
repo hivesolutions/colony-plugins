@@ -102,7 +102,7 @@ class APIEasypay(colony.System):
         :return: The created client.
         """
 
-        # retrieves the client http plugin
+        # retrieves the client HTTP plugin
         client_http_plugin = self.plugin.client_http_plugin
 
         # retrieves the Easypay structure and test mode (if available)
@@ -122,7 +122,7 @@ class EasypayClient(object):
     """
 
     client_http_plugin = None
-    """ The client http plugin """
+    """ The client HTTP plugin """
 
     easypay_structure = None
     """ The Easypay structure """
@@ -132,14 +132,14 @@ class EasypayClient(object):
     run in test mode (uses different API urls) """
 
     http_client = None
-    """ The http client for the connection """
+    """ The HTTP client for the connection """
 
     def __init__(self, client_http_plugin = None, easypay_structure = None, test_mode = False):
         """
         Constructor of the class.
 
-        :type client_http_plugin: ClientHttpPlugin
-        :param client_http_plugin: The client http plugin.
+        :type client_http_plugin: ClientHTTPPlugin
+        :param client_http_plugin: The client HTTP plugin.
         :type easypay_structure: EasypayStructure
         :param easypay_structure: The Easypay structure.
         :type test_mode: bool
@@ -163,7 +163,7 @@ class EasypayClient(object):
         Closes the Easypay client.
         """
 
-        # closes the http client in case it is defined
+        # closes the HTTP client in case it is defined
         if self.http_client: self.http_client.close({})
 
     def generate_easypay_structure(
@@ -501,8 +501,8 @@ class EasypayClient(object):
         # creates the parameters map in case it is not defined
         if not parameters: parameters = {}
 
-        # retrieves the http client, fetches the URL retrieving the
-        # http response and retrieves the contents from the response
+        # retrieves the HTTP client, fetches the URL retrieving the
+        # HTTP response and retrieves the contents from the response
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(
             url,
@@ -558,14 +558,14 @@ class EasypayClient(object):
 
     def _get_http_client(self):
         """
-        Retrieves the http client currently in use (in case it's created)
-        if not created creates the http client.
+        Retrieves the HTTP client currently in use (in case it's created)
+        if not created creates the HTTP client.
 
-        :rtype: HttpClient
-        :return: The retrieved http client.
+        :rtype: HTTPClient
+        :return: The retrieved HTTP client.
         """
 
-        # in case an http client already exists then returns it
+        # in case an HTTP client already exists then returns it
         if self.http_client: return self.http_client
 
         # defines the client parameters
@@ -573,7 +573,7 @@ class EasypayClient(object):
             CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
         }
 
-        # creates the http client
+        # creates the HTTP client
         self.http_client = self.client_http_plugin.create_client(client_parameters)
 
         # defines the open parameters
@@ -581,10 +581,10 @@ class EasypayClient(object):
             REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT
         }
 
-        # opens the http client
+        # opens the HTTP client
         self.http_client.open(open_parameters)
 
-        # returns the http client
+        # returns the HTTP client
         return self.http_client
 
     def get_xml_node_text(self, xml_document, xml_tag_name):
