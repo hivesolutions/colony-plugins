@@ -80,12 +80,12 @@ class NangerPlugin(colony.Plugin):
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
-        to the mvc service. The tuple should relate the route with the handler
+        to the MVC service. The tuple should relate the route with the handler
         method/function.
 
         :rtype: Tuple
         :return: The tuple of regular expressions to be used as patterns,
-        to the mvc service.
+        to the MVC service.
         """
 
         return self.nanger.get_patterns()
@@ -93,12 +93,12 @@ class NangerPlugin(colony.Plugin):
     def get_resource_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the mvc service. The tuple should relate the route with the base
+        to the MVC service. The tuple should relate the route with the base
         file system path to be used.
 
         :rtype: Tuple
         :return: The tuple of regular expressions to be used as resource patterns,
-        to the mvc service.
+        to the MVC service.
         """
 
         return self.nanger.get_resource_patterns()
