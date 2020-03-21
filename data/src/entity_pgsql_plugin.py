@@ -45,7 +45,7 @@ class EntityPgSQLPlugin(colony.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data.entity.pgsql"
-    name = "Entity Postgresql"
+    name = "Entity PostgreSQL"
     description = "The plugin that manages the PostgreSQL adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
