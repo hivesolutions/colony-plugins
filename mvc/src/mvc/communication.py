@@ -1258,12 +1258,12 @@ class CommunicationConnection(object):
         token that identifies the device/app uniquely.
         :type key_file: String
         :param key_file: The path to the (private) key file to be used in
-        the connection to the apn service.
+        the connection to the APN service.
         :type cert_file: String
         :param cert_file: The path to the certificate file to be used in
-        the connection to the apn service.
+        the connection to the APN service.
         :type sandbox: bool
-        :param sandbox: If the connection with the apn service should be done
+        :param sandbox: If the connection with the APN service should be done
         using the secure sandboxed approach (default) or the production model.
         """
 

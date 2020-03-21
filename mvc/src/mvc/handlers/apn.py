@@ -50,19 +50,19 @@ except ImportError: json = None
 from . import handler
 
 HOST = "gateway.push.apple.com"
-""" The host of the apn service to be used when
+""" The host of the APN service to be used when
 in production mode """
 
 PORT = 2195
-""" The port of the apn service to be used when
+""" The port of the APN service to be used when
 in sandbox mode """
 
 SANDBOX_HOST = "gateway.sandbox.push.apple.com"
-""" The host of the apn service to be used when
+""" The host of the APN service to be used when
 in sandbox mode """
 
 SANDBOX_PORT = 2195
-""" The port of the apn service to be used when
+""" The port of the APN service to be used when
 in sandbox mode """
 
 KEY_FILE = "apn_key.pem"
@@ -99,11 +99,11 @@ class APNHandler(handler.Handler):
 
     key_file = None
     """ The path to the (private) key file to be used for the connection
-    to be established for the apn service """
+    to be established for the APN service """
 
     cert_file = None
     """ The path to the certificate file to be used for the connection
-    to be established for the apn service """
+    to be established for the APN service """
 
     sandbox = None
     """ Flag that controls if the sandbox infra-structure should
@@ -216,4 +216,4 @@ class APNHandler(handler.Handler):
         # in case there is data received from the server there
         # must be a problem in the communication, must raise an
         # exception indicating the problem
-        if data: raise RuntimeError("Problem handling apn communication: '%s'" % data)
+        if data: raise RuntimeError("Problem handling APN communication: '%s'" % data)
