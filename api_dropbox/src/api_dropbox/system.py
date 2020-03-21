@@ -150,7 +150,7 @@ class DropboxClient(object):
     """
 
     json_plugin = None
-    """ The json plugin """
+    """ The JSON plugin """
 
     client_http_plugin = None
     """ The client HTTP plugin """
@@ -178,7 +178,7 @@ class DropboxClient(object):
         Constructor of the class.
 
         :type json_plugin: JSONPlugin
-        :param json_plugin: The json plugin.
+        :param json_plugin: The JSON plugin.
         :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type encoding: String
@@ -318,7 +318,7 @@ class DropboxClient(object):
                 hashlib.sha1
             ).digest().encode("base64")[:-1]
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -392,7 +392,7 @@ class DropboxClient(object):
                 hashlib.sha1
             ).digest().encode("base64")[:-1]
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
         # retrieves the values from the request
@@ -472,10 +472,10 @@ class DropboxClient(object):
 
         retrieval_url = BASE_REST_SECURE_URL + "account/info"
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for Dropbox errors
@@ -524,7 +524,7 @@ class DropboxClient(object):
         # file on the remove data source
         retrieval_url = CONTENT_REST_SECURE_URL + "files_put/dropbox/" + target_path
 
-        # fetches the retrieval URL with the given parameters retrieving the json
+        # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, PUT_METHOD_VALUE, file_contents)
 
         # loads json retrieving the data

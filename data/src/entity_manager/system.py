@@ -587,7 +587,7 @@ class EntityManager(object):
         using the date range tuple attribute.
 
         The serializer attribute controls the kind of serializer
-        that is going to be used in the data (json or bson are
+        that is going to be used in the data (JSON or BSON are
         the recommended formats)
 
         :type serializer: Serializer
@@ -602,7 +602,7 @@ class EntityManager(object):
         data in the data source base on the modified time.
         """
 
-        # retrieves the json plugin reference
+        # retrieves the JSON plugin reference
         json_plugin = self.entity_manager_plugin.json_plugin
 
         # creates a new temporary directory to hold the generated data
@@ -648,7 +648,7 @@ class EntityManager(object):
                     encoding = DEFAULT_ENCODING
                 )
 
-                # dumps the information structure using the json serializer
+                # dumps the information structure using the JSON serializer
                 # to serialize its data
                 information_data = json_plugin.dumps_pretty(information)
 
@@ -7365,7 +7365,7 @@ class EntityManager(object):
         representation from the file.
         """
 
-        # retrieves the json plugin reference, to be used
+        # retrieves the JSON plugin reference, to be used
         # in the loading of the meta file
         json_plugin = self.entity_manager_plugin.json_plugin
 
@@ -7374,12 +7374,12 @@ class EntityManager(object):
         if not os.path.exists(path): return {}
 
         # opens the meta file for reading in the binary
-        # form (json extraneous contents)
+        # form (JSON extraneous contents)
         file = open(path, "rb")
 
         try:
             # reads the contents (data) from the meta file
-            # and then loads them as json
+            # and then loads them as JSON
             contents = file.read()
             information_data = json_plugin.loads(contents)
         finally:
