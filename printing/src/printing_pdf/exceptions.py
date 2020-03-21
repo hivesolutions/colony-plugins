@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class PrintingPdfException(colony.ColonyException):
+class PrintingPDFException(colony.ColonyException):
     """
     The printing PDF exception class.
     """
@@ -47,7 +47,7 @@ class PrintingPdfException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class InvalidContextInformationName(PrintingPdfException):
+class InvalidContextInformationName(PrintingPDFException):
     """
     The invalid context information name class.
     """
@@ -60,7 +60,7 @@ class InvalidContextInformationName(PrintingPdfException):
         :param message: The message to be printed.
         """
 
-        PrintingPdfException.__init__(self)
+        PrintingPDFException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class InvalidContextInformationName(PrintingPdfException):
 
         return "Invalid context information name - %s" % self.message
 
-class InvalidFont(PrintingPdfException):
+class InvalidFont(PrintingPDFException):
     """
     The invalid font class.
     """
@@ -86,7 +86,7 @@ class InvalidFont(PrintingPdfException):
         :param message: The message to be printed.
         """
 
-        PrintingPdfException.__init__(self)
+        PrintingPDFException.__init__(self)
         self.message = message
 
     def __str__(self):

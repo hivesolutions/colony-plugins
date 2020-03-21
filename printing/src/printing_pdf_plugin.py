@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class PrintingPdfPlugin(colony.Plugin):
+class PrintingPDFPlugin(colony.Plugin):
     """
     The main class for the Printing PDF plugin.
     """
@@ -66,7 +66,7 @@ class PrintingPdfPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import printing_pdf
-        self.system = printing_pdf.PrintingPdf(self)
+        self.system = printing_pdf.PrintingPDF(self)
 
     def get_printing_name(self):
         """

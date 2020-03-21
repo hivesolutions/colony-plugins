@@ -38,6 +38,6 @@ from . import exceptions
 from . import system
 from . import visitor
 
-from .exceptions import PrintingPdfException, InvalidContextInformationName, InvalidFont
-from .system import PrintingPdf
+from .exceptions import PrintingPDFException, InvalidContextInformationName, InvalidFont
+from .system import PrintingPDF
 from .visitor import Visitor

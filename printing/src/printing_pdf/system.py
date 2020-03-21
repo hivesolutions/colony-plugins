@@ -44,7 +44,7 @@ from . import visitor
 PRINTING_NAME = "pdf"
 """ The printing name """
 
-class PrintingPdf(colony.System):
+class PrintingPDF(colony.System):
     """
     The printing PDF class.
     """
