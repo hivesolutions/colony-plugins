@@ -1441,10 +1441,10 @@ class RESTRequest(object):
         """
         Redirects the request logically, so it becomes readable
         as a new resource. This redirection process uses the
-        standard http process for redirection.
+        standard HTTP process for redirection.
 
         An optional attributes map may be used to use
-        url parameters in the redirect.
+        URL parameters in the redirect.
 
         :type target_path: String
         :param target_path: The target path of the redirection.
@@ -1459,7 +1459,7 @@ class RESTRequest(object):
         :type attributes_map: Dictionary
         :param attributes_map: Map containing the series of
         attributes to be sent over the target path in the
-        redirect url.
+        redirect URL.
         """
 
         # in case no attributes map is passed uses the current request's
@@ -1468,7 +1468,7 @@ class RESTRequest(object):
         base_map = self.request.attributes_map if keep else {}
         attributes_map = attributes_map or base_map
 
-        # quotes the target path according to the url quoting schema
+        # quotes the target path according to the URL quoting schema
         # in case the quote flat is set
         target_path_quoted = quote and\
             colony.quote(target_path, "/") or target_path
@@ -1530,7 +1530,7 @@ class RESTRequest(object):
 
     def allow_cookies(self):
         """
-        Allows the setting of cookies through the typical http
+        Allows the setting of cookies through the typical HTTP
         header technique.
 
         This technique may prove to be not required for simple
@@ -1541,7 +1541,7 @@ class RESTRequest(object):
 
     def deny_cookies(self):
         """
-        Denies the setting of cookies through the typical http
+        Denies the setting of cookies through the typical HTTP
         header technique.
 
         This technique may prove to be not required for simple
@@ -1906,25 +1906,25 @@ class RESTRequest(object):
 
     def get_method(self):
         """
-        Retrieves the http verb/method for the current request,
+        Retrieves the HTTP verb/method for the current request,
         this value is stored and the operation type value of the
         original/underlying request object.
 
         :rtype: String
-        :return: The normalized http verb/method for the request.
+        :return: The normalized HTTP verb/method for the request.
         """
 
         return self.request.operation_type
 
     def get_path(self):
         """
-        Retrieves the path component of the uri/url by gathering
+        Retrieves the path component of the URI/URL by gathering
         the original path of the request and removing any extra
         get based arguments from it.
 
         :rtype: String
         :return: The (original) path of the request as a canonical
-        version of the uri/url.
+        version of the URI/URL.
         """
 
         return self.request.original_path.split("?", 1)[0]
@@ -2346,7 +2346,7 @@ class RESTRequest(object):
 
     def _get_domain(self):
         """
-        Retrieves the domain using the http request header
+        Retrieves the domain using the HTTP request header
         host value.
 
         :rtype: String
@@ -2926,7 +2926,7 @@ class RedisSession(RESTSession):
         super(RedisSession, cls).load()
         import redis
         url = colony.conf("REDISTOGO_URL", None)
-        if not url: raise RuntimeError("invalid redis url")
+        if not url: raise RuntimeError("invalid redis URL")
         cls.BGSAVE = bgsave
         cls.REDIS = cls.REDIS or redis.from_url(url)
         cls.REDIS.ping()
@@ -2990,7 +2990,7 @@ class RedisSession(RESTSession):
 
 class Cookie(object):
     """
-    The cookie class representing an http cookie.
+    The cookie class representing an HTTP cookie.
     This class may be used for both parsing and
     serialization of a cookie structure.
     """
@@ -3064,7 +3064,7 @@ class Cookie(object):
 
         :rtype: String
         :return: The linear version of the cookie as default
-        serialized value according to http specification.
+        serialized value according to HTTP specification.
         """
 
         # starts the string value
@@ -3097,7 +3097,7 @@ class Cookie(object):
                 string_value += serialized_attribute
 
         # returns the string value, representing the serialized version
-        # of the cookie as per http specification
+        # of the cookie as per HTTP specification
         return string_value
 
     def get_attribute(self, attribute_name, default = None):

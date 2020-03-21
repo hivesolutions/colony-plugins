@@ -49,7 +49,7 @@ class ClientHTTPException(colony.ColonyException):
 
 class HTTPInvalidURLData(ClientHTTPException):
     """
-    The invalid url data class.
+    The invalid URL data class.
     """
 
     def __init__(self, message):
@@ -71,7 +71,7 @@ class HTTPInvalidURLData(ClientHTTPException):
         :return: The string representation of the class.
         """
 
-        return "HTTP invalid url data - %s" % self.message
+        return "HTTP invalid URL data - %s" % self.message
 
 class HTTPRuntimeException(ClientHTTPException):
     """

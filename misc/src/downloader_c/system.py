@@ -56,10 +56,10 @@ class Downloader(colony.System):
 
     def download_package(self, address, target_directory = None, handlers_map = {}):
         """
-        Downloads a package from the given url address to a target directory.
+        Downloads a package from the given URL address to a target directory.
 
         :type address: String
-        :param address: The url address of the package to download.
+        :param address: The URL address of the package to download.
         :type target_directory: String
         :param target_directory: The target directory of the download.
         :type handlers_map: Dictionary
@@ -73,44 +73,44 @@ class Downloader(colony.System):
             # sets the target directory
             target_directory = target_directory or self._get_default_target_directory()
 
-            # retrieves the client http plugin
+            # retrieves the client HTTP plugin
             client_http_plugin = self.plugin.client_http_plugin
 
             # notifies the handlers about the message
             colony.message(handlers_map, "Get %s" % address)
 
-            # creates a new set of handlers map (for http client) for
+            # creates a new set of handlers map (for HTTP client) for
             # the current context
             _handlers_map = self._create_handlers_map(handlers_map)
 
-            # retrieves the file name from the url path
+            # retrieves the file name from the URL path
             file_name = self.get_file_name_url(address)
 
-            # creates the http client
+            # creates the HTTP client
             http_client = client_http_plugin.create_client({})
 
-            # opens the http client
+            # opens the HTTP client
             http_client.open({})
 
             try:
-                # fetches the url retrieving the http response
+                # fetches the URL retrieving the HTTP response
                 http_response = http_client.fetch_url(address, handlers_map = _handlers_map)
 
-                # retrieves the status code from the http response
+                # retrieves the status code from the HTTP response
                 status_code = http_response.status_code
 
                 # in case the status code is not valid
                 if not status_code in VALID_STATUS_CODES:
-                    # retrieves the status message from the http response
+                    # retrieves the status message from the HTTP response
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
                     raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
 
-                # retrieves the file contents from the http response
+                # retrieves the file contents from the HTTP response
                 file_contents = http_response.received_message
             finally:
-                # closes the http client
+                # closes the HTTP client
                 http_client.close({})
 
             # in case there is no directory
@@ -170,38 +170,38 @@ class Downloader(colony.System):
         """
 
         try:
-            # retrieves the client http plugin
+            # retrieves the client HTTP plugin
             client_http_plugin = self.plugin.client_http_plugin
 
-            # creates a new set of handlers map (for http client) for
+            # creates a new set of handlers map (for HTTP client) for
             # the current context
             _handlers_map = self._create_handlers_map(handlers_map)
 
-            # creates the http client
+            # creates the HTTP client
             http_client = client_http_plugin.create_client({})
 
-            # opens the http client
+            # opens the HTTP client
             http_client.open({})
 
             try:
-                # fetches the url retrieving the http response
+                # fetches the URL retrieving the HTTP response
                 http_response = http_client.fetch_url(address, handlers_map = _handlers_map)
 
-                # retrieves the status code from the http response
+                # retrieves the status code from the HTTP response
                 status_code = http_response.status_code
 
                 # in case the status code is not valid
                 if not status_code in VALID_STATUS_CODES:
-                    # retrieves the status message from the http response
+                    # retrieves the status message from the HTTP response
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
                     raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
 
-                # retrieves the file contents from the http response
+                # retrieves the file contents from the HTTP response
                 file_contents = http_response.received_message
             finally:
-                # closes the http client
+                # closes the HTTP client
                 http_client.close({})
 
             # returns the file contents
@@ -214,15 +214,15 @@ class Downloader(colony.System):
 
     def get_file_name_url(self, url):
         """
-        Retrieves the file name for the given url.
+        Retrieves the file name for the given URL.
 
         :type url: String
-        :param url: The url to retrieve the file name.
+        :param url: The URL to retrieve the file name.
         :rtype: String
-        :return: The file name for the given url.
+        :return: The file name for the given URL.
         """
 
-        # splits the url
+        # splits the URL
         url_split = url.split("/")
 
         # in case the last group is empty

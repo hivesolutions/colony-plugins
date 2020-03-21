@@ -94,7 +94,7 @@ DEFAULT_CHARSET = None
 """ The default charset """
 
 DEFAULT_URL_CHARSET = "utf-8"
-""" The default url charset """
+""" The default URL charset """
 
 STATUS_CODE_VALUES = {
     100 : "Continue",
@@ -393,10 +393,10 @@ class HTTPClient(object):
         handlers_map = {}
     ):
         """
-        Fetches the url for the given url, method and (HTTP) parameters.
+        Fetches the URL for the given URL, method and (HTTP) parameters.
 
         :type url: String
-        :param url: The url to be fetched.
+        :param url: The URL to be fetched.
         :type method: String
         :param method: The method to be used.
         :type parameters: Dictionary
@@ -431,10 +431,10 @@ class HTTPClient(object):
         plugin = self.client_http.plugin
 
         # print a debug message
-        plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
+        plugin.debug("Fetching URL '%s' with '%s' method" % (url, method))
 
-        # parses the url retrieving the protocol the host, the username,
-        # the password, the port, the path, the base url and the options map
+        # parses the URL retrieving the protocol the host, the username,
+        # the password, the port, the path, the base URL and the options map
         protocol, username, password, host, port, path, base_url, options_map = self._parse_url(url)
 
         # extends the parameters map with the options map
@@ -479,7 +479,7 @@ class HTTPClient(object):
         _password = self.password
 
         # in case the username and password are
-        # set using the url
+        # set using the URL
         if username and password:
             # sets the authentication flag
             self.authentication = True
@@ -492,7 +492,7 @@ class HTTPClient(object):
         try:
             # sends the request for the host, port, path,
             # parameters, method, headers, protocol version, content type,
-            # content type charset, encode path, contents, url and base url
+            # content type charset, encode path, contents, URL and base URL
             # and retrieves the request
             request = self.send_request(
                 host,
@@ -534,50 +534,50 @@ class HTTPClient(object):
 
     def build_url(self, base_url, method, parameters):
         """
-        Builds the url for the given base url, method
+        Builds the URL for the given base URL, method
         and parameters.
 
         :type base_url: String
         :param base_url: The base URL to build the final
-        url.
+        URL.
         :type method: String
-        :param method: The method to be used in the url retrieval.
+        :param method: The method to be used in the URL retrieval.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used in the url
+        :param parameters: The parameters to be used in the URL
         retrieval.
         :rtype: String
-        :return: The final url value.
+        :return: The final URL value.
         """
 
         # in case the request method is not get as the parameters
-        # are not meant to be encoded as url parameters
+        # are not meant to be encoded as URL parameters
         if not method == GET_METHOD_VALUE: return base_url
 
-        # creates the HTTP request to build the url
+        # creates the HTTP request to build the URL
         request = HTTPRequest(attributes_map = parameters)
 
         # encodes the request attributes
         encoded_attributes = request._encode_attributes()
 
         # in case the encoded attributes string
-        # is not valid or is empty the url remain
-        # the base one, returns the base url
+        # is not valid or is empty the URL remain
+        # the base one, returns the base URL
         if not encoded_attributes: return base_url
 
         # in case no exclamation mark exists in
-        # the url
+        # the URL
         if base_url.find("?") == -1:
-            # creates the url by adding the encoded attributes
+            # creates the URL by adding the encoded attributes
             # as the first parameters
             url = base_url + "?" + encoded_attributes
         # in case an exclamation mark already exists in the
-        # url (parameters exist)
+        # URL (parameters exist)
         else:
-            # creates the url by adding the encoded attributes
+            # creates the URL by adding the encoded attributes
             # to the existing parameters
             url = base_url + "&" + encoded_attributes
 
-        # return the built url
+        # return the built URL
         return url
 
     def send_request(
@@ -622,7 +622,7 @@ class HTTPClient(object):
         :type contents: String
         :param contents: The contents of the message to be sent.
         :type url: String
-        :param url: The complete url of the request.
+        :param url: The complete URL of the request.
         :type base_url: String
         :param base_url: The base URL of the request.
         :rtype: HTTPRequest
@@ -631,7 +631,7 @@ class HTTPClient(object):
 
         # creates the HTTP request with the host, the port, the path, the parameters, operation type,
         # the headers, the protocol version, the content type, the content type charset, the encode path,
-        # the url and the base url
+        # the URL and the base URL
         request = HTTPRequest(
             host = host,
             port = port,
@@ -1199,30 +1199,30 @@ class HTTPClient(object):
 
     def _parse_url(self, url):
         """
-        Parses the url, retrieving a tuple structure containing
+        Parses the URL, retrieving a tuple structure containing
         the protocol, the username, the password, the host, the port,
-        the path, the base url and the options map for the given url.
+        the path, the base URL and the options map for the given URL.
 
         :type url: String
-        :param url: The url to be parsed.
+        :param url: The URL to be parsed.
         :rtype: Tuple
         :return: A tuple containing the protocol, the username, the password
-        the host, the port, the path, the base url and the options map.
+        the host, the port, the path, the base URL and the options map.
         """
 
-        # retrieves the url parser plugin
+        # retrieves the URL parser plugin
         url_parser_plugin = self.client_http.plugin.url_parser_plugin
 
-        # parses the url retrieving the structure
+        # parses the URL retrieving the structure
         url_structure = url_parser_plugin.parse_url(url)
 
-        # in case the url structure contains the protocol sets the
+        # in case the URL structure contains the protocol sets the
         # protocol with the value in lower case (normalized) otherwise
         # raises an exception alerting for the missing protocol information
         if url_structure.protocol: protocol = url_structure.protocol.lower()
         else: raise exceptions.HTTPInvalidURLData("missing protocol information: " + url)
 
-        # in case the url structure contains both the username
+        # in case the URL structure contains both the username
         # and the password information must set it, otherwise
         # invalidates it (username and password unset)
         if url_structure.username and url_structure.password:
@@ -1230,35 +1230,35 @@ class HTTPClient(object):
             password = url_structure.password
         else: username = None; password = None
 
-        # in case the url structure contains the base name sets it
+        # in case the URL structure contains the base name sets it
         # as the host field otherwise raises an exception indicating
         # the missing of the host information
         if url_structure.base_name: host = url_structure.base_name
         else: raise exceptions.HTTPInvalidURLData("missing host information: " + url)
 
-        # in case the url structure contains the port (pre defined port)
+        # in case the URL structure contains the port (pre defined port)
         # must use it as it's enforced otherwise uses the map associating
         # each of the protocols with the default port to retrieve the port
         if url_structure.port: port = url_structure.port
         else: port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
 
-        # in case the url structure contains the resource reference
+        # in case the URL structure contains the resource reference
         # uses it, otherwise assumes the root path (default behavior)
         if url_structure.resource_reference: path = url_structure.resource_reference
         else: path = "/"
 
-        # in case the url structure contains the base url sets it
+        # in case the URL structure contains the base URL sets it
         # otherwise invalidates the value
         if url_structure.base_url: base_url = url_structure.base_url
         else: base_url = None
 
-        # in case the url structure contains the options map must set
+        # in case the URL structure contains the options map must set
         # it otherwise must use an empty map for the options
         if url_structure.options_map: options_map = url_structure.options_map
         else: options_map = {}
 
         # returns the tuple containing the protocol, the username,
-        # the password, the host, the port, the path, the base url
+        # the password, the host, the port, the path, the base URL
         # and the options map
         return (
             protocol,
@@ -1301,7 +1301,7 @@ class HTTPClient(object):
         location = response.headers_map[LOCATION_VALUE]
         location = location.decode(DEFAULT_URL_CHARSET)
 
-        # retrieves the url of the request
+        # retrieves the URL of the request
         request_url = request.url
 
         # retrieves the status code
@@ -1313,14 +1313,14 @@ class HTTPClient(object):
             # in case the location starts with the slash value
             # the address refers to a base address
             if location.startswith("/"):
-                # retrieves the base url of the request
+                # retrieves the base URL of the request
                 request_base_url = request.base_url
 
                 # creates the "absolute" location value
                 location = request_base_url + location
             # the address is relative to the current one
             else:
-                # retrieves the request base url (without the last token)
+                # retrieves the request base URL (without the last token)
                 request_url = request_url.rsplit("/", 1)[0]
 
                 # sets the "relative" location value
@@ -1335,7 +1335,7 @@ class HTTPClient(object):
             # retrieves the request headers
             request_headers = request.headers_map
 
-            # returns the "new" fetched url (redirection)
+            # returns the "new" fetched URL (redirection)
             return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
 
         # returns invalid
@@ -1479,7 +1479,7 @@ class HTTPRequest(object):
     """ The encode path """
 
     url = None
-    """ The complete url """
+    """ The complete URL """
 
     base_url = None
     """ The base URL """
@@ -1526,7 +1526,7 @@ class HTTPRequest(object):
         :type encode_path: bool
         :param encode_path: If the path should be encoded.
         :type url: String
-        :param url: The complete url.
+        :param url: The complete URL.
         :type base_url: String
         :param base_url: The base URL.
         """
@@ -1770,7 +1770,7 @@ class HTTPRequest(object):
 
     def _encode_attributes(self):
         """
-        Encodes the current attributes into url encoding.
+        Encodes the current attributes into URL encoding.
 
         :rtype: String
         :return: The encoded attributes string.

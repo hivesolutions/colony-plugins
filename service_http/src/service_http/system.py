@@ -1163,7 +1163,7 @@ class HTTPClientServiceHandler(object):
                     request.headers_in[header_name] = header_value
 
                 # parses the get attributes, this will load
-                # the attributes associated with the url
+                # the attributes associated with the URL
                 request.__parse_get_attributes__()
 
                 # in case the content length is defined in the headers map
@@ -1960,10 +1960,10 @@ class HTTPClientServiceHandler(object):
         prefix = is_secure and SECURE_PREFIX_VALUE or PREFIX_VALUE
 
         # retrieves the original (raw) path to be used in the construction
-        # of the new (domain processed) url
+        # of the new (domain processed) URL
         original_path = request.original_path
 
-        # construct the url (new location) with the prefix and using the
+        # construct the URL (new location) with the prefix and using the
         # port part of the value in case a non default secure port is defined
         location = service_connection.connection_port in (80, 443) and prefix + force_domain + original_path or prefix + force_domain + ":" + str(service_connection.connection_port) + original_path
 
@@ -2025,18 +2025,18 @@ class HTTPClientServiceHandler(object):
         host = request.headers_map.get(HOST_VALUE, None)
 
         # in case the host is not defined, it's not possible
-        # to construct the secure url
+        # to construct the secure URL
         if not host:
             # raises the client request security violation exception
             raise exceptions.ClientRequestSecurityViolation("host not defined")
 
         # retrieves the "hostname" from the host (removing the port part
         # of the name) then retrieves the original (raw) path to be used in the
-        # construction of the secure url
+        # construction of the secure URL
         hostname = host.rsplit(":", 1)[0]
         original_path = request.original_path
 
-        # construct the secure url (new location) with the secure prefix and
+        # construct the secure URL (new location) with the secure prefix and
         # using the port part of the value in case a non default secure port
         # is defined
         location = secure_port == 443 and SECURE_PREFIX_VALUE + hostname + original_path or SECURE_PREFIX_VALUE + hostname + ":" + str(secure_port) + original_path
@@ -2741,7 +2741,7 @@ class HTTPRequest(object):
                 # from the attribute field splitted
                 attribute_name, attribute_value = attribute_field_splitted
 
-                # "unquotes" the attribute value from the url encoding
+                # "unquotes" the attribute value from the URL encoding
                 attribute_value = colony.unquote_plus(attribute_value)
             # in case the attribute field splitted length is one
             elif attribute_field_splitted_length == 1:
@@ -2751,7 +2751,7 @@ class HTTPRequest(object):
                 # sets the attribute value to none
                 attribute_value = None
 
-            # "unquotes" the attribute name from the url encoding
+            # "unquotes" the attribute name from the URL encoding
             attribute_name = colony.unquote_plus(attribute_name)
 
             # sets the attribute value

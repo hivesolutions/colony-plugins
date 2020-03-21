@@ -285,7 +285,7 @@ class ServiceHTTPProxy(colony.System):
         if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
-            # fetches the contents from the url
+            # fetches the contents from the URL
             http_response = http_client.fetch_url(
                 complete_path,
                 method = request.operation_type,
@@ -358,7 +358,7 @@ class ServiceHTTPProxy(colony.System):
         if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
-            # fetches the contents from the url
+            # fetches the contents from the URL
             http_response_generator = http_client.fetch_url(
                 complete_path,
                 method = request.operation_type,
@@ -502,7 +502,7 @@ class ServiceHTTPProxy(colony.System):
         if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
-            # fetches the contents from the url
+            # fetches the contents from the URL
             http_response = http_client.fetch_url(
                 complete_path,
                 method = request.operation_type,
@@ -579,7 +579,7 @@ class ServiceHTTPProxy(colony.System):
         if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
 
         try:
-            # fetches the contents from the url
+            # fetches the contents from the URL
             http_response_generator = http_client.fetch_url(
                 complete_path,
                 method = request.operation_type,
@@ -696,7 +696,7 @@ class ServiceHTTPProxy(colony.System):
         return request_headers
 
     def _create_headers_map(self, request, http_response, removal_response_headers = ()):
-        # retrieves the url parser plugin
+        # retrieves the URL parser plugin
         url_parser_plugin = self.plugin.url_parser_plugin
 
         # creates a new map for the headers map
@@ -738,10 +738,10 @@ class ServiceHTTPProxy(colony.System):
                 location = location.replace(proxy_target, handler_path)
             # in case the location starts with a slash (relative to host path)
             elif location.startswith("/"):
-                # parses the url retrieving the url structure
+                # parses the URL retrieving the URL structure
                 url_structure = url_parser_plugin.parse_url(proxy_target)
 
-                # retrieves the resource reference from the url structure
+                # retrieves the resource reference from the URL structure
                 # or sets the default one (empty) in case it's not defined
                 resource_reference = url_structure.resource_reference or ""
 

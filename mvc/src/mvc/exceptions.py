@@ -160,7 +160,7 @@ class FileNotFoundException(MVCRequestNotHandled):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
         MVCRequestNotHandled.__init__(self, message)
@@ -191,7 +191,7 @@ class InvalidCommunicationCommandException(MVCRequestNotHandled):
         :type message: String
         :param message: The message to be printed.
         :type status_code: int
-        :param status_code: The http status code.
+        :param status_code: The HTTP status code.
         """
 
         MVCRequestNotHandled.__init__(self, message)

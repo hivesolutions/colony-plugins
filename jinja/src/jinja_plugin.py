@@ -41,9 +41,9 @@ import colony
 
 class JinjaPlugin(colony.Plugin):
     """
-    The main class for the jinja plugin responsible for
+    The main class for the Jinja plugin responsible for
     the rendering and processing of templates based on
-    the jinja 2 framework.
+    the Jinja 2 framework.
     """
 
     id = "pt.hive.colony.plugins.jinja"

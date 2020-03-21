@@ -537,7 +537,7 @@ class FacebookClient(object):
         # retrieves the HTTP client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the HTTP response
+        # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
         # retrieves the contents from the HTTP response

@@ -50,15 +50,15 @@ EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.\-]+$"
 """ The email regex value """
 
 URL_REGEX_VALUE = "^\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?$"
-""" The url regex value """
+""" The URL regex value """
 
 EMAIL_REGEX = re.compile(EMAIL_REGEX_VALUE)
 """ The email regex, that is going to be used in the
 email validation process """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)
-""" The url regex to be used latter for the validation
-of proper url/uri values """
+""" The URL regex to be used latter for the validation
+of proper URL/URI values """
 
 TO_ONE_RELATION = "to-one"
 """ The string value of a "to-one" relation """
@@ -1906,9 +1906,9 @@ def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, p
 
 def is_url_validate(self, attribute_name, attribute_value, properties):
     """
-    Validates an attribute to ensure that the value is an url.
+    Validates an attribute to ensure that the value is an URL.
 
-    The validation is performed according to the general url/uri
+    The validation is performed according to the general URL/URI
     regular expression.
 
     :type attribute_name: String
@@ -1922,10 +1922,10 @@ def is_url_validate(self, attribute_name, attribute_value, properties):
     # checks if the attribute value matches the regular expression
     match = URL_REGEX.match(attribute_value)
 
-    # in case the value is not an url
+    # in case the value is not an URL
     if not match:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "value is not an url")
+        self.add_error(attribute_name, "value is not an URL")
 
 def is_email_validate(self, attribute_name, attribute_value, properties):
     """

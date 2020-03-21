@@ -67,7 +67,7 @@ of the integer type based groups for the urls """
 REGEX_REGEX = re.compile("\<regex\([\"'](.*?)[\"']\):(\w+)\>")
 """ Regular expression that is going to be used for the
 replacement of regular expression types with the proper
-group in the final url based route regex """
+group in the final URL based route regex """
 
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
@@ -631,14 +631,14 @@ class MVC(colony.System):
         names_t = meta.get("names_t", {})
 
         # strips the base name from the possible trailing values (that
-        # are not part of the url path)
+        # are not part of the URL path)
         base = base.rstrip("$")
         base = base.lstrip("^/")
 
         # verifies if the controller currently associated with the request
         # contains the pluggable resolution method, that should be able to map
         # a resolved base route value into a resolved one, provided an extended
-        # support for domain and url resolution during runtime
+        # support for domain and URL resolution during runtime
         has_resolve = hasattr(controller, "resolve")
         if has_resolve: base = controller.resolve(request, base)
 
@@ -647,7 +647,7 @@ class MVC(colony.System):
         query = []
 
         # iterates over all the keyword based arguments to try to either
-        # populate the various parts of the url with arguments or the
+        # populate the various parts of the URL with arguments or the
         # parameters part of the query sequence with key based values
         for key, value in colony.legacy.iteritems(kwargs):
             value_t = type(value)
@@ -662,7 +662,7 @@ class MVC(colony.System):
                 param = key_q + "=" + value_q
                 query.append(param)
 
-        # quotes the final base url value (already processed)
+        # quotes the final base URL value (already processed)
         # and joins the complete set of key values for the query
         # concatenating then the result from both (final resolution)
         location = colony.quote(base)
@@ -826,7 +826,7 @@ class MVC(colony.System):
 
         # sets the reference to the resolve method in the request
         # this is the method from which it's possible to resolve a
-        # dynamic resource into a proper relative url path, it may
+        # dynamic resource into a proper relative URL path, it may
         # be used during the life time of the request
         rest_request.resolve = self.resolve
 

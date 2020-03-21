@@ -52,7 +52,7 @@ METHOD_COLOR = dict(
     GET = "green",
     POST = "blue"
 )
-""" The map that associates the various http verbs/methods
+""" The map that associates the various HTTP verbs/methods
 with the proper color string to be used in display """
 
 mvc_utils = colony.__import__("mvc_utils")
