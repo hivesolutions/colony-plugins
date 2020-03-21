@@ -1017,17 +1017,17 @@ class OpenidClient(object):
         # strips the claimed id from trailing spaces
         claimed_id = claimed_id.strip()
 
-        # in case the claimed id is of type xri
+        # in case the claimed id is of type XRI
         if claimed_id.startswith(XRI_URI_VALUE) or claimed_id.startswith(XRI_INITIALIZER_VALUE):
-            # in case the claimed id starts with the xri uri value
+            # in case the claimed id starts with the XRI URI value
             if claimed_id.startswith(XRI_URI_VALUE):
-                # removes the xri uri from the claimed id
+                # removes the XRI URI from the claimed id
                 claimed_id = claimed_id[6:]
         # in case the claimed id is of type URL
         else:
-            # in case the clamed id (URL) does not start with the correct uri value
+            # in case the claimed id (URL) does not start with the correct URI value
             if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE):
-                # adds the HTTP uri to the claimed id
+                # adds the HTTP URI to the claimed id
                 claimed_id = HTTP_URI_VALUE + claimed_id
 
             # in case the claimed id (URL) is missing

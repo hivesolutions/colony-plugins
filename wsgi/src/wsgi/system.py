@@ -87,8 +87,8 @@ value of content type provided by the server """
 
 PATH_INFO_PREFIX = "/dynamic/rest"
 """ The prefix to be used at the start of the
-path info so that every request uri is inserted
-within this context (this way the uri is shorter) """
+path info so that every request URI is inserted
+within this context (this way the URI is shorter) """
 
 CHUNK_SIZE = 4096
 """ The size (in bytes) of the message piece
@@ -452,7 +452,7 @@ class WSGIRequest(object):
 
         # creates the "final" path info (resolved) value by adding
         # the "static" path info prefix to it, so that smaller
-        # uri's may be used in WSGI, in case the "extra" prefix variable
+        # URI's may be used in WSGI, in case the "extra" prefix variable
         # is set an "extra" prefix is prepended to the path info
         if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info_r
         else: path_info_r = PATH_INFO_PREFIX + path_info_r

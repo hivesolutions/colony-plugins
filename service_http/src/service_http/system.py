@@ -2475,7 +2475,7 @@ class HTTPRequest(object):
     """ The filename """
 
     uri = "none"
-    """ The uri """
+    """ The URI """
 
     query_string = ""
     """ The query string value """
