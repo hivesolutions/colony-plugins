@@ -738,7 +738,7 @@ class Connection(object):
 
     connection_port = None
     """ The port for the connection, this value should
-    conform with tcp specification and it's an integer """
+    conform with TCP specification and it's an integer """
 
     connection_status = True
     """ The status of of the connection, this is a boolean value

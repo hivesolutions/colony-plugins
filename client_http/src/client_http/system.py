@@ -602,7 +602,7 @@ class HTTPClient(object):
         :type host: String
         :param host: The host to be used by the request.
         :type port: int
-        :param port: The tcp port to be used.
+        :param port: The TCP port to be used.
         :type path: String
         :param path: The path to be retrieve via HTTP.
         :type parameters: Dictionary
