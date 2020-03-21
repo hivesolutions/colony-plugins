@@ -55,12 +55,12 @@ class RSA(colony.System):
         keys = parameters.get("keys", None)
 
         # creates the RSA structure
-        rsa_structure = RsaStructure(keys)
+        rsa_structure = RSAStructure(keys)
 
         # returns the RSA structure
         return rsa_structure
 
-class RsaStructure(object):
+class RSAStructure(object):
     """
     Class representing the RSA,
     cryptographic protocol structure.
