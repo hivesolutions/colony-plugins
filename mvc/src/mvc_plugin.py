@@ -117,7 +117,7 @@ class MVCPlugin(colony.Plugin):
         """
         Handles the given REST request.
 
-        :type rest_request: RestRequest
+        :type rest_request: RESTRequest
         :param rest_request: The REST request to be handled.
         :rtype: bool
         :return: The result of the handling.
