@@ -51,13 +51,10 @@ class RSA(colony.System):
     """
 
     def create_structure(self, parameters):
-        # retrieves the keys (if available)
+        # retrieves the keys (if available), then creates the
+        # RSA structure and returns it
         keys = parameters.get("keys", None)
-
-        # creates the RSA structure
         rsa_structure = RSAStructure(keys)
-
-        # returns the RSA structure
         return rsa_structure
 
 class RSAStructure(object):
