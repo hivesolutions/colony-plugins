@@ -189,13 +189,13 @@ class SMTPClient(object):
             self.login(session, parameters)
             self.ehlo(session, parameters)
 
-            # retrieves the use tls flag
+            # retrieves the use TLS flag
             tls = parameters.get("tls", False)
 
-            # in case the tls flag is active
+            # in case the TLS flag is active
             if tls:
-                # tries to start tls and then runs the
-                # ehlo command (again, because of tls)
+                # tries to start TLS and then runs the
+                # ehlo command (again, because of TLS)
                 self.starttls(session, parameters)
                 self.ehlo(session, parameters)
 
@@ -451,9 +451,9 @@ class SMTPClient(object):
         response = self.retrieve_response(request, session)
 
         # checks the response for errors
-        self._check_response_error(response, (220,), "problem starting tls: ")
+        self._check_response_error(response, (220,), "problem starting TLS: ")
 
-        # upgrades the client connection to use SSL (tls)
+        # upgrades the client connection to use SSL (TLS)
         self.client_connection.upgrade("ssl", {})
 
     def vrfy(self, session, parameters = {}):
