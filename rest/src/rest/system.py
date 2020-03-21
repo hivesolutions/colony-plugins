@@ -2899,7 +2899,7 @@ class ShelveSession(RESTSession):
 
 class RedisSession(RESTSession):
     """
-    Redis based session that uses a redis server to store a
+    Redis based session that uses a Redis server to store a
     serialized version of the session associated with string
     based session identifier values.
 
@@ -2908,17 +2908,17 @@ class RedisSession(RESTSession):
     a priority (and a requirement).
 
     To be able to use this session the proper configuration
-    variables must be set to define the connection with redis.
+    variables must be set to define the connection with Redis.
     """
 
     REDIS = None
-    """ The underlying redis connection object that will be
+    """ The underlying Redis connection object that will be
     used for the storage and loading of sessions, this connection
     is supposed to be permanent and auto-reconnection possible """
 
     BGSAVE = True
     """ The global configuration variable that controls if the
-    current redis infra-structure should trigger a background
+    current Redis infra-structure should trigger a background
     save (bgsave) operation on each flush """
 
     @classmethod
@@ -2926,7 +2926,7 @@ class RedisSession(RESTSession):
         super(RedisSession, cls).load()
         import redis
         url = colony.conf("REDISTOGO_URL", None)
-        if not url: raise RuntimeError("invalid redis URL")
+        if not url: raise RuntimeError("invalid Redis URL")
         cls.BGSAVE = bgsave
         cls.REDIS = cls.REDIS or redis.from_url(url)
         cls.REDIS.ping()

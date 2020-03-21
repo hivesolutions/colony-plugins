@@ -78,7 +78,7 @@ class FileGridFS(colony.System):
         port = connection_parameters.get("port", 27017)
         database = connection_parameters.get("database", "test")
 
-        # creates a new mongo connection
+        # creates a new MongoDB connection
         # for file insertion and then retrieves the correct
         # database from it (as the connection)
         is_new = int(pymongo.version[0]) >= 3
