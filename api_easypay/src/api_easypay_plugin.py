@@ -46,7 +46,7 @@ class APIEasypayPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.api.easypay"
     name = "Easypay API"
-    description = "The plugin that offers the easypay API"
+    description = "The plugin that offers the Easypay API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
