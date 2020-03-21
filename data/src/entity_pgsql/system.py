@@ -66,11 +66,11 @@ OPERATORS_MAP = dict(
     length = "char_length"
 )
 """ The map that resolves the various specific operator
-for the pgsql implementation from the generic ones """
+for the PgSQL implementation from the generic ones """
 
-class EntityPgsql(colony.System):
+class EntityPgSQL(colony.System):
     """
-    The entity pgsql class.
+    The entity PgSQL class.
     """
 
     def get_engine_name(self):
@@ -80,9 +80,9 @@ class EntityPgsql(colony.System):
         return pgdb.version
 
     def create_engine(self, entity_manager):
-        return PgsqlEngine(self, entity_manager)
+        return PgSQLEngine(self, entity_manager)
 
-class PgsqlEngine(object):
+class PgSQLEngine(object):
 
     pgsql_system = None
     """ The reference to the "owning" system entity """
@@ -146,7 +146,7 @@ class PgsqlEngine(object):
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False, cast = bool)
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
-        connection._connection = PgsqlConnection(
+        connection._connection = PgSQLConnection(
             host = host,
             user = user,
             password = password,
@@ -346,7 +346,7 @@ class PgsqlEngine(object):
 
         try:
             # prints a debug message about the query that is going to be
-            # executed under the pgsql engine (for debugging purposes)
+            # executed under the PgSQL engine (for debugging purposes)
             self.pgsql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the SQL string
@@ -637,17 +637,17 @@ class PgsqlEngine(object):
         return False
 
     def _allow_for_update(self):
-        # currently pgsql does not support the row level locking
+        # currently PgSQL does not support the row level locking
         # for outer joins, meaning that queries that for queries
         # contain relations loading it would be impossible to lock
         # the selected rows, making the for update support not reliable
-        # this is considered a major drawback towards pgsql usage
+        # this is considered a major drawback towards PgSQL usage
         return False
 
-class PgsqlConnection(object):
+class PgSQLConnection(object):
     """
     Class that represents a logical connection with a
-    pgsql database, it should be used to encapsulate
+    PgSQL database, it should be used to encapsulate
     the inner details of a connection.
     """
 

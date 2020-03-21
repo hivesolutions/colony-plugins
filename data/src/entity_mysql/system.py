@@ -78,7 +78,7 @@ DEAD_LOCK_ERRORS = (1213,)
 """ The sequence that defines the codes describing errors
 related with possible dead lock situations (rollback) """
 
-class EntityMysql(colony.System):
+class EntityMySQL(colony.System):
     """
     The entity MySQL class.
     """
@@ -90,9 +90,9 @@ class EntityMysql(colony.System):
         return MySQLdb.get_client_info()
 
     def create_engine(self, entity_manager):
-        return MysqlEngine(self, entity_manager)
+        return MySQLEngine(self, entity_manager)
 
-class MysqlEngine(object):
+class MySQLEngine(object):
     """
     The engine class that handles all the adaptation
     process from the general entity manager structures
@@ -167,7 +167,7 @@ class MysqlEngine(object):
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False, cast = bool)
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
-        connection._connection = MysqlConnection(
+        connection._connection = MySQLConnection(
             host = host,
             user = user,
             password = password,
@@ -765,7 +765,7 @@ class MysqlEngine(object):
     def _allow_for_update(self):
         return True
 
-class MysqlConnection(object):
+class MySQLConnection(object):
     """
     Class representing an abstraction on top of
     the MySQL connection, to provide necessary

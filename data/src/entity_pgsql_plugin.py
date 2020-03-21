@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class EntityPgsqlPlugin(colony.Plugin):
+class EntityPgSQLPlugin(colony.Plugin):
     """
-    The main class for the Entity Pgsql plugin.
+    The main class for the Entity PgSQL plugin.
     """
 
     id = "pt.hive.colony.plugins.data.entity.pgsql"
     name = "Entity Postgresql"
-    description = "The plugin that manages the postgresql adaptation structures for the entity manager"
+    description = "The plugin that manages the PostgreSQL adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -65,7 +65,7 @@ class EntityPgsqlPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import entity_pgsql
-        self.system = entity_pgsql.EntityPgsql(self)
+        self.system = entity_pgsql.EntityPgSQL(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()

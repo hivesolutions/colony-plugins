@@ -58,9 +58,9 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
-class EntitySqlite(colony.System):
+class EntitySQLite(colony.System):
     """
-    The entity sqlite class.
+    The entity SQLite class.
     """
 
     def get_engine_name(self):
@@ -70,9 +70,9 @@ class EntitySqlite(colony.System):
         return INTERNAL_VERSION
 
     def create_engine(self, entity_manager):
-        return SqliteEngine(self, entity_manager)
+        return SQLiteEngine(self, entity_manager)
 
-class SqliteEngine(object):
+class SQLiteEngine(object):
 
     sqlite_system = None
     """ The reference to the "owning" system entity """
@@ -120,7 +120,7 @@ class SqliteEngine(object):
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
-        connection._connection = SqliteConnection(
+        connection._connection = SQLiteConnection(
             file_path,
             cache_size = cache_size,
             synchronous = synchronous
@@ -259,7 +259,7 @@ class SqliteEngine(object):
 
         try:
             # prints a debug message about the query that is going to be
-            # executed under the pgsql engine (for debugging purposes)
+            # executed under the SQLite engine (for debugging purposes)
             self.sqlite_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the SQL string
@@ -404,7 +404,7 @@ class SqliteEngine(object):
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (updating of the table in invalid
-        # value should be able to lock the sqlite database)
+        # value should be able to lock the SQLite database)
         query_buffer = colony.StringBuffer()
         query_buffer.write("update %s set %s = %s where 0 = 1" % (table_name, field_name, field_name))
 
@@ -505,30 +505,30 @@ class SqliteEngine(object):
     def _allow_for_update(self):
         return False
 
-class SqliteConnection(object):
+class SQLiteConnection(object):
     """
     Class representing an abstraction on top of
-    the sqlite connection, to provide necessary
+    the SQLite connection, to provide necessary
     abstraction features.
     This features include: thread connection abstraction
     transaction stack retrieval, etc.
     """
 
     file_path = None
-    """ The path to the file containing the sqlite
+    """ The path to the file containing the SQLite
     database, this should be a complete path to the
     file and not a "simple" file name """
 
     cache_size = None
     """ The size (in pages) of the cache memory to be used
-    by the sqlite session """
+    by the SQLite session """
 
     synchronous = None
     """ If the current session should use the synchronous mode
     of operation (if asynchronous write is faster) """
 
     transaction_level_map = {}
-    """ The map associating the sqlite connection with the
+    """ The map associating the SQLite connection with the
     transaction depth (nesting) level """
 
     connections_map = {}

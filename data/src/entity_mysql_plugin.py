@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class EntityMysqlPlugin(colony.Plugin):
+class EntityMySQLPlugin(colony.Plugin):
     """
-    The main class for the Entity Mysql plugin.
+    The main class for the Entity MySQL plugin.
     """
 
     id = "pt.hive.colony.plugins.data.entity.mysql"
-    name = "Entity Mysql"
-    description = "The plugin that manages the mysql adaptation structures for the entity manager"
+    name = "Entity MySQL"
+    description = "The plugin that manages the MySQL adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -65,7 +65,7 @@ class EntityMysqlPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import entity_mysql
-        self.system = entity_mysql.EntityMysql(self)
+        self.system = entity_mysql.EntityMySQL(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
