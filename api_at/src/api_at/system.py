@@ -425,21 +425,21 @@ class ATClient(object):
 
     def get_at_document_id(self, data):
         """
-        Parses the provided xml data, retrieving the
+        Parses the provided XML data, retrieving the
         document identifier containing it.
 
-        The provided xml data should be compliant with
+        The provided XML data should be compliant with
         the pre-defined AT SOAP response.
 
         :type data: String
-        :param data: The string containing the xml data
+        :param data: The string containing the XML data
         to be used for parsing and retrieval of the document
         identifier.
         :rtype: String
         :return: The AT document id.
         """
 
-        # parses the xml data and retrieves the entry document
+        # parses the XML data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
@@ -461,11 +461,11 @@ class ATClient(object):
         :param data: The data to be checked for AT errors.
         """
 
-        # parses the xml data and retrieves the entry document
+        # parses the XML data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
-        # tries to retrieve the various elements from the xml data
+        # tries to retrieve the various elements from the XML data
         # that represent error information, an error may be either
         # a normal message based error or a fault
         fault_strings = document.getElementsByTagName("faultstring")

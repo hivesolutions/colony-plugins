@@ -93,7 +93,7 @@ class ResourcesFileParser(Parser):
         return self.resource_list
 
     def load_resource_file(self, file_path):
-        # creates the xml doument DOM object
+        # creates the XML document DOM object
         xml_document = xml.dom.minidom.parse(file_path)
         child_nodes = xml_document.childNodes
 
@@ -408,7 +408,7 @@ def valid_node(node):
     Gets if a node is valid or not for parsing.
 
     :type node: Node
-    :param node: The Xml node to be validated.
+    :param node: The XML node to be validated.
     :rtype: bool
     :return: The valid or not valid value.
     """

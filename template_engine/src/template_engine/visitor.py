@@ -966,7 +966,7 @@ class Visitor(object):
         :param attribute: A map describing the attribute structure.
         :type meta: Dictionary
         :param meta: The map containing the meta-information related with
-        the attribute in question (eg: xml escaping).
+        the attribute in question (eg: XML escaping).
         :type localize: bool
         :param localize: If the value must be localized using the currently
         available locale bundles.

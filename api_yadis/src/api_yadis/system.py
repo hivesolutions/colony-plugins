@@ -161,7 +161,7 @@ class YadisClient(object):
         # start the parameters map
         parameters = {}
 
-        # fetches the retrieval URL with the given parameters retrieving the xml response
+        # fetches the retrieval URL with the given parameters retrieving the XML response
         result = self._fetch_url(retrieval_url, parameters)
 
         # creates a new resource descriptor parser

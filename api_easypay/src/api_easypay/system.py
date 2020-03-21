@@ -243,7 +243,7 @@ class EasypayClient(object):
         if mobile: parameters["o_mobile"] = mobile
         if email: parameters["o_email"] = email
 
-        # fetches the retrieval URL with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the XML
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -300,7 +300,7 @@ class EasypayClient(object):
         parameters["ep_ref"] = reference
         parameters["ep_delete"] = "yes"
 
-        # fetches the retrieval URL with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the XML
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -354,7 +354,7 @@ class EasypayClient(object):
         parameters["ep_doc"] = document_identifier
         parameters["ep_key"] = reference_key
 
-        # fetches the retrieval URL with the given parameters retrieving the xml
+        # fetches the retrieval URL with the given parameters retrieving the XML
         result = self._fetch_url(retrieval_url, parameters)
 
         # parses the result (response) and retrieves the root node
@@ -588,16 +588,16 @@ class EasypayClient(object):
         return self.http_client
 
     def get_xml_node_text(self, xml_document, xml_tag_name):
-        # retrieves the xml nodes, returning none
+        # retrieves the XML nodes, returning none
         # in case the retrieved nodes are empty
         xml_nodes = xml_document.getElementsByTagName(xml_tag_name)
         if not xml_nodes: return None
 
-        # retrieves the xml node (first), and its text
+        # retrieves the XML node (first), and its text
         xml_node = xml_nodes[0]
         xml_node_text = self._get_xml_node_text(xml_node)
 
-        # returns the xml node text
+        # returns the XML node text
         return xml_node_text
 
     def _get_xml_node_text(self, xml_node):
@@ -611,7 +611,7 @@ class EasypayClient(object):
         # converts the child text nodes to a string
         xml_node_text = "".join(child_node_data_list)
 
-        # returns the xml node text
+        # returns the XML node text
         return xml_node_text
 
 class EasypayStructure(object):

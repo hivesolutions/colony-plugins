@@ -42,9 +42,9 @@ import colony
 HANDLER_NAME = "xml"
 """ The handler name """
 
-class AuthenticationXml(colony.System):
+class AuthenticationXML(colony.System):
     """
-    The authentication xml class.
+    The authentication XML class.
     """
 
     def get_handler_name(self):

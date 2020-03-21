@@ -93,7 +93,7 @@ class ResourceDescriptorParser(Parser):
         return self.resources_list
 
     def load_yadis_file(self, file_path):
-        # creates the xml doument DOM object
+        # creates the XML document DOM object
         xml_document = xml.dom.minidom.parse(file_path)
         child_nodes = xml_document.childNodes
 
@@ -102,7 +102,7 @@ class ResourceDescriptorParser(Parser):
                 self.resources_list = self.parse_resources(child_node)
 
     def load_yadis_contents(self, file_contents):
-        # creates the xml doument DOM object
+        # creates the XML document DOM object
         xml_document = xml.dom.minidom.parseString(file_contents)
         child_nodes = xml_document.childNodes
 
@@ -260,7 +260,7 @@ def valid_node(node):
     Gets if a node is valid or not for parsing.
 
     :type node: Node
-    :param node: The Xml node to be validated.
+    :param node: The XML node to be validated.
     :rtype: bool
     :return: The valid or not valid value.
     """

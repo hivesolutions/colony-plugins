@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class AuthenticationXmlPlugin(colony.Plugin):
+class AuthenticationXMLPlugin(colony.Plugin):
     """
-    The main class for the Authentication Xml plugin.
+    The main class for the Authentication XML plugin.
     """
 
     id = "pt.hive.colony.plugins.authentication.xml"
-    name = "Authentication Xml"
-    description = "Authentication Xml Plugin"
+    name = "Authentication XML"
+    description = "Authentication XML Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -62,7 +62,7 @@ class AuthenticationXmlPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import authentication_xml
-        self.system = authentication_xml.AuthenticationXml(self)
+        self.system = authentication_xml.AuthenticationXML(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()
