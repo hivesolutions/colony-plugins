@@ -527,7 +527,7 @@ class DropboxClient(object):
         # fetches the retrieval URL with the given parameters retrieving the JSON
         json = self._fetch_url(retrieval_url, parameters, PUT_METHOD_VALUE, file_contents)
 
-        # loads json retrieving the data
+        # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
 
         # checks for Dropbox errors

@@ -96,7 +96,7 @@ class ConsoleController(BaseController):
         # in the current context
         plugin_manager = self.plugin.manager
 
-        # retrieves the json plugin for the encoding of the
+        # retrieves the JSON plugin for the encoding of the
         # response value (serialized value)
         json_plugin = self.plugin.json_plugin
 
@@ -170,7 +170,7 @@ class ConsoleController(BaseController):
         result_err = buffer_err.getvalue()
         result = result_err or result_out
 
-        # creates the response map and serializes it with json to create the
+        # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
         response = dict(
             result = result,
@@ -192,7 +192,7 @@ class ConsoleController(BaseController):
         # in the current context
         plugin_manager = self.plugin.manager
 
-        # retrieves the json plugin for the encoding of the
+        # retrieves the JSON plugin for the encoding of the
         # response value (serialized value)
         json_plugin = self.plugin.json_plugin
 
@@ -285,7 +285,7 @@ class ConsoleController(BaseController):
         result_err = buffer_err.getvalue()
         result = result_err or result_out
 
-        # creates the response map and serializes it with json to create the
+        # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
         response = dict(
             result = result,
@@ -308,7 +308,7 @@ class ConsoleController(BaseController):
         # in the current context
         plugin_manager = self.plugin.manager
 
-        # retrieves the json plugin for the encoding of the
+        # retrieves the JSON plugin for the encoding of the
         # response value (serialized value)
         json_plugin = self.plugin.json_plugin
 
@@ -425,7 +425,7 @@ class ConsoleController(BaseController):
         # that they are presented to the end user in the best way possible
         commands.sort()
 
-        # creates the response map and serializes it with json to create the
+        # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
         response = dict(
             result = commands,

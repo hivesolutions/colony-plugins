@@ -72,11 +72,11 @@ class DiagnosticsController(BaseController):
         )
 
     def requests_list(self, request):
-        # retrieves the json plugin for the encoding of the
+        # retrieves the JSON plugin for the encoding of the
         # response value (serialized value)
         json_plugin = self.plugin.json_plugin
 
-        # retrieves the json plugin to be used for the retrieval
+        # retrieves the JSON plugin to be used for the retrieval
         # of the diagnostics information to be shown
         diagnostics_plugin = self.plugin.diagnostics_plugin
 
@@ -131,7 +131,7 @@ class DiagnosticsController(BaseController):
         self.serialize(request, requests, serializer = json_plugin)
 
     def requests_show(self, request, request_id = None):
-        # retrieves the json plugin to be used for the retrieval
+        # retrieves the JSON plugin to be used for the retrieval
         # of the diagnostics information to be shown
         diagnostics_plugin = self.plugin.diagnostics_plugin
 

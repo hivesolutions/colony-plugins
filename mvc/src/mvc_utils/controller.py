@@ -1019,21 +1019,21 @@ def set_field(self, request, field_name, field_value):
 
 def get_json(self, request):
     """
-    Retrieves the loaded json information from the request this
+    Retrieves the loaded JSON information from the request this
     method assumes that the request is properly formed and that
-    the header information is set in accordance with json.
+    the header information is set in accordance with JSON.
 
     :type request: Request
     :param request: The request to be used.
     :rtype: Object
-    :return: The object that represents the parsed json information
+    :return: The object that represents the parsed JSON information
     that was passed inside the request data.
     """
 
     # processes (and retrieves) the data map from the
-    # request and then tries to retrieves the json
+    # request and then tries to retrieves the JSON
     # data from it in case it does not exists the complete
-    # maps is returned as the json value
+    # maps is returned as the JSON value
     form_data_map = self.process_json_data(request)
     json_v = form_data_map.get("root", form_data_map)
     return json_v
@@ -1361,23 +1361,23 @@ def create_form_data(self, request, data_map, encoding = "utf-8"):
 
 def process_json_data(self, request, encoding = "utf-8", force = False):
     """
-    Processes the json data (attributes), creating a map containing
-    the hierarchy of defined structure for the "json" contents.
+    Processes the JSON data (attributes), creating a map containing
+    the hierarchy of defined structure for the "JSON" contents.
 
     Note that the encoding argument controls the encoding to be used
-    while decoding the request data for json loading.
+    while decoding the request data for JSON loading.
 
     :type request: Request
     :param request: The request to be used.
     :type encoding: String
     :param encoding: The encoding to be used when decoding the request
-    data/payload so that it can be used in json loading operation.
+    data/payload so that it can be used in JSON loading operation.
     :type force: bool
     :param force: If any cached data should be discarded and the
     the request information re-parsed if necessary.
     :rtype: Dictionary
     :return: The map containing the hierarchy of defined structure
-    for the "json" contents.
+    for the "JSON" contents.
     """
 
     # tries to retrieves the base attributes map from the
@@ -1390,10 +1390,10 @@ def process_json_data(self, request, encoding = "utf-8", force = False):
     if not force and data_map: return data_map
 
     # reads the contents from the request and then "loads"
-    # the json structure from them, in case the value is not a
+    # the JSON structure from them, in case the value is not a
     # dictionary converts it into one settings the loaded contents
     # in a new dictionary "under" the root key value then stores the result
-    # in the private json data value and returns the data map
+    # in the private JSON data value and returns the data map
     contents = request.read()
     is_bytes = colony.legacy.is_bytes(contents)
     if is_bytes: contents = contents.decode(encoding)
@@ -4287,10 +4287,10 @@ def set_engines(self, engines):
 
 def set_json_plugin(self, json_plugin):
     """
-    Sets the json plugin.
+    Sets the JSON plugin.
 
     :type json_plugin: Plugin
-    :param json_plugin: The json plugin.
+    :param json_plugin: The JSON plugin.
     """
 
     self.json_plugin = json_plugin
@@ -5504,7 +5504,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
     base_path = os.path.join(locales_path, bundle_file)
 
     # constructs the bundle path from the locales path and
-    # the expected bundle name (assumes json type), in case
+    # the expected bundle name (assumes JSON type), in case
     # such path does not exists returns immediately, note that
     # the base resource is used first as fallback process
     bundle_path = os.path.join(self.locales_path, bundle_file)
@@ -5519,12 +5519,12 @@ def _get_bundle(self, locale, bundle_name = "global"):
     if bundle: return bundle
 
     # opens the bundle file for reading of its contents
-    # after the reading they will be processed as json
+    # after the reading they will be processed as JSON
     bundle_file = open(bundle_path, "rb")
 
     try:
         # reads the bundle file contents and loads them
-        # as json information, (map) decoding it using
+        # as JSON information, (map) decoding it using
         # the default encoding (utf-8)
         bundle_contents = bundle_file.read()
         bundle_contents = bundle_contents.decode("utf-8")
@@ -5535,7 +5535,7 @@ def _get_bundle(self, locale, bundle_name = "global"):
         bundle_file.close()
 
     # adds the bundle to the cache map using the last retrieved
-    # timestamp and the parsed bundle json data, this will allow
+    # timestamp and the parsed bundle JSON data, this will allow
     # the next retrieval to be done through the cache system
     bundle_cache.add(bundle_path, bundle, bundle_timestamp)
 

@@ -75,7 +75,7 @@ in the encrypted communication with the server """
 
 MESSAGE_TEMPLATE = "{\"aps\":{\"alert\":\"%s\",\"sound\":\"%s\",\"badge\":%d}}"
 """ The template to be used to create the message
-in case the json plugin is currently not available """
+in case the JSON plugin is currently not available """
 
 class APNHandler(handler.Handler):
     """
@@ -176,7 +176,7 @@ class APNHandler(handler.Handler):
 
         # creates the message structure using with the
         # message (string) as the alert and then converts
-        # it into a json format (payload)
+        # it into a JSON format (payload)
         message_s = dict(
            aps = dict(
                 alert = message,

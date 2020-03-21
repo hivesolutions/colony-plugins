@@ -536,7 +536,7 @@ class MVCCommunicationHandler(object):
         the client as resulting meta information.
         """
 
-        # retrieves the json plugin
+        # retrieves the JSON plugin
         json_plugin = self.mvc_plugin.json_plugin
 
         # serializes the message and writes the serialized
@@ -546,7 +546,7 @@ class MVCCommunicationHandler(object):
         )
         request.write(serialized_message)
 
-        # retrieves the mime type associated with the json
+        # retrieves the mime type associated with the JSON
         # plugin and uses it to set the content type in the
         # provided request object, then flushes the request
         # so that the content type is set in it

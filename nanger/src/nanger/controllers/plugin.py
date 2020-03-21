@@ -50,7 +50,7 @@ class PluginController(BaseController):
         # in the current context
         plugin_manager = self.plugin.manager
 
-        # retrieves the json plugin for the encoding of the
+        # retrieves the JSON plugin for the encoding of the
         # response value (serialized value)
         json_plugin = self.plugin.json_plugin
 

@@ -292,7 +292,7 @@ class MVCUtils(colony.System):
         _controller.set_template_engine_plugin(template_engine_plugin)
         _controller.set_engines(engines)
 
-        # sets the template engine plugin and the json plugins
+        # sets the template engine plugin and the JSON plugins
         # in the controller, this are required for proper usage
         # of the controller according to specification
         _controller.set_template_engine_plugin(template_engine_plugin)
