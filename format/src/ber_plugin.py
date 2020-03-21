@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class BerPlugin(colony.Plugin):
+class BERPlugin(colony.Plugin):
     """
-    The main class for the Ber plugin.
+    The main class for the BER plugin.
     """
 
     id = "pt.hive.colony.plugins.format.ber"
-    name = "Ber"
-    description = "The plugin that offers the ber (basic encoding rules) format support"
+    name = "BER"
+    description = "The plugin that offers the BER (basic encoding rules) format support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -64,7 +64,7 @@ class BerPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ber_c
-        self.system = ber_c.Ber(self)
+        self.system = ber_c.BER(self)
 
     def create_structure(self, parameters):
         return self.system.create_structure(parameters)

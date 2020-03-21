@@ -39,15 +39,15 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class BerException(colony.ColonyException):
+class BERException(colony.ColonyException):
     """
-    The ber exception class.
+    The BER exception class.
     """
 
     message = None
     """ The exception's message """
 
-class PackingError(BerException):
+class PackingError(BERException):
     """
     The packing error class.
     """
@@ -60,7 +60,7 @@ class PackingError(BerException):
         :param message: The message to be printed.
         """
 
-        BerException.__init__(self)
+        BERException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class PackingError(BerException):
 
         return "Packing error - %s" % self.message
 
-class UnpackingError(BerException):
+class UnpackingError(BERException):
     """
     The unpacking error class.
     """
@@ -86,7 +86,7 @@ class UnpackingError(BerException):
         :param message: The message to be printed.
         """
 
-        BerException.__init__(self)
+        BERException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class UnpackingError(BerException):
 
         return "Unpacking error - %s" % self.message
 
-class OperationNotImplemented(BerException):
+class OperationNotImplemented(BERException):
     """
     The operation not implemented class.
     """
@@ -112,7 +112,7 @@ class OperationNotImplemented(BerException):
         :param message: The message to be printed.
         """
 
-        BerException.__init__(self)
+        BERException.__init__(self)
         self.message = message
 
     def __str__(self):

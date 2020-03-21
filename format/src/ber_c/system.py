@@ -128,17 +128,17 @@ DEFAULT_TYPE_CONSTRUCTED = {
 DEFAULT_CLASS = 0x00
 """ The default class to be used """
 
-class Ber(colony.System):
+class BER(colony.System):
     """
-    The ber class.
+    The BER class.
     """
 
     def create_structure(self, parameters):
-        return BerStructure()
+        return BERStructure()
 
-class BerStructure(object):
+class BERStructure(object):
     """
-    Class representing a ber structure.
+    Class representing a BER structure.
     """
 
     buffer = None

@@ -37,5 +37,5 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import BerException, PackingError, UnpackingError, OperationNotImplemented
-from .system import Ber
+from .exceptions import BERException, PackingError, UnpackingError, OperationNotImplemented
+from .system import BER
