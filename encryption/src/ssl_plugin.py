@@ -44,9 +44,9 @@ class SSLPlugin(colony.Plugin):
     The main class for the SSL plugin.
     """
 
-    id = "pt.hive.colony.plugins.encryption.ssl"
+    id = "pt.hive.colony.plugins.encryption.SSL"
     name = "SSL"
-    description = "The plugin that offers the ssl support"
+    description = "The plugin that offers the SSL support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [

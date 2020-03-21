@@ -453,7 +453,7 @@ class SMTPClient(object):
         # checks the response for errors
         self._check_response_error(response, (220,), "problem starting tls: ")
 
-        # upgrades the client connection to use ssl (tls)
+        # upgrades the client connection to use SSL (tls)
         self.client_connection.upgrade("ssl", {})
 
     def vrfy(self, session, parameters = {}):

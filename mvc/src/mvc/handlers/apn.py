@@ -139,7 +139,7 @@ class APNHandler(handler.Handler):
         _socket = APNHandler.sockets.get(key_tuple, None)
         if _socket: return _socket
 
-        # in case the ssl module is currently not available
+        # in case the SSL module is currently not available
         # it s not possible to create a new socket
         if not ssl: return
 

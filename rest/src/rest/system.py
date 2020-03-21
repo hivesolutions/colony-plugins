@@ -156,7 +156,7 @@ class REST(colony.System):
     name with the proper method object, to be called at runtime """
 
     force_ssl = False
-    """ If the ssl verification must be performed as default for
+    """ If the SSL verification must be performed as default for
     the requests associated with this handler """
 
     session_c = None
@@ -176,7 +176,7 @@ class REST(colony.System):
         self.service_methods = []
         self.service_methods_map = {}
 
-        # determines if the ssl (secure) connection should be
+        # determines if the SSL (secure) connection should be
         # enforced for connections associated with the request
         self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
 
@@ -965,7 +965,7 @@ class RESTRequest(object):
     are going to be returned as part of the result for request """
 
     force_ssl = False
-    """ If the ssl verification must be performed as default for
+    """ If the SSL verification must be performed as default for
     the current request (extra pre handling operation) """
 
     rest_encoder_plugins = []

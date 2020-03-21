@@ -46,7 +46,7 @@ import colony
 
 class SSLTest(colony.Test):
     """
-    The ssl infra-structure test class, responsible
+    The SSL infra-structure test class, responsible
     for the returning of the associated tests.
     """
 

@@ -57,10 +57,10 @@ models = colony.__import__("models")
 class SignatureController(BaseController):
 
     def encrypt(self, request, api_key, key_name, message):
-        # retrieves the ssl plugin
+        # retrieves the SSL plugin
         ssl_plugin = self.plugin.ssl_plugin
 
-        # creates the ssl structure
+        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
         # validates the API key
@@ -79,10 +79,10 @@ class SignatureController(BaseController):
         return message_e
 
     def decrypt(self, request, api_key, key_name, message_e):
-        # retrieves the ssl plugin
+        # retrieves the SSL plugin
         ssl_plugin = self.plugin.ssl_plugin
 
-        # creates the ssl structure
+        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
         # validates the API key
@@ -101,10 +101,10 @@ class SignatureController(BaseController):
         return message
 
     def sign(self, request, api_key, key_name, message, algorithm_name):
-        # retrieves the ssl plugin
+        # retrieves the SSL plugin
         ssl_plugin = self.plugin.ssl_plugin
 
-        # creates the ssl structure
+        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
         # validates the API key
@@ -123,10 +123,10 @@ class SignatureController(BaseController):
         return signature
 
     def verify(self, request, api_key, key_name, signature, message):
-        # retrieves the ssl plugin
+        # retrieves the SSL plugin
         ssl_plugin = self.plugin.ssl_plugin
 
-        # creates the ssl structure
+        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
         # validates the API key
@@ -208,7 +208,7 @@ class SignatureController(BaseController):
         private_key_path = plugin_manager.resolve_file_path(private_key_path, True, True)
         public_key_path = plugin_manager.resolve_file_path(public_key_path, True, True)
 
-        # creates the ssl structure and then generates the public and
+        # creates the SSL structure and then generates the public and
         # private keys (should update the generated structure)
         ssl_structure = ssl_plugin.create_structure({})
         ssl_structure.generate_keys(private_key_path, public_key_path, DEFAULT_NUMBER_BITS)
