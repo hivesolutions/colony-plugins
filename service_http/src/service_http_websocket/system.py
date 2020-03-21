@@ -225,13 +225,13 @@ class WebSocketConnection(object):
         # result 2 and the (8 byte) message
         result = struct.pack("!II8s", number_result_1, number_result_2, message)
 
-        # creates the md5 hash value
+        # creates the MD5 hash value
         md5_hash = hashlib.md5()
 
-        # update the md5 hash value
+        # update the MD5 hash value
         md5_hash.update(result)
 
-        # retrieves the md5 digest
+        # retrieves the MD5 digest
         md5_digest = md5_hash.digest()
 
         # sets the upgrade mode in the request

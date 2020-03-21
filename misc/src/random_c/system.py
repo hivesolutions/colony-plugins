@@ -166,43 +166,43 @@ class Random(colony.System):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an md5 value.
+        into an MD5 value.
 
         :rtype: Md5
         :return: The generated random key converted
-        into an md5 value.
+        into an MD5 value.
         """
 
         # generates a random value
         random = self.generate_random()
 
-        # generates an md5 hash of the random value
+        # generates an MD5 hash of the random value
         # note that the random value is first encoded
         # into a bytes value before the hash
         random = colony.legacy.bytes(random)
         random_md5 = hashlib.md5(random)
 
-        # returns the md5 hash of the random value
+        # returns the MD5 hash of the random value
         return random_md5
 
     def generate_random_md5_string(self):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an md5 string value.
+        into an MD5 string value.
 
         :rtype: String
         :return: The generated random key converted
-        into an md5 string value.
+        into an MD5 string value.
         """
 
-        # generates the md5 hash of a random value
+        # generates the MD5 hash of a random value
         random_md5 = self.generate_random_md5()
 
-        # converts the md5 hash into string
+        # converts the MD5 hash into string
         random_md5_string = random_md5.hexdigest()
 
-        # returns the string value of the md5 hash
+        # returns the string value of the MD5 hash
         # of the random value
         return random_md5_string
 
@@ -254,43 +254,43 @@ class Random(colony.System):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha256 value.
+        into an SHA256 value.
 
         :rtype: Sha256
         :return: The generated random key converted
-        into an sha256 value.
+        into an SHA256 value.
         """
 
         # generates a random value
         random = self.generate_random()
 
-        # generates an sha256 hash of the random value
+        # generates an SHA256 hash of the random value
         # note that the random value is first encoded
         # into a bytes value before the hash
         random = colony.legacy.bytes(random)
         random_sha256 = hashlib.sha256(random)
 
-        # returns the sha256 hash of the random value
+        # returns the SHA256 hash of the random value
         return random_sha256
 
     def generate_random_sha256_string(self):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha256 string value.
+        into an SHA256 string value.
 
         :rtype: String
         :return: The generated random key converted
-        into an sha256 string value.
+        into an SHA256 string value.
         """
 
-        # generates the sha256 hash of a random value
+        # generates the SHA256 hash of a random value
         random_sha256 = self.generate_random_sha256()
 
-        # converts the sha256 hash into string
+        # converts the SHA256 hash into string
         random_sha256_string = random_sha256.hexdigest()
 
-        # returns the string value of the sha256 hash
+        # returns the string value of the SHA256 hash
         # of the random value
         return random_sha256_string
 

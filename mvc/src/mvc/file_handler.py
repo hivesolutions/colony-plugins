@@ -179,7 +179,7 @@ class MVCFileHandler(object):
         :return: The etag value.
         """
 
-        # retrieves the md5 builder
+        # retrieves the MD5 builder
         md5 = hashlib.md5()
 
         # retrieves the size
@@ -188,13 +188,13 @@ class MVCFileHandler(object):
         # creates the modification plus size string
         modification_size_string = str(modified_timestamp + size)
 
-        # updates the md5 hash with the modification
+        # updates the MD5 hash with the modification
         # plus size string, note that the value that
         # is provided is ensured to be a bytes buffer
         modification_size_string = colony.legacy.bytes(modification_size_string)
         md5.update(modification_size_string)
 
-        # retrieves the md5 hex digest as the etag value
+        # retrieves the MD5 hex digest as the etag value
         etag_value = md5.hexdigest()
 
         # returns the etag value

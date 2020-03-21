@@ -757,7 +757,7 @@ class OpenidServer(object):
         elif self.openid_structure.session_type == DH_SHA1_VALUE:
             # returns the hmac SHA1 value
             return HMAC_SHA1_VALUE
-        # in case the current session is of type DH sha256
+        # in case the current session is of type DH SHA256
         elif self.openid_structure.session_type == DH_SHA256_VALUE:
             # returns the hmac sha256 value
             return HMAC_SHA256_VALUE

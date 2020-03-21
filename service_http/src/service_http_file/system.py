@@ -612,7 +612,7 @@ class ServiceHTTPFile(colony.System):
         :return: The etag value.
         """
 
-        # retrieves the md5 builder
+        # retrieves the MD5 builder
         md5 = hashlib.md5()
 
         # retrieves the size
@@ -621,13 +621,13 @@ class ServiceHTTPFile(colony.System):
         # creates the modification plus size string
         modification_size_string = str(modified_timestamp + size)
 
-        # updates the md5 hash with the modification
+        # updates the MD5 hash with the modification
         # plus size string, note that the value is
         # encoded a bytes buffer before the update
         modification_size_string = colony.legacy.bytes(modification_size_string)
         md5.update(modification_size_string)
 
-        # retrieves the md5 hex digest as the etag value
+        # retrieves the MD5 hex digest as the etag value
         # and then encapsulates in quotation marks
         etag_value = md5.hexdigest()
         etag_value = "\"" + etag_value + "\""

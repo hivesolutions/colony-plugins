@@ -73,22 +73,22 @@ VALUE_VALUE = "value"
 """ The value value """
 
 MD5_CRYPT_VALUE = "crypt"
-""" The md5 crypt value """
+""" The MD5 crypt value """
 
 SSHA_VALUE = "ssha"
-""" The ssha value """
+""" The SSHA value """
 
 PASSWORD_VALUE_REGEX_VALUE = "\{(?P<hash>\w+)\}(?P<value>.+)"
 """ The password value regex value """
 
 MD5_CRYPT_SALT_VALUE_REGEX_VALUE = "\$1\$(?P<salt>.+)\$.+"
-""" The md5 crypt salt value regex value """
+""" The MD5 crypt salt value regex value """
 
 PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
 """ The password value regex """
 
 MD5_CRYPT_SALT_VALUE_REGEX = re.compile(MD5_CRYPT_SALT_VALUE_REGEX_VALUE)
-""" The md5 crypt salt value regex """
+""" The MD5 crypt salt value regex """
 
 class AuthenticationLDAP(colony.System):
     """
@@ -165,13 +165,13 @@ class AuthenticationLDAP(colony.System):
             # converts the user password hash to lower case
             user_password_hash_lower = user_password_hash.lower()
 
-            # in case the user password hash is of type md5 crypt
+            # in case the user password hash is of type MD5 crypt
             if user_password_hash_lower == MD5_CRYPT_VALUE:
-                # processes the password using md5 crypt
+                # processes the password using MD5 crypt
                 processed_password_value = self._process_password_md5_crypt(password, user_password_value)
-            # in case the user password hash is of type ssha
+            # in case the user password hash is of type SSHA
             elif user_password_hash_lower == SSHA_VALUE:
-                # processes the password using ssha
+                # processes the password using SSHA
                 processed_password_value = self._process_password_ssha(password, user_password_value)
             # otherwise it must be a "normal" hash
             else:
@@ -202,14 +202,14 @@ class AuthenticationLDAP(colony.System):
 
     def _process_password_md5_crypt(self, password, user_password_value):
         # matches the user password value against the
-        # md5 crypt salt value regex
+        # MD5 crypt salt value regex
         user_password_value_match = MD5_CRYPT_SALT_VALUE_REGEX.match(user_password_value)
 
         # retrieves the salt from the user password value match
         salt = user_password_value_match.group("salt")
 
         # encrypts the password and the salt with the
-        # md5 crypt algorithm
+        # MD5 crypt algorithm
         processed_password_value = colony.md5_crypt(password, salt)
 
         # returns the processed password value

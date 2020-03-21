@@ -480,7 +480,7 @@ class FacebookClient(object):
         # retrieves the message from the message string buffer
         message = message_string_buffer.get_value()
 
-        # returns the md5 hex digest for the message
+        # returns the MD5 hex digest for the message
         return hashlib.md5(message).hexdigest()
 
     def _set_base_parameters(self, method_name, parameters):
