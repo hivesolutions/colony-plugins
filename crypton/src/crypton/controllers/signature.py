@@ -63,7 +63,7 @@ class SignatureController(BaseController):
         # creates the ssl structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the api key
+        # validates the API key
         self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
@@ -85,7 +85,7 @@ class SignatureController(BaseController):
         # creates the ssl structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the api key
+        # validates the API key
         self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
@@ -107,7 +107,7 @@ class SignatureController(BaseController):
         # creates the ssl structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the api key
+        # validates the API key
         self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
@@ -129,7 +129,7 @@ class SignatureController(BaseController):
         # creates the ssl structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the api key
+        # validates the API key
         self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
@@ -151,14 +151,14 @@ class SignatureController(BaseController):
         # retrieves the security map
         security_map = self.system.security_map
 
-        # retrieves the validate api key value
+        # retrieves the validate API key value
         validate_api_key = security_map.get("validate_api_key", True)
 
-        # returns in case no api key validation is required
+        # returns in case no API key validation is required
         if not validate_api_key: return
 
         # creates the filter to retrieve the consumer with
-        # the provided api, only existing clients should
+        # the provided API, only existing clients should
         # be considered valid according to specification
         filter = dict(
             filters = (
@@ -171,13 +171,13 @@ class SignatureController(BaseController):
             )
         )
 
-        # retrieves the consumer (entity) with the api key
+        # retrieves the consumer (entity) with the API key
         consumer = models.Consumer.find_one(filter)
 
         # raises an exception in case no consumer was found
         # this is the expected behavior for such problem
         if not consumer:
-            raise crypton.AccessDeniedException("invalid api key")
+            raise crypton.AccessDeniedException("invalid API key")
 
     def _get_key_path(self, key_name, key_type):
         # retrieves the plugin manager

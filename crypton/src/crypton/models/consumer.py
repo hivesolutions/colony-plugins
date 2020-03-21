@@ -44,7 +44,7 @@ RootEntity = RootEntity
 class Consumer(RootEntity):
     """
     The consumer class, which represents a generic
-    consumer client with an api key.
+    consumer client with an API key.
     """
 
     STATUS_ACTIVE = 1
@@ -104,7 +104,7 @@ class Consumer(RootEntity):
         self.add_validation("name", "not_none", True)
         self.add_validation("name", "not_empty")
 
-        # adds the validation methods to the api key attribute
+        # adds the validation methods to the API key attribute
         self.add_validation("api_key", "not_none", True)
         self.add_validation("api_key", "not_empty")
 
@@ -117,8 +117,8 @@ class Consumer(RootEntity):
         random_plugin = self.crypton_plugin.random_plugin
 
         # generates a random string value for
-        # the api key
+        # the API key
         api_key = random_plugin.generate_random_sha256_string()
 
-        # returns the (generated) api key
+        # returns the (generated) API key
         return api_key

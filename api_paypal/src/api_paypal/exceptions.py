@@ -54,7 +54,7 @@ class PaypalAPIError(APIPaypalException):
 
     long_message = None
     """ The longer version of the error message present
-    by the paypal api """
+    by the PayPal API """
 
     def __init__(self, message, long_message):
         """
@@ -64,7 +64,7 @@ class PaypalAPIError(APIPaypalException):
         :param message: The message to be printed.
         :type long_message: String
         :param long_message: The longer version of the
-        error message present by the paypal api.
+        error message present by the PayPal API.
         """
 
         APIPaypalException.__init__(self)

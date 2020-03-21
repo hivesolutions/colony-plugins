@@ -51,6 +51,6 @@ class ConsumerController(BaseController):
         consumer = request.field("consumer", {})
         consumer = models.Consumer.new(consumer)
 
-        # generates the consumer api key for the
+        # generates the consumer API key for the
         consumer.generate_api_key()
         consumer.create()
