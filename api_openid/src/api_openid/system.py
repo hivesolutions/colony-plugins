@@ -122,7 +122,7 @@ ID_RES_VALUE = "id_res"
 """ The id res value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
-""" The hmac SHA1 value """
+""" The HMAC SHA1 value """
 
 HMAC_SHA256_VALUE = "HMAC-SHA256"
 """ The HMAC SHA256 value """
@@ -160,7 +160,7 @@ HMAC_HASH_MODULES_MAP = {
     DH_SHA1_VALUE : hashlib.sha1,
     DH_SHA256_VALUE : hashlib.sha1
 }
-""" The map associating the hmac values with the hashlib
+""" The map associating the HMAC values with the hashlib
 hash function modules """
 
 DIFFIE_HELLMAN_ASSOCIATION_TYPES = (
@@ -635,7 +635,7 @@ class OpenidServer(object):
             # decodes the MAC key using Base64
             decoded_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
-            # retrieves the hash module from the hmac hash modules map
+            # retrieves the hash module from the HMAC hash modules map
             hash_module = HMAC_HASH_MODULES_MAP.get(mac_key_type, None)
 
             # encodes the key value in order to be used in the xor operation
@@ -755,11 +755,11 @@ class OpenidServer(object):
             return self.openid_structure.association_type
         # in case the current session is of type DH SHA1
         elif self.openid_structure.session_type == DH_SHA1_VALUE:
-            # returns the hmac SHA1 value
+            # returns the HMAC SHA1 value
             return HMAC_SHA1_VALUE
         # in case the current session is of type DH SHA256
         elif self.openid_structure.session_type == DH_SHA256_VALUE:
-            # returns the hmac sha256 value
+            # returns the HMAC sha256 value
             return HMAC_SHA256_VALUE
 
     def _generate_signature(self):
@@ -795,7 +795,7 @@ class OpenidServer(object):
         # decodes the signature MAC key from Base64
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
-        # retrieves the hash module from the hmac hash modules map
+        # retrieves the hash module from the HMAC hash modules map
         hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
 
         # in case no hash module is set
@@ -1205,7 +1205,7 @@ class OpenidClient(object):
         # decodes the signature MAC key from Base64
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
-        # retrieves the hash module from the hmac hash modules map
+        # retrieves the hash module from the HMAC hash modules map
         hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
 
         # in case no hash module is set

@@ -57,7 +57,7 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
-""" The hmac SHA1 value """
+""" The HMAC SHA1 value """
 
 RSA_SHA1_VALUE = "RSA-SHA1"
 """ The RSA SHA1 value """
@@ -89,7 +89,7 @@ OUT_OF_BAND_CALLBACK_VALUE = "oob"
 HMAC_HASH_MODULES_MAP = {
     HMAC_SHA1_VALUE : hashlib.sha1
 }
-""" The map associating the hmac values with the hashlib hash function modules """
+""" The map associating the HMAC values with the hashlib hash function modules """
 
 BASE_REST_URL = "http://api.dropbox.com/1/"
 """ The base REST URL to be used """
