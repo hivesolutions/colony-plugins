@@ -90,12 +90,12 @@ class CryptonPlugin(colony.Plugin):
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
-        to the mvc service. The tuple should relate the route with the handler
+        to the MVC service. The tuple should relate the route with the handler
         method/function.
 
         :rtype: Tuple
         :return: The tuple of regular expressions to be used as patterns,
-        to the mvc service.
+        to the MVC service.
         """
 
         return self.system.get_patterns()

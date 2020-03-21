@@ -62,7 +62,7 @@ class Crypton(colony.System):
         This load should occur only after the dependencies are loaded.
         """
 
-        # retrieves the mvc utils plugin and uses it in the generation
+        # retrieves the MVC utils plugin and uses it in the generation
         # of the proper entity manager arguments for the assign operation
         mvc_utils_plugin = self.plugin.mvc_utils_plugin
         self.arguments = mvc_utils_plugin.manager_arguments(
@@ -84,7 +84,7 @@ class Crypton(colony.System):
         This load should occur the earliest possible in the unloading process.
         """
 
-        # retrieves the mvc utils plugin and uses the reference to
+        # retrieves the MVC utils plugin and uses the reference to
         # destroy the entity models, unregistering them from the
         # entity manager instance and then destroy the controllers,
         # unregistering them from the internal structures
@@ -94,12 +94,12 @@ class Crypton(colony.System):
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
-        to the mvc service. The tuple should relate the route with the handler
+        to the MVC service. The tuple should relate the route with the handler
         method/function.
 
         :rtype: Tuple
         :return: The tuple of regular expressions to be used as patterns,
-        to the mvc service.
+        to the MVC service.
         """
 
         return (

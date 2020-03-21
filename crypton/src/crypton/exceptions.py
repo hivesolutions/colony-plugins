@@ -41,7 +41,7 @@ import colony
 
 class CryptonException(colony.ColonyException):
     """
-    The wen mvc encryption exception class.
+    The Crypton MVC encryption exception class.
     """
 
     message = None
