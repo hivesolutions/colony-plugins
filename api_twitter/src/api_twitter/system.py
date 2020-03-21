@@ -198,7 +198,7 @@ class TwitterClient(object):
         :param password: The password.
         :type encoding: String
         :param encoding: The encoding used.
-        :type oauth_structure: OauthStructure
+        :type oauth_structure: OAuthStructure
         :param oauth_structure: The OAuth structure
         """
 
@@ -262,12 +262,12 @@ class TwitterClient(object):
         :type set_structure: bool
         :param set_structure: The set structure flag (if the structure
         should be set in the client).
-        :rtype: OauthStructure
+        :rtype: OAuthStructure
         :return: The generated OAuth structure.
         """
 
         # constructs a new OAuth structure
-        oauth_structure = OauthStructure(
+        oauth_structure = OAuthStructure(
             oauth_consumer_key,
             oauth_consumer_secret,
             oauth_signature_method,
@@ -289,7 +289,7 @@ class TwitterClient(object):
         """
         Opens the OAuth request token.
 
-        :rtype: OauthStructure
+        :rtype: OAuthStructure
         :return: The current OAuth structure.
         """
 
@@ -366,7 +366,7 @@ class TwitterClient(object):
         """
         Opens the OAuth access token.
 
-        :rtype: OauthStructure
+        :rtype: OAuthStructure
         :return: The current OAuth structure.
         """
 
@@ -863,7 +863,7 @@ class TwitterClient(object):
         """
         Retrieves the OAuth structure.
 
-        :rtype: OauthStructure
+        :rtype: OAuthStructure
         :return: The OAuth structure.
         """
 
@@ -873,7 +873,7 @@ class TwitterClient(object):
         """
         Sets the OAuth structure.
 
-        :type oauth_structure: OauthStructure
+        :type oauth_structure: OAuthStructure
         :param oauth_structure: The OAuth structure.
         """
 
@@ -1112,7 +1112,7 @@ class TwitterClient(object):
         # returns the HTTP client
         return self.http_client
 
-class OauthStructure(object):
+class OAuthStructure(object):
     """
     The OAuth structure class.
     """

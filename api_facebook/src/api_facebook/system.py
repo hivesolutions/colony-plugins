@@ -116,7 +116,7 @@ class APIFacebook(colony.System):
 
         self.facebook_client_map = {
             FACEBOOK_CLIENT_TYPE_REST : FacebookClient,
-            FACEBOOK_CLIENT_TYPE_OAUTH : FacebookClientOauth
+            FACEBOOK_CLIENT_TYPE_OAUTH : FacebookClientOAuth
         }
 
     def create_client(self, api_attributes, open_client = True):
@@ -619,7 +619,7 @@ class FacebookClient(object):
         # returns the HTTP client
         return self.http_client
 
-class FacebookClientOauth(object):
+class FacebookClientOAuth(object):
     """
     The class that represents a Facebook client OAuth connection.
     """

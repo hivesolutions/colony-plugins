@@ -66,13 +66,13 @@ PLAINTEXT_VALUE = "PLAINTEXT"
 """ The plaintext value """
 
 OAUTH_AUTHENTICATION_TYPE = 1
-""" The oauth authentication type """
+""" The OAuth authentication type """
 
 DEFAULT_OAUTH_SIGNATURE_METHOD = HMAC_SHA1_VALUE
-""" The default oauth signature method """
+""" The default OAuth signature method """
 
 DEFAULT_OAUTH_VERSION = "1.0"
-""" The default oauth version """
+""" The default OAuth version """
 
 GET_METHOD_VALUE = "GET"
 """ The get method value """
@@ -183,8 +183,8 @@ class DropboxClient(object):
         :param client_http_plugin: The client HTTP plugin.
         :type encoding: String
         :param encoding: The encoding used.
-        :type oauth_structure: OauthStructure
-        :param oauth_structure: The oauth structure
+        :type oauth_structure: OAuthStructure
+        :param oauth_structure: The OAuth structure
         """
 
         self.json_plugin = json_plugin
@@ -224,7 +224,7 @@ class DropboxClient(object):
         set_structure = True
     ):
         """
-        Generates a new oauth structure, for the given parameters.
+        Generates a new OAuth structure, for the given parameters.
 
         :type oauth_consumer_key: String
         :param oauth_consumer_key: The consumer key.
@@ -244,12 +244,12 @@ class DropboxClient(object):
         :param oauth_callback: The callback.
         :type set_structure: bool
         :param set_structure: The set structure flag (if the structure should be set in the client).
-        :rtype: OauthStructure
-        :return: The generated oauth structure.
+        :rtype: OAuthStructure
+        :return: The generated OAuth structure.
         """
 
-        # constructs a new oauth structure
-        oauth_structure = OauthStructure(
+        # constructs a new OAuth structure
+        oauth_structure = OAuthStructure(
             oauth_consumer_key,
             oauth_consumer_secret,
             oauth_signature_method = oauth_signature_method,
@@ -268,10 +268,10 @@ class DropboxClient(object):
 
     def open_oauth_request_token(self):
         """
-        Opens the oauth request token.
+        Opens the OAuth request token.
 
-        :rtype: OauthStructure
-        :return: The current oauth structure.
+        :rtype: OAuthStructure
+        :return: The current OAuth structure.
         """
 
         # sets the retrieval URL
@@ -286,7 +286,7 @@ class DropboxClient(object):
         # start the parameters map
         parameters = {}
 
-        # sets the oauth parameters
+        # sets the OAuth parameters
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
         parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -330,21 +330,21 @@ class DropboxClient(object):
         # converts the values list into a map
         values_map = dict(values_list)
 
-        # retrieves the oauth token from the values map
+        # retrieves the OAuth token from the values map
         self.oauth_structure.oauth_token = values_map["oauth_token"]
 
-        # retrieves the oauth token secret from the values map
+        # retrieves the OAuth token secret from the values map
         self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
 
-        # returns the oauth structure
+        # returns the OAuth structure
         return self.oauth_structure
 
     def open_oauth_access_token(self):
         """
-        Opens the oauth access token.
+        Opens the OAuth access token.
 
-        :rtype: OauthStructure
-        :return: The current oauth structure.
+        :rtype: OAuthStructure
+        :return: The current OAuth structure.
         """
 
         # sets the retrieval URL
@@ -359,7 +359,7 @@ class DropboxClient(object):
         # start the parameters map
         parameters = {}
 
-        # sets the oauth parameters
+        # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
         parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
@@ -404,19 +404,19 @@ class DropboxClient(object):
         # converts the values list into a map
         values_map = dict(values_list)
 
-        # retrieves the oauth values from the values map
+        # retrieves the OAuth values from the values map
         self.oauth_structure.oauth_access_token = values_map["oauth_token"]
         self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
 
-        # returns the oauth structure
+        # returns the OAuth structure
         return self.oauth_structure
 
     def get_oauth_authorize_url(self):
         """
-        Retrieves the oauth authorize URL.
+        Retrieves the OAuth authorize URL.
 
         :rtype: String
-        :return: The oauth authorize URL.
+        :return: The OAuth authorize URL.
         """
 
         # sets the retrieval URL
@@ -436,10 +436,10 @@ class DropboxClient(object):
 
     def get_oauth_authenticate_url(self):
         """
-        Retrieves the oauth authenticate URL.
+        Retrieves the OAuth authenticate URL.
 
         :rtype: String
-        :return: The oauth authenticate URL.
+        :return: The OAuth authenticate URL.
         """
 
         # sets the retrieval URL
@@ -543,27 +543,27 @@ class DropboxClient(object):
         are available.
         """
 
-        # in case the oauth access token is not available
+        # in case the OAuth access token is not available
         if not self.oauth_structure.oauth_access_token:
             # raises the invalid authentication exception
             raise exceptions.InvalidAuthentication("user not authenticated")
 
     def get_oauth_structure(self):
         """
-        Retrieves the oauth structure.
+        Retrieves the OAuth structure.
 
-        :rtype: OauthStructure
-        :return: The oauth structure.
+        :rtype: OAuthStructure
+        :return: The OAuth structure.
         """
 
         return self.oauth_structure
 
     def set_oauth_structure(self, oauth_structure):
         """
-        Sets the oauth structure.
+        Sets the OAuth structure.
 
-        :type oauth_structure: OauthStructure
-        :param oauth_structure: The oauth structure.
+        :type oauth_structure: OAuthStructure
+        :param oauth_structure: The OAuth structure.
         """
 
         self.oauth_structure = oauth_structure
@@ -595,10 +595,10 @@ class DropboxClient(object):
         # retrieves the current authentication type
         authentication_type = self._get_authentication_type()
 
-        # builds the oauth arguments, for authentication in case the
-        # oauth authentication method is selected
+        # builds the OAuth arguments, for authentication in case the
+        # OAuth authentication method is selected
         if authentication_type == OAUTH_AUTHENTICATION_TYPE:
-            # builds the oauth arguments for authentication
+            # builds the OAuth arguments for authentication
             self._build_oauth_arguments(url, parameters, method)
 
         # fetches the URL retrieving the HTTP response
@@ -636,16 +636,16 @@ class DropboxClient(object):
 
     def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
         """
-        Builds the oauth arguments encoding them into the oauth message specification.
+        Builds the OAuth arguments encoding them into the OAuth message specification.
 
         :type url: String
-        :param url: The URL to be used for the oauth encoding.
+        :param url: The URL to be used for the OAuth encoding.
         :type parameters: Dictionary
-        :param parameters: The parameters to be used for the oauth encoding.
+        :param parameters: The parameters to be used for the OAuth encoding.
         :type method: String
-        :param method: The method to be used for the oauth encoding.
+        :param method: The method to be used for the OAuth encoding.
         :rtype: String
-        :return: The oauth arguments encoded in oauth message specification.
+        :return: The OAuth arguments encoded in OAuth message specification.
         """
 
         # retrieves the timestamp
@@ -654,7 +654,7 @@ class DropboxClient(object):
         # retrieves the nonce
         oauth_nonce = self._get_oauth_nonce()
 
-        # sets the oauth parameters
+        # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_access_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
         parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
@@ -727,10 +727,10 @@ class DropboxClient(object):
 
     def _get_oauth_timestamp(self):
         """
-        Retrieves the real value for the oauth timestamp.
+        Retrieves the real value for the OAuth timestamp.
 
         :rtype: float
-        :return: The real value for the oauth timestamp.
+        :return: The real value for the OAuth timestamp.
         """
 
         if self.oauth_structure.oauth_timestamp:
@@ -742,10 +742,10 @@ class DropboxClient(object):
 
     def _get_oauth_nonce(self):
         """
-        Retrieves the real value for the oauth nonce.
+        Retrieves the real value for the OAuth nonce.
 
         :rtype: int
-        :return: the real value for the oauth nonce.
+        :return: the real value for the OAuth nonce.
         """
 
         if self.oauth_structure.oauth_nonce:
@@ -779,9 +779,9 @@ class DropboxClient(object):
         # returns the HTTP client
         return self.http_client
 
-class OauthStructure(object):
+class OAuthStructure(object):
     """
-    The oauth structure class.
+    The OAuth structure class.
     """
 
     oauth_consumer_key = None
@@ -809,7 +809,7 @@ class OauthStructure(object):
     """ The callback """
 
     oauth_token = None
-    """ The oauth token """
+    """ The OAuth token """
 
     oauth_token_secret = None
     """ The token secret """
@@ -818,7 +818,7 @@ class OauthStructure(object):
     """ The verifier """
 
     oauth_access_token = None
-    """ The oauth access token """
+    """ The OAuth access token """
 
     def __init__(
         self,
