@@ -42,9 +42,9 @@ import colony
 HANDLER_NAME = "openid"
 """ The handler name """
 
-class AuthenticationOpenid(colony.System):
+class AuthenticationOpenID(colony.System):
     """
-    The authentication openid class.
+    The authentication OpenID class.
     """
 
     def get_handler_name(self):

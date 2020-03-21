@@ -39,14 +39,14 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class AuthenticationOpenidPlugin(colony.Plugin):
+class AuthenticationOpenIDPlugin(colony.Plugin):
     """
-    The main class for the Authentication Openid plugin.
+    The main class for the Authentication OpenID plugin.
     """
 
     id = "pt.hive.colony.plugins.authentication.openid"
-    name = "Authentication Openid"
-    description = "Authentication Openid Plugin"
+    name = "Authentication OpenID"
+    description = "Authentication OpenID Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
@@ -62,7 +62,7 @@ class AuthenticationOpenidPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import authentication_openid
-        self.system = authentication_openid.AuthenticationOpenid(self)
+        self.system = authentication_openid.AuthenticationOpenID(self)
 
     def get_handler_name(self):
         return self.system.get_handler_name()

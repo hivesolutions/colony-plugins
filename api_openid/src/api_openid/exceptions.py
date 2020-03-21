@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class APIOpenidException(colony.ColonyException):
+class APIOpenIDException(colony.ColonyException):
     """
     The API OpenID exception class.
     """
@@ -47,7 +47,7 @@ class APIOpenidException(colony.ColonyException):
     message = None
     """ The exception's message """
 
-class InvalidData(APIOpenidException):
+class InvalidData(APIOpenIDException):
     """
     The invalid data class.
     """
@@ -60,7 +60,7 @@ class InvalidData(APIOpenidException):
         :param message: The message to be printed.
         """
 
-        APIOpenidException.__init__(self)
+        APIOpenIDException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -73,7 +73,7 @@ class InvalidData(APIOpenidException):
 
         return "Invalid data - %s" % self.message
 
-class ProviderError(APIOpenidException):
+class ProviderError(APIOpenIDException):
     """
     The provider error class.
     """
@@ -86,7 +86,7 @@ class ProviderError(APIOpenidException):
         :param message: The message to be printed.
         """
 
-        APIOpenidException.__init__(self)
+        APIOpenIDException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -99,7 +99,7 @@ class ProviderError(APIOpenidException):
 
         return "Provider error - %s" % self.message
 
-class VerificationFailed(APIOpenidException):
+class VerificationFailed(APIOpenIDException):
     """
     The verification failed class.
     """
@@ -112,7 +112,7 @@ class VerificationFailed(APIOpenidException):
         :param message: The message to be printed.
         """
 
-        APIOpenidException.__init__(self)
+        APIOpenIDException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -125,7 +125,7 @@ class VerificationFailed(APIOpenidException):
 
         return "Verification failed - %s" % self.message
 
-class InvalidHashFunction(APIOpenidException):
+class InvalidHashFunction(APIOpenIDException):
     """
     The invalid hash function class.
     """
@@ -138,7 +138,7 @@ class InvalidHashFunction(APIOpenidException):
         :param message: The message to be printed.
         """
 
-        APIOpenidException.__init__(self)
+        APIOpenIDException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -151,7 +151,7 @@ class InvalidHashFunction(APIOpenidException):
 
         return "Invalid hash function - %s" % self.message
 
-class InvalidClaimedId(APIOpenidException):
+class InvalidClaimedId(APIOpenIDException):
     """
     The invalid claimed id function class.
     """
@@ -164,7 +164,7 @@ class InvalidClaimedId(APIOpenidException):
         :param message: The message to be printed.
         """
 
-        APIOpenidException.__init__(self)
+        APIOpenIDException.__init__(self)
         self.message = message
 
     def __str__(self):

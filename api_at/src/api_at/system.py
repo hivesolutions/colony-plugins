@@ -79,7 +79,7 @@ class APIAT(colony.System):
         :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
-        :rtype: OpenidClient
+        :rtype: OpenIDClient
         :return: The created client.
         """
 

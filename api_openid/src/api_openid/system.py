@@ -175,7 +175,7 @@ DEFAULT_PRIME_VALUE = colony.legacy.LONG(155172898181473697471232257763715539915
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
 
-class APIOpenid(colony.System):
+class APIOpenID(colony.System):
     """
     The API OpenID class.
     """
@@ -195,7 +195,7 @@ class APIOpenid(colony.System):
         :param api_attributes: The API attributes to be used.
         :type open_server: bool
         :param open_server: If the server should be opened.
-        :rtype: OpenidServer
+        :rtype: OpenIDServer
         :return: The created server.
         """
 
@@ -208,7 +208,7 @@ class APIOpenid(colony.System):
         # retrieves the OpenID structure (if available) and uses it
         # to create the "new" OpenID server
         openid_structure = api_attributes.get("openid_structure", None)
-        openid_server = OpenidServer(
+        openid_server = OpenIDServer(
             self.plugin,
             diffie_hellman_plugin,
             random_plugin,
@@ -231,7 +231,7 @@ class APIOpenid(colony.System):
         :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
-        :rtype: OpenidClient
+        :rtype: OpenIDClient
         :return: The created client.
         """
 
@@ -247,7 +247,7 @@ class APIOpenid(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        openid_client = OpenidClient(self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure)
+        openid_client = OpenIDClient(self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure)
         open_client and openid_client.open()
         return openid_client
 
@@ -382,7 +382,7 @@ class APIOpenid(colony.System):
         # returns the result
         return result
 
-class OpenidServer(object):
+class OpenIDServer(object):
     """
     The class that represents an OpenID server connection.
     """
@@ -417,15 +417,15 @@ class OpenidServer(object):
         """
         Constructor of the class.
 
-        :type api_openid_plugin: APIOpenidPlugin
+        :type api_openid_plugin: APIOpenIDPlugin
         :param api_openid_plugin: The API OpenID plugin.
         :type diffie_hellman_plugin: DiffieHellmanPlugin
         :param diffie_hellman_plugin: The Diffie Hellman plugin.
         :type random_plugin: RandomPlugin
         :param random_plugin: The random plugin.
-        :type api_openid: ServiceOpenid
+        :type api_openid: ServiceOpenID
         :param api_openid: The API OpenID.
-        :type openid_structure: OpenidStructure
+        :type openid_structure: OpenIDStructure
         :param openid_structure: The OpenID structure.
         :type diffie_hellman: DiffieHellman
         :param diffie_hellman: The Diffie Hellman management structure.
@@ -463,7 +463,7 @@ class OpenidServer(object):
         set_structure = True
     ):
         # creates a new OpenID structure
-        openid_structure = OpenidStructure(
+        openid_structure = OpenIDStructure(
             provider_url,
             association_type = association_type,
             session_type = session_type
@@ -504,7 +504,7 @@ class OpenidServer(object):
         Requests an association (associate mode) according to the
         OpenID specification.
 
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The current OpenID structure.
         """
 
@@ -577,12 +577,12 @@ class OpenidServer(object):
         Verifies the given return OpenID structure (verification)
         according to the OpenID specification.
 
-        :type return_openid_structure: OpenidStructure
+        :type return_openid_structure: OpenIDStructure
         :param return_openid_structure: The return OpenID structure
         to be verified.
         :type strict: bool
         :param strict: Flag to control if the verification should be strict.
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The current OpenID structure.
         """
 
@@ -724,7 +724,7 @@ class OpenidServer(object):
         """
         Retrieves the OpenID structure.
 
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The OpenID structure.
         """
 
@@ -734,7 +734,7 @@ class OpenidServer(object):
         """
         Sets the OpenID structure.
 
-        :type openid_structure: OpenidStructure
+        :type openid_structure: OpenIDStructure
         :param openid_structure: The OpenID structure.
         """
 
@@ -906,7 +906,7 @@ class OpenidServer(object):
 
         return "\n".join([key + ":" + value for key, value in colony.legacy.items(values_map)])
 
-class OpenidClient(object):
+class OpenIDClient(object):
     """
     The class that represents an OpenID client connection.
     """
@@ -943,15 +943,15 @@ class OpenidClient(object):
         """
         Constructor of the class.
 
-        :type api_openid_plugin: APIOpenidPlugin
+        :type api_openid_plugin: APIOpenIDPlugin
         :param api_openid_plugin: The API OpenID plugin.
         :type client_http_plugin: ClientHTTPPlugin
         :param client_http_plugin: The client HTTP plugin.
         :type api_yadis_plugin: APIYadisPlugin
         :param api_yadis_plugin: The API Yadis plugin.
-        :type api_openid: ServiceOpenid
+        :type api_openid: ServiceOpenID
         :param api_openid: The API OpenID.
-        :type openid_structure: OpenidStructure
+        :type openid_structure: OpenIDStructure
         :param openid_structure: The OpenID structure.
         """
 
@@ -993,7 +993,7 @@ class OpenidClient(object):
         set_structure = True
     ):
         # creates a new OpenID structure
-        openid_structure = OpenidStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
+        openid_structure = OpenIDStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -1047,7 +1047,7 @@ class OpenidClient(object):
         Initializes the discovery process according to the
         OpenID specification.
 
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The current OpenID structure.
         """
 
@@ -1096,7 +1096,7 @@ class OpenidClient(object):
         Requests an association (associate mode) according to the
         OpenID specification.
 
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The current OpenID structure.
         """
 
@@ -1158,12 +1158,12 @@ class OpenidClient(object):
         Verifies the given return OpenID structure (verification)
         according to the OpenID specification.
 
-        :type return_openid_structure: OpenidStructure
+        :type return_openid_structure: OpenIDStructure
         :param return_openid_structure: The return OpenID structure
         to be verified.
         :type strict: bool
         :param strict: Flag to control if the verification should be strict.
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The current OpenID structure.
         """
 
@@ -1319,7 +1319,7 @@ class OpenidClient(object):
         """
         Retrieves the OpenID structure.
 
-        :rtype: OpenidStructure
+        :rtype: OpenIDStructure
         :return: The OpenID structure.
         """
 
@@ -1329,7 +1329,7 @@ class OpenidClient(object):
         """
         Sets the OpenID structure.
 
-        :type openid_structure: OpenidStructure
+        :type openid_structure: OpenIDStructure
         :param openid_structure: The OpenID structure.
         """
 
@@ -1493,7 +1493,7 @@ class OpenidClient(object):
         # returns the Yadis remote client
         return self.yadis_client
 
-class OpenidStructure(object):
+class OpenIDStructure(object):
     """
     The OpenID structure class.
     """

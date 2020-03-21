@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-class APIOpenidPlugin(colony.Plugin):
+class APIOpenIDPlugin(colony.Plugin):
     """
     The main class for the OpenID API plugin.
     """
@@ -68,7 +68,7 @@ class APIOpenidPlugin(colony.Plugin):
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_openid
-        self.system = api_openid.APIOpenid(self)
+        self.system = api_openid.APIOpenID(self)
 
     def create_server(self, api_attributes):
         """

@@ -282,7 +282,7 @@ class YadisStructure(object):
     """
 
     provider_url = None
-    """ The URL of the openid provider """
+    """ The URL of the OpenID provider """
 
     def __init__(self, provider_url):
         """
