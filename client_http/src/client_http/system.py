@@ -197,7 +197,7 @@ CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 """ The certificate file path value """
 
 SSL_VERSION_VALUE = "ssl_version"
-""" The ssl version value """
+""" The SSL version value """
 
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
@@ -306,11 +306,11 @@ class HTTPClient(object):
     used for a secured connection """
 
     certificate_file_path = None
-    """ The path to the ssl certificate file to be
+    """ The path to the SSL certificate file to be
     used for a secured connection """
 
     ssl_version = None
-    """ The version of the ssl specification to be
+    """ The version of the SSL specification to be
     used as base for the current connection """
 
     client_connection = None
@@ -345,10 +345,10 @@ class HTTPClient(object):
         :param key_file_path: The path to the (private) key file to be
         used for a secured connection.
         :type certificate_file_path:  String
-        :param certificate_file_path: The path to the ssl certificate
+        :param certificate_file_path: The path to the SSL certificate
         file to be used for a secured connection
         :type ssl_version: String
-        :param ssl_version: The version of the ssl specification to be used
+        :param ssl_version: The version of the SSL specification to be used
         as the based verified one to the connection
         """
 
