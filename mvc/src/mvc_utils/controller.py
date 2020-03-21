@@ -1575,25 +1575,25 @@ def process_acl_values(
     maximum_value = 10000
 ):
     """
-    Processes the various acl values in the given list.
+    Processes the various ACL values in the given list.
     Retrieves the lowest value for the given key and takes into account
     the wildcard value for global permission values.
 
     :type acl_list: List
-    :param acl_list: The list of acl (access control list) to
-    be used for acl permission value retrieval.
+    :param acl_list: The list of ACL (access control list) to
+    be used for ACL permission value retrieval.
     :type key: String/List
-    :param key: The key to be used for retrieval of acl permissions
+    :param key: The key to be used for retrieval of ACL permissions
     value (this key is joined with the current wildcard). This value
     may also be a list of keys and the most permissive one will be used.
     :type wildcard_key: String
     :param wildcard_key: The wildcard key to be used for retrieval
     of wildcard values.
     :type maximum_value: int
-    :param maximum_value: The maximum value valid for acl permission
+    :param maximum_value: The maximum value valid for ACL permission
     values (this value should be changed carefully).
     :rtype: int
-    :return: The lowest processed acl permission value for the given key.
+    :return: The lowest processed ACL permission value for the given key.
     """
 
     # verifies if the provided key value represents a sequence
@@ -1617,9 +1617,9 @@ def process_acl_values(
     # value in it as this is considered the fallback value
     permission_values = [maximum_value]
 
-    # iterates over all the acl in the acl list
+    # iterates over all the ACL in the ACL list
     for acl in acl_list:
-        # retrieves the various permissions from the acl
+        # retrieves the various permissions from the ACL
         wildcard_permissions = acl.get(wildcard_value, maximum_value)
         key_permissions = acl.get(key, maximum_value)
 
@@ -1642,13 +1642,13 @@ def validate_acl_session(
     session_attribute = DEFAULT_SESSION_ATTRIBUTE
 ):
     """
-    Validates the current session defined acl against the
+    Validates the current session defined ACL against the
     defined key and value.
 
     :type request: Request
     :param request: The request to be used.
     :type key: String/List
-    :param key: The key to be used for retrieval of acl permissions
+    :param key: The key to be used for retrieval of ACL permissions
     value (this key is joined with the current wildcard). This value
     may also be a list of keys and the most permissive one will be used.
     :type value: int
@@ -1656,22 +1656,22 @@ def validate_acl_session(
     valid value.
     :type session_attribute: String
     :param session_attribute: The name of the session attribute
-    to retrieve the acl list.
+    to retrieve the ACL list.
     :rtype: bool
-    :return: If the key is valid for the current session acl.
+    :return: If the key is valid for the current session ACL.
     """
 
-    # retrieves the user acl value
+    # retrieves the user ACL value
     user_acl = self.get_session_attribute(request, session_attribute) or {}
 
-    # process the acl values, retrieving the permissions value
+    # process the ACL values, retrieving the permissions value
     permissions = self.process_acl_values((user_acl,), key)
 
     # checks if the value is valid according
     # to the retrieved permissions
     valid_acl = permissions <= value
 
-    # returns the result of the valid acl test
+    # returns the result of the valid ACL test
     return valid_acl
 
 def get_mvc_path(self, request, delta_value = 1):
@@ -5636,10 +5636,10 @@ def get_process_method(controller, request, process_method_name):
         # session attribute value was defined (fallback operation)
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user acl value
+        # retrieves the user ACL value
         user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
-        # process the acl values, retrieving the permissions value
+        # process the ACL values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
 
         # sets the initial accept node value
@@ -5690,10 +5690,10 @@ def get_process_method(controller, request, process_method_name):
         # session attribute value was defined (fallback operation)
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user acl value
+        # retrieves the user ACL value
         user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
-        # process the acl values, retrieving the permissions value
+        # process the ACL values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
 
         # sets the initial accept node value
@@ -5748,10 +5748,10 @@ def get_process_method(controller, request, process_method_name):
         # session attribute value was defined (fallback operation)
         else: attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user acl value
+        # retrieves the user ACL value
         user_acl = controller.get_session_attribute(request, attribute_session_attribute_value) or {}
 
-        # process the acl values, retrieving the permissions value
+        # process the ACL values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
 
         # sets the initial accept node value
