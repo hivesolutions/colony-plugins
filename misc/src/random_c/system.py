@@ -168,7 +168,7 @@ class Random(colony.System):
         default random generator and converts it
         into an MD5 value.
 
-        :rtype: Md5
+        :rtype: MD5
         :return: The generated random key converted
         into an MD5 value.
         """
@@ -210,43 +210,43 @@ class Random(colony.System):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha1 value.
+        into an SHA1 value.
 
-        :rtype: Sha1
+        :rtype: SHA1
         :return: The generated random key converted
-        into an sha1 value.
+        into an SHA1 value.
         """
 
         # generates a random value
         random = self.generate_random()
 
-        # generates an sha1 hash of the random value
+        # generates an SHA1 hash of the random value
         # note that the random value is first encoded
         # into a bytes value before the hash
         random = colony.legacy.bytes(random)
         random_sha1 = hashlib.sha1(random)
 
-        # returns the sha1 hash of the random value
+        # returns the SHA1 hash of the random value
         return random_sha1
 
     def generate_random_sha1_string(self):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha1 string value.
+        into an SHA1 string value.
 
         :rtype: String
         :return: The generated random key converted
-        into an sha1 string value.
+        into an SHA1 string value.
         """
 
-        # generates the sha1 hash of a random value
+        # generates the SHA1 hash of a random value
         random_sha1 = self.generate_random_sha1()
 
-        # converts the sha1 hash into string
+        # converts the SHA1 hash into string
         random_sha1_string = random_sha1.hexdigest()
 
-        # returns the string value of the sha1 hash
+        # returns the string value of the SHA1 hash
         # of the random value
         return random_sha1_string
 
@@ -256,7 +256,7 @@ class Random(colony.System):
         default random generator and converts it
         into an SHA256 value.
 
-        :rtype: Sha256
+        :rtype: SHA256
         :return: The generated random key converted
         into an SHA256 value.
         """

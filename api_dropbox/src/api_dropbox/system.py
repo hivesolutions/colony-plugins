@@ -57,10 +57,10 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
-""" The hmac sha1 value """
+""" The hmac SHA1 value """
 
 RSA_SHA1_VALUE = "RSA-SHA1"
-""" The rsa sha1 value """
+""" The RSA SHA1 value """
 
 PLAINTEXT_VALUE = "PLAINTEXT"
 """ The plaintext value """
@@ -98,10 +98,10 @@ BASE_REST_SECURE_URL = "https://api.dropbox.com/1/"
 """ The base REST secure URL to be used """
 
 WWW_REST_SECURE_URL = "http://www.dropbox.com/1/"
-""" The www REST URL to be used """
+""" The WWW REST URL to be used """
 
 WWW_REST_SECURE_URL = "https://www.dropbox.com/1/"
-""" The www REST secure URL to be used """
+""" The WWW REST secure URL to be used """
 
 CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
 """ The content REST URL to be used """

@@ -64,10 +64,10 @@ TYPE_CLASS_VALUE = "type_class"
 """ The type class value """
 
 BEGIN_RSA_PRIVATE_VALUE = "-----BEGIN RSA PRIVATE KEY-----"
-""" The begin rsa private value """
+""" The begin RSA private value """
 
 END_RSA_PRIVATE_VALUE = "-----END RSA PRIVATE KEY-----"
-""" The end rsa private value """
+""" The end RSA private value """
 
 BEGIN_PUBLIC_VALUE = "-----BEGIN PUBLIC KEY-----"
 """ The begin public value """
@@ -306,7 +306,7 @@ class PKCS1Structure:
         # creates the string value list
         string_value_list = []
 
-        # adds the begin rsa private value to the string value list
+        # adds the begin RSA private value to the string value list
         string_value_list.append(BEGIN_RSA_PRIVATE_VALUE + "\n")
 
         # splits the private key der encoded value
@@ -315,7 +315,7 @@ class PKCS1Structure:
         # adds the private key der splitted to the string value list
         string_value_list.append(private_key_der_splitted)
 
-        # adds the end rsa private value to the string value list
+        # adds the end RSA private value to the string value list
         string_value_list.append(END_RSA_PRIVATE_VALUE + "\n")
 
         # joins the string value list retrieving the
@@ -348,7 +348,7 @@ class PKCS1Structure:
         # creates the string value list
         string_value_list = []
 
-        # adds the begin rsa public value to the string value list
+        # adds the begin RSA public value to the string value list
         string_value_list.append(BEGIN_PUBLIC_VALUE + "\n")
 
         # splits the public key der encoded value
@@ -357,7 +357,7 @@ class PKCS1Structure:
         # adds the public key der splitted to the string value list
         string_value_list.append(public_key_der_splitted)
 
-        # adds the end rsa public value to the string value list
+        # adds the end RSA public value to the string value list
         string_value_list.append(END_PUBLIC_VALUE + "\n")
 
         # joins the string value list retrieving the
@@ -503,7 +503,7 @@ class PKCS1Structure:
             VALUE_VALUE : coefficient
         }
 
-        # creates the rsa private key contents (list)
+        # creates the RSA private key contents (list)
         rsa_private_key_contents = [
             version_value,
             modulus_value,
@@ -516,7 +516,7 @@ class PKCS1Structure:
             coefficient_value
         ]
 
-        # creates the rsa private key
+        # creates the RSA private key
         rsa_private_key = {
             TYPE_VALUE : {
                 TYPE_CONSTRUCTED_VALUE : 1,
@@ -526,10 +526,10 @@ class PKCS1Structure:
             VALUE_VALUE : rsa_private_key_contents
         }
 
-        # packs the rsa private key
+        # packs the RSA private key
         rsa_private_key_packed = ber_structure.pack(rsa_private_key)
 
-        # returns the rsa private key packed
+        # returns the RSA private key packed
         return rsa_private_key_packed
 
     def generate_public_key_der(self, keys):
@@ -547,11 +547,11 @@ class PKCS1Structure:
         # unpacks the keys value
         public_key, _private_key, _extras = keys
 
-        # retrieves the pubic key values
+        # retrieves the public key values
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
-        # retrieves the rsa encryption object identifier
+        # retrieves the RSA encryption object identifier
         rsa_encryption_object_identifier = OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]
 
         # creates the ber structure
@@ -569,13 +569,13 @@ class PKCS1Structure:
             VALUE_VALUE : public_exponent
         }
 
-        # creates the rsa public key contents (list)
+        # creates the RSA public key contents (list)
         rsa_public_key_contents = [
             modulus_value,
             public_exponent_value
         ]
 
-        # creates the rsa public key
+        # creates the RSA public key
         rsa_public_key = {
             TYPE_VALUE : {
                 TYPE_CONSTRUCTED_VALUE : 1,
@@ -585,7 +585,7 @@ class PKCS1Structure:
             VALUE_VALUE : rsa_public_key_contents
         }
 
-        # packs the rsa public key
+        # packs the RSA public key
         rsa_public_key_packed = ber_structure.pack(rsa_public_key)
 
         # creates the algorithm identifier value
@@ -616,7 +616,7 @@ class PKCS1Structure:
             VALUE_VALUE : algorithm_identifier_contents
         }
 
-        # creates the rsa public key packed but value
+        # creates the RSA public key packed but value
         rsa_public_key_packed_bit_value = {
             TYPE_VALUE : BIT_STRING_TYPE,
             VALUE_VALUE : rsa_public_key_packed
@@ -648,10 +648,10 @@ class PKCS1Structure:
         # creates the ber structure
         ber_structure = self.ber_plugin.create_structure({})
 
-        # unpacks the rsa private key
+        # unpacks the RSA private key
         rsa_private_key_unpacked = ber_structure.unpack(private_key_der)
 
-        # retrieves the rsa private key value
+        # retrieves the RSA private key value
         rsa_private_key_value = rsa_private_key_unpacked[VALUE_VALUE]
 
         # retrieves the version and the version value
@@ -730,10 +730,10 @@ class PKCS1Structure:
         # creates the ber structure
         ber_structure = self.ber_plugin.create_structure({})
 
-        # unpacks the rsa public key
+        # unpacks the RSA public key
         rsa_public_key_unpacked = ber_structure.unpack(private_key_der)
 
-        # retrieves the rsa public key value
+        # retrieves the RSA public key value
         rsa_public_key_value = rsa_public_key_unpacked[VALUE_VALUE]
 
         # retrieves the algorithm identifier and the algorithm identifier value
@@ -748,14 +748,14 @@ class PKCS1Structure:
         arguments = algorithm_identifier_value[1]
         arguments_value = arguments[VALUE_VALUE]
 
-        # retrieves the rsa public key packed bit value and the rsa public key packed bit value value
+        # retrieves the RSA public key packed bit value and the RSA public key packed bit value value
         rsa_public_key_packed_bit = rsa_public_key_value[1]
         rsa_public_key_packed_bit_value_value = rsa_public_key_packed_bit[VALUE_VALUE]
 
-        # unpacks the rsa public key packed bit value value
+        # unpacks the RSA public key packed bit value value
         rsa_public_key = ber_structure.unpack(rsa_public_key_packed_bit_value_value)
 
-        # retrieves the rsa public key value value
+        # retrieves the RSA public key value value
         rsa_public_key_value_value = rsa_public_key[VALUE_VALUE]
 
         # retrieves the modulus and the modulus value
@@ -766,8 +766,8 @@ class PKCS1Structure:
         public_exponent = rsa_public_key_value_value[1]
         public_exponent_value = public_exponent[VALUE_VALUE]
 
-        # in case the object identifier is not rsa encryption
-        # raises an error as the rsa encryption is the only
+        # in case the object identifier is not RSA encryption
+        # raises an error as the RSA encryption is the only
         # supported encryption type
         if not algorithm_value == OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]:
             raise exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))

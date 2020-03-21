@@ -317,7 +317,7 @@ class ATClient(object):
         public_key_path = self.get_resource("api_at/resources/at.pem")
 
         # runs the encryption on the secret value to create an
-        # rsa encrypted representation of it and then encodes
+        # RSA encrypted representation of it and then encodes
         # that value in base 64 to create the nonce value
         ssl_structure = self.ssl_plugin.create_structure({})
         secret_encrypted = ssl_structure.encrypt(public_key_path, secret)

@@ -129,7 +129,7 @@ class RandomPlugin(colony.Plugin):
         default random generator and converts it
         into an MD5 value.
 
-        :rtype: Md5
+        :rtype: MD5
         :return: The generated random key converted
         into an MD5 value.
         """
@@ -153,11 +153,11 @@ class RandomPlugin(colony.Plugin):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha1 value.
+        into an SHA1 value.
 
-        :rtype: Sha1
+        :rtype: SHA1
         :return: The generated random key converted
-        into an sha1 value.
+        into an SHA1 value.
         """
 
         return self.system.generate_random_sha1()
@@ -166,11 +166,11 @@ class RandomPlugin(colony.Plugin):
         """
         Generates a random key, using the current
         default random generator and converts it
-        into an sha1 string value.
+        into an SHA1 string value.
 
         :rtype: String
         :return: The generated random key converted
-        into an sha1 string value.
+        into an SHA1 string value.
         """
 
         return self.system.generate_random_sha1_string()
@@ -181,7 +181,7 @@ class RandomPlugin(colony.Plugin):
         default random generator and converts it
         into an SHA256 value.
 
-        :rtype: Sha256
+        :rtype: SHA256
         :return: The generated random key converted
         into an SHA256 value.
         """
