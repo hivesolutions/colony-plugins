@@ -288,7 +288,7 @@ class Visitor(object):
 
         # iterates over the complete set of elements (attributes)
         # defined for the current instance's class trying to find
-        # the ones that are annotated with the ast node class value
+        # the ones that are annotated with the AST node class value
         for name in cls_elements:
             # retrieves the current element in iteration and verifies
             # if the current element is annotated with the asr node class

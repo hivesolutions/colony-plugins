@@ -861,7 +861,7 @@ class TemplateFile(object):
     def load_visitor(self):
         """
         Runs the various loading/prepare operations in the currently
-        set visitor so that it becomes reading for the visit of ast
+        set visitor so that it becomes reading for the visit of AST
         based nodes (prepare operation).
 
         This operation should always be called before any accepting
