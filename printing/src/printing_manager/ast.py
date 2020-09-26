@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 class AstNode(object):
     """
-    The ast node class.
+    The AST node class.
     """
 
     value = None

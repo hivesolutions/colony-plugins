@@ -104,7 +104,7 @@ a negation should be done in the final boolean evaluation (not) """
 
 class AstNode(object):
     """
-    The ast node class, this is the top level abstract
+    The AST node class, this is the top level abstract
     value from which the various nodes should inherit.
     """
 
