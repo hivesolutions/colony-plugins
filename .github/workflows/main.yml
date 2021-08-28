@@ -18,6 +18,7 @@ jobs:
       - run: pip install colony
       - run: python setup.py test
         env:
+          HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
   build-pypy:
     name: Build PyPy
@@ -36,4 +37,5 @@ jobs:
       - run: pip install colony
       - run: pypy setup.py test
         env:
+          HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
