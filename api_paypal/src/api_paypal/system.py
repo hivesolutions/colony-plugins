@@ -248,7 +248,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -387,7 +387,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -437,7 +437,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -474,7 +474,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -525,7 +525,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
@@ -586,7 +586,7 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = self.test_mode and BASE_SANDBOX_REST_SECURE_URL or BASE_REST_SECURE_URL
+        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}

@@ -240,7 +240,7 @@ class ATClient(object):
     def submit_invoice(self, invoice_payload):
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
-        base_url = self.test_mode and INVOICE_BASE_TEST_URL or INVOICE_BASE_URL
+        base_url = INVOICE_BASE_TEST_URL if self.test_mode else INVOICE_BASE_URL
         submit_invoice_url = base_url + "/faturas"
 
         # submits the invoice document and returns the result
@@ -250,7 +250,7 @@ class ATClient(object):
     def submit_transport(self, transport_payload):
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
-        base_url = self.test_mode and TRANSPORT_BASE_TEST_URL or TRANSPORT_BASE_URL
+        base_url = TRANSPORT_BASE_TEST_URL if self.test_mode else TRANSPORT_BASE_URL
         submit_transport_url = base_url + "/documentosTransporte"
 
         # submits the transport document and returns the result
@@ -298,8 +298,8 @@ class ATClient(object):
         # according to the current test mode flag value then
         # convert both values into string to make sure that
         # no unicode buffers are present (avoids conversion)
-        username = self.test_mode and "599999993/0037" or str(self.at_structure.username)
-        password = self.test_mode and "testes1234" or str(self.at_structure.password)
+        username = "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        password = "testes1234" if self.test_mode else str(self.at_structure.password)
         username = str(username)
         password = str(password)
         password_b = colony.legacy.bytes(password)
@@ -512,8 +512,8 @@ class ATClient(object):
             # certificate paths according to the current test mode
             base_key_path = self.get_resource("api_at/resources/key.pem")
             base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
-            key_path = self.test_mode and base_key_path or self.key
-            certificate_path = self.test_mode and base_certificate_path or self.certificate
+            key_path = base_key_path if self.test_mode else self.key
+            certificate_path = base_certificate_path if self.test_mode else self.certificate
 
             # defines the client parameters to be used in the
             # creation of the HTTP client

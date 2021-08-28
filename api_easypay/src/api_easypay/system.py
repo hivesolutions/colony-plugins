@@ -219,7 +219,7 @@ class EasypayClient(object):
     ):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
+        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
 
         # start the parameters map
         parameters = {}
@@ -287,7 +287,7 @@ class EasypayClient(object):
     def cancel_reference(self, entity, reference):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_00BG.php"
+        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_00BG.php"
 
         # start the parameters map
         parameters = {}
@@ -342,7 +342,7 @@ class EasypayClient(object):
     def get_payment_details(self, document_identifier, reference_key):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (self.test_mode and TEST_BASE_REST_SECURE_URL or BASE_REST_SECURE_URL) + "api_easypay_03AG.php"
+        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_03AG.php"
 
         # start the parameters map
         parameters = {}
