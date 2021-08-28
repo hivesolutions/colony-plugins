@@ -68,5 +68,5 @@ Colony is currently licensed under the [Apache License, Version 2.0](http://www.
 
 ## Build Automation
 
-[![Build Status](https://travis-ci.com/github/hivesolutions/colony_plugins.png?branch=master)](https://travis-ci.com/github/hivesolutions/colony_plugins)
+[![Build Status](https://api.travis-ci.com/hivesolutions/colony_plugins.png?branch=master)](https://travis-ci.com/github/hivesolutions/colony_plugins)
 [![Coverage Status](https://coveralls.io/repos/hivesolutions/colony_plugins/badge.png?branch=master)](https://coveralls.io/r/hivesolutions/colony_plugins?branch=master)
