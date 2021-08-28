@@ -304,7 +304,7 @@ class ATClient(object):
         password = str(password)
         password_b = colony.legacy.bytes(password)
 
-        # creates a new aes cipher structure to be
+        # creates a new AES cipher structure to be
         # able to encrypt the target fields and gets
         # its currently set key as the secret (this
         # key was generated according to the default
@@ -324,7 +324,7 @@ class ATClient(object):
         nonce = base64.b64encode(secret_encrypted)
         nonce = colony.legacy.str(nonce)
 
-        # encrypts the current password using the aes structure
+        # encrypts the current password using the AES structure
         # created for the current context and then encodes it
         # into a base 64 structure
         password_encrypted = aes.encrypt(password_b)
