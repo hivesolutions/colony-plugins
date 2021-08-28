@@ -17,6 +17,8 @@ jobs:
         if: matrix.python-version == '2.7'
       - run: pip install colony
       - run: python setup.py test
+        env:
+          PLUGIN_PATH: ./*/src;./*/*src
   build-pypy:
     name: Build PyPy
     strategy:
@@ -33,3 +35,5 @@ jobs:
         if: matrix.python-version == '2.7'
       - run: pip install colony
       - run: pypy setup.py test
+        env:
+          PLUGIN_PATH: ./*/src;./*/*src
