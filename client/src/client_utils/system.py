@@ -572,7 +572,7 @@ class ClientConnection(object):
         """
 
         # sets the cancel time
-        self.cancel_time = time.clock() + delta_time
+        self.cancel_time = time.time() + delta_time
 
     def upgrade(self, socket_upgrader, parameters):
         """

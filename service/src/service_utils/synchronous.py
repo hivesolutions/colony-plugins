@@ -1093,17 +1093,17 @@ class AbstractServiceConnectionHandler(object):
         connection is closed.
         """
 
-        # retrieves the current clock
-        current_clock = time.clock()
+        # retrieves the current time value to determine of the
+        # connection is already meant to be canceled
+        current_clock = time.time()
 
         # iterates over all the service connections
         for service_connection in self.service_connections_list:
             # in case there is a cancel time defined and there is a timeout
             if service_connection.cancel_time and service_connection.cancel_time < current_clock:
-                # retrieves the connection tuple
-                connection_tuple = service_connection.get_connection_tuple()
-
+                # retrieves the connection tuple and then
                 # removes the ready service connection (via remove work)
+                connection_tuple = service_connection.get_connection_tuple()
                 self.remove_work(connection_tuple)
 
     def poll_connections(self, poll_timeout = POLL_TIMEOUT):
