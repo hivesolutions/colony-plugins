@@ -2138,7 +2138,7 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
             model and model.add_error(model_attribute_name, "value has duplicate")
 
     # in case the validation failed adds an error to the attribute
-    validation_failed and self.add_error(attribute_name, "value has duplicates")
+    if validation_failed: self.add_error(attribute_name, "value has duplicates")
 
 def password_strength_validate(self, attribute_name, attribute_value, properties):
     """
