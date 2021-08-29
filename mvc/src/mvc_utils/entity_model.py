@@ -1176,7 +1176,7 @@ def store(
         # with validation in the saving process that will imply the
         # "rollback" of the transaction and the consequent invalidation
         # of the data (this process is recursive on model's relations)
-        validate and self.preemptive_validate(persist_type)
+        if validate: self.preemptive_validate(persist_type)
 
         # tries to call the on store method, in order to notify the
         # current instance about the starting of the store procedure
@@ -1766,7 +1766,7 @@ def persist(
 
     # in case the validate flag is set the validation
     # process is run in the current model
-    validate and self.validate_exception()
+    if validate: self.validate_exception()
 
     # checks if the entity is persisted
     is_persisted = self.is_persisted()
