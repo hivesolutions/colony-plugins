@@ -1543,7 +1543,7 @@ def store_relation(
 
     # adds an error to the entity on the relation
     # for latter usage and presentation to user
-    error_set and self.add_error(relation_name, "relation validation failed")
+    if error_set: self.add_error(relation_name, "relation validation failed")
 
 def create(self, *args, **kwargs):
     """
@@ -2781,7 +2781,7 @@ def _validate_relations(self, persist_type):
 
         # adds an error to the entity on the relation
         # for latter usage
-        error_set and self.add_error(relation_name, "relation validation failed")
+        if error_set: self.add_error(relation_name, "relation validation failed")
 
     # returns the relations is/are valid result,
     # this value may be used to infer if the parent

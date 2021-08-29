@@ -480,7 +480,7 @@ def serialized(serialization_parameters = None, default_success = True):
             except BaseException as exception:
                 # determines if the exception is considered to be ignored and then
                 # taking that into consideration decides the proper logging level
-                # to be used for the log operation of the exception        
+                # to be used for the log operation of the exception
                 is_ignored = isinstance(exception, IGNORED_EXCEPTIONS)
                 logging_method = self.debug if is_ignored else self.warning
 
