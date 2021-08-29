@@ -832,7 +832,7 @@ class MySQLConnection(object):
             # creates a new connection and sets it in the
             # connections map for the current thread
             connection = MySQLdb.connect(
-                self.host,
+                host = self.host,
                 user = self.user,
                 passwd = self.password,
                 db = self.database
