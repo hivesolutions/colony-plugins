@@ -121,7 +121,6 @@ class SignatureController(BaseController):
         message_decoded = base64.b64decode(message)
 
         # signs the message (decoded) in base 64
-        print(private_key_path)
         signature = ssl_structure.sign_base_64(private_key_path, algorithm_name, message_decoded)
 
         # returns the signature
