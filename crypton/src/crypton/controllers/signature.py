@@ -68,16 +68,12 @@ class SignatureController(BaseController):
         # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
-        # retrieves the public key path for the key name
+        # retrieves the public key path for the key name, decodes
+        # the message (using base 64) and encrypts the message (decoded)
+        # in base 64 returning the encrypted message back to caller
         public_key_path = self._get_key_path(key_name, "public_key")
-
-        # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
-
-        # encrypts the message (decoded) in base 64
         message_e = ssl_structure.encrypt_base_64(public_key_path, message_decoded)
-
-        # returns the encrypted message
         return message_e
 
     def decrypt(self, request, api_key, key_name, message_e):
@@ -91,16 +87,13 @@ class SignatureController(BaseController):
         # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
-        # retrieves the private key path for the key name
+        # retrieves the private key path for the key name, decodes
+        # the message (using base 64) and  decrypts the encrypted
+        # message (decoded) in base 64, then returns the result
+        # back to the caller method
         private_key_path = self._get_key_path(key_name, "private_key")
-
-        # decodes the message (using base 64)
         message_e_decoded = base64.b64decode(message_e)
-
-        # decrypts the encrypted message (decoded) in base 64
         message = ssl_structure.encrypt_base_64(private_key_path, message_e_decoded)
-
-        # returns the original message
         return message
 
     def sign(self, request, api_key, key_name, message, algorithm_name):
@@ -114,16 +107,17 @@ class SignatureController(BaseController):
         # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
-        # retrieves the private key path for the key name
+        # retrieves the private key path for the key name,
+        # decodes the message (using base 64) and signs the
+        # message (decoded) in base 64 and returns the signature
+        # back to the caller method
         private_key_path = self._get_key_path(key_name, "private_key")
-
-        # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
-
-        # signs the message (decoded) in base 64
-        signature = ssl_structure.sign_base_64(private_key_path, algorithm_name, message_decoded)
-
-        # returns the signature
+        signature = ssl_structure.sign_base_64(
+            private_key_path,
+            algorithm_name,
+            message_decoded
+        )
         return signature
 
     def verify(self, request, api_key, key_name, signature, message):
@@ -137,19 +131,14 @@ class SignatureController(BaseController):
         # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
-        # retrieves the public key path for the key name
+        # retrieves the public key path for the key name, decodes
+        # the message (using base 64), then verifies the signature in
+        # base 64 and returns a simple string based boolean value,
+        # indicating if the validation was successful or not
         public_key_path = self._get_key_path(key_name, "public_key")
-
-        # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
-
-        # verifies the signature in base 64
         return_value = ssl_structure.verify_base_64(public_key_path, signature, message_decoded)
-
-        # retrieves the return value in (simple) string mode
         return_value_string = return_value and "1" or "0"
-
-        # returns the return value string
         return return_value_string
 
     def _validate_api_key(self, request, api_key):
