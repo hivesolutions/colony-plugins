@@ -57,13 +57,14 @@ models = colony.__import__("models")
 class SignatureController(BaseController):
 
     def encrypt(self, request, api_key, key_name, message):
-        # retrieves the SSL plugin
+        # retrieves the SSL plugin and uses it to create
+        # the client structure to be used
         ssl_plugin = self.plugin.ssl_plugin
-
-        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the API key
+        # validates the API key meaning that in case an API
+        # key is expected it's validated, raising an exception
+        # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
@@ -79,13 +80,14 @@ class SignatureController(BaseController):
         return message_e
 
     def decrypt(self, request, api_key, key_name, message_e):
-        # retrieves the SSL plugin
+        # retrieves the SSL plugin and uses it to create
+        # the client structure to be used
         ssl_plugin = self.plugin.ssl_plugin
-
-        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the API key
+        # validates the API key meaning that in case an API
+        # key is expected it's validated, raising an exception
+        # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
@@ -101,13 +103,14 @@ class SignatureController(BaseController):
         return message
 
     def sign(self, request, api_key, key_name, message, algorithm_name):
-        # retrieves the SSL plugin
+        # retrieves the SSL plugin and uses it to create
+        # the client structure to be used
         ssl_plugin = self.plugin.ssl_plugin
-
-        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the API key
+        # validates the API key meaning that in case an API
+        # key is expected it's validated, raising an exception
+        # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
         # retrieves the private key path for the key name
@@ -123,13 +126,14 @@ class SignatureController(BaseController):
         return signature
 
     def verify(self, request, api_key, key_name, signature, message):
-        # retrieves the SSL plugin
+        # retrieves the SSL plugin and uses it to create
+        # the client structure to be used
         ssl_plugin = self.plugin.ssl_plugin
-
-        # creates the SSL structure
         ssl_structure = ssl_plugin.create_structure({})
 
-        # validates the API key
+        # validates the API key meaning that in case an API
+        # key is expected it's validated, raising an exception
+        # in case the validation operation fails
         self._validate_api_key(request, api_key)
 
         # retrieves the public key path for the key name
@@ -151,10 +155,11 @@ class SignatureController(BaseController):
         # retrieves the security map
         security_map = self.system.security_map
 
-        # retrieves the validate API key value
+        # retrieves the validate API key value and
+        # returns immediately in case no API key
+        # for validation is defined, meaning that
+        # no validation is expected
         validate_api_key = security_map.get("validate_api_key", True)
-
-        # returns in case no API key validation is required
         if not validate_api_key: return
 
         # creates the filter to retrieve the consumer with
