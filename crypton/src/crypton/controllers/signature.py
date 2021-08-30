@@ -49,8 +49,9 @@ from .base import BaseController
 CONSUMER_STATUS_ACTIVE = 1
 """ The consumer active status """
 
-DEFAULT_NUMBER_BITS = 256
-""" The default number of bits """
+DEFAULT_NUMBER_BITS = 1024
+""" The default number of bits to be used in the private
+key generation process """
 
 models = colony.__import__("models")
 
@@ -120,6 +121,7 @@ class SignatureController(BaseController):
         message_decoded = base64.b64decode(message)
 
         # signs the message (decoded) in base 64
+        print(private_key_path)
         signature = ssl_structure.sign_base_64(private_key_path, algorithm_name, message_decoded)
 
         # returns the signature
@@ -200,7 +202,7 @@ class SignatureController(BaseController):
         # returns the key path
         return key_path
 
-    def _generate_key_files(self, key):
+    def _generate_key_files(self, key, number_bits = DEFAULT_NUMBER_BITS):
         # retrieves the plugin manager and the required plugins for
         # the operation that is going to be performed
         plugin_manager = self.plugin.manager
@@ -216,4 +218,8 @@ class SignatureController(BaseController):
         # creates the SSL structure and then generates the public and
         # private keys (should update the generated structure)
         ssl_structure = ssl_plugin.create_structure({})
-        ssl_structure.generate_keys(private_key_path, public_key_path, DEFAULT_NUMBER_BITS)
+        ssl_structure.generate_keys(
+            private_key_path,
+            public_key_path,
+            number_bits = DEFAULT_NUMBER_BITS
+        )

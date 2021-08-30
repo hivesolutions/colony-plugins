@@ -45,7 +45,8 @@ BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
 
 DEFAULT_NUMBER_BITS = 1024
-""" The default number of bits """
+""" The default number of bits to be used in the generation
+of the private key """
 
 class SSL(colony.System):
     """
