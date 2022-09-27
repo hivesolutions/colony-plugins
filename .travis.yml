@@ -16,8 +16,6 @@ matrix:
     dist: xenial
   - python: 3.9
     dist: xenial
-  - python: pypy
-    dist: xenial
 before_install:
   - pip install --upgrade pip setuptools
 install:
