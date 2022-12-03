@@ -3,7 +3,7 @@
 	url = https://github.com/hivesolutions/jquery.git
 [submodule "nanger/src/nanger/resources/extras/libs/uxf"]
 	path = nanger/src/nanger/resources/extras/libs/uxf
-	url = https://github.com/hivesolutions/uxf_bin.git
+	url = https://github.com/hivesolutions/uxf-bin.git
 [submodule "nanger/src/nanger/resources/extras/libs/layout"]
 	path = nanger/src/nanger/resources/extras/libs/layout
 	url = https://github.com/hivesolutions/layout.git
