@@ -141,7 +141,7 @@ class APIDropbox(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         dropbox_client = DropboxClient(json_plugin, client_http_plugin, encoding, oauth_structure)
-        open_client and dropbox_client.open()
+        if open_client: dropbox_client.open()
         return dropbox_client
 
 class DropboxClient(object):

@@ -113,7 +113,7 @@ class APIEasypay(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         easypay_client = EasypayClient(client_http_plugin, easypay_structure, test_mode)
-        open_client and easypay_client.open()
+        if open_client: easypay_client.open()
         return easypay_client
 
 class EasypayClient(object):

@@ -77,7 +77,7 @@ class APICrypton(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         crypton_client = CryptonClient(client_http_plugin, crypton_structure)
-        open_client and crypton_client.open()
+        if open_client: crypton_client.open()
         return crypton_client
 
 class CryptonClient(object):

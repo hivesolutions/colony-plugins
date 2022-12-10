@@ -144,7 +144,7 @@ class APITwitter(colony.System):
             encoding,
             oauth_structure
         )
-        open_client and twitter_client.open()
+        if open_client: twitter_client.open()
         return twitter_client
 
 class TwitterClient(object):

@@ -248,7 +248,7 @@ class APIOpenID(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         openid_client = OpenIDClient(self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure)
-        open_client and openid_client.open()
+        if open_client: openid_client.open()
         return openid_client
 
     def _verify_nonce(self, nonce_value, provider_url):

@@ -80,7 +80,7 @@ class APIYadis(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         yadis_client = YadisClient(client_http_plugin, yadis_structure)
-        open_client and yadis_client.open()
+        if open_client: yadis_client.open()
         return yadis_client
 
 class YadisClient(object):

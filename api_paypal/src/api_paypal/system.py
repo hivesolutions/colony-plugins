@@ -114,7 +114,7 @@ class APIPaypal(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         paypal_client = PaypalClient(client_http_plugin, paypal_structure, test_mode)
-        open_client and paypal_client.open()
+        if open_client: paypal_client.open()
         return paypal_client
 
 class PaypalClient(object):

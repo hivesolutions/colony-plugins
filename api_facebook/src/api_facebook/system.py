@@ -149,7 +149,7 @@ class APIFacebook(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         facebook_client = facebook_client_class(json_plugin, client_http_plugin, facebook_structure)
-        open_client and facebook_client.open()
+        if open_client: facebook_client.open()
         return facebook_client
 
 class FacebookClient(object):
