@@ -68,7 +68,9 @@ but still only for testing purposes """
 
 class APIAT(colony.System):
     """
-    The API AT class.
+    The API AT class that manages the back-end operations
+    of the plugin, including but not limited to API client
+    generation and management.
     """
 
     def create_client(self, api_attributes, open_client = True):
@@ -105,7 +107,7 @@ class APIAT(colony.System):
             key,
             certificate
         )
-        open_client and at_client.open()
+        if open_client: at_client.open()
         return at_client
 
 class ATClient(object):
@@ -546,10 +548,11 @@ class ATStructure(object):
     """
 
     username = None
-    """ The username """
+    """ The username of the client submitting information,
+    this value is typically the tax number of the client """
 
     password = None
-    """ The password """
+    """ The password of the client submitting information """
 
     def __init__(self, username, password):
         """
