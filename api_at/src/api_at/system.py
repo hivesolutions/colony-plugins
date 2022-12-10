@@ -549,7 +549,8 @@ class ATStructure(object):
 
     username = None
     """ The username of the client submitting information,
-    this value is typically the tax number of the client """
+    this value is typically the tax number of the client
+    and the number of the sub-user to be used (eg: 508605989/1) """
 
     password = None
     """ The password of the client submitting information """
