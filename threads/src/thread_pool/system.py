@@ -453,7 +453,7 @@ class ThreadPoolImplementation(object):
                     # of required threads
                     if self.current_number_threads > required_threads:
                         # prints a debug message about the thread pool shrink
-                        self.logger.debug("Thread pool (%s) shrinked" % self.name)
+                        self.logger.debug("Thread pool (%s) shrank" % self.name)
 
                         # retrieves the task queue size
                         task_queue_size = len(self.task_queue)
