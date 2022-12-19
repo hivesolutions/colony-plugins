@@ -52,7 +52,9 @@ value may require a large amount of memory"""
 
 class FileFS(colony.System):
     """
-    The File FS class.
+    The File FS class, that implements the access to
+    the file system according to the "generic" file
+    engine interface definition.
     """
 
     def get_engine_name(self):
