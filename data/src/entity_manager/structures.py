@@ -3119,6 +3119,10 @@ class EntityClass(object):
         The retrieved map may contain the complete set
         of relations for the entity or only the first level.
 
+        Using the recursive (multi level) variant can prove
+        to be an ultra expensive operation both from computational
+        and memory perspectives.
+
         :type recursive: bool
         :param recursive: If the entity relations for the
         current level should be included in the returning map.
