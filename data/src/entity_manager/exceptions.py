@@ -163,7 +163,7 @@ class ValidationError(EntityManagerException):
     def _get_message(self):
         if not self.message: return self.message
         if not self.context: return self.message
-        return "(%s) %s" (self.context, self.message)
+        return "(%s) %s" % (self.context, self.message)
 
 class RelationValidationError(ValidationError):
     """
