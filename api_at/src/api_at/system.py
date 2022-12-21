@@ -237,6 +237,7 @@ class ATClient(object):
         # for the requested resource then returns that path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         path = os.path.join(plugin_path, path)
+        path = os.path.normpath(path)
         return path
 
     def submit_invoice(self, invoice_payload):
