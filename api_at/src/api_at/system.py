@@ -75,6 +75,15 @@ TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
+SERIES_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:422/SeriesWSService"
+""" The base URL to be used for document series
+submission, this is a secure HTTPS based URL"""
+
+SERIES_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:722/SeriesWSService"
+""" The base test URL to be used for document series
+submission, this is a secure HTTPS based URL
+but still only for testing purposes """
+
 class APIAT(colony.System):
     """
     The API AT class that manages the back-end operations
