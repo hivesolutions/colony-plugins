@@ -52,9 +52,18 @@ INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base URL to be used for invoice
 submission, this is a secure HTTPS based URL"""
 
+INVOICE_BASE_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:423/fatcorews/ws/"
+""" The base URL to be used for invoice submission
+(in version 2), this is a secure HTTPS based URL"""
+
 INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
 """ The base test URL to be used for invoice
 submission, this is a secure HTTPS based URL
+but still only for testing purposes """
+
+INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcorews/ws"
+""" The base test URL to be used for invoice submission
+(in version 2), this is a secure HTTPS based URL
 but still only for testing purposes """
 
 TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
@@ -81,7 +90,21 @@ class APIAT(colony.System):
         :param api_attributes: The API attributes to be used.
         :type open_client: bool
         :param open_client: If the client should be opened.
-        :rtype: OpenIDClient
+        :rtype: ATClient
+        :return: The created client.
+        """
+
+        return self.create_client_v1(api_attributes, open_client = open_client)
+
+    def create_client_v1(self, api_attributes, open_client = True):
+        """
+        Creates a client (v1), with the given API attributes.
+
+        :type api_attributes: Dictionary
+        :param api_attributes: The API attributes to be used.
+        :type open_client: bool
+        :param open_client: If the client should be opened.
+        :rtype: ATClientV1
         :return: The created client.
         """
 
@@ -98,7 +121,7 @@ class APIAT(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        at_client = ATClient(
+        at_client = ATClientV1(
             self.plugin,
             ssl_plugin,
             client_http_plugin,
@@ -110,9 +133,9 @@ class APIAT(colony.System):
         if open_client: at_client.open()
         return at_client
 
-class ATClient(object):
+class ATClientV1(object):
     """
-    The class that represents a AT client connection.
+    The class that represents a AT client v1 connection.
     Will be used to encapsulate the HTTP request
     around a locally usable API.
     """
@@ -156,7 +179,9 @@ class ATClient(object):
         certificate = None
     ):
         """
-        Constructor of the class.
+        Constructor of the class, should initialize the key and
+        certificate elements of the class and handle all the
+        plugin relations.
 
         :type plugin: Plugin
         :param plugin: The plugin associated with the AT client this
