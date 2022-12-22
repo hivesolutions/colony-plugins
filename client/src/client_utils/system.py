@@ -270,18 +270,16 @@ class AbstractClient(object):
         # is not open
         if not client_connection or not client_connection.is_open():
             # creates the a new client connection for the given connection tuple
+            # and sets the client connection in the client connections map
             client_connection = self._create_client_connection(connection_tuple)
-
-            # sets the client connection in the client connections map
             self.client_connections_map[connection_tuple_hashable] = client_connection
 
         # retrieves the client connection for the client
-        # connections map
+        # connections map and then in case the connection should
+        # be opened and the client  connection is not open, opens
+        # the client connection
         client_connection = self.client_connections_map[connection_tuple_hashable]
-
-        # in case the connection should be opened and the client
-        # connection is not open, opens the client connection
-        open_connection and not client_connection.is_open() and client_connection.open()
+        if open_connection and not client_connection.is_open(): client_connection.open()
 
         # returns the client connection
         return client_connection
