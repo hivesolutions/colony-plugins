@@ -287,7 +287,11 @@ class ATClient(object):
         submit_series_url = base_url + "/SeriesWSService"
 
         # submits the series document and returns the result
-        data = self._submit_document(submit_series_url, series_payload)
+        data = self._submit_document(
+            submit_series_url,
+            series_payload,
+            header_version = 2
+        )
         return data
 
     def validate_credentials(self):
@@ -326,7 +330,36 @@ class ATClient(object):
 
         self.at_structure = at_structure
 
-    def _submit_document(self, submit_url, document_payload):
+    def _submit_document(self, submit_url, document_payload, header_version = 1):
+        # makes uses of the version of the header to properly
+        # generate the complete message
+        if header_version == 1: message = self._gen_envelope_v1(document_payload)
+        elif header_version == 2: message = self._gen_envelope_v2(document_payload)
+        else: raise NotImplementedError("Version %d of the header is not available")
+
+        # "fetches" the submit invoice URL with the message contents
+        # this should post the invoice and create it in the remote
+        # data source
+        data = self._fetch_url(submit_url, method = "POST", contents = message)
+        self._check_at_errors(data)
+
+        # returns the resulting data
+        return data
+
+    def _gen_envelope_v1(self, document_payload):
+        """
+        Generates the complete envelope according to the original
+        (V1) specification of Autoridade Tributária (AT).
+
+        :type document_payload: String
+        :param document_payload: The payload that is going to be
+        used in the body of the envelope.
+        :retype: String
+        :return: The final envelope with the properly generated
+        header according to v1 of the specification.
+        :see: https://associativismo.cm-vfxira.pt/images/documentos_apoio/documentos_tecnicos/AT_Manual_Integracao_Software.pdf
+        """
+
         # retrieves the proper username and password values
         # according to the current test mode flag value then
         # convert both values into string to make sure that
@@ -364,7 +397,7 @@ class ATClient(object):
         password_encrypted_b64 = base64.b64encode(password_encrypted)
         password_encrypted_b64 = colony.legacy.str(password_encrypted_b64)
 
-        # retrieves the current utc date to be used for temporal
+        # retrieves the current UTC date to be used for temporal
         # verification of the request on the server side
         current_date = datetime.datetime.utcnow()
         current_date_s = current_date.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -409,14 +442,106 @@ class ATClient(object):
             document_payload
         )
 
-        # "fetches" the submit invoice URL with the message contents
-        # this should post the invoice and create it in the remote
-        # data source
-        data = self._fetch_url(submit_url, method = "POST", contents = message)
-        self._check_at_errors(data)
+        # returns the final envelope message
+        return message
 
-        # returns the resulting data
-        return data
+    def _gen_envelope_v2(self, document_payload):
+        """
+        Generates the complete envelope according to the new
+        (v2) specification of Autoridade Tributária (AT).
+
+        There are some significant simplifications in the way
+        the header is generated in this second version.
+
+        :type document_payload: String
+        :param document_payload: The payload that is going to be
+        used in the body of the envelope.
+        :retype: String
+        :return: The final envelope with the properly generated
+        header according to v2 of the specification.
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        """
+
+        # retrieves the proper username and password values
+        # according to the current test mode flag value then
+        # convert both values into string to make sure that
+        # no unicode buffers are present (avoids conversion)
+        username = "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        password = "testes1234" if self.test_mode else str(self.at_structure.password)
+        username = str(username)
+        password = str(password)
+        password_b = colony.legacy.bytes(password)
+
+        # creates a new AES cipher structure to be
+        # able to encrypt the target fields and gets
+        # its currently set key as the secret (this
+        # key was generated according to the default
+        # block size defined in the module)
+        aes = colony.AesCipher()
+        secret = aes.get_key()
+
+        # retrieves the path to the AT public key to be used
+        # in the encryption of the secret value (as nonce)
+        public_key_path = self.get_resource("api_at/resources/at.pem")
+
+        # runs the encryption on the secret value to create an
+        # RSA encrypted representation of it and then encodes
+        # that value in base 64 to create the nonce value
+        ssl_structure = self.ssl_plugin.create_structure({})
+        secret_encrypted = ssl_structure.encrypt(public_key_path, secret)
+        nonce = base64.b64encode(secret_encrypted)
+        nonce = colony.legacy.str(nonce)
+
+        # encrypts the current password using the AES structure
+        # created for the current context and then encodes it
+        # into a base 64 structure
+        password_encrypted = aes.encrypt(password_b)
+        password_encrypted_b64 = base64.b64encode(password_encrypted)
+        password_encrypted_b64 = colony.legacy.str(password_encrypted_b64)
+
+        # retrieves the current UTC date to be used for temporal
+        # verification of the request on the server side
+        current_date = datetime.datetime.utcnow()
+        current_date_s = current_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        current_date_b = colony.legacy.bytes(current_date_s)
+
+        # encrypts the current date using the AES structure
+        # created for the current context and then encodes it
+        # into a base 64 structure
+        current_date_encrypted = aes.encrypt(current_date_b)
+        current_date_encrypted_b64 = base64.b64encode(current_date_encrypted)
+        current_date_encrypted_b64 = colony.legacy.str(current_date_encrypted_b64)
+
+        # defines the format of the SOAP envelope to be submitted to AT
+        # as a normal string template to be populated with global values
+        envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
+            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+                <S:Header>
+                    <wss:Security xmlns:wss="http://schemas.xmlsoap.org/ws/2002/12/secext">
+                        <wss:UsernameToken>
+                            <wss:Username>%s</wss:Username>
+                            <wss:Password>%s</wss:Password>
+                            <wss:Nonce>%s</wss:Nonce>
+                            <wss:Created>%s</wss:Created>
+                        </wss:UsernameToken>
+                    </wss:Security>
+                </S:Header>
+                <S:Body>
+                    %s
+                </S:Body>
+            </S:Envelope>"""
+
+        # applies the attributes to the SOAP envelope
+        message = envelope % (
+            username,
+            password_encrypted_b64,
+            nonce,
+            current_date_encrypted_b64,
+            document_payload
+        )
+
+        # returns the final envelope message
+        return message
 
     def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
         """
