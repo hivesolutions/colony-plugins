@@ -369,7 +369,7 @@ class ATClient(object):
                 document_payload,
                 namespace = namespace
             )
-        else: raise NotImplementedError("Version %d of the header is not available")
+        else: raise exceptions.ATVersionError(version = version)
 
         # "fetches" the "submit document" URL with the message contents
         # this should post the document and create it in the remote
@@ -381,7 +381,7 @@ class ATClient(object):
         # error an exception should be raised
         if version == 1: self._check_at_errors_v1(data)
         elif version == 2: self._check_at_errors_v2(data)
-        else: raise NotImplementedError("Version %d of the header is not available")
+        else: raise exceptions.ATVersionError(version = version)
 
         # returns the resulting data
         return data

@@ -82,3 +82,13 @@ class ATAPIError(APIATException):
 
         return "AT API error (%d) - %s" % (self.error_code, self.message) if\
             self.error_code else "AT API error - %s" % self.message
+
+class ATVersionError(APIATException):
+
+    def __init__(self, version = None):
+        APIATException.__init__(
+            self,
+            message = "Invalid AT WS version (%d)" % version if\
+                version else "Invalid AT WS version"
+        )
+        self.version = version
