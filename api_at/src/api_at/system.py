@@ -691,7 +691,7 @@ class ATClient(object):
 
     def _check_at_errors_v1(self, data):
         """
-        Checks the given data for AT errors (original v1 version).
+        Checks the given data for AT errors (v1 version).
 
         This method raises an exception in case an error
         exists in the data to be verified.
@@ -735,15 +735,31 @@ class ATClient(object):
         raise exceptions.ATAPIError(return_message, return_code)
 
     def _check_at_errors_v2(self, data):
+        """
+        Checks the given data for AT errors (v2 version).
+
+        This method raises an exception in case an error
+        exists in the data to be verified.
+
+        :type data: Dictionary
+        :param data: The data to be checked for AT errors.
+        """
+
         # parses the XML data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
+        # tries to obtain the elements for both the result code
+        # and the result message (description)
         result_code = document.getElementsByTagName("codResultOper")
         result_message = document.getElementsByTagName("msgResultOper")
 
+        # in case no result code is present we can safely return
+        # immediately as no error is present
         if not result_code: return
 
+        # converts the result code into its textual representation and
+        # then into an integer value, to be properly handled
         result_code = self._text(result_code[0])
         result_code = int(result_code)
 
@@ -752,6 +768,8 @@ class ATClient(object):
         is_success = result_code // 1000 == 2
         if is_success: return
 
+        # obtains the result message (if present) and raises the error with
+        # both the code and the message to be handled by exception handlers
         result_message = self._text(result_message[0]) if result_message else None
         raise exceptions.ATAPIError(result_message, result_code)
 
