@@ -280,6 +280,16 @@ class ATClient(object):
         data = self._submit_document(submit_transport_url, transport_payload)
         return data
 
+    def submit_series(self, series_payload):
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
+        submit_series_url = base_url + "/SeriesWSService"
+
+        # submits the series document and returns the result
+        data = self._submit_document(submit_series_url, series_payload)
+        return data
+
     def validate_credentials(self):
         """
         Validates that the credentials are valid, returning a flag
