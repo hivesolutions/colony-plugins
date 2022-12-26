@@ -639,6 +639,33 @@ class ATClient(object):
         at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
         return at_doc_code_id
 
+    def get_at_series(self, data):
+        """
+        Parses the provided XML data, retrieving the
+        series response structure.
+
+        The provided XML data should be compliant with
+        the pre-defined AT SOAP response.
+
+        :type data: String
+        :param data: The string containing the XML data
+        to be used for parsing and retrieval of the
+        series response.
+        :rtype: Dictionary
+        :return: The AT series response structure.
+        """
+
+        # parses the XML data and retrieves the entry document
+        # structure that will be uses in the parsing
+        document = xml.dom.minidom.parseString(data)
+
+        # retrieves the AT series response from the document,
+        # and returns it, returning none in case it the
+        # document id was not found in the document
+        series_resp = document.getElementsByTagName("passregistarSerieResp")
+        series_resp = colony.xml_to_dict(series_resp[0]) if series_resp else None
+        return series_resp
+
     def _check_at_errors_v1(self, data):
         """
         Checks the given data for AT errors.
@@ -694,7 +721,7 @@ class ATClient(object):
         return_code = document.getElementsByTagName("codResultOper")
         result_message = document.getElementsByTagName("msgResultOper")
 
-        #@todo implemen this and document the function
+        #@todo implement this and document the function
 
     def _get_http_client(self):
         """
@@ -734,6 +761,12 @@ class ATClient(object):
         return self.http_client
 
     def _text(self, node):
+        for _node in node.childNodes:
+            if not _node.nodeType == xml.dom.Node.TEXT_NODE: continue
+            return _node.data
+        return None
+
+    def _dict(self, node):
         for _node in node.childNodes:
             if not _node.nodeType == xml.dom.Node.TEXT_NODE: continue
             return _node.data
