@@ -103,20 +103,6 @@ class APIAT(colony.System):
         :return: The created client.
         """
 
-        return self.create_client_v1(api_attributes, open_client = open_client)
-
-    def create_client_v1(self, api_attributes, open_client = True):
-        """
-        Creates a client (v1), with the given API attributes.
-
-        :type api_attributes: Dictionary
-        :param api_attributes: The API attributes to be used.
-        :type open_client: bool
-        :param open_client: If the client should be opened.
-        :rtype: ATClientV1
-        :return: The created client.
-        """
-
         # retrieves the client HTTP plugin
         ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
@@ -130,7 +116,7 @@ class APIAT(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        at_client = ATClientV1(
+        at_client = ATClient(
             self.plugin,
             ssl_plugin,
             client_http_plugin,
@@ -142,9 +128,9 @@ class APIAT(colony.System):
         if open_client: at_client.open()
         return at_client
 
-class ATClientV1(object):
+class ATClient(object):
     """
-    The class that represents a AT client v1 connection.
+    The class that represents a AT client connection.
     Will be used to encapsulate the HTTP request
     around a locally usable API.
     """
