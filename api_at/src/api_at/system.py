@@ -480,7 +480,7 @@ class ATClient(object):
 
         # applies the attributes to the SOAP envelope
         message = envelope % (
-            namespace,
+            namespace or "",
             username,
             digest_hash_encrypted_b64,
             password_encrypted_b64,
@@ -583,7 +583,7 @@ class ATClient(object):
 
         # applies the attributes to the SOAP envelope
         message = envelope % (
-            namespace,
+            namespace or "",
             username,
             password_encrypted_b64,
             nonce,
