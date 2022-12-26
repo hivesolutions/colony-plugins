@@ -294,7 +294,22 @@ class ATClient(object):
         data = self._submit_document(
             submit_series_url,
             series_payload,
-            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/seriesWSService/\"",
+            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/SeriesWSService/\"",
+            version = 2
+        )
+        return data
+
+    def get_series(self, get_series_payload):
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
+        get_series_url = base_url
+
+        # submits the series document and returns the result
+        data = self._submit_document(
+            get_series_url,
+            get_series_payload,
+            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/SeriesWSService/\"",
             version = 2
         )
         return data
@@ -356,12 +371,17 @@ class ATClient(object):
             )
         else: raise NotImplementedError("Version %d of the header is not available")
 
-        # "fetches" the submit invoice URL with the message contents
-        # this should post the invoice and create it in the remote
-        # data source
+        # "fetches" the "submit document" URL with the message contents
+        # this should post the document and create it in the remote
+        # data source according to the AT WS specification
         data = self._fetch_url(submit_url, method = "POST", contents = message)
+
+        # checks the result data for error according to the version of
+        # WS specification that has been requested, in case there's an
+        # error an exception should be raised
         if version == 1: self._check_at_errors_v1(data)
         elif version == 2: self._check_at_errors_v2(data)
+        else: raise NotImplementedError("Version %d of the header is not available")
 
         # returns the resulting data
         return data
@@ -639,7 +659,7 @@ class ATClient(object):
         at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
         return at_doc_code_id
 
-    def get_at_series(self, data):
+    def get_at_series(self, data, tag_name = "registarSerieResp"):
         """
         Parses the provided XML data, retrieving the
         series response structure.
@@ -651,6 +671,9 @@ class ATClient(object):
         :param data: The string containing the XML data
         to be used for parsing and retrieval of the
         series response.
+        :type tag_name: String
+        :param tag_name: The name of the tag that is going to
+        be used to obtain the series dictionary payload.
         :rtype: Dictionary
         :return: The AT series response structure.
         """
@@ -662,13 +685,13 @@ class ATClient(object):
         # retrieves the AT series response from the document,
         # and returns it, returning none in case it the
         # document id was not found in the document
-        series_resp = document.getElementsByTagName("passregistarSerieResp")
+        series_resp = document.getElementsByTagName(tag_name)
         series_resp = colony.xml_to_dict(series_resp[0]) if series_resp else None
         return series_resp
 
     def _check_at_errors_v1(self, data):
         """
-        Checks the given data for AT errors.
+        Checks the given data for AT errors (original v1 version).
 
         This method raises an exception in case an error
         exists in the data to be verified.
@@ -680,8 +703,6 @@ class ATClient(object):
         # parses the XML data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
-
-        print(data)
 
         # tries to retrieve the various elements from the XML data
         # that represent error information, an error may be either
@@ -718,10 +739,21 @@ class ATClient(object):
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
-        return_code = document.getElementsByTagName("codResultOper")
+        result_code = document.getElementsByTagName("codResultOper")
         result_message = document.getElementsByTagName("msgResultOper")
 
-        #@todo implement this and document the function
+        if not result_code: return
+
+        result_code = self._text(result_code[0])
+        result_code = int(result_code)
+
+        # determines if the result code represents a success (eg: 2xxxx) and
+        # if that's the case returns the control flow immediately (not an error)
+        is_success = result_code // 1000 == 2
+        if is_success: return
+
+        result_message = self._text(result_message[0]) if result_message else None
+        raise exceptions.ATAPIError(result_message, result_code)
 
     def _get_http_client(self):
         """
