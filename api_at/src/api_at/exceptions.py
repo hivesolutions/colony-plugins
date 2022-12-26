@@ -49,14 +49,15 @@ class APIATException(colony.ColonyException):
 
 class ATAPIError(APIATException):
     """
-    The AT API error class.
+    The AT API error class representing an error
+    coming from the AT server.
     """
 
     error_code = None
     """ The code associated with the message contained
     in this API error """
 
-    def __init__(self, message, error_code):
+    def __init__(self, message, error_code = None):
         """
         Constructor of the class.
 
@@ -79,4 +80,5 @@ class ATAPIError(APIATException):
         :return: The string representation of the class.
         """
 
-        return "AT API error - %s" % self.message
+        return "AT API error (%d) - %s" % (self.error_code, self.message) if\
+            self.error_code else "AT API error - %s" % self.message
