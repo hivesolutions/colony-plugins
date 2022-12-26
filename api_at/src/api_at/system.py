@@ -766,12 +766,6 @@ class ATClient(object):
             return _node.data
         return None
 
-    def _dict(self, node):
-        for _node in node.childNodes:
-            if not _node.nodeType == xml.dom.Node.TEXT_NODE: continue
-            return _node.data
-        return None
-
 class ATStructure(object):
     """
     The AT structure class used to store
