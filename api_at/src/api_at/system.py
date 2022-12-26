@@ -271,8 +271,8 @@ class ATClient(object):
         submit_invoice_url = base_url + "/faturas"
 
         # submits the invoice document and returns the result
-        result = self._submit_document(submit_invoice_url, invoice_payload)
-        return result
+        data = self._submit_document(submit_invoice_url, invoice_payload)
+        return data
 
     def submit_transport(self, transport_payload):
         # retrieves the proper based URL according to the current
@@ -295,7 +295,7 @@ class ATClient(object):
             submit_series_url,
             series_payload,
             namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/seriesWSService/\"",
-            header_version = 2
+            version = 2
         )
         return data
 
@@ -340,16 +340,16 @@ class ATClient(object):
         submit_url,
         document_payload,
         namespace = None,
-        header_version = 1
+        version = 1
     ):
         # makes uses of the version of the header to properly
         # generate the complete message
-        if header_version == 1:
+        if version == 1:
             message = self._gen_envelope_v1(
                 document_payload,
                 namespace = namespace
             )
-        elif header_version == 2:
+        elif version == 2:
             message = self._gen_envelope_v2(
                 document_payload,
                 namespace = namespace
@@ -360,7 +360,8 @@ class ATClient(object):
         # this should post the invoice and create it in the remote
         # data source
         data = self._fetch_url(submit_url, method = "POST", contents = message)
-        self._check_at_errors(data)
+        if version == 1: self._check_at_errors_v1(data)
+        elif version == 2: self._check_at_errors_v2(data)
 
         # returns the resulting data
         return data
@@ -638,7 +639,7 @@ class ATClient(object):
         at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
         return at_doc_code_id
 
-    def _check_at_errors(self, data):
+    def _check_at_errors_v1(self, data):
         """
         Checks the given data for AT errors.
 
@@ -652,6 +653,8 @@ class ATClient(object):
         # parses the XML data and retrieves the entry document
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
+
+        print(data)
 
         # tries to retrieve the various elements from the XML data
         # that represent error information, an error may be either
@@ -673,7 +676,7 @@ class ATClient(object):
 
         # "casts" the return code as an integer, in order to convert
         # it from the "normal" string representation
-        return_code = return_code and int(return_code)
+        if return_code: return_code = int(return_code)
 
         # in case the return code is zero no error is currently present
         # (this is a successful request) must return immediately
@@ -682,6 +685,16 @@ class ATClient(object):
         # raises the AT API error exception associated with the error
         # that has just been "parsed"
         raise exceptions.ATAPIError(return_message, return_code)
+
+    def _check_at_errors_v2(self, data):
+        # parses the XML data and retrieves the entry document
+        # structure that will be uses in the parsing
+        document = xml.dom.minidom.parseString(data)
+
+        return_code = document.getElementsByTagName("codResultOper")
+        result_message = document.getElementsByTagName("msgResultOper")
+
+        #@todo implemen this and document the function
 
     def _get_http_client(self):
         """
