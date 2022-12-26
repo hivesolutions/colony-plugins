@@ -133,6 +133,10 @@ class ATClient(object):
     The class that represents a AT client connection.
     Will be used to encapsulate the HTTP request
     around a locally usable API.
+
+    To be able to use the client one must setup an user
+    at the AT using the following URL to do so:
+    https://www.acesso.gov.pt/gestaoDeUtilizadores/consulta?partID=PFIN
     """
 
     plugin = None
@@ -284,12 +288,13 @@ class ATClient(object):
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
-        submit_series_url = base_url + "/SeriesWSService"
+        submit_series_url = base_url
 
         # submits the series document and returns the result
         data = self._submit_document(
             submit_series_url,
             series_payload,
+            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/seriesWSService/\"",
             header_version = 2
         )
         return data
@@ -330,11 +335,25 @@ class ATClient(object):
 
         self.at_structure = at_structure
 
-    def _submit_document(self, submit_url, document_payload, header_version = 1):
+    def _submit_document(
+        self,
+        submit_url,
+        document_payload,
+        namespace = None,
+        header_version = 1
+    ):
         # makes uses of the version of the header to properly
         # generate the complete message
-        if header_version == 1: message = self._gen_envelope_v1(document_payload)
-        elif header_version == 2: message = self._gen_envelope_v2(document_payload)
+        if header_version == 1:
+            message = self._gen_envelope_v1(
+                document_payload,
+                namespace = namespace
+            )
+        elif header_version == 2:
+            message = self._gen_envelope_v2(
+                document_payload,
+                namespace = namespace
+            )
         else: raise NotImplementedError("Version %d of the header is not available")
 
         # "fetches" the submit invoice URL with the message contents
@@ -346,18 +365,24 @@ class ATClient(object):
         # returns the resulting data
         return data
 
-    def _gen_envelope_v1(self, document_payload):
+    def _gen_envelope_v1(self, document_payload, namespace = None):
         """
         Generates the complete envelope according to the original
         (V1) specification of Autoridade Tributária (AT).
 
+        This is the original version of the envelope that started
+        development back in 2012.
+
         :type document_payload: String
         :param document_payload: The payload that is going to be
         used in the body of the envelope.
+        :type namespace: String
+        :param namespace: Additional namespace string to be added to
+        the final part of the envelop open tag.
         :retype: String
         :return: The final envelope with the properly generated
         header according to v1 of the specification.
-        :see: https://associativismo.cm-vfxira.pt/images/documentos_apoio/documentos_tecnicos/AT_Manual_Integracao_Software.pdf
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Documents/ComunicacaodosdadosdasfaturasaAT.pdf
         """
 
         # retrieves the proper username and password values
@@ -416,7 +441,7 @@ class ATClient(object):
         # defines the format of the SOAP envelope to be submitted to AT
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
-            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" %s>
                 <S:Header>
                     <wss:Security xmlns:wss="http://schemas.xmlsoap.org/ws/2002/12/secext">
                         <wss:UsernameToken>
@@ -434,6 +459,7 @@ class ATClient(object):
 
         # applies the attributes to the SOAP envelope
         message = envelope % (
+            namespace,
             username,
             digest_hash_encrypted_b64,
             password_encrypted_b64,
@@ -445,7 +471,7 @@ class ATClient(object):
         # returns the final envelope message
         return message
 
-    def _gen_envelope_v2(self, document_payload):
+    def _gen_envelope_v2(self, document_payload, namespace = None):
         """
         Generates the complete envelope according to the new
         (v2) specification of Autoridade Tributária (AT).
@@ -456,6 +482,9 @@ class ATClient(object):
         :type document_payload: String
         :param document_payload: The payload that is going to be
         used in the body of the envelope.
+        :type namespace: String
+        :param namespace: Additional namespace string to be added to
+        the final part of the envelop open tag.
         :retype: String
         :return: The final envelope with the properly generated
         header according to v2 of the specification.
@@ -515,7 +544,7 @@ class ATClient(object):
         # defines the format of the SOAP envelope to be submitted to AT
         # as a normal string template to be populated with global values
         envelope = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
-            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" %s>
                 <S:Header>
                     <wss:Security xmlns:wss="http://schemas.xmlsoap.org/ws/2002/12/secext">
                         <wss:UsernameToken>
@@ -533,6 +562,7 @@ class ATClient(object):
 
         # applies the attributes to the SOAP envelope
         message = envelope % (
+            namespace,
             username,
             password_encrypted_b64,
             nonce,
