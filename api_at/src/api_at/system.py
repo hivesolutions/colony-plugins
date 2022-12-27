@@ -84,6 +84,10 @@ SERIES_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:722/SeriesWSSe
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
+SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/SeriesAutoFaturacaoWSService.wsdl"
+""" The link to the WSDL description file for the
+document series submission operations """
+
 class APIAT(colony.System):
     """
     The API AT class that manages the back-end operations
