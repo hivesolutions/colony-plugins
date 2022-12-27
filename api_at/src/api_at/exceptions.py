@@ -86,9 +86,24 @@ class ATAPIError(APIATException):
 class ATVersionError(APIATException):
 
     def __init__(self, version = None):
-        APIATException.__init__(
-            self,
-            message = "Invalid AT WS version (%d)" % version if\
-                version else "Invalid AT WS version"
-        )
+        """
+        Constructor of the class.
+
+        :type version: int
+        :param version: The version that is considered
+        to be in error under the context.
+        """
+
+        APIATException.__init__(self)
         self.version = version
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "AT Version error - %d" % self.version if\
+            self.version else "AT Version error"
