@@ -294,7 +294,6 @@ class ATClient(object):
         data = self._submit_document(
             submit_series_url,
             series_payload,
-            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/SeriesWSService/\"",
             version = 2
         )
         return data
@@ -309,7 +308,6 @@ class ATClient(object):
         data = self._submit_document(
             get_series_url,
             get_series_payload,
-            namespace = "xmlns:doc=\"https://servicos.portaldasfinancas.gov.pt/SeriesWSService/\"",
             version = 2
         )
         return data
