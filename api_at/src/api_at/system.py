@@ -52,19 +52,23 @@ INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base URL to be used for invoice
 submission, this is a secure HTTPS based URL"""
 
-INVOICE_BASE_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:423/fatcorews/ws/"
-""" The base URL to be used for invoice submission
-(in version 2), this is a secure HTTPS based URL"""
-
 INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
 """ The base test URL to be used for invoice
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
+INVOICE_BASE_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:423/fatcorews/ws/"
+""" The base URL to be used for invoice submission
+(in version 2), this is a secure HTTPS based URL"""
+
 INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcorews/ws"
 """ The base test URL to be used for invoice submission
 (in version 2), this is a secure HTTPS based URL
 but still only for testing purposes """
+
+INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Fatcorews.wsdl"
+""" The link to the WSDL description file for the
+invoice (in version 2) submission operations """
 
 TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
 """ The base URL to be used for transport document
@@ -74,6 +78,10 @@ TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 """ The base test URL to be used for transport document
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
+
+TRANSPORT_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Documents/documentosTransporte.wsdl"
+""" The link to the WSDL description file for the
+transport submission operations """
 
 SERIES_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:422/SeriesWSService"
 """ The base URL to be used for document series
@@ -141,6 +149,8 @@ class ATClient(object):
     To be able to use the client one must setup an user
     at the AT using the following URL to do so:
     https://www.acesso.gov.pt/gestaoDeUtilizadores/consulta?partID=PFIN
+
+    :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte
     """
 
     plugin = None
@@ -269,6 +279,10 @@ class ATClient(object):
         return path
 
     def submit_invoice(self, invoice_payload):
+        """
+        see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Documents/ComunicacaodosdadosdasfaturasaAT.pdf
+        """
+
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = INVOICE_BASE_TEST_URL if self.test_mode else INVOICE_BASE_URL
@@ -279,6 +293,10 @@ class ATClient(object):
         return data
 
     def submit_transport(self, transport_payload):
+        """
+        see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Documents/Comunicacao_Dados_Documentos_Transporte.pdf
+        """
+
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = TRANSPORT_BASE_TEST_URL if self.test_mode else TRANSPORT_BASE_URL
@@ -289,6 +307,11 @@ class ATClient(object):
         return data
 
     def submit_series(self, series_payload):
+        """
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Especificos.pdf
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Genericos.pdf
+        """
+
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
