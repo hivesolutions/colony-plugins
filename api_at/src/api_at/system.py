@@ -303,7 +303,11 @@ class ATClient(object):
         submit_invoice_url = base_url
 
         # submits the invoice document and returns the result
-        data = self._submit_document(submit_invoice_url, invoice_payload)
+        data = self._submit_document(
+            submit_invoice_url,
+            invoice_payload,
+            version = 2
+        )
         return data
 
     def submit_transport(self, transport_payload):
