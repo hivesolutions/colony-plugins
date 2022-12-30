@@ -61,7 +61,7 @@ INVOICE_BASE_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:423/fatcorews/w
 """ The base URL to be used for invoice submission
 (in version 2), this is a secure HTTPS based URL"""
 
-INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcorews/ws"
+INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcorews/ws/"
 """ The base test URL to be used for invoice submission
 (in version 2), this is a secure HTTPS based URL
 but still only for testing purposes """
@@ -287,6 +287,20 @@ class ATClient(object):
         # test mode and uses it to create the complete action URL
         base_url = INVOICE_BASE_TEST_URL if self.test_mode else INVOICE_BASE_URL
         submit_invoice_url = base_url + "/faturas"
+
+        # submits the invoice document and returns the result
+        data = self._submit_document(submit_invoice_url, invoice_payload)
+        return data
+
+    def submit_invoice_v2(self, invoice_payload):
+        """
+        see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        """
+
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = INVOICE_BASE_TEST_URL_V2 if self.test_mode else INVOICE_BASE_URL_V2
+        submit_invoice_url = base_url
 
         # submits the invoice document and returns the result
         data = self._submit_document(submit_invoice_url, invoice_payload)
