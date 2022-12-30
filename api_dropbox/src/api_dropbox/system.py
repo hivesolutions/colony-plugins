@@ -321,19 +321,17 @@ class DropboxClient(object):
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
-        # retrieves the values from the request
+        # splits the multiple parameters around the separator characters
+        # and then build the list of tuples that is then converted into
+        # a key to value dictionary
         values = result.split("&")
-
-        # retrieves the values list
         values_list = [value.split("=", 1) for value in values]
-
-        # converts the values list into a map
+        values_list = [tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list]
         values_map = dict(values_list)
 
-        # retrieves the OAuth token from the values map
+        # retrieves both the OAuth token and the OAuth token secret to
+        # be able to use them in further authenticated requests
         self.oauth_structure.oauth_token = values_map["oauth_token"]
-
-        # retrieves the OAuth token secret from the values map
         self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
 
         # returns the OAuth structure
@@ -395,13 +393,12 @@ class DropboxClient(object):
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
 
-        # retrieves the values from the request
+        # splits the multiple parameters around the separator characters
+        # and then build the list of tuples that is then converted into
+        # a key to value dictionary
         values = result.split("&")
-
-        # retrieves the values list
         values_list = [value.split("=", 1) for value in values]
-
-        # converts the values list into a map
+        values_list = [tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list]
         values_map = dict(values_list)
 
         # retrieves the OAuth values from the values map
