@@ -306,7 +306,12 @@ class ATClient(object):
         data = self._submit_document(
             submit_invoice_url,
             invoice_payload,
-            version = 2
+            version = 2,
+            check_errors = lambda data: self._check_at_errors_v1(
+                data,
+                code_tag = "CodigoResposta",
+                message_tag = "Mensagem"
+            )
         )
         return data
 
@@ -398,7 +403,8 @@ class ATClient(object):
         submit_url,
         document_payload,
         namespace = None,
-        version = 1
+        version = 1,
+        check_errors = None
     ):
         # makes uses of the version of the header to properly
         # generate the complete message
@@ -421,8 +427,11 @@ class ATClient(object):
 
         # checks the result data for error according to the version of
         # WS specification that has been requested, in case there's an
-        # error an exception should be raised
-        if version == 1: self._check_at_errors_v1(data)
+        # error an exception should be raised, notice that the consumer
+        # can provide a custom `check_errors` parameter to be called instead
+        # of the default one for the version
+        if check_errors: check_errors(data)
+        elif version == 1: self._check_at_errors_v1(data)
         elif version == 2: self._check_at_errors_v2(data)
         else: raise exceptions.ATVersionError(version = version)
 
@@ -745,7 +754,13 @@ class ATClient(object):
         series_resp = colony.xml_to_dict(series_resp[0]) if series_resp else None
         return series_resp
 
-    def _check_at_errors_v1(self, data):
+    def _check_at_errors_v1(
+        self,
+        data,
+        fault_tag = "faultstring",
+        code_tag = "ReturnCode",
+        message_tag = "ReturnMessage"
+    ):
         """
         Checks the given data for AT errors (v1 version).
 
@@ -754,6 +769,15 @@ class ATClient(object):
 
         :type data: Dictionary
         :param data: The data to be checked for AT errors.
+        :type fault_tag: String
+        :param fault_tag: The name of the XML tag to be used
+        to obtain the fault string explanation.
+        :type code_tag: String
+        :param code_tag: The name of the XML tag to be used
+        to obtain the result code.
+        :type message_tag: String
+        :param message_tag: The name of the XML tag to be used
+        to obtain the result message.
         """
 
         # parses the XML data and retrieves the entry document
@@ -763,20 +787,20 @@ class ATClient(object):
         # tries to retrieve the various elements from the XML data
         # that represent error information, an error may be either
         # a normal message based error or a fault
-        fault_strings = document.getElementsByTagName("faultstring")
-        return_codes = document.getElementsByTagName("ReturnCode")
-        return_messages = document.getElementsByTagName("ReturnMessage")
+        fault_string = document.getElementsByTagName(fault_tag)
+        return_code = document.getElementsByTagName(code_tag)
+        return_message = document.getElementsByTagName(message_tag)
 
-        # in case no fault strings and no returns messages are
+        # in case no fault string and no returns message are
         # defined must return immediately because no error has
         # been discovered (or raised)
-        if not fault_strings and not return_messages: return
+        if not fault_string and not return_message: return
 
         # tries to retrieve the return code defaulting to undefined
         # in case there's a fault string then retrieves the return
-        # message either from the fault string or from the return messages
-        return_code = None if fault_strings else self._text(return_codes[0])
-        return_message = self._text(fault_strings[0]) if fault_strings else self._text(return_messages[0])
+        # message either from the fault string or from the return message
+        return_code = None if fault_string else self._text(return_code[0])
+        return_message = self._text(fault_string[0]) if fault_string else self._text(return_message[0])
 
         # "casts" the return code as an integer, in order to convert
         # it from the "normal" string representation
@@ -790,7 +814,12 @@ class ATClient(object):
         # that has just been "parsed"
         raise exceptions.ATAPIError(return_message, error_code = return_code)
 
-    def _check_at_errors_v2(self, data):
+    def _check_at_errors_v2(
+        self,
+        data,
+        code_tag = "codResultOper",
+        message_tag = "msgResultOper"
+    ):
         """
         Checks the given data for AT errors (v2 version).
 
@@ -799,6 +828,12 @@ class ATClient(object):
 
         :type data: Dictionary
         :param data: The data to be checked for AT errors.
+        :type code_tag: String
+        :param code_tag: The name of the XML tag to be used
+        to obtain the result code.
+        :type message_tag: String
+        :param message_tag: The name of the XML tag to be used
+        to obtain the result message.
         """
 
         # parses the XML data and retrieves the entry document
@@ -807,8 +842,8 @@ class ATClient(object):
 
         # tries to obtain the elements for both the result code
         # and the result message (description)
-        result_code = document.getElementsByTagName("codResultOper")
-        result_message = document.getElementsByTagName("msgResultOper")
+        result_code = document.getElementsByTagName(code_tag)
+        result_message = document.getElementsByTagName(message_tag)
 
         # in case no result code is present we can safely return
         # immediately as no error is present
