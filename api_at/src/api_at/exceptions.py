@@ -57,7 +57,12 @@ class ATAPIError(APIATException):
     """ The code associated with the message contained
     in this API error """
 
-    def __init__(self, message, error_code = None):
+    details = None
+    """ An optional details value that will better
+    describe the issue in detail, the data type of this
+    attribute is dynamic and can be a dictionary or a string """
+
+    def __init__(self, message, error_code = None, details = None):
         """
         Constructor of the class.
 
@@ -66,11 +71,15 @@ class ATAPIError(APIATException):
         :type error_code: String
         :param error_code: The code associated with
         the message contained in this API error.
+        :type details: String/Dictionary
+        :param details: The details that describe this
+        error for possible debugging.
         """
 
         APIATException.__init__(self)
         self.message = message
         self.error_code = error_code
+        self.details = details
 
     def __str__(self):
         """

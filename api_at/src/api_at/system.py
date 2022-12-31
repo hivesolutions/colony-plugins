@@ -417,7 +417,7 @@ class ATClient(object):
         # "fetches" the "submit document" URL with the message contents
         # this should post the document and create it in the remote
         # data source according to the AT WS specification
-        data = self._fetch_url(submit_url, method = "POST", contents = message)
+        data, code = self._fetch_url(submit_url, method = "POST", contents = message)
 
         # checks the result data for error according to the version of
         # WS specification that has been requested, in case there's an
@@ -425,6 +425,17 @@ class ATClient(object):
         if version == 1: self._check_at_errors_v1(data)
         elif version == 2: self._check_at_errors_v2(data)
         else: raise exceptions.ATVersionError(version = version)
+
+        # in case the response HTTP code is not valid raises an AT API
+        # error to avoid operations from progressing
+        if not code // 100 == 2:
+            try: details = colony.xml_to_dict(data)
+            except Exception: details = data
+            raise exceptions.ATAPIError(
+                "Invalid AT HTTP response code received",
+                error_code = code,
+                details = details
+            )
 
         # returns the resulting data
         return data
@@ -653,8 +664,9 @@ class ATClient(object):
         :param method: The method to be used in the fetch.
         :type contents: String
         :param contents: The contents.
-        :rtype: String
-        :return: The fetched data.
+        :rtype: Tuple
+        :return: A tuple containing both the fetched data and the
+        resulting HTTP status code as an integer.
         """
 
         # in case parameters is not defined creates a new parameters
@@ -673,7 +685,8 @@ class ATClient(object):
             contents = contents
         )
         contents = http_response.received_message
-        return contents
+        code = http_response.status_code
+        return (contents, code)
 
     def get_at_document_id(self, data):
         """
@@ -775,7 +788,7 @@ class ATClient(object):
 
         # raises the AT API error exception associated with the error
         # that has just been "parsed"
-        raise exceptions.ATAPIError(return_message, return_code)
+        raise exceptions.ATAPIError(return_message, error_code = return_code)
 
     def _check_at_errors_v2(self, data):
         """
@@ -814,7 +827,7 @@ class ATClient(object):
         # obtains the result message (if present) and raises the error with
         # both the code and the message to be handled by exception handlers
         result_message = self._text(result_message[0]) if result_message else None
-        raise exceptions.ATAPIError(result_message, result_code)
+        raise exceptions.ATAPIError(result_message, error_code = result_code)
 
     def _get_http_client(self):
         """
