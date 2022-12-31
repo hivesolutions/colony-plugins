@@ -296,6 +296,20 @@ def get_exception_map(self, exception, request = None):
     exception_message = exception.message if hasattr(exception, "message") else None
     exception_message = exception_message or colony.legacy.UNICODE(exception)
 
+    # tries to obtain the exception code from the exception in order so
+    # provide more detailed information about the exception
+    exception_code = exception.code if hasattr(exception, "code") else None
+    exception_code = exception.code if hasattr(exception, "error_code") else exception_code
+
+    # tries to obtain the exception long message from the exception in order so
+    # provide more detailed information about the exception
+    exception_long_message = exception.message_long if hasattr(exception, "message_long") else None
+    exception_long_message = exception.long_message if hasattr(exception, "long_message") else exception_long_message
+
+    # in case there are available details in the exceptions obtains them to
+    # send as part of the exception map
+    exception_details = exception.details if hasattr(exception, "details") else None
+
     # creates the exception map, with information on
     # the exception and on the (global) environment
     exception_map = dict(
@@ -313,6 +327,12 @@ def get_exception_map(self, exception, request = None):
             traceback = formatted_traceback
         )
     )
+
+    # sets some of the optional components of the exception part of the
+    # exception map - will allow better information on the error
+    if exception_code: exception_map["exception"]["code"] = exception_code
+    if exception_long_message: exception_map["exception"]["long_message"] = exception_long_message
+    if exception_details: exception_map["exception"]["details"] = exception_details
 
     # converts the exception class name to underscore notation and uses it
     # to create the name of the method that will process the exception
