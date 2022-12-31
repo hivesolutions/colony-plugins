@@ -48,11 +48,11 @@ import colony
 
 from . import exceptions
 
-INVOICE_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:400/fews"
+INVOICE_BASE_URL_V1 = "https://servicos.portaldasfinancas.gov.pt:400/fews"
 """ The base URL to be used for invoice
 submission, this is a secure HTTPS based URL"""
 
-INVOICE_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:700/fews"
+INVOICE_BASE_TEST_URL_V1 = "https://servicos.portaldasfinancas.gov.pt:700/fews"
 """ The base test URL to be used for invoice
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
@@ -278,14 +278,14 @@ class ATClient(object):
         path = os.path.normpath(path)
         return path
 
-    def submit_invoice(self, invoice_payload):
+    def submit_invoice_v1(self, invoice_payload):
         """
         see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Documents/ComunicacaodosdadosdasfaturasaAT.pdf
         """
 
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
-        base_url = INVOICE_BASE_TEST_URL if self.test_mode else INVOICE_BASE_URL
+        base_url = INVOICE_BASE_TEST_URL_V1 if self.test_mode else INVOICE_BASE_URL_V1
         submit_invoice_url = base_url + "/faturas"
 
         # submits the invoice document and returns the result
