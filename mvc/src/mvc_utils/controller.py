@@ -1648,6 +1648,13 @@ def process_acl_values(
         permission_values.append(wildcard_permissions)
         permission_values.append(key_permissions)
 
+    # in case the provided key is invalid (null) value meaning that
+    # no relevant permissions are being required and a valid ACL is
+    # also sent (assumes authenticated user) then the most permissive
+    # value (lowest) is added to the permissions values
+    if key == None and acl:
+        permission_values.append(0)
+
     # retrieves the minimum value from the permission values,
     # meaning that the most permissive will be used and then
     # returns such value to the caller method
