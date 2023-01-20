@@ -69,7 +69,7 @@ of the complete set of persist type values """
 
 IGNORED_EXCEPTIONS = (exceptions.ControllerValidationReasonFailed,)
 """ The sequence that contains the complete set of exception that
-are considered fo low priority and for which a more reduced logging
+are considered of low priority and for which a more reduced logging
 operation should be performed """
 
 def validated(
@@ -151,8 +151,8 @@ def validated(
             # the parameters and the validation parameters and retrieves
             # the list with the validation failure reasons, in case no validate
             # method is present ignores the call
-            reasons_list = run_validate and\
-                self.validate(request, parameters, validation_parameters) or []
+            reasons_list = self.validate(request, parameters, validation_parameters) if\
+                run_validate else []
 
             # updates the validated flag for the current request workflow so that
             # no second validation occurs, this is the default (top to down) expected
