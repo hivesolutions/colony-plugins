@@ -852,8 +852,8 @@ class MySQLConnection(object):
             has_charset = hasattr(connection, "set_charset")
             has_character_set = hasattr(connection, "set_character_set")
             encoding = self.get_database_encoding()
-            if has_charset: connection.set_charset(encoding)
-            if has_character_set: connection.set_character_set(encoding)
+            if has_charset and encoding: connection.set_charset(encoding)
+            if has_character_set and encoding: connection.set_character_set(encoding)
 
             # sets the isolation level for the connection as the one defined
             # to be the default one by the "driver"
