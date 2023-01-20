@@ -154,7 +154,7 @@ class MVCUtils(colony.System):
 
         # creates the complete module name from the package name, avoiding the
         # usage of the package name in case it does not exists
-        complete_module_name = package_name and package_name + "." + module_name or module_name
+        complete_module_name = package_name + "." + module_name if package_name else module_name
 
         # checks if the target module already exists, to later
         # avoid module reloading
@@ -242,7 +242,7 @@ class MVCUtils(colony.System):
 
         # starts the model structures, only in case the
         # the start structures flag is set
-        start_structures and model._start_model()
+        if start_structures: model._start_model()
 
         # returns the model
         return model
@@ -430,7 +430,7 @@ class MVCUtils(colony.System):
             # (only in case the load entity manager flag is set)
             entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
             entity_manager.set_connection_parameters(connection_parameters)
-            load_entity_manager and entity_manager.open()
+            if load_entity_manager: entity_manager.open()
 
             # sets the entity manager in the base entity models module
             # and in the models module (for latter reference)
@@ -598,7 +598,7 @@ class MVCUtils(colony.System):
             # (this assumes that every model is loaded in the same entity manager context)
             # this loading process only occurs in case the entity models is not empty
             # (at least one entity model is loaded)
-            entity_models and entity_models_module.entity_manager.open()
+            if entity_models: entity_models_module.entity_manager.open()
 
         # otherwise it's a "simple" models module and must be imported
         # non recursively
@@ -782,8 +782,8 @@ class MVCUtils(colony.System):
         # a tentative reload should be applied to the package path,
         # in that case it also flushes the module package path
         # from the globals
-        is_first and colony.reload_import(package_path)
-        is_first and self._flush_globals(module_package_path)
+        if is_first: colony.reload_import(package_path)
+        if is_first: self._flush_globals(module_package_path)
 
         # tries to retrieve the id value of the models package associated
         # with the controllers to be loaded (in case it exists) and if it
@@ -1022,7 +1022,7 @@ class MVCUtils(colony.System):
 
         # creates the controllers map name and retrieves the controllers
         # map from the system instance
-        controllers_map_name = prefix_name and prefix_name + "_controllers" or "controllers"
+        controllers_map_name = prefix_name + "_controllers" if prefix_name else "controllers"
         controllers_map = getattr(system_instance, controllers_map_name)
 
         # stops the controllers (internal structures), this process
@@ -1390,8 +1390,8 @@ class MVCUtils(colony.System):
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
         controller_base_name = colony.to_underscore(controller_base_name)
-        controller_reference_name = prefix_name and prefix_name + "_" + controller_base_name +\
-            "_" + "controller" or controller_base_name + "_" + "controller"
+        controller_reference_name = prefix_name + "_" + controller_base_name +\
+            "_" + "controller" if prefix_name else controller_base_name + "_" + "controller"
 
         # returns the reference (converted) controller name
         return controller_reference_name, controller_base_name
