@@ -78,6 +78,14 @@ DEAD_LOCK_ERRORS = (1213,)
 """ The sequence that defines the codes describing errors
 related with possible dead lock situations (rollback) """
 
+ENCODING_ALIAS = dict(
+    utf8mb3 = "utf8",
+    utf8mb4 = "utf8"
+)
+""" A map that establish an alias relation between the MySQL
+specific encoding and more standard representation of them,
+allowing Python to working properly """
+
 class EntityMySQL(colony.System):
     """
     The entity MySQL class.
@@ -156,11 +164,13 @@ class MySQLEngine(object):
         db_suffix = colony.conf("DB_SUFFIX", db_suffix)
         db_default = db_prefix + db_suffix if db_prefix else self.entity_manager.id
         host = parameters.get("host", "localhost")
+        port = parameters.get("port", 3306)
         user = parameters.get("user", "root")
         password = parameters.get("password", "root")
         database = parameters.get("database", db_default)
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
         host = colony.conf("DB_HOST", host)
+        port = colony.conf("DB_PORT", port, cast = int)
         user = colony.conf("DB_USER", user)
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
@@ -169,6 +179,7 @@ class MySQLEngine(object):
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
         connection._connection = MySQLConnection(
             host = host,
+            port = port,
             user = user,
             password = password,
             database = database,
@@ -778,6 +789,10 @@ class MySQLConnection(object):
     """ The current (remote) host for the connection this
     can be used to control the access to the remote database """
 
+    port = None
+    """ The current (remote) port for the connection this
+    can be used to control the access to the remote database """
+
     user = None
     """ The name of the user (username) to be used in the
     authentication process for the connection """
@@ -804,12 +819,14 @@ class MySQLConnection(object):
     def __init__(
         self,
         host = "localhost",
+        port = 3306,
         user = "root",
         password = "root",
         database = "default",
         isolation = ISOLATION_LEVEL
     ):
         self.host = host
+        self.port = port
         self.user = user
         self.password = password
         self.database = database
@@ -833,6 +850,7 @@ class MySQLConnection(object):
             # connections map for the current thread
             connection = MySQLdb.connect(
                 host = self.host,
+                port = self.port,
                 user = self.user,
                 passwd = self.password,
                 db = self.database
@@ -965,7 +983,7 @@ class MySQLConnection(object):
     def get_database(self):
         return self.database
 
-    def get_database_encoding(self):
+    def get_database_encoding(self, alias = True):
         # checks if the current object already contains the encoding
         # attribute set for such cases the retrieval is immediate
         if hasattr(self, "_encoding"): return self._encoding
@@ -977,6 +995,10 @@ class MySQLConnection(object):
         cursor = self._execute_query(query)
         try: result = self._database_encoding_result(cursor)
         finally: cursor.close()
+
+        # tries to resolve any encoding alias so that the
+        # encoding is resolved to a standard value
+        if alias: result = ENCODING_ALIAS.get(result, result)
 
         # caches the database encoding into the current
         # connection object (no need to retrieve it again
