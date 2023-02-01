@@ -3091,10 +3091,9 @@ class Cookie(object):
         for attribute_name, attribute_value in colony.legacy.items(self.attributes_map):
             # in case the attribute is not the main one
             if not attribute_name == self.main_attribute_name:
-                # serializes the attribute
+                # serializes the attribute and appends the serialized
+                # attribute to the string value
                 serialized_attribute = self._serialize_attribute(attribute_name, attribute_value)
-
-                # appends the serialized attribute to the string value
                 string_value += serialized_attribute
 
         # returns the string value, representing the serialized version
