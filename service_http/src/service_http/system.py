@@ -145,7 +145,7 @@ DEFAULT_VALUE = "default"
 VALID_VALUE = "valid"
 """ The valid value """
 
-STATUS_CODE_VALUES = {
+STATUS_MESSAGES = {
     100 : "Continue",
     101 : "Switching Protocols",
     200 : "OK",
@@ -188,10 +188,10 @@ STATUS_CODE_VALUES = {
     504 : "Gateway Timeout",
     505 : "HTTP Version Not Supported"
 }
-""" The status code values map """
+""" The status code messages map """
 
-DEFAULT_STATUS_CODE_VALUE = "Invalid"
-""" The default status code value """
+DEFAULT_STATUS_MESSAGE = "Invalid"
+""" The default status message """
 
 HOST_VALUE = "Host"
 """ The host value """
@@ -779,9 +779,8 @@ class HTTPClientServiceHandler(object):
             # in case the request was not already handled
             if not handler_name:
                 # retrieves the default handler name
+                # and sets the handler path to an invalid value
                 handler_name = service_configuration.get("default_handler", None)
-
-                # sets the handler path
                 request.handler_path = None
 
             # in case no handler name is defined (request not handled)
@@ -800,7 +799,8 @@ class HTTPClientServiceHandler(object):
             # handles the request by the request handler, only in case the
             # request does not already contains a status code (in such case the
             # request is considered to be already processed)
-            not request.status_code and http_service_handler_plugin.handle_request(request)
+            if not request.status_code:
+                http_service_handler_plugin.handle_request(request)
 
             # sets the request information in the request data of
             # the service connection (provides indirect access)
@@ -1290,10 +1290,10 @@ class HTTPClientServiceHandler(object):
             content_type = request.headers_map[CONTENT_TYPE_VALUE]
 
             # splits the content type
-            content_type_splited = content_type.split(";")
+            content_type_splitted = content_type.split(";")
 
-            # iterates over all the items in the content type splited
-            for content_type_item in content_type_splited:
+            # iterates over all the items in the content type splitted
+            for content_type_item in content_type_splitted:
                 # strips the content type item
                 content_type_item_stripped = content_type_item.strip()
 
@@ -1304,29 +1304,25 @@ class HTTPClientServiceHandler(object):
 
                 # in case the content is of type multipart form data
                 if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
-                    # parses the request as multipart
-                    request.parse_post_multipart()
-
+                    # parses the request as multipart and
                     # returns immediately
+                    request.parse_post_multipart()
                     return
 
                 # in case the content is of type www form urlencoded
                 if content_type_item_stripped.startswith(WWW_FORM_URLENCODED_VALUE):
-                    # parses the request attributes
-                    request.parse_post_attributes()
-
+                    # parses the request attributes and
                     # returns immediately
+                    request.parse_post_attributes()
                     return
 
                 # in case the item is the charset definition
                 if content_type_item_stripped.startswith("charset"):
-                    # splits the content type item stripped
-                    content_type_item_stripped_splited = content_type_item_stripped.split("=")
-
-                    # retrieves the content type charset
-                    content_type_charset = content_type_item_stripped_splited[1].lower()
-
+                    # splits the content type item stripped, 
+                    # retrieves the content type charset and
                     # sets the valid charset flag
+                    content_type_item_stripped_splitted = content_type_item_stripped.split("=")
+                    content_type_charset = content_type_item_stripped_splitted[1].lower()
                     valid_charset = True
 
                     # breaks the cycle
@@ -1748,36 +1744,36 @@ class HTTPClientServiceHandler(object):
             # sets the internal server error status code
             request.status_code = 500
 
-        # retrieves the value for the status code
-        status_code_value = request.get_status_code_value()
+        # retrieves the value for the status message, this is the message
+        # that will be sent after the code
+        status_message = request.get_status_message()
 
-        # writes the header message in the message
-        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
-
-        # writes the error message
+        # writes the header message and the initial error line
+        # these values are sent as plain text values
+        request.write("colony web server - " + str(request.status_code) + " " + status_message + "\n")
         request.write("error: '" + colony.legacy.UNICODE(error) + "'\n")
 
-        # writes the traceback message in the request
+        # writes the traceback header message in the request
         request.write("traceback:\n")
 
         # retrieves the execution information
         _type, _value, traceback_list = sys.exc_info()
 
-        # in case the traceback list is valid
+        # in case the traceback list is valid then uses it to create
+        # a properly formated traceback string ling
         if traceback_list:
             # creates the (initial) formated traceback
             formated_traceback = traceback.format_tb(traceback_list)
 
-            # retrieves the file system encoding
-            file_system_encoding = sys.getfilesystemencoding()
-
-            # decodes the traceback values using the file system encoding
+            # retrieves the file system encoding and uses it to
+            # decode the traceback values using the file system encoding
             # in case that required (values encoded as byte strings)
+            file_system_encoding = sys.getfilesystemencoding()
             formated_traceback = [value.decode(file_system_encoding) if colony.legacy.is_bytes(value) else\
                 value for value in formated_traceback]
-        # otherwise there is no traceback list
+        # otherwise there is no traceback list, then
+        # sets an empty formated traceback
         else:
-            # sets an empty formated traceback
             formated_traceback = ()
 
         # iterates over the traceback lines
@@ -3034,11 +3030,11 @@ class HTTPRequest(object):
             # message content itself (measure string)
             self.content_length = len(message)
 
-        # retrieves the value for the status code
-        status_code_value = self.get_status_code_value()
+        # retrieves the value for the status message
+        status_message = self.get_status_message()
 
-        # writes the HTTP command in the string buffer (version, status code and status value)
-        command = self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n"
+        # writes the HTTP command in the string buffer (version, status code and status message)
+        command = self.protocol_version + " " + str(self.status_code) + " " + status_message + "\r\n"
         command = colony.legacy.bytes(command)
         result.write(command)
 
@@ -3402,32 +3398,32 @@ class HTTPRequest(object):
     def set_contains_message(self, contains_message):
         self.contains_message = contains_message
 
-    def get_status_code_value(self):
+    def get_status_message(self):
         """
-        Retrieves the current status code value.
-        The method returns the defined status code value,
+        Retrieves the current status message value.
+        The method returns the defined status message value,
         or the default in case none is defined.
 
         :rtype: String
-        :return: The status code value as the string that
+        :return: The status message as the string that
         describes the currently defined status code.
         """
 
         # in case a status message is defined
         if self.status_message:
             # sets the defined status message as the
-            # status code value
-            status_code_value = self.status_message
+            # currently set status message
+            status_message = self.status_message
         else:
-            # retrieves the value for the status code, defaulting
+            # retrieves the message for the status code, defaulting
             # to the default value in case none is defined (error)
-            status_code_value = STATUS_CODE_VALUES.get(
+            status_message = STATUS_MESSAGES.get(
                 self.status_code,
-                DEFAULT_STATUS_CODE_VALUE
+                DEFAULT_STATUS_MESSAGE
             )
 
-        # returns the status code value
-        return status_code_value
+        # returns the status message
+        return status_message
 
     def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
         """

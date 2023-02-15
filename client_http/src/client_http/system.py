@@ -96,7 +96,7 @@ DEFAULT_CHARSET = None
 DEFAULT_URL_CHARSET = "utf-8"
 """ The default URL charset """
 
-STATUS_CODE_VALUES = {
+STATUS_MESSAGES = {
     100 : "Continue",
     101 : "Switching Protocols",
     200 : "OK",
@@ -139,7 +139,7 @@ STATUS_CODE_VALUES = {
     504 : "Gateway Timeout",
     505 : "HTTP Version Not Supported"
 }
-""" The status code values map, mapping the standard
+""" The status code messages map, mapping the standard
 HTTP error codes with their descriptive value """
 
 CHUNKED_VALUE = "chunked"

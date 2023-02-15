@@ -101,6 +101,53 @@ DEFAULT_CHARSET = "utf-8"
 this value is defined in such a way that all the
 knows characters are able to be encoded """
 
+STATUS_MESSAGES = {
+    100 : "Continue",
+    101 : "Switching Protocols",
+    200 : "OK",
+    201 : "Created",
+    202 : "Accepted",
+    203 : "Non-Authoritative Information",
+    204 : "No Content",
+    205 : "Reset Content",
+    206 : "Partial Content",
+    207 : "Multi-Status",
+    301 : "Moved permanently",
+    302 : "Found",
+    303 : "See Other",
+    304 : "Not Modified",
+    305 : "Use Proxy",
+    306 : "(Unused)",
+    307 : "Temporary Redirect",
+    400 : "Bad Request",
+    401 : "Unauthorized",
+    402 : "Payment Required",
+    403 : "Forbidden",
+    404 : "Not Found",
+    405 : "Method Not Allowed",
+    406 : "Not Acceptable",
+    407 : "Proxy Authentication Required",
+    408 : "Request Timeout",
+    409 : "Conflict",
+    410 : "Gone",
+    411 : "Length Required",
+    412 : "Precondition Failed",
+    413 : "Request Entity Too Large",
+    414 : "Request-URI Too Long",
+    415 : "Unsupported Media Type",
+    416 : "Requested Range Not Satisfiable",
+    417 : "Expectation Failed",
+    500 : "Internal Server Error",
+    501 : "Not Implemented",
+    502 : "Bad Gateway",
+    503 : "Service Unavailable",
+    504 : "Gateway Timeout",
+    505 : "HTTP Version Not Supported"
+}
+""" The status code messages map, that associates
+the HTTP status code as an integer with the descriptive
+value of the error (message) """
+
 class WSGI(colony.System):
     """
     The WSGI class, responsible for the implementation
@@ -179,6 +226,7 @@ class WSGI(colony.System):
             headers_out_l = []
         else:
             code = request.status_code
+            status = request.get_status_message()
             content = request.message_buffer
             headers_out = request.headers_out
             headers_out_l = colony.legacy.items(headers_out)
@@ -331,8 +379,14 @@ class WSGIRequest(object):
 
     status_code = 200
     """ The status code for the HTTP request, this
-    is considered to be the valid (ok) status code
+    is considered to be the valid (OK) status code
     by default (optimistic approach) """
+
+    status_message = None
+    """ The message that is going to be sent after the
+    status code as part of the HTTP request, by default
+    no value is set and the message is instead inferred
+    from the status code """
 
     content_type = None
     """ The content type as a string that defined
@@ -969,6 +1023,22 @@ class WSGIRequest(object):
         last_modified = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
         last_modified_f = last_modified.strftime("%a, %d %b %Y %H:%M:%S GMT")
         self.headers_out["Last-Modified"] = last_modified_f
+
+    def get_status_message(self):
+        """
+        Retrieves the current status message value.
+        The method returns the defined status message value,
+        or the default in case none is defined.
+
+        :rtype: String
+        :return: The status message as the string that
+        describes the currently defined status code.
+        """
+
+        if self.status_message:
+            return self.status_message
+        else:
+            return STATUS_MESSAGES.get(self.status_code, "Invalid")
 
     def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
         # retrieves the if modified header value and in case the

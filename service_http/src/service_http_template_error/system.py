@@ -61,7 +61,7 @@ TEMPLATE_ERROR_RESOURCES_PATH = "service_http_template_error/resources"
 ERROR_HTML_TEMPLATE_FILE_NAME = "error.html.tpl"
 """ The error HTML template file name """
 
-STATUS_CODE_VALUES = {
+STATUS_MESSAGES = {
     100 : "Continue",
     101 : "Switching Protocols",
     200 : "OK",
@@ -104,7 +104,7 @@ STATUS_CODE_VALUES = {
     504 : "Gateway Timeout",
     505 : "HTTP Version Not Supported"
 }
-""" The status code values map """
+""" The status code messages map """
 
 STATUS_CODE_IMAGES = {
     100 : "none",
@@ -206,7 +206,7 @@ class ServiceHTTPTemplateError(colony.System):
             formated_traceback = ()
 
         # retrieves the error description
-        error_description = STATUS_CODE_VALUES.get(error_code, "No description")
+        error_description = STATUS_MESSAGES.get(error_code, "No description")
 
         # retrieves the error image
         error_image = STATUS_CODE_IMAGES.get(error_code, "none")
