@@ -253,13 +253,20 @@ class WSGI(colony.System):
             content_length = request.mediated_handler.get_size()
             content = request.mediate()
 
+        # creates the final runtime powered by string and ensures that
+        # it's represented by a proper bytes string
+        powered_by = colony.legacy.bytes(
+            POWERED_BY_STRING % (manager_version, manager_environment),
+            force = True
+        )
+
         # update the status line with the provided code value and then
         # creates the initial/static response headers list with the
         # created values to be used as part of the initial response
         status = "%d %s" % (code, status)
         response_headers = [
             ("Content-Type", content_type),
-            ("X-Powered-By", POWERED_BY_STRING % (manager_version, manager_environment))
+            ("X-Powered-By", powered_by)
         ]
 
         # verifies if the provided content length value is considered
