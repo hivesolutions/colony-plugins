@@ -2821,9 +2821,9 @@ def process_set_contents(
     # case the apply base path and the assign the session flags are set in
     # current environment (fast assign) then in case the assign flash flag
     # is set assigns the flash information to the template
-    apply_base_path and self.apply_base_path_template_file(request, template_file)
-    assign_session and self.assign_session_template_file(request, template_file)
-    assign_flash and self.assign_flash_template_file(request, template_file)
+    if apply_base_path: self.apply_base_path_template_file(request, template_file)
+    if assign_session: self.assign_session_template_file(request, template_file)
+    if assign_flash: self.assign_flash_template_file(request, template_file)
 
     # assigns the basic instance attributes to the template file so that
     # it can access the controller instance and the system and plugin instances
