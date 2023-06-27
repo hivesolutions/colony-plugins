@@ -197,13 +197,11 @@ class EasypayClient(object):
         :return: The generated Easypay structure.
         """
 
-        # creates a new Easypay structure
+        # creates a new Easypay structure then sets the
+        # Easypay structure in case it is to be set and
+        # returns it to the caller
         easypay_structure = EasypayStructure(username, cin, country, language, api_version)
-
-        # sets the Easypay structure in case it is to be set
         if set_structure: self.set_easypay_structure(easypay_structure)
-
-        # returns the Easypay structure
         return easypay_structure
 
     def generate_reference(
