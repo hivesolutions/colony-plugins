@@ -7116,7 +7116,7 @@ class EntityManager(object):
         by the entity manager to a certain range.
 
         The data range can be provided as an undefined value no
-        range is applied or as a tuple with the defined start\
+        range is applied or as a tuple with the defined start
         and end data range values.
 
         :type date_range: Tuple
