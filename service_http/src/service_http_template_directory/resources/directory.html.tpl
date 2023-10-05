@@ -59,8 +59,8 @@
                 </div>
                 <div class="text-contents">Document provided by colony framework in ${out value=delta_time xml_escape=True /} seconds
                     <br />Copyright
-                    <a href="http://hive.pt">Hive Solutions Lda.</a> distributed under
-                    <a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>
+                    <a href="http://hive.pt" target="_blank">Hive Solutions Lda.</a> distributed under
+                    <a href="http://creativecommons.org/licenses/by-sa/3.0" target="_blank"> Creative Commons License</a>
                 </div>
             </div>
         </div>
