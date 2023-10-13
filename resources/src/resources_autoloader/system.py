@@ -146,9 +146,9 @@ class ResourcesAutoloader(colony.System):
         self.continue_flag = False
 
     def _analyze_resources_directory(self, directory_path, verified_resource_paths_list):
-        # in case the directory path does not exists
+        # in case the directory path does not exists, then returns
+        # the control flow immediately
         if not os.path.exists(directory_path):
-            # returns immediately
             return
 
         # retrieves the resources manager plugin
