@@ -52,7 +52,7 @@ class CryptonRoot(models.EntityModel):
         type = "integer",
         generated = True
     )
-    """ The object id of the root entity, this should
+    """ The object id of the Crypton root entity, this should
     be the main identifier of an object in the data source """
 
     def __init__(self):
