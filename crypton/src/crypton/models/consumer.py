@@ -37,11 +37,11 @@ __copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from .root_entity import RootEntity
+from .crypton_root import CryptonRoot
 
-RootEntity = RootEntity
+CryptonRoot = CryptonRoot
 
-class Consumer(RootEntity):
+class Consumer(CryptonRoot):
     """
     The consumer class, which represents a generic
     consumer client with an API key.
@@ -86,7 +86,7 @@ class Consumer(RootEntity):
         default values for a typical consumer.
         """
 
-        RootEntity.__init__(self)
+        CryptonRoot.__init__(self)
         self.name = None
         self.api_key = None
         self.status = Consumer.STATUS_INACTIVE
@@ -98,7 +98,7 @@ class Consumer(RootEntity):
         """
 
         # adds the inherited validations
-        RootEntity.set_validation(self)
+        CryptonRoot.set_validation(self)
 
         # adds the validation methods to the name attribute
         self.add_validation("name", "not_none", True)

@@ -41,9 +41,9 @@ import colony
 
 models = colony.__import__("models")
 
-class RootEntity(models.EntityModel):
+class CryptonRoot(models.EntityModel):
     """
-    The root entity class, inherited by other entities
+    The Crypton root entity class, inherited by other entities
     in order for them to have a global unique identifier.
     """
 
