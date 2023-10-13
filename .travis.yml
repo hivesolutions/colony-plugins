@@ -32,3 +32,4 @@ script: PLUGIN_PATH="./*/src;./*/*src" coverage run setup.py test
 after_success:
   - coveralls
   - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then cpm upload "./*/*/*_plugin.py" colony; fi
+ 
