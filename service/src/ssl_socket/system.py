@@ -246,6 +246,7 @@ def context_wrap(
     ssl_version = ssl.PROTOCOL_SSLv23,
     do_handshake_on_connect = False,
     server_hostname = "localhost",
+    verify_mode = ssl.CERT_NONE,
     context = None
 ):
     if hasattr(ssl, "wrap_socket"):
@@ -261,6 +262,7 @@ def context_wrap(
     if not context:
         context = ssl.create_default_context()
 
+    context.verify_mode = verify_mode
     context.load_cert_chain(
         certfile = certificate_file_path,
         keyfile = key_file_path
