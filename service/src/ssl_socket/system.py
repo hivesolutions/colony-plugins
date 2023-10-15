@@ -223,16 +223,48 @@ class SSLSocket(colony.System):
 
         # warps the base socket into an SSL socket, then wraps it with
         # new  methods and returns it to the caller method
-        ssl_socket = ssl.wrap_socket(
+        ssl_socket = context_wrap(
             base_socket,
+            key_file_path,
+            certificate_file_path,
+            server_side = server_side,
+            ssl_version = ssl_version,
+            do_handshake_on_connect = do_handshake_on_connect
+        )
+        wrap_socket(ssl_socket)
+        return ssl_socket
+
+def context_wrap(
+    socket,
+    key_file_path,
+    certificate_file_path,
+    server_side = False,
+    ssl_version = ssl.PROTOCOL_SSLv23,
+    do_handshake_on_connect = False,
+    context = None
+):
+    if hasattr(ssl, "wrap_socket"):
+        return ssl.wrap_socket(
+            socket,
             key_file_path,
             certificate_file_path,
             server_side,
             ssl_version = ssl_version,
             do_handshake_on_connect = do_handshake_on_connect
         )
-        wrap_socket(ssl_socket)
-        return ssl_socket
+
+    if not context:
+        context = ssl.create_default_context()
+
+    context.load_cert_chain(
+        certfile = certificate_file_path,
+        keyfile = key_file_path
+    )
+    return context.wrap_socket(
+        socket,
+        server_side = server_side,
+        do_handshake_on_connect = do_handshake_on_connect
+    )
 
 def wrap_socket(ssl_socket):
     # creates the bound accept and handshake methods for
@@ -276,7 +308,7 @@ def accept(self):
 
         # sets the connection to non blocking mode in case
         # the blocking flag is not set in the current socket
-        hasattr(self, "blocking") and not self.blocking and connection.setblocking(0)
+        if hasattr(self, "blocking") and not self.blocking: connection.setblocking(0)
 
         # tries to archive the proper handshake on the SSL
         # connection, asynchronous handshake
