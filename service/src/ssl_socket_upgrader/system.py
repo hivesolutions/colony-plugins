@@ -219,7 +219,9 @@ class SSLSocketUpgrader(colony.System):
         :return: The wrapped (SSL) socket.
         """
 
-        # warps the base socket into an SSL socket
+        # warps the base socket into an SSL socket, then wraps it with
+        # new  methods and returns it to the caller method, in case handshake
+        # is requested then also performs the handshake operation (synchronously)
         ssl_socket = ssl.wrap_socket(
             base_socket,
             key_file_path,
@@ -228,14 +230,8 @@ class SSLSocketUpgrader(colony.System):
             ssl_version = ssl_version,
             do_handshake_on_connect = False
         )
-
-        # does the handshake (on connect)
-        do_handshake_on_connect and self._do_handshake(ssl_socket)
-
-        # wraps the SSL socket with new methods
+        if do_handshake_on_connect: self._do_handshake(ssl_socket)
         wrap_socket(ssl_socket)
-
-        # returns the SSL socket
         return ssl_socket
 
     def _do_handshake(self, ssl_socket):

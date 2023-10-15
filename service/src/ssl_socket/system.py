@@ -221,7 +221,8 @@ class SSLSocket(colony.System):
         :return: The wrapped (SSL) socket.
         """
 
-        # warps the base socket into an SSL socket
+        # warps the base socket into an SSL socket, then wraps it with
+        # new  methods and returns it to the caller method
         ssl_socket = ssl.wrap_socket(
             base_socket,
             key_file_path,
@@ -230,11 +231,7 @@ class SSLSocket(colony.System):
             ssl_version = ssl_version,
             do_handshake_on_connect = do_handshake_on_connect
         )
-
-        # wraps the SSL socket with new methods
         wrap_socket(ssl_socket)
-
-        # returns the SSL socket
         return ssl_socket
 
 def wrap_socket(ssl_socket):

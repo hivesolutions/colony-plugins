@@ -1318,7 +1318,7 @@ class HTTPClientServiceHandler(object):
 
                 # in case the item is the charset definition
                 if content_type_item_stripped.startswith("charset"):
-                    # splits the content type item stripped, 
+                    # splits the content type item stripped,
                     # retrieves the content type charset and
                     # sets the valid charset flag
                     content_type_item_stripped_splitted = content_type_item_stripped.split("=")

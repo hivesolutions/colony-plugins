@@ -155,7 +155,7 @@ class APNHandler(handler.Handler):
 
         # creates the address using the sandbox flag as reference
         # and the uses it to connect to the remote host
-        address = self.sandbox and (SANDBOX_HOST, SANDBOX_PORT) or (HOST, PORT)
+        address = (SANDBOX_HOST, SANDBOX_PORT) if self.sandbox else (HOST, PORT)
         _socket.connect(address)
 
         # stores the socket in the socket (cache) map to be used

@@ -1025,7 +1025,7 @@ class RESTRequest(object):
         # clock value (useful for benchmarking)
         self._generation_time = time.time()
         if hasattr(time, "clock"): self._generation_clock = time.clock()
-        elif hasattr(time, "process_time"): self._generation_clock = time.process_time() 
+        elif hasattr(time, "process_time"): self._generation_clock = time.process_time()
 
     @property
     def session(self):
