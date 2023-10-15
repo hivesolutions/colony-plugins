@@ -192,7 +192,8 @@ class SSLSocketUpgrader(colony.System):
         certificate_file_path,
         server_side = False,
         ssl_version = ssl.PROTOCOL_SSLv23,
-        do_handshake_on_connect = True
+        do_handshake_on_connect = True,
+        server_hostname = "localhost"
     ):
         """
         Wraps the base socket into an SSL socket using the given
@@ -215,6 +216,8 @@ class SSLSocketUpgrader(colony.System):
         is allowed to be executed for the socket to wrapped.
         :type do_handshake_on_connect: bool
         :param do_handshake_on_connect: If a handshake should be done on connect.
+        :type server_hostname: String
+        :param server_hostname: The server hostname to be used in the SSL.
         :rtype: Socket
         :return: The wrapped (SSL) socket.
         """
@@ -222,13 +225,14 @@ class SSLSocketUpgrader(colony.System):
         # warps the base socket into an SSL socket, then wraps it with
         # new  methods and returns it to the caller method, in case handshake
         # is requested then also performs the handshake operation (synchronously)
-        ssl_socket = ssl.wrap_socket(
+        ssl_socket = context_wrap(
             base_socket,
             key_file_path,
             certificate_file_path,
-            server_side,
+            server_side = server_side,
             ssl_version = ssl_version,
-            do_handshake_on_connect = False
+            do_handshake_on_connect = do_handshake_on_connect,
+            server_hostname = server_hostname
         )
         if do_handshake_on_connect: self._do_handshake(ssl_socket)
         wrap_socket(ssl_socket)
@@ -268,8 +272,43 @@ class SSLSocketUpgrader(colony.System):
                     # re-raises the exception
                     raise
 
+def context_wrap(
+    socket,
+    key_file_path,
+    certificate_file_path,
+    server_side = False,
+    ssl_version = ssl.PROTOCOL_SSLv23,
+    do_handshake_on_connect = False,
+    server_hostname = "localhost",
+    context = None
+):
+    if hasattr(ssl, "wrap_socket"):
+        return ssl.wrap_socket(
+            socket,
+            key_file_path,
+            certificate_file_path,
+            server_side,
+            ssl_version = ssl_version,
+            do_handshake_on_connect = do_handshake_on_connect
+        )
+
+    if not context:
+        context = ssl.create_default_context()
+
+    context.load_cert_chain(
+        certfile = certificate_file_path,
+        keyfile = key_file_path
+    )
+    return context.wrap_socket(
+        socket,
+        server_side = server_side,
+        do_handshake_on_connect = do_handshake_on_connect,
+        server_hostname = server_hostname
+    )
+
 def wrap_socket(ssl_socket):
-    # creates the bound accept method for the SSL socket
+    # creates the bound accept and handshake methods for
+    # the SSL socket
     _accept = types.MethodType(accept, ssl_socket)
 
     # creates the bound process exception method for the SSL socket
@@ -279,7 +318,7 @@ def wrap_socket(ssl_socket):
     # a different name
     ssl_socket._accept = ssl_socket.accept
 
-    # sets the new accept bound method in the SSL socket
+    # sets the new accept in the SSL socket
     ssl_socket.accept = _accept
 
     # sets the extra secure attribute, to indicate

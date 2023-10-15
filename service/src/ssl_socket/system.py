@@ -194,7 +194,8 @@ class SSLSocket(colony.System):
         certificate_file_path,
         server_side = False,
         ssl_version = ssl.PROTOCOL_SSLv23,
-        do_handshake_on_connect = False
+        do_handshake_on_connect = False,
+        server_hostname = "localhost"
     ):
         """
         Wraps the base socket into an SSL socket using the given
@@ -217,6 +218,8 @@ class SSLSocket(colony.System):
         is allowed to be executed for the socket to wrapped.
         :type do_handshake_on_connect: bool
         :param do_handshake_on_connect: If a handshake should be done on connect.
+        :type server_hostname: String
+        :param server_hostname: The server hostname to be used in the SSL.
         :rtype: Socket
         :return: The wrapped (SSL) socket.
         """
@@ -229,7 +232,8 @@ class SSLSocket(colony.System):
             certificate_file_path,
             server_side = server_side,
             ssl_version = ssl_version,
-            do_handshake_on_connect = do_handshake_on_connect
+            do_handshake_on_connect = do_handshake_on_connect,
+            server_hostname = server_hostname
         )
         wrap_socket(ssl_socket)
         return ssl_socket
@@ -241,6 +245,7 @@ def context_wrap(
     server_side = False,
     ssl_version = ssl.PROTOCOL_SSLv23,
     do_handshake_on_connect = False,
+    server_hostname = "localhost",
     context = None
 ):
     if hasattr(ssl, "wrap_socket"):
@@ -263,7 +268,8 @@ def context_wrap(
     return context.wrap_socket(
         socket,
         server_side = server_side,
-        do_handshake_on_connect = do_handshake_on_connect
+        do_handshake_on_connect = do_handshake_on_connect,
+        server_hostname = server_hostname
     )
 
 def wrap_socket(ssl_socket):
