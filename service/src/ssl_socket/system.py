@@ -263,7 +263,8 @@ def context_wrap(
     if not context:
         context = ssl.create_default_context()
 
-    if hasattr(context, "check_hostname"): context.check_hostname = check_hostname
+    if hasattr(context, "check_hostname"):
+        context.check_hostname = check_hostname
     context.verify_mode = verify_mode
     context.load_cert_chain(
         certfile = certificate_file_path,
