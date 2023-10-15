@@ -38,7 +38,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import os
-import imp
 import sys
 
 import colony
@@ -161,7 +160,7 @@ class BusinessHelper(colony.System):
 
     def generate_module_bundle(self, bundle_module_name, bundle_map):
         # creates the bundle module
-        bundle_module = imp.new_module(bundle_module_name)
+        bundle_module = colony.legacy.new_module(bundle_module_name)
 
         for bundle_key, bundle_value in colony.legacy.items(bundle_map):
             bundle_module.__dict__[bundle_key] = bundle_value
@@ -442,7 +441,7 @@ class BusinessHelper(colony.System):
         if not target_module:
             # creates the target module, using the underlying
             # python facilities for it
-            target_module = imp.new_module(target_module_name)
+            target_module = colony.legacy.new_module(target_module_name)
 
             # adds the target module to the globals map
             # and sets it in the global modules reference map

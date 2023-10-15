@@ -39,7 +39,6 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import sys
-import imp
 import types
 
 import colony
@@ -365,7 +364,7 @@ class MVCUtils(colony.System):
             # for the module name to avoid possible problems
             # and then uses it to creates the models module
             models_module_name = models_id.replace(".", "_")
-            models_module = imp.new_module(models_module_name)
+            models_module = colony.legacy.new_module(models_module_name)
 
             # sets the entity class the entity model and the (base) model
             # in the modules module for latter models reference
@@ -1375,7 +1374,7 @@ class MVCUtils(colony.System):
         if not target_module:
             # creates the target module, using the underlying
             # python facilities for it
-            target_module = imp.new_module(target_module_name)
+            target_module = colony.legacy.new_module(target_module_name)
 
             # adds the target module to the globals map
             # and sets it in the global modules reference map
