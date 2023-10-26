@@ -1513,7 +1513,7 @@ def store_relation(
             # stores the relation value in the data source
             # using the "propagated" persist type (only in
             # case the relation is "storable")
-            is_storable and _relation_value.store(
+            if is_storable: _relation_value.store(
                 persist_type,
                 validate,
                 force_persist = force_persist,
@@ -1524,7 +1524,7 @@ def store_relation(
             # in case the relation is not valid it must be removed
             # from the entity to avoid "malicious" association to be set
             # on the data source (corrupting data from a security point)
-            not is_associable and remove_relations.append(_relation_value)
+            if not is_associable: remove_relations.append(_relation_value)
         except exceptions.ModelValidationError:
             # in case the raise exception flag is set
             # the exception must be "raised again"
