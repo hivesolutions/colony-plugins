@@ -320,6 +320,10 @@ def transaction(
                 entity_manager = current
                 setattr(self, manager_ref, entity_manager)
 
+            # by default the return value is set to an invalid value,
+            # this value should be overridden under normal execution
+            return_value = None
+
             # initializes the transaction, calling the begin operation
             # in the entity manager, this should create a new transaction
             # context for the execution of the function code
