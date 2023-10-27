@@ -1539,7 +1539,7 @@ def store_relation(
     # that is considered not valid (to be removed) the relation
     # is considered invalid and is removed from the entity
     # model (provides the main data model security measure)
-    remove_relations and self.delete_value(relation_name)
+    if remove_relations: self.delete_value(relation_name)
 
     # adds an error to the entity on the relation
     # for latter usage and presentation to user
@@ -1827,7 +1827,7 @@ def lock(self, reload = False, entity_manager = None):
     # in case the reload flag is set the entity must be
     # reloaded retrieving the must updated contents for
     # the entity from the data source
-    reload and self.reload()
+    if reload: self.reload()
 
 def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
     """
