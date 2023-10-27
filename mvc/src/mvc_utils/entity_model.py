@@ -1831,11 +1831,19 @@ def lock(self, reload = False, entity_manager = None):
     # the entity from the data source
     if reload: self.reload()
 
-def after_commit(self, callable):
-    # @TODO: implement the logic to call the provided callable
-    # after the commit of the current transaction
+def after_commit(self, callable, entity_manager = None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the commit of the
+    # currently open data transaction
+    entity_manager = entity_manager or self._entity_manager
+    entity_manager.after_commit(callable)
 
-    pass
+def after_rollback(self, callable, entity_manager = None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the rollback of the
+    # currently open data transaction
+    entity_manager = entity_manager or self._entity_manager
+    entity_manager.after_rollback(callable)
 
 def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
     """

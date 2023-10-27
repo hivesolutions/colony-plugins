@@ -280,11 +280,12 @@ class DataEntityManager(colony.System):
 
 class EntityManager(object):
     """
-    The entity manager class, responsible for
-    the overall management of entities and
-    coordination of the underlying engines.
-    This class represents the overall front-end
-    to the usage of the persistence layer.
+    The entity manager class, responsible for the overall management
+    of entities and coordination of the underlying engines.
+    This class represents the overall front-end to the usage of
+    the persistence layer.
+    A single entity manager should be able to manage multiple
+    connections to the data source at the same time (connection pool).
     """
 
     entity_manager_plugin = None
@@ -309,7 +310,9 @@ class EntityManager(object):
     in runtime execution of the entity manager """
 
     connection = None
-    """ The connection with the data source sub-system """
+    """ The connection with the data source sub-system, this
+    value should be an abstract structure able to be populated
+    by the data source engine with domain specific data """
 
     types_map = {}
     """ The map containing the associations between the standard
@@ -319,6 +322,14 @@ class EntityManager(object):
     connection_parameters = {}
     """ The map containing the set of parameters to be passed
     to the underlying engine upon the connection creation """
+
+    commit_callbacks = []
+    """ The list of callback functions (callables) that are going
+    to be called once the transaction level is effectively commited """
+
+    rollback_callbacks = []
+    """ The list of callback functions (callables) that are going
+    to be called in case the transaction level is "rollbacked" """
 
     _exists = {}
     """ Map for indexing of the classes that have already been persisted """
@@ -351,6 +362,8 @@ class EntityManager(object):
 
         self.types_map = copy.copy(SQL_TYPES_MAP)
         self.connection_parameters = {}
+        self.commit_callbacks = []
+        self.rollback_callbacks = []
         self._exists = {}
 
         self.apply_types()
@@ -1035,10 +1048,30 @@ class EntityManager(object):
         self.engine.begin()
 
     def commit(self):
-        self.engine.commit()
+        result = self.engine.commit()
+        if not result: return
+        self._flush_callbacks(self.commit_callbacks)
+        self._flush_callbacks(self.rollback_callbacks, call = False)
 
     def rollback(self):
-        self.engine.rollback()
+        result = self.engine.rollback()
+        if not result: return
+        self._flush_callbacks(self.rollback_callbacks)
+        self._flush_callbacks(self.commit_callbacks, call = False)
+
+    def after_commit(self, callable):
+        if self.engine.is_empty:
+            raise exceptions.RuntimeError("not inside a transaction")
+        self.commit_callbacks.append(
+            (callable, self.engine.transaction_level)
+        )
+
+    def after_rollback(self, callable):
+        if self.engine.is_empty:
+            raise exceptions.RuntimeError("not inside a transaction")
+        self.rollback_callbacks.append(
+            (callable, self.engine.transaction_level)
+        )
 
     def lock(self, entity_class, id_value = None, lock_parents = True):
         self.engine.lock(entity_class, id_value, lock_parents)
@@ -2562,6 +2595,27 @@ class EntityManager(object):
         # returns the cursor to be used in the query
         # execution, for data retrieval
         return cursor
+
+    def _flush_callbacks(self, callbacks, call = True):
+        _transaction_level = self.engine.transaction_level
+        while True:
+            # in case the sequence of callbacks is now empty then
+            # there's nothign remaining to be done
+            if not callbacks:
+                break
+
+            # "peeks" the current callback in the sequence to test
+            # it for transaction level accordance and call the callable
+            # in case it "complies"
+            callable, transaction_level = callbacks[len(callbacks) - 1]
+
+            # in case we've reached the target transaction level
+            # then we break the cycle (assumes callbacks list is ordered
+            # according to transaction level)
+            if _transaction_level >= transaction_level: break
+
+            if call: callable()
+            callbacks.pop()
 
     def _generate_fields(self, entity):
         """
