@@ -1829,6 +1829,12 @@ def lock(self, reload = False, entity_manager = None):
     # the entity from the data source
     if reload: self.reload()
 
+def after_commit(self, callable):
+    # @TODO: implement the logic to call the provided callable
+    # after the commit of the current transaction
+
+    pass
+
 def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
     """
     Validates a relation of the current entity, checking if was already
