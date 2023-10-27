@@ -208,8 +208,9 @@ class PgSQLEngine(object):
         _connection.pop_transaction()
 
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return
+        if not is_empty_transaction: return False
         self._commit()
+        return True
 
     def rollback(self):
         # retrieves the current connection from the associated
@@ -222,7 +223,7 @@ class PgSQLEngine(object):
         # for such situation the current method should return, it's not
         # possible to perform the rollback operation
         is_close = _connection.is_close()
-        if is_close: return
+        if is_close: return False
 
         # in case the current transaction level is zero it's
         # not a valid situation as not transaction is open, must
@@ -239,11 +240,12 @@ class PgSQLEngine(object):
         # it's not empty there is no need to rollback the transaction
         # because it's an inner level and no effect should be made
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return
+        if not is_empty_transaction: return False
 
         # runs the "rollback" command in the underlying data base
         # layer, executes the "rollback" operation
         self._rollback()
+        return True
 
     def lock(self, entity_class, id_value = None, lock_parents = True):
         # retrieves the table name and id associated
@@ -260,7 +262,7 @@ class PgSQLEngine(object):
 
         # validates that the id value is valid as an id
         # attribute, type validation (security consideration)
-        id_value_valid and entity_class._validate_value(table_id, id_value)
+        if id_value_valid: entity_class._validate_value(table_id, id_value)
 
         # converts the table id value into the appropriate
         # SQL representation for query usage (casting) this
@@ -407,6 +409,16 @@ class PgSQLEngine(object):
         _connection = connection._connection
         _connection.isolation_level(isolation)
 
+    @property
+    def transaction_level(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        return _connection.transaction_level
+
+    @property
+    def is_empty(self):
+        return self.transaction_level == 0
+
     def _commit(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -491,11 +503,11 @@ class PgSQLEngine(object):
 
         # retrieves the database size as the first element
         # of the first retrieved row
-        datbase_size = counts[0][0]
+        database_size = counts[0][0]
 
         # returns the result of the retrieval of the database
         # size from the data source
-        return datbase_size
+        return database_size
 
     def _index_query(self, entity_class, attribute_name, index_type = "hash"):
         # retrieves the associated table name
@@ -549,7 +561,8 @@ class PgSQLEngine(object):
         # the required field values will lock the appropriate rows)
         query_buffer = colony.StringBuffer()
         query_buffer.write("select %s from %s" % (fields_string, table_name))
-        field_name and field_value and query_buffer.write(" where %s = %s" % (field_name, field_value))
+        if field_name and field_value:
+            query_buffer.write(" where %s = %s" % (field_name, field_value))
         query_buffer.write(" for update")
 
         # retrieves the "final" query value from
@@ -827,11 +840,11 @@ class PgSQLConnection(object):
 
         # retrieves the database encoding as the first element
         # of the first retrieved row
-        datbase_encoding = counts[0][0]
+        database_encoding = counts[0][0]
 
         # returns the result of the retrieval of the database
         # encoding from the data source
-        return datbase_encoding
+        return database_encoding
 
     def _execute_query(self, query, connection = None):
         # retrieves the current connection and creates

@@ -171,8 +171,9 @@ class SQLiteEngine(object):
         _connection.pop_transaction()
 
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return
+        if not is_empty_transaction: return False
         self._commit()
+        return True
 
     def rollback(self):
         connection = self.entity_manager.get_connection()
@@ -193,11 +194,12 @@ class SQLiteEngine(object):
         # it's not empty there is no need to rollback the transaction
         # because it's an inner level and no effect should be made
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return
+        if not is_empty_transaction: return False
 
         # runs the "rollback" command in the underlying data base
         # layer, executes the "rollback" operation
         self._rollback()
+        return True
 
     def lock(self, entity_class, id_value = None, lock_parents = True):
         table_name = entity_class.get_name()
@@ -298,6 +300,16 @@ class SQLiteEngine(object):
         # returns the cursor to be used to retrieve
         # the resulting values from the query execution
         return cursor
+
+    @property
+    def transaction_level(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        return _connection.transaction_level
+
+    @property
+    def is_empty(self):
+        return self.transaction_level == 0
 
     def _commit(self):
         connection = self.entity_manager.get_connection()
@@ -632,7 +644,6 @@ class SQLiteConnection(object):
         connection = self.get_connection()
         level = self.transaction_level_map[connection]
         is_empty_transaction = level == 0
-
         return is_empty_transaction
 
     def is_valid_transaction(self):
@@ -663,3 +674,8 @@ class SQLiteConnection(object):
         # returns the cursor that has just been created for
         # the execution of the requested query
         return cursor
+
+    @property
+    def transaction_level(self):
+        connection = self.get_connection()
+        return self.transaction_level_map[connection]

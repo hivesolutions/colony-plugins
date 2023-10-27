@@ -262,7 +262,8 @@ def _class_get(
     # and using the given options, then in case the retrieval was
     # successful applies the context as the entity model request
     entity_model = entity_manager.get(cls, id_value, options, **kwargs)
-    entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
+    if entity_model and hasattr(entity_model, "set_request"):
+        entity_model.set_request(context)
 
     # in case no entity model was not found for the requested parameters
     # an error must be raised indicating such problems as the retrieval
@@ -489,7 +490,8 @@ def _class_find_one(
     # the entity model request
     entity_models = entity_manager.find(cls, options, **kwargs)
     entity_model = entity_models and entity_models[0] or None
-    entity_model and hasattr(entity_model, "set_request") and entity_model.set_request(context)
+    if entity_model and hasattr(entity_model, "set_request"):
+        entity_model.set_request(context)
 
     # in case no entity model was not found for the requested parameters
     # an error must be raised indicating such problems as the retrieval
@@ -1829,6 +1831,20 @@ def lock(self, reload = False, entity_manager = None):
     # the entity from the data source
     if reload: self.reload()
 
+def after_commit(self, callable, entity_manager = None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the commit of the
+    # currently open data transaction
+    entity_manager = entity_manager or self._entity_manager
+    entity_manager.after_commit(callable)
+
+def after_rollback(self, callable, entity_manager = None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the rollback of the
+    # currently open data transaction
+    entity_manager = entity_manager or self._entity_manager
+    entity_manager.after_rollback(callable)
+
 def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
     """
     Validates a relation of the current entity, checking if was already
@@ -2200,12 +2216,12 @@ def resolve_to_many(self, maps_list, model_class, permissive):
 
     # creates the list to hold the various
     # entities of the "to-many" relation
-    entitites_list = []
+    entities_list = []
 
     # in case the received maps list is an empty
     # sequence symbol, (the relation is meant to be set
     # as empty) returns immediately (empty entities list)
-    if maps_list == [""]: return entitites_list
+    if maps_list == [""]: return entities_list
 
     # retrieves the request associated with the current model, this
     # is going to be use to propagate its setting to the created or loaded
@@ -2273,11 +2289,11 @@ def resolve_to_many(self, maps_list, model_class, permissive):
         # the created entity is added to the list of entities for the relations
         if entity: entity.apply(map, permissive = permissive); entity.set_request(request)
         else: entity = _model_class.new(request, map, permissive = permissive)
-        entitites_list.append(entity)
+        entities_list.append(entity)
 
     # returns the list of entities that were loaded or created for the
     # requested to-many relation
-    return entitites_list
+    return entities_list
 
 def set_context(self, context = None, namespace_name = None, entity_manager = None):
     """
