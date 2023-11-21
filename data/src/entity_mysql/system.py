@@ -169,6 +169,14 @@ class MySQLEngine(object):
         password = parameters.get("password", "root")
         database = parameters.get("database", db_default)
         isolation = parameters.get("isolation", ISOLATION_LEVEL)
+        url = colony.conf("DB_URL", None)
+        if url:
+            url_p = colony.legacy.urlparse(url)
+            host = url_p.hostname
+            port = url_p.port
+            user = url_p.username
+            password = url_p.password
+            database = url_p.path.strip("/")
         host = colony.conf("DB_HOST", host)
         port = colony.conf("DB_PORT", port, cast = int)
         user = colony.conf("DB_USER", user)
