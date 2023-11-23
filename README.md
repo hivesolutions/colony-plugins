@@ -1,7 +1,7 @@
 # [Colony Framework](http://getcolony.com)
-This project contains the base plugins that provide the rich functionality associated with the Colony Framework. Here you'll find everything from the HTTP server, to the Web MVC stack, the Build Automation infrastructure and everything else we call base.
+This project contains the base plugins that provide the rich functionality associated with the Colony Framework. Here you'll find everything from the HTTP server, to the Web MVC stack, the Build Automation infrastructure, and everything else we call base.
 
-The Colony Framework is an open source plugin framework specification. Implementations of the specification offer a runtime component model, that allows for plugins to be installed, started, stopped, updated and uninstalled without requiring the application container to be stopped. The specification relies heavily on the Inversion of control principle, in order to make it easier for application components to discover and interact with each other.
+The Colony Framework is an open-source plugin framework specification. Implementations of the specification offer a runtime component model, allowing plugins to be installed, started, stopped, updated, and uninstalled without requiring the application container to be stopped. The specification relies heavily on the Inversion of control principle, in order to make it easier for application components to discover and interact with each other.
 
 Colony aims to eliminate the complexity typically associated with the creation of modular applications, through a simplified unified model for component development. Practical applications can range from modular enterprise software to application mashing.
 
@@ -46,7 +46,7 @@ Colony aims to eliminate the complexity typically associated with the creation o
 
 ## Contributing
 
-Although Colony is still in an early stage we're welcoming help for all kinds of work.
+Colony is currently in its early development stages, and we are open to contributions across various areas of work.
 The best ways to get involved:
 
 1. Join the [mailing list](http://groups.google.com/group/colony-users).
