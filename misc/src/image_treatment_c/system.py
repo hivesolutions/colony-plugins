@@ -84,19 +84,15 @@ class ImageTreatment(colony.System):
         # resets the image path
         self._reset_image_path(image_path)
 
-        # opens the image file
+        # opens the image file, resizes the image
+        # ands saves it into an in memory buffer
+        # setting the offset position to the initial one
         image = PIL.Image.open(image_path)
-
-        # resizes the images
-        image_resize = image.resize((width, height), PIL.Image.ANTIALIAS)
-
-        # creates a new string buffer for the image
+        algorithm = PIL.Image.ANTIALIAS if hasattr(PIL.Image, "ANTIALIAS") else\
+            PIL.Image.LANCZOS
+        image_resize = image.resize((width, height), algorithm)
         string_buffer = colony.StringBuffer(False)
-
-        # saves the image into the string buffer
         image_resize.save(string_buffer, image_type)
-
-        # seeks the buffer to the beginning of the file
         string_buffer.seek(0)
 
         # returns the string buffer
