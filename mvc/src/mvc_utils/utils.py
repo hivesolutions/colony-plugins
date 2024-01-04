@@ -22,7 +22,6 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-
 __copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
 """ The copyright for the module """
 
