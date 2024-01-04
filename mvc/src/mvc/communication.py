@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -56,6 +47,7 @@ stays "waiting" for a response for the server """
 
 VALID_STATUS_CODE = 200
 """ The valid status code """
+
 
 class MVCCommunicationHandler(object):
     """
@@ -152,18 +144,14 @@ class MVCCommunicationHandler(object):
 
         self.connection_processing_thread = ConnectionProcessingThread(self)
 
-    def new_connection(self, connection_name, channels = ()):
+    def new_connection(self, connection_name, channels=()):
         # retrieves the random plugin
         random_plugin = self.mvc_plugin.random_plugin
 
         # generates a new connection id, then uses it to create the
         # (communication) connection structure
         connection_id = random_plugin.generate_random_md5_string()
-        connection = CommunicationConnection(
-            self,
-            connection_id,
-            connection_name
-        )
+        connection = CommunicationConnection(self, connection_id, connection_name)
 
         # opens the connection, this should update the internal
         # structures and event handlers (connection start)
@@ -185,7 +173,8 @@ class MVCCommunicationHandler(object):
     def delete_connection(self, connection):
         # in case the connection is already closed returns immediately
         # avoids duplicated close operations
-        if not connection.is_open(): return
+        if not connection.is_open():
+            return
 
         # closes the connection, this should update the internal
         # structures and event handlers (connection stop)
@@ -196,7 +185,7 @@ class MVCCommunicationHandler(object):
         # original state (without the connection)
         self._remove_connection(connection)
 
-    def send(self, connection_name, message, channels = ("public",)):
+    def send(self, connection_name, message, channels=("public",)):
         """
         Sends a unicast message to the clients that are registered
         for the channels in the connection with the given name.
@@ -228,7 +217,8 @@ class MVCCommunicationHandler(object):
 
             # iterates over all the (communication) connections to send
             # the message into their queues (for the channel)
-            for connection in connections: self.send_message(connection, message)
+            for connection in connections:
+                self.send_message(connection, message)
 
     def send_broadcast(self, connection_name, message):
         """
@@ -251,7 +241,8 @@ class MVCCommunicationHandler(object):
 
         # iterates over all the (communication) connections to send
         # the message into their queues (for the channel)
-        for connection in connections: self.send_message(connection, message)
+        for connection in connections:
+            self.send_message(connection, message)
 
     def send_message(self, connection, message):
         """
@@ -309,11 +300,7 @@ class MVCCommunicationHandler(object):
         # retrieves the process method for the given method and calls it
         # with the request to be handled, the data handler method
         process_method = getattr(self, process_method_name)
-        process_method(
-            request,
-            delegate,
-            connection_name
-        )
+        process_method(request, delegate, connection_name)
         return True
 
     def process_connect(self, request, delegate, connection_name):
@@ -327,11 +314,7 @@ class MVCCommunicationHandler(object):
         # (communication) connection structure
         connection_id = random_plugin.generate_random_md5_string()
         connection = CommunicationConnection(
-            self,
-            connection_id,
-            connection_name,
-            service_connection,
-            delegate = delegate
+            self, connection_id, connection_name, service_connection, delegate=delegate
         )
 
         # opens the connection, this should update the internal
@@ -349,9 +332,7 @@ class MVCCommunicationHandler(object):
         channels = channels and channels.split(",") or ()
         for channel in channels:
             parameters = dict(
-                communication_handler = self,
-                operation = "channel",
-                channel = channel
+                communication_handler=self, operation="channel", channel=channel
             )
             delegate.changed(request, parameters)
 
@@ -375,7 +356,9 @@ class MVCCommunicationHandler(object):
         # in case no (communication) connection is available raises
         # the communication command exception
         if not connection:
-            raise exceptions.CommunicationCommandException("no communication connection available")
+            raise exceptions.CommunicationCommandException(
+                "no communication connection available"
+            )
 
         # sets the request as delayed (for latter writing)
         # and sets the status code as valid
@@ -401,11 +384,7 @@ class MVCCommunicationHandler(object):
         # handled and constructs the parameters map with it sending
         # it for data handling in the correct method
         data = request.get_attribute("data")
-        parameters = dict(
-            communication_handler = self,
-            operation = "data",
-            data = data
-        )
+        parameters = dict(communication_handler=self, operation="data", data=data)
         delegate.data(request, parameters)
 
         # writes the success message to the client end point to
@@ -423,9 +402,7 @@ class MVCCommunicationHandler(object):
         # method with the appropriate parameters
         channel = request.get_attribute("channel")
         parameters = dict(
-            communication_handler = self,
-            operation = "channel",
-            channel = channel
+            communication_handler=self, operation="channel", channel=channel
         )
         delegate.changed(request, parameters)
 
@@ -509,7 +486,7 @@ class MVCCommunicationHandler(object):
         # returns the pop queue
         return pop_queue
 
-    def _write_message(self, request, connection, message, data = ()):
+    def _write_message(self, request, connection, message, data=()):
         """
         Serializes and writes a message using the appropriate
         structures available in the connection.
@@ -542,7 +519,7 @@ class MVCCommunicationHandler(object):
         # serializes the message and writes the serialized
         # message to the request (message deliver)
         serialized_message = connection.serialize_message(
-            message, json_plugin, data = data
+            message, json_plugin, data=data
         )
         request.write(serialized_message)
 
@@ -551,7 +528,7 @@ class MVCCommunicationHandler(object):
         # provided request object, then flushes the request
         # so that the content type is set in it
         mime_type = json_plugin.get_mime_type()
-        request.set_content_type(mime_type, flush = True)
+        request.set_content_type(mime_type, flush=True)
 
     def _get_connection(self, request, connection_name):
         """
@@ -637,7 +614,7 @@ class MVCCommunicationHandler(object):
 
             # notifies the connection about the changing in the channel
             # state (it has been registered)
-            connection.on_channel(channel_fqn, unregister = False)
+            connection.on_channel(channel_fqn, unregister=False)
 
         # retrieves the complete set of channels registered for the
         # current connection and adds the list of channels current
@@ -645,7 +622,7 @@ class MVCCommunicationHandler(object):
         channels_list = self.channels_map_i.get(connection, [])
         self.channels_map_i[connection] = channels_list + list(channels_fqn)
 
-    def _unregister_channels(self, connection, channels = None):
+    def _unregister_channels(self, connection, channels=None):
         # retrieves the connection name, to be used to determine
         # the diffusion domain of the connection and uses it to
         # creates the fully qualified names for the various channels
@@ -657,8 +634,10 @@ class MVCCommunicationHandler(object):
         # set of channels (unregistering from all) otherwise runs
         # the resolution of the fully qualified names for the set
         # of channels provided (channel resolution process)
-        if channels == None: channels_fqn = self.channels_map_i.get(connection, [])
-        else: channels_fqn = [connection_name + "/" + channel for channel in channels]
+        if channels == None:
+            channels_fqn = self.channels_map_i.get(connection, [])
+        else:
+            channels_fqn = [connection_name + "/" + channel for channel in channels]
 
         # iterates over the complete set of channels provided to unregister
         # the provided connection from them
@@ -666,18 +645,20 @@ class MVCCommunicationHandler(object):
             # retrieves the connections list for the current channel
             # and removes the current connection from it
             connections_list = self.channels_map.get(channel_fqn, [])
-            if connection in connections_list: connections_list.remove(connection)
+            if connection in connections_list:
+                connections_list.remove(connection)
 
             # notifies the connection about the changing in the channel
             # state (it has been unregistered)
-            connection.on_channel(channel_fqn, unregister = True)
+            connection.on_channel(channel_fqn, unregister=True)
 
         # retrieves the complete set of channels registered for the
         # current connection and removes the channels current
         # for unregistration from it
         channels_list = self.channels_map_i.get(connection, [])
         for channel_fqn in channels_fqn:
-            if channel_fqn in channels_list: channels_list.remove(channel_fqn)
+            if channel_fqn in channels_list:
+                channels_list.remove(channel_fqn)
 
         # in case the list of channels is currently empty and
         # the connection exists in the channels map inverted
@@ -736,7 +717,8 @@ class MVCCommunicationHandler(object):
         # in case the connections list is empty, removes the
         # connection list from the connections map (performs
         # garbage collection operation)
-        if not connections_list: del self.connections_map[connection_name]
+        if not connections_list:
+            del self.connections_map[connection_name]
 
     def __remove_service_connections_map(self, connection):
         # retrieves the service connection (low level socket connection)
@@ -751,13 +733,15 @@ class MVCCommunicationHandler(object):
         # in case the connections list is empty, removes the
         # connection list from the service connections map
         # (performs garbage collection operation)
-        if not connections_list: del self.service_connections_map[service_connection]
+        if not connections_list:
+            del self.service_connections_map[service_connection]
 
     def __unset_connection_information_map(self, connection):
         # retrieves the connection information and uses it to remove
         # the (communication) connection from the connection informations map
         connection_information = connection.get_connection_information()
         del self.connection_informations_map[connection_information]
+
 
 class ConnectionProcessingThread(threading.Thread):
     """
@@ -824,15 +808,18 @@ class ConnectionProcessingThread(threading.Thread):
         while True:
             # in case the stop flag is set must break
             # the loop (end of iteration)
-            if self.stop_flag: break
+            if self.stop_flag:
+                break
 
             # acquires the processing queue lock
             self.processing_queue_lock.acquire()
 
             # pops the "current" connection queue from the communication handler
             # and then released the processing queue lock
-            try: connection_queue = self.communication_handler.pop_connection_queue()
-            finally: self.processing_queue_lock.release()
+            try:
+                connection_queue = self.communication_handler.pop_connection_queue()
+            finally:
+                self.processing_queue_lock.release()
 
             # iterates over the connection queue "connections" to process
             # its communication elements (are ready to be sent)
@@ -875,7 +862,8 @@ class ConnectionProcessingThread(threading.Thread):
         # iterates over all the communication elements
         # in the removal list in order to remove them
         # from the current queue
-        for element in removal_list: self.remove_queue(element)
+        for element in removal_list:
+            self.remove_queue(element)
 
     def get_all_elements(self):
         # starts the overflown (communication) elements list
@@ -891,7 +879,8 @@ class ConnectionProcessingThread(threading.Thread):
             # iterates over all the communication elements
             # to add them to the overflown communication
             # elements (list extension)
-            for element in elements: overflown_elements.append(element)
+            for element in elements:
+                overflown_elements.append(element)
 
         # returns the overflown (communication) elements
         return overflown_elements
@@ -920,7 +909,8 @@ class ConnectionProcessingThread(threading.Thread):
             # the timestamp in iteration the communication
             # element is not to be processed yet (end of
             # communication elements, must break loop)
-            if current_timestamp < timestamp: break
+            if current_timestamp < timestamp:
+                break
 
             # retrieves the communication element for the
             # timestamp in iteration
@@ -929,7 +919,8 @@ class ConnectionProcessingThread(threading.Thread):
             # iterates over all the communication elements
             # to add them to the overflown communication
             # elements (list extension)
-            for element in elements: overflown_elements.append(element)
+            for element in elements:
+                overflown_elements.append(element)
 
         # returns the overflown (communication) elements
         return overflown_elements
@@ -981,7 +972,8 @@ class ConnectionProcessingThread(threading.Thread):
             # in case the communication element is not present
             # in the processing queue (possible add and remove)
             # must return immediately
-            if not element in self.processing_queue: return
+            if not element in self.processing_queue:
+                return
 
             # unpacks the communication element into the various components
             # of it to be for the removing operation
@@ -1037,7 +1029,8 @@ class ConnectionProcessingThread(threading.Thread):
         # and in case the service connection is not open anymore returns
         # immediately (no need to write in a closed connection)
         service_connection_is_open = service_connection.is_open()
-        if not service_connection_is_open: return
+        if not service_connection_is_open:
+            return
 
         # retrieves the current message queue (complete set of pending
         # messages to be delivered) for the connection by "popping"
@@ -1049,9 +1042,10 @@ class ConnectionProcessingThread(threading.Thread):
         # of the delayed processing of the request) flushing the data
         # to the client side
         self.communication_handler._write_message(
-            request, connection, "success", data = message_queue
+            request, connection, "success", data=message_queue
         )
         request.process()
+
 
 class CommunicationConnection(object):
     """
@@ -1106,8 +1100,8 @@ class CommunicationConnection(object):
         communication_handler,
         connection_id,
         connection_name,
-        service_connection = None,
-        delegate = None
+        service_connection=None,
+        delegate=None,
     ):
         """
         Constructor of the class.
@@ -1165,7 +1159,7 @@ class CommunicationConnection(object):
         if self.delegate and hasattr(self.delegate, "on_close"):
             self.delegate.on_close(self)
 
-    def serialize_message(self, message, serializer, data = ()):
+    def serialize_message(self, message, serializer, data=()):
         """
         Serializes the given message, using the given
         serializer method.
@@ -1208,8 +1202,10 @@ class CommunicationConnection(object):
         interaction with the connection.
         """
 
-        if self.service_connection: self.add_message_queue(message)
-        for handler in self.handlers: handler(message)
+        if self.service_connection:
+            self.add_message_queue(message)
+        for handler in self.handlers:
+            handler(message)
 
     def add_handler(self, handler):
         """
@@ -1235,7 +1231,8 @@ class CommunicationConnection(object):
         the current connection, no further messages handled.
         """
 
-        if not handler in self.handlers: return
+        if not handler in self.handlers:
+            return
         self.handlers.remove(handler)
 
     def add_print_handler(self):
@@ -1247,7 +1244,9 @@ class CommunicationConnection(object):
 
         self.add_handler(self.print_handler)
 
-    def add_apn_handler(self, token_string, key_file = None, cert_file = None, sandbox = True):
+    def add_apn_handler(
+        self, token_string, key_file=None, cert_file=None, sandbox=True
+    ):
         """
         Adds an APN (Apple Push Notifications) handler to the current
         connection to be able to handle communication with ios/osx
@@ -1268,10 +1267,7 @@ class CommunicationConnection(object):
         """
 
         apn_handler = handlers.APNHandler(
-            token_string,
-            key_file = key_file,
-            cert_file = cert_file,
-            sandbox = sandbox
+            token_string, key_file=key_file, cert_file=cert_file, sandbox=sandbox
         )
         self.add_handler(apn_handler.handle)
 
@@ -1337,11 +1333,11 @@ class CommunicationConnection(object):
     def on_close(self, connection):
         self.communication_handler.delete_connection(self)
 
-    def on_channel(self, fqn, unregister = False):
+    def on_channel(self, fqn, unregister=False):
         connection_name_l = len(self.connection_name)
-        name = fqn[connection_name_l + 1:]
+        name = fqn[connection_name_l + 1 :]
         if self.delegate and hasattr(self.delegate, "on_channel"):
-            self.delegate.on_channel(self, name, unregister = unregister)
+            self.delegate.on_channel(self, name, unregister=unregister)
 
     def is_open(self):
         """
@@ -1382,10 +1378,7 @@ class CommunicationConnection(object):
         :return: The connection information.
         """
 
-        return (
-            self.connection_id,
-            self.connection_name
-        )
+        return (self.connection_id, self.connection_name)
 
     def get_connection_id(self):
         """

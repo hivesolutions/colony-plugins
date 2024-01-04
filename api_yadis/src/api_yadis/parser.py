@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import xml.dom.minidom
+
 
 class Parser(object):
     """
@@ -68,6 +60,7 @@ class Parser(object):
 
         pass
 
+
 class ResourceDescriptorParser(Parser):
     """
     The resource descriptor parser class.
@@ -79,7 +72,7 @@ class ResourceDescriptorParser(Parser):
     resources_list = []
     """ The resources list """
 
-    def __init__(self, file_path = None):
+    def __init__(self, file_path=None):
         Parser.__init__(self)
         self.file_path = file_path
 
@@ -178,6 +171,7 @@ class ResourceDescriptorParser(Parser):
         service_attribute = attribute.firstChild.data.strip()
         return service_attribute
 
+
 class Resource(object):
     """
     Class that represent an xrd resource.
@@ -189,7 +183,7 @@ class Resource(object):
     services_list = []
     """ The list of service for the resource """
 
-    def __init__(self, version = "none"):
+    def __init__(self, version="none"):
         """
         Constructor of the class.
 
@@ -200,6 +194,7 @@ class Resource(object):
         self.version = version
 
         self.services_list = []
+
 
 class Service(object):
     """
@@ -215,7 +210,7 @@ class Service(object):
     attributes_map = {}
     """ The map containing all the attributes """
 
-    def __init__(self, priority = "none"):
+    def __init__(self, priority="none"):
         """
         Constructor of the class.
 
@@ -228,7 +223,7 @@ class Service(object):
         self.types_list = []
         self.attributes_map = {}
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         """
         Retrieves an attribute from the attributes map.
 
@@ -254,6 +249,7 @@ class Service(object):
         """
 
         self.attributes_map[attribute_name] = attribute_value
+
 
 def valid_node(node):
     """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -43,8 +34,8 @@ from .base import BaseController
 
 mvc_utils = colony.__import__("mvc_utils")
 
-class PluginController(BaseController):
 
+class PluginController(BaseController):
     def list(self, request):
         # retrieves the reference to the plugin manager running
         # in the current context
@@ -57,8 +48,8 @@ class PluginController(BaseController):
         # retrieves the various fields that are going to be used to
         # perform the query over the plugins
         filter = request.field("filter_string", "")
-        start_record = request.field("start_record", 0, cast = int)
-        number_records = request.field("number_records", 9, cast = int)
+        start_record = request.field("start_record", 0, cast=int)
+        number_records = request.field("number_records", 9, cast=int)
 
         # uses the plugin manager to retrieve the list of all plugin instances
         # (this is a list of object and as such is not serializable)
@@ -80,24 +71,25 @@ class PluginController(BaseController):
             # the comparison fails continues the loop immediately
             id = loaded_plugin.id.lower()
             name = loaded_plugin.name.lower()
-            if not _filter in id and not _filter in name: continue
+            if not _filter in id and not _filter in name:
+                continue
 
             # creates the plugin map containing the identifier and the
             # name of the plugin and then adds it to the plugins list
             plugin = dict(
-                id = loaded_plugin.id,
-                name = loaded_plugin.name,
-                short_name = loaded_plugin.short_name
+                id=loaded_plugin.id,
+                name=loaded_plugin.name,
+                short_name=loaded_plugin.short_name,
             )
             plugins.append(plugin)
 
         # sorts the plugins list using the default alphabetic order and
         # then serializes the same plugin list using the defined plugin
-        plugins.sort(key = lambda item: item["id"])
-        plugins = plugins[start_record:start_record + number_records]
-        self.serialize(request, plugins, serializer = json_plugin)
+        plugins.sort(key=lambda item: item["id"])
+        plugins = plugins[start_record : start_record + number_records]
+        self.serialize(request, plugins, serializer=json_plugin)
 
-    def show(self, request, plugin_id = None):
+    def show(self, request, plugin_id=None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -106,22 +98,23 @@ class PluginController(BaseController):
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
         plugin = plugin_manger._get_plugin(plugin_id)
-        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+        if not plugin:
+            raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
         # generates and processes the template with the provided values
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "plugin/show.html.tpl",
-            title = plugin.name,
-            area = "plugins",
-            section = "plugins.html.tpl",
-            sub_area = "info",
-            plugin = plugin
+            request=request,
+            template="plugin/show.html.tpl",
+            title=plugin.name,
+            area="plugins",
+            section="plugins.html.tpl",
+            sub_area="info",
+            plugin=plugin,
         )
 
-    def load(self, request, plugin_id = None):
+    def load(self, request, plugin_id=None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -130,7 +123,8 @@ class PluginController(BaseController):
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
         plugin = plugin_manger._get_plugin(plugin_id)
-        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+        if not plugin:
+            raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
         # loads the just retrieved plugin using its main identifier as
         # the trigger element for the loading
@@ -140,7 +134,7 @@ class PluginController(BaseController):
         # instance (default behavior)
         self.redirect_base_path(request, "plugins/%s" % plugin.short_name)
 
-    def unload(self, request, plugin_id = None):
+    def unload(self, request, plugin_id=None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -149,7 +143,8 @@ class PluginController(BaseController):
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
         plugin = plugin_manger._get_plugin(plugin_id)
-        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+        if not plugin:
+            raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
         # unloads the just retrieved plugin using its main identifier as
         # the trigger element for the loading
@@ -159,7 +154,7 @@ class PluginController(BaseController):
         # instance (default behavior)
         self.redirect_base_path(request, "plugins/%s" % plugin.short_name)
 
-    def reload(self, request, plugin_id = None):
+    def reload(self, request, plugin_id=None):
         # retrieves the reference to the plugin manager running
         # in the current context
         plugin_manger = self.plugin.manager
@@ -168,7 +163,8 @@ class PluginController(BaseController):
         # current request and tries to retrieve the associated plugin
         # from the plugin manager, in case it fails raises exception
         plugin = plugin_manger._get_plugin(plugin_id)
-        if not plugin: raise RuntimeError("Plugin '%s' not found" % plugin_id)
+        if not plugin:
+            raise RuntimeError("Plugin '%s' not found" % plugin_id)
 
         # loads and then unloads (reloading process) the just retrieved
         # plugin using its main identifier as the trigger element for the loading

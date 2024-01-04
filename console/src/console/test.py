@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -40,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import colony
 
 from . import system
+
 
 class ConsoleTestCase(colony.ColonyTestCase):
     """
@@ -58,7 +50,9 @@ class ConsoleTestCase(colony.ColonyTestCase):
         """
 
         # process the invalid command line
-        return_value = self.console.process_command_line("invalid_command", self.output_method)
+        return_value = self.console.process_command_line(
+            "invalid_command", self.output_method
+        )
 
         # asserts the echo value
         self.assertEqual(self.last_output, system.INVALID_COMMAND_MESSAGE)
@@ -66,5 +60,5 @@ class ConsoleTestCase(colony.ColonyTestCase):
         # assets the return value
         self.assertEqual(return_value, False)
 
-    def output_method(self, text, new_line = True):
+    def output_method(self, text, new_line=True):
         self.last_output = text

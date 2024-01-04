@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class MVCPlugin(colony.Plugin):
     """
@@ -49,36 +41,27 @@ class MVCPlugin(colony.Plugin):
     description = "The plugin that offers a strategy abstraction for MVC management"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc",
-        "rest_service"
-    ]
-    capabilities_allowed = [
-        "mvc_service"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["mvc", "rest_service"]
+    capabilities_allowed = ["mvc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.csv"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
     events_handled = [
         "mvc.patterns_reload",
         "mvc.patterns_load",
         "mvc.patterns_unload",
-        "mvc.communication"
+        "mvc.communication",
     ]
-    main_modules = [
-        "mvc"
-    ]
+    main_modules = ["mvc"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mvc
+
         self.system = mvc.MVC(self)
 
     def end_load_plugin(self):

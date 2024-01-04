@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -53,14 +44,30 @@ BASE_KEYWORDS = ("break", "continue", "pass")
 basic because their are not suffixed """
 
 SPACE_KEYWORDS = (
-    "and", "as", "assert",
-    "class", "def", "del",
-    "elif", "except", "exec",
-    "for", "from", "global",
-    "if", "import", "in",
-    "is", "lambda", "not",
-    "or", "raise", "return",
-    "while", "with", "yield"
+    "and",
+    "as",
+    "assert",
+    "class",
+    "def",
+    "del",
+    "elif",
+    "except",
+    "exec",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
+    "in",
+    "is",
+    "lambda",
+    "not",
+    "or",
+    "raise",
+    "return",
+    "while",
+    "with",
+    "yield",
 )
 """ The set of python keywords that are meant to
 be suffixed with a space character """
@@ -68,6 +75,7 @@ be suffixed with a space character """
 DOT_KEYWORDS = ("else", "finally", "try")
 """ The set of python keywords that are meant to
 be suffixed with a dot character """
+
 
 class ConsoleController(BaseController):
     """
@@ -116,22 +124,21 @@ class ConsoleController(BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = dict(
-            manager = plugin_manager,
-            plugins = plugin_manager.plugins
-        )
+        locals = dict(manager=plugin_manager, plugins=plugin_manager.plugins)
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
         # back in the interpreters map for latter usage
         interpreter = self.interpreters.get(instance, None)
-        interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
+        interpreter = interpreter or code.InteractiveInterpreter(locals=locals)
         self.interpreters[instance] = interpreter
 
         # resolves the configuration init file path using the plugins manager
         # then ensures that it exists falling back to the local resources init
         # file that is contained in the bundle
-        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + self.plugin.id + "%/initrc", True)
+        configuration_file_path = plugin_manager.resolve_file_path(
+            "%configuration:" + self.plugin.id + "%/initrc", True
+        )
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
         init_file_path = plugin_path + "/nanger/resources/default/initrc"
         colony.ensure_file_path(configuration_file_path, init_file_path)
@@ -139,8 +146,10 @@ class ConsoleController(BaseController):
         # opens the configuration (init) file and reads the complete set of
         # contents in it (to be executed in the current instance)
         file = open(configuration_file_path, "rb")
-        try: contents = file.read()
-        finally: file.close()
+        try:
+            contents = file.read()
+        finally:
+            file.close()
 
         # replaces the windows styled newlines with the normalized unix like
         # newline styled values (compatibility issues)
@@ -157,7 +166,7 @@ class ConsoleController(BaseController):
             # tries to run the source code extracted from the execution
             # file under the "exec" mode (this should print the results
             # to the standard output)
-            interpreter.runsource(contents, configuration_file_path, symbol = "exec")
+            interpreter.runsource(contents, configuration_file_path, symbol="exec")
         finally:
             # restores both the standard output and the standard error streams
             # into the original values (further writes will be handled normally)
@@ -172,11 +181,8 @@ class ConsoleController(BaseController):
 
         # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
-        response = dict(
-            result = result,
-            instance = instance
-        )
-        self.serialize(request, response, serializer = json_plugin)
+        response = dict(result=result, instance=instance)
+        self.serialize(request, response, serializer=json_plugin)
 
     def execute(self, request):
         """
@@ -203,7 +209,7 @@ class ConsoleController(BaseController):
         # command should be compiled in multiple or single line mode
         command = request.field("command", "")
         instance = request.field("instance", None)
-        file = request.field("file", 0, cast = int)
+        file = request.field("file", 0, cast=int)
         name = request.field("name", "<input>")
 
         # in case no instance (identifier) is found a new randomly generated
@@ -213,7 +219,8 @@ class ConsoleController(BaseController):
         # in case the current command represents a file, a final newline token
         # must be included so that the interpreter knows that no more data
         # is coming, this avoids problems in the compilation
-        if file: command += "\n"
+        if file:
+            command += "\n"
 
         # retrieves the final (file) name defaulting to the input token in case
         # no file flag is set (command came from console)
@@ -227,30 +234,33 @@ class ConsoleController(BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = dict(
-            manager = plugin_manager,
-            plugins = plugin_manager.plugins
-        )
+        locals = dict(manager=plugin_manager, plugins=plugin_manager.plugins)
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
         # back in the interpreters map for latter usage
         interpreter = self.interpreters.get(instance, None)
-        interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
+        interpreter = interpreter or code.InteractiveInterpreter(locals=locals)
         self.interpreters[instance] = interpreter
 
         try:
             # tries to compile the command using the single line strategy
             # so that the return value is printed to the standard output, this
             # may fail in case a multiple line command is present
-            command_code = code.compile_command(command, symbol = file and "exec" or "single")
+            command_code = code.compile_command(
+                command, symbol=file and "exec" or "single"
+            )
         except Exception:
             # compiles the provided command into the appropriate code representation
             # using the "exec" strategy, this operation should return an invalid value
             # in case the provided code is not complete (spans multiple lines)
-            try: command_code = code.compile_command(command, symbol = "exec")
-            except Exception: command_code = None; exception = True
-            else: exception = False
+            try:
+                command_code = code.compile_command(command, symbol="exec")
+            except Exception:
+                command_code = None
+                exception = True
+            else:
+                exception = False
         else:
             # unsets the exception flag because no exception occurred while compiling
             # the command using the single line strategy
@@ -271,8 +281,10 @@ class ConsoleController(BaseController):
             # tries to run from either the "compiled" code object or from
             # the source code in case the exception mode was activated
             # this should allow syntax errors to be printed
-            if command_code: interpreter.runcode(command_code)
-            elif exception: interpreter.runsource(command, filename = name, symbol = "exec")
+            if command_code:
+                interpreter.runcode(command_code)
+            elif exception:
+                interpreter.runsource(command, filename=name, symbol="exec")
         finally:
             # restores both the standard output and the standard error streams
             # into the original values (further writes will be handled normally)
@@ -287,12 +299,8 @@ class ConsoleController(BaseController):
 
         # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
-        response = dict(
-            result = result,
-            pending = pending,
-            instance = instance
-        )
-        self.serialize(request, response, serializer = json_plugin)
+        response = dict(result=result, pending=pending, instance=instance)
+        self.serialize(request, response, serializer=json_plugin)
 
     def autocomplete(self, request):
         """
@@ -325,17 +333,14 @@ class ConsoleController(BaseController):
         # creates the map containing the various local names to be used
         # in the interpreter, these are the values that will be made available
         # as entrance points to the end user
-        locals = dict(
-            manager = plugin_manager,
-            plugins = plugin_manager.plugins
-        )
+        locals = dict(manager=plugin_manager, plugins=plugin_manager.plugins)
 
         # tries to retrieve the correct interpreter from the interpreters
         # map in case it does not exists creates a new one, then sets it
         # back in the interpreters map for latter usage, at the final part
         # of the execution updates the current locals reference
         interpreter = self.interpreters.get(instance, None)
-        interpreter = interpreter or code.InteractiveInterpreter(locals = locals)
+        interpreter = interpreter or code.InteractiveInterpreter(locals=locals)
         self.interpreters[instance] = interpreter
         locals = interpreter.locals
 
@@ -366,22 +371,30 @@ class ConsoleController(BaseController):
             # with the command text must be skipped, otherwise
             # adds the local name to the list of valid commands
             # for the autocomplete operation
-            if not value.startswith(base): continue
+            if not value.startswith(base):
+                continue
 
             # retrieves the object associated with the current value (name)
             # taking into account the type of the container object (different
             # strategies apply for different container types)
-            if type(container) == dict: object = container[value]
-            else: object = getattr(container, value)
+            if type(container) == dict:
+                object = container[value]
+            else:
+                object = getattr(container, value)
 
             # retrieves the (python) object type and then uses it to convert
             # the type into the "normalized" string representation
             object_type = type(object)
-            if object_type == types.FunctionType: object_type_s = "function"
-            elif object_type == types.BuiltinFunctionType: object_type_s = "function"
-            elif object_type == types.MethodType: object_type_s = "method"
-            elif object_type == types.BuiltinMethodType: object_type_s = "method"
-            else: object_type_s = "object"
+            if object_type == types.FunctionType:
+                object_type_s = "function"
+            elif object_type == types.BuiltinFunctionType:
+                object_type_s = "function"
+            elif object_type == types.MethodType:
+                object_type_s = "method"
+            elif object_type == types.BuiltinMethodType:
+                object_type_s = "method"
+            else:
+                object_type_s = "object"
 
             # retrieves the documentation part of the object, this is a raw
             # string and should be processed for correct handling
@@ -390,11 +403,7 @@ class ConsoleController(BaseController):
 
             # creates the map of options that contains the base documentation
             # string an also the tuple containing the parameters reference
-            options = {
-                "doc" : doc,
-                "params" : params,
-                "return" : _return
-            }
+            options = {"doc": doc, "params": params, "return": _return}
 
             # adds the value and the object type values as a tuple to the list
             # of commands (to be interpreted by the client side)
@@ -404,22 +413,25 @@ class ConsoleController(BaseController):
         # filter and add them to the commands list, these keywords
         # will have no extra values associated (basic keywords)
         for keyword in BASE_KEYWORDS:
-            if not keyword.startswith(command): continue
+            if not keyword.startswith(command):
+                continue
             commands.append((keyword, "keyword", dict()))
 
         # iterates over all the space keywords in order to be able to
         # filter and add them to the commands list, these keywords
         # will have the extra space character appended
         for keyword in SPACE_KEYWORDS:
-            if not keyword.startswith(command): continue
-            commands.append((keyword, "keyword", dict(extra = " ")))
+            if not keyword.startswith(command):
+                continue
+            commands.append((keyword, "keyword", dict(extra=" ")))
 
         # iterates over all the base keywords in order to be able to
         # filter and add them to the commands list, these keywords
         # will have the extra dot character appended
         for keyword in DOT_KEYWORDS:
-            if not keyword.startswith(command): continue
-            commands.append((keyword, "keyword", dict(extra = ":")))
+            if not keyword.startswith(command):
+                continue
+            commands.append((keyword, "keyword", dict(extra=":")))
 
         # sorts the commands according to their default (alphabetic order) so
         # that they are presented to the end user in the best way possible
@@ -427,12 +439,8 @@ class ConsoleController(BaseController):
 
         # creates the response map and serializes it with JSON to create the
         # final result contents, should retrieve the appropriate mime type
-        response = dict(
-            result = commands,
-            offset = offset,
-            instance = instance
-        )
-        self.serialize(request, response, serializer = json_plugin)
+        response = dict(result=commands, offset=offset, instance=instance)
+        self.serialize(request, response, serializer=json_plugin)
 
     def _resolve_value(self, partials, names):
         """
@@ -456,13 +464,15 @@ class ConsoleController(BaseController):
 
         # in case the names list is not valid (probably an unset
         # value from a resolution error) returns an empty map
-        if not names: return ({}, {})
+        if not names:
+            return ({}, {})
 
         # in case there are no more partials for resolution the
         # final values sequence must be returned, note that an
         # appropriate conversion is done in case no map type is
         # present (object value)
-        if not partials: return type(names) == dict and (names, names) or (dir(names), names)
+        if not partials:
+            return type(names) == dict and (names, names) or (dir(names), names)
 
         # retrieves the first partial values, this value
         # is going to be used as the reference value for
@@ -472,8 +482,10 @@ class ConsoleController(BaseController):
 
         # uses the appropriate strategy to retrieve the value taking
         # into account the appropriate type
-        if names_type == dict: value = names.get(partial, None)
-        else: value = hasattr(names, partial) and getattr(names, partial) or None
+        if names_type == dict:
+            value = names.get(partial, None)
+        else:
+            value = hasattr(names, partial) and getattr(names, partial) or None
 
         # returns the result of the recursion step on top of the
         # the currently resolve value and the remainder list of
@@ -503,12 +515,14 @@ class ConsoleController(BaseController):
 
         # in case the provided documentation element is not
         # valid must return immediately with the default values
-        if not doc: return doc, (), None
+        if not doc:
+            return doc, (), None
 
         # in case the documentation element does not comply with
         # the standard structure for the parsing must return
         # with the default values immediately
-        if not doc[0] == "\n": return doc, (), None
+        if not doc[0] == "\n":
+            return doc, (), None
 
         # splits the various doc string lines around their newline
         # character, this should be able to return  the various lines
@@ -544,17 +558,20 @@ class ConsoleController(BaseController):
             if in_transit:
                 # in case the line is not valid (empty) must continue immediately
                 # cannot process an empty line
-                if not line: continue
+                if not line:
+                    continue
 
                 # in case the line refers a special argument an unexpected situation
                 # has occurred must skip the in transit situation otherwise must
                 # process the in transit line and add it to the currently processing
                 # parameters observations
-                if line[0] in ("@", ":"): in_transit = False
+                if line[0] in ("@", ":"):
+                    in_transit = False
                 else:
                     # in case the end line dot is the final character in the current
                     # line must unset the in transit situation (end of in transit)
-                    if line[-1] == ".": in_transit = False
+                    if line[-1] == ".":
+                        in_transit = False
 
                     # in case there is a selected parameter and an observations field
                     # in it must add the current line into it
@@ -581,7 +598,9 @@ class ConsoleController(BaseController):
 
                 # in case the parameter is new adds it to the parameters map
                 # and to the list of parameters
-                if is_new: params_map[param_name] = param; params.append(param)
+                if is_new:
+                    params_map[param_name] = param
+                    params.append(param)
 
                 # unsets the is documentation flag so that the in transit flag
                 # may be set for multiple line parameter descriptions
@@ -604,7 +623,9 @@ class ConsoleController(BaseController):
 
                 # in case the parameter is new adds it to the parameters map
                 # and to the list of parameters
-                if is_new: params_map[param_name] = param; params.append(param)
+                if is_new:
+                    params_map[param_name] = param
+                    params.append(param)
 
                 # sets the is documentation flag to prevent the is transit flag
                 # from being set (not required)
@@ -655,7 +676,8 @@ class ConsoleController(BaseController):
             # in case the current token does not belong to a documentation
             # and there is a valid line as there is no dot at the end the
             # in transit flag is set to provide multiple line processing
-            if not is_doc and line and not line[-1] == ".": in_transit = True
+            if not is_doc and line and not line[-1] == ".":
+                in_transit = True
 
         # joins the various loaded line into a single documentation string
         # and then returns the a tuple containing that string, the parameters

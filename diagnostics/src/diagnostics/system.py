@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -41,16 +32,17 @@ import time
 
 import colony
 
-class Diagnostics(colony.System):
 
+class Diagnostics(colony.System):
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
         self.data = dict()
         self.state = dict()
-        self.diagnostics = colony.conf("DIAGNOSTICS", False, cast = bool)
+        self.diagnostics = colony.conf("DIAGNOSTICS", False, cast=bool)
 
     def start(self):
-        if not self.diagnostics: return
+        if not self.diagnostics:
+            return
         colony.register_g("request.begin", self.request_begin)
         colony.register_g("request.end", self.request_end)
         colony.register_g("template.begin", self.template_begin)
@@ -60,7 +52,8 @@ class Diagnostics(colony.System):
         colony.register_g("sql.executed", self.sql_executed)
 
     def stop(self):
-        if not self.diagnostics: return
+        if not self.diagnostics:
+            return
         colony.unregister_g("request.begin", self.request_begin)
         colony.unregister_g("request.end", self.request_end)
         colony.unregister_g("template.begin", self.template_begin)
@@ -81,14 +74,16 @@ class Diagnostics(colony.System):
         stack = self.state[name]
         return stack.pop()
 
-    def peek_state(self, name, default = None):
+    def peek_state(self, name, default=None):
         stack = self.state.get(name, None)
-        if not stack: return default
+        if not stack:
+            return default
         return stack[-1]
 
     def add_operation(self, name, target, data):
         state = self.peek_state(target)
-        if not state: return False
+        if not state:
+            return False
         totals = state["totals"]
         operations = state["operations"]
         sequence = operations.get(name, [])
@@ -103,7 +98,8 @@ class Diagnostics(colony.System):
     def try_operation(self, name, targets, data):
         for target in targets:
             result = self.add_operation(name, target, data)
-            if result: break
+            if result:
+                break
 
     def set_time(self, data):
         initial = data["initial"]
@@ -117,12 +113,12 @@ class Diagnostics(colony.System):
         requests = self.data.get("requests", {})
         requests_l = self.data.get("requests_l", [])
         data = dict(
-            id = identifier,
-            initial = time.time(),
-            method = request.get_method(),
-            path = request.get_path(),
-            operations = dict(),
-            totals = dict()
+            id=identifier,
+            initial=time.time(),
+            method=request.get_method(),
+            path=request.get_path(),
+            operations=dict(),
+            totals=dict(),
         )
         requests[identifier] = data
         requests_l.append(data)
@@ -142,10 +138,7 @@ class Diagnostics(colony.System):
         templates = self.data.get("templates", {})
         templates_l = self.data.get("templates_l", [])
         data = dict(
-            id = identifier,
-            initial = time.time(),
-            operations = dict(),
-            totals = dict()
+            id=identifier, initial=time.time(), operations=dict(), totals=dict()
         )
         templates[identifier] = data
         templates_l.append(data)
@@ -153,7 +146,7 @@ class Diagnostics(colony.System):
         self.data["templates_l"] = templates_l
         self.push_state("template", data)
 
-    def template_end(self, identifier, template_file = None):
+    def template_end(self, identifier, template_file=None):
         templates = self.data.get("templates", {})
         data = templates[identifier]
         data["file_path"] = template_file and template_file.file_path
@@ -161,15 +154,15 @@ class Diagnostics(colony.System):
         self.pop_state("template")
         self.try_operation("template", ("template", "request"), data)
 
-    def orm_begin(self, identifier, operation, options = None):
+    def orm_begin(self, identifier, operation, options=None):
         orms = self.data.get("orms", {})
         orms_l = self.data.get("orms_l", [])
         data = dict(
-            id = identifier,
-            initial = time.time(),
-            operation = operation,
-            operations = dict(),
-            totals = dict()
+            id=identifier,
+            initial=time.time(),
+            operation=operation,
+            operations=dict(),
+            totals=dict(),
         )
         orms[identifier] = data
         orms_l.append(data)
@@ -177,7 +170,7 @@ class Diagnostics(colony.System):
         self.data["orms_l"] = orms_l
         self.push_state("orm", data)
 
-    def orm_end(self, identifier, count = None):
+    def orm_end(self, identifier, count=None):
         orms = self.data.get("orms", {})
         data = orms[identifier]
         data["count"] = count
@@ -188,11 +181,7 @@ class Diagnostics(colony.System):
     def sql_executed(self, query, engine, time):
         is_bytes = type(query) == colony.legacy.BYTES
         query = query.decode("utf-8") if is_bytes else query
-        data = dict(
-            query = query,
-            engine = engine,
-            time = time
-        )
+        data = dict(query=query, engine=engine, time=time)
         sql = self.data.get("sql", [])
         sql.append(data)
         self.data["sql"] = sql

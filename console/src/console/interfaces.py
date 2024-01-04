@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -39,7 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-SPECIAL_CHARACTER_ORDINAL = 0xe0
+SPECIAL_CHARACTER_ORDINAL = 0xE0
 """ The special character ordinal """
 
 BACKSPACE_CHARACTER_ORDINAL = 0x08
@@ -48,35 +39,24 @@ BACKSPACE_CHARACTER_ORDINAL = 0x08
 TAB_CHARACTER_ORDINAL = 0x09
 """ The tab character ordinal """
 
-ENTER_CHARACTER_ORDINAL = 0x0d
+ENTER_CHARACTER_ORDINAL = 0x0D
 """ The enter character ordinal """
 
-UP_CHARACTER_ORDINAL = (
-    SPECIAL_CHARACTER_ORDINAL,
-    0x48
-)
+UP_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x48)
 """ The up character ordinal """
 
-DOWN_CHARACTER_ORDINAL = (
-    SPECIAL_CHARACTER_ORDINAL,
-    0x50
-)
+DOWN_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x50)
 """ The down character ordinal """
 
-RIGHT_CHARACTER_ORDINAL = (
-    SPECIAL_CHARACTER_ORDINAL,
-    0x4d
-)
+RIGHT_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x4D)
 """ The right character ordinal """
 
-LEFT_CHARACTER_ORDINAL = (
-    SPECIAL_CHARACTER_ORDINAL,
-    0x4b
-)
+LEFT_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x4B)
 """ The right character ordinal """
 
 LINE_HISTORY_LIST_MAXIMUM_SIZE = 100
 """ The line history list maximum size """
+
 
 class ConsoleInterfaceCharacter(object):
     """
@@ -125,13 +105,13 @@ class ConsoleInterfaceCharacter(object):
         self.console_context = console_context
 
         self.character_methods_map = {
-            BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
-            TAB_CHARACTER_ORDINAL : self._process_tab_character,
-            ENTER_CHARACTER_ORDINAL : self._process_enter_character,
-            UP_CHARACTER_ORDINAL : self._process_up_character,
-            DOWN_CHARACTER_ORDINAL : self._process_down_character,
-            RIGHT_CHARACTER_ORDINAL : self._process_right_character,
-            LEFT_CHARACTER_ORDINAL : self._process_left_character
+            BACKSPACE_CHARACTER_ORDINAL: self._process_backspace_character,
+            TAB_CHARACTER_ORDINAL: self._process_tab_character,
+            ENTER_CHARACTER_ORDINAL: self._process_enter_character,
+            UP_CHARACTER_ORDINAL: self._process_up_character,
+            DOWN_CHARACTER_ORDINAL: self._process_down_character,
+            RIGHT_CHARACTER_ORDINAL: self._process_right_character,
+            LEFT_CHARACTER_ORDINAL: self._process_left_character,
         }
 
         self.line_buffer = []
@@ -177,7 +157,10 @@ class ConsoleInterfaceCharacter(object):
 
         # in case the line buffer is valid (not empty) and the line history list
         # is not valid or the line buffer is different than the list item in the line history
-        if self.line_buffer and (not self.line_history_list or not self.line_buffer == self.line_history_list[-1]):
+        if self.line_buffer and (
+            not self.line_history_list
+            or not self.line_buffer == self.line_history_list[-1]
+        ):
             # adds the current line buffer to history
             self._add_history()
 
@@ -201,7 +184,9 @@ class ConsoleInterfaceCharacter(object):
         elif character_ordinal > 0x19:
             # calls the process writable character
             # method
-            return_value = self._process_writable_character(character, character_ordinal)
+            return_value = self._process_writable_character(
+                character, character_ordinal
+            )
         # otherwise
         else:
             # sets the return value to false
@@ -256,7 +241,10 @@ class ConsoleInterfaceCharacter(object):
 
         # retrieves the alternatives list and the best match
         # for the current command and arguments
-        alternatives_list, best_match = self.console_context.get_command_line_alternatives(command, arguments)
+        (
+            alternatives_list,
+            best_match,
+        ) = self.console_context.get_command_line_alternatives(command, arguments)
 
         # sorts the alternatives list (alphabetically)
         alternatives_list.sort()
@@ -459,7 +447,9 @@ class ConsoleInterfaceCharacter(object):
         current_line = "".join(self.line_buffer)
 
         # splits the current line into a list of tokens
-        current_line_list = self.console.split_command_line_arguments(current_line, True)
+        current_line_list = self.console.split_command_line_arguments(
+            current_line, True
+        )
 
         # retrieves the current last token
         current_last_token = current_line_list and current_line_list[-1] or ""
@@ -467,7 +457,7 @@ class ConsoleInterfaceCharacter(object):
         # returns the current last token
         return current_last_token
 
-    def _write(self, text, new_line = True):
+    def _write(self, text, new_line=True):
         """
         Writes the given text to the standard output,
         may use a newline or not.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class BERException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class BERException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class PackingError(BERException):
     """
@@ -73,6 +66,7 @@ class PackingError(BERException):
 
         return "Packing error - %s" % self.message
 
+
 class UnpackingError(BERException):
     """
     The unpacking error class.
@@ -98,6 +92,7 @@ class UnpackingError(BERException):
         """
 
         return "Unpacking error - %s" % self.message
+
 
 class OperationNotImplemented(BERException):
     """

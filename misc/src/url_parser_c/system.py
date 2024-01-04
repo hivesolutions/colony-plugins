@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -54,6 +45,7 @@ DEFAULT_PROTOCOL_VALUE = "http://"
 
 DEFAULT_PORT_VALUE = None
 """ The default port value """
+
 
 class URLParser(colony.System):
     """
@@ -87,6 +79,7 @@ class URLParser(colony.System):
 
         # returns the URL
         return url
+
 
 class URL(object):
     """
@@ -128,15 +121,15 @@ class URL(object):
 
     def __init__(
         self,
-        protocol = DEFAULT_PROTOCOL_VALUE,
-        username = None,
-        password = None,
-        base_name = None,
-        port = DEFAULT_PORT_VALUE,
-        resource_reference = None,
-        options = None,
-        location = None,
-        base_url = None
+        protocol=DEFAULT_PROTOCOL_VALUE,
+        username=None,
+        password=None,
+        base_name=None,
+        port=DEFAULT_PORT_VALUE,
+        resource_reference=None,
+        options=None,
+        location=None,
+        base_url=None,
     ):
         """
         Constructor of the class.
@@ -189,7 +182,10 @@ class URL(object):
         url = self.protocol + self.base_name
 
         # in case the protocol port is not the default one
-        if not self.protocol == DEFAULT_PROTOCOL_VALUE or not self.port == DEFAULT_PORT_VALUE:
+        if (
+            not self.protocol == DEFAULT_PROTOCOL_VALUE
+            or not self.port == DEFAULT_PORT_VALUE
+        ):
             url += ":" + str(self.port)
 
         # adds the resource reference to the URL
@@ -288,7 +284,12 @@ class URL(object):
             self.location = location
 
         # creates the base URL from the protocol, authentication, base name and port
-        self.base_url = (protocol or "") + (authentication and authentication + "@" or "") + (base_name or "") + (port and ":" + port or "")
+        self.base_url = (
+            (protocol or "")
+            + (authentication and authentication + "@" or "")
+            + (base_name or "")
+            + (port and ":" + port or "")
+        )
 
     def add_resource_reference_item(self, resource_reference_item):
         """
@@ -518,7 +519,9 @@ class URL(object):
             # returns immediately
             return
 
-        self.options = "&".join([key + "=" + value for key, value in colony.legacy.items(self.options_map)])
+        self.options = "&".join(
+            [key + "=" + value for key, value in colony.legacy.items(self.options_map)]
+        )
 
     def _generate_resource_reference_list(self):
         """

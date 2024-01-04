@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -45,17 +36,17 @@ from .base import BaseController
 
 mvc_utils = colony.__import__("mvc_utils")
 
-class MainController(BaseController):
 
+class MainController(BaseController):
     def index(self, request):
         # generates and processes the template with the provided values
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/index.html.tpl",
-            title = "Colony Framework",
-            area = "home"
+            request=request,
+            template="general/index.html.tpl",
+            title="Colony Framework",
+            area="home",
         )
 
     def plugins(self, request):
@@ -63,10 +54,10 @@ class MainController(BaseController):
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/plugins.html.tpl",
-            title = "Plugins",
-            area = "plugins"
+            request=request,
+            template="general/plugins.html.tpl",
+            title="Plugins",
+            area="plugins",
         )
 
     def console(self, request):
@@ -84,12 +75,12 @@ class MainController(BaseController):
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/console.html.tpl",
-            title = "Console",
-            area = "console",
-            version = version,
-            information = system_information_map
+            request=request,
+            template="general/console.html.tpl",
+            title="Console",
+            area="console",
+            version=version,
+            information=system_information_map,
         )
 
     def log(self, request):
@@ -100,24 +91,24 @@ class MainController(BaseController):
         # tries to retrieve the provided count parameter that will
         # condition the amount of lines retrieved, defaulting to
         # the default value in case none is provided
-        count = request.field("count", 3000, cast = int)
+        count = request.field("count", 3000, cast=int)
 
         # retrieves the memory handler installed in the current
         # plugin manager and then uses it to retrieve the sequence
         # containing the latest messages stored in it
         memory_handler = plugin_manager.get_log_handler("memory")
-        latest = memory_handler.get_latest(count = count)
+        latest = memory_handler.get_latest(count=count)
         latest.reverse()
 
         # generates and processes the template with the provided values
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/log.html.tpl",
-            title = "Log",
-            area = "log",
-            latest = latest
+            request=request,
+            template="general/log.html.tpl",
+            title="Log",
+            area="log",
+            latest=latest,
         )
 
     def diagnostics(self, request):
@@ -125,10 +116,10 @@ class MainController(BaseController):
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/diagnostics.html.tpl",
-            title = "Diagnostics",
-            area = "diagnostics"
+            request=request,
+            template="general/diagnostics.html.tpl",
+            title="Diagnostics",
+            area="diagnostics",
         )
 
     def about(self, request):
@@ -146,11 +137,11 @@ class MainController(BaseController):
         # changing the current request accordingly, note that there's
         # a defined partial page and a base template value defined
         self._template(
-            request = request,
-            template = "general/about.html.tpl",
-            title = "About",
-            area = "about",
-            manager = plugin_manager,
-            version = version,
-            information = system_information_map
+            request=request,
+            template="general/about.html.tpl",
+            title="About",
+            area="about",
+            manager=plugin_manager,
+            version=version,
+            information=system_information_map,
         )

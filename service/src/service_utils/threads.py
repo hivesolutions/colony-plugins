@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -47,6 +38,7 @@ CONDITION_TIMEOUT = 1.0
 """ The timeout value for the condition object,
 this value should not be to small otherwise system
 resources may be used in excess """
+
 
 class ServiceAcceptingThread(threading.Thread):
     """
@@ -87,7 +79,8 @@ class ServiceAcceptingThread(threading.Thread):
         while True:
             # in case the stop flag is set must break
             # the loop immediately
-            if self.stop_flag: break
+            if self.stop_flag:
+                break
 
             # acquires the service tuple queue condition
             self.service_tuple_queue_condition.acquire()
@@ -101,7 +94,8 @@ class ServiceAcceptingThread(threading.Thread):
 
                 # in case the stop flag is set must break
                 # the loop immediately
-                if self.stop_flag: break
+                if self.stop_flag:
+                    break
 
                 # pops the top service tuple to be used in the accepting
                 # process inserting it into the connection pool
@@ -109,7 +103,8 @@ class ServiceAcceptingThread(threading.Thread):
             except Exception as exception:
                 # prints an error message about the problem accessing the service tuple queue
                 self.abstract_service.service_utils_plugin.error(
-                    "Error accessing service tuple queue: " + colony.legacy.UNICODE(exception)
+                    "Error accessing service tuple queue: "
+                    + colony.legacy.UNICODE(exception)
                 )
             finally:
                 # releases the service tuple queue condition
@@ -157,6 +152,7 @@ class ServiceAcceptingThread(threading.Thread):
         finally:
             # releases the service tuple queue condition
             self.service_tuple_queue_condition.release()
+
 
 class ServiceExecutionThread(threading.Thread):
     """
@@ -207,7 +203,8 @@ class ServiceExecutionThread(threading.Thread):
 
                 # in case the stop flag is set must break
                 # the loop immediately
-                if self.stop_flag: break
+                if self.stop_flag:
+                    break
 
                 # retrieves the current timestamp value so that it's
                 # possible to compare the target callable timestamp and
@@ -218,7 +215,9 @@ class ServiceExecutionThread(threading.Thread):
                 # queue (peek value)  and checks if the timestamp is valid
                 # for execution at the current time
                 timestamp, callable, retries, timeout = self.callable_queue[0]
-                if timestamp > _timestamp: self.callable_queue_condition.wait(CONDITION_TIMEOUT); continue
+                if timestamp > _timestamp:
+                    self.callable_queue_condition.wait(CONDITION_TIMEOUT)
+                    continue
 
                 # pops the top callable to be used in the calling process
                 # the callable queue should not be empty
@@ -227,7 +226,8 @@ class ServiceExecutionThread(threading.Thread):
                 # prints an error message about the problem accessing the callable queue
                 # this may happen for a wide range of reasons
                 self.abstract_service.service_utils_plugin.error(
-                    "Error accessing callable queue: " + colony.legacy.UNICODE(exception)
+                    "Error accessing callable queue: "
+                    + colony.legacy.UNICODE(exception)
                 )
             finally:
                 # releases the callable queue condition
@@ -245,7 +245,10 @@ class ServiceExecutionThread(threading.Thread):
                 # in case there are still retries remaining to be used for the
                 # callable the callable is inserted back to the list with one
                 # less retry and with the timeout value as the delta time
-                if retries: self.add_callable(callable, retries - 1, timeout, time.time() + timeout)
+                if retries:
+                    self.add_callable(
+                        callable, retries - 1, timeout, time.time() + timeout
+                    )
 
     def stop(self):
         # acquires the callable queue condition
@@ -261,7 +264,7 @@ class ServiceExecutionThread(threading.Thread):
             # releases the callable queue condition
             self.callable_queue_condition.release()
 
-    def add_callable(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def add_callable(self, callable, retries=0, timeout=0.0, timestamp=None):
         # acquires the callable queue condition
         self.callable_queue_condition.acquire()
 

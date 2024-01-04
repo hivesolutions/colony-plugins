@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -70,11 +61,7 @@ HANDLER_PORT = 80
 meaning that additional configuration values may
 change the port that is going to be used at runtime """
 
-LOCALHOST_VALUES = (
-    "localhost",
-    "127.0.0.1",
-    "::1"
-)
+LOCALHOST_VALUES = ("localhost", "127.0.0.1", "::1")
 """ The set defining the various string values that
 may represent the localhost (hostname and ip addresses) """
 
@@ -114,6 +101,7 @@ DEFAULT_DIRTY_INTERVAL = 600
 considered valid as an interval to mark a session as
 dirty for the new calculus of expire time, this value
 avoids an exhaustion on flushing the session data """
+
 
 class REST(colony.System):
     """
@@ -165,7 +153,7 @@ class REST(colony.System):
     not be defined and for such situations the default
     class is going to be used (in memory) """
 
-    def __init__(self, plugin, session_c = None):
+    def __init__(self, plugin, session_c=None):
         colony.System.__init__(self, plugin)
         self.session_c = session_c or RedisSession
         self.matching_regex_list = []
@@ -178,7 +166,7 @@ class REST(colony.System):
 
         # determines if the SSL (secure) connection should be
         # enforced for connections associated with the request
-        self.force_ssl = colony.conf("FORCE_SSL", False, cast = bool)
+        self.force_ssl = colony.conf("FORCE_SSL", False, cast=bool)
 
         # tries to retrieve the value of the session (engine) configuration
         # value and if there's success retrieves the proper class from the
@@ -233,10 +221,12 @@ class REST(colony.System):
         # in case the handler base filename is in the start of the
         # request filename this is the correct handler for the request
         # otherwise it's not and an invalid value is returned
-        if request_filename.find(HANDLER_BASE_FILENAME) == 0: return True
-        else: return False
+        if request_filename.find(HANDLER_BASE_FILENAME) == 0:
+            return True
+        else:
+            return False
 
-    def handle_request(self, request, retries = 3):
+    def handle_request(self, request, retries=3):
         """
         Handles the given request, this is the main entry point
         for the handling of the request and the responsible for
@@ -288,15 +278,15 @@ class REST(colony.System):
         # otherwise in case there's at least a name defined it's extracted
         # from the splitted value to be evaluated
         elif last_path_name_splitted_length == 1:
-            last_path_initial_name, = last_path_name_splitted
+            (last_path_initial_name,) = last_path_name_splitted
 
         # as a fallback procedure an exception must be raised indicating
         # that the provided path for evaluation is invalid as it's not
         # defined according to the specification
         else:
             raise exceptions.InvalidPath(
-                "invalid last path name value size: " +\
-                str(last_path_name_splitted_length)
+                "invalid last path name value size: "
+                + str(last_path_name_splitted_length)
             )
 
         # retrieves the encoder name from the extension provided
@@ -357,7 +347,8 @@ class REST(colony.System):
                 # successes returns the controls flow (avoid exception)
                 try:
                     result = self.try_rest_request_plugin(rest_request, resource_path)
-                    if result: return
+                    if result:
+                        return
                 except colony.OperationRestart as exception:
                     time.sleep(exception.delay)
                     continue
@@ -373,17 +364,15 @@ class REST(colony.System):
         # are no more retries left for the execution of the REST request,
         # this is considered to be an abnormal situation
         self.info(
-            "No more REST request handling operation retries left, aborting handling of '%s %s'" %\
-            (request.get_method(), request.uri)
+            "No more REST request handling operation retries left, aborting handling of '%s %s'"
+            % (request.get_method(), request.uri)
         )
 
         # raises the REST request error exception, because if the control flow
         # has reached this parts of the code the maximum number of retry operations
         # have been performed for the current request and a low level exception
         # should be raised to better serialize the error
-        raise exceptions.RESTRequestError(
-            "no more REST operation retries left"
-        )
+        raise exceptions.RESTRequestError("no more REST operation retries left")
 
     def handle_rest_request_services(self, rest_request):
         """
@@ -403,7 +392,8 @@ class REST(colony.System):
 
         # in case the request has already been handled through
         # redirection, the control flow must be returned immediately
-        if rest_request.redirected: return
+        if rest_request.redirected:
+            return
 
         # retrieves the (underlying) request for the current
         # REST request, this value may be used latter for the
@@ -421,7 +411,8 @@ class REST(colony.System):
         # in case there is a list methods request, this is considered
         # to be a special call and the result is "automatically" set
         # as the current set of service methods
-        if method_name == "system.listMethods": result = self.service_methods
+        if method_name == "system.listMethods":
+            result = self.service_methods
 
         # in case the method is current registered in the service methods
         # and is a valid method, the typical work flow is performed
@@ -437,7 +428,8 @@ class REST(colony.System):
             # iterates over all the variable names in the function
             # variables to try to map the arguments and the arguments
             for variable_name in rpc_method.func_code.co_varnames:
-                if not variable_name in request.attributes_map: continue
+                if not variable_name in request.attributes_map:
+                    continue
 
                 # retrieves the variable value from the attributes map,
                 # unquotes the variable value and sets the variable
@@ -452,7 +444,10 @@ class REST(colony.System):
 
         # in case the method name is not valid must raise an exception
         # indicating the problem on the method name
-        else: raise exceptions.InvalidMethod("the method name " + method_name + " is not valid")
+        else:
+            raise exceptions.InvalidMethod(
+                "the method name " + method_name + " is not valid"
+            )
 
         # serializes the result for the given encoder name retrieving
         # the content type and the translated result, these values are
@@ -490,7 +485,8 @@ class REST(colony.System):
 
         # in case the request has already been handled through
         # redirection, the control flow must be returned immediately
-        if rest_request.redirected: return
+        if rest_request.redirected:
+            return
 
         # iterates over all the matching regex in the matching regex list
         # to try to determined the proper one for handling
@@ -498,7 +494,8 @@ class REST(colony.System):
             # retrieves the resource path match and in case there is
             # no valid resource path match, must continue the loop
             resource_path_match = matching_regex.match(resource_path)
-            if not resource_path_match: continue
+            if not resource_path_match:
+                continue
 
             # retrieves the base value for the matching regex and uses
             # the value together with the group regex to calculates the
@@ -513,14 +510,17 @@ class REST(colony.System):
             # note that proper callback are called before and after and
             # returns the control flow to the caller method immediately
             rest_request.pre_handle()
-            try: not rest_request.redirected and\
-                rest_service_plugin.handle_rest_request(rest_request)
+            try:
+                not rest_request.redirected and rest_service_plugin.handle_rest_request(
+                    rest_request
+                )
             except colony.OperationRestart:
                 raise
             except BaseException as exception:
                 rest_request.except_handle(exception)
                 raise
-            else: rest_request.post_handle()
+            else:
+                rest_request.post_handle()
             return True
 
         # in case the control flow reaches this places there has been no processing
@@ -541,8 +541,10 @@ class REST(colony.System):
         # in case the current container is apache
         # the service is considered to be active
         is_apache = manager.container == "apache"
-        if is_apache: return True
-        else: return False
+        if is_apache:
+            return True
+        else:
+            return False
 
     def get_handler_name(self):
         """
@@ -573,8 +575,8 @@ class REST(colony.System):
         """
 
         return dict(
-            handler_base_filename = HANDLER_BASE_FILENAME,
-            handler_extension = HANDLER_EXTENSION
+            handler_base_filename=HANDLER_BASE_FILENAME,
+            handler_extension=HANDLER_EXTENSION,
         )
 
     def load_rest_service_plugin(self, rest_service_plugin):
@@ -619,7 +621,7 @@ class REST(colony.System):
         # may have been removed by the unload operation of the plugin
         self._update_matching_regex()
 
-    def update_service_methods(self, updated_rpc_service_plugin = None):
+    def update_service_methods(self, updated_rpc_service_plugin=None):
         """
         Runs the update operation on the service methods meaning that
         there's the internal structures are updated, taking into account
@@ -684,9 +686,13 @@ class REST(colony.System):
             # retrieves the list of all the available rpc methods as a string name
             # and then iterates over the complete set of alias to add also the alias
             # for the methods to this same list
-            available_rpc_methods_string = [value.__name__ for value in available_rpc_methods]
+            available_rpc_methods_string = [
+                value.__name__ for value in available_rpc_methods
+            ]
             for available_rpc_method_alias_key in available_rpc_methods_alias:
-                available_rpc_methods_alias_string = available_rpc_methods_alias[available_rpc_method_alias_key]
+                available_rpc_methods_alias_string = available_rpc_methods_alias[
+                    available_rpc_method_alias_key
+                ]
                 available_rpc_methods_string.extend(available_rpc_methods_alias_string)
 
             # extends the service methods list with the available rpc methods string
@@ -703,7 +709,9 @@ class REST(colony.System):
             # names to create "all" the fully qualified names for the methods
             for service_name in service_names:
                 for available_rpc_method_string in available_rpc_methods_string:
-                    composite_available_rpc_method_string = service_name + "." + available_rpc_method_string
+                    composite_available_rpc_method_string = (
+                        service_name + "." + available_rpc_method_string
+                    )
                     self.service_methods.append(composite_available_rpc_method_string)
 
             # iterates over all the available rpc methods to generate the service methods map
@@ -722,7 +730,9 @@ class REST(colony.System):
 
                 # adds the complete set of alias at each of the lists, this
                 # alias may be used at runtime as an alternate name for the method
-                alias_service_method_names = [value for value in available_rpc_methods_alias[available_rpc_method]]
+                alias_service_method_names = [
+                    value for value in available_rpc_methods_alias[available_rpc_method]
+                ]
                 service_method_names.extend(alias_service_method_names)
                 service_method_basic_names.extend(alias_service_method_names)
 
@@ -730,7 +740,9 @@ class REST(colony.System):
                 # name of the method (complex name) under the "names" list
                 for service_name in service_names:
                     for service_method_basic_name in service_method_basic_names:
-                        service_method_complex_name = service_name + "." + service_method_basic_name
+                        service_method_complex_name = (
+                            service_name + "." + service_method_basic_name
+                        )
                         service_method_names.append(service_method_complex_name)
 
                 # registers the method for the complete set of (complex) method names
@@ -750,7 +762,7 @@ class REST(colony.System):
 
         return data
 
-    def translate_result(self, result, encoder_name = None):
+    def translate_result(self, result, encoder_name=None):
         """
         Translates the given python result into the encoding defined.
 
@@ -771,7 +783,8 @@ class REST(colony.System):
 
         # in case no encoder name is defined the default result is
         # returns as a plain string of the provided result
-        if not encoder_name: "text/plain", str(result)
+        if not encoder_name:
+            "text/plain", str(result)
 
         # iterates over all the complete set of REST encoder plugins
         # trying to find the encoder for the requested name
@@ -779,7 +792,8 @@ class REST(colony.System):
             # verifies if the current REST encoder is the valid one and in
             # case it's not skips the current loop, not found
             is_valid = rest_encoder_plugin.get_encoder_name() == encoder_name
-            if not is_valid: continue
+            if not is_valid:
+                continue
 
             # retries the content type that is going to be returned from
             # the REST encoder plugin and then runs the encoding process
@@ -849,12 +863,16 @@ class REST(colony.System):
 
         # iterates over all the items in the REST service routes map in
         # order to populate and create the matching regex
-        for rest_service_plugin_id, routes_list in colony.legacy.items(self.rest_service_routes_map):
+        for rest_service_plugin_id, routes_list in colony.legacy.items(
+            self.rest_service_routes_map
+        ):
             # in case it's the first plugin to be used in
             # the creation of the matching regex unset the flag
             # otherwise adds the "or" character to the buffer
-            if is_first_plugin: is_first_plugin = False
-            else: matching_regex_value_buffer.write("|")
+            if is_first_plugin:
+                is_first_plugin = False
+            else:
+                matching_regex_value_buffer.write("|")
 
             # adds the group part of the regex to the matching regex value buffer
             matching_regex_value_buffer.write("(")
@@ -867,8 +885,10 @@ class REST(colony.System):
             for route in routes_list:
                 # in case it's the first route updates the flag otherwise
                 # writes the "or" operator to the buffer
-                if is_first: is_first = False
-                else: matching_regex_value_buffer.write("|")
+                if is_first:
+                    is_first = False
+                else:
+                    matching_regex_value_buffer.write("|")
 
                 # adds the route to the matching regex value buffer
                 matching_regex_value_buffer.write(route)
@@ -914,6 +934,7 @@ class REST(colony.System):
         matching_regex = re.compile(matching_regex_value)
         self.matching_regex_list.append(matching_regex)
         self.matching_regex_base_values_map[matching_regex] = current_base_value
+
 
 class RESTRequest(object):
     """
@@ -1024,8 +1045,10 @@ class RESTRequest(object):
         # time (useful for generation time) also updates the
         # clock value (useful for benchmarking)
         self._generation_time = time.time()
-        if hasattr(time, "clock"): self._generation_clock = time.clock()
-        elif hasattr(time, "process_time"): self._generation_clock = time.process_time()
+        if hasattr(time, "clock"):
+            self._generation_clock = time.clock()
+        elif hasattr(time, "process_time"):
+            self._generation_clock = time.process_time()
 
     @property
     def session(self):
@@ -1042,11 +1065,7 @@ class RESTRequest(object):
         colony.notify_g("request.end", self, exception)
 
     def start_session(
-        self,
-        force = False,
-        session_id = None,
-        timeout = None,
-        maximum_timeout = None
+        self, force=False, session_id=None, timeout=None, maximum_timeout=None
     ):
         """
         Starts the session for the given session id,
@@ -1071,7 +1090,8 @@ class RESTRequest(object):
         # in case a session exists and force flag is disabled
         # avoids creation (provides duplicate creation blocking)
         # must return immediately
-        if self._session and not force: return self._session
+        if self._session and not force:
+            return self._session
 
         # in case no session ID is defined, must generate a new
         # one using a secure algorithm for it (avoid corruption)
@@ -1086,22 +1106,19 @@ class RESTRequest(object):
         # to be calculated using configuration variables or static
         # "hardcoded" values otherwise
         if timeout == None:
-            timeout = colony.conf("SESSION_TIMEOUT", DEFAULT_TIMEOUT, cast = int)
+            timeout = colony.conf("SESSION_TIMEOUT", DEFAULT_TIMEOUT, cast=int)
         if maximum_timeout == None:
-            factor = colony.conf("SESSION_FACTOR", None, cast = int)
+            factor = colony.conf("SESSION_FACTOR", None, cast=int)
             maximum_timeout = colony.conf(
-                "SESSION_MAX_TIMEOUT",
-                DEFAULT_MAXIMUM_TIMEOUT,
-                cast = int
+                "SESSION_MAX_TIMEOUT", DEFAULT_MAXIMUM_TIMEOUT, cast=int
             )
-            if factor: maximum_timeout = timeout * factor
+            if factor:
+                maximum_timeout = timeout * factor
 
         # creates a new REST session and sets
         # it as the current session (uses the timeout information)
         self._session = self.rest.session_c.new(
-            session_id,
-            timeout = timeout,
-            maximum_timeout = maximum_timeout
+            session_id, timeout=timeout, maximum_timeout=maximum_timeout
         )
 
         # retrieves the host name value
@@ -1114,7 +1131,7 @@ class RESTRequest(object):
 
         # starts the session with the defined domain and then
         # returns the same session as the created session
-        self._session.start(domain, secure = is_secure)
+        self._session.start(domain, secure=is_secure)
         return self._session
 
     def stop_session(self):
@@ -1128,7 +1145,8 @@ class RESTRequest(object):
 
         # in case no session is defined, creates a new empty
         # session that is going to be used for the operation
-        if not self._session: self._session = self.session_c()
+        if not self._session:
+            self._session = self.session_c()
 
         # retrieves the domain value and uses it in the stop
         # operation of the currently defined session
@@ -1164,7 +1182,8 @@ class RESTRequest(object):
         # verifies if the flag that controls the execution of
         # the session updating operation is set and if that's
         # the case skips the current execution logic
-        if self._updated: return
+        if self._updated:
+            return
 
         try:
             # updates the session using the attribute method
@@ -1191,9 +1210,10 @@ class RESTRequest(object):
         # in case the session is defined updates the
         # expire time according to the timeout and
         # the current time (extending it's life)
-        if self._session: self._session.update_expire_time()
+        if self._session:
+            self._session.update_expire_time()
 
-    def touch_date(self, secure_delta = DEFAULT_TOUCH_SECURE_DELTA):
+    def touch_date(self, secure_delta=DEFAULT_TOUCH_SECURE_DELTA):
         """
         Touches the last modified timestamp value, setting it
         to the current date information including a "small"
@@ -1208,7 +1228,7 @@ class RESTRequest(object):
         # time value reduced by the secure delta value
         self.request.last_modified_timestamp = time.time() - secure_delta
 
-    def update_timeout(self, timeout, maximum_timeout = None):
+    def update_timeout(self, timeout, maximum_timeout=None):
         """
         Updates the session timeout (and maximum timeout) values
         so that the session may be extended or shortened.
@@ -1227,7 +1247,8 @@ class RESTRequest(object):
         # in case no session is defined must return immediately
         # not possible to change timeout in case no session is
         # currently defined
-        if not self._session: return
+        if not self._session:
+            return
 
         # sets the maximum timeout value in case is not currently
         # set as the triple value of the timeout
@@ -1302,8 +1323,10 @@ class RESTRequest(object):
 
         # in case the operation is of type get must return
         # valid otherwise returns false (default validation)
-        if self.request.operation_type == "GET": return True
-        else: return False
+        if self.request.operation_type == "GET":
+            return True
+        else:
+            return False
 
     def is_post(self):
         """
@@ -1316,10 +1339,12 @@ class RESTRequest(object):
 
         # in case the operation is of type post must return
         # valid otherwise returns false (default validation)
-        if self.request.operation_type == "POST": return True
-        else: return False
+        if self.request.operation_type == "POST":
+            return True
+        else:
+            return False
 
-    def is_debug(self, minimum_level = 6):
+    def is_debug(self, minimum_level=6):
         """
         In case the request should be set in debug mode.
         Maximum verbosity, in actions like exception handling.
@@ -1339,8 +1364,10 @@ class RESTRequest(object):
 
         # in case the debug level does meet the required
         # level returns valid otherwise return not valid
-        if debug_level and debug_level.data >= minimum_level: return True
-        else: return False
+        if debug_level and debug_level.data >= minimum_level:
+            return True
+        else:
+            return False
 
     def is_flushed(self):
         """
@@ -1415,7 +1442,8 @@ class RESTRequest(object):
 
         # in case the current result translated is an invalid value it
         # must be "defaulted" as an empty string (would create issues)
-        if self.result_translated == None: self.result_translated = str()
+        if self.result_translated == None:
+            self.result_translated = str()
 
         # sets the content type for the request, this should
         # be able to asset the correct content type in the
@@ -1432,12 +1460,7 @@ class RESTRequest(object):
         self.flushed = True
 
     def redirect(
-        self,
-        target_path,
-        status_code = 302,
-        quote = True,
-        keep = False,
-        attributes_map = None
+        self, target_path, status_code=302, quote=True, keep=False, attributes_map=None
     ):
         """
         Redirects the request logically, so it becomes readable
@@ -1471,24 +1494,25 @@ class RESTRequest(object):
 
         # quotes the target path according to the URL quoting schema
         # in case the quote flat is set
-        target_path_quoted = quote and\
-            colony.quote(target_path, "/") or target_path
+        target_path_quoted = quote and colony.quote(target_path, "/") or target_path
 
         # creates the final target path using the attributes
         # map in case they are present (by appending them to
         # the target path) otherwise (in case no attributes map
         # is present) the target path is used
-        target_path_quoted = attributes_map and\
-            target_path_quoted + "?" +\
-            colony.url_encode(attributes_map) or\
-            target_path_quoted
+        target_path_quoted = (
+            attributes_map
+            and target_path_quoted + "?" + colony.url_encode(attributes_map)
+            or target_path_quoted
+        )
 
         # checks if the current request is "marked" as asynchronous, for
         # such cases a special redirection process is applies to avoid the
         # typical problems with automated redirection using "ajax"
         is_async = True if self.request.get_header("X-Async") else False
         is_async = True if self.get_attribute("async") else is_async
-        if is_async: status_code = 280
+        if is_async:
+            status_code = 280
 
         # sets the status code, that was defined as the argument
         # this status code should represent a redirect
@@ -1502,7 +1526,7 @@ class RESTRequest(object):
         # redirection operation asn not a "normal" response
         self.redirected = True
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def execute_background(self, callable, retries=0, timeout=0.0, timestamp=None):
         """
         Executes the given callable object in a background
         thread.
@@ -1523,10 +1547,7 @@ class RESTRequest(object):
         """
 
         self.request.execute_background(
-            callable,
-            retries = retries,
-            timeout = timeout,
-            timestamp = timestamp
+            callable, retries=retries, timeout=timeout, timestamp=timestamp
         )
 
     def allow_cookies(self):
@@ -1600,7 +1621,7 @@ class RESTRequest(object):
 
         return self.request.get_attributes_list()
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         """
         Retrieves the attribute for the given attribute name.
 
@@ -1713,7 +1734,7 @@ class RESTRequest(object):
 
         self.request = request
 
-    def get_s(self, name, default = None, unset = False):
+    def get_s(self, name, default=None, unset=False):
         """
         Retrieves the value of the session attribute with the
         provided name. The session that is going to be used is
@@ -1738,9 +1759,11 @@ class RESTRequest(object):
         """
 
         session = self.get_session()
-        if not session: return default
-        value = session.get_attribute(name, default = default)
-        if unset: session.unset_attribute(name)
+        if not session:
+            return default
+        value = session.get_attribute(name, default=default)
+        if unset:
+            session.unset_attribute(name)
         return value
 
     def set_s(self, name, value):
@@ -1760,7 +1783,8 @@ class RESTRequest(object):
         """
 
         session = self.get_session()
-        if not session: session = self.start_session()
+        if not session:
+            session = self.start_session()
         session.set_attribute(name, value)
 
     def unset_s(self, name):
@@ -1774,7 +1798,8 @@ class RESTRequest(object):
         """
 
         session = self.get_session()
-        if not session: return
+        if not session:
+            return
         session.unset_attribute(name)
 
     def ensure_session(self):
@@ -1792,12 +1817,15 @@ class RESTRequest(object):
         or an invalid/unset value in case no session was loaded.
         """
 
-        if self._session: return self._session
-        try: self.update_session()
-        except Exception: self._session = None
+        if self._session:
+            return self._session
+        try:
+            self.update_session()
+        except Exception:
+            self._session = None
         return self._session
 
-    def get_session(self, block = True):
+    def get_session(self, block=True):
         """
         Retrieves the associated session using the proper
         locking mechanisms (secure way).
@@ -1858,7 +1886,8 @@ class RESTRequest(object):
 
         # in case no session is defined the control
         # returns immediately to the caller
-        if not self.session: return
+        if not self.session:
+            return
 
         # runs the lock operation on the session object
         # blocking any future accesses to the session
@@ -1872,7 +1901,8 @@ class RESTRequest(object):
 
         # in case no session is defined the control
         # returns immediately to the caller
-        if not self.session: return
+        if not self.session:
+            return
 
         # runs the release operation on the session object
         # allowing any future accesses to the session
@@ -2017,7 +2047,7 @@ class RESTRequest(object):
 
         return self.content_type
 
-    def set_content_type(self, content_type, flush = False):
+    def set_content_type(self, content_type, flush=False):
         """
         Sets the content type, in case the flush
         flag is set the content type is immediately
@@ -2032,7 +2062,8 @@ class RESTRequest(object):
         """
 
         self.content_type = content_type
-        if flush: self.request.content_type = content_type
+        if flush:
+            self.request.content_type = content_type
 
     def get_result_translated(self):
         """
@@ -2200,38 +2231,37 @@ class RESTRequest(object):
         return port
 
     def field(
-        self,
-        name,
-        default = None,
-        cast = None,
-        mandatory = False,
-        split = False,
-        token = ","
+        self, name, default=None, cast=None, mandatory=False, split=False, token=","
     ):
         controller = self._get_controller()
-        if not controller: return default
+        if not controller:
+            return default
         return controller.get_field(
             self,
             name,
-            default = default,
-            cast_type = cast,
-            mandatory = mandatory,
-            split = split,
-            token = token
+            default=default,
+            cast_type=cast,
+            mandatory=mandatory,
+            split=split,
+            token=token,
         )
 
     def field_s(self, name, value):
         controller = self._get_controller()
-        if not controller: return
+        if not controller:
+            return
         return controller.set_field(self, name, value)
 
-    def form(self, name, default = None, cast = None, required = False):
+    def form(self, name, default=None, cast=None, required=False):
         controller = self._get_controller()
-        if not controller: return default
+        if not controller:
+            return default
         form_data = controller.process_form_data(self)
-        if required and not name in form_data: raise ValueError("%s not found" % name)
+        if required and not name in form_data:
+            raise ValueError("%s not found" % name)
         value = form_data.get(name, default)
-        if cast and not value in (None, ""): value = cast(value)
+        if cast and not value in (None, ""):
+            value = cast(value)
         return value
 
     @property
@@ -2245,16 +2275,19 @@ class RESTRequest(object):
         such connection by redirecting the request.
         """
 
-        if not self.force_ssl: return
+        if not self.force_ssl:
+            return
 
         is_secure = self.request.is_secure()
         host = self.request.get_header("Host")
 
-        if not host: return
-        if is_secure: return
+        if not host:
+            return
+        if is_secure:
+            return
 
         url = "https://" + host + self.request.original_path
-        self.redirect(url, quote = False)
+        self.redirect(url, quote=False)
 
     def _update_session_cookie(self):
         """
@@ -2265,14 +2298,16 @@ class RESTRequest(object):
 
         # in case there's already a loaded session for
         # the current REST request returns immediately
-        if self._session: return
+        if self._session:
+            return
 
         # retrieves the cookie value from the request
         cookie_value = self.request.get_header("Cookie")
 
         # in case there is not valid cookie value,
         # must return immediately
-        if not cookie_value: return
+        if not cookie_value:
+            return
 
         # creates a new cookie, using the header value of
         # it and then parses it to populate the attributes
@@ -2286,7 +2321,8 @@ class RESTRequest(object):
 
         # in case there is no session id defined in the
         # current cookie, must return immediately
-        if not session_id: return
+        if not session_id:
+            return
 
         # tries to retrieve the session from the session id
         # this value may be invalid (not set) in case no
@@ -2295,9 +2331,8 @@ class RESTRequest(object):
 
         # if no session is selected, raises an invalid session
         # exception to indicate the error
-        if not self._session: raise exceptions.InvalidSession(
-            "no session started or session timed out"
-        )
+        if not self._session:
+            raise exceptions.InvalidSession("no session started or session timed out")
 
     def _update_session_attribute(self):
         """
@@ -2308,7 +2343,8 @@ class RESTRequest(object):
 
         # in case there's already a loaded session for
         # the current REST request returns immediately
-        if self._session: return
+        if self._session:
+            return
 
         # retrieves the session id attribute value from the request
         # using the multiple possible attribute values
@@ -2317,15 +2353,15 @@ class RESTRequest(object):
 
         # in case there is no valid session id
         # returns immediately
-        if not session_id: return
+        if not session_id:
+            return
 
         # retrieves the session from the session id and if
         # no session is selected, raises an invalid session
         # exception to indicate the error
         self._session = self.rest.get_session(session_id)
-        if not self._session: raise exceptions.InvalidSession(
-            "no session started or session timed out"
-        )
+        if not self._session:
+            raise exceptions.InvalidSession("no session started or session timed out")
 
     def _get_controller(self):
         """
@@ -2342,7 +2378,8 @@ class RESTRequest(object):
         not possible to find it.
         """
 
-        if not hasattr(self, "controller"): return None
+        if not hasattr(self, "controller"):
+            return None
         return self.controller
 
     def _get_domain(self):
@@ -2359,7 +2396,8 @@ class RESTRequest(object):
 
         # in case the host is not defined, returns an invalid
         # value immediately, can't parse any value
-        if not host: return None
+        if not host:
+            return None
 
         # retrieves the domain removing the port part
         # of the host value
@@ -2367,6 +2405,7 @@ class RESTRequest(object):
 
         # returns the domain
         return domain
+
 
 class RESTSession(object):
     """
@@ -2430,9 +2469,9 @@ class RESTSession(object):
 
     def __init__(
         self,
-        session_id = None,
-        timeout = DEFAULT_TIMEOUT,
-        maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT
+        session_id=None,
+        timeout=DEFAULT_TIMEOUT,
+        maximum_timeout=DEFAULT_MAXIMUM_TIMEOUT,
     ):
         """
         Constructor of the class.
@@ -2461,12 +2500,12 @@ class RESTSession(object):
 
     def __getstate__(self):
         return dict(
-            session_id = self.session_id,
-            timeout = self.timeout,
-            maximum_timeout = self.maximum_timeout,
-            expire_time = self.expire_time,
-            attributes_map = self.attributes_map,
-            _maximum_expire_time = self._maximum_expire_time
+            session_id=self.session_id,
+            timeout=self.timeout,
+            maximum_timeout=self.maximum_timeout,
+            expire_time=self.expire_time,
+            attributes_map=self.attributes_map,
+            _maximum_expire_time=self._maximum_expire_time,
         )
 
     def __setstate__(self, state):
@@ -2498,19 +2537,24 @@ class RESTSession(object):
 
     @classmethod
     def new(cls, *args, **kwargs):
-        if not cls.STORAGE: cls.load()
+        if not cls.STORAGE:
+            cls.load()
         session = cls(*args, **kwargs)
         cls.STORAGE[session.session_id] = session
         return session
 
     @classmethod
     def get_s(cls, sid):
-        if not cls.STORAGE: cls.load()
-        if cls.GC_PENDING: cls.gc()
+        if not cls.STORAGE:
+            cls.load()
+        if cls.GC_PENDING:
+            cls.gc()
         session = cls.STORAGE.get(sid, None)
-        if not session: return session
+        if not session:
+            return session
         is_expired = session.is_expired()
-        if is_expired: cls.expire(sid)
+        if is_expired:
+            cls.expire(sid)
         session = None if is_expired else session
         return session
 
@@ -2524,16 +2568,13 @@ class RESTSession(object):
         for sid in cls.STORAGE:
             session = cls.STORAGE.get(sid, None)
             is_expired = session.is_expired()
-            if is_expired: cls.expire(sid)
+            if is_expired:
+                cls.expire(sid)
 
-    def update(self, domain = None, include_sub_domain = False, secure = False):
-        self.start(
-            domain = domain,
-            include_sub_domain = include_sub_domain,
-            secure = secure
-        )
+    def update(self, domain=None, include_sub_domain=False, secure=False):
+        self.start(domain=domain, include_sub_domain=include_sub_domain, secure=secure)
 
-    def start(self, domain = None, include_sub_domain = False, secure = False):
+    def start(self, domain=None, include_sub_domain=False, secure=False):
         """
         Starts the current session.
 
@@ -2560,7 +2601,7 @@ class RESTSession(object):
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
 
-    def stop(self, domain = None, include_sub_domain = False, secure = False):
+    def stop(self, domain=None, include_sub_domain=False, secure=False):
         """
         Stops the current session.
 
@@ -2584,7 +2625,7 @@ class RESTSession(object):
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
 
-    def update_expire_time(self, dirty_interval = DEFAULT_DIRTY_INTERVAL):
+    def update_expire_time(self, dirty_interval=DEFAULT_DIRTY_INTERVAL):
         """
         Updates the expire time value according to the currently
         defined timeout and maximum timeout values.
@@ -2602,7 +2643,8 @@ class RESTSession(object):
         original = self.expire_time
         self._generate_expire_time(self.timeout, self.maximum_timeout)
         should_mark = self.expire_time - original > dirty_interval
-        if should_mark: self.mark()
+        if should_mark:
+            self.mark()
 
     def lock(self):
         """
@@ -2621,9 +2663,9 @@ class RESTSession(object):
         self._access_lock.release()
 
     def flush(self):
-        self.mark(dirty = False)
+        self.mark(dirty=False)
 
-    def mark(self, dirty = True):
+    def mark(self, dirty=True):
         self.dirty = dirty
 
     def is_expired(self):
@@ -2670,7 +2712,7 @@ class RESTSession(object):
         cls = self.__class__
         return cls.__name__
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         """
         Retrieves the attribute value for the given
         attribute name. Note that it's possible to provide
@@ -2711,7 +2753,8 @@ class RESTSession(object):
         :param attribute_name: The name of the attribute to unset.
         """
 
-        if not attribute_name in self.attributes_map: return
+        if not attribute_name in self.attributes_map:
+            return
         del self.attributes_map[attribute_name]
         self.mark()
 
@@ -2736,7 +2779,7 @@ class RESTSession(object):
         self.attributes_map = attributes_map
         self.mark()
 
-    def _set_domain(self, domain, include_sub_domain = False):
+    def _set_domain(self, domain, include_sub_domain=False):
         """
         Sets the domain "attributes" in the session cookie.
 
@@ -2752,23 +2795,27 @@ class RESTSession(object):
 
         # in case the domain is not defined defined
         # should return immediately
-        if not domain: return
+        if not domain:
+            return
 
         # sets the domain in the cookie
         self.cookie.set_attribute("path", "/")
 
         # in case the domain is local, returns immediately
         # to avoid problems in the browser
-        if domain in LOCALHOST_VALUES: return
+        if domain in LOCALHOST_VALUES:
+            return
 
         # in case the domain is "valid" and sub domains
         # flag is active, sets the domain in the cookie
         # (including sub domains) otherwise sets only the
         # current domain in the cookie
-        if include_sub_domain: self.cookie.set_attribute("domain", "." + domain)
-        else: self.cookie.set_attribute("domain", domain)
+        if include_sub_domain:
+            self.cookie.set_attribute("domain", "." + domain)
+        else:
+            self.cookie.set_attribute("domain", domain)
 
-    def _set_secure(self, secure = False):
+    def _set_secure(self, secure=False):
         """
         Sets the secure "attributes" in the session cookie.
 
@@ -2783,7 +2830,8 @@ class RESTSession(object):
 
         # in case the secure flag is set adds the simple secure
         # attribute to the cookie
-        if secure: self.cookie.set_attribute("secure")
+        if secure:
+            self.cookie.set_attribute("secure")
 
     def _generate_expire_time(self, timeout, maximum_timeout):
         """
@@ -2815,8 +2863,12 @@ class RESTSession(object):
 
         # sets the expire time as the calculated expire time
         # or as the maximum expire time in case it's smaller
-        self.expire_time = expire_time if self._maximum_expire_time > expire_time\
+        self.expire_time = (
+            expire_time
+            if self._maximum_expire_time > expire_time
             else self._maximum_expire_time
+        )
+
 
 class ShelveSession(RESTSession):
     """
@@ -2835,18 +2887,15 @@ class ShelveSession(RESTSession):
     variable starts with the unset value (not loaded) """
 
     @classmethod
-    def load(cls, file_path = "session.shelve"):
+    def load(cls, file_path="session.shelve"):
         super(ShelveSession, cls).load()
         base_path = colony.conf("SESSION_PATH", "")
         base_path = os.path.abspath(base_path)
         exists_path = os.path.exists(base_path)
-        if not exists_path: os.makedirs(base_path)
+        if not exists_path:
+            os.makedirs(base_path)
         file_path = os.path.join(base_path, file_path)
-        cls.SHELVE = cls.SHELVE or shelve.open(
-            file_path,
-            protocol = 2,
-            writeback = True
-        )
+        cls.SHELVE = cls.SHELVE or shelve.open(file_path, protocol=2, writeback=True)
 
     @classmethod
     def unload(cls):
@@ -2864,19 +2913,24 @@ class ShelveSession(RESTSession):
 
     @classmethod
     def new(cls, *args, **kwargs):
-        if cls.SHELVE == None: cls.load()
+        if cls.SHELVE == None:
+            cls.load()
         session = cls(*args, **kwargs)
         cls.SHELVE[session.session_id] = session
         return session
 
     @classmethod
     def get_s(cls, sid):
-        if cls.SHELVE == None: cls.load()
-        if cls.GC_PENDING: cls.gc()
+        if cls.SHELVE == None:
+            cls.load()
+        if cls.GC_PENDING:
+            cls.gc()
         session = cls.SHELVE.get(sid, None)
-        if not session: return session
+        if not session:
+            return session
         is_expired = session.is_expired()
-        if is_expired: cls.expire(sid)
+        if is_expired:
+            cls.expire(sid)
         session = None if is_expired else session
         return session
 
@@ -2890,13 +2944,16 @@ class ShelveSession(RESTSession):
         for sid in cls.SHELVE:
             session = cls.SHELVE.get(sid, None)
             is_expired = session.is_expired()
-            if is_expired: cls.expire(sid)
+            if is_expired:
+                cls.expire(sid)
 
     def flush(self):
-        if not self.is_dirty(): return
+        if not self.is_dirty():
+            return
         cls = self.__class__
-        self.mark(dirty = False)
+        self.mark(dirty=False)
         cls.SHELVE.sync()
+
 
 class RedisSession(RESTSession):
     """
@@ -2923,11 +2980,13 @@ class RedisSession(RESTSession):
     save (bgsave) operation on each flush """
 
     @classmethod
-    def load(cls, bgsave = True):
+    def load(cls, bgsave=True):
         super(RedisSession, cls).load()
         import redis
+
         url = colony.conf("REDISTOGO_URL", None)
-        if not url: raise RuntimeError("invalid Redis URL")
+        if not url:
+            raise RuntimeError("invalid Redis URL")
         cls.BGSAVE = bgsave
         cls.REDIS = cls.REDIS or redis.from_url(url)
         cls.REDIS.ping()
@@ -2943,30 +3002,31 @@ class RedisSession(RESTSession):
 
     @classmethod
     def count(cls):
-        if not cls.REDIS: cls.load()
+        if not cls.REDIS:
+            cls.load()
         return cls.REDIS.dbsize()
 
     @classmethod
     def new(cls, *args, **kwargs):
-        if not cls.REDIS: cls.load()
+        if not cls.REDIS:
+            cls.load()
         session = cls(*args, **kwargs)
         remaining = session.get_remaining()
-        session_s = colony.legacy.cPickle.dumps(session, protocol = 2)
-        cls.REDIS.setex(
-            session.session_id,
-            value = session_s,
-            time = int(remaining)
-        )
+        session_s = colony.legacy.cPickle.dumps(session, protocol=2)
+        cls.REDIS.setex(session.session_id, value=session_s, time=int(remaining))
         return session
 
     @classmethod
     def get_s(cls, sid):
-        if not cls.REDIS: cls.load()
+        if not cls.REDIS:
+            cls.load()
         session_s = cls.REDIS.get(sid)
-        if not session_s: return session_s
+        if not session_s:
+            return session_s
         session = colony.legacy.cPickle.loads(session_s)
         is_expired = session.is_expired()
-        if is_expired: cls.expire(sid)
+        if is_expired:
+            cls.expire(sid)
         session = None if is_expired else session
         return session
 
@@ -2975,19 +3035,20 @@ class RedisSession(RESTSession):
         cls.REDIS.delete(sid)
 
     def flush(self):
-        if not self.is_dirty(): return
+        if not self.is_dirty():
+            return
         cls = self.__class__
-        self.mark(dirty = False)
+        self.mark(dirty=False)
         remaining = self.get_remaining()
-        session_s = colony.legacy.cPickle.dumps(self, protocol = 2)
-        cls.REDIS.setex(
-            self.session_id,
-            value = session_s,
-            time = int(remaining)
-        )
-        if not cls.BGSAVE: return
-        try: cls.REDIS.bgsave()
-        except Exception: pass
+        session_s = colony.legacy.cPickle.dumps(self, protocol=2)
+        cls.REDIS.setex(self.session_id, value=session_s, time=int(remaining))
+        if not cls.BGSAVE:
+            return
+        try:
+            cls.REDIS.bgsave()
+        except Exception:
+            pass
+
 
 class Cookie(object):
     """
@@ -3010,7 +3071,7 @@ class Cookie(object):
     """ The attributes map associating each of the
     attribute names with the corresponding value """
 
-    def __init__(self, string_value = None):
+    def __init__(self, string_value=None):
         """
         Constructor of the class.
 
@@ -3052,8 +3113,11 @@ class Cookie(object):
             # for such situations unpacks the value normally
             # otherwise sets the first value as the name and
             # the value as an invalid/unset value
-            if len(value_splitted) == 2: name, value = value_splitted
-            else: name = value_splitted[0]; value = None
+            if len(value_splitted) == 2:
+                name, value = value_splitted
+            else:
+                name = value_splitted[0]
+                value = None
 
             # sets the value in the attributes map
             self.attributes_map[name] = value
@@ -3079,8 +3143,7 @@ class Cookie(object):
 
             # serializes the main attribute
             serialized_attribute = self._serialize_attribute(
-                self.main_attribute_name,
-                main_attribute_value
+                self.main_attribute_name, main_attribute_value
             )
 
             # appends the serialized attribute to the string value
@@ -3093,14 +3156,16 @@ class Cookie(object):
             if not attribute_name == self.main_attribute_name:
                 # serializes the attribute and appends the serialized
                 # attribute to the string value
-                serialized_attribute = self._serialize_attribute(attribute_name, attribute_value)
+                serialized_attribute = self._serialize_attribute(
+                    attribute_name, attribute_value
+                )
                 string_value += serialized_attribute
 
         # returns the string value, representing the serialized version
         # of the cookie as per HTTP specification
         return string_value
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         """
         Retrieves an attribute using the attribute name.
 
@@ -3115,7 +3180,7 @@ class Cookie(object):
 
         return self.attributes_map.get(attribute_name, default)
 
-    def set_attribute(self, attribute_name, attribute_value = None):
+    def set_attribute(self, attribute_name, attribute_value=None):
         """
         Retrieves an attribute using the attribute name.
 
@@ -3137,7 +3202,7 @@ class Cookie(object):
 
         self.main_attribute_name = main_attribute_name
 
-    def _serialize_attribute(self, attribute_name, attribute_value = None):
+    def _serialize_attribute(self, attribute_name, attribute_value=None):
         """
         Serializes the given attribute (name and value) into
         a valid cookie string.
@@ -3156,5 +3221,7 @@ class Cookie(object):
         # converts the attribute into the correct key value
         # pair defaulting to a single name attribute in case
         # no value is defined (default fallback strategy)
-        if attribute_value == None: return attribute_name + ";"
-        else: return attribute_name + "=" + str(attribute_value) + ";"
+        if attribute_value == None:
+            return attribute_name + ";"
+        else:
+            return attribute_name + "=" + str(attribute_value) + ";"

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -59,16 +50,17 @@ blocking connection is not able to read/write more, this
 error should be raised constantly in no blocking connections """
 
 SSL_VERSIONS = {
-    "ssl2" : ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,
-    "ssl3" : ssl.PROTOCOL_SSLv3 if hasattr(ssl, "PROTOCOL_SSLv3") else -1,
-    "ssl23" : ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1,
-    "tls1" : ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1
+    "ssl2": ssl.PROTOCOL_SSLv2 if hasattr(ssl, "PROTOCOL_SSLv2") else -1,
+    "ssl3": ssl.PROTOCOL_SSLv3 if hasattr(ssl, "PROTOCOL_SSLv3") else -1,
+    "ssl23": ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1,
+    "tls1": ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1,
 }
 """ The map associating the string based description
 values for the various SSL protocols with the corresponding
 constants in the SSL infra-structure, note that the map
 is constructed taking into account the existence of the
 constants in the SSL module defaulting to invalid otherwise """
+
 
 class SSLSocket(colony.System):
     """
@@ -100,7 +92,7 @@ class SSLSocket(colony.System):
         # returns the SSL socket
         return ssl_socket
 
-    def provide_socket_parameters(self, parameters = {}):
+    def provide_socket_parameters(self, parameters={}):
         """
         Provides a new socket, configured with
         the given parameters.
@@ -136,7 +128,9 @@ class SSLSocket(colony.System):
         # tries to retrieve the key and certificate file paths,
         # falling back to the dummy certificate values
         key_file_path = parameters.get("key_file_path", dummy_ssl_key_path)
-        certificate_file_path = parameters.get("certificate_file_path", dummy_ssl_certificate_path)
+        certificate_file_path = parameters.get(
+            "certificate_file_path", dummy_ssl_certificate_path
+        )
 
         # resolves both file paths using the plugin manager, in case
         # their refers logical references their are converted into absolute paths
@@ -161,8 +155,8 @@ class SSLSocket(colony.System):
             key_file_path,
             certificate_file_path,
             server_side,
-            ssl_version = ssl_version,
-            do_handshake_on_connect = do_handshake_on_connect
+            ssl_version=ssl_version,
+            do_handshake_on_connect=do_handshake_on_connect,
         )
 
         # returns the SSL socket
@@ -192,10 +186,10 @@ class SSLSocket(colony.System):
         base_socket,
         key_file_path,
         certificate_file_path,
-        server_side = False,
-        ssl_version = ssl.PROTOCOL_SSLv23,
-        do_handshake_on_connect = False,
-        server_hostname = "localhost"
+        server_side=False,
+        ssl_version=ssl.PROTOCOL_SSLv23,
+        do_handshake_on_connect=False,
+        server_hostname="localhost",
     ):
         """
         Wraps the base socket into an SSL socket using the given
@@ -230,25 +224,26 @@ class SSLSocket(colony.System):
             base_socket,
             key_file_path,
             certificate_file_path,
-            server_side = server_side,
-            ssl_version = ssl_version,
-            do_handshake_on_connect = do_handshake_on_connect,
-            server_hostname = server_hostname
+            server_side=server_side,
+            ssl_version=ssl_version,
+            do_handshake_on_connect=do_handshake_on_connect,
+            server_hostname=server_hostname,
         )
         wrap_socket(ssl_socket)
         return ssl_socket
+
 
 def context_wrap(
     socket,
     key_file_path,
     certificate_file_path,
-    server_side = False,
-    ssl_version = ssl.PROTOCOL_SSLv23,
-    do_handshake_on_connect = False,
-    server_hostname = "localhost",
-    verify_mode = ssl.CERT_NONE,
-    check_hostname = False,
-    context = None
+    server_side=False,
+    ssl_version=ssl.PROTOCOL_SSLv23,
+    do_handshake_on_connect=False,
+    server_hostname="localhost",
+    verify_mode=ssl.CERT_NONE,
+    check_hostname=False,
+    context=None,
 ):
     if hasattr(ssl, "wrap_socket"):
         return ssl.wrap_socket(
@@ -256,8 +251,8 @@ def context_wrap(
             key_file_path,
             certificate_file_path,
             server_side,
-            ssl_version = ssl_version,
-            do_handshake_on_connect = do_handshake_on_connect
+            ssl_version=ssl_version,
+            do_handshake_on_connect=do_handshake_on_connect,
         )
 
     if not context:
@@ -266,16 +261,14 @@ def context_wrap(
     if hasattr(context, "check_hostname"):
         context.check_hostname = check_hostname
     context.verify_mode = verify_mode
-    context.load_cert_chain(
-        certfile = certificate_file_path,
-        keyfile = key_file_path
-    )
+    context.load_cert_chain(certfile=certificate_file_path, keyfile=key_file_path)
     return context.wrap_socket(
         socket,
-        server_side = server_side,
-        do_handshake_on_connect = do_handshake_on_connect,
-        server_hostname = server_hostname
+        server_side=server_side,
+        do_handshake_on_connect=do_handshake_on_connect,
+        server_hostname=server_hostname,
     )
+
 
 def wrap_socket(ssl_socket):
     # creates the bound accept and handshake methods for
@@ -304,6 +297,7 @@ def wrap_socket(ssl_socket):
     # sets the new process exception bound method in the SSL socket
     ssl_socket.process_exception = _process_exception
 
+
 def accept(self):
     # accepts the connection, retrieving
     # the return value
@@ -319,7 +313,8 @@ def accept(self):
 
         # sets the connection to non blocking mode in case
         # the blocking flag is not set in the current socket
-        if hasattr(self, "blocking") and not self.blocking: connection.setblocking(0)
+        if hasattr(self, "blocking") and not self.blocking:
+            connection.setblocking(0)
 
         # tries to archive the proper handshake on the SSL
         # connection, asynchronous handshake
@@ -335,7 +330,7 @@ def accept(self):
             errno.EAGAIN,
             errno.EPERM,
             errno.ENOENT,
-            WSAEWOULDBLOCK
+            WSAEWOULDBLOCK,
         ):
             # creates the error and populates it with the connection and the address
             # then raises it to the upper levels
@@ -360,32 +355,36 @@ def accept(self):
     # returns the return value
     return return_value
 
+
 def handshake(self):
     self.do_handshake()
 
+
 def set_option(self, name, value):
     setattr(self, name, value)
+
 
 def process_exception(self, exception):
     # in case the exception is of type socket error and the error
     # value is inside the list of valid error the exception is considered
     # valid and a valid value is returned
-    if isinstance(exception, socket.error) and\
-        exception.args[0] in (
-            errno.EWOULDBLOCK,
-            errno.EAGAIN,
-            errno.EPERM,
-            errno.ENOENT,
-            WSAEWOULDBLOCK
-        ):
+    if isinstance(exception, socket.error) and exception.args[0] in (
+        errno.EWOULDBLOCK,
+        errno.EAGAIN,
+        errno.EPERM,
+        errno.ENOENT,
+        WSAEWOULDBLOCK,
+    ):
         return True
 
     # in case the exception is of type SSL error and the error
     # number is SSL error want read or write, the exception must
     # be ignored as it means that an operation could not be immediately
     # performed and must be delayed
-    if isinstance(exception, ssl.SSLError) and\
-       exception.errno in (SSL_ERROR_WANT_READ, SSL_ERROR_WANT_WRITE):
+    if isinstance(exception, ssl.SSLError) and exception.errno in (
+        SSL_ERROR_WANT_READ,
+        SSL_ERROR_WANT_WRITE,
+    ):
         return True
 
     # return false (exception must be processed) as no graceful

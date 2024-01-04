@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -77,6 +68,7 @@ END_TOKEN_VALUE = b"\r\n"
 AUTHENTICATION_METHOD_VALUE = "authentication_method"
 """ The authentication method value """
 
+
 class ClientSMTP(colony.System):
     """
     The client SMTP class.
@@ -101,6 +93,7 @@ class ClientSMTP(colony.System):
 
     def create_request(self, parameters):
         pass
+
 
 class SMTPClient(object):
     """
@@ -144,7 +137,9 @@ class SMTPClient(object):
         client_parameters = self._generate_client_parameters(parameters)
 
         # creates the SMTP client, generating the internal structures
-        self._smtp_client = self.client_smtp.plugin.client_utils_plugin.generate_client(client_parameters)
+        self._smtp_client = self.client_smtp.plugin.client_utils_plugin.generate_client(
+            client_parameters
+        )
 
         # starts the SMTP client
         self._smtp_client.start_client()
@@ -160,22 +155,18 @@ class SMTPClient(object):
         sender,
         recipients_list,
         message,
-        parameters = {},
-        persistent = DEFAULT_PERSISTENT,
-        socket_name = DEFAULT_SOCKET_NAME,
-        socket_parameters = DEFAULT_SOCKET_PARAMETERS
+        parameters={},
+        persistent=DEFAULT_PERSISTENT,
+        socket_name=DEFAULT_SOCKET_NAME,
+        socket_parameters=DEFAULT_SOCKET_PARAMETERS,
     ):
         # defines the connection parameters
-        connection_parameters = (
-            host,
-            port,
-            persistent,
-            socket_name,
-            socket_parameters
-        )
+        connection_parameters = (host, port, persistent, socket_name, socket_parameters)
 
         # retrieves the corresponding (SMTP) client connection
-        self.client_connection = self._smtp_client.get_client_connection(connection_parameters)
+        self.client_connection = self._smtp_client.get_client_connection(
+            connection_parameters
+        )
 
         # acquires the SMTP client lock
         self._smtp_client_lock.acquire()
@@ -204,7 +195,8 @@ class SMTPClient(object):
 
             # in case the verify user flag is active, must
             # run the proper vrfy comment (as expected)
-            if verify_user: self.vrfy(session, parameters)
+            if verify_user:
+                self.vrfy(session, parameters)
 
             # tries to retrieve the username from the parameters
             username = parameters.get("username", "")
@@ -301,7 +293,7 @@ class SMTPClient(object):
         # returns the request
         return request
 
-    def retrieve_response(self, request, session, response_timeout = None):
+    def retrieve_response(self, request, session, response_timeout=None):
         """
         Retrieves the response from the sent request.
 
@@ -370,7 +362,9 @@ class SMTPClient(object):
                 if comparison_character == b"-":
                     continue
                 elif not comparison_character == b" ":
-                    raise exceptions.SMTPInvalidDataException("invalid comparison character")
+                    raise exceptions.SMTPInvalidDataException(
+                        "invalid comparison character"
+                    )
 
                 # retrieves the SMTP message, by extracting the content
                 # until the end token value and then splits the message
@@ -426,14 +420,16 @@ class SMTPClient(object):
                 # returns the response
                 return response
 
-    def login(self, session, parameters = {}):
+    def login(self, session, parameters={}):
         # retrieves the initial response value
         response = self.retrieve_response(None, session)
 
         # checks the response for errors
-        self._check_response_error(response, (220,), "problem establishing connection: ")
+        self._check_response_error(
+            response, (220,), "problem establishing connection: "
+        )
 
-    def ehlo(self, session, parameters = {}):
+    def ehlo(self, session, parameters={}):
         # sends the hello request
         request = self.send_request("ehlo", "mail.sender.com", session, parameters)
 
@@ -441,9 +437,11 @@ class SMTPClient(object):
         response = self.retrieve_response(request, session)
 
         # checks the response for errors
-        self._check_response_error(response, (250,), "problem establishing connection: ")
+        self._check_response_error(
+            response, (250,), "problem establishing connection: "
+        )
 
-    def starttls(self, session, parameters = {}):
+    def starttls(self, session, parameters={}):
         # sends the starttls request
         request = self.send_request("starttls", None, session, parameters)
 
@@ -456,7 +454,7 @@ class SMTPClient(object):
         # upgrades the client connection to use SSL (TLS)
         self.client_connection.upgrade("ssl", {})
 
-    def vrfy(self, session, parameters = {}):
+    def vrfy(self, session, parameters={}):
         # retrieves the verification user
         verification_user = parameters.get("verification_user", None)
 
@@ -472,9 +470,11 @@ class SMTPClient(object):
         response = self.retrieve_response(request, session)
 
         # checks the response for errors
-        self._check_response_error(response, (250, 251, 252), "problem verifying the user: ")
+        self._check_response_error(
+            response, (250, 251, 252), "problem verifying the user: "
+        )
 
-    def auth(self, session, username, password, parameters = {}):
+    def auth(self, session, username, password, parameters={}):
         # tries to retrieve the username from the parameters
         username = parameters.get("username", "")
 
@@ -482,7 +482,9 @@ class SMTPClient(object):
         password = parameters.get("password", "")
 
         # retrieves the authentication method
-        authentication_method = parameters.get(AUTHENTICATION_METHOD_VALUE, DEFAULT_AUTHENTICATION_METHOD)
+        authentication_method = parameters.get(
+            AUTHENTICATION_METHOD_VALUE, DEFAULT_AUTHENTICATION_METHOD
+        )
 
         # creates the authentication method name
         authentication_method_name = "authenticate_" + authentication_method
@@ -490,7 +492,9 @@ class SMTPClient(object):
         # in case the authentication method is not defined in the current object
         if not hasattr(self, authentication_method_name):
             # raises the SMTP runtime exception
-            raise exceptions.SMTPRuntimeException("authentication method not found: " + authentication_method)
+            raise exceptions.SMTPRuntimeException(
+                "authentication method not found: " + authentication_method
+            )
 
         # retrieves the authentication method from the object
         authentication_method = getattr(self, authentication_method_name)
@@ -499,9 +503,11 @@ class SMTPClient(object):
         # and authentication arguments
         authentication_method(session, parameters, username, password)
 
-    def mail(self, session, sender, parameters = {}):
+    def mail(self, session, sender, parameters={}):
         # sends the mail request
-        request = self.send_request("mail", "from:<" + sender + ">", session, parameters)
+        request = self.send_request(
+            "mail", "from:<" + sender + ">", session, parameters
+        )
 
         # retrieves the response
         response = self.retrieve_response(request, session)
@@ -509,11 +515,13 @@ class SMTPClient(object):
         # checks the response for errors
         self._check_response_error(response, (250,), "problem sending email: ")
 
-    def rcpt(self, session, recipients_list, parameters = {}):
+    def rcpt(self, session, recipients_list, parameters={}):
         # iterates over all the recipients in the recipients list
         for recipient in recipients_list:
             # sends the rcpt request
-            request = self.send_request("rcpt", "to:<" + recipient + ">", session, parameters)
+            request = self.send_request(
+                "rcpt", "to:<" + recipient + ">", session, parameters
+            )
 
             # retrieves the response
             response = self.retrieve_response(request, session)
@@ -521,7 +529,7 @@ class SMTPClient(object):
             # checks the response for errors
             self._check_response_error(response, (250,), "problem sending email: ")
 
-    def data(self, session, data, parameters = {}):
+    def data(self, session, data, parameters={}):
         # sends the data request
         request = self.send_request("data", None, session, parameters)
 
@@ -551,7 +559,7 @@ class SMTPClient(object):
         # checks the response for errors
         self._check_response_error(response, (250,), "problem sending email data: ")
 
-    def quit(self, session, parameters = {}):
+    def quit(self, session, parameters={}):
         # sends the quit request
         request = self.send_request("quit", None, session, parameters)
 
@@ -569,13 +577,17 @@ class SMTPClient(object):
         authentication_string_base64 = base64.b64encode(authentication_string)
 
         # sends the auth request
-        request = self.send_request("auth", "plain " + authentication_string_base64, session, parameters)
+        request = self.send_request(
+            "auth", "plain " + authentication_string_base64, session, parameters
+        )
 
         # retrieves the response
         response = self.retrieve_response(request, session)
 
         # checks the response for errors
-        self._check_response_error(response, (235,), "problem in login authentication: ")
+        self._check_response_error(
+            response, (235,), "problem in login authentication: "
+        )
 
     def authenticate_login(self, session, parameters, username, password):
         # converts the username to base64
@@ -609,7 +621,9 @@ class SMTPClient(object):
         response = self.retrieve_response(request, session)
 
         # checks the response for errors
-        self._check_response_error(response, (235,), "problem in login authentication: ")
+        self._check_response_error(
+            response, (235,), "problem in login authentication: "
+        )
 
     def _get_transaction_id(self):
         """
@@ -621,7 +635,7 @@ class SMTPClient(object):
         """
 
         # in case the limit is reached
-        if self.current_transaction_id == 0xffff:
+        if self.current_transaction_id == 0xFFFF:
             # resets the current transaction id
             self.current_transaction_id = 0x0000
 
@@ -631,7 +645,7 @@ class SMTPClient(object):
         # returns the current transaction id
         return self.current_transaction_id
 
-    def _check_response_error(self, response, accepted_codes, message = ""):
+    def _check_response_error(self, response, accepted_codes, message=""):
         """
         Checks the given response for errors, in case
         of errors using the given accepted codes list as the base
@@ -668,9 +682,9 @@ class SMTPClient(object):
 
         # creates the default parameters
         default_parameters = {
-            "client_plugin" : self.client_smtp.plugin,
-            "request_timeout" : REQUEST_TIMEOUT,
-            "response_timeout" : RESPONSE_TIMEOUT
+            "client_plugin": self.client_smtp.plugin,
+            "request_timeout": REQUEST_TIMEOUT,
+            "response_timeout": RESPONSE_TIMEOUT,
         }
 
         # creates the parameters map, from the default parameters
@@ -678,6 +692,7 @@ class SMTPClient(object):
 
         # returns the parameters
         return parameters
+
 
 class SMTPRequest(object):
     """
@@ -875,6 +890,7 @@ class SMTPRequest(object):
 
         self.properties = properties
 
+
 class SMTPResponse(object):
     """
     The SMTP response class.
@@ -1044,6 +1060,7 @@ class SMTPResponse(object):
 
         self.properties = properties
 
+
 class SMTPSession(object):
     """
     The SMTP session class.
@@ -1077,7 +1094,7 @@ class SMTPSession(object):
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
 
-    def generate_message(self, set_current_message = True):
+    def generate_message(self, set_current_message=True):
         # creates the new message
         message = SMTPMessage()
 
@@ -1241,6 +1258,7 @@ class SMTPSession(object):
         """
 
         self.properties = properties
+
 
 class SMTPMessage(object):
     """

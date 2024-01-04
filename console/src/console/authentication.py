@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import exceptions
+
 
 class ConsoleAuthentication(object):
     """
@@ -57,7 +49,7 @@ class ConsoleAuthentication(object):
 
         self.console_plugin = console_plugin
 
-    def handle_authentication(self, username, password, properties = {}):
+    def handle_authentication(self, username, password, properties={}):
         """
         Handles the given console authentication.
 
@@ -90,7 +82,9 @@ class ConsoleAuthentication(object):
         # retrieves the authentication plugin and uses it to try
         # to authenticate the current user retrieving the result
         authentication_plugin = self.console_plugin.authentication_plugin
-        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_result = authentication_plugin.authenticate_user(
+            username, password, authentication_handler, arguments
+        )
 
         # returns the authentication result
         return authentication_result

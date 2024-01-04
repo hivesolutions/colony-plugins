@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -85,12 +76,13 @@ DEFAULT_COUNTRY = "PT"
 DEFAULT_LANGUAGE = "PT"
 """ The default language """
 
+
 class APIEasypay(colony.System):
     """
     The API Easypay class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -113,8 +105,10 @@ class APIEasypay(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         easypay_client = EasypayClient(client_http_plugin, easypay_structure, test_mode)
-        if open_client: easypay_client.open()
+        if open_client:
+            easypay_client.open()
         return easypay_client
+
 
 class EasypayClient(object):
     """
@@ -134,7 +128,9 @@ class EasypayClient(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, client_http_plugin = None, easypay_structure = None, test_mode = False):
+    def __init__(
+        self, client_http_plugin=None, easypay_structure=None, test_mode=False
+    ):
         """
         Constructor of the class.
 
@@ -164,16 +160,17 @@ class EasypayClient(object):
         """
 
         # closes the HTTP client in case it is defined
-        if self.http_client: self.http_client.close({})
+        if self.http_client:
+            self.http_client.close({})
 
     def generate_easypay_structure(
         self,
         username,
         cin,
-        country = DEFAULT_COUNTRY,
-        language = DEFAULT_LANGUAGE,
-        api_version = DEFAULT_API_VERSION,
-        set_structure = True
+        country=DEFAULT_COUNTRY,
+        language=DEFAULT_LANGUAGE,
+        api_version=DEFAULT_API_VERSION,
+        set_structure=True,
     ):
         """
         Generates the Easypay structure for the given arguments.
@@ -200,8 +197,11 @@ class EasypayClient(object):
         # creates a new Easypay structure then sets the
         # Easypay structure in case it is to be set and
         # returns it to the caller
-        easypay_structure = EasypayStructure(username, cin, country, language, api_version)
-        if set_structure: self.set_easypay_structure(easypay_structure)
+        easypay_structure = EasypayStructure(
+            username, cin, country, language, api_version
+        )
+        if set_structure:
+            self.set_easypay_structure(easypay_structure)
         return easypay_structure
 
     def generate_reference(
@@ -209,15 +209,17 @@ class EasypayClient(object):
         amount,
         transaction_key,
         entity,
-        reference_type = "auto",
-        name = None,
-        description = None,
-        mobile = None,
-        email = None
+        reference_type="auto",
+        name=None,
+        description=None,
+        mobile=None,
+        email=None,
     ):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_01BG.php"
+        retrieval_url = (
+            TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        ) + "api_easypay_01BG.php"
 
         # start the parameters map
         parameters = {}
@@ -236,10 +238,14 @@ class EasypayClient(object):
 
         # sets the name, description, mobile an email
         # in the parameters in case they were specified
-        if name: parameters["o_name"] = name
-        if description: parameters["o_description"] = description
-        if mobile: parameters["o_mobile"] = mobile
-        if email: parameters["o_email"] = email
+        if name:
+            parameters["o_name"] = name
+        if description:
+            parameters["o_description"] = description
+        if mobile:
+            parameters["o_mobile"] = mobile
+        if email:
+            parameters["o_email"] = email
 
         # fetches the retrieval URL with the given parameters retrieving the XML
         result = self._fetch_url(retrieval_url, parameters)
@@ -250,13 +256,23 @@ class EasypayClient(object):
         get_reference_root_node = get_reference_root_nodes[0]
 
         # retrieves the reference values
-        get_reference_status = self.get_xml_node_text(get_reference_root_node, "ep_status")
-        get_reference_message = self.get_xml_node_text(get_reference_root_node, "ep_message")
+        get_reference_status = self.get_xml_node_text(
+            get_reference_root_node, "ep_status"
+        )
+        get_reference_message = self.get_xml_node_text(
+            get_reference_root_node, "ep_message"
+        )
         get_reference_cin = self.get_xml_node_text(get_reference_root_node, "ep_cin")
         get_reference_user = self.get_xml_node_text(get_reference_root_node, "ep_user")
-        get_reference_entity = self.get_xml_node_text(get_reference_root_node, "ep_entity")
-        get_reference_reference = self.get_xml_node_text(get_reference_root_node, "ep_reference")
-        get_reference_value = self.get_xml_node_text(get_reference_root_node, "ep_value")
+        get_reference_entity = self.get_xml_node_text(
+            get_reference_root_node, "ep_entity"
+        )
+        get_reference_reference = self.get_xml_node_text(
+            get_reference_root_node, "ep_reference"
+        )
+        get_reference_value = self.get_xml_node_text(
+            get_reference_root_node, "ep_value"
+        )
         get_reference_key = self.get_xml_node_text(get_reference_root_node, "t_key")
         get_reference_link = self.get_xml_node_text(get_reference_root_node, "ep_link")
 
@@ -265,15 +281,15 @@ class EasypayClient(object):
 
         # initializes the data (map)
         data = {
-            "status" : get_reference_status,
-            "message" : get_reference_message,
-            "cin" : get_reference_cin,
-            "user" : get_reference_user,
-            "entity" : get_reference_entity,
-            "reference" : get_reference_reference,
-            "value" : get_reference_value,
-            "key" : get_reference_key,
-            "link" : get_reference_link
+            "status": get_reference_status,
+            "message": get_reference_message,
+            "cin": get_reference_cin,
+            "user": get_reference_user,
+            "entity": get_reference_entity,
+            "reference": get_reference_reference,
+            "value": get_reference_value,
+            "key": get_reference_key,
+            "link": get_reference_link,
         }
 
         # checks for Easypay errors
@@ -285,7 +301,9 @@ class EasypayClient(object):
     def cancel_reference(self, entity, reference):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_00BG.php"
+        retrieval_url = (
+            TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        ) + "api_easypay_00BG.php"
 
         # start the parameters map
         parameters = {}
@@ -307,13 +325,23 @@ class EasypayClient(object):
         get_reference_root_node = get_reference_root_nodes[0]
 
         # retrieves the reference values
-        get_reference_status = self.get_xml_node_text(get_reference_root_node, "ep_status")
-        get_reference_message = self.get_xml_node_text(get_reference_root_node, "ep_message")
+        get_reference_status = self.get_xml_node_text(
+            get_reference_root_node, "ep_status"
+        )
+        get_reference_message = self.get_xml_node_text(
+            get_reference_root_node, "ep_message"
+        )
         get_reference_cin = self.get_xml_node_text(get_reference_root_node, "ep_cin")
         get_reference_user = self.get_xml_node_text(get_reference_root_node, "ep_user")
-        get_reference_entity = self.get_xml_node_text(get_reference_root_node, "ep_entity")
-        get_reference_reference = self.get_xml_node_text(get_reference_root_node, "ep_reference")
-        get_reference_value = self.get_xml_node_text(get_reference_root_node, "ep_value")
+        get_reference_entity = self.get_xml_node_text(
+            get_reference_root_node, "ep_entity"
+        )
+        get_reference_reference = self.get_xml_node_text(
+            get_reference_root_node, "ep_reference"
+        )
+        get_reference_value = self.get_xml_node_text(
+            get_reference_root_node, "ep_value"
+        )
         get_reference_key = self.get_xml_node_text(get_reference_root_node, "t_key")
 
         # processes the casting of the values
@@ -321,14 +349,14 @@ class EasypayClient(object):
 
         # initializes the data (map)
         data = {
-            "status" : get_reference_status,
-            "message" : get_reference_message,
-            "cin" : get_reference_cin,
-            "user" : get_reference_user,
-            "entity" : get_reference_entity,
-            "reference" : get_reference_reference,
-            "value" : get_reference_value,
-            "key" : get_reference_key
+            "status": get_reference_status,
+            "message": get_reference_message,
+            "cin": get_reference_cin,
+            "user": get_reference_user,
+            "entity": get_reference_entity,
+            "reference": get_reference_reference,
+            "value": get_reference_value,
+            "key": get_reference_key,
         }
 
         # checks for Easypay errors
@@ -340,7 +368,9 @@ class EasypayClient(object):
     def get_payment_details(self, document_identifier, reference_key):
         # sets the retrieval URL, using the test URL
         # in case the client is running in test mode
-        retrieval_url = (TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL) + "api_easypay_03AG.php"
+        retrieval_url = (
+            TEST_BASE_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        ) + "api_easypay_03AG.php"
 
         # start the parameters map
         parameters = {}
@@ -357,44 +387,82 @@ class EasypayClient(object):
 
         # parses the result (response) and retrieves the root node
         response_document = xml.dom.minidom.parseString(result)
-        get_payment_details_root_nodes = response_document.getElementsByTagName("getautoMB_detail")
+        get_payment_details_root_nodes = response_document.getElementsByTagName(
+            "getautoMB_detail"
+        )
         get_payment_details_root_node = get_payment_details_root_nodes[0]
 
         # retrieves the basic payment details
-        get_payment_details_status = self.get_xml_node_text(get_payment_details_root_node, "ep_status")
-        get_payment_details_message = self.get_xml_node_text(get_payment_details_root_node, "ep_message")
-        get_payment_details_cin = self.get_xml_node_text(get_payment_details_root_node, "ep_cin")
-        get_payment_details_user = self.get_xml_node_text(get_payment_details_root_node, "ep_user")
-        get_payment_details_key = self.get_xml_node_text(get_payment_details_root_node, "ep_key")
-        get_payment_details_transaction_key = self.get_xml_node_text(get_payment_details_root_node, "t_key")
-        get_payment_details_doc = self.get_xml_node_text(get_payment_details_root_node, "ep_doc")
+        get_payment_details_status = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_status"
+        )
+        get_payment_details_message = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_message"
+        )
+        get_payment_details_cin = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_cin"
+        )
+        get_payment_details_user = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_user"
+        )
+        get_payment_details_key = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_key"
+        )
+        get_payment_details_transaction_key = self.get_xml_node_text(
+            get_payment_details_root_node, "t_key"
+        )
+        get_payment_details_doc = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_doc"
+        )
 
         # initializes the data (map)
         data = {
-            "status" : get_payment_details_status,
-            "message" : get_payment_details_message,
-            "cin" : get_payment_details_cin,
-            "user" : get_payment_details_user,
-            "key" : get_payment_details_key,
-            "transaction_key" : get_payment_details_transaction_key,
-            "document" : get_payment_details_doc
+            "status": get_payment_details_status,
+            "message": get_payment_details_message,
+            "cin": get_payment_details_cin,
+            "user": get_payment_details_user,
+            "key": get_payment_details_key,
+            "transaction_key": get_payment_details_transaction_key,
+            "document": get_payment_details_doc,
         }
 
         # checks for Easypay errors
         self._check_easypay_errors(data)
 
         # retrieves the remaining payment details
-        get_payment_details_entity = self.get_xml_node_text(get_payment_details_root_node, "ep_entity")
-        get_payment_details_reference = self.get_xml_node_text(get_payment_details_root_node, "ep_reference")
-        get_payment_details_value = self.get_xml_node_text(get_payment_details_root_node, "ep_value")
-        get_payment_details_payment_type = self.get_xml_node_text(get_payment_details_root_node, "ep_payment_type")
-        get_payment_details_value_fixed = self.get_xml_node_text(get_payment_details_root_node, "ep_value_fixed")
-        get_payment_details_value_var = self.get_xml_node_text(get_payment_details_root_node, "ep_value_var")
-        get_payment_details_value_tax = self.get_xml_node_text(get_payment_details_root_node, "ep_value_tax")
-        get_payment_details_value_transf = self.get_xml_node_text(get_payment_details_root_node, "ep_value_transf")
-        get_payment_details_date_transf = self.get_xml_node_text(get_payment_details_root_node, "ep_date_transf")
-        get_payment_details_date_read = self.get_xml_node_text(get_payment_details_root_node, "ep_date_read")
-        get_payment_details_status_read = self.get_xml_node_text(get_payment_details_root_node, "ep_status_read")
+        get_payment_details_entity = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_entity"
+        )
+        get_payment_details_reference = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_reference"
+        )
+        get_payment_details_value = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_value"
+        )
+        get_payment_details_payment_type = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_payment_type"
+        )
+        get_payment_details_value_fixed = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_value_fixed"
+        )
+        get_payment_details_value_var = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_value_var"
+        )
+        get_payment_details_value_tax = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_value_tax"
+        )
+        get_payment_details_value_transf = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_value_transf"
+        )
+        get_payment_details_date_transf = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_date_transf"
+        )
+        get_payment_details_date_read = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_date_read"
+        )
+        get_payment_details_status_read = self.get_xml_node_text(
+            get_payment_details_root_node, "ep_status_read"
+        )
 
         # converts the numeric payment details
         get_payment_details_value = float(get_payment_details_value)
@@ -442,8 +510,10 @@ class EasypayClient(object):
         # with invalid arguments (no-op) and checks
         # if a credential failure is in the exception message,
         # to determine if the credentials are valid
-        try: self.get_payment_details(None, None)
-        except Exception as exception: valid = not "ep_cin not ok" in exception.message
+        try:
+            self.get_payment_details(None, None)
+        except Exception as exception:
+            valid = not "ep_cin not ok" in exception.message
 
         # returns the valid flag
         return valid
@@ -482,7 +552,7 @@ class EasypayClient(object):
         parameters["ep_user"] = self.easypay_structure.username
         parameters["ep_cin"] = self.easypay_structure.cin
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -497,16 +567,14 @@ class EasypayClient(object):
         """
 
         # creates the parameters map in case it is not defined
-        if not parameters: parameters = {}
+        if not parameters:
+            parameters = {}
 
         # retrieves the HTTP client, fetches the URL retrieving the
         # HTTP response and retrieves the contents from the response
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(
-            url,
-            method,
-            parameters,
-            content_type_charset = DEFAULT_CHARSET
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
         )
         contents = http_response.received_message
 
@@ -549,7 +617,8 @@ class EasypayClient(object):
 
         # returns immediately in case the
         # status does not start with an error
-        if not status.startswith(ERROR_STATUS): return
+        if not status.startswith(ERROR_STATUS):
+            return
 
         # raises the Easypay API error
         raise exceptions.EasypayAPIError("error in request: " + message)
@@ -564,20 +633,17 @@ class EasypayClient(object):
         """
 
         # in case an HTTP client already exists then returns it
-        if self.http_client: return self.http_client
+        if self.http_client:
+            return self.http_client
 
         # defines the client parameters
-        client_parameters = {
-            CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-        }
+        client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
         # creates the HTTP client
         self.http_client = self.client_http_plugin.create_client(client_parameters)
 
         # defines the open parameters
-        open_parameters = {
-            REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT
-        }
+        open_parameters = {REQUEST_TIMEOUT_VALUE: DEFAULT_REQUEST_TIMEOUT}
 
         # opens the HTTP client
         self.http_client.open(open_parameters)
@@ -589,7 +655,8 @@ class EasypayClient(object):
         # retrieves the XML nodes, returning none
         # in case the retrieved nodes are empty
         xml_nodes = xml_document.getElementsByTagName(xml_tag_name)
-        if not xml_nodes: return None
+        if not xml_nodes:
+            return None
 
         # retrieves the XML node (first), and its text
         xml_node = xml_nodes[0]
@@ -603,14 +670,18 @@ class EasypayClient(object):
         child_nodes = xml_node.childNodes
 
         # collects the child text nodes
-        child_node_data_list = [child_node.data for child_node in\
-            child_nodes if child_node.nodeType == xml.dom.minidom.Node.TEXT_NODE]
+        child_node_data_list = [
+            child_node.data
+            for child_node in child_nodes
+            if child_node.nodeType == xml.dom.minidom.Node.TEXT_NODE
+        ]
 
         # converts the child text nodes to a string
         xml_node_text = "".join(child_node_data_list)
 
         # returns the XML node text
         return xml_node_text
+
 
 class EasypayStructure(object):
     """
@@ -633,12 +704,7 @@ class EasypayStructure(object):
     """ The version of the API being used """
 
     def __init__(
-        self,
-        username,
-        cin,
-        country,
-        language,
-        api_version = DEFAULT_API_VERSION
+        self, username, cin, country, language, api_version=DEFAULT_API_VERSION
     ):
         """
         Constructor of the class.

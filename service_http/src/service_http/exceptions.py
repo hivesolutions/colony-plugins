@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceHTTPException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class ServiceHTTPException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class EncodingNotFound(ServiceHTTPException):
     """
@@ -73,6 +66,7 @@ class EncodingNotFound(ServiceHTTPException):
 
         return "Encoding not found - %s" % self.message
 
+
 class ClientRequestSecurityViolation(ServiceHTTPException):
     """
     The client request security violation request timeout class.
@@ -98,6 +92,7 @@ class ClientRequestSecurityViolation(ServiceHTTPException):
         """
 
         return "Client request security violation - %s" % self.message
+
 
 class HTTPRuntimeException(ServiceHTTPException):
     """
@@ -125,6 +120,7 @@ class HTTPRuntimeException(ServiceHTTPException):
 
         return "HTTP runtime exception - %s" % self.message
 
+
 class HTTPInvalidDataException(HTTPRuntimeException):
     """
     The HTTP invalid data exception class.
@@ -149,6 +145,7 @@ class HTTPInvalidDataException(HTTPRuntimeException):
         """
 
         return "HTTP invalid data exception - %s" % self.message
+
 
 class HTTPNoHandlerException(HTTPRuntimeException):
     """
@@ -175,6 +172,7 @@ class HTTPNoHandlerException(HTTPRuntimeException):
 
         return "HTTP no handler exception - %s" % self.message
 
+
 class HTTPHandlerNotFoundException(HTTPRuntimeException):
     """
     The HTTP handler not found exception.
@@ -199,6 +197,7 @@ class HTTPHandlerNotFoundException(HTTPRuntimeException):
         """
 
         return "HTTP handler not found exception - %s" % self.message
+
 
 class HTTPAuthenticationHandlerNotFoundException(HTTPRuntimeException):
     """
@@ -225,6 +224,7 @@ class HTTPAuthenticationHandlerNotFoundException(HTTPRuntimeException):
 
         return "HTTP authentication handler not found exception - %s" % self.message
 
+
 class HTTPInvalidMultipartRequestException(HTTPRuntimeException):
     """
     The HTTP invalid multipart request exception.
@@ -249,6 +249,7 @@ class HTTPInvalidMultipartRequestException(HTTPRuntimeException):
         """
 
         return "HTTP invalid multipart request exception - %s" % self.message
+
 
 class HTTPDataRetrievalException(HTTPRuntimeException):
     """
@@ -275,6 +276,7 @@ class HTTPDataRetrievalException(HTTPRuntimeException):
 
         return "HTTP data retrieval exception - %s" % self.message
 
+
 class HTTPDataSendingException(HTTPRuntimeException):
     """
     The HTTP data sending exception.
@@ -299,6 +301,7 @@ class HTTPDataSendingException(HTTPRuntimeException):
         """
 
         return "HTTP data sending exception - %s" % self.message
+
 
 class UnauthorizedException(HTTPRuntimeException):
     """

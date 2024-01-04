@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -56,6 +47,7 @@ SECRET_KEY = colony.legacy.LONG(123123123)
 
 SYSTEM_RANDOM_VALUE = "SystemRandom"
 """ The system random value """
+
 
 class Random(colony.System):
     """
@@ -106,12 +98,18 @@ class Random(colony.System):
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s%s" % (SECRET_KEY, process_id_absolute, thread_id_absolute, current_time_integer, random_key)
+        random = "%s%s%s%s%s" % (
+            SECRET_KEY,
+            process_id_absolute,
+            thread_id_absolute,
+            current_time_integer,
+            random_key,
+        )
 
         # returns the random value
         return random
 
-    def generate_random_int(self, number_digits = None):
+    def generate_random_int(self, number_digits=None):
         """
         Generates a random key, using the current
         default random generator and converts it

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -75,6 +66,7 @@ error should be raised constantly in no blocking connections """
 
 DEFAULT_TYPE = "connection"
 """ The default type client """
+
 
 class ClientUtils(colony.System):
     """
@@ -162,6 +154,7 @@ class ClientUtils(colony.System):
         # removes the socket upgrader plugin from the socket upgrader plugins map
         del self.socket_upgrader_plugins_map[upgrader_name]
 
+
 class AbstractClient(object):
     """
     The abstract client class.
@@ -200,7 +193,7 @@ class AbstractClient(object):
     client_connections_map = {}
     """ The map containing the client connections """
 
-    def __init__(self, client_utils, client_utils_plugin, parameters = {}):
+    def __init__(self, client_utils, client_utils_plugin, parameters={}):
         """
         Constructor of the class.
 
@@ -219,8 +212,12 @@ class AbstractClient(object):
         self.client_plugin = parameters.get("client_plugin", None)
         self.chunk_size = parameters.get("chunk_size", CHUNK_SIZE)
         self.client_configuration = parameters.get("client_configuration", {})
-        self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
-        self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
+        self.client_connection_timeout = parameters.get(
+            "client_connection_timeout", CLIENT_CONNECTION_TIMEOUT
+        )
+        self.connection_timeout = parameters.get(
+            "connection_timeout", CONNECTION_TIMEOUT
+        )
         self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
         self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
 
@@ -239,11 +236,13 @@ class AbstractClient(object):
         """
 
         # iterates over all the client connections, to closes them
-        for _connection_tuple, client_connection in colony.legacy.items(self.client_connections_map):
+        for _connection_tuple, client_connection in colony.legacy.items(
+            self.client_connections_map
+        ):
             # closes the client connection
             client_connection.close()
 
-    def get_client_connection(self, connection_tuple, open_connection = True):
+    def get_client_connection(self, connection_tuple, open_connection=True):
         """
         Retrieves the client connection for the given
         connection tuple.
@@ -260,10 +259,14 @@ class AbstractClient(object):
 
         # generates an hashable connection tuple from the original
         # connection tuple
-        connection_tuple_hashable = self._generate_connection_tuple_hashable(connection_tuple)
+        connection_tuple_hashable = self._generate_connection_tuple_hashable(
+            connection_tuple
+        )
 
         # tries to retrieve the current client connection
-        client_connection = self.client_connections_map.get(connection_tuple_hashable, None)
+        client_connection = self.client_connections_map.get(
+            connection_tuple_hashable, None
+        )
 
         # in case the connection tuple is not present in the
         # client connections map or the current client connection
@@ -279,7 +282,8 @@ class AbstractClient(object):
         # be opened and the client  connection is not open, opens
         # the client connection
         client_connection = self.client_connections_map[connection_tuple_hashable]
-        if open_connection and not client_connection.is_open(): client_connection.open()
+        if open_connection and not client_connection.is_open():
+            client_connection.open()
 
         # returns the client connection
         return client_connection
@@ -301,10 +305,7 @@ class AbstractClient(object):
         host, port, persistent, socket_name, socket_parameters = connection_tuple
 
         # creates the address tuple
-        address = (
-            host,
-            port
-        )
+        address = (host, port)
 
         # creates a socket for the client with
         # the given socket name
@@ -321,13 +322,13 @@ class AbstractClient(object):
             socket_parameters,
             self.request_timeout,
             self.response_timeout,
-            self.chunk_size
+            self.chunk_size,
         )
 
         # returns the client connection
         return client_connection
 
-    def _get_socket(self, socket_name = "normal", socket_parameters = {}):
+    def _get_socket(self, socket_name="normal", socket_parameters={}):
         """
         Retrieves the socket for the given socket name
         using the socket provider plugins.
@@ -352,9 +353,7 @@ class AbstractClient(object):
             # creates the parameters for the socket provider, the
             # handshake process in case it's required must be forced
             # then copies the socket parameters to the parameters map
-            parameters = {
-                "do_handshake_on_connect" : True
-            }
+            parameters = {"do_handshake_on_connect": True}
             colony.map_copy(socket_parameters, parameters)
 
             # creates a new socket with the socket provider plugin
@@ -363,7 +362,9 @@ class AbstractClient(object):
             return socket
         else:
             # raises the socket provider not found exception
-            raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
+            raise exceptions.SocketProviderNotFound(
+                "socket provider %s not found" % socket_name
+            )
 
     def _generate_connection_tuple_hashable(self, connection_tuple):
         """
@@ -382,7 +383,9 @@ class AbstractClient(object):
 
         # sets the last element of the connection tuple hashable as the
         # items tuple instead of the dictionary in order to avoid unhashable problems
-        connection_tuple_hashable[4] = tuple(colony.legacy.items(connection_tuple_hashable[4]))
+        connection_tuple_hashable[4] = tuple(
+            colony.legacy.items(connection_tuple_hashable[4])
+        )
 
         # converts the connection tuple hashable into a tuple
         # in order to hashable
@@ -390,6 +393,7 @@ class AbstractClient(object):
 
         # returns the connection tuple hashable
         return connection_tuple_hashable
+
 
 class ClientConnection(object):
     """
@@ -465,7 +469,7 @@ class ClientConnection(object):
         connection_socket_parameters,
         connection_request_timeout,
         connection_response_timeout,
-        connection_chunk_size
+        connection_chunk_size,
     ):
         """
         Constructor of the class.
@@ -523,7 +527,9 @@ class ClientConnection(object):
 
         # connects the connection socket to the connection address
         # the connection is only created in case the connection is persistent
-        self.connection_persistent and self.connection_socket.connect(self.connection_address)
+        self.connection_persistent and self.connection_socket.connect(
+            self.connection_address
+        )
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
@@ -592,18 +598,24 @@ class ClientConnection(object):
         # in case the upgrader handler is not found in the handler plugins map
         # raises the socket upgrader not found exception
         if not socket_upgrader in socket_upgrader_plugins_map:
-            raise exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+            raise exceptions.SocketUpgraderNotFound(
+                "socket upgrader %s not found" % self.socket_upgrader
+            )
 
         # retrieves the socket upgrader plugin
-        socket_upgrader_plugin = client_utils.socket_upgrader_plugins_map[socket_upgrader]
+        socket_upgrader_plugin = client_utils.socket_upgrader_plugins_map[
+            socket_upgrader
+        ]
 
         # upgrades the current connection socket using the socket upgrader plugin
-        self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
+        self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(
+            self.connection_socket, parameters
+        )
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def receive(self, request_timeout = None, chunk_size = None, retries = RECEIVE_RETRIES):
+    def receive(self, request_timeout=None, chunk_size=None, retries=RECEIVE_RETRIES):
         """
         Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -619,11 +631,13 @@ class ClientConnection(object):
         """
 
         self._read_lock.acquire()
-        try: return_value = self._receive(request_timeout, chunk_size, retries)
-        finally: self._read_lock.release()
+        try:
+            return_value = self._receive(request_timeout, chunk_size, retries)
+        finally:
+            self._read_lock.release()
         return return_value
 
-    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
+    def send(self, message, response_timeout=None, retries=SEND_RETRIES):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -638,8 +652,10 @@ class ClientConnection(object):
         """
 
         self._write_lock.acquire()
-        try: self._send(message, response_timeout, retries)
-        finally: self._write_lock.release()
+        try:
+            self._send(message, response_timeout, retries)
+        finally:
+            self._write_lock.release()
 
     def return_data(self, data):
         """
@@ -708,11 +724,7 @@ class ClientConnection(object):
         :return: A tuple representing the connection.
         """
 
-        return (
-            self._connection_socket,
-            self.connection_address,
-            self.connection_port
-        )
+        return (self._connection_socket, self.connection_address, self.connection_port)
 
     def get_connection_socket(self):
         """
@@ -761,7 +773,9 @@ class ClientConnection(object):
         """
 
         # retrieves the request timeout
-        request_timeout = request_timeout and request_timeout or self.connection_request_timeout
+        request_timeout = (
+            request_timeout and request_timeout or self.connection_request_timeout
+        )
 
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
@@ -796,7 +810,9 @@ class ClientConnection(object):
         while True:
             try:
                 # runs the select in the connection socket, with timeout
-                selected_values = select.select([self.connection_socket], [], [], request_timeout)
+                selected_values = select.select(
+                    [self.connection_socket], [], [], request_timeout
+                )
             except Exception:
                 # closes the connection and then raises the
                 # request closed exception
@@ -820,18 +836,21 @@ class ClientConnection(object):
 
                     # in case no data is received (end of connection)
                     # must break the current loop
-                    if not data: break
+                    if not data:
+                        break
 
             except Exception as exception:
                 # in case there was at least one successful read
                 # breaks the current loop (read complete)
-                if read_flag: break
+                if read_flag:
+                    break
 
                 # tries to process the exception, meaning that the
                 # exception is going to be tested against a series
                 # of validation and in case it's considered valid
                 # it's ignored and the loop continues
-                if self._process_exception(exception): continue
+                if self._process_exception(exception):
+                    continue
 
                 # in case the number of retries (available)
                 # is greater than zero, decrements the retries value
@@ -867,7 +886,7 @@ class ClientConnection(object):
         # returns the data
         return data
 
-    def _send(self, message, response_timeout = None, retries = SEND_RETRIES):
+    def _send(self, message, response_timeout=None, retries=SEND_RETRIES):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -883,7 +902,9 @@ class ClientConnection(object):
         """
 
         # retrieves the response timeout
-        response_timeout = response_timeout and response_timeout or self.connection_response_timeout
+        response_timeout = (
+            response_timeout and response_timeout or self.connection_response_timeout
+        )
 
         # retrieves the number of bytes in the message
         number_bytes = len(message)
@@ -895,7 +916,9 @@ class ClientConnection(object):
             # has been dropped for some reason a reconnection attempt
             # must be performed to retry the client
             if not data:
-                self.client_plugin.debug("Received empty data (in read buffer), reconnecting socket")
+                self.client_plugin.debug(
+                    "Received empty data (in read buffer), reconnecting socket"
+                )
                 self._reconnect_connection_socket()
                 break
 
@@ -908,7 +931,7 @@ class ClientConnection(object):
                     [self.connection_socket],
                     [self.connection_socket],
                     [],
-                    response_timeout
+                    response_timeout,
                 )
             except Exception:
                 # closes the connection and raises a request closed exception
@@ -927,7 +950,9 @@ class ClientConnection(object):
                     if not data:
                         # prints a debug message and then runs the re-connection
                         # operation to try to send the data
-                        self.client_plugin.debug("Received empty data, reconnecting socket")
+                        self.client_plugin.debug(
+                            "Received empty data, reconnecting socket"
+                        )
                         self._reconnect_connection_socket()
 
                     # otherwise there are contents in it
@@ -938,7 +963,10 @@ class ClientConnection(object):
                         self.return_data(data)
                 except Exception as exception:
                     # prints a debug message and then reconnects the connection socket
-                    self.client_plugin.debug("Problem while receiving pending data: " + colony.legacy.UNICODE(exception))
+                    self.client_plugin.debug(
+                        "Problem while receiving pending data: "
+                        + colony.legacy.UNICODE(exception)
+                    )
                     self._reconnect_connection_socket()
 
             # in case there are no selected values connection is closed as the timeout
@@ -965,13 +993,16 @@ class ClientConnection(object):
                     else:
                         # sends the data in chunks, the send to command is used for
                         # a non connection oriented connection
-                        number_bytes_sent = self.connection_socket.sendto(message, self.connection_address)
+                        number_bytes_sent = self.connection_socket.sendto(
+                            message, self.connection_address
+                        )
                 except Exception as exception:
                     # tries to process the exception, meaning that the
                     # exception is going to be tested against a series
                     # of validation and in case it's considered valid
                     # it's ignored and the loop continues
-                    if self._process_exception(exception): continue
+                    if self._process_exception(exception):
+                        continue
 
                     # in case the number of retries (available) is greater than
                     # zero must decrement the value and continue the loop as this
@@ -998,8 +1029,10 @@ class ClientConnection(object):
 
                 # in case the number of bytes (pending)
                 # is zero (the transfer is complete)
-                if number_bytes == 0: break
-                else: message = message[number_bytes * -1:]
+                if number_bytes == 0:
+                    break
+                else:
+                    message = message[number_bytes * -1 :]
 
     def _reconnect_connection_socket(self):
         """
@@ -1014,7 +1047,9 @@ class ClientConnection(object):
 
         # creates a socket for the client with
         # the given socket name and parameters
-        self.connection_socket = self.client._get_socket(self.connection_socket_name, self.connection_socket_parameters)
+        self.connection_socket = self.client._get_socket(
+            self.connection_socket_name, self.connection_socket_parameters
+        )
 
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
@@ -1041,21 +1076,21 @@ class ClientConnection(object):
         # in case the current connection socket contains the process
         # exception method and the exception is process successfully
         # returns valid as the exception is not critical
-        if hasattr(self.connection_socket, "process_exception") and\
-            self.connection_socket.process_exception(exception):
+        if hasattr(
+            self.connection_socket, "process_exception"
+        ) and self.connection_socket.process_exception(exception):
             return True
 
         # tries to run the verification of the exception against the
         # "valid" socket errors in case it's one of such errors the
         # returned valid is true (should be ignored)
-        if isinstance(exception, socket.error) and\
-            exception.args[0] in (
-                errno.EWOULDBLOCK,
-                errno.EAGAIN,
-                errno.EPERM,
-                errno.ENOENT,
-                WSAEWOULDBLOCK
-            ):
+        if isinstance(exception, socket.error) and exception.args[0] in (
+            errno.EWOULDBLOCK,
+            errno.EAGAIN,
+            errno.EPERM,
+            errno.ENOENT,
+            WSAEWOULDBLOCK,
+        ):
             return True
 
         # by default returns an invalid value meaning that the exception

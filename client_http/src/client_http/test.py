@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -41,6 +32,7 @@ import json
 
 import colony
 
+
 class ClientHTTPTest(colony.Test):
     """
     The client HTTP infra-structure test class, responsible
@@ -48,9 +40,7 @@ class ClientHTTPTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (
-            ClientHTTPTestCase,
-        )
+        return (ClientHTTPTestCase,)
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -64,8 +54,8 @@ class ClientHTTPTest(colony.Test):
 
         test_case.http.close()
 
-class ClientHTTPTestCase(colony.ColonyTestCase):
 
+class ClientHTTPTestCase(colony.ColonyTestCase):
     def setUp(self):
         colony.ColonyTestCase.setUp(self)
         self.httpbin = colony.conf("HTTPBIN", "httpbin.org")
@@ -94,9 +84,7 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         self.assertEqual(len(response.received_message) > 100, True)
 
         response = self.http.fetch_url(
-            "https://%s/post" % self.httpbin,
-            method = "POST",
-            contents = b"hello world"
+            "https://%s/post" % self.httpbin, method="POST", contents=b"hello world"
         )
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
@@ -114,8 +102,8 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
 
         response = self.http.fetch_url(
             "https://%s/post" % self.httpbin,
-            method = "POST",
-            parameters = dict(hello = "world")
+            method="POST",
+            parameters=dict(hello="world"),
         )
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
@@ -128,13 +116,11 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
-        self.assertEqual(received_message_j["form"], {"hello" : "world"})
+        self.assertEqual(received_message_j["form"], {"hello": "world"})
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
-            "https://%s/post" % self.httpbin,
-            method = "POST",
-            parameters = {"olá" : "mundo"}
+            "https://%s/post" % self.httpbin, method="POST", parameters={"olá": "mundo"}
         )
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
@@ -147,15 +133,14 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
-        self.assertEqual(received_message_j["form"], {
-            colony.legacy.u("olá") : colony.legacy.u("mundo")
-        })
+        self.assertEqual(
+            received_message_j["form"],
+            {colony.legacy.u("olá"): colony.legacy.u("mundo")},
+        )
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
-            "https://%s/post" % self.httpbin,
-            method = "POST",
-            parameters = {"你好" : "世界"}
+            "https://%s/post" % self.httpbin, method="POST", parameters={"你好": "世界"}
         )
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")
@@ -167,14 +152,14 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         received_message = response.received_message.decode("utf-8")
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
-        self.assertEqual(received_message_j["form"], {
-            colony.legacy.u("你好") : colony.legacy.u("世界")
-        })
+        self.assertEqual(
+            received_message_j["form"], {colony.legacy.u("你好"): colony.legacy.u("世界")}
+        )
         self.assertEqual(received_message_j["data"], "")
 
         response = self.http.fetch_url(
             "https://username:password@%s/basic-auth/username/password" % self.httpbin,
-            method = "GET"
+            method="GET",
         )
 
         self.assertEqual(response.protocol_version, "HTTP/1.1")

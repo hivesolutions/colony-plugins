@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -87,7 +78,7 @@ MISSING_MANDATORY_ARGUMENTS_MESSAGE = "missing mandatory arguments"
 INTERNAL_CONFIGURATION_PROBLEM_MESSAGE = "internal configuration problem"
 """ The internal configuration problem message """
 
-COMMAND_LINE_REGEX_VALUE = "\"[^\"]*\"|[^ \s]+"
+COMMAND_LINE_REGEX_VALUE = '"[^"]*"|[^ \s]+'
 """ The regular expression to retrieve the command line arguments """
 
 COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)
@@ -96,11 +87,9 @@ COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)
 COMPLETE_PERCENTAGE = 100
 """ The percentage value that defines a completed task """
 
-SEQUENCE_TYPES = (
-    list,
-    tuple
-)
+SEQUENCE_TYPES = (list, tuple)
 """ The sequence types """
+
 
 class Console(colony.System):
     """
@@ -149,20 +138,28 @@ class Console(colony.System):
         :return: The create console interface character.
         """
 
-        return interfaces.ConsoleInterfaceCharacter(self, console_handler, console_context)
+        return interfaces.ConsoleInterfaceCharacter(
+            self, console_handler, console_context
+        )
 
-    def authenticate_user(self, username, password, console_context = None):
+    def authenticate_user(self, username, password, console_context=None):
         # retrieves the authentication properties from the console configuration
-        authentication_properties = self.console_configuration.get("authentication_properties", {})
+        authentication_properties = self.console_configuration.get(
+            "authentication_properties", {}
+        )
 
         # handles the authentication with the console authentication and
         # retrieves the authentication result
-        authentication_result = self.console_authentication.handle_authentication(username, password, authentication_properties)
+        authentication_result = self.console_authentication.handle_authentication(
+            username, password, authentication_properties
+        )
 
         # returns the authentication result
         return authentication_result
 
-    def process_command_line(self, command_line, output_method = None, console_context = None):
+    def process_command_line(
+        self, command_line, output_method=None, console_context=None
+    ):
         """
         Processes the given command line, with the given output method.
 
@@ -198,7 +195,9 @@ class Console(colony.System):
 
         # validates the command with the given arguments and
         # retrieves the command handler and the arguments map in success
-        command_handler, arguments_map = self._validate_command(command, arguments, output_method)
+        command_handler, arguments_map = self._validate_command(
+            command, arguments, output_method
+        )
 
         # in case the validation failed
         if not command_handler:
@@ -211,7 +210,9 @@ class Console(colony.System):
             command_handler(arguments, arguments_map, output_method, console_context)
         except Exception as exception:
             # prints the exception message
-            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + colony.legacy.UNICODE(exception))
+            output_method(
+                COMMAND_EXCEPTION_MESSAGE + ": " + colony.legacy.UNICODE(exception)
+            )
 
             # logs the stack trace value
             self.plugin.log_stack_trace()
@@ -232,7 +233,7 @@ class Console(colony.System):
 
         return self.write
 
-    def get_command_line_alternatives(self, command, arguments, console_context = None):
+    def get_command_line_alternatives(self, command, arguments, console_context=None):
         """
         Processes the given command line, with the given output method.
         Retrieves the alternative (possible) values for the given command
@@ -253,7 +254,9 @@ class Console(colony.System):
         # in case the argument are valid
         if arguments:
             # retrieves the list of argument alternatives
-            alternatives_list = self._get_argument_alternatives(command, arguments, console_context)
+            alternatives_list = self._get_argument_alternatives(
+                command, arguments, console_context
+            )
         # otherwise we're completing a command only
         else:
             # retrieves the list of command alternatives
@@ -264,15 +267,12 @@ class Console(colony.System):
 
         # creates the alternatives tuple containing
         # the alternatives list and the best match
-        alternatives_tuple = (
-            alternatives_list,
-            best_match
-        )
+        alternatives_tuple = (alternatives_list, best_match)
 
         # returns the alternatives tuple
         return alternatives_tuple
 
-    def split_command_line(self, command_line, include_extra_space = False):
+    def split_command_line(self, command_line, include_extra_space=False):
         """
         Splits the given command line into command and arguments.
 
@@ -286,7 +286,9 @@ class Console(colony.System):
         """
 
         # splits the command line arguments
-        line_split = self.split_command_line_arguments(command_line, include_extra_space)
+        line_split = self.split_command_line_arguments(
+            command_line, include_extra_space
+        )
 
         # in case the line is not valid (empty)
         if not line_split:
@@ -302,10 +304,7 @@ class Console(colony.System):
 
         # creates the command tuple with the command
         # and the arguments
-        command_tuple = (
-            command,
-            arguments
-        )
+        command_tuple = (command, arguments)
 
         # returns the command tuple
         return command_tuple
@@ -338,7 +337,7 @@ class Console(colony.System):
         # cleans the console configuration
         colony.map_clean(self.console_configuration)
 
-    def split_command_line_arguments(self, command_line, include_extra_space = False):
+    def split_command_line_arguments(self, command_line, include_extra_space=False):
         """
         Separates the various command line arguments per space or per quotes.
 
@@ -363,7 +362,7 @@ class Console(colony.System):
             line = line_split[line_split_length_index]
 
             # removes the "extra" characters from the line
-            line = line.replace("\"", "")
+            line = line.replace('"', "")
 
             # sets the line in the line split list
             line_split[line_split_length_index] = line
@@ -380,7 +379,7 @@ class Console(colony.System):
         # returns the line split
         return line_split
 
-    def write(self, text, new_line = True):
+    def write(self, text, new_line=True):
         """
         Writes the given text to the standard output,
         may use a newline or not.
@@ -412,17 +411,16 @@ class Console(colony.System):
             output_method(INVALID_COMMAND_MESSAGE)
 
             # returns none (invalid)
-            return (
-                None,
-                None
-            )
+            return (None, None)
 
         # retrieves the command arguments
         command_arguments = command_information.get("arguments", [])
 
         # retrieves the command mandatory arguments from the
         # the command information
-        command_mandatory_arguments = self.__get_command_mandatory_arguments(command_arguments)
+        command_mandatory_arguments = self.__get_command_mandatory_arguments(
+            command_arguments
+        )
 
         # retrieves the command mandatory arguments length
         command_mandatory_arguments_length = len(command_mandatory_arguments)
@@ -435,26 +433,31 @@ class Console(colony.System):
         if arguments_length < command_mandatory_arguments_length:
             # retrieves the missing arguments count, by subtracting the arguments
             # length from the command mandatory arguments length
-            missing_arguments_count = command_mandatory_arguments_length - arguments_length
+            missing_arguments_count = (
+                command_mandatory_arguments_length - arguments_length
+            )
 
             # retrieves the missing arguments list
-            missing_arguments = command_mandatory_arguments[missing_arguments_count * -1:]
+            missing_arguments = command_mandatory_arguments[
+                missing_arguments_count * -1 :
+            ]
 
             # creates the missing argument names list
-            missing_argument_names = [value.get("name", "undefined") for value in missing_arguments]
+            missing_argument_names = [
+                value.get("name", "undefined") for value in missing_arguments
+            ]
 
             # joins the missing argument names to create the missing
             # argument names line
             missing_argument_names_line = ", ".join(missing_argument_names)
 
             # print the missing mandatory arguments message
-            output_method(MISSING_MANDATORY_ARGUMENTS_MESSAGE + ": " + missing_argument_names_line)
+            output_method(
+                MISSING_MANDATORY_ARGUMENTS_MESSAGE + ": " + missing_argument_names_line
+            )
 
             # returns none (invalid)
-            return (
-                None,
-                None
-            )
+            return (None, None)
 
         # retrieves the command handler
         command_handler = command_information.get("handler", None)
@@ -465,16 +468,15 @@ class Console(colony.System):
             output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
 
             # returns none (invalid)
-            return (
-                None,
-                None
-            )
+            return (None, None)
 
         # retrieves the received arguments list
         received_arguments = command_arguments[:arguments_length]
 
         # retrieves the received argument names
-        received_argument_names = [value.get("name", "undefined") for value in received_arguments]
+        received_argument_names = [
+            value.get("name", "undefined") for value in received_arguments
+        ]
 
         # zip the received argument names and the arguments list
         received_arguments_tuple = zip(received_argument_names, arguments)
@@ -485,10 +487,7 @@ class Console(colony.System):
 
         # creates the command tuple from the command handler
         # and the arguments map
-        command_tuple = (
-            command_handler,
-            arguments_map
-        )
+        command_tuple = (command_handler, arguments_map)
 
         # returns the command tuple
         return command_tuple
@@ -571,18 +570,26 @@ class Console(colony.System):
         elif command_argument_values_type == types.MethodType:
             # sets the alternatives base list as the return
             # of the command argument values call
-            alternatives_base_list = command_argument_values(target_argument, console_context)
+            alternatives_base_list = command_argument_values(
+                target_argument, console_context
+            )
 
         # iterates over all the commands in the
         # commands map
         for alternative_base in alternatives_base_list:
             # recreates the alternative base value based on either
             # the command contains any more arguments or not
-            alternative_base = command_arguments_length > arguments_index + 1 and alternative_base + " " or alternative_base
+            alternative_base = (
+                command_arguments_length > arguments_index + 1
+                and alternative_base + " "
+                or alternative_base
+            )
 
             # in case the alternative base starts with the
             # value in the target argument
-            alternative_base.startswith(target_argument) and alternatives_list.append(alternative_base)
+            alternative_base.startswith(target_argument) and alternatives_list.append(
+                alternative_base
+            )
 
         # returns the alternatives list
         return alternatives_list
@@ -620,7 +627,9 @@ class Console(colony.System):
 
                 # retrieves the (current) alternative
                 # character (in case the alternative length is valid)
-                alternative_character = alternative_length > index and alternative[index] or None
+                alternative_character = (
+                    alternative_length > index and alternative[index] or None
+                )
 
                 # in case the base character and the alternative
                 # character are not the same
@@ -659,10 +668,13 @@ class Console(colony.System):
 
             # in case the command argument adds it
             # to the command mandatory arguments
-            command_argument_mandatory and command_mandatory_arguments.append(command_argument)
+            command_argument_mandatory and command_mandatory_arguments.append(
+                command_argument
+            )
 
         # returns the command mandatory arguments
         return command_mandatory_arguments
+
 
 class ConsoleContext(colony.Protected):
     """
@@ -710,17 +722,27 @@ class ConsoleContext(colony.Protected):
             # tries to authenticate the user retrieving the result, this call
             # should returns the authentication map, then uses this map to
             # retrieve the boolean result from it (represents the validation result)
-            authentication_result = self.console.authenticate_user(username, password, self._proxy_instance)
+            authentication_result = self.console.authenticate_user(
+                username, password, self._proxy_instance
+            )
             authentication_result_valid = authentication_result.get(VALID_VALUE, False)
 
             # in case the authentication is not valid
             if not authentication_result_valid:
                 # retrieves the authentication result information
-                authentication_result_exception = authentication_result.get(EXCEPTION_VALUE, {})
-                authentication_result_exception_message = authentication_result_exception.get(MESSAGE_VALUE, "undefined error")
+                authentication_result_exception = authentication_result.get(
+                    EXCEPTION_VALUE, {}
+                )
+                authentication_result_exception_message = (
+                    authentication_result_exception.get(
+                        MESSAGE_VALUE, "undefined error"
+                    )
+                )
 
                 # raises the authentication failed exception
-                raise exceptions.AuthenticationFailed(authentication_result_exception_message)
+                raise exceptions.AuthenticationFailed(
+                    authentication_result_exception_message
+                )
 
             # retrieves the username from the authentication result
             username = authentication_result.get(USERNAME_VALUE, None)
@@ -734,7 +756,9 @@ class ConsoleContext(colony.Protected):
             self.authentication_information = authentication_result
         except Exception as exception:
             # prints a debug message
-            self.console.plugin.debug("Problem authenticating user: %s" % colony.legacy.UNICODE(exception))
+            self.console.plugin.debug(
+                "Problem authenticating user: %s" % colony.legacy.UNICODE(exception)
+            )
 
             # invalidates the user and authentication information as
             # the authentication failed
@@ -748,10 +772,7 @@ class ConsoleContext(colony.Protected):
     def create_handlers_map(self, output_method):
         # creates the map that defined the state
         # for the current console context of execution
-        state = {
-            CURRENT_VALUE : str(),
-            PENDING_NEWLINE_VALUE : False
-        }
+        state = {CURRENT_VALUE: str(), PENDING_NEWLINE_VALUE: False}
 
         def newline():
             # in case there's a newline character
@@ -810,15 +831,17 @@ class ConsoleContext(colony.Protected):
             # otherwise the task is not considered to be
             # completed and so the percentage value is printed
             else:
-                output_method("\r" + state[CURRENT_VALUE] + " " + str(percentage) + "%", False)
+                output_method(
+                    "\r" + state[CURRENT_VALUE] + " " + str(percentage) + "%", False
+                )
 
         # creates the map containing the various handlers
         # to be used during the operations
         handlers_map = {
-            NEWLINE_VALUE : newline,
-            MESSAGE_VALUE : message,
-            ACTION_VALUE : action,
-            PROGRESS_VALUE : progress
+            NEWLINE_VALUE: newline,
+            MESSAGE_VALUE: message,
+            ACTION_VALUE: action,
+            PROGRESS_VALUE: progress,
         }
 
         # returns the map of handlers to be used
@@ -902,11 +925,15 @@ class ConsoleContext(colony.Protected):
 
     @colony.public
     def process_command_line(self, command_line, output_method):
-        return self.console.process_command_line(command_line, output_method, self._proxy_instance)
+        return self.console.process_command_line(
+            command_line, output_method, self._proxy_instance
+        )
 
     @colony.public
     def get_command_line_alternatives(self, command, arguments):
-        return self.console.get_command_line_alternatives(command, arguments, self._proxy_instance)
+        return self.console.get_command_line_alternatives(
+            command, arguments, self._proxy_instance
+        )
 
     @colony.public
     def create_console_interface_character(self, console_handler):
@@ -1054,7 +1081,9 @@ class ConsoleContext(colony.Protected):
 
             # sets the "new" biggest (item) length according to the
             # item length just read (updating it if necessary)
-            biggest_length = item_length > biggest_length and item_length or biggest_length
+            biggest_length = (
+                item_length > biggest_length and item_length or biggest_length
+            )
 
         # increments the biggest length by one (extra space)
         biggest_length += 1

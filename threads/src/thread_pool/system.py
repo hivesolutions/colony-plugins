@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -82,10 +73,11 @@ TASK_PAUSED_STATUS = 3
 """ The task paused status value """
 
 SCHEDULING_ALGORITHM_NAME_MAP = {
-    CONSTANT_SCHEDULING_ALGORITHM : "constant",
-    DYNAMIC_SCHEDULING_ALGORITHM : "dynamic"
+    CONSTANT_SCHEDULING_ALGORITHM: "constant",
+    DYNAMIC_SCHEDULING_ALGORITHM: "dynamic",
 }
 """ The scheduling algorithm name map """
+
 
 class ThreadPool(colony.System):
     """
@@ -113,9 +105,9 @@ class ThreadPool(colony.System):
         self,
         name,
         description,
-        number_threads = DEFAULT_NUMBER_THREADS,
-        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
-        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS
+        number_threads=DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm=CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads=DEFAULT_MAXIMUM_NUMBER_THREADS,
     ):
         """
         Creates a new thread pool with the given name, description
@@ -140,12 +132,12 @@ class ThreadPool(colony.System):
 
         # creates a new thread pool
         thread_pool = ThreadPoolImplementation(
-            name = name,
-            description = description,
-            number_threads = number_threads,
-            scheduling_algorithm = scheduling_algorithm,
-            maximum_number_threads = maximum_number_threads,
-            logger = logger
+            name=name,
+            description=description,
+            number_threads=number_threads,
+            scheduling_algorithm=scheduling_algorithm,
+            maximum_number_threads=maximum_number_threads,
+            logger=logger,
         )
 
         # adds the new thread pool to the list of thread pools
@@ -187,31 +179,29 @@ class ThreadPool(colony.System):
             thread_pool_busy_threads = thread_pool.busy_threads
 
             # retrieves the thread pool scheduling algorithm name
-            thread_pool_scheduling_algorithm_name = SCHEDULING_ALGORITHM_NAME_MAP[thread_pool_scheduling_algorithm]
+            thread_pool_scheduling_algorithm_name = SCHEDULING_ALGORITHM_NAME_MAP[
+                thread_pool_scheduling_algorithm
+            ]
 
             # creates the thread pool thread string
-            thread_pool_thread_string = "%d / %d / %d / %d" % (thread_pool_busy_threads, thread_pool_current_threads, thread_pool_number_threads, thread_pool_maximum_number_threads)
+            thread_pool_thread_string = "%d / %d / %d / %d" % (
+                thread_pool_busy_threads,
+                thread_pool_current_threads,
+                thread_pool_number_threads,
+                thread_pool_maximum_number_threads,
+            )
 
             # sets the instance value for the thread pool information
             thread_pool_information[thread_pool_name] = (
                 thread_pool_thread_string,
-                thread_pool_scheduling_algorithm_name
+                thread_pool_scheduling_algorithm_name,
             )
 
         # defines the thread pool item columns
         thread_pool_item_columns = [
-            {
-                "type" : "name",
-                "value" : "Pool Name"
-            },
-            {
-                "type" : "value",
-                "value" : "BUS / CUR / MIN / MAX"
-            },
-            {
-                "type" : "value",
-                "value" : "Algorithm"
-            }
+            {"type": "name", "value": "Pool Name"},
+            {"type": "value", "value": "BUS / CUR / MIN / MAX"},
+            {"type": "value", "value": "Algorithm"},
         ]
 
         # creates the thread pool item
@@ -231,6 +221,7 @@ class ThreadPool(colony.System):
 
         # returns the system information
         return system_information
+
 
 class ThreadPoolImplementation(object):
     """
@@ -278,12 +269,12 @@ class ThreadPoolImplementation(object):
 
     def __init__(
         self,
-        name = "none",
-        description = "none",
-        number_threads = DEFAULT_NUMBER_THREADS,
-        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
-        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
-        logger = None
+        name="none",
+        description="none",
+        number_threads=DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm=CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads=DEFAULT_MAXIMUM_NUMBER_THREADS,
+        logger=None,
     ):
         """
         Constructor of the class.
@@ -360,7 +351,9 @@ class ThreadPoolImplementation(object):
             self.remove_worker_thread_task(task)
 
         # creates a copy of the task descriptor running queue (to stop the task)
-        task_descriptor_running_queue_copy = copy.copy(self.task_descriptor_running_queue)
+        task_descriptor_running_queue_copy = copy.copy(
+            self.task_descriptor_running_queue
+        )
 
         # iterates over all the task descriptors running in the task descriptor running queue
         for task_descriptor_running in task_descriptor_running_queue_copy:
@@ -411,7 +404,7 @@ class ThreadPoolImplementation(object):
         # increments the current number of threads
         self.current_number_threads -= 1
 
-    def refresh_thread_pool_size(self, increment_size = True):
+    def refresh_thread_pool_size(self, increment_size=True):
         """
         Refreshes the thread pool size, growing it if necessary.
 
@@ -460,23 +453,36 @@ class ThreadPoolImplementation(object):
 
                         # retrieves the difference between the current number of threads
                         # and the busy threads (non busy threads) plus the size of the task queue
-                        difference_threads = self.current_number_threads - self.busy_threads - task_queue_size
+                        difference_threads = (
+                            self.current_number_threads
+                            - self.busy_threads
+                            - task_queue_size
+                        )
 
                         # retrieves the difference between the current number of threads and the default number of threads
-                        difference_current_threads_and_number_threads = self.current_number_threads - self.number_threads
+                        difference_current_threads_and_number_threads = (
+                            self.current_number_threads - self.number_threads
+                        )
 
                         # in case the first difference is bigger than the second
-                        if difference_threads > difference_current_threads_and_number_threads:
-                            number_threads_destroy = difference_current_threads_and_number_threads
+                        if (
+                            difference_threads
+                            > difference_current_threads_and_number_threads
+                        ):
+                            number_threads_destroy = (
+                                difference_current_threads_and_number_threads
+                            )
                         else:
                             number_threads_destroy = difference_threads
 
                         # destroys the defined number of threads
-                        for _n_thread_destroy in colony.legacy.xrange(number_threads_destroy):
+                        for _n_thread_destroy in colony.legacy.xrange(
+                            number_threads_destroy
+                        ):
                             # destroys a worker thread
                             self.destroy_worker_thread()
 
-    def insert_task(self, task_descriptor, start_method_args = []):
+    def insert_task(self, task_descriptor, start_method_args=[]):
         """
         Inserts a new task into the thread pool.
 
@@ -489,14 +495,13 @@ class ThreadPoolImplementation(object):
         # creates a worker thread task to start a task and inserts the
         # task descriptor and arguments as arguments
         worker_thread_task = WorkerThreadTask(
-            START_TASK_TASK_TYPE,
-            (task_descriptor, start_method_args)
+            START_TASK_TASK_TYPE, (task_descriptor, start_method_args)
         )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
 
-    def remove_task(self, task_descriptor, stop_method_args = []):
+    def remove_task(self, task_descriptor, stop_method_args=[]):
         """
         Removes a task from the thread pool.
 
@@ -509,14 +514,13 @@ class ThreadPoolImplementation(object):
         # creates a worker thread task to stop a task and inserts the
         # task descriptor and arguments as arguments
         worker_thread_task = WorkerThreadTask(
-            STOP_TASK_TASK_TYPE,
-            (task_descriptor, stop_method_args)
+            STOP_TASK_TASK_TYPE, (task_descriptor, stop_method_args)
         )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
 
-    def pause_task(self, task_descriptor, pause_method_args = []):
+    def pause_task(self, task_descriptor, pause_method_args=[]):
         """
         Pauses a task from the thread pool.
 
@@ -529,14 +533,13 @@ class ThreadPoolImplementation(object):
         # creates a worker thread task to pause a task and inserts the
         # task descriptor and arguments as arguments
         worker_thread_task = WorkerThreadTask(
-            PAUSE_TASK_TASK_TYPE,
-            (task_descriptor, pause_method_args)
+            PAUSE_TASK_TASK_TYPE, (task_descriptor, pause_method_args)
         )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
 
-    def resume_task(self, task_descriptor, resume_method_args = []):
+    def resume_task(self, task_descriptor, resume_method_args=[]):
         """
         Resumes a task from the thread pool.
 
@@ -549,14 +552,13 @@ class ThreadPoolImplementation(object):
         # creates a worker thread task to pause a task and inserts the
         # task descriptor and arguments as arguments
         worker_thread_task = WorkerThreadTask(
-            RESUME_TASK_TASK_TYPE,
-            (task_descriptor, resume_method_args)
+            RESUME_TASK_TASK_TYPE, (task_descriptor, resume_method_args)
         )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
 
-    def cancel_task(self, task_descriptor, stop_method_args = []):
+    def cancel_task(self, task_descriptor, stop_method_args=[]):
         """
         Cancels a task from the thread pool.
 
@@ -568,14 +570,13 @@ class ThreadPoolImplementation(object):
 
         # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
         worker_thread_task = WorkerThreadTask(
-            STOP_TASK_TASK_TYPE,
-            (task_descriptor, stop_method_args)
+            STOP_TASK_TASK_TYPE, (task_descriptor, stop_method_args)
         )
 
         # inserts the worker thread task into the task queue
         self.insert_worker_thread_task(worker_thread_task)
 
-    def insert_worker_thread_task(self, worker_thread_task, insert_at_end = True):
+    def insert_worker_thread_task(self, worker_thread_task, insert_at_end=True):
         """
         Inserts a worker thread task into the task queue.
 
@@ -598,7 +599,7 @@ class ThreadPoolImplementation(object):
         self.task_condition.notify()
         self.task_condition.release()
 
-    def insert_worker_thread_task_all(self, worker_thread_task, insert_at_end = True):
+    def insert_worker_thread_task_all(self, worker_thread_task, insert_at_end=True):
         """
         Inserts n worker thread tasks into the task queue (the
         same amount as the current number of active threads
@@ -639,6 +640,7 @@ class ThreadPoolImplementation(object):
             self.task_queue.remove(worker_thread_task)
         self.task_condition.notify()
         self.task_condition.release()
+
 
 class WorkerThread(threading.Thread):
     """
@@ -762,6 +764,7 @@ class WorkerThread(threading.Thread):
             # refreshes the thread pool size shrinking it if necessary
             thread_pool.refresh_thread_pool_size(False)
 
+
 class WorkerThreadTask(object):
     """
     The worker thread task class.
@@ -773,7 +776,7 @@ class WorkerThreadTask(object):
     task_arguments = None
     """ The arguments of the work thread task """
 
-    def __init__(self, task_type, task_arguments = None):
+    def __init__(self, task_type, task_arguments=None):
         """
         Constructor of the class
 
@@ -785,6 +788,7 @@ class WorkerThreadTask(object):
 
         self.task_type = task_type
         self.task_arguments = task_arguments
+
 
 class TaskDescriptor(object):
     """
@@ -815,7 +819,15 @@ class TaskDescriptor(object):
     status = TASK_STOPPED_STATUS
     """ The current status of the task """
 
-    def __init__(self, name = "none", description = "none", start_method = None, stop_method = None, pause_method = None, resume_method = None):
+    def __init__(
+        self,
+        name="none",
+        description="none",
+        start_method=None,
+        stop_method=None,
+        pause_method=None,
+        resume_method=None,
+    ):
         """
         Constructor of the class
 

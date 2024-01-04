@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -91,9 +82,7 @@ POST_METHOD_VALUE = "POST"
 OUT_OF_BAND_CALLBACK_VALUE = "oob"
 """ The out of band (default) callback value """
 
-HMAC_HASH_MODULES_MAP = {
-    HMAC_SHA1_VALUE : hashlib.sha1 #@UndefinedVariable
-}
+HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE: hashlib.sha1}  # @UndefinedVariable
 """ The map associating the HMAC values with the hashlib
 hash function modules """
 
@@ -103,12 +92,13 @@ BASE_REST_URL = "http://twitter.com/"
 BASE_REST_SECURE_URL = "https://twitter.com/"
 """ The base REST secure URL to be used """
 
+
 class APITwitter(colony.System):
     """
     The API Twitter class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -142,10 +132,12 @@ class APITwitter(colony.System):
             username,
             password,
             encoding,
-            oauth_structure
+            oauth_structure,
         )
-        if open_client: twitter_client.open()
+        if open_client:
+            twitter_client.open()
         return twitter_client
+
 
 class TwitterClient(object):
     """
@@ -178,12 +170,12 @@ class TwitterClient(object):
 
     def __init__(
         self,
-        json_plugin = None,
-        client_http_plugin = None,
-        username = None,
-        password = None,
-        encoding = None,
-        oauth_structure = None
+        json_plugin=None,
+        client_http_plugin=None,
+        username=None,
+        password=None,
+        encoding=None,
+        oauth_structure=None,
     ):
         """
         Constructor of the class.
@@ -226,19 +218,20 @@ class TwitterClient(object):
         # in case an HTTP client is defined
         # closes the same HTTP client as it's not
         # going to be used any longer
-        if self.http_client: self.http_client.close({})
+        if self.http_client:
+            self.http_client.close({})
 
     def generate_oauth_structure(
         self,
         oauth_consumer_key,
         oauth_consumer_secret,
-        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
-        oauth_signature = None,
-        oauth_timestamp = None,
-        oauth_nonce = None,
-        oauth_version = DEFAULT_OAUTH_VERSION,
-        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE,
-        set_structure = True
+        oauth_signature_method=DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature=None,
+        oauth_timestamp=None,
+        oauth_nonce=None,
+        oauth_version=DEFAULT_OAUTH_VERSION,
+        oauth_callback=OUT_OF_BAND_CALLBACK_VALUE,
+        set_structure=True,
     ):
         """
         Generates a new OAuth structure, for the given parameters.
@@ -275,12 +268,13 @@ class TwitterClient(object):
             oauth_timestamp,
             oauth_nonce,
             oauth_version,
-            oauth_callback
+            oauth_callback,
         )
 
         # in case the structure is meant to be set
         # sets the OAuth structure
-        if set_structure: self.set_oauth_structure(oauth_structure)
+        if set_structure:
+            self.set_oauth_structure(oauth_structure)
 
         # returns the OAuth structure
         return oauth_structure
@@ -309,7 +303,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -330,16 +326,36 @@ class TwitterClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&" % self._escape_url(self.oauth_structure.oauth_consumer_secret)
+            oauth_consumer_secret_escaped = "%s&" % self._escape_url(
+                self.oauth_structure.oauth_consumer_secret
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(
+                    self._escape_url,
+                    [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)],
+                )
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )  # @UndefinedVariable
 
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
@@ -389,7 +405,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -410,16 +428,37 @@ class TwitterClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+            oauth_consumer_secret_escaped = "%s&%s" % (
+                self._escape_url(self.oauth_structure.oauth_consumer_secret),
+                self._escape_url(self.oauth_structure.oauth_token_secret),
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(
+                    self._escape_url,
+                    [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)],
+                )
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )  # @UndefinedVariable
 
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
@@ -460,9 +499,7 @@ class TwitterClient(object):
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authorize"
 
         # creates the authentication parameters
-        authentication_parameters = {
-            "oauth_token" : self.oauth_structure.oauth_token
-        }
+        authentication_parameters = {"oauth_token": self.oauth_structure.oauth_token}
 
         # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
@@ -482,9 +519,7 @@ class TwitterClient(object):
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
-        authentication_parameters = {
-            "oauth_token" : self.oauth_structure.oauth_token
-        }
+        authentication_parameters = {"oauth_token": self.oauth_structure.oauth_token}
 
         # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
@@ -492,7 +527,7 @@ class TwitterClient(object):
         # returns the authentication URL
         return authentication_url
 
-    def get_public_timeline(self, since_id = None):
+    def get_public_timeline(self, since_id=None):
         """
         Retrieves the public timeline, since the given date id.
 
@@ -522,7 +557,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_home_timeline(self, since_id = None, max_id = None, count = None, page = None):
+    def get_home_timeline(self, since_id=None, max_id=None, count=None, page=None):
         """
         Retrieves the home timeline, since the given id, for the given maximum id, with the given count
         and the given page.
@@ -571,7 +606,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_friends_timeline(self, since_id = None, max_id = None, count = None, page = None):
+    def get_friends_timeline(self, since_id=None, max_id=None, count=None, page=None):
         """
         Retrieves the friends timeline, since the given id, for the given maximum id, with the given count
         and the given page.
@@ -620,7 +655,9 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_user_timeline(self, user = None, since = None, since_id = None, count = None, page = None):
+    def get_user_timeline(
+        self, user=None, since=None, since_id=None, count=None, page=None
+    ):
         """
         Retrieves the user timeline, since the given id, for the given maximum id, with the given count
         and the given page.
@@ -672,7 +709,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_friends(self, user = None, cursor = None, user_id = None, screen_name = None):
+    def get_friends(self, user=None, cursor=None, user_id=None, screen_name=None):
         """
         Retrieves the user friends, for the given user, with the given cursor,
         for the given user id and screen name.
@@ -722,7 +759,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_followers(self, user = None, cursor = None, user_id = None, screen_name = None):
+    def get_followers(self, user=None, cursor=None, user_id=None, screen_name=None):
         """
         Retrieves the user followers, for the given user, with the given cursor,
         for the given user id and screen name.
@@ -772,7 +809,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def get_user(self, user = None):
+    def get_user(self, user=None):
         """
         Retrieves the user information for the given user.
 
@@ -802,7 +839,7 @@ class TwitterClient(object):
         # returns the data
         return data
 
-    def post_update(self, status, in_reply_to_status_id = None, lat = None, long = None):
+    def post_update(self, status, in_reply_to_status_id=None, lat=None, long=None):
         """
         Posts an update message, with the given arguments.
 
@@ -824,10 +861,13 @@ class TwitterClient(object):
         # in case the length of the status message is greater than the Twitter
         # character limit value
         if len(status) > TWITTER_CHARACTER_LIMIT_VALUE:
-            raise exceptions.StatusUpdateProblem("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
+            raise exceptions.StatusUpdateProblem(
+                "text must be less than or equal to %d characters"
+                % TWITTER_CHARACTER_LIMIT_VALUE
+            )
 
         # sets the status in the post data
-        parameters = {"status" : status}
+        parameters = {"status": status}
 
         if in_reply_to_status_id:
             parameters["in_reply_to_status_id"] = in_reply_to_status_id
@@ -855,7 +895,9 @@ class TwitterClient(object):
         """
 
         # in case the username and the password are not defined and the OAuth access token is not available
-        if (not self.username or not self.password) and not self.oauth_structure.oauth_access_token:
+        if (
+            not self.username or not self.password
+        ) and not self.oauth_structure.oauth_access_token:
             # raises the invalid authentication exception
             raise exceptions.InvalidAuthentication("user not authenticated")
 
@@ -879,7 +921,7 @@ class TwitterClient(object):
 
         self.oauth_structure = oauth_structure
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -915,7 +957,9 @@ class TwitterClient(object):
             self._build_oauth_arguments(url, parameters, method)
 
         # fetches the URL retrieving the HTTP response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the HTTP response
         contents = http_response.received_message
@@ -944,7 +988,7 @@ class TwitterClient(object):
         # returns the URL
         return url
 
-    def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
+    def _build_oauth_arguments(self, url, parameters, method=GET_METHOD_VALUE):
         """
         Builds the OAuth arguments encoding them into the OAuth message specification.
 
@@ -971,7 +1015,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -987,16 +1033,34 @@ class TwitterClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+            oauth_consumer_secret_escaped = "%s&%s" % (
+                self._escape_url(self.oauth_structure.oauth_consumer_secret),
+                self._escape_url(self.oauth_structure.oauth_token_secret),
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(self._escape_url, [method, url, "&".join(parameters_tuple)])
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1] #@UndefinedVariable
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )  # @UndefinedVariable
 
     def _escape_url(self, url_text):
         """
@@ -1099,9 +1163,7 @@ class TwitterClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
@@ -1111,6 +1173,7 @@ class TwitterClient(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class OAuthStructure(object):
     """
@@ -1163,12 +1226,12 @@ class OAuthStructure(object):
         self,
         oauth_consumer_key,
         oauth_consumer_secret,
-        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
-        oauth_signature = None,
-        oauth_timestamp = None,
-        oauth_nonce = None,
-        oauth_version = DEFAULT_OAUTH_VERSION,
-        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE
+        oauth_signature_method=DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature=None,
+        oauth_timestamp=None,
+        oauth_nonce=None,
+        oauth_version=DEFAULT_OAUTH_VERSION,
+        oauth_callback=OUT_OF_BAND_CALLBACK_VALUE,
     ):
         """
         Constructor of the class.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class EntityManagerAnalyser(object):
     """
@@ -68,7 +60,12 @@ class EntityManagerAnalyser(object):
         self.analyse_definition(entity_class)
 
     def analyse_definition(self, entity_class):
-        if entity_class.is_abstract(): return
-        if not entity_class.is_ready(): return
-        if self.entity_manager.exists(entity_class): return
-        self.plugin.warning("No definition for class '%s' exists" % entity_class.__name__)
+        if entity_class.is_abstract():
+            return
+        if not entity_class.is_ready():
+            return
+        if self.entity_manager.exists(entity_class):
+            return
+        self.plugin.warning(
+            "No definition for class '%s' exists" % entity_class.__name__
+        )

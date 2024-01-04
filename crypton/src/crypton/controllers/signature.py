@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -55,8 +46,8 @@ key generation process """
 
 models = colony.__import__("models")
 
-class SignatureController(BaseController):
 
+class SignatureController(BaseController):
     def encrypt(self, request, api_key, key_name, message):
         # retrieves the SSL plugin and uses it to create
         # the client structure to be used
@@ -114,9 +105,7 @@ class SignatureController(BaseController):
         private_key_path = self._get_key_path(key_name, "private_key")
         message_decoded = base64.b64decode(message)
         signature = ssl_structure.sign_base_64(
-            private_key_path,
-            algorithm_name,
-            message_decoded
+            private_key_path, algorithm_name, message_decoded
         )
         return signature
 
@@ -137,7 +126,9 @@ class SignatureController(BaseController):
         # indicating if the validation was successful or not
         public_key_path = self._get_key_path(key_name, "public_key")
         message_decoded = base64.b64decode(message)
-        return_value = ssl_structure.verify_base_64(public_key_path, signature, message_decoded)
+        return_value = ssl_structure.verify_base_64(
+            public_key_path, signature, message_decoded
+        )
         return_value_string = return_value and "1" or "0"
         return return_value_string
 
@@ -150,20 +141,14 @@ class SignatureController(BaseController):
         # for validation is defined, meaning that
         # no validation is expected
         validate_api_key = security_map.get("validate_api_key", True)
-        if not validate_api_key: return
+        if not validate_api_key:
+            return
 
         # creates the filter to retrieve the consumer with
         # the provided API, only existing clients should
         # be considered valid according to specification
         filter = dict(
-            filters = (
-                dict(
-                    api_key = api_key
-                ),
-                dict(
-                    status = CONSUMER_STATUS_ACTIVE
-                )
-            )
+            filters=(dict(api_key=api_key), dict(status=CONSUMER_STATUS_ACTIVE))
         )
 
         # retrieves the consumer (entity) with the API key
@@ -190,7 +175,7 @@ class SignatureController(BaseController):
         # returns the key path
         return key_path
 
-    def _generate_key_files(self, key, number_bits = DEFAULT_NUMBER_BITS):
+    def _generate_key_files(self, key, number_bits=DEFAULT_NUMBER_BITS):
         # retrieves the plugin manager and the required plugins for
         # the operation that is going to be performed
         plugin_manager = self.plugin.manager
@@ -200,14 +185,14 @@ class SignatureController(BaseController):
         # of the complete path to both of the key values
         private_key_path = key.get("private_key", None)
         public_key_path = key.get("public_key", None)
-        private_key_path = plugin_manager.resolve_file_path(private_key_path, True, True)
+        private_key_path = plugin_manager.resolve_file_path(
+            private_key_path, True, True
+        )
         public_key_path = plugin_manager.resolve_file_path(public_key_path, True, True)
 
         # creates the SSL structure and then generates the public and
         # private keys (should update the generated structure)
         ssl_structure = ssl_plugin.create_structure({})
         ssl_structure.generate_keys(
-            private_key_path,
-            public_key_path,
-            number_bits = DEFAULT_NUMBER_BITS
+            private_key_path, public_key_path, number_bits=DEFAULT_NUMBER_BITS
         )

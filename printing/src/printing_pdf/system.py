@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -43,6 +34,7 @@ from . import visitor
 
 PRINTING_NAME = "pdf"
 """ The printing name """
+
 
 class PrintingPDF(colony.System):
     """
@@ -59,13 +51,13 @@ class PrintingPDF(colony.System):
 
         return PRINTING_NAME
 
-    def print_test(self, printing_options = {}):
+    def print_test(self, printing_options={}):
         pass
 
-    def print_test_image(self, image_path, printing_options = {}):
+    def print_test_image(self, image_path, printing_options={}):
         pass
 
-    def print_printing_language(self, printing_document, printing_options = {}):
+    def print_printing_language(self, printing_document, printing_options={}):
         # creates the PDF printing visitor then sets the
         # provided printing options in the visitor
         _visitor = visitor.Visitor()

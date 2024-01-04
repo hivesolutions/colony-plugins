@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class MVCUtilsExceptionException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class MVCUtilsExceptionException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidValidationMethod(MVCUtilsExceptionException):
     """
@@ -73,6 +66,7 @@ class InvalidValidationMethod(MVCUtilsExceptionException):
 
         return "Invalid validation method - %s" % self.message
 
+
 class InvalidAttributeName(MVCUtilsExceptionException):
     """
     The invalid attribute name class.
@@ -99,6 +93,7 @@ class InvalidAttributeName(MVCUtilsExceptionException):
 
         return "Invalid attribute name - %s" % self.message
 
+
 class InsufficientHTTPInformation(MVCUtilsExceptionException):
     """
     The insufficient HTTP information error class.
@@ -124,6 +119,7 @@ class InsufficientHTTPInformation(MVCUtilsExceptionException):
         """
 
         return "Insufficient HTTP information - %s" % self.message
+
 
 class NotFoundError(MVCUtilsExceptionException):
     """
@@ -155,6 +151,7 @@ class NotFoundError(MVCUtilsExceptionException):
 
         return "Not found error - %s" % self.message
 
+
 class ValidationError(MVCUtilsExceptionException):
     """
     The validation error class.
@@ -163,7 +160,7 @@ class ValidationError(MVCUtilsExceptionException):
     variable = None
     """ The variable that failed the validation """
 
-    def __init__(self, message, variable = None):
+    def __init__(self, message, variable=None):
         """
         Constructor of the class.
 
@@ -188,6 +185,7 @@ class ValidationError(MVCUtilsExceptionException):
 
         return "Validation error - %s" % self.message
 
+
 class ModelValidationError(ValidationError):
     """
     The model validation error class, used to indicate that
@@ -200,7 +198,7 @@ class ModelValidationError(ValidationError):
     latter to be able to display the data of the model that has
     failed proper model validation """
 
-    def __init__(self, message, model = None):
+    def __init__(self, message, model=None):
         """
         Constructor of the class.
 
@@ -223,8 +221,11 @@ class ModelValidationError(ValidationError):
         """
 
         validation_s = self.get_validation_s()
-        return "Model validation error - (%s) %s (%s)" %\
-            (self.model, self.message, validation_s)
+        return "Model validation error - (%s) %s (%s)" % (
+            self.model,
+            self.message,
+            validation_s,
+        )
 
     def get_validation_s(self):
         """
@@ -238,7 +239,8 @@ class ModelValidationError(ValidationError):
 
         # in case no model is not possible to retrieve the
         # validations map for it returns a default string
-        if not self.model: return "no model defined"
+        if not self.model:
+            return "no model defined"
 
         # creates the buffer that will hold the validation
         # string components (to be joined)
@@ -255,8 +257,10 @@ class ModelValidationError(ValidationError):
         is_first = True
         for key, errors in colony.legacy.items(map):
             for error in errors:
-                if is_first: is_first = False
-                else: validation_b.append(", ")
+                if is_first:
+                    is_first = False
+                else:
+                    validation_b.append(", ")
                 validation_b.append("%s - %s" % (key, error))
 
         # creates the validation string from the various components
@@ -264,6 +268,7 @@ class ModelValidationError(ValidationError):
         # caller method
         validation_s = "".join(validation_b)
         return validation_s
+
 
 class ControllerValidationError(ValidationError):
     """
@@ -277,7 +282,7 @@ class ControllerValidationError(ValidationError):
     """ The HTTP based status code to be used when
     raising this exception through the pipeline """
 
-    def __init__(self, message, controller = None):
+    def __init__(self, message, controller=None):
         """
         Constructor of the class.
 
@@ -301,6 +306,7 @@ class ControllerValidationError(ValidationError):
 
         return "Controller validation error - %s" % self.message
 
+
 class ControllerValidationReasonFailed(ControllerValidationError):
     """
     The controller validation reason failed class, to be used
@@ -310,7 +316,7 @@ class ControllerValidationReasonFailed(ControllerValidationError):
     reasons_list = []
     """ The list of reasons for validation failure """
 
-    def __init__(self, message, controller = None, reasons_list = []):
+    def __init__(self, message, controller=None, reasons_list=[]):
         """
         Constructor of the class.
 
@@ -334,6 +340,7 @@ class ControllerValidationReasonFailed(ControllerValidationError):
         """
 
         return "Controller validation reason error - %s" % self.message
+
 
 class ValidationMethodError(MVCUtilsExceptionException):
     """
@@ -360,6 +367,7 @@ class ValidationMethodError(MVCUtilsExceptionException):
         """
 
         return "Validation method error - %s" % self.message
+
 
 class ModelApplyException(MVCUtilsExceptionException):
     """

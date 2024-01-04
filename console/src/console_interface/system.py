@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -48,6 +39,7 @@ console_interface_class = None
 try:
     if not console_interface_class:
         import interface_win32
+
         console_interface_class = interface_win32.ConsoleInterfaceWin32
 except ImportError:
     pass
@@ -55,6 +47,7 @@ except ImportError:
 try:
     if not console_interface_class:
         import interface_unix
+
         console_interface_class = interface_unix.ConsoleInterfaceUnix
 except ImportError:
     pass
@@ -79,6 +72,7 @@ CONSOLE_CONTEXT_VALUE = "console_context"
 
 TEST_VALUE = "test"
 """ The test value """
+
 
 class ConsoleInterface(colony.System):
     """
@@ -120,8 +114,9 @@ class ConsoleInterface(colony.System):
         # must be returned immediately to the caller avoiding the loading
         # of the console interface, this may be used to avoid the typical
         # blocking call problems involving the console thread
-        allow_terminal = colony.conf("TERMINAL", False, cast = bool)
-        if not allow_terminal: return
+        allow_terminal = colony.conf("TERMINAL", False, cast=bool)
+        if not allow_terminal:
+            return
 
         # retrieves the active configuration value (checks if
         # the console interface should start or not)
@@ -129,7 +124,8 @@ class ConsoleInterface(colony.System):
 
         # in case the active flag is not set, must return immediately
         # no need to load the console as it's considered inactive
-        if not active: return
+        if not active:
+            return
 
         # in case the console interface class is not defined, must
         # raise the undefined console exception
@@ -143,10 +139,7 @@ class ConsoleInterface(colony.System):
 
         try:
             # defines the parameters
-            parameters = {
-                CONSOLE_CONTEXT_VALUE : console_context,
-                TEST_VALUE : True
-            }
+            parameters = {CONSOLE_CONTEXT_VALUE: console_context, TEST_VALUE: True}
 
             # starts the console interface
             self.console_interface.start(parameters)
@@ -158,7 +151,10 @@ class ConsoleInterface(colony.System):
             # prints a info message about the issue while starting the
             # console interface (nor critical) and then sets the read line
             # method as the console interface method as a method for fallback
-            self.plugin.info("Problem starting console interface: %s" % colony.legacy.UNICODE(exception))
+            self.plugin.info(
+                "Problem starting console interface: %s"
+                % colony.legacy.UNICODE(exception)
+            )
             console_interface_method = sys.stdin.readline
 
         # sets the method used to retrieve a line in the current
@@ -216,14 +212,20 @@ class ConsoleInterface(colony.System):
         while self.continue_flag:
             # prompts the login as message using the console
             # interface method, retrieving the username
-            username = self._prompt_value(LOGIN_AS_MESSAGE + ": ", console_interface_method)
+            username = self._prompt_value(
+                LOGIN_AS_MESSAGE + ": ", console_interface_method
+            )
 
             # prompts the password message using the console
             # interface method, retrieving the password
-            password = self._prompt_value(PASSWORD_MESSAGE + ": ", console_interface_method)
+            password = self._prompt_value(
+                PASSWORD_MESSAGE + ": ", console_interface_method
+            )
 
             # authenticates the user (through the console system)
-            authentication_result = console_context.authenticate_user(username, password)
+            authentication_result = console_context.authenticate_user(
+                username, password
+            )
 
             # in case the authentication as succeed
             if authentication_result:

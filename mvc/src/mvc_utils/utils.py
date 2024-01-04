@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -63,10 +63,9 @@ IGNORED_EXCEPTIONS = (exceptions.ControllerValidationReasonFailed,)
 are considered of low priority and for which a more reduced logging
 operation should be performed """
 
+
 def validated(
-    validation_parameters = None,
-    validation_method = None,
-    call_validation_failed = None
+    validation_parameters=None, validation_method=None, call_validation_failed=None
 ):
     """
     Decorator for the validated method.
@@ -122,12 +121,15 @@ def validated(
 
             # otherwise simply use the call validation failed value as the
             # value for the should call boolean flag (transition of value)
-            else: should_call = call_validation_failed
+            else:
+                should_call = call_validation_failed
 
             # in case the controller instance does not have the validate method
             # an exception should be raised indicating the problem
             if not hasattr(self, "validate"):
-                raise exceptions.ControllerValidationError("validation method not found", self)
+                raise exceptions.ControllerValidationError(
+                    "validation method not found", self
+                )
 
             # tests if the controller instance contains the validate method and
             # then tries to retrieve the current state of validation for the request
@@ -142,8 +144,11 @@ def validated(
             # the parameters and the validation parameters and retrieves
             # the list with the validation failure reasons, in case no validate
             # method is present ignores the call
-            reasons_list = self.validate(request, parameters, validation_parameters) if\
-                run_validate else []
+            reasons_list = (
+                self.validate(request, parameters, validation_parameters)
+                if run_validate
+                else []
+            )
 
             # updates the validated flag for the current request workflow so that
             # no second validation occurs, this is the default (top to down) expected
@@ -152,24 +157,21 @@ def validated(
 
             # tries to retrieves the validation failed method from the current controller
             # instance, this is going to be used in case the validation method is enabled
-            validation_failed_method = hasattr(self, "validation_failed") and\
-                self.validation_failed or None
+            validation_failed_method = (
+                hasattr(self, "validation_failed") and self.validation_failed or None
+            )
 
             # in case the reasons list is not empty, there was a validation that failed
             # and so either the validation failed method must be called or an exception
             # should be immediately raised indicating the problem
             if reasons_list:
-
                 # in case a validation failed method is defined and
                 # the validation method should be called (by flag)
                 if validation_failed_method and should_call:
                     # calls the validation failed method with the request the parameters the
                     # validation parameters and the reasons list and sets the return value
                     return_value = validation_failed_method(
-                        request,
-                        parameters,
-                        validation_parameters,
-                        reasons_list
+                        request, parameters, validation_parameters, reasons_list
                     )
 
                 # otherwise there is no validation method defined and the exception
@@ -178,14 +180,16 @@ def validated(
                     # raises the controller validation failed exception to indicate that
                     # there was a problem validating the controller's action method
                     raise exceptions.ControllerValidationReasonFailed(
-                        "validation failed for a series of reasons: " + str(reasons_list),
+                        "validation failed for a series of reasons: "
+                        + str(reasons_list),
                         self,
-                        reasons_list
+                        reasons_list,
                     )
 
             # otherwise the reason list is empty (no errors have occurred) and so the
             # "normal" function call workflow must be used
-            else: return_value = colony.call_safe(function, *args, **kwargs)
+            else:
+                return_value = colony.call_safe(function, *args, **kwargs)
 
             # returns the return value, retrieved from either the
             # validation method or form the decorated function
@@ -214,10 +218,11 @@ def validated(
     # returns the created decorator
     return decorator
 
+
 def transaction(
-    manager_ref = None,
-    controller = False,
-    raise_exception = True,
+    manager_ref=None,
+    controller=False,
+    raise_exception=True,
 ):
     """
     Decorator for the "transactional" data logic.
@@ -243,8 +248,10 @@ def transaction(
     # defaults the (entity manager) manager reference to the proper default
     # value taking into account if the current method is running inside a
     # controller or inside the default model
-    if not manager_ref: manager_ref = "system.models.entity_manager"\
-        if controller else "_entity_manager"
+    if not manager_ref:
+        manager_ref = (
+            "system.models.entity_manager" if controller else "_entity_manager"
+        )
 
     def create_decorator_interceptor(function):
         """
@@ -261,8 +268,10 @@ def transaction(
         # in accordance with the existence of it
         function_spec = colony.legacy.getargspec(function)
         function_args = function_spec.args
-        if "_yield" in function_args: is_yield = True
-        else: is_yield = False
+        if "_yield" in function_args:
+            is_yield = True
+        else:
+            is_yield = False
 
         def decorator_interceptor(*args, **kwargs):
             """
@@ -276,8 +285,10 @@ def transaction(
             # in case the yield mode is set tries to retrieve
             # the value of such variable, as it will control
             # the behavior of the function call
-            if is_yield: _yield = kwargs.get("_yield", False)
-            else: _yield = None
+            if is_yield:
+                _yield = kwargs.get("_yield", False)
+            else:
+                _yield = None
 
             # in case the current object contains the entity
             # manager reference, no need to try to find it
@@ -329,7 +340,8 @@ def transaction(
                 # is not the complete set of iterations are performed on the
                 # function (simulating the normal function behavior)
                 return_value = function(*args, **kwargs)
-                if is_yield and not _yield: return_value = all(return_value)
+                if is_yield and not _yield:
+                    return_value = all(return_value)
             except:
                 # "rollsback" the transaction, something wrong
                 # has happened and the transaction actions must
@@ -338,7 +350,8 @@ def transaction(
 
                 # in case the raise exception flag is set the
                 # exception must be re-raise to the top layers
-                if raise_exception: raise
+                if raise_exception:
+                    raise
             else:
                 # commits the transaction, no problems occurred and
                 # so all the pending operations may be persisted
@@ -371,8 +384,9 @@ def transaction(
     # returns the created decorator
     return decorator
 
+
 def eager(function, *args, **kwargs):
-    """"
+    """ "
     The eager decorator meant to be used for situations where
     a generator based function/method is meant to be executed
     immediately (no generator returned).
@@ -394,21 +408,26 @@ def eager(function, *args, **kwargs):
     # in accordance with the existence of it
     function_spec = colony.legacy.getargspec(function)
     function_args = function_spec.args
-    if "_yield" in function_args: is_yield = True
-    else: is_yield = False
+    if "_yield" in function_args:
+        is_yield = True
+    else:
+        is_yield = False
 
     def decorator(*args, **kwargs):
         # in case the yield mode is set tries to retrieve
         # the value of such variable, as it will control
         # the behavior of the function call
-        if is_yield: _yield = kwargs.get("_yield", False)
-        else: _yield = None
+        if is_yield:
+            _yield = kwargs.get("_yield", False)
+        else:
+            _yield = None
 
         # calls the concrete function with the proper arguments and
         # in case the yield mode is active retrieves the complete set
         # of values from the generator as the return value (as expected)
         return_value = function(*args, **kwargs)
-        if is_yield and not _yield: return_value = all(return_value)
+        if is_yield and not _yield:
+            return_value = all(return_value)
 
         # returns the return value, this is the value returned
         # by the called function (can assume any type)
@@ -417,7 +436,8 @@ def eager(function, *args, **kwargs):
     # returns the created decorator
     return decorator
 
-def serialized(serialization_parameters = None, default_success = True):
+
+def serialized(serialization_parameters=None, default_success=True):
     """
     Decorator for the serialization of any exception raised
     by the decorator method or a method called indirectly
@@ -465,8 +485,9 @@ def serialized(serialization_parameters = None, default_success = True):
                 # prints a small warning message about the restart operation
                 # that has been request (it's an abnormal situation)
                 self.warning(
-                    "Operation restart request for controller (%s): " %\
-                    exception.__class__.__name__ + colony.legacy.UNICODE(exception)
+                    "Operation restart request for controller (%s): "
+                    % exception.__class__.__name__
+                    + colony.legacy.UNICODE(exception)
                 )
 
                 # raises the exception to the top levels indicating that
@@ -483,8 +504,9 @@ def serialized(serialization_parameters = None, default_success = True):
                 # reached this area it must be considered not handled
                 # gracefully and must be considered an anomaly
                 logging_method(
-                    "There was an exception in controller (%s): " %\
-                    exception.__class__.__name__ + colony.legacy.UNICODE(exception)
+                    "There was an exception in controller (%s): "
+                    % exception.__class__.__name__
+                    + colony.legacy.UNICODE(exception)
                 )
 
                 # retrieves the serializer and the exception
@@ -495,19 +517,23 @@ def serialized(serialization_parameters = None, default_success = True):
                 # in case the serializer and the exception
                 # handler are not set must raise the exception
                 # to the top levels, nothing to be done here
-                if not serializer and not exception_handler: raise
+                if not serializer and not exception_handler:
+                    raise
 
                 # verifies if the current exception contains a status
                 # code attribute and in case it does uses it instead
                 # of the default (fallback) error status code
                 has_status_code = hasattr(exception, "status_code")
-                status_code = exception.status_code if\
-                    has_status_code else ERROR_STATUS_CODE
+                status_code = (
+                    exception.status_code if has_status_code else ERROR_STATUS_CODE
+                )
 
                 # tries to cast the status code as an integer defaulting
                 # in case it fails to the default error status code
-                try: status_code = int(status_code)
-                except Exception: status_code = ERROR_STATUS_CODE
+                try:
+                    status_code = int(status_code)
+                except Exception:
+                    status_code = ERROR_STATUS_CODE
 
                 # sets the error status code in the current request indicating
                 # that a problem has occurred (default behavior)
@@ -533,9 +559,7 @@ def serialized(serialization_parameters = None, default_success = True):
                     exception_map_serialized = serializer.dumps(exception_map)
                     mime_type = serializer.get_mime_type()
                     self.set_contents(
-                        request,
-                        exception_map_serialized,
-                        content_type = mime_type
+                        request, exception_map_serialized, content_type=mime_type
                     )
 
                     # sets the return value as invalid (error)
@@ -554,9 +578,9 @@ def serialized(serialization_parameters = None, default_success = True):
                     return_value = colony.call_safe(
                         method,
                         request,
-                        parameters = exception_map,
-                        message = message,
-                        traceback = traceback
+                        parameters=exception_map,
+                        message=message,
+                        traceback=traceback,
                     )
             else:
                 # checks if the current message is already flushed (data sent to
@@ -567,12 +591,10 @@ def serialized(serialization_parameters = None, default_success = True):
                 serializer = parameters.get("serializer", None)
                 should_default = not is_flushed and default_success and serializer
                 if should_default:
-                    success_serialized = serializer.dumps(dict(result = "success"))
+                    success_serialized = serializer.dumps(dict(result="success"))
                     mime_type = serializer.get_mime_type()
                     self.set_contents(
-                        request,
-                        success_serialized,
-                        content_type = mime_type
+                        request, success_serialized, content_type=mime_type
                     )
 
             # returns the return value, resulting from the decorated method
@@ -601,6 +623,7 @@ def serialized(serialization_parameters = None, default_success = True):
 
     # returns the created decorator
     return decorator
+
 
 class Controller(object):
     """
@@ -638,7 +661,8 @@ class Controller(object):
         self.plugin = plugin
         self.system = system
 
+
 ensure = validated
 serialize = serialized("all")
-transaction_m = transaction(controller = False)
-transaction_c = transaction(controller = True)
+transaction_m = transaction(controller=False)
+transaction_c = transaction(controller=True)

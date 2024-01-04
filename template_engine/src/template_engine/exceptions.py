@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class TemplateEngineException(colony.ColonyException):
     """
@@ -48,6 +40,7 @@ class TemplateEngineException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RuntimeError(TemplateEngineException):
     """
@@ -77,6 +70,7 @@ class RuntimeError(TemplateEngineException):
 
         return "Runtime error - %s" % self.message
 
+
 class UndefinedVariable(TemplateEngineException):
     """
     The undefined variable class.
@@ -102,6 +96,7 @@ class UndefinedVariable(TemplateEngineException):
         """
 
         return "Undefined variable - %s" % self.message
+
 
 class UndefinedReference(TemplateEngineException):
     """
@@ -129,6 +124,7 @@ class UndefinedReference(TemplateEngineException):
 
         return "Undefined reference - %s" % self.message
 
+
 class VariableNotIterable(TemplateEngineException):
     """
     The variable not iterable class.
@@ -154,6 +150,7 @@ class VariableNotIterable(TemplateEngineException):
         """
 
         return "Variable not iterable - %s" % self.message
+
 
 class InvalidNumberAttributes(TemplateEngineException):
     """
@@ -181,6 +178,7 @@ class InvalidNumberAttributes(TemplateEngineException):
 
         return "Invalid number attributes - %s" % self.message
 
+
 class InvalidBooleanValue(TemplateEngineException):
     """
     The invalid boolean value class.
@@ -206,6 +204,7 @@ class InvalidBooleanValue(TemplateEngineException):
         """
 
         return "Invalid boolean value - %s" % self.message
+
 
 class InvalidSerializer(TemplateEngineException):
     """

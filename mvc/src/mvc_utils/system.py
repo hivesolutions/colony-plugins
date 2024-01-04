@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -76,18 +67,13 @@ be used in case none os provided through parameters """
 DEFAULT_DATABASE_SUFFIX = "database.db"
 """ The default database suffix """
 
-DEFAULT_CONNECTION_PARAMETERS = dict(
-    file_path = "mvc_utils_system.db",
-    autocommit = False
-)
+DEFAULT_CONNECTION_PARAMETERS = dict(file_path="mvc_utils_system.db", autocommit=False)
 """ The default connection parameters """
 
 DEFAULT_MANAGER_ARGUMENTS = dict(
-    id = "pt.hive.colony.database",
-    engine = "sqlite",
-    connection_parameters = dict(
-        autocommit = False
-    )
+    id="pt.hive.colony.database",
+    engine="sqlite",
+    connection_parameters=dict(autocommit=False),
 )
 """ The default entity manager arguments that are going to
 be used in case an invalid value is provided as the base
@@ -100,9 +86,10 @@ SYMBOLS_LIST = (
     ("handle_show", r"^%s/%s/(?P<id>\w+)$", "get"),
     ("handle_edit", r"^%s/%s/(?P<id>\w+)/edit$", "get"),
     ("handle_update", r"^%s/%s/(?P<id>\w+)/update$", "post"),
-    ("handle_delete", r"^%s/%s/(?P<id>\w+)/delete$", "post")
+    ("handle_delete", r"^%s/%s/(?P<id>\w+)/delete$", "post"),
 )
 """ The list of symbols to be used for pattern generation """
+
 
 class MVCUtils(colony.System):
     """
@@ -132,12 +119,14 @@ class MVCUtils(colony.System):
         self,
         module_name,
         package_name,
-        directory_path = None,
-        system_instance = None,
+        directory_path=None,
+        system_instance=None,
         **kwargs
     ):
         # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.get_instance_module_directory(system_instance)
+        directory_path = directory_path or colony.get_instance_module_directory(
+            system_instance
+        )
 
         # creates the globals map from
         # the current globals map
@@ -149,15 +138,20 @@ class MVCUtils(colony.System):
         # iterates over the complete set of keyword based arguments provided
         # to the method and sets the values in the globals map to be included
         # and accessible under the controllers module to be imported
-        for key, value in colony.legacy.items(kwargs): globals_map[key] = value
+        for key, value in colony.legacy.items(kwargs):
+            globals_map[key] = value
 
         # creates the complete module name from the package name, avoiding the
         # usage of the package name in case it does not exists
-        complete_module_name = package_name + "." + module_name if package_name else module_name
+        complete_module_name = (
+            package_name + "." + module_name if package_name else module_name
+        )
 
         # checks if the target module already exists, to later
         # avoid module reloading
-        exists_target_module = self._exists_target_module(complete_module_name, globals_map)
+        exists_target_module = self._exists_target_module(
+            complete_module_name, globals_map
+        )
 
         # tries to retrieve the target module, creating it if
         # it does not already exists
@@ -165,7 +159,8 @@ class MVCUtils(colony.System):
 
         # in case the target module already existed no need to
         # reload it, must return the module immediately
-        if exists_target_module: return target_module
+        if exists_target_module:
+            return target_module
 
         # sets the target module dictionary as the target map
         target_map = target_module.__dict__
@@ -185,7 +180,8 @@ class MVCUtils(colony.System):
         for symbol_name, symbol in colony.legacy.items(system_instance_symbols):
             # in case the symbol name ends with the models
             # suffix it must be a models reference, continues
-            if not symbol_name.endswith("models"): continue
+            if not symbol_name.endswith("models"):
+                continue
 
             # sets the symbol in the globals map
             # for latter reference
@@ -217,7 +213,9 @@ class MVCUtils(colony.System):
         else:
             # creates the python file path, by joining the directory
             # path and the module name
-            python_file_path = os.path.join(directory_path, module_name + PYTHON_EXTENSION)
+            python_file_path = os.path.join(
+                directory_path, module_name + PYTHON_EXTENSION
+            )
 
         # executes the file in the given environment
         # to import the symbols
@@ -231,7 +229,7 @@ class MVCUtils(colony.System):
         base_model,
         base_arguments_list,
         base_arguments_map,
-        start_structures = False
+        start_structures=False,
     ):
         # sets the module functions in the base model class
         self._set_module_functions(model, base_model)
@@ -241,7 +239,8 @@ class MVCUtils(colony.System):
 
         # starts the model structures, only in case the
         # the start structures flag is set
-        if start_structures: model._start_model()
+        if start_structures:
+            model._start_model()
 
         # returns the model
         return model
@@ -251,8 +250,8 @@ class MVCUtils(colony.System):
         base_controller,
         base_arguments_list,
         base_arguments_map,
-        start_structures = False,
-        default_parameters = {}
+        start_structures=False,
+        default_parameters={},
     ):
         # retrieves the required plugins, that are going to be set
         # under the current controller
@@ -319,8 +318,8 @@ class MVCUtils(colony.System):
         package_path,
         entity_manager_arguments,
         directory_path,
-        extra_entity_models = [],
-        load_entity_manager = True
+        extra_entity_models=[],
+        load_entity_manager=True,
     ):
         # retrieves the entity related plugins
         entity_manager_plugin = self.plugin.entity_manager_plugin
@@ -343,7 +342,9 @@ class MVCUtils(colony.System):
         # retrieves the extra symbols map for the module importing, these
         # symbols represents the extra classes and values to be exposed
         # to the entity models
-        extra_symbols_map = self._get_extra_symbols_map(extra_entity_models, entity_class)
+        extra_symbols_map = self._get_extra_symbols_map(
+            extra_entity_models, entity_class
+        )
 
         # creates a new map to hold the various extra global symbols
         # to be exposes to the created module
@@ -392,12 +393,14 @@ class MVCUtils(colony.System):
             directory_path,
             package_path,
             extra_symbols_map,
-            extra_globals_map
+            extra_globals_map,
         )
 
         # retrieves all the entity (and non entity) classes from the base entity models module
         # the entity class is used as reference (all entity classes must inherit from that class)
-        base_entity_models = self._get_entity_classes(base_entity_models_module, entity_class)
+        base_entity_models = self._get_entity_classes(
+            base_entity_models_module, entity_class
+        )
         base_models = self._get_classes(base_entity_models_module, RawModel)
 
         # in case there are (base) entity models available, need to load and set the entity
@@ -420,16 +423,18 @@ class MVCUtils(colony.System):
             # used in the entity manager is the one constructed for
             # the models module
             entity_manager_properties = dict(
-                id = models_id,
-                entities_list = base_entity_models
+                id=models_id, entities_list=base_entity_models
             )
 
             # creates a new entity manager for the remote models with the given properties
             # then sets the connection parameters in it and triggers the loading (open) process
             # (only in case the load entity manager flag is set)
-            entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
+            entity_manager = entity_manager_plugin.load_entity_manager_properties(
+                engine, entity_manager_properties
+            )
             entity_manager.set_connection_parameters(connection_parameters)
-            if load_entity_manager: entity_manager.open()
+            if load_entity_manager:
+                entity_manager.open()
 
             # sets the entity manager in the base entity models module
             # and in the models module (for latter reference)
@@ -490,19 +495,15 @@ class MVCUtils(colony.System):
 
         # returns the base entity models, the base
         # models (no persistence) and the models module
-        return (
-            base_entity_models,
-            base_models,
-            models_module
-        )
+        return (base_entity_models, base_models, models_module)
 
     def create_models(
         self,
         system_instance,
         plugin_instance,
-        package_path = None,
-        entity_manager_arguments = {},
-        extra_models = []
+        package_path=None,
+        entity_manager_arguments={},
+        extra_models=[],
     ):
         # retrieves the directory path from the system instance
         directory_path = colony.get_instance_module_directory(system_instance)
@@ -552,7 +553,8 @@ class MVCUtils(colony.System):
 
                 # in case the module extension is not
                 # a python file, ignores the file
-                if not module_extension == PYTHON_EXTENSION: continue
+                if not module_extension == PYTHON_EXTENSION:
+                    continue
 
                 # creates the "new" model package path from the
                 # "parent" package path
@@ -573,7 +575,8 @@ class MVCUtils(colony.System):
 
                 # in case the module extension is not
                 # a python file, ignores the file
-                if not module_extension == PYTHON_EXTENSION: continue
+                if not module_extension == PYTHON_EXTENSION:
+                    continue
 
                 # creates the "new" model package path from the
                 # "parent" package path
@@ -588,7 +591,7 @@ class MVCUtils(colony.System):
                     entity_manager_arguments,
                     test_directory_path,
                     extra_models,
-                    load_entity_manager = False
+                    load_entity_manager=False,
                 )
                 entity_models.extend(_entity_models)
                 models.extend(_models)
@@ -597,7 +600,8 @@ class MVCUtils(colony.System):
             # (this assumes that every model is loaded in the same entity manager context)
             # this loading process only occurs in case the entity models is not empty
             # (at least one entity model is loaded)
-            if entity_models: entity_models_module.entity_manager.open()
+            if entity_models:
+                entity_models_module.entity_manager.open()
 
         # otherwise it's a "simple" models module and must be imported
         # non recursively
@@ -609,7 +613,7 @@ class MVCUtils(colony.System):
                 package_path,
                 entity_manager_arguments,
                 directory_path,
-                extra_models
+                extra_models,
             )
 
         # sets the entity models and models (tuple) in the
@@ -627,11 +631,11 @@ class MVCUtils(colony.System):
         self,
         system_instance,
         plugin_instance,
-        package_path = None,
-        prefix_name = None,
-        directory_path = None,
-        entity_manager_arguments = {},
-        is_first = True
+        package_path=None,
+        prefix_name=None,
+        directory_path=None,
+        entity_manager_arguments={},
+        is_first=True,
     ):
         """
         Creates the various controllers for the given package path (dot notation based path
@@ -701,7 +705,9 @@ class MVCUtils(colony.System):
         package_name, module_name = package_path.rsplit(".", 1)
 
         # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.get_instance_module_directory(system_instance)
+        directory_path = directory_path or colony.get_instance_module_directory(
+            system_instance
+        )
 
         # creates the (possible) module directory path taking into
         # account the module name and then normalizes the path
@@ -732,7 +738,8 @@ class MVCUtils(colony.System):
                 # values and verifies that the proper (python) extension
                 # is present, otherwise continues the current loop
                 module_base, module_extension = os.path.splitext(module_item)
-                if not module_extension == PYTHON_EXTENSION: continue
+                if not module_extension == PYTHON_EXTENSION:
+                    continue
 
                 # creates the module package paths from the (current)
                 # package path and the module base and then adds
@@ -757,11 +764,11 @@ class MVCUtils(colony.System):
                 _controllers = self.create_controllers(
                     system_instance,
                     plugin_instance,
-                    package_path = module_package_path,
-                    prefix_name = prefix_name,
-                    directory_path = module_directory_path,
-                    entity_manager_arguments = entity_manager_arguments,
-                    is_first = False
+                    package_path=module_package_path,
+                    prefix_name=prefix_name,
+                    directory_path=module_directory_path,
+                    entity_manager_arguments=entity_manager_arguments,
+                    is_first=False,
                 )
                 controllers.extend(_controllers)
 
@@ -781,8 +788,10 @@ class MVCUtils(colony.System):
         # a tentative reload should be applied to the package path,
         # in that case it also flushes the module package path
         # from the globals
-        if is_first: colony.reload_import(package_path)
-        if is_first: self._flush_globals(module_package_path)
+        if is_first:
+            colony.reload_import(package_path)
+        if is_first:
+            self._flush_globals(module_package_path)
 
         # tries to retrieve the id value of the models package associated
         # with the controllers to be loaded (in case it exists) and if it
@@ -790,22 +799,19 @@ class MVCUtils(colony.System):
         # arguments for the module import (going to be included as globals)
         models_id = entity_manager_arguments.get("id", None)
         models_module = self.models_modules_map.get(models_id, None)
-        kwargs = dict(models = models_module) if models_module else dict()
+        kwargs = dict(models=models_module) if models_module else dict()
 
         # in case there's a valid models module loaded for the current set
         # of controllers loading process it's set in the systems instance
         # so that it may be referred latter by any controller logic
-        if models_module: setattr(system_instance, "models", models_module)
+        if models_module:
+            setattr(system_instance, "models", models_module)
 
         # imports the controllers module with the MVC utils support
         # this should allow the exporting of the various packages
         # included in the utils structure (extra import)
         controllers_module = self.import_module_mvc_utils(
-            module_name,
-            package_name,
-            directory_path,
-            system_instance,
-            **kwargs
+            module_name, package_name, directory_path, system_instance, **kwargs
         )
 
         # retrieves the controllers module items
@@ -820,8 +826,7 @@ class MVCUtils(colony.System):
         # underscore notation so that it may be used to discover if
         # the proper exception handler exists for the current context
         exception_reference_name, _exception_base_name = self._convert_controller_name(
-            EXCEPTION_CONTROLLER_VALUE,
-            prefix_name = prefix_name
+            EXCEPTION_CONTROLLER_VALUE, prefix_name=prefix_name
         )
 
         # in case the exception controller is already present in the system
@@ -840,7 +845,8 @@ class MVCUtils(colony.System):
             # controller name meaning that it ends with the proper
             # suffix value and the module is the one imported
             valid_controller_name = controllers_module_item.endswith("Controller")
-            if not valid_controller_name : continue
+            if not valid_controller_name:
+                continue
 
             # retrieves the controller class and the controller class name
             # these values are going to be used for both validation and processing
@@ -850,21 +856,32 @@ class MVCUtils(colony.System):
             # verifies that the item in validation is a member of the current
             # module being imported (not an imported symbol) this avoids the
             # multiple registration of modules that are imported inside another
-            valid_controller_module = controller_class.__module__ == controllers_module.__name__
-            if not valid_controller_module: continue
+            valid_controller_module = (
+                controller_class.__module__ == controllers_module.__name__
+            )
+            if not valid_controller_module:
+                continue
 
             # converts the controller class name into the normalized
             # controller base name according to the prefix value
-            controller_reference_name, controller_base_name = self._convert_controller_name(
-                controller_class_name,
-                prefix_name = prefix_name
+            (
+                controller_reference_name,
+                controller_base_name,
+            ) = self._convert_controller_name(
+                controller_class_name, prefix_name=prefix_name
             )
 
             # creates the controller instance from the controller
             # class and uses the plugin instance and system instance
             # as the constructor arguments, sends also the default
             # parameters map to be used by the controller
-            controller = self.create_controller(controller_class, (plugin_instance, system_instance), {}, False, default_parameters)
+            controller = self.create_controller(
+                controller_class,
+                (plugin_instance, system_instance),
+                {},
+                False,
+                default_parameters,
+            )
 
             # in case the current controller class is the exception
             # controller must signal it (and save it)
@@ -880,7 +897,9 @@ class MVCUtils(colony.System):
             controllers_map[controller_base_name] = controller
 
         # creates the controllers map name
-        controllers_map_name = prefix_name and prefix_name + "_controllers" or "controllers"
+        controllers_map_name = (
+            prefix_name and prefix_name + "_controllers" or "controllers"
+        )
 
         # checks if the system instance already contains the controllers
         # map (in case it's not the first controller import)
@@ -889,7 +908,7 @@ class MVCUtils(colony.System):
             # in the system instance and extends it with the new items
             # controller map (uses the fast map extension process)
             _controllers_map = getattr(system_instance, controllers_map_name)
-            colony.map_extend(_controllers_map, controllers_map, copy_base_map = False)
+            colony.map_extend(_controllers_map, controllers_map, copy_base_map=False)
 
             # updates the current reference of the controllers map to
             # "point" to the "master" controllers map contained in the
@@ -914,9 +933,13 @@ class MVCUtils(colony.System):
         if exception_controller:
             # iterates over all the imported controllers to set the "additional"
             # exception handler default parameter
-            for _controller_reference_name, controller in colony.legacy.items(controllers_map):
+            for _controller_reference_name, controller in colony.legacy.items(
+                controllers_map
+            ):
                 # sets the exception handler default parameter as the exception controller
-                controller.set_default_parameter("exception_handler", exception_controller)
+                controller.set_default_parameter(
+                    "exception_handler", exception_controller
+                )
 
         # returns the list of (created) controllers
         return controllers
@@ -973,7 +996,9 @@ class MVCUtils(colony.System):
             # to the original state (back to old start)
             model._start = model._old_start
 
-    def destroy_models(self, system_instance, package_path = None, entity_manager_arguments = {}):
+    def destroy_models(
+        self, system_instance, package_path=None, entity_manager_arguments={}
+    ):
         # retrieves the "complete" module name for the system
         # instance to be used as target for the model destruction
         module_name = system_instance.__module__
@@ -1000,7 +1025,12 @@ class MVCUtils(colony.System):
         # path models map
         del self.package_path_models_map[package_path]
 
-    def destroy_controllers(self, system_instance, package_path = None, prefix_name = None,):
+    def destroy_controllers(
+        self,
+        system_instance,
+        package_path=None,
+        prefix_name=None,
+    ):
         # retrieves the "complete" module name for the system
         # instance to be used as target for the controller destruction
         module_name = system_instance.__module__
@@ -1021,7 +1051,9 @@ class MVCUtils(colony.System):
 
         # creates the controllers map name and retrieves the controllers
         # map from the system instance
-        controllers_map_name = prefix_name + "_controllers" if prefix_name else "controllers"
+        controllers_map_name = (
+            prefix_name + "_controllers" if prefix_name else "controllers"
+        )
         controllers_map = getattr(system_instance, controllers_map_name)
 
         # stops the controllers (internal structures), this process
@@ -1038,9 +1070,11 @@ class MVCUtils(colony.System):
 
             # converts the controller class name into the normalized
             # controller base name according to the prefix value
-            controller_reference_name, controller_base_name = self._convert_controller_name(
-                controller_class_name,
-                prefix_name = prefix_name
+            (
+                controller_reference_name,
+                controller_base_name,
+            ) = self._convert_controller_name(
+                controller_class_name, prefix_name=prefix_name
             )
 
             # removes the controller references in the system instance
@@ -1052,7 +1086,7 @@ class MVCUtils(colony.System):
         # path controllers map
         del self.package_path_controllers_map[package_path]
 
-    def create_file_manager(self, engine_name, connection_parameters = {}):
+    def create_file_manager(self, engine_name, connection_parameters={}):
         """
         Creates a new file manager reference, to manage files
         in an indirect and adapted fashion.
@@ -1125,10 +1159,11 @@ class MVCUtils(colony.System):
             # adds the pattern (tuple) to the list of patterns
             patterns.append(pattern)
 
-    def generate_entity_manager_arguments(self, plugin, base = None, parameters = {}):
+    def generate_entity_manager_arguments(self, plugin, base=None, parameters={}):
         # default the provided set of base (entity manager arguments) in case there's no
         # value provided (default situation), this is the expected behavior
-        if base == None: base = DEFAULT_MANAGER_ARGUMENTS
+        if base == None:
+            base = DEFAULT_MANAGER_ARGUMENTS
 
         # creates the entity manager arguments map, then copies the entity manager
         # arguments constant to the new entity manager arguments
@@ -1194,10 +1229,17 @@ class MVCUtils(colony.System):
             # and the module associated with it must be the same as the one
             # from which the entity models are being extracted (avoids multiple
             # inclusion of referred/external models
-            is_valid = module_item_type == type and issubclass(module_item, entity_class) and\
-                (not hasattr(module_item, "data_reference") or module_item.data_reference == False) and\
-                module_item.__module__ == module.__name__
-            if not is_valid: continue
+            is_valid = (
+                module_item_type == type
+                and issubclass(module_item, entity_class)
+                and (
+                    not hasattr(module_item, "data_reference")
+                    or module_item.data_reference == False
+                )
+                and module_item.__module__ == module.__name__
+            )
+            if not is_valid:
+                continue
 
             # adds the module item to the list of (valid) entity classes as the
             # complete set of pre-validations have been executed on it
@@ -1270,7 +1312,9 @@ class MVCUtils(colony.System):
         for extra_entity_model_module in extra_entity_models:
             # retrieves the entity classes and the (raw model) classes
             # from the extra entity model module
-            entity_classes = self._get_entity_classes(extra_entity_model_module, entity_class)
+            entity_classes = self._get_entity_classes(
+                extra_entity_model_module, entity_class
+            )
             classes = self._get_classes(extra_entity_model_module, RawModel)
 
             # iterates over all the entity classes to set them in
@@ -1313,7 +1357,8 @@ class MVCUtils(colony.System):
             # in case the item value type is not function
             # the item is not valid for setting and so the
             # current iteration loop is skipped
-            if not item_value_type == types.FunctionType: continue
+            if not item_value_type == types.FunctionType:
+                continue
 
             # in case the items starts with class reference
             # the item is meant to be referenced as class method
@@ -1327,7 +1372,8 @@ class MVCUtils(colony.System):
             # in case the target class already contains a reference
             # to the given item, no overlap should occur as so the
             # current loop is skipped
-            if hasattr(target_class, item): continue
+            if hasattr(target_class, item):
+                continue
 
             # sets the item in the target class
             setattr(target_class, item, item_value)
@@ -1360,7 +1406,9 @@ class MVCUtils(colony.System):
     def _exists_target_module(self, target_module_name, globals):
         # checks if the target target module already exists in the
         # globals context or in the "system modules"
-        exists_target_module = target_module_name in globals and target_module_name in sys.modules
+        exists_target_module = (
+            target_module_name in globals and target_module_name in sys.modules
+        )
 
         # returns the result of the existence test
         return exists_target_module
@@ -1384,22 +1432,28 @@ class MVCUtils(colony.System):
         # returns the target model
         return target_module
 
-    def _convert_controller_name(self, controller_name, prefix_name = None):
+    def _convert_controller_name(self, controller_name, prefix_name=None):
         # converts the controller name into the underscore notation and then adds
         # the prefix path in case it's set (before that it has removed the controller's suffix)
         controller_base_name = controller_name[:-10]
         controller_base_name = colony.to_underscore(controller_base_name)
-        controller_reference_name = prefix_name + "_" + controller_base_name +\
-            "_" + "controller" if prefix_name else controller_base_name + "_" + "controller"
+        controller_reference_name = (
+            prefix_name + "_" + controller_base_name + "_" + "controller"
+            if prefix_name
+            else controller_base_name + "_" + "controller"
+        )
 
         # returns the reference (converted) controller name
         return controller_reference_name, controller_base_name
 
     def _generate_entity_manager_id(self, plugin, entity_manager_arguments, parameters):
         id = parameters.get("id", None)
-        if id: entity_manager_arguments["id"] = id
+        if id:
+            entity_manager_arguments["id"] = id
 
-    def _generate_entity_manager_path(self, plugin, entity_manager_arguments, parameters):
+    def _generate_entity_manager_path(
+        self, plugin, entity_manager_arguments, parameters
+    ):
         # retrieves the resources manager plugin
         resources_manager_plugin = self.plugin.resources_manager_plugin
 
@@ -1409,13 +1463,17 @@ class MVCUtils(colony.System):
         configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
-        system_database_filename_resource = resources_manager_plugin.get_resource("system.database.file_name")
+        system_database_filename_resource = resources_manager_plugin.get_resource(
+            "system.database.file_name"
+        )
 
         # in case the system database filename resource is defined, retrieves the system
         # database filename suffix, otherwise sets the system database filename suffix
         # as the default one (fallback process)
-        if system_database_filename_resource: system_database_filename_suffix = system_database_filename_resource.data
-        else: system_database_filename_suffix = database_sufix
+        if system_database_filename_resource:
+            system_database_filename_suffix = system_database_filename_resource.data
+        else:
+            system_database_filename_suffix = database_sufix
 
         # creates the system database file name value using the prefix and suffix values
         system_database_filename = database_prefix + system_database_filename_suffix
@@ -1423,12 +1481,19 @@ class MVCUtils(colony.System):
         # retrieves the configuration plugin id and uses it to create the database file
         # path using the configuration plugin id and the system database filename
         configuration_plugin_id = configuration_plugin.id
-        database_file_path = "%configuration:" + configuration_plugin_id + "%/" + system_database_filename
+        database_file_path = (
+            "%configuration:"
+            + configuration_plugin_id
+            + "%/"
+            + system_database_filename
+        )
 
         # sets the file path in the entity manager arguments, note that this operation
         # also propagates the database prefix value to the connection parameters so that
         # it may be used freely by the underlying database layers
-        entity_manager_arguments["connection_parameters"]["file_path"] = database_file_path
+        entity_manager_arguments["connection_parameters"][
+            "file_path"
+        ] = database_file_path
         entity_manager_arguments["connection_parameters"]["db_prefix"] = database_prefix
 
     def _start_controllers(self, controllers):
@@ -1481,11 +1546,13 @@ class MVCUtils(colony.System):
         # in case the package path is not present
         # in the current environment globals (nothing
         # should be done for the situation)
-        if not package_path in globals_map: return
+        if not package_path in globals_map:
+            return
 
         # removes the package in the package
         # path from the globals map
         del globals_map[package_path]
+
 
 class DataReferenceModel(object):
     """
@@ -1498,6 +1565,7 @@ class DataReferenceModel(object):
 
     data_reference = True
     """ The signal for the data reference flag """
+
 
 class RawModel(object):
     """
@@ -1525,16 +1593,16 @@ class RawModel(object):
     def _start(self):
         pass
 
-    def attach(self, force = True):
+    def attach(self, force=True):
         pass
 
-    def detach(self, force = True):
+    def detach(self, force=True):
         pass
 
     def has_value(self, name):
         return name in self.__dict__
 
-    def get_value(self, name, load_lazy = False):
+    def get_value(self, name, load_lazy=False):
         # in case the current model contains a
         # value for the attribute name (simple
         # case) it's returned normally
@@ -1546,6 +1614,7 @@ class RawModel(object):
         # returns an invalid value, not possible to
         # return a relation using any of the approaches
         return None
+
 
 def create_new_start(base_model):
     """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -69,18 +60,19 @@ SMART_BUSY_WORK_SCHEDULING_ALGORITHM = 3
 """ The smart busy work scheduling algorithm value """
 
 WORK_SCHEDULING_ALGORITHM_NAME_MAP = {
-    RANDOM_WORK_SCHEDULING_ALGORITHM : "random",
-    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin",
-    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : "smart_busy"
+    RANDOM_WORK_SCHEDULING_ALGORITHM: "random",
+    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM: "round_robin",
+    SMART_BUSY_WORK_SCHEDULING_ALGORITHM: "smart_busy",
 }
 """ The work scheduling algorithm name map """
 
 WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {
-    RANDOM_WORK_SCHEDULING_ALGORITHM : algorithms.RandomAlgorithm,
-    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : algorithms.RoundRobinAlgorithm,
-    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : algorithms.SmartBusyAlgorithm
+    RANDOM_WORK_SCHEDULING_ALGORITHM: algorithms.RandomAlgorithm,
+    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM: algorithms.RoundRobinAlgorithm,
+    SMART_BUSY_WORK_SCHEDULING_ALGORITHM: algorithms.SmartBusyAlgorithm,
 }
 """ The work scheduling algorithm class map """
+
 
 class WorkPool(colony.System):
     """
@@ -108,13 +100,13 @@ class WorkPool(colony.System):
         self,
         name,
         description,
-        work_processing_task_class = None,
-        work_processing_task_arguments = [],
-        number_threads = DEFAULT_NUMBER_THREADS,
-        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
-        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
-        maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
-        work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM
+        work_processing_task_class=None,
+        work_processing_task_arguments=[],
+        number_threads=DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm=CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads=DEFAULT_MAXIMUM_NUMBER_THREADS,
+        maximum_number_works_thread=DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
+        work_scheduling_algorithm=ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM,
     ):
         """
         Creates a new work pool with the given name, description and number of works.
@@ -153,17 +145,17 @@ class WorkPool(colony.System):
         # creates a new work pool
         work_pool = WorkPoolImplementation(
             thread_pool_plugin,
-            name = name,
-            description = description,
-            work_processing_task_class = work_processing_task_class,
-            work_processing_task_arguments = work_processing_task_arguments,
-            task_descriptor_class = task_descriptor_class,
-            number_threads = number_threads,
-            scheduling_algorithm = scheduling_algorithm,
-            maximum_number_threads = maximum_number_threads,
-            maximum_number_works_thread = maximum_number_works_thread,
-            work_scheduling_algorithm = work_scheduling_algorithm,
-            logger = logger
+            name=name,
+            description=description,
+            work_processing_task_class=work_processing_task_class,
+            work_processing_task_arguments=work_processing_task_arguments,
+            task_descriptor_class=task_descriptor_class,
+            number_threads=number_threads,
+            scheduling_algorithm=scheduling_algorithm,
+            maximum_number_threads=maximum_number_threads,
+            maximum_number_works_thread=maximum_number_works_thread,
+            work_scheduling_algorithm=work_scheduling_algorithm,
+            logger=logger,
         )
 
         # adds the new thread pool to the list of work pools
@@ -206,39 +198,32 @@ class WorkPool(colony.System):
             work_pool_thread_pool_name = work_pool_thread_pool.name
 
             # retrieves the work pool scheduling algorithm name
-            work_pool_scheduling_algorithm_name = WORK_SCHEDULING_ALGORITHM_NAME_MAP[work_pool_work_scheduling_algorithm]
+            work_pool_scheduling_algorithm_name = WORK_SCHEDULING_ALGORITHM_NAME_MAP[
+                work_pool_work_scheduling_algorithm
+            ]
 
             # retrieves the work pool work tasks list length
             work_pool_work_tasks_list_length = len(work_pool_work_tasks_list)
 
             # creates the work pool work string
-            work_pool_work_string = "%d / %d" % (work_pool_work_counter, maximum_number_works_thread * work_pool_work_tasks_list_length)
+            work_pool_work_string = "%d / %d" % (
+                work_pool_work_counter,
+                maximum_number_works_thread * work_pool_work_tasks_list_length,
+            )
 
             # sets the instance value for the work pool information
             work_pool_information[work_pool_name] = (
                 work_pool_work_string,
                 work_pool_scheduling_algorithm_name,
-                work_pool_thread_pool_name
+                work_pool_thread_pool_name,
             )
 
         # defines the work pool item columns
         work_pool_item_columns = [
-            {
-                "type" : "name",
-                "value" : "Pool Name"
-            },
-            {
-                "type" : "value",
-                "value" : "CUR / MAX"
-            },
-            {
-                "type" : "value",
-                "value" : "Algorithm"
-            },
-            {
-                "type" : "value",
-                "value" : "Thread Pool"
-            }
+            {"type": "name", "value": "Pool Name"},
+            {"type": "value", "value": "CUR / MAX"},
+            {"type": "value", "value": "Algorithm"},
+            {"type": "value", "value": "Thread Pool"},
         ]
 
         # creates the work pool item
@@ -254,12 +239,11 @@ class WorkPool(colony.System):
 
         # sets the system information (item) values
         system_information["name"] = "Work Pool"
-        system_information["items"] = [
-            work_pool_item
-        ]
+        system_information["items"] = [work_pool_item]
 
         # returns the system information
         return system_information
+
 
 class WorkPoolImplementation(object):
     """
@@ -314,17 +298,17 @@ class WorkPoolImplementation(object):
     def __init__(
         self,
         thread_pool,
-        name = "none",
-        description = "none",
-        work_processing_task_class = None,
-        work_processing_task_arguments = [],
-        task_descriptor_class = None,
-        number_threads = DEFAULT_NUMBER_THREADS,
-        scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM,
-        maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS,
-        maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
-        work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM,
-        logger = None
+        name="none",
+        description="none",
+        work_processing_task_class=None,
+        work_processing_task_arguments=[],
+        task_descriptor_class=None,
+        number_threads=DEFAULT_NUMBER_THREADS,
+        scheduling_algorithm=CONSTANT_SCHEDULING_ALGORITHM,
+        maximum_number_threads=DEFAULT_MAXIMUM_NUMBER_THREADS,
+        maximum_number_works_thread=DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD,
+        work_scheduling_algorithm=ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM,
+        logger=None,
     ):
         """
         Constructor of the class
@@ -368,7 +352,13 @@ class WorkPoolImplementation(object):
         self.logger = logger
 
         # creates the thread pool to be used for in the work pool
-        self.thread_pool = thread_pool.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        self.thread_pool = thread_pool.create_new_thread_pool(
+            name,
+            description,
+            number_threads,
+            scheduling_algorithm,
+            maximum_number_threads,
+        )
 
         self.work_tasks_list = []
         self.work_tasks_access_lock = threading.RLock()
@@ -392,7 +382,9 @@ class WorkPoolImplementation(object):
             self._insert_task()
 
         # retrieves the work scheduling algorithm class
-        work_scheduling_algorithm_class = WORK_SCHEDULING_ALGORITHM_CLASS_MAP[self.work_scheduling_algorithm]
+        work_scheduling_algorithm_class = WORK_SCHEDULING_ALGORITHM_CLASS_MAP[
+            self.work_scheduling_algorithm
+        ]
 
         # creates the algorithm manager for the current work pool
         self.algorithm_manager = work_scheduling_algorithm_class(self)
@@ -465,7 +457,9 @@ class WorkPoolImplementation(object):
 
         # creates an instance of the work processing task class,
         # using the work processing task arguments
-        work_processing_task = self.work_processing_task_class(*self.work_processing_task_arguments)
+        work_processing_task = self.work_processing_task_class(
+            *self.work_processing_task_arguments
+        )
 
         # creates a new work task with for work processing task
         work_task = WorkTask(self, work_processing_task)
@@ -475,10 +469,10 @@ class WorkPoolImplementation(object):
 
         # creates a new work task descriptor
         work_task_descriptor = self.task_descriptor_class(
-            start_method = work_task.start,
-            stop_method = work_task.stop,
-            pause_method = work_task.pause,
-            resume_method = work_task.resume
+            start_method=work_task.start,
+            stop_method=work_task.stop,
+            pause_method=work_task.pause,
+            resume_method=work_task.resume,
         )
 
         # inserts the new work task descriptor into the thread pool
@@ -511,6 +505,7 @@ class WorkPoolImplementation(object):
 
     def _work_removed(self, work_task, work_reference):
         self.algorithm_manager.work_removed(work_task, work_reference)
+
 
 class WorkTask(object):
     """
@@ -760,6 +755,7 @@ class WorkTask(object):
 
         # notifies the work pool about work removed
         self.work_pool._work_removed(self, work_reference)
+
 
 def remove_work(self, work_reference):
     """

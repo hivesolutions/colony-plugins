@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -47,6 +38,7 @@ BASE_64_ENCODED_MAXIMUM_SIZE = 64
 DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits to be used in the generation
 of the private key """
+
 
 class SSL(colony.System):
     """
@@ -64,6 +56,7 @@ class SSL(colony.System):
         # and then returns it to the caller method
         ssl_structure = SSLStructure(rsa_plugin, pkcs1_plugin)
         return ssl_structure
+
 
 class SSLStructure(object):
     """
@@ -93,7 +86,9 @@ class SSLStructure(object):
         self.rsa_plugin = rsa_plugin
         self.pkcs1_plugin = pkcs1_plugin
 
-    def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
+    def generate_keys(
+        self, private_key_path, public_key_path, number_bits=DEFAULT_NUMBER_BITS
+    ):
         # creates both structures that are required for
         # the generation of the keys an packing of them
         rsa_structure = self.rsa_plugin.create_structure({})
@@ -230,7 +225,9 @@ class SSLStructure(object):
         # algorithm name and then used the resulting string
         # value to sign (encrypt) it under RSA using the
         # private key
-        signature_verified = pkcs1_structure.sign(keys, hash_algorithm_name, base_string_value)
+        signature_verified = pkcs1_structure.sign(
+            keys, hash_algorithm_name, base_string_value
+        )
         signature = rsa_structure.sign(signature_verified)
 
         # returns the resulting signature value as a plain
@@ -274,7 +271,8 @@ class SSLStructure(object):
             # in case the base index is greater or equal
             # to the private key der encoded length must
             # break the loop (end of iteration)
-            if base_index >= string_value_length: break
+            if base_index >= string_value_length:
+                break
 
             # calculates the end index from the base index
             end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE

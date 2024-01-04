@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceUtilsException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class ServiceUtilsException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class SocketProviderNotFound(ServiceUtilsException):
     """
@@ -73,6 +66,7 @@ class SocketProviderNotFound(ServiceUtilsException):
 
         return "Socket provider not found - %s" % self.message
 
+
 class SocketUpgraderNotFound(ServiceUtilsException):
     """
     The socket upgrader not found class.
@@ -98,6 +92,7 @@ class SocketUpgraderNotFound(ServiceUtilsException):
         """
 
         return "Socket upgrader not found - %s" % self.message
+
 
 class ServerRequestTimeout(ServiceUtilsException):
     """
@@ -125,6 +120,7 @@ class ServerRequestTimeout(ServiceUtilsException):
 
         return "Server request timeout - %s" % self.message
 
+
 class ClientRequestTimeout(ServiceUtilsException):
     """
     The client request timeout class.
@@ -150,6 +146,7 @@ class ClientRequestTimeout(ServiceUtilsException):
         """
 
         return "Client request timeout - %s" % self.message
+
 
 class ServerResponseTimeout(ServiceUtilsException):
     """
@@ -177,6 +174,7 @@ class ServerResponseTimeout(ServiceUtilsException):
 
         return "Server response timeout - %s" % self.message
 
+
 class ClientResponseTimeout(ServiceUtilsException):
     """
     The client response timeout class.
@@ -202,6 +200,7 @@ class ClientResponseTimeout(ServiceUtilsException):
         """
 
         return "Client response timeout - %s" % self.message
+
 
 class RequestClosed(ServiceUtilsException):
     """
@@ -229,6 +228,7 @@ class RequestClosed(ServiceUtilsException):
 
         return "Request closed - %s" % self.message
 
+
 class PortStarvationReached(ServiceUtilsException):
     """
     The port starvation reached class.
@@ -254,6 +254,7 @@ class PortStarvationReached(ServiceUtilsException):
         """
 
         return "Port starvation reached - %s" % self.message
+
 
 class ConnectionChangeFailure(ServiceUtilsException):
     """

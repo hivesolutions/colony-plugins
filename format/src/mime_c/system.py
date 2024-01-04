@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -62,15 +53,74 @@ MULTI_PART_MESSAGE = "This is a multi-part message in MIME format"
 the placeholder/info text for the main part of the message """
 
 VALID_BOUNDARY_CHARACTERS = (
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-    "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
-    "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
-    "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-    "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7",
-    "8", "9", "+", "/"
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "+",
+    "/",
 )
 """ The tuple containing the valid boundary characters, meaning
 that a boundary string may only characters defined is this sequence """
+
 
 class Mime(colony.System):
     """
@@ -92,7 +142,7 @@ class Mime(colony.System):
     def create_message_part(self, parameters):
         return MimeMessagePart()
 
-    def get_mime_type_file_name(self, file_name, fallback = True):
+    def get_mime_type_file_name(self, file_name, fallback=True):
         # retrieves the base name and extension from the
         # file name and then converts the extension value
         # into its lower cased version to be normalizes in
@@ -117,7 +167,8 @@ class Mime(colony.System):
         # retrieves the configuration and verifies that the retrieved
         # value is valid to be processed in the current handler
         configuration = configuration_propery.get_data()
-        if not configuration: return
+        if not configuration:
+            return
 
         # retrieves the extension map from the configuration and
         # and updates the current extension map reference so that
@@ -128,6 +179,7 @@ class Mime(colony.System):
     def unset_configuration_property(self):
         # sets the extension map
         self.extension_map = {}
+
 
 class MimeMessage(object):
     """
@@ -180,7 +232,7 @@ class MimeMessage(object):
         self.headers_map = {}
         self.message_stream = colony.StringBuffer()
 
-    def read_simple(self, message_contents, decode = True):
+    def read_simple(self, message_contents, decode=True):
         # retrieves the data type of the provided message contents
         # string value to be used for encoding evaluation
         message_type = type(message_contents)
@@ -228,7 +280,7 @@ class MimeMessage(object):
             else:
                 # only unpacks the name value and sets the
                 # value to default
-                header_name, = header_values
+                (header_name,) = header_values
                 header_value = ""
 
             # strips both the header name and value
@@ -239,12 +291,12 @@ class MimeMessage(object):
             self.headers_map[header_name] = header_value
 
         # retrieves the message (contents) value
-        message_value = message_contents[end_headers_index + 4:]
+        message_value = message_contents[end_headers_index + 4 :]
 
         # writes the message value in the message stream
         self.message_stream.write(message_value)
 
-    def write(self, message, flush = 1, encode = True):
+    def write(self, message, flush=1, encode=True):
         # retrieves the message type
         message_type = type(message)
 
@@ -259,7 +311,7 @@ class MimeMessage(object):
         # issues at the final part of the message assembling
         self.message_stream.write(message)
 
-    def write_base_64(self, message, flush = 1):
+    def write_base_64(self, message, flush=1):
         # makes sure that the message is a byte string
         # and encodes the message into base 64 and then
         # writes the encoded value to the stream
@@ -274,11 +326,11 @@ class MimeMessage(object):
     def remove_part(self, part):
         self.part_list.remove(part)
 
-    def get_value(self, encode = True):
+    def get_value(self, encode=True):
         # creates the buffer that is going to hold the
         # final message stream value (to be joined latter)
         # note that the base type is enforced to be unicode
-        result = colony.StringBuffer(btype = colony.legacy.UNICODE)
+        result = colony.StringBuffer(btype=colony.legacy.UNICODE)
 
         # in case this is a multi part message
         if self.multi_part:
@@ -302,8 +354,14 @@ class MimeMessage(object):
         # the content type value with the appropriate
         # multipart value with the proper boundary
         if self.multi_part:
-            headers_ordered_map[CONTENT_TYPE_VALUE] = "multipart/" + self.multi_part +\
-                ";" + "boundary=\"" + self.boundary + "\""
+            headers_ordered_map[CONTENT_TYPE_VALUE] = (
+                "multipart/"
+                + self.multi_part
+                + ";"
+                + 'boundary="'
+                + self.boundary
+                + '"'
+            )
 
         # in case this message is not a part, writes the
         # main headers, including the mime indication
@@ -326,7 +384,8 @@ class MimeMessage(object):
         # retrieves the value from the result buffer and then encodes
         # the value if that's required by argument (using current charset)
         result_value = result.get_value()
-        if encode: result_value = result_value.encode(self.content_type_charset)
+        if encode:
+            result_value = result_value.encode(self.content_type_charset)
 
         # returns the final result value that may be either a bytes
         # string value or unicode one (depending on encode flag)
@@ -346,7 +405,7 @@ class MimeMessage(object):
 
         return self.headers_map.get(header_name, None)
 
-    def set_header(self, header_name, header_value, decode = True):
+    def set_header(self, header_name, header_value, decode=True):
         """
         Set a mime header value in the message, the operation
         of this method will decode the header value if required.
@@ -488,7 +547,8 @@ class MimeMessage(object):
             # if that's the case breaks the current loop
             self.boundary = self._generate_boundary()
             is_valid = self._check_part_values_boundary(self.boundary, part_values)
-            if is_valid: break
+            if is_valid:
+                break
 
         # iterates over all the part values to write their
         # contents into the current buffer (as expected)
@@ -502,7 +562,7 @@ class MimeMessage(object):
         # message stream (indicating end of parts section)
         self.write("\r\n--" + self.boundary + "--\r\n")
 
-    def _generate_boundary(self, boundary = None):
+    def _generate_boundary(self, boundary=None):
         """
         Generates a boundary, using the given boundary as the
         base value in case it is given.
@@ -563,7 +623,8 @@ class MimeMessage(object):
         for part_value in part_values:
             # in case the part value does not contains the boundary value
             # must skip the current iteration (nothing to be done)
-            if part_value.find(boundary) == -1: continue
+            if part_value.find(boundary) == -1:
+                continue
 
             # returns invalid as the boundary has been found in at least
             # one of the parts, so the boundary is considered invalid
@@ -571,6 +632,7 @@ class MimeMessage(object):
 
         # returns valid
         return True
+
 
 class MimeMessagePart(MimeMessage):
     """

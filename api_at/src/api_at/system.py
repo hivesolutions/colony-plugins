@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -96,6 +87,7 @@ SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/F
 """ The link to the WSDL description file for the
 document series submission operations """
 
+
 class APIAT(colony.System):
     """
     The API AT class that manages the back-end operations
@@ -103,7 +95,7 @@ class APIAT(colony.System):
     generation and management.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -135,10 +127,12 @@ class APIAT(colony.System):
             at_structure,
             test_mode,
             key,
-            certificate
+            certificate,
         )
-        if open_client: at_client.open()
+        if open_client:
+            at_client.open()
         return at_client
+
 
 class ATClient(object):
     """
@@ -184,12 +178,12 @@ class ATClient(object):
     def __init__(
         self,
         plugin,
-        ssl_plugin = None,
-        client_http_plugin = None,
-        at_structure = None,
-        test_mode = False,
-        key = None,
-        certificate = None
+        ssl_plugin=None,
+        client_http_plugin=None,
+        at_structure=None,
+        test_mode=False,
+        key=None,
+        certificate=None,
     ):
         """
         Constructor of the class, should initialize the key and
@@ -238,9 +232,10 @@ class ATClient(object):
 
         # in case an HTTP client is defined closes it
         # (flushing its internal structures
-        if self.http_client: self.http_client.close({})
+        if self.http_client:
+            self.http_client.close({})
 
-    def generate_at_structure(self, username, password, set_structure = True):
+    def generate_at_structure(self, username, password, set_structure=True):
         """
         Generates the AT structure for the given arguments.
 
@@ -260,7 +255,8 @@ class ATClient(object):
 
         # in case the structure is meant to be set
         # sets it accordingly (in the current object)
-        if set_structure: self.set_at_structure(at_structure)
+        if set_structure:
+            self.set_at_structure(at_structure)
 
         # returns the AT structure
         return at_structure
@@ -306,12 +302,10 @@ class ATClient(object):
         data = self._submit_document(
             submit_invoice_url,
             invoice_payload,
-            version = 2,
-            check_errors = lambda data: self._check_at_errors_v1(
-                data,
-                code_tag = "CodigoResposta",
-                message_tag = "Mensagem"
-            )
+            version=2,
+            check_errors=lambda data: self._check_at_errors_v1(
+                data, code_tag="CodigoResposta", message_tag="Mensagem"
+            ),
         )
         return data
 
@@ -341,11 +335,7 @@ class ATClient(object):
         submit_series_url = base_url
 
         # submits the series document and returns the result
-        data = self._submit_document(
-            submit_series_url,
-            series_payload,
-            version = 2
-        )
+        data = self._submit_document(submit_series_url, series_payload, version=2)
         return data
 
     def get_series(self, get_series_payload):
@@ -355,11 +345,7 @@ class ATClient(object):
         get_series_url = base_url
 
         # submits the series document and returns the result
-        data = self._submit_document(
-            get_series_url,
-            get_series_payload,
-            version = 2
-        )
+        data = self._submit_document(get_series_url, get_series_payload, version=2)
         return data
 
     def validate_credentials(self):
@@ -399,57 +385,53 @@ class ATClient(object):
         self.at_structure = at_structure
 
     def _submit_document(
-        self,
-        submit_url,
-        document_payload,
-        namespace = None,
-        version = 1,
-        check_errors = None
+        self, submit_url, document_payload, namespace=None, version=1, check_errors=None
     ):
         # makes uses of the version of the header to properly
         # generate the complete message
         if version == 1:
-            message = self._gen_envelope_v1(
-                document_payload,
-                namespace = namespace
-            )
+            message = self._gen_envelope_v1(document_payload, namespace=namespace)
         elif version == 2:
-            message = self._gen_envelope_v2(
-                document_payload,
-                namespace = namespace
-            )
-        else: raise exceptions.ATVersionError(version = version)
+            message = self._gen_envelope_v2(document_payload, namespace=namespace)
+        else:
+            raise exceptions.ATVersionError(version=version)
 
         # "fetches" the "submit document" URL with the message contents
         # this should post the document and create it in the remote
         # data source according to the AT WS specification
-        data, code = self._fetch_url(submit_url, method = "POST", contents = message)
+        data, code = self._fetch_url(submit_url, method="POST", contents=message)
 
         # checks the result data for error according to the version of
         # WS specification that has been requested, in case there's an
         # error an exception should be raised, notice that the consumer
         # can provide a custom `check_errors` parameter to be called instead
         # of the default one for the version
-        if check_errors: check_errors(data)
-        elif version == 1: self._check_at_errors_v1(data)
-        elif version == 2: self._check_at_errors_v2(data)
-        else: raise exceptions.ATVersionError(version = version)
+        if check_errors:
+            check_errors(data)
+        elif version == 1:
+            self._check_at_errors_v1(data)
+        elif version == 2:
+            self._check_at_errors_v2(data)
+        else:
+            raise exceptions.ATVersionError(version=version)
 
         # in case the response HTTP code is not valid raises an AT API
         # error to avoid operations from progressing
         if not code // 100 == 2:
-            try: details = colony.xml_to_dict(data)
-            except Exception: details = data
+            try:
+                details = colony.xml_to_dict(data)
+            except Exception:
+                details = data
             raise exceptions.ATAPIError(
                 "Invalid AT HTTP response code received",
-                error_code = code,
-                details = details
+                error_code=code,
+                details=details,
             )
 
         # returns the resulting data
         return data
 
-    def _gen_envelope_v1(self, document_payload, namespace = None):
+    def _gen_envelope_v1(self, document_payload, namespace=None):
         """
         Generates the complete envelope according to the original
         (V1) specification of Autoridade Tributária (AT).
@@ -473,7 +455,9 @@ class ATClient(object):
         # according to the current test mode flag value then
         # convert both values into string to make sure that
         # no unicode buffers are present (avoids conversion)
-        username = "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        username = (
+            "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        )
         password = "testes1234" if self.test_mode else str(self.at_structure.password)
         username = str(username)
         password = str(password)
@@ -549,13 +533,13 @@ class ATClient(object):
             password_encrypted_b64,
             nonce,
             current_date_s,
-            document_payload
+            document_payload,
         )
 
         # returns the final envelope message
         return message
 
-    def _gen_envelope_v2(self, document_payload, namespace = None):
+    def _gen_envelope_v2(self, document_payload, namespace=None):
         """
         Generates the complete envelope according to the new
         (v2) specification of Autoridade Tributária (AT).
@@ -579,7 +563,9 @@ class ATClient(object):
         # according to the current test mode flag value then
         # convert both values into string to make sure that
         # no unicode buffers are present (avoids conversion)
-        username = "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        username = (
+            "599999993/0037" if self.test_mode else str(self.at_structure.username)
+        )
         password = "testes1234" if self.test_mode else str(self.at_structure.password)
         username = str(username)
         password = str(password)
@@ -651,13 +637,13 @@ class ATClient(object):
             password_encrypted_b64,
             nonce,
             current_date_encrypted_b64,
-            document_payload
+            document_payload,
         )
 
         # returns the final envelope message
         return message
 
-    def _fetch_url(self, url, parameters = None, method = "GET", contents = None):
+    def _fetch_url(self, url, parameters=None, method="GET", contents=None):
         """
         Fetches the given URL for the given parameters and using
         the given method.
@@ -680,18 +666,15 @@ class ATClient(object):
 
         # in case parameters is not defined creates a new parameters
         # map instance to be used
-        if not parameters: parameters = {}
+        if not parameters:
+            parameters = {}
 
         # retrieves the HTTP client and uses it to fetch the provided
         # URL with the provided parameters retrieving the received
         # message and the contents and returning it to the caller method
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(
-            url,
-            method,
-            parameters,
-            content_type_charset = "utf-8",
-            contents = contents
+            url, method, parameters, content_type_charset="utf-8", contents=contents
         )
         contents = http_response.received_message
         code = http_response.status_code
@@ -724,7 +707,7 @@ class ATClient(object):
         at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
         return at_doc_code_id
 
-    def get_at_series(self, data, tag_name = "registarSerieResp"):
+    def get_at_series(self, data, tag_name="registarSerieResp"):
         """
         Parses the provided XML data, retrieving the
         series response structure.
@@ -757,9 +740,9 @@ class ATClient(object):
     def _check_at_errors_v1(
         self,
         data,
-        fault_tag = "faultstring",
-        code_tag = "ReturnCode",
-        message_tag = "ReturnMessage"
+        fault_tag="faultstring",
+        code_tag="ReturnCode",
+        message_tag="ReturnMessage",
     ):
         """
         Checks the given data for AT errors (v1 version).
@@ -794,31 +777,35 @@ class ATClient(object):
         # in case no fault string and no returns message are
         # defined must return immediately because no error has
         # been discovered (or raised)
-        if not fault_string and not return_message: return
+        if not fault_string and not return_message:
+            return
 
         # tries to retrieve the return code defaulting to undefined
         # in case there's a fault string then retrieves the return
         # message either from the fault string or from the return message
         return_code = None if fault_string else self._text(return_code[0])
-        return_message = self._text(fault_string[0]) if fault_string else self._text(return_message[0])
+        return_message = (
+            self._text(fault_string[0])
+            if fault_string
+            else self._text(return_message[0])
+        )
 
         # "casts" the return code as an integer, in order to convert
         # it from the "normal" string representation
-        if return_code: return_code = int(return_code)
+        if return_code:
+            return_code = int(return_code)
 
         # in case the return code is zero no error is currently present
         # (this is a successful request) must return immediately
-        if return_code == 0: return
+        if return_code == 0:
+            return
 
         # raises the AT API error exception associated with the error
         # that has just been "parsed"
-        raise exceptions.ATAPIError(return_message, error_code = return_code)
+        raise exceptions.ATAPIError(return_message, error_code=return_code)
 
     def _check_at_errors_v2(
-        self,
-        data,
-        code_tag = "codResultOper",
-        message_tag = "msgResultOper"
+        self, data, code_tag="codResultOper", message_tag="msgResultOper"
     ):
         """
         Checks the given data for AT errors (v2 version).
@@ -847,7 +834,8 @@ class ATClient(object):
 
         # in case no result code is present we can safely return
         # immediately as no error is present
-        if not result_code: return
+        if not result_code:
+            return
 
         # converts the result code into its textual representation and
         # then into an integer value, to be properly handled
@@ -857,12 +845,13 @@ class ATClient(object):
         # determines if the result code represents a success (eg: 2xxxx) and
         # if that's the case returns the control flow immediately (not an error)
         is_success = result_code // 1000 == 2
-        if is_success: return
+        if is_success:
+            return
 
         # obtains the result message (if present) and raises the error with
         # both the code and the message to be handled by exception handlers
         result_message = self._text(result_message[0]) if result_message else None
-        raise exceptions.ATAPIError(result_message, error_code = result_code)
+        raise exceptions.ATAPIError(result_message, error_code=result_code)
 
     def _get_http_client(self):
         """
@@ -880,17 +869,21 @@ class ATClient(object):
             # certificate files and retrieves the (final) key and
             # certificate paths according to the current test mode
             base_key_path = self.get_resource("api_at/resources/key.pem")
-            base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
+            base_certificate_path = self.get_resource(
+                "api_at/resources/certificate.crt"
+            )
             key_path = base_key_path if self.test_mode else self.key
-            certificate_path = base_certificate_path if self.test_mode else self.certificate
+            certificate_path = (
+                base_certificate_path if self.test_mode else self.certificate
+            )
 
             # defines the client parameters to be used in the
             # creation of the HTTP client
             client_parameters = dict(
-                content_type_charset = "utf-8",
-                key_file_path = key_path,
-                certificate_file_path = certificate_path,
-                ssl_version = "tls1"
+                content_type_charset="utf-8",
+                key_file_path=key_path,
+                certificate_file_path=certificate_path,
+                ssl_version="tls1",
             )
 
             # creates the HTTP client to be used for the API
@@ -903,9 +896,11 @@ class ATClient(object):
 
     def _text(self, node):
         for _node in node.childNodes:
-            if not _node.nodeType == xml.dom.Node.TEXT_NODE: continue
+            if not _node.nodeType == xml.dom.Node.TEXT_NODE:
+                continue
             return _node.data
         return None
+
 
 class ATStructure(object):
     """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -42,27 +33,19 @@ import jinja2
 
 import colony
 
-ESCAPE_EXTENSIONS = (
-    ".xml",
-    ".html",
-    ".xhtml",
-    ".xml.tpl",
-    ".html.tpl",
-    ".xhtml.tpl"
-)
+ESCAPE_EXTENSIONS = (".xml", ".html", ".xhtml", ".xml.tpl", ".html.tpl", ".xhtml.tpl")
 """ The sequence containing the various extensions
 for which the autoescape mode will be enabled  by
 default as expected by the end developer """
 
-class Jinja(colony.System):
 
-    def parse_file_path(self, file_path, base_path = ".", encoding = "utf-8"):
+class Jinja(colony.System):
+    def parse_file_path(self, file_path, base_path=".", encoding="utf-8"):
         extension = self._extension(file_path)
 
         loader = jinja2.FileSystemLoader(base_path)
         jinja = jinja2.Environment(
-            loader = loader,
-            autoescape = extension in ESCAPE_EXTENSIONS
+            loader=loader, autoescape=extension in ESCAPE_EXTENSIONS
         )
 
         template = colony.relative_path(file_path, base_path)
@@ -75,11 +58,12 @@ class Jinja(colony.System):
     def _extension(self, file_path):
         _head, tail = os.path.split(file_path)
         tail_s = tail.split(".", 1)
-        if len(tail_s) > 1: return "." + tail_s[1]
+        if len(tail_s) > 1:
+            return "." + tail_s[1]
         return None
 
-class JinjaTemplate(object):
 
+class JinjaTemplate(object):
     def __init__(self, template):
         self.template = template
         self.values = dict()

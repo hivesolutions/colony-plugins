@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -44,6 +35,7 @@ RESOURCES_PARSER_NAME = "json"
 
 JSON_FILE_ENCODING = "utf-8"
 """ The JSON file encoding """
+
 
 class ResourcesJSON(colony.System):
     """
@@ -70,5 +62,9 @@ class ResourcesJSON(colony.System):
         # the complete set of contents from it and
         # closes the file to avoid any possible leaks
         json_file = open(full_json_file_path, "rb")
-        try: resource.data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
-        finally: json_file.close()
+        try:
+            resource.data = json_plugin.load_file_encoding(
+                json_file, JSON_FILE_ENCODING
+            )
+        finally:
+            json_file.close()

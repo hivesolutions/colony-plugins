@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -49,6 +40,7 @@ MIME_TYPE = "text/csv"
 """ The mime type for the CSV format as defined
 by the proper ISO organizations  """
 
+
 class CSV(colony.System):
     """
     Provides functions to interact with CSV.
@@ -56,16 +48,16 @@ class CSV(colony.System):
     the dumping and loading of CSV.
     """
 
-    def dumps(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps(object, encoding = encoding)
+    def dumps(self, object, encoding=DEFAULT_ENCODING):
+        return serializer.dumps(object, encoding=encoding)
 
-    def dumps_lazy(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps_lazy(object, encoding = encoding)
+    def dumps_lazy(self, object, encoding=DEFAULT_ENCODING):
+        return serializer.dumps_lazy(object, encoding=encoding)
 
-    def loads(self, csv_string, header = True):
+    def loads(self, csv_string, header=True):
         return serializer.loads(csv_string, header)
 
-    def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, csv_file, encoding=DEFAULT_ENCODING):
         # reads the CSV file and decodes the file using
         # the defined (by parameter encoding) then runs
         # the load process for the CSV bytes buffer,

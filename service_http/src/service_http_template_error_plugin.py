@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceHTTPTemplateErrorPlugin(colony.Plugin):
     """
@@ -52,21 +44,16 @@ class ServiceHTTPTemplateErrorPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_error_handler"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.template_engine")
-    ]
-    main_modules = [
-        "service_http_template_error"
-    ]
+    capabilities = ["http_service_error_handler"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.template_engine")]
+    main_modules = ["service_http_template_error"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_template_error
+
         self.system = service_http_template_error.ServiceHTTPTemplateError(self)
 
     def get_error_handler_name(self):

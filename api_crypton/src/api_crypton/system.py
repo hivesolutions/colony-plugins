@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -50,12 +41,13 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
+
 class APICrypton(colony.System):
     """
     The API Crypton class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -77,8 +69,10 @@ class APICrypton(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         crypton_client = CryptonClient(client_http_plugin, crypton_structure)
-        if open_client: crypton_client.open()
+        if open_client:
+            crypton_client.open()
         return crypton_client
+
 
 class CryptonClient(object):
     """
@@ -94,7 +88,7 @@ class CryptonClient(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, client_http_plugin = None, crypton_structure = None):
+    def __init__(self, client_http_plugin=None, crypton_structure=None):
         """
         Constructor of the class.
 
@@ -124,7 +118,9 @@ class CryptonClient(object):
             # closes the HTTP client
             self.http_client.close({})
 
-    def generate_crypton_structure(self, base_url, api_key, key_name, set_structure = True):
+    def generate_crypton_structure(
+        self, base_url, api_key, key_name, set_structure=True
+    ):
         """
         Generates the Crypton structure for the given arguments.
 
@@ -204,7 +200,7 @@ class CryptonClient(object):
         # returns the (decrypted) message
         return message
 
-    def sign(self, message, algorithm_name = None):
+    def sign(self, message, algorithm_name=None):
         # retrieves the base URL
         base_url = self.crypton_structure.base_url
 
@@ -298,7 +294,7 @@ class CryptonClient(object):
         # sets the key name
         parameters["key_name"] = self.crypton_structure.key_name
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -321,10 +317,7 @@ class CryptonClient(object):
         # retrieving the HTTP response
         http_client = self._get_http_client()
         http_response = http_client.fetch_url(
-            url,
-            method,
-            parameters,
-            content_type_charset = DEFAULT_CHARSET
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
         )
 
         # retrieves the contents from the HTTP response, returning
@@ -369,6 +362,7 @@ class CryptonClient(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class CryptonStructure(object):
     """

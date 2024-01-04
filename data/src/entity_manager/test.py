@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -43,16 +34,14 @@ from . import mocks
 from . import structures
 from . import exceptions
 
+
 class EntityManagerTest(colony.Test):
     """
     The entity manager class.
     """
 
     def get_bundle(self):
-        return (
-            EntityManagerBaseTestCase,
-            EntityManagerRsetTestCase
-        )
+        return (EntityManagerBaseTestCase, EntityManagerRsetTestCase)
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -66,7 +55,7 @@ class EntityManagerTest(colony.Test):
         # context (for the current set of operations)
         test_case.entity_manager = system.load_entity_manager("sqlite")
         test_case.entity_manager.extend_module(mocks)
-        test_case.entity_manager.open(start = False)
+        test_case.entity_manager.open(start=False)
         test_case.entity_manager.create_generator()
         test_case.entity_manager.begin()
 
@@ -82,8 +71,8 @@ class EntityManagerTest(colony.Test):
         # current entity manager context
         test_case.entity_manager.destroy()
 
-class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
+class EntityManagerBaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
         return "Entity Manager Base test case"
@@ -242,7 +231,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person = mocks.Person()
         person.object_id = 1
         person.name = "name_person"
-        person.metadata = dict(occupation = "student", salary = 100)
+        person.metadata = dict(occupation="student", salary=100)
         self.entity_manager.save(person)
 
         # retrieves the person from the data source and verifies that
@@ -252,7 +241,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertNotEqual(saved_person, None)
         self.assertEqual(saved_person.object_id, 1)
         self.assertEqual(saved_person.name, "name_person")
-        self.assertEqual(saved_person.metadata, dict(occupation = "student", salary = 100))
+        self.assertEqual(saved_person.metadata, dict(occupation="student", salary=100))
 
         # creates a new person and populates the information, this time
         # the person's occupation is encoded with special characters in order
@@ -260,7 +249,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person = mocks.Person()
         person.object_id = 2
         person.name = "name_person"
-        person.metadata = dict(occupation = colony.legacy.u("学生"), salary = 10)
+        person.metadata = dict(occupation=colony.legacy.u("学生"), salary=10)
         self.entity_manager.save(person)
 
         # retrieves the person from the data source and verifies that
@@ -270,7 +259,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertNotEqual(saved_person, None)
         self.assertEqual(saved_person.object_id, 2)
         self.assertEqual(saved_person.name, "name_person")
-        self.assertEqual(saved_person.metadata, dict(occupation = colony.legacy.u("学生"), salary = 10))
+        self.assertEqual(
+            saved_person.metadata, dict(occupation=colony.legacy.u("学生"), salary=10)
+        )
 
     def test_one_to_one(self):
         # creates the required entity classes in the data source
@@ -792,9 +783,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the breed dog using an eager approach to the owner and then
         # verifies that the license number is properly set (as expected)
-        saved_breed_dog = self.entity_manager.get(mocks.BreedDog, 2, dict(
-            eager = ("owner",)
-        ))
+        saved_breed_dog = self.entity_manager.get(
+            mocks.BreedDog, 2, dict(eager=("owner",))
+        )
         self.assertEqual(saved_breed_dog.owner.license_number, breeder.license_number)
 
     def test_save_with_cycle(self):
@@ -877,7 +868,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the owner relation in the dog entity is invalid (should be
         # person instead got car)
-        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, dog)
+        self.assert_raises(
+            exceptions.RelationValidationError, self.entity_manager.save, dog
+        )
 
         # creates the the car and person entities and populates
         # them with some values, then sets the dogs relation
@@ -893,7 +886,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the dogs relation in the dog entity is invalid (should be
         # dog instead got car)
-        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, person)
+        self.assert_raises(
+            exceptions.RelationValidationError, self.entity_manager.save, person
+        )
 
         # creates the the dog and car entities and populates
         # them with some values, then sets the owners relation
@@ -909,7 +904,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that an exception is raised because the type of object
         # for the owners relation in the car entity is invalid (should be
         # person instead got dog)
-        self.assert_raises(exceptions.RelationValidationError, self.entity_manager.save, car)
+        self.assert_raises(
+            exceptions.RelationValidationError, self.entity_manager.save, car
+        )
 
         # creates the the person and car entities and populates
         # them with some values, then sets the owners relation
@@ -986,7 +983,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         saved_person = self.entity_manager.get(mocks.RootEntity, 1)
         self.assertNotEqual(saved_person, None)
         saved_person.status = 2
-        saved_person._load_lazy_attr("name", force = True)
+        saved_person._load_lazy_attr("name", force=True)
         self.assertEqual(saved_person.name, "name_person")
         self.assertEqual(saved_person.status, 1)
 
@@ -1027,9 +1024,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute (defaults as descending)
-        persons = self.entity_manager.find(mocks.Person, dict(
-            order_by = "name"
-        ))
+        persons = self.entity_manager.find(mocks.Person, dict(order_by="name"))
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1040,9 +1035,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in descending order (explicit)
-        persons = self.entity_manager.find(mocks.Person, dict(
-            order_by = (("name", "descending"),)
-        ))
+        persons = self.entity_manager.find(
+            mocks.Person, dict(order_by=(("name", "descending"),))
+        )
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1053,9 +1048,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the name attribute in ascending order (explicit)
-        persons = self.entity_manager.find(mocks.Person, dict(
-            order_by = (("name", "ascending"),)
-        ))
+        persons = self.entity_manager.find(
+            mocks.Person, dict(order_by=(("name", "ascending"),))
+        )
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1086,10 +1081,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in descending order
-        persons = self.entity_manager.find(mocks.Person, dict(
-            eager = ("address",),
-            order_by = (("address.street", "descending"),)
-        ))
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(eager=("address",), order_by=(("address.street", "descending"),)),
+        )
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1100,10 +1095,10 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # retrieves the persons from the data source ordered
         # by the address street attribute in ascending order
-        persons = self.entity_manager.find(mocks.Person, dict(
-            eager = ("address",),
-            order_by = (("address.street", "ascending"),)
-        ))
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(eager=("address",), order_by=(("address.street", "ascending"),)),
+        )
 
         # verifies that the retrieved list is not empty and that
         # the various persons are ordered in the expected order
@@ -1488,16 +1483,16 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # the cache based strategy, this strategy avoids the access to the data
         # source value as re-uses the cached one, so that the name that is access
         # is the same as the one changed locally by the test
-        options = dict(entities = person._entities, cache = True)
-        cached_person = self.entity_manager.get(mocks.Person, 1, options = options)
+        options = dict(entities=person._entities, cache=True)
+        cached_person = self.entity_manager.get(mocks.Person, 1, options=options)
         self.assertEqual(person.name, cached_person.name)
         self.assertEqual(cached_person.name, "name_person_changed")
 
         # re-uses the previous test, using the same dictionary of entities cache
         # but disables the cache usage so that value is retrieved from the data
         # source changing/reverting the name of the person to the original value
-        options = dict(entities = person._entities, cache = False)
-        cached_person = self.entity_manager.get(mocks.Person, 1, options = options)
+        options = dict(entities=person._entities, cache=False)
+        cached_person = self.entity_manager.get(mocks.Person, 1, options=options)
         self.assertEqual(person.name, cached_person.name)
         self.assertEqual(cached_person.name, "name_person")
 
@@ -1527,7 +1522,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # runs the nullify process on the person in a non recursive
         # fashion (no relations are affected) then verifies that the
         # unset attributes in the person and address are none (not set)
-        person.nullify(recursive = False)
+        person.nullify(recursive=False)
         self.assertEqual(person.name, None)
         self.assertEqual(address.country, None)
 
@@ -1553,7 +1548,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # fashion (relations are affected) then verifies that the
         # unset attributes in the person and the ones in the address
         # are set to none
-        person.nullify(recursive = True)
+        person.nullify(recursive=True)
         self.assertEqual(person.name, None)
         self.assertEqual(address.country, None)
 
@@ -1602,10 +1597,11 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
         # re-retrieves the person from the data source, sorting the dogs
         # relation using the name in a descending order
-        person = self.entity_manager.get(mocks.Person, 1, options = dict(
-            eager = ("dogs",),
-            order_by = (("dogs.name", "descending"),)
-        ))
+        person = self.entity_manager.get(
+            mocks.Person,
+            1,
+            options=dict(eager=("dogs",), order_by=(("dogs.name", "descending"),)),
+        )
 
         # verifies that the retrieval was a success and that the dogs are now
         # sorted in the opposite order, when compared with the first retrieval
@@ -1648,53 +1644,48 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # creates a simple filter for name base selection and runs
         # the normalization process, creating the full complex based
         # filtering structure and verifies the result
-        result = self.entity_manager.normalize_options(dict(
-            name = "person_a"
-        ))
-        self.assertEqual(result, dict(
-            _normalized = True,
-            filters = (
-                dict(
-                     type = "equals",
-                     fields = [
-                        dict(
-                            name = "name",
-                            value = "person_a"
-                        ),
-                    ]
+        result = self.entity_manager.normalize_options(dict(name="person_a"))
+        self.assertEqual(
+            result,
+            dict(
+                _normalized=True,
+                filters=(
+                    dict(
+                        type="equals",
+                        fields=[
+                            dict(name="name", value="person_a"),
+                        ],
+                    ),
                 ),
-            )
-        ))
+            ),
+        )
 
         # normalizes the options map of a find operation that
         # orders the enemies of the associated dogs meaning that
         # order by propagation will occur and then verifies that
         # the result is normalized and valid
-        result = self.entity_manager.normalize_options(dict(
-            eager = dict(
-                dogs = dict(
-                    eager = ("enemies", )
-                )
+        result = self.entity_manager.normalize_options(
+            dict(
+                eager=dict(dogs=dict(eager=("enemies",))),
+                order_by=(("dogs.enemies.name", "descending"),),
+            )
+        )
+        self.assertEqual(
+            result,
+            dict(
+                _normalized=True,
+                eager=dict(
+                    dogs=dict(
+                        _normalized=True,
+                        eager=dict(enemies=dict(order_by=(("name", "descending"),))),
+                    )
+                ),
+                order_by=(("dogs.enemies.name", "descending"),),
             ),
-            order_by = (("dogs.enemies.name", "descending"),)
-        ))
-        self.assertEqual(result, dict(
-            _normalized = True,
-            eager = dict(
-                dogs = dict(
-                    _normalized = True,
-                    eager = dict(
-                        enemies = dict(
-                            order_by = (("name", "descending"),)
-                        )
-                    ),
-                )
-            ),
-            order_by = (("dogs.enemies.name", "descending"),)
-        ))
+        )
+
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):
-
     @staticmethod
     def get_description():
         return "Entity Manager Rset test case"
@@ -1730,7 +1721,8 @@ class EntityManagerRsetTestCase(colony.ColonyTestCase):
         self.assertEqual(first["name"], "First")
         self.assertEqual(first["age"], 30)
 
-        for line in iterator: line["salary"] = 100
+        for line in iterator:
+            line["salary"] = 100
 
         result = set.header()
         self.assertEqual(result, ["name", "age", "salary"])

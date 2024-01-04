@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -42,6 +33,7 @@ CONSOLE_EXTENSION_NAME = "scheduler"
 
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
 """ The table top text """
+
 
 class ConsoleScheduler(object):
     """
@@ -71,7 +63,9 @@ class ConsoleScheduler(object):
     def get_commands_map(self):
         return self.commands_map
 
-    def process_show_all_scheduler(self, arguments, arguments_map, output_method, console_context):
+    def process_show_all_scheduler(
+        self, arguments, arguments_map, output_method, console_context
+    ):
         """
         Processes the show all scheduler command, with the given
         arguments and output method.
@@ -101,8 +95,8 @@ class ConsoleScheduler(object):
 
     def __generate_commands_map(self):
         return {
-            "show_all_scheduler" : {
-                "handler" : self.process_show_all_scheduler,
-                "description" : "shows all the scheduled tasks"
+            "show_all_scheduler": {
+                "handler": self.process_show_all_scheduler,
+                "description": "shows all the scheduled tasks",
             }
         }

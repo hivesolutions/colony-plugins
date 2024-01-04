@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class Crypton(colony.System):
     """
@@ -67,10 +59,9 @@ class Crypton(colony.System):
         mvc_utils_plugin = self.plugin.mvc_utils_plugin
         self.arguments = mvc_utils_plugin.manager_arguments(
             self.plugin,
-            parameters = dict(
-                id = "pt.hive.colony.crypton.database",
-                database_prefix = "crypton_"
-            )
+            parameters=dict(
+                id="pt.hive.colony.crypton.database", database_prefix="crypton_"
+            ),
         )
 
         # creates the entity models classes by creating the entity manager
@@ -107,7 +98,7 @@ class Crypton(colony.System):
             (r"crypton/decrypt", self.main_controller.decrypt, "get"),
             (r"crypton/sign", self.main_controller.sign, "get"),
             (r"crypton/verify", self.main_controller.verify, "get"),
-            (r"crypton/consumers", self.consumer_controller.create, "post")
+            (r"crypton/consumers", self.consumer_controller.create, "post"),
         )
 
     def get_controller(self, name):

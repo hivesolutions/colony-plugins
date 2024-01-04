@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -19,16 +19,7 @@
 # You should have received a copy of the Apache License along with
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -41,10 +32,22 @@ from . import system
 from . import threads
 
 from .asynchronous import SelectPolling, EpollPolling, KqueuePolling, Connection
-from .exceptions import ServiceUtilsException, SocketProviderNotFound, SocketUpgraderNotFound,\
-    ServerRequestTimeout, ClientRequestTimeout, ServerResponseTimeout, ClientResponseTimeout,\
-    RequestClosed, PortStarvationReached, ConnectionChangeFailure
-from .synchronous import AbstractServiceConnectionHandler, AbstractServiceConnectionlessHandler
+from .exceptions import (
+    ServiceUtilsException,
+    SocketProviderNotFound,
+    SocketUpgraderNotFound,
+    ServerRequestTimeout,
+    ClientRequestTimeout,
+    ServerResponseTimeout,
+    ClientResponseTimeout,
+    RequestClosed,
+    PortStarvationReached,
+    ConnectionChangeFailure,
+)
+from .synchronous import (
+    AbstractServiceConnectionHandler,
+    AbstractServiceConnectionlessHandler,
+)
 from .system import ServiceUtils
 from .threads import ServiceAcceptingThread, ServiceExecutionThread
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -98,12 +89,9 @@ FILE_TYPE = "file"
 UNKNOWN_TYPE = "unknown"
 """ The unknown type """
 
-ITEM_SORT_MAP = {
-    FOLDER_TYPE : 1,
-    FILE_TYPE : 2,
-    UNKNOWN_TYPE : 3
-}
+ITEM_SORT_MAP = {FOLDER_TYPE: 1, FILE_TYPE: 2, UNKNOWN_TYPE: 3}
 """ Map used for list sorting """
+
 
 class ServiceHTTPFile(colony.System):
     """
@@ -175,7 +163,9 @@ class ServiceHTTPFile(colony.System):
         # retrieves the real base directory, resolving it using
         # both the resources manager and the plugin manager (this is quite
         # an expensive operation)
-        real_base_directory = resources_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = resources_manager_plugin.get_real_string_value(
+            base_directory
+        )
         real_base_directory = plugin_manager.resolve_file_path(real_base_directory)
 
         # in case the real base directory was not resolved
@@ -274,7 +264,9 @@ class ServiceHTTPFile(colony.System):
         # retrieves the plugin directory handler name
         directory_handler_name = directory_handler_plugin.get_directory_handler_name()
 
-        self.directory_handler_plugins_map[directory_handler_name] = directory_handler_plugin
+        self.directory_handler_plugins_map[
+            directory_handler_name
+        ] = directory_handler_plugin
 
     def directory_handler_unload(self, directory_handler_plugin):
         # retrieves the plugin directory handler name
@@ -349,7 +341,9 @@ class ServiceHTTPFile(colony.System):
             # in order to avoid file redirection problems
             # and then redirect the user agent to the new page,
             # returning the control flow immediately to caller
-            resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/".encode(DEFAULT_CHARSET)
+            resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/".encode(
+                DEFAULT_CHARSET
+            )
             self._redirect(request, resource_path)
             return
 
@@ -372,7 +366,9 @@ class ServiceHTTPFile(colony.System):
 
             # retrieves the file properties
             file_size = file_stat[stat.ST_SIZE]
-            file_modified_date = datetime.datetime.fromtimestamp(file_stat[stat.ST_MTIME])
+            file_modified_date = datetime.datetime.fromtimestamp(
+                file_stat[stat.ST_MTIME]
+            )
 
             # retrieves the file mode
             file_mode = file_stat[stat.ST_MODE]
@@ -408,8 +404,8 @@ class ServiceHTTPFile(colony.System):
         comparator_method = self.generate_comparator(comparator)
 
         # sorts the directory entries
-        directory_entries.sort(key = comparator_method)
-        directory_entries.sort(key = self.type_comparator)
+        directory_entries.sort(key=comparator_method)
+        directory_entries.sort(key=self.type_comparator)
 
         # creates the directory list structure
         directory_list = {}
@@ -469,7 +465,9 @@ class ServiceHTTPFile(colony.System):
 
     def _handle_directory_list(self, handler_configuration, request, directory_list):
         # retrieves the preferred directory handlers list
-        preferred_directory_handlers_list = handler_configuration.get("preferred_directory_handlers", (DEFAULT_VALUE,))
+        preferred_directory_handlers_list = handler_configuration.get(
+            "preferred_directory_handlers", (DEFAULT_VALUE,)
+        )
 
         # retrieves the directory handler plugins map
         directory_handler_plugins_map = self.directory_handler_plugins_map
@@ -488,15 +486,19 @@ class ServiceHTTPFile(colony.System):
                 # directory handler plugins map
                 if preferred_directory_handler in directory_handler_plugins_map:
                     # retrieves the directory handler plugin
-                    directory_handler_plugin = directory_handler_plugins_map[preferred_directory_handler]
+                    directory_handler_plugin = directory_handler_plugins_map[
+                        preferred_directory_handler
+                    ]
 
                     # calls the handle directory list in the directory handler plugin
-                    directory_handler_plugin.handle_directory_list(request, directory_list)
+                    directory_handler_plugin.handle_directory_list(
+                        request, directory_list
+                    )
 
                     # breaks the loop
                     break
 
-    def _redirect(self, request, target_path, status_code = 301, quote = True):
+    def _redirect(self, request, target_path, status_code=301, quote=True):
         """
         Redirects the given request to the target path.
 
@@ -563,14 +565,11 @@ class ServiceHTTPFile(colony.System):
             initial_value, end_value = range_value.split("-")
 
             # converts both the initial and the end values to number
-            initial_value_number = initial_value and int(initial_value) or - 1
-            end_value_number = end_value and int(end_value) or - 1
+            initial_value_number = initial_value and int(initial_value) or -1
+            end_value_number = end_value and int(end_value) or -1
 
             # creates the range number tuple with both the initial and end values
-            range_number_tuple = (
-                initial_value_number,
-                end_value_number
-            )
+            range_number_tuple = (initial_value_number, end_value_number)
 
             # adds the range number tuple to the ranges number list
             ranges_number_list.append(range_number_tuple)
@@ -582,7 +581,9 @@ class ServiceHTTPFile(colony.System):
         # is bigger than one, the feature is not implemented
         if ranges_number_list_length > 1:
             # raises the not implemented exception
-            raise exceptions.NotImplementedException("no support for multiple ranges", 501)
+            raise exceptions.NotImplementedException(
+                "no support for multiple ranges", 501
+            )
 
         # retrieves the first range value
         first_range_value = ranges_number_list[0]
@@ -630,7 +631,7 @@ class ServiceHTTPFile(colony.System):
         # retrieves the MD5 hex digest as the etag value
         # and then encapsulates in quotation marks
         etag_value = md5.hexdigest()
-        etag_value = "\"" + etag_value + "\""
+        etag_value = '"' + etag_value + '"'
 
         # returns the etag value
         return etag_value
@@ -739,6 +740,7 @@ class ServiceHTTPFile(colony.System):
         # returns the comparator method
         return comparator
 
+
 class ChunkHandler(object):
     """
     The chunk handler class.
@@ -837,7 +839,7 @@ class ChunkHandler(object):
 
         return self.file_size
 
-    def get_chunk(self, chunk_size = CHUNK_SIZE):
+    def get_chunk(self, chunk_size=CHUNK_SIZE):
         """
         Retrieves the a chunk with the given size.
 
@@ -850,7 +852,8 @@ class ChunkHandler(object):
         # in case the chunk handler is currently closed
         # need to return immediately nothing to be done,
         # nothing to be retrieved from closed chunk handler
-        if self._closed: return None
+        if self._closed:
+            return None
 
         return self.file.read(chunk_size)
 
@@ -861,7 +864,8 @@ class ChunkHandler(object):
 
         # in case the chunk handler is already closed
         # need to return immediately nothing to be done
-        if self._closed: return
+        if self._closed:
+            return
 
         # sets the closed flag
         self._closed = True

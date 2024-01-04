@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class RSATest(colony.Test):
     """
@@ -46,9 +38,7 @@ class RSATest(colony.Test):
     """
 
     def get_bundle(self):
-        return (
-            RSABaseTestCase,
-        )
+        return (RSABaseTestCase,)
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -56,8 +46,8 @@ class RSATest(colony.Test):
         system = self.plugin.system
         test_case.rsa = system.create_structure({})
 
-class RSABaseTestCase(colony.ColonyTestCase):
 
+class RSABaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
         return "RSA Base test case"
@@ -67,14 +57,12 @@ class RSABaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, True)
 
         result = self.rsa._relatively_prime(
-            1303455847,
-            80677199572618450341522439921473626971
+            1303455847, 80677199572618450341522439921473626971
         )
         self.assertEqual(result, True)
 
         result = self.rsa._relatively_prime(
-            130347,
-            80677199572618450341522439921472697123
+            130347, 80677199572618450341522439921472697123
         )
         self.assertEqual(result, False)
 
@@ -85,7 +73,9 @@ class RSABaseTestCase(colony.ColonyTestCase):
         result = self.rsa._extended_euclid_greatest_common_divisor(418297, 225168)
         self.assertEqual(result, (1, -22391, 41596))
 
-        result = self.rsa._extended_euclid_greatest_common_divisor(35713992551911994100259367902610573100, 1585944697)
+        result = self.rsa._extended_euclid_greatest_common_divisor(
+            35713992551911994100259367902610573100, 1585944697
+        )
         self.assertEqual(result, (1, -157708412, 3551446063785330185006617352461492633))
 
     def test__string_to_integer(self):

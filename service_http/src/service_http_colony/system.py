@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -51,6 +42,7 @@ DEFAULT_ERROR_STATUS_CODE = 500
 """ The default error status code, this value
 is going to be set in the request in case no
 valid status code is set in it """
+
 
 class ServiceHTTPColony(colony.System):
     """
@@ -89,7 +81,9 @@ class ServiceHTTPColony(colony.System):
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
             # retrieves the HTTP handler plugin
-            http_handler_plugin = self.http_handler_plugin_map.get(plugin_handler_id, None)
+            http_handler_plugin = self.http_handler_plugin_map.get(
+                plugin_handler_id, None
+            )
 
             # handles the request by the HTTP handler plugin and
             # retrieves the return value
@@ -110,7 +104,8 @@ class ServiceHTTPColony(colony.System):
 
                 # in case it's not the request handler, must continue
                 # the current loop, nothing to handler
-                if not is_request_handler: continue
+                if not is_request_handler:
+                    continue
 
                 # handles the request by the HTTP handler plugin and
                 # retrieves the return value then sets the status code in
@@ -124,7 +119,9 @@ class ServiceHTTPColony(colony.System):
                 return
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no python handler plugin could handle the request")
+        raise exceptions.RequestNotHandled(
+            "no python handler plugin could handle the request"
+        )
 
     def http_handler_load(self, http_handler_plugin):
         # retrieves the plugin id

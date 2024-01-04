@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -49,6 +40,7 @@ WSAEWOULDBLOCK = 10035
 """ Windows based value for the error raised when a non
 blocking connection is not able to read/write more, this
 error should be raised constantly in no blocking connections """
+
 
 class RawSocket(colony.System):
     """
@@ -80,7 +72,7 @@ class RawSocket(colony.System):
         # returns the raw socket
         return raw_socket
 
-    def provide_socket_parameters(self, parameters = {}):
+    def provide_socket_parameters(self, parameters={}):
         """
         Provides a new socket, configured with
         the given parameters.
@@ -122,18 +114,18 @@ class RawSocket(colony.System):
 
         return process_exception(socket, exception)
 
+
 def process_exception(self, exception):
     # in case the exception is of type socket error and the error
     # value is inside the list of valid error the exception is considered
     # valid and a valid value is returned
-    if isinstance(exception, socket.error) and\
-        exception.args[0] in (
-            errno.EWOULDBLOCK,
-            errno.EAGAIN,
-            errno.EPERM,
-            errno.ENOENT,
-            WSAEWOULDBLOCK
-        ):
+    if isinstance(exception, socket.error) and exception.args[0] in (
+        errno.EWOULDBLOCK,
+        errno.EAGAIN,
+        errno.EPERM,
+        errno.ENOENT,
+        WSAEWOULDBLOCK,
+    ):
         return True
 
     # return false (exception must be processed) as no graceful

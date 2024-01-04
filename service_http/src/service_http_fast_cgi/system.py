@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -216,11 +207,9 @@ DEFAULT_PATH = "~/fastcgi-bin"
 DEFAULT_CONNECTION_TYPE = INTERNET_CONNECTION_TYPE
 """ The default connection type """
 
-DEFAULT_CONNECTION_ARGUMENTS = (
-    "127.0.0.1",
-    9000
-)
+DEFAULT_CONNECTION_ARGUMENTS = ("127.0.0.1", 9000)
 """ The default connection arguments type """
+
 
 class ServiceHTTPFastCGI(colony.System):
     """
@@ -280,19 +269,28 @@ class ServiceHTTPFastCGI(colony.System):
         request_connection_port = request_service_connection.connection_port
 
         # retrieves the request content type
-        request_content_type = request.get_header(CONTENT_TYPE_HEADER_VALUE) or DEFAULT_APPLICATION_CONTENT_TYPE
+        request_content_type = (
+            request.get_header(CONTENT_TYPE_HEADER_VALUE)
+            or DEFAULT_APPLICATION_CONTENT_TYPE
+        )
 
         # retrieves the request content length
-        request_content_length = request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        request_content_length = (
+            request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        )
 
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
 
         # retrieves the connection type
-        connection_type = request.properties.get(CONNECTION_TYPE_VALUE, DEFAULT_CONNECTION_TYPE)
+        connection_type = request.properties.get(
+            CONNECTION_TYPE_VALUE, DEFAULT_CONNECTION_TYPE
+        )
 
         # retrieves the connection arguments
-        connection_arguments = request.properties.get(CONNECTION_ARGUMENTS_VALUE, DEFAULT_CONNECTION_ARGUMENTS)
+        connection_arguments = request.properties.get(
+            CONNECTION_ARGUMENTS_VALUE, DEFAULT_CONNECTION_ARGUMENTS
+        )
 
         # retrieves the connection
         connection = self._get_connection(connection_type, connection_arguments)
@@ -302,7 +300,9 @@ class ServiceHTTPFastCGI(colony.System):
         request_id = connection.increment_request_id()
 
         # constructs the begin record data
-        begin_record_data = struct.pack(FCGI_BEGIN_REQUEST_BODY_STRUCT, FCGI_RESPONDER_VALUE, FCGI_KEEP_CONN_VALUE)
+        begin_record_data = struct.pack(
+            FCGI_BEGIN_REQUEST_BODY_STRUCT, FCGI_RESPONDER_VALUE, FCGI_KEEP_CONN_VALUE
+        )
 
         # adds the begin record to the connection
         connection.add_record(request_id, FCGI_BEGIN_REQUEST_VALUE, begin_record_data)
@@ -351,7 +351,11 @@ class ServiceHTTPFastCGI(colony.System):
             header_value_length = len(header_value)
 
             # retrieves the params length data
-            params_length_data = struct.pack(FCGI_PARAMS_LENGTH_STRUCT, header_length | 0x80000000, header_value_length | 0x80000000)
+            params_length_data = struct.pack(
+                FCGI_PARAMS_LENGTH_STRUCT,
+                header_length | 0x80000000,
+                header_value_length | 0x80000000,
+            )
 
             # writes the values to the params record data buffer
             params_record_data_buffer.write(params_length_data)
@@ -379,7 +383,14 @@ class ServiceHTTPFastCGI(colony.System):
             record = connection.get_record(request_id)
 
             # retrieves the record values
-            _version, type, _request_id, _content_length, _padding_length, contents = record
+            (
+                _version,
+                type,
+                _request_id,
+                _content_length,
+                _padding_length,
+                contents,
+            ) = record
 
             # in case the type of the request is stdout
             if type == FCGI_STDOUT_VALUE:
@@ -446,7 +457,9 @@ class ServiceHTTPFastCGI(colony.System):
         request.status_code = status
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no FastCGI handler could handle the request")
+        raise exceptions.RequestNotHandled(
+            "no FastCGI handler could handle the request"
+        )
 
     def _get_connection(self, connection_type, connection_arguments):
         """
@@ -459,10 +472,7 @@ class ServiceHTTPFastCGI(colony.System):
         """
 
         # creates the connection id tuple
-        connection_id_tuple = (
-            connection_type,
-            connection_arguments
-        )
+        connection_id_tuple = (connection_type, connection_arguments)
 
         # in case the connection id tuples does not exists
         # in the connection map
@@ -481,6 +491,7 @@ class ServiceHTTPFastCGI(colony.System):
 
         # returns the connection
         return connection
+
 
 class FastCGIConnection(object):
     """
@@ -505,7 +516,9 @@ class FastCGIConnection(object):
     record_buffer_map = {}
     """ The record buffer map """
 
-    def __init__(self, connection_type = INTERNET_CONNECTION_TYPE, connection_arguments = ()):
+    def __init__(
+        self, connection_type=INTERNET_CONNECTION_TYPE, connection_arguments=()
+    ):
         """
         Constructor of the class.
 
@@ -533,7 +546,9 @@ class FastCGIConnection(object):
         # in case the connection is of type unix
         elif self.connection_type == UNIX_CONNECTION_TYPE:
             # creates the socket
-            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) #@UndefinedVariable
+            self.socket = socket.socket(
+                socket.AF_UNIX, socket.SOCK_STREAM
+            )  # @UndefinedVariable
 
         # connects the socket using the connection arguments
         self.socket.connect(self.connection_arguments)
@@ -543,7 +558,14 @@ class FastCGIConnection(object):
         record_data_length = len(record_data)
 
         # constructs the header data
-        header_data = struct.pack(FCGI_HEADER_STRUCT, FCGI_VERSION_1_VALUE, request_type, request_id, record_data_length, 0)
+        header_data = struct.pack(
+            FCGI_HEADER_STRUCT,
+            FCGI_VERSION_1_VALUE,
+            request_type,
+            request_id,
+            record_data_length,
+            0,
+        )
 
         # sends the record
         self.socket.sendall(header_data + record_data)
@@ -592,7 +614,9 @@ class FastCGIConnection(object):
             header_data = self.socket.recv(FCGI_HEADER_LENGTH)
 
             # unpacks the header data
-            version, type, request_id, content_length, padding_length = struct.unpack(FCGI_HEADER_STRUCT, header_data)
+            version, type, request_id, content_length, padding_length = struct.unpack(
+                FCGI_HEADER_STRUCT, header_data
+            )
 
             # retrieves the contents
             contents = self.socket.recv(content_length)
@@ -609,7 +633,7 @@ class FastCGIConnection(object):
                 request_id,
                 content_length,
                 padding_length,
-                contents
+                contents,
             )
 
             # in case the request id is the same as the target

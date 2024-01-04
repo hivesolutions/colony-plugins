@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class RESTPlugin(colony.Plugin):
     """
@@ -49,30 +41,19 @@ class RESTPlugin(colony.Plugin):
     description = "REST Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "rest",
-        "http_handler",
-        "rpc_handler"
-    ]
-    capabilities_allowed = [
-        "rest_encoder",
-        "rest_service",
-        "rpc_service"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["rest", "http_handler", "rpc_handler"]
+    capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.random")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
     ]
-    main_modules = [
-        "rest"
-    ]
+    main_modules = ["rest"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import rest
+
         self.system = rest.REST(self)
 
     @colony.load_allowed

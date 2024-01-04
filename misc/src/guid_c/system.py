@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -44,8 +35,9 @@ import threading
 
 import colony
 
-MAX_COUNTER = 0xfffffffe
+MAX_COUNTER = 0xFFFFFFFE
 """ The max counter value """
+
 
 class GUID(colony.System):
     """
@@ -73,7 +65,7 @@ class GUID(colony.System):
             rand = random.Random()
             for _index in colony.legacy.xrange(3):
                 # might as well use IPv6 range if we're making it up
-                self.ip += "." + str(rand.randrange(1, 0xffff))
+                self.ip += "." + str(rand.randrange(1, 0xFFFF))
             self.hexadecimal_ip = make_hexadecimal_ip(self.ip)
 
     def generate_guid(self):
@@ -94,7 +86,7 @@ class GUID(colony.System):
             now = colony.legacy.LONG(time.time() * 1000)
 
             while self.last_time == now and self.counter == self.first_counter:
-                time.sleep(.01)
+                time.sleep(0.01)
                 now = colony.legacy.LONG(time.time() * 1000)
 
             # appends time part
@@ -123,5 +115,8 @@ class GUID(colony.System):
             # releases the lock, more GUID can be generated now
             self.lock.release()
 
-make_hexadecimal_ip = lambda ip: "".join(["%04x" % colony.legacy.LONG(index) for index in ip.split(".")])
+
+make_hexadecimal_ip = lambda ip: "".join(
+    ["%04x" % colony.legacy.LONG(index) for index in ip.split(".")]
+)
 """ Makes an hexadecimal IP from a decimal dot-separated ip (eg: 127.0.0.1) """

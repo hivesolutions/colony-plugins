@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -44,17 +35,16 @@ import colony
 
 from . import exceptions
 
-VALID_STATUS_CODES = (
-    200,
-)
+VALID_STATUS_CODES = (200,)
 """ The valid status codes """
+
 
 class Downloader(colony.System):
     """
     The downloader class.
     """
 
-    def download_package(self, address, target_directory = None, handlers_map = {}):
+    def download_package(self, address, target_directory=None, handlers_map={}):
         """
         Downloads a package from the given URL address to a target directory.
 
@@ -94,7 +84,9 @@ class Downloader(colony.System):
 
             try:
                 # fetches the URL retrieving the HTTP response
-                http_response = http_client.fetch_url(address, handlers_map = _handlers_map)
+                http_response = http_client.fetch_url(
+                    address, handlers_map=_handlers_map
+                )
 
                 # retrieves the status code from the HTTP response
                 status_code = http_response.status_code
@@ -105,7 +97,9 @@ class Downloader(colony.System):
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
-                    raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
+                    raise exceptions.InvalidStatusCodeException(
+                        "%i - %s" % (status_code, status_message)
+                    )
 
                 # retrieves the file contents from the HTTP response
                 file_contents = http_response.received_message
@@ -145,19 +139,23 @@ class Downloader(colony.System):
 
             # converts the speed value into a size string (speed string)
             # for simpler scale values
-            speed_string = colony.size_round_unit(speed, space = True)
+            speed_string = colony.size_round_unit(speed, space=True)
 
             # notifies the handlers about the message
-            colony.message(handlers_map, "Saved data as %s [%s/s]. " % (file_name, speed_string))
+            colony.message(
+                handlers_map, "Saved data as %s [%s/s]. " % (file_name, speed_string)
+            )
 
         except Exception as exception:
             # prints an info message
             self.plugin.info(
-                "Problem while downloading file: " + address +\
-                ", error: " + colony.legacy.UNICODE(exception)
+                "Problem while downloading file: "
+                + address
+                + ", error: "
+                + colony.legacy.UNICODE(exception)
             )
 
-    def get_download_package_stream(self, address, handlers_map = {}):
+    def get_download_package_stream(self, address, handlers_map={}):
         """
         Retrieves the download package stream for the given address.
 
@@ -185,7 +183,9 @@ class Downloader(colony.System):
 
             try:
                 # fetches the URL retrieving the HTTP response
-                http_response = http_client.fetch_url(address, handlers_map = _handlers_map)
+                http_response = http_client.fetch_url(
+                    address, handlers_map=_handlers_map
+                )
 
                 # retrieves the status code from the HTTP response
                 status_code = http_response.status_code
@@ -196,7 +196,9 @@ class Downloader(colony.System):
                     status_message = http_response.status_message
 
                     # raises the invalid status code exception
-                    raise exceptions.InvalidStatusCodeException("%i - %s" % (status_code, status_message))
+                    raise exceptions.InvalidStatusCodeException(
+                        "%i - %s" % (status_code, status_message)
+                    )
 
                 # retrieves the file contents from the HTTP response
                 file_contents = http_response.received_message
@@ -208,8 +210,10 @@ class Downloader(colony.System):
             return file_contents
         except Exception as exception:
             self.plugin.error(
-                "Problem while downloading file: " + address +\
-                ", error: " + colony.legacy.UNICODE(exception)
+                "Problem while downloading file: "
+                + address
+                + ", error: "
+                + colony.legacy.UNICODE(exception)
             )
 
     def get_file_name_url(self, url):
@@ -245,7 +249,10 @@ class Downloader(colony.System):
         plugin_manager = self.plugin.manager
 
         # retrieves the configuration path for the downloader plugin
-        configuration_path, _workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(self.plugin.id)
+        (
+            configuration_path,
+            _workspace_path,
+        ) = plugin_manager.get_plugin_configuration_paths_by_id(self.plugin.id)
 
         # sets the target path as the configuration path
         target_path = configuration_path
@@ -256,10 +263,7 @@ class Downloader(colony.System):
     def _create_handlers_map(self, handlers_map):
         # creates the context map to be used to store
         # context information on the current execution
-        context = {
-            "message_length" : 0,
-            "current_count" : 0
-        }
+        context = {"message_length": 0, "current_count": 0}
 
         def headers_handler(response):
             # retrieves the various information from
@@ -270,11 +274,20 @@ class Downloader(colony.System):
             content_length = response.headers_map.get("Content-Length") or 0
             content_type = response.headers_map.get("Content-Type") or "N/A"
             content_length_integer = int(content_length)
-            content_length_string = colony.size_round_unit(content_length_integer, space = True)
+            content_length_string = colony.size_round_unit(
+                content_length_integer, space=True
+            )
 
             # prints a series of message to the observer object
-            colony.message(handlers_map, "Request sent, awaiting response... %d %s" % (status_code, status_message))
-            colony.message(handlers_map, "Received headers [%s] [%s]" % (content_length_string, content_type))
+            colony.message(
+                handlers_map,
+                "Request sent, awaiting response... %d %s"
+                % (status_code, status_message),
+            )
+            colony.message(
+                handlers_map,
+                "Received headers [%s] [%s]" % (content_length_string, content_type),
+            )
             colony.message(handlers_map, "Receiving data... ")
 
             # updates the message length in the current context
@@ -292,12 +305,14 @@ class Downloader(colony.System):
             context["current_count"] = current_count
 
             # notifies the handlers about the progress change
-            colony.progress(handlers_map, int(float(current_count) / float(message_length) * 100))
+            colony.progress(
+                handlers_map, int(float(current_count) / float(message_length) * 100)
+            )
 
         # creates the map containing the handlers to be used in the download
         _handlers_map = {
-            "message_data" : message_data_handler,
-            "headers" : headers_handler
+            "message_data": message_data_handler,
+            "headers": headers_handler,
         }
 
         # returns the (generated) handlers map

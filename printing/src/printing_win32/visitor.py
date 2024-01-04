@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -84,7 +75,7 @@ EXCLUSION_LIST = [
     "set_value",
     "indent",
     "value",
-    "child_nodes"
+    "child_nodes",
 ]
 """ The exclusion list """
 
@@ -99,6 +90,7 @@ BOLD_TEXT_WEIGHT = 800
 
 DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
 """ The default text weight """
+
 
 class Visitor(object):
     """
@@ -155,7 +147,8 @@ class Visitor(object):
 
             # in case the current class real element does not contain
             # an AST node class reference must continue the loop
-            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            if not hasattr(self_class_real_element, "ast_node_class"):
+                continue
 
             # retrieves the AST node class from the current class real element
             # and sets it in the node method map
@@ -224,7 +217,12 @@ class Visitor(object):
     @colony.visit(printing_manager.PrintingDocument)
     def visit_printing_document(self, node):
         # unpacks the printer handler information
-        handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
+        (
+            handler_device_context,
+            _printable_area,
+            _printer_size,
+            _printer_margins,
+        ) = self.printer_handler
 
         # in case it's the first visit
         if self.visit_index == 0:
@@ -244,9 +242,7 @@ class Visitor(object):
             handler_device_context.SelectObject(pen)
 
             # sets the initial position
-            self.current_position = (
-                0, 0
-            )
+            self.current_position = (0, 0)
         # in case it's the second visit
         elif self.visit_index == 1:
             # ends the current page and document (flushes the data
@@ -273,8 +269,10 @@ class Visitor(object):
 
     @colony.visit(printing_manager.Paragraph)
     def visit_paragraph(self, node):
-        if self.visit_index == 0: self.add_context(node)
-        elif self.visit_index == 1: self.remove_context(node)
+        if self.visit_index == 0:
+            self.add_context(node)
+        elif self.visit_index == 1:
+            self.remove_context(node)
 
     @colony.visit(printing_manager.Line)
     def visit_line(self, node):
@@ -291,7 +289,7 @@ class Visitor(object):
             current_position_x, current_position_y = self.current_position
             self.current_position = (
                 current_position_x,
-                current_position_y - margin_top * FONT_SCALE_FACTOR
+                current_position_y - margin_top * FONT_SCALE_FACTOR,
             )
 
         elif self.visit_index == 1:
@@ -306,7 +304,8 @@ class Visitor(object):
             # and then updates the current position
             current_position_x, current_position_y = self.current_position
             self.current_position = (
-                0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
+                0,
+                current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR,
             )
 
             # removes the context information
@@ -316,7 +315,12 @@ class Visitor(object):
     def visit_text(self, node):
         if self.visit_index == 0:
             # unpacks the printer handler information
-            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
+            (
+                handler_device_context,
+                _printable_area,
+                _printer_size,
+                _printer_margins,
+            ) = self.printer_handler
 
             # adds the node as the context information
             self.add_context(node)
@@ -347,10 +351,10 @@ class Visitor(object):
 
             # defines the font parameters
             font_parameters = {
-                "name" : font_name,
-                "height" : font_size * FONT_SCALE_FACTOR,
-                "weight" : text_weight,
-                "italic" : text_italic
+                "name": font_name,
+                "height": font_size * FONT_SCALE_FACTOR,
+                "weight": text_weight,
+                "italic": text_italic,
             }
 
             # creates the font
@@ -366,7 +370,12 @@ class Visitor(object):
             # the current clip box values to be used in the calculus of
             # the appropriate text position
             text_width, text_height = handler_device_context.GetTextExtent(text_encoded)
-            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
+            (
+                _box_left,
+                _box_top,
+                box_right,
+                _box_bottom,
+            ) = handler_device_context.GetClipBox()
 
             # initializes the text x coordinate with the margin defined
             # for the current node (difference of margins)
@@ -374,8 +383,10 @@ class Visitor(object):
 
             # calculates the appropriate text position according to the
             # "requested" horizontal text alignment
-            if text_align == "left": text_x += 0
-            elif text_align == "right": text_x += box_right - text_width
+            if text_align == "left":
+                text_x += 0
+            elif text_align == "right":
+                text_x += box_right - text_width
             elif text_align == "center":
                 text_x += int(box_right / 2) - int(text_width / 2)
 
@@ -400,7 +411,12 @@ class Visitor(object):
     def visit_image(self, node):
         if self.visit_index == 0:
             # unpacks the printer handler information
-            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
+            (
+                handler_device_context,
+                _printable_area,
+                _printer_size,
+                _printer_margins,
+            ) = self.printer_handler
 
             # adds the node as the context information
             self.add_context(node)
@@ -412,8 +428,10 @@ class Visitor(object):
 
             # retrieves the path or source value to be used
             # in the retrieval (only one value is set)
-            if self.has_context("path"): image_path = self.get_context("path")
-            elif self.has_context("source"): image_source = self.get_context("source")
+            if self.has_context("path"):
+                image_path = self.get_context("path")
+            elif self.has_context("source"):
+                image_source = self.get_context("source")
 
             # retrieves the complete set of attributes for the current
             # context to be used for the processing of the node
@@ -453,15 +471,23 @@ class Visitor(object):
             _current_position_x, current_position_y = self.current_position
 
             # retrieves the current clip box values
-            _box_left, _box_top, box_right, _box_bottom = handler_device_context.GetClipBox()
+            (
+                _box_left,
+                _box_top,
+                box_right,
+                _box_bottom,
+            ) = handler_device_context.GetClipBox()
 
             # calculates the appropriate bitmap position according to the
             # "requested" horizontal text alignment
-            if text_align == "left": real_bitmap_x1 = 0
+            if text_align == "left":
+                real_bitmap_x1 = 0
             elif text_align == "right":
                 real_bitmap_x1 = box_right - bitmap_image_width * IMAGE_SCALE_FACTOR
             elif text_align == "center":
-                real_bitmap_x1 = int(box_right / 2) - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+                real_bitmap_x1 = int(box_right / 2) - int(
+                    bitmap_image_width * IMAGE_SCALE_FACTOR / 2
+                )
 
             real_bitmap_y1 = current_position_y
             real_bitmap_x2 = real_bitmap_x1 + (bitmap_image_width * IMAGE_SCALE_FACTOR)
@@ -473,18 +499,17 @@ class Visitor(object):
             # draws the image in the output for the handler device context
             dib_image.draw(
                 handler_device_context_output,
-                (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2)
+                (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2),
             )
 
             # sets the new current position
-            self.current_position = (
-                real_bitmap_x2,
-                current_position_y
-            )
+            self.current_position = (real_bitmap_x2, current_position_y)
 
             biggest_height = self.get_context("biggest_height")
             if biggest_height < bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context("biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR)
+                self.put_context(
+                    "biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR
+                )
 
         elif self.visit_index == 1:
             self.remove_context(node)
@@ -505,15 +530,16 @@ class Visitor(object):
         # converts the current position to context
         current_position_context = (
             FONT_SCALE_FACTOR * current_position_x,
-            -1 * FONT_SCALE_FACTOR * current_position_y
+            -1 * FONT_SCALE_FACTOR * current_position_y,
         )
 
         # returns the current position context
         return current_position_context
 
-    def get_context(self, context_name, default = None):
+    def get_context(self, context_name, default=None):
         if not self.has_context(context_name):
-            if not default == None: return default
+            if not default == None:
+                return default
             raise exceptions.InvalidContextInformationName(
                 "the context information name: " + context_name + " is invalid"
             )
@@ -521,13 +547,19 @@ class Visitor(object):
         return self.peek_context(context_name)
 
     def add_context(self, node):
-        valid_attributes = [(value, getattr(node, value)) for value in dir(node) if not value in EXCLUSION_LIST]
+        valid_attributes = [
+            (value, getattr(node, value))
+            for value in dir(node)
+            if not value in EXCLUSION_LIST
+        ]
 
         for valid_attribute_name, valid_attribute_value in valid_attributes:
             self.push_context(valid_attribute_name, valid_attribute_value)
 
     def remove_context(self, node):
-        valid_attribute_names = [value for value in dir(node) if not value in EXCLUSION_LIST]
+        valid_attribute_names = [
+            value for value in dir(node) if not value in EXCLUSION_LIST
+        ]
 
         for valid_attribute_name in valid_attribute_names:
             self.pop_context(valid_attribute_name)
@@ -589,6 +621,7 @@ class Visitor(object):
 
         # in case the context information name exists in the
         # context information map and is not invalid
-        if context_name in self.context_map and\
-            self.context_map[context_name]: return True
-        else: return False
+        if context_name in self.context_map and self.context_map[context_name]:
+            return True
+        else:
+            return False

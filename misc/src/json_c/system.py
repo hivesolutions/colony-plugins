@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -53,6 +44,7 @@ FAST_LOADS = True
 """ Flag that controls if by default the strategy for the loading
 operation should try to use the embedded loader (faster) """
 
+
 class JSON(colony.System):
     """
     Provides functions to interact with JSON, this class should
@@ -71,11 +63,12 @@ class JSON(colony.System):
     def dumps_buffer(self, object):
         return serializer.dumps_buffer(object)
 
-    def loads(self, json_string, fast = FAST_LOADS):
-        if fast: return serializer.loads_f(json_string)
+    def loads(self, json_string, fast=FAST_LOADS):
+        if fast:
+            return serializer.loads_f(json_string)
         return serializer.loads(json_string)
 
-    def load_file(self, json_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, json_file, encoding=DEFAULT_ENCODING):
         # reads the JSON file
         json_file_contents = json_file.read()
 

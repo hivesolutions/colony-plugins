@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -50,25 +41,19 @@ class CryptonPlugin(colony.Plugin):
     description = "The plugin that offers the Crypton base infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc_service",
-        "controller_access"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["mvc_service", "controller_access"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
-        colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl"),
     ]
-    main_modules = [
-        "crypton"
-    ]
+    main_modules = ["crypton"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import crypton
+
         self.system = crypton.Crypton(self)
 
     def end_load_plugin(self):

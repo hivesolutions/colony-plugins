@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceHTTPPlugin(colony.Plugin):
     """
@@ -52,27 +44,22 @@ class ServiceHTTPPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "service.http"
-    ]
+    capabilities = ["service.http"]
     capabilities_allowed = [
         "http_service_handler",
         "http_service_encoding",
         "http_service_authentication_handler",
-        "http_service_error_handler"
+        "http_service_error_handler",
     ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.service.utils")
-    ]
-    main_modules = [
-        "service_http"
-    ]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.service.utils")]
+    main_modules = ["service_http"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http
+
         self.system = service_http.ServiceHTTP(self)
 
     @colony.load_allowed

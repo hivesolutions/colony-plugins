@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -76,6 +67,7 @@ RGBA_VALUE = "RGBA"
 JPEG_VALUE = "jpeg"
 """ The jpeg value """
 
+
 class Captcha(colony.System):
     """
     The Captcha class.
@@ -112,7 +104,9 @@ class Captcha(colony.System):
             string_value = self._generate_string_value(number_letters)
 
         # creates a background image
-        image = PIL.Image.new(RGBA_VALUE, (image_width, image_height), (255, 255, 255, 255))
+        image = PIL.Image.new(
+            RGBA_VALUE, (image_width, image_height), (255, 255, 255, 255)
+        )
 
         # fill the image with the pattern
         self._fill_pattern(image, pattern)
@@ -131,10 +125,7 @@ class Captcha(colony.System):
 
         # returns a tuple with the string value and
         # the string buffer
-        return (
-            string_value,
-            string_buffer
-        )
+        return (string_value, string_buffer)
 
     def generate_captcha_string_value(self, properties):
         # tries to retrieve the number of letters
@@ -176,12 +167,14 @@ class Captcha(colony.System):
         # returns the string value
         return string_value
 
-    def _draw_text(self, image, text_font, string_value, rotate = True):
+    def _draw_text(self, image, text_font, string_value, rotate=True):
         # retrieves the image width and height
         image_width, image_height = image.size
 
         # creates a text image
-        text_image = PIL.Image.new(RGBA_VALUE, (image_width, image_height), (255, 255, 255, 0))
+        text_image = PIL.Image.new(
+            RGBA_VALUE, (image_width, image_height), (255, 255, 255, 0)
+        )
 
         # creates the text draw (temporary) from the text image
         text_draw = PIL.ImageDraw.Draw(text_image)
@@ -209,7 +202,7 @@ class Captcha(colony.System):
 
     def _draw_text_simple(self, text_draw, text_font, string_value):
         # draw the text to the text draw
-        text_draw.text((0, 0), string_value, font = text_font, fill = (220, 220, 220))
+        text_draw.text((0, 0), string_value, font=text_font, fill=(220, 220, 220))
 
         # retrieves the text size from the text font
         text_size = text_font.getsize(string_value)
@@ -234,19 +227,23 @@ class Captcha(colony.System):
         for letter_value in string_value:
             # retrieves the letter width and height from the text font
             letter_width, letter_height = text_font.getsize(letter_value)
-            if has_offset: offset_width, offset_height = text_font.getoffset(letter_value)
-            else: offset_width, offset_height = (0, 0)
+            if has_offset:
+                offset_width, offset_height = text_font.getoffset(letter_value)
+            else:
+                offset_width, offset_height = (0, 0)
             letter_width += offset_width
             letter_height += offset_height
 
             # creates a letter image
-            letter_image = PIL.Image.new(RGBA_VALUE, (letter_width, letter_height), (255, 255, 255, 0))
+            letter_image = PIL.Image.new(
+                RGBA_VALUE, (letter_width, letter_height), (255, 255, 255, 0)
+            )
 
             # creates the letter draw (temporary) from the letter image
             letter_draw = PIL.ImageDraw.Draw(letter_image)
 
             # draw the text to the text draw
-            letter_draw.text((0, 0), letter_value, font = text_font, fill = (220, 220, 220))
+            letter_draw.text((0, 0), letter_value, font=text_font, fill=(220, 220, 220))
 
             # generates a random rotation angle
             rotation = random.randint(-45, 45)
@@ -302,7 +299,7 @@ class Captcha(colony.System):
             # increments the y position with the pattern height
             current_pattern_y += pattern_height
 
-    def _get_font(self, resources_path, font_name = None, font_size = DEFAULT_FONT_SIZE):
+    def _get_font(self, resources_path, font_name=None, font_size=DEFAULT_FONT_SIZE):
         # retrieves the fonts path for the resources path
         fonts_path = resources_path + "/fonts"
 
@@ -321,7 +318,7 @@ class Captcha(colony.System):
         # returns the font
         return font
 
-    def _get_pattern(self, resources_path, pattern_name = None):
+    def _get_pattern(self, resources_path, pattern_name=None):
         # retrieves the fonts path for the resources path
         patterns_path = resources_path + "/patterns"
 
@@ -340,13 +337,15 @@ class Captcha(colony.System):
         # returns the pattern
         return pattern
 
-    def _get_random_file_path(self, directory_path, extensions = []):
+    def _get_random_file_path(self, directory_path, extensions=[]):
         # retrieves the list of files within
         # the directory path
         file_paths = os.listdir(directory_path)
 
         # filters the file paths based on the extensions
-        file_paths = [value for value in file_paths if os.path.splitext(value)[1] in extensions]
+        file_paths = [
+            value for value in file_paths if os.path.splitext(value)[1] in extensions
+        ]
 
         # retrieves the length of the list of file paths,
         # the quantity of files available

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -52,47 +43,44 @@ import colony
 from . import exceptions
 
 EXCLUSION_MAP = {
-    "__class__" : True,
-    "__delattr__" : True,
-    "__dict__" : True,
-    "__doc__" : True,
-    "__getattribute__" : True,
-    "__hash__" : True,
-    "__init__" : True,
-    "__module__" : True,
-    "__new__" : True,
-    "__reduce__" : True,
-    "__reduce_ex__" : True,
-    "__repr__" : True,
-    "__setattr__" : True,
-    "__str__" : True,
-    "__weakref__" : True,
-    "__format__" : True,
-    "__sizeof__" : True,
-    "__subclasshook__" : True
+    "__class__": True,
+    "__delattr__": True,
+    "__dict__": True,
+    "__doc__": True,
+    "__getattribute__": True,
+    "__hash__": True,
+    "__init__": True,
+    "__module__": True,
+    "__new__": True,
+    "__reduce__": True,
+    "__reduce_ex__": True,
+    "__repr__": True,
+    "__setattr__": True,
+    "__str__": True,
+    "__weakref__": True,
+    "__format__": True,
+    "__sizeof__": True,
+    "__subclasshook__": True,
 }
 """ The map used to exclude invalid values from an object """
 
-EXCLUSION_TYPES = {
-    types.MethodType : True,
-    types.FunctionType : True
-}
+EXCLUSION_TYPES = {types.MethodType: True, types.FunctionType: True}
 """ The map used to exclude invalid types from an object """
 
 NUMBER_TYPES = {
-    int : True,
+    int: True,
     colony.legacy.LONG: True,
-    float : True,
-    colony.Decimal : True,
-    decimal.Decimal : True,
+    float: True,
+    colony.Decimal: True,
+    decimal.Decimal: True,
 }
 """ The map used to check number types """
 
 SEQUENCE_TYPES = {
-    tuple : True,
-    list : True,
-    types.GeneratorType : True,
-    itertools.chain : True
+    tuple: True,
+    list: True,
+    types.GeneratorType: True,
+    itertools.chain: True,
 }
 """ The map used to check sequence types """
 
@@ -100,14 +88,14 @@ INDENTATION_VALUE = "    "
 """ The indentation value """
 
 character_replacements = {
-    "\t" : "\\t",
-    "\b" : "\\b",
-    "\f" : "\\f",
-    "\n" : "\\n",
-    "\r" : "\\r",
-    "\\" : "\\\\",
-    "/" : "\\/",
-    "\"" : "\\\""
+    "\t": "\\t",
+    "\b": "\\b",
+    "\f": "\\f",
+    "\n": "\\n",
+    "\r": "\\r",
+    "\\": "\\\\",
+    "/": "\\/",
+    '"': '\\"',
 }
 
 escape_char_to_char = {
@@ -118,14 +106,13 @@ escape_char_to_char = {
     "r": "\r",
     "\\": "\\",
     "/": "/",
-    "\"" : "\""
+    '"': '"',
 }
 
 string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
 
-digits_list = (
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-)
+digits_list = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+
 
 def escape_character(match):
     """
@@ -161,6 +148,7 @@ def escape_character(match):
             # returns the character
             return character
 
+
 def dumps(object):
     """
     Dumps (converts to JSON) the given object using the "normal"
@@ -176,6 +164,7 @@ def dumps(object):
 
     parts = dump_parts(object)
     return "".join([part for part in parts])
+
 
 def dumps_lazy(object):
     """
@@ -195,6 +184,7 @@ def dumps_lazy(object):
 
     return dump_parts(object)
 
+
 def dumps_pretty(object):
     """
     Dumps (converts to JSON) the given object using the "normal"
@@ -208,6 +198,7 @@ def dumps_pretty(object):
     """
 
     return "".join([part for part in dump_parts_pretty(object)])
+
 
 def dumps_buffer(object):
     """
@@ -232,7 +223,8 @@ def dumps_buffer(object):
     # returns the string value
     return string_value
 
-def dump_parts(object, objects = None, cycles = False):
+
+def dump_parts(object, objects=None, cycles=False):
     """
     Dumps (converts to JSON) the given object parts using the "normal"
     approach, note that the construction of the final string must be
@@ -255,11 +247,13 @@ def dump_parts(object, objects = None, cycles = False):
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
-    if has_json_v: object = object.json_v()
+    if has_json_v:
+        object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
-    if objects == None: objects = {}
+    if objects == None:
+        objects = {}
 
     # retrieves the object type and the
     # identifier of the object
@@ -271,11 +265,13 @@ def dump_parts(object, objects = None, cycles = False):
     if object_id in objects:
         # yields the null value and returns
         # immediately to the calling method
-        yield "null"; return
+        yield "null"
+        return
 
     # sets the object identifier reference in the
     # map of "already" parsed elements
-    if cycles: objects[object_id] = True
+    if cycles:
+        objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -284,15 +280,15 @@ def dump_parts(object, objects = None, cycles = False):
     # in case the object is a function
     elif object_type is types.FunctionType:
         # yields the function value
-        yield "\"function\""
+        yield '"function"'
     # in case the object is a module
     elif object_type is types.ModuleType:
         # yields the module value
-        yield "\"module\""
+        yield '"module"'
     # in case the object is a method
     elif object_type is types.MethodType:
         # yields the method value
-        yield "\"method\""
+        yield '"method"'
     # in case the object is a boolean
     elif object_type is bool:
         # in case the object is valid (true)
@@ -343,7 +339,7 @@ def dump_parts(object, objects = None, cycles = False):
     # in case the object is a string
     elif object_type in colony.legacy.STRINGS:
         # yields the string value
-        yield "\"" + string_escape_re.sub(escape_character, object) + "\""
+        yield '"' + string_escape_re.sub(escape_character, object) + '"'
     # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
         # yields the list initial value
@@ -394,9 +390,13 @@ def dump_parts(object, objects = None, cycles = False):
 
         # retrieves the object items from the object, taking into
         # account the exclusion map and the value type
-        object_items = [value for value in dir(object) if\
-            not value.startswith("_") and not value in EXCLUSION_MAP and\
-            not type(getattr(object, value)) in EXCLUSION_TYPES]
+        object_items = [
+            value
+            for value in dir(object)
+            if not value.startswith("_")
+            and not value in EXCLUSION_MAP
+            and not type(getattr(object, value)) in EXCLUSION_TYPES
+        ]
 
         # iterates over all the object items
         for object_item in object_items:
@@ -412,7 +412,7 @@ def dump_parts(object, objects = None, cycles = False):
                 yield ","
 
             # yields the object item
-            yield "\"" + object_item + "\"" + ":"
+            yield '"' + object_item + '"' + ":"
 
             # iterates over the object value parts
             for part in dump_parts(object_value, objects, cycles):
@@ -428,9 +428,11 @@ def dump_parts(object, objects = None, cycles = False):
 
     # removes the current object identifier from
     # the map of object already serialized
-    if cycles: del objects[object_id]
+    if cycles:
+        del objects[object_id]
 
-def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
+
+def dump_parts_pretty(object, objects=None, indentation=0, cycles=False):
     """
     Dumps (converts to JSON) the given object parts using the "normal"
     approach.
@@ -453,11 +455,13 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
-    if has_json_v: object = object.json_v()
+    if has_json_v:
+        object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
-    if objects == None: objects = {}
+    if objects == None:
+        objects = {}
 
     # retrieves the object type and the
     # identifier of the object
@@ -469,11 +473,13 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     if object_id in objects:
         # yields the null value and returns
         # immediately to the calling method
-        yield "null"; return
+        yield "null"
+        return
 
     # sets the object identifier reference in the
     # map of "already" parsed elements
-    if cycles: objects[object_id] = True
+    if cycles:
+        objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -482,15 +488,15 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     # in case the object is a function
     elif object_type is types.FunctionType:
         # yields the function value
-        yield "\"function\""
+        yield '"function"'
     # in case the object is a module
     elif object_type is types.ModuleType:
         # yields the module value
-        yield "\"module\""
+        yield '"module"'
     # in case the object is a method
     elif object_type is types.MethodType:
         # yields the method value
-        yield "\"method\""
+        yield '"method"'
     # in case the object is a boolean
     elif object_type is bool:
         # in case the object is valid (true)
@@ -557,7 +563,7 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
     # in case the object is a string
     elif object_type in colony.legacy.STRINGS:
         # yields the string value
-        yield "\"" + string_escape_re.sub(escape_character, object) + "\""
+        yield '"' + string_escape_re.sub(escape_character, object) + '"'
     # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
         # yields the list initial value
@@ -608,7 +614,13 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
 
         # retrieves the object items from the object, taking into
         # account the exclusion map and the value type
-        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        object_items = [
+            value
+            for value in dir(object)
+            if not value.startswith("_")
+            and not value in EXCLUSION_MAP
+            and not type(getattr(object, value)) in EXCLUSION_TYPES
+        ]
 
         # iterates over all the object items
         for object_item in object_items:
@@ -632,10 +644,12 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
                 yield INDENTATION_VALUE
 
             # yields the object item
-            yield "\"" + object_item + "\"" + " : "
+            yield '"' + object_item + '"' + " : "
 
             # iterates over the object value parts
-            for part in dump_parts_pretty(object_value, objects, indentation + 1, cycles):
+            for part in dump_parts_pretty(
+                object_value, objects, indentation + 1, cycles
+            ):
                 # yields the part
                 yield part
 
@@ -656,9 +670,11 @@ def dump_parts_pretty(object, objects = None, indentation = 0, cycles = False):
 
     # removes the current object identifier from
     # the map of object already serialized
-    if cycles: del objects[object_id]
+    if cycles:
+        del objects[object_id]
 
-def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
+
+def dump_parts_buffer(object, string_buffer, objects=None, cycles=False):
     """
     Dumps (converts to JSON) the given object parts using the "buffered"
     approach.
@@ -682,11 +698,13 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     # method the object to be serialized should be the
     # one retrieved by this method
     has_json_v = hasattr(object, "json_v")
-    if has_json_v: object = object.json_v()
+    if has_json_v:
+        object = object.json_v()
 
     # in case the objects reference is not initializes
     # starts a new map to hold the contents
-    if objects == None: objects = {}
+    if objects == None:
+        objects = {}
 
     # retrieves the object type and the
     # identifier of the object
@@ -698,11 +716,13 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     if object_id in objects:
         # writes the null value and returns
         # immediately to the calling method
-        string_buffer.write("null"); return
+        string_buffer.write("null")
+        return
 
     # sets the object identifier reference in the
     # map of "already" parsed elements
-    if cycles: objects[object_id] = True
+    if cycles:
+        objects[object_id] = True
 
     # in case the object is none
     if object == None:
@@ -711,15 +731,15 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     # in case the object is a function
     elif object_type is types.FunctionType:
         # writes the function value
-        string_buffer.write("\"function\"")
+        string_buffer.write('"function"')
     # in case the object is a module
     elif object_type is types.ModuleType:
         # writes the module value
-        string_buffer.write("\"module\"")
+        string_buffer.write('"module"')
     # in case the object is a method
     elif object_type is types.MethodType:
         # writes the method value
-        string_buffer.write("\"method\"")
+        string_buffer.write('"method"')
     # in case the object is a boolean
     elif object_type is bool:
         # in case the object is valid (true)
@@ -767,7 +787,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
     # in case the object is a string
     elif object_type in colony.legacy.STRINGS:
         # writes the escaped string value
-        string_buffer.write("\"" + string_escape_re.sub(escape_character, object) + "\"")
+        string_buffer.write('"' + string_escape_re.sub(escape_character, object) + '"')
     # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
         # writes the list initial value
@@ -815,7 +835,13 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
 
         # retrieves the object items from the object, taking into
         # account the exclusion map and the value type
-        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        object_items = [
+            value
+            for value in dir(object)
+            if not value.startswith("_")
+            and not value in EXCLUSION_MAP
+            and not type(getattr(object, value)) in EXCLUSION_TYPES
+        ]
 
         # iterates over all the object items
         for object_item in object_items:
@@ -832,7 +858,7 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
                 string_buffer.write(",")
 
             # writes the object item
-            string_buffer.write("\"" + object_item + "\"" + ":")
+            string_buffer.write('"' + object_item + '"' + ":")
 
             # dumps the object value parts
             dump_parts_buffer(object_value, string_buffer, objects, cycles)
@@ -846,7 +872,9 @@ def dump_parts_buffer(object, string_buffer, objects = None, cycles = False):
 
     # removes the current object identifier from
     # the map of object already serialized
-    if cycles: del objects[object_id]
+    if cycles:
+        del objects[object_id]
+
 
 def loads(data):
     # initializes the stack
@@ -885,14 +913,14 @@ def loads(data):
             current_character_is_next = False
 
             # in case it's the beginning of a string
-            if character == "\"":
+            if character == '"':
                 value = ""
                 try:
                     # retrieves the next character
                     character = next(characters)
 
                     # iterates while the string is not finished
-                    while not character == "\"":
+                    while not character == '"':
                         if character == "\\":
                             # retrieves the next character
                             character = next(characters)
@@ -901,11 +929,18 @@ def loads(data):
                                 value += escape_char_to_char[character]
                             except KeyError:
                                 if character == "u":
-                                    hex_code = next(characters) + next(characters) + next(characters) + next(characters)
+                                    hex_code = (
+                                        next(characters)
+                                        + next(characters)
+                                        + next(characters)
+                                        + next(characters)
+                                    )
                                     value += colony.legacy.unichr(int(hex_code, 16))
                                 else:
                                     # raises the JSON decode exception
-                                    raise exceptions.JSONDecodeException("Bad Escape Sequence Found")
+                                    raise exceptions.JSONDecodeException(
+                                        "Bad Escape Sequence Found"
+                                    )
                         else:
                             value += character
 
@@ -964,9 +999,7 @@ def loads(data):
                 # sets the skip flag
                 skip = True
             elif character in digits_list or character == "-":
-                digits = [
-                    character
-                ]
+                digits = [character]
 
                 character = next(characters)
                 num_conv = int
@@ -1013,7 +1046,9 @@ def loads(data):
                     raise exceptions.JSONDecodeException("Expected Null, False or True")
             else:
                 # raises the JSON decode exception
-                raise exceptions.JSONDecodeException("Expected []{},\" or Number, Null, False or True")
+                raise exceptions.JSONDecodeException(
+                    'Expected []{}," or Number, Null, False or True'
+                )
 
             if not skip:
                 if len(stack):
@@ -1028,7 +1063,9 @@ def loads(data):
                         # in the valid map
                         if not top_id in valid_map:
                             # raises the JSON decode exception
-                            raise exceptions.JSONDecodeException("Expected list structure")
+                            raise exceptions.JSONDecodeException(
+                                "Expected list structure"
+                            )
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -1039,7 +1076,9 @@ def loads(data):
                             valid_map[top_id] = False
                         else:
                             # raises the JSON decode exception
-                            raise exceptions.JSONDecodeException("Expected list separator ','")
+                            raise exceptions.JSONDecodeException(
+                                "Expected list separator ','"
+                            )
                     elif type(top) is dict:
                         # appends the value to the stack
                         stack.append(value)
@@ -1051,7 +1090,9 @@ def loads(data):
                         # in the valid map
                         if not top_id in valid_map:
                             # raises the JSON decode exception
-                            raise exceptions.JSONDecodeException("Expected dictionary structure")
+                            raise exceptions.JSONDecodeException(
+                                "Expected dictionary structure"
+                            )
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -1073,11 +1114,15 @@ def loads(data):
                             valid_map[top_id] = False
                         else:
                             # raises the JSON decode exception
-                            raise exceptions.JSONDecodeException("Expected dictionary separator ':'")
+                            raise exceptions.JSONDecodeException(
+                                "Expected dictionary separator ':'"
+                            )
                     # otherwise
                     else:
                         # raises the JSON decode exception
-                        raise exceptions.JSONDecodeException("Expected dictionary key, or start of a value")
+                        raise exceptions.JSONDecodeException(
+                            "Expected dictionary key, or start of a value"
+                        )
                 # otherwise
                 else:
                     # returns the value
@@ -1086,7 +1131,10 @@ def loads(data):
         # raises the JSON decode exception
         raise exceptions.JSONDecodeException("Unexpected end of JSON source")
 
+
 def loads_f(data):
-    try: import json
-    except ImportError: return loads(data)
+    try:
+        import json
+    except ImportError:
+        return loads(data)
     return json.loads(data)

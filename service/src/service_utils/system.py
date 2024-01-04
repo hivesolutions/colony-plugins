@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -45,17 +36,15 @@ from . import synchronous
 from . import asynchronous
 from . import exceptions
 
-PORT_RANGES = (
-    (38001, 39999),
-    (40001, 42999)
-)
+PORT_RANGES = ((38001, 39999), (40001, 42999))
 """ The ranges of port available for services """
 
 SERVICE_CLASSES_MAP = {
-    "sync" : synchronous.AbstractService,
-    "async" : asynchronous.AbstractService
+    "sync": synchronous.AbstractService,
+    "async": asynchronous.AbstractService,
 }
 """ The map containing the various abstract service types """
+
 
 class ServiceUtils(colony.System):
     """
@@ -101,7 +90,9 @@ class ServiceUtils(colony.System):
         # retrieves the service type from the parameters in order
         # to retrieve the proper (abstract) service class
         service_type = parameters.get("service_type", "sync")
-        service_class = SERVICE_CLASSES_MAP.get(service_type, synchronous.AbstractService)
+        service_class = SERVICE_CLASSES_MAP.get(
+            service_type, synchronous.AbstractService
+        )
 
         # creates the service "instance" using the abstract service class
         service_instance = service_class(self, self.plugin, parameters)

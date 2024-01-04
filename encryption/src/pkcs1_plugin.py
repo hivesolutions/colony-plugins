@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class PKCS1Plugin(colony.Plugin):
     """
@@ -49,23 +41,15 @@ class PKCS1Plugin(colony.Plugin):
     description = "The plugin that offers the PKCS1 support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "encryption.pkcs1"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.format.ber")
-    ]
-    main_modules = [
-        "pkcs1_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["encryption.pkcs1"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.format.ber")]
+    main_modules = ["pkcs1_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import pkcs1_c
+
         self.system = pkcs1_c.PKCS1(self)
 
     def create_structure(self, parameters):

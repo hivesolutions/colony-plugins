@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class APIOpenIDPlugin(colony.Plugin):
     """
@@ -49,25 +41,20 @@ class APIOpenIDPlugin(colony.Plugin):
     description = "The plugin that offers the OpenID API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.openid"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.openid"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
         colony.PluginDependency("pt.hive.colony.plugins.api.yadis"),
         colony.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.random")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
     ]
-    main_modules = [
-        "api_openid"
-    ]
+    main_modules = ["api_openid"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_openid
+
         self.system = api_openid.APIOpenID(self)
 
     def create_server(self, api_attributes):

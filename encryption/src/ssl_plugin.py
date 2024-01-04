@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class SSLPlugin(colony.Plugin):
     """
@@ -49,25 +41,18 @@ class SSLPlugin(colony.Plugin):
     description = "The plugin that offers the SSL support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "test",
-        "encryption.ssl"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["test", "encryption.ssl"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.encryption.rsa"),
-        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1"),
     ]
-    main_modules = [
-        "ssl_c"
-    ]
+    main_modules = ["ssl_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_c
+
         self.system = ssl_c.SSL(self)
         self.test = ssl_c.SSLTest(self)
 

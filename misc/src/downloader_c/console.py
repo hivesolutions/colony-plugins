@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -39,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 CONSOLE_EXTENSION_NAME = "downloader"
 """ The console extension name """
+
 
 class ConsoleDownloader(object):
     """
@@ -68,7 +60,9 @@ class ConsoleDownloader(object):
     def get_commands_map(self):
         return self.commands_map
 
-    def process_download(self, arguments, arguments_map, output_method, console_context):
+    def process_download(
+        self, arguments, arguments_map, output_method, console_context
+    ):
         """
         Processes the download command, with the given
         arguments and output method.
@@ -91,12 +85,14 @@ class ConsoleDownloader(object):
 
         # creates a new set of handlers map to be used in the current
         # command line execution context
-        handlers_map = console_context and console_context.create_handlers_map(output_method) or {}
+        handlers_map = (
+            console_context and console_context.create_handlers_map(output_method) or {}
+        )
 
         try:
             # downloads the specified file, and notifies the appropriate
             # handlers for messages
-            downloader.download_package(file_path, handlers_map = handlers_map)
+            downloader.download_package(file_path, handlers_map=handlers_map)
         finally:
             # flushes the handlers map, avoids possible data
             # synchronization problems
@@ -104,16 +100,16 @@ class ConsoleDownloader(object):
 
     def __generate_commands_map(self):
         return {
-            "download" : {
-                "handler" : self.process_download,
-                "description" : "starts the download of the file",
-                "arguments" : [
+            "download": {
+                "handler": self.process_download,
+                "description": "starts the download of the file",
+                "arguments": [
                     {
-                        "name" : "file_path",
-                        "description" : "the path of the file to download",
-                        "values" : str,
-                        "mandatory" : True
+                        "name": "file_path",
+                        "description": "the path of the file to download",
+                        "values": str,
+                        "mandatory": True,
                     }
-                ]
+                ],
             }
         }

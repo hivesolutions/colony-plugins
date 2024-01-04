@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ResourcesManagerPlugin(colony.Plugin):
     """
@@ -52,28 +44,20 @@ class ResourcesManagerPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "startup",
-        "resources_manager",
-        "test_case",
-        "system_information"
-    ]
-    capabilities_allowed = [
-        "resources_parser"
-    ]
+    capabilities = ["startup", "resources_manager", "test_case", "system_information"]
+    capabilities_allowed = ["resources_parser"]
     events_handled = [
         "plugin_manager.plugin.end_load_plugin",
-        "plugin_manager.plugin.unload_plugin"
+        "plugin_manager.plugin.unload_plugin",
     ]
-    main_modules = [
-        "resources_manager"
-    ]
+    main_modules = ["resources_manager"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import resources_manager
+
         self.system = resources_manager.ResourcesManager(self)
         self.test = resources_manager.ResourcesManagerTestCase
         self.system.load_system()
@@ -114,13 +98,21 @@ class ResourcesManagerPlugin(colony.Plugin):
         return self.system.parse_file(file_path, full_resources_path)
 
     def register_resources(self, resources_list, file_path, full_resources_path):
-        return self.system.register_resources(resources_list, file_path, full_resources_path)
+        return self.system.register_resources(
+            resources_list, file_path, full_resources_path
+        )
 
     def unregister_resources(self, resources_list, file_path, full_resources_path):
-        return self.system.unregister_resources(resources_list, file_path, full_resources_path)
+        return self.system.unregister_resources(
+            resources_list, file_path, full_resources_path
+        )
 
-    def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
-        return self.system.register_resource(resource_namespace, resource_name, resource_type, resource_data)
+    def register_resource(
+        self, resource_namespace, resource_name, resource_type, resource_data
+    ):
+        return self.system.register_resource(
+            resource_namespace, resource_name, resource_type, resource_data
+        )
 
     def unregister_resource(self, resource_id):
         return self.system.unregister_resource(resource_id)
@@ -134,8 +126,12 @@ class ResourcesManagerPlugin(colony.Plugin):
     def get_resource(self, resource_id):
         return self.system.get_resource(resource_id)
 
-    def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
-        return self.system.get_resources(resource_namespace, resource_name, resource_type)
+    def get_resources(
+        self, resource_namespace=None, resource_name=None, resource_type=None
+    ):
+        return self.system.get_resources(
+            resource_namespace, resource_name, resource_type
+        )
 
     def load_resource_file(self, file_path):
         return self.system.load_resource_file(file_path)
@@ -175,9 +171,13 @@ class ResourcesManagerPlugin(colony.Plugin):
         self.system.unload_resources_parser_plugin(plugin)
 
     @colony.event_handler_method("plugin_manager.plugin.end_load_plugin")
-    def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+    def end_load_plugin_handler(
+        self, event_name, plugin_id, plugin_version, plugin, *event_args
+    ):
         self.system.register_plugin_resources(plugin)
 
     @colony.event_handler_method("plugin_manager.plugin.unload_plugin")
-    def unload_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+    def unload_plugin_handler(
+        self, event_name, plugin_id, plugin_version, plugin, *event_args
+    ):
         self.system.unregister_plugin_resources(plugin)

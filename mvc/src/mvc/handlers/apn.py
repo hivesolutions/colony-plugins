@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -42,10 +33,14 @@ import select
 import socket
 import binascii
 
-try: import ssl
-except ImportError: ssl = None
-try: import json
-except ImportError: json = None
+try:
+    import ssl
+except ImportError:
+    ssl = None
+try:
+    import json
+except ImportError:
+    json = None
 
 from . import handler
 
@@ -73,9 +68,10 @@ CERT_FILE = "apn_cert.pem"
 """ The path to the certificate file to be used
 in the encrypted communication with the server """
 
-MESSAGE_TEMPLATE = "{\"aps\":{\"alert\":\"%s\",\"sound\":\"%s\",\"badge\":%d}}"
+MESSAGE_TEMPLATE = '{"aps":{"alert":"%s","sound":"%s","badge":%d}}'
 """ The template to be used to create the message
 in case the JSON plugin is currently not available """
+
 
 class APNHandler(handler.Handler):
     """
@@ -113,7 +109,9 @@ class APNHandler(handler.Handler):
     """ Flag that controls if the current handler should wait
     for an answer from the server before disconnecting """
 
-    def __init__(self, token_string, key_file = None, cert_file = None, sandbox = True, wait = False):
+    def __init__(
+        self, token_string, key_file=None, cert_file=None, sandbox=True, wait=False
+    ):
         handler.Handler.__init__(self)
 
         self.token_string = token_string
@@ -137,20 +135,19 @@ class APNHandler(handler.Handler):
         # the retrieval is verified returns it
         key_tuple = (key_file, cert_file)
         _socket = APNHandler.sockets.get(key_tuple, None)
-        if _socket: return _socket
+        if _socket:
+            return _socket
 
         # in case the SSL module is currently not available
         # it s not possible to create a new socket
-        if not ssl: return
+        if not ssl:
+            return
 
         # creates the socket that will be used for the
         # communication with the remote host and
         _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _socket = ssl.wrap_socket(
-            _socket,
-            keyfile = self.key_file,
-            certfile = self.cert_file,
-            server_side = False
+            _socket, keyfile=self.key_file, certfile=self.cert_file, server_side=False
         )
 
         # creates the address using the sandbox flag as reference
@@ -172,20 +169,20 @@ class APNHandler(handler.Handler):
         # (this should be able to used cached connections) in case
         # no valid socket is retrieved returns immediately
         _socket = self._get_socket(KEY_FILE, CERT_FILE)
-        if not _socket: return
+        if not _socket:
+            return
 
         # creates the message structure using with the
         # message (string) as the alert and then converts
         # it into a JSON format (payload)
-        message_s = dict(
-           aps = dict(
-                alert = message,
-                sound = "default",
-                badge = 0
-            )
-        )
+        message_s = dict(aps=dict(alert=message, sound="default", badge=0))
         payload = json.dumps(message_s)
-        if not json: payload = MESSAGE_TEMPLATE % (message.replace("\"", "\\\""), "default", 0).encode("utf-8")
+        if not json:
+            payload = MESSAGE_TEMPLATE % (
+                message.replace('"', '\\"'),
+                "default",
+                0,
+            ).encode("utf-8")
 
         # sets the command with the zero value (simplified)
         # then calculates the token and payload lengths
@@ -198,7 +195,9 @@ class APNHandler(handler.Handler):
         # applies the various components of the message and packs
         # them according to the generated template
         template = "!BH%dsH%ds" % (token_length, payload_length)
-        message = struct.pack(template, command, token_length, self.token, payload_length, payload)
+        message = struct.pack(
+            template, command, token_length, self.token, payload_length, payload
+        )
         _socket.send(message)
 
         # sets the current socket in non blocking mode and then
@@ -210,10 +209,13 @@ class APNHandler(handler.Handler):
         # in case there are socket with read data available
         # must read it in the proper way, otherwise sets the
         # data string with an empty value
-        if ready[0]: data = _socket.recv(4096)
-        else: data = ""
+        if ready[0]:
+            data = _socket.recv(4096)
+        else:
+            data = ""
 
         # in case there is data received from the server there
         # must be a problem in the communication, must raise an
         # exception indicating the problem
-        if data: raise RuntimeError("Problem handling APN communication: '%s'" % data)
+        if data:
+            raise RuntimeError("Problem handling APN communication: '%s'" % data)

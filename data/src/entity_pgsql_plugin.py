@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class EntityPgSQLPlugin(colony.Plugin):
     """
@@ -49,22 +41,20 @@ class EntityPgSQLPlugin(colony.Plugin):
     description = "The plugin that manages the PostgreSQL adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "entity_engine"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["entity_engine"]
     dependencies = [
-        colony.PackageDependency("PostgreSQL module for Python (PyGreSQL)", (("pgdb", "psycopg2", "psycopg2cffi"),))
+        colony.PackageDependency(
+            "PostgreSQL module for Python (PyGreSQL)",
+            (("pgdb", "psycopg2", "psycopg2cffi"),),
+        )
     ]
-    main_modules = [
-        "entity_pgsql"
-    ]
+    main_modules = ["entity_pgsql"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import entity_pgsql
+
         self.system = entity_pgsql.EntityPgSQL(self)
 
     def get_engine_name(self):

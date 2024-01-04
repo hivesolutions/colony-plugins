@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -102,51 +93,52 @@ this value is defined in such a way that all the
 knows characters are able to be encoded """
 
 STATUS_MESSAGES = {
-    100 : "Continue",
-    101 : "Switching Protocols",
-    200 : "OK",
-    201 : "Created",
-    202 : "Accepted",
-    203 : "Non-Authoritative Information",
-    204 : "No Content",
-    205 : "Reset Content",
-    206 : "Partial Content",
-    207 : "Multi-Status",
-    301 : "Moved permanently",
-    302 : "Found",
-    303 : "See Other",
-    304 : "Not Modified",
-    305 : "Use Proxy",
-    306 : "(Unused)",
-    307 : "Temporary Redirect",
-    400 : "Bad Request",
-    401 : "Unauthorized",
-    402 : "Payment Required",
-    403 : "Forbidden",
-    404 : "Not Found",
-    405 : "Method Not Allowed",
-    406 : "Not Acceptable",
-    407 : "Proxy Authentication Required",
-    408 : "Request Timeout",
-    409 : "Conflict",
-    410 : "Gone",
-    411 : "Length Required",
-    412 : "Precondition Failed",
-    413 : "Request Entity Too Large",
-    414 : "Request-URI Too Long",
-    415 : "Unsupported Media Type",
-    416 : "Requested Range Not Satisfiable",
-    417 : "Expectation Failed",
-    500 : "Internal Server Error",
-    501 : "Not Implemented",
-    502 : "Bad Gateway",
-    503 : "Service Unavailable",
-    504 : "Gateway Timeout",
-    505 : "HTTP Version Not Supported"
+    100: "Continue",
+    101: "Switching Protocols",
+    200: "OK",
+    201: "Created",
+    202: "Accepted",
+    203: "Non-Authoritative Information",
+    204: "No Content",
+    205: "Reset Content",
+    206: "Partial Content",
+    207: "Multi-Status",
+    301: "Moved permanently",
+    302: "Found",
+    303: "See Other",
+    304: "Not Modified",
+    305: "Use Proxy",
+    306: "(Unused)",
+    307: "Temporary Redirect",
+    400: "Bad Request",
+    401: "Unauthorized",
+    402: "Payment Required",
+    403: "Forbidden",
+    404: "Not Found",
+    405: "Method Not Allowed",
+    406: "Not Acceptable",
+    407: "Proxy Authentication Required",
+    408: "Request Timeout",
+    409: "Conflict",
+    410: "Gone",
+    411: "Length Required",
+    412: "Precondition Failed",
+    413: "Request Entity Too Large",
+    414: "Request-URI Too Long",
+    415: "Unsupported Media Type",
+    416: "Requested Range Not Satisfiable",
+    417: "Expectation Failed",
+    500: "Internal Server Error",
+    501: "Not Implemented",
+    502: "Bad Gateway",
+    503: "Service Unavailable",
+    504: "Gateway Timeout",
+    505: "HTTP Version Not Supported",
 }
 """ The status code messages map, that associates
 the HTTP status code as an integer with the descriptive
 value of the error (message) """
+
 
 class WSGI(colony.System):
     """
@@ -156,17 +148,10 @@ class WSGI(colony.System):
     :see: http://www.python.org/dev/peps/pep-0333/
     """
 
-    def handle(
-        self,
-        environ,
-        start_response,
-        prefix = None,
-        alias = None,
-        rewrite = None
-    ):
+    def handle(self, environ, start_response, prefix=None, alias=None, rewrite=None):
         # retrieves some of the configuration values that are
         # going to control the request handling behaviour
-        secure_headers = colony.conf("WSGI_SECURE_HEADERS", True, cast = bool)
+        secure_headers = colony.conf("WSGI_SECURE_HEADERS", True, cast=bool)
         allow_origin = colony.conf("WSGI_CORS", ALLOW_ORIGIN)
         allow_origin = colony.conf("WSGI_ALLOW_ORIGIN", allow_origin)
         allow_headers = colony.conf("WSGI_ALLOW_HEADERS", ALLOW_HEADERS)
@@ -204,11 +189,7 @@ class WSGI(colony.System):
         # with the request for handling, handling the resulting
         # data or setting the exception values
         request = WSGIRequest(
-            self,
-            environ,
-            prefix = prefix,
-            alias = alias,
-            rewrite = rewrite
+            self, environ, prefix=prefix, alias=alias, rewrite=rewrite
         )
         try:
             rest_plugin.handle_request(request)
@@ -216,12 +197,15 @@ class WSGI(colony.System):
         except Exception as exception:
             has_code = hasattr(exception, "status_code")
             code = exception.status_code if has_code else 500
-            try: code = int(code)
-            except Exception: code = 500
+            try:
+                code = int(code)
+            except Exception:
+                code = 500
             status = "Not OK"
-            message = self.error_message(exception, code = code)
+            message = self.error_message(exception, code=code)
             is_unicode = colony.legacy.is_unicode(message)
-            if is_unicode: message = message.encode(request.content_type_charset)
+            if is_unicode:
+                message = message.encode(request.content_type_charset)
             content = [message]
             headers_out_l = []
         else:
@@ -235,15 +219,18 @@ class WSGI(colony.System):
         # if that's the case special handling is required meaning for example
         # that the complete set of contents is considered to be the generator
         is_generator = content and colony.legacy.is_generator(content[0])
-        if is_generator: content = content[0]
+        if is_generator:
+            content = content[0]
 
         # sets the content type to be returned as the one provided
         # by the request or defaults to the basic one, then tries
         # to calculate the content length based on the size of the
         # various items present in the content sequence (list)
         content_type = request.content_type or "text/plain"
-        if is_generator: content_length = -1
-        else: content_length = sum([len(value) for value in content])
+        if is_generator:
+            content_length = -1
+        else:
+            content_length = sum([len(value) for value in content])
 
         # in case the request is mediated additional operations may
         # be taken to provide the compatibility layer, the content
@@ -256,8 +243,7 @@ class WSGI(colony.System):
         # creates the final runtime powered by string and ensures that
         # it's represented by a proper bytes string
         powered_by = colony.legacy.bytes(
-            POWERED_BY_STRING % (manager_version, manager_environment),
-            force = True
+            POWERED_BY_STRING % (manager_version, manager_environment), force=True
         )
 
         # update the status line with the provided code value and then
@@ -266,14 +252,13 @@ class WSGI(colony.System):
         status = "%d %s" % (code, status)
         response_headers = [
             ("Content-Type", content_type),
-            ("X-Powered-By", powered_by)
+            ("X-Powered-By", powered_by),
         ]
 
         # verifies if the provided content length value is considered
         # valid and if that's the case adds it's value as an header
-        if not content_length == -1: response_headers.append(
-            ("Content-Length", str(content_length))
-        )
+        if not content_length == -1:
+            response_headers.append(("Content-Length", str(content_length)))
 
         # in case the secure headers flag is set, runs the setting operation
         # over the complete set of secure headers
@@ -305,7 +290,7 @@ class WSGI(colony.System):
         # possible to render the appropriate message to the client
         return content
 
-    def error_message(self, error, code = 500):
+    def error_message(self, error, code=500):
         """
         Formats the error as message and returns it so it can be
         used to notify the end user.
@@ -341,7 +326,8 @@ class WSGI(colony.System):
         # returning the resulting value as the result
         error_s = str(error)
         message = "[%d] %s\n%s\n" % (code, error_s, identifier_s)
-        if not is_development: return message
+        if not is_development:
+            return message
         trace = "\n".join(self.stacktrace_message())
         message += "\n%s\n" % trace
         return message
@@ -363,7 +349,9 @@ class WSGI(colony.System):
         # and iterates over them to yield the value of them to the caller
         # method (a lazy loaded approach is used to reduce usage)
         lines = traceback.format_exc().splitlines()
-        for line in lines: yield line
+        for line in lines:
+            yield line
+
 
 class WSGIRequest(object):
     """
@@ -485,10 +473,10 @@ class WSGIRequest(object):
         self,
         service,
         environ,
-        content_type_charset = DEFAULT_CHARSET,
-        prefix = None,
-        alias = None,
-        rewrite = None
+        content_type_charset=DEFAULT_CHARSET,
+        prefix=None,
+        alias=None,
+        rewrite=None,
     ):
         # sets the current "owner" service of the request
         # in the current request, this is going to be used
@@ -515,8 +503,10 @@ class WSGIRequest(object):
         # the "static" path info prefix to it, so that smaller
         # URI's may be used in WSGI, in case the "extra" prefix variable
         # is set an "extra" prefix is prepended to the path info
-        if prefix: path_info_r = PATH_INFO_PREFIX + prefix + path_info_r
-        else: path_info_r = PATH_INFO_PREFIX + path_info_r
+        if prefix:
+            path_info_r = PATH_INFO_PREFIX + prefix + path_info_r
+        else:
+            path_info_r = PATH_INFO_PREFIX + path_info_r
 
         # creates the complete "original" path info value by adding
         # the script name (routing base value) to the path info, this
@@ -535,7 +525,9 @@ class WSGIRequest(object):
         self.operation_type = request_method
         self.uri = path_info_r
         self.path = path_info_r + "?" + query_string if query_string else path_info_r
-        self.original_path = path_info_o + "?" + query_string if query_string else path_info_o
+        self.original_path = (
+            path_info_o + "?" + query_string if query_string else path_info_o
+        )
 
         # starts the map that will hold the various attributes
         # resulting from the parsing of the request
@@ -568,7 +560,7 @@ class WSGIRequest(object):
         elif content_type.startswith("multipart/form-data"):
             self.parse_post_multipart()
 
-    def __getattributes__(self, attribute_name, default = None):
+    def __getattributes__(self, attribute_name, default=None):
         """
         Retrieves the attribute from the attributes map.
 
@@ -617,7 +609,7 @@ class WSGIRequest(object):
                 # and the attribute value
                 self.attributes_map[attribute_name] = [
                     attribute_value_reference,
-                    attribute_value
+                    attribute_value,
                 ]
         # otherwise the attribute is not defined and a normal
         # set must be performed (single and simple set)
@@ -632,7 +624,8 @@ class WSGIRequest(object):
         path_splitted_length = len(path_splitted)
 
         # in case there are no arguments to be parsed
-        if path_splitted_length < 2: return
+        if path_splitted_length < 2:
+            return
 
         # retrieves the query string from the path splitted
         # and sets the arguments values as the query string
@@ -699,7 +692,10 @@ class WSGIRequest(object):
 
             # in case the attribute field splitted length is invalid,
             # must continue the loop (invalid value)
-            if attribute_field_splitted_length == 0 or attribute_field_splitted_length > 2:
+            if (
+                attribute_field_splitted_length == 0
+                or attribute_field_splitted_length > 2
+            ):
                 continue
 
             # in case the attribute field splitted length is two, this
@@ -716,7 +712,7 @@ class WSGIRequest(object):
             elif attribute_field_splitted_length == 1:
                 # retrieves the attribute name, from the attribute field splitted
                 # and sets the value as invalid (not set)
-                attribute_name, = attribute_field_splitted
+                (attribute_name,) = attribute_field_splitted
                 attribute_value = None
 
             # "unquotes" the attribute name from the URL encoding and sets
@@ -739,9 +735,7 @@ class WSGIRequest(object):
         # in case no content type is defined
         if not content_type:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.WSGIRuntimeException(
-                "no content type defined"
-            )
+            raise exceptions.WSGIRuntimeException("no content type defined")
 
         # splits the content type and then strips the first
         # value of it from any "extra" character
@@ -764,9 +758,7 @@ class WSGIRequest(object):
         # in case the length of the boundary is not two (invalid)
         # this is considered invalid and an exception is raised
         if not len(boundary_splitted) == 2:
-            raise exceptions.WSGIRuntimeException(
-                "invalid boundary value: " + boundary
-            )
+            raise exceptions.WSGIRuntimeException("invalid boundary value: " + boundary)
 
         # retrieves (unpacks) the boundary reference and the boundary value
         # and retrieves the length of the boundary value
@@ -789,12 +781,15 @@ class WSGIRequest(object):
 
             # in case the end index is invalid (end of multipart)
             # must break the loop
-            if end_index == -1: break
+            if end_index == -1:
+                break
 
             # parses the multipart part retrieving the headers map and the contents
             # the sent indexes avoid the extra newline values incrementing and decrementing
             # the value of two at the end and start
-            headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
+            headers_map, contents = self._parse_multipart_part(
+                current_index + 2, end_index - 2
+            )
 
             # parses the content disposition header retrieving the content
             # disposition map and list (with the attributes order) then
@@ -821,7 +816,7 @@ class WSGIRequest(object):
         header = self.environ.get(header_name, None)
         return self.environ.get(header_name_b, header)
 
-    def set_header(self, header_name, header_value, encode = True):
+    def set_header(self, header_name, header_value, encode=True):
         """
         Set a response header value on the request.
         The header that is set is sent to the client after
@@ -896,7 +891,7 @@ class WSGIRequest(object):
 
         return self.received_message
 
-    def write(self, message, flush = 1, encode = True):
+    def write(self, message, flush=1, encode=True):
         # retrieves the message type and in case it's unicode
         # it must be encoded using the currently set encoding
         # then adds the resulting message into the message
@@ -906,7 +901,7 @@ class WSGIRequest(object):
             message = message.encode(self.content_type_charset)
         self.message_buffer.append(message)
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def execute_background(self, callable, retries=0, timeout=0.0, timestamp=None):
         """
         Executes the given callable object in a background
         thread, avoiding the blocking of the current thread.
@@ -927,10 +922,7 @@ class WSGIRequest(object):
         """
 
         self._execute_background_thread(
-            callable,
-            retries = retries,
-            timeout = timeout,
-            timestamp = timestamp
+            callable, retries=retries, timeout=timeout, timestamp=timestamp
         )
 
     def flush(self):
@@ -976,7 +968,7 @@ class WSGIRequest(object):
 
         return colony.legacy.keys(self.attributes_map)
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         return self.__getattributes__(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
@@ -1047,7 +1039,7 @@ class WSGIRequest(object):
         else:
             return STATUS_MESSAGES.get(self.status_code, "Invalid")
 
-    def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
+    def verify_resource_modification(self, modified_timestamp=None, etag_value=None):
         # retrieves the if modified header value and in case the
         # modified timestamp and if modified header are defined
         # the date time base modification check must be run
@@ -1057,15 +1049,15 @@ class WSGIRequest(object):
                 # converts the if modified header value to date time and then
                 # converts the modified timestamp to date time
                 if_modified_header_data_time = datetime.datetime.strptime(
-                    if_modified_header,
-                    "%a, %d %b %Y %H:%M:%S GMT"
+                    if_modified_header, "%a, %d %b %Y %H:%M:%S GMT"
                 )
                 modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
 
                 # in case the modified date time is less or the same
                 # as the if modified header date time (no modification)
                 # must return false as there was no modification
-                if modified_date_time <= if_modified_header_data_time: return False
+                if modified_date_time <= if_modified_header_data_time:
+                    return False
             except Exception:
                 # prints a warning for not being able to check the modification date
                 self.service.plugin.warning("Problem while checking modification date")
@@ -1078,7 +1070,8 @@ class WSGIRequest(object):
             # in case the value of the if none match header is the same
             # as the etag value of the file (no modification) must
             # return false as there was no modification
-            if if_none_match_header == etag_value: return False
+            if if_none_match_header == etag_value:
+                return False
 
         # returns true (modified or no information for
         # modification test)
@@ -1094,10 +1087,12 @@ class WSGIRequest(object):
             # the sequence control to the caller otherwise yield
             # the value to the iteration
             mediated_value = self.mediated_handler.get_chunk(CHUNK_SIZE)
-            if not mediated_value: return
-            else: yield mediated_value
+            if not mediated_value:
+                return
+            else:
+                yield mediated_value
 
-    def _resolve_path(self, path_info, alias, separator = "/"):
+    def _resolve_path(self, path_info, alias, separator="/"):
         """
         Resolves the provided path info string using the provided
         alias list, if there's a match at beginning of the string in
@@ -1123,15 +1118,21 @@ class WSGIRequest(object):
 
         # in case the alias list is not valid or is not set the value
         # could not be resolved and the original path info is returned
-        if not alias: return path_info
+        if not alias:
+            return path_info
 
         # iterates over all the alias keys present in the list of alias
         # to try to find one that matches the start of the path info
         # in case it does happen the value is replaced
         for key, value in alias:
-            if not path_info.startswith(key): continue
-            if separator and not len(path_info) == len(key) and\
-               not path_info[len(key)] == separator: continue
+            if not path_info.startswith(key):
+                continue
+            if (
+                separator
+                and not len(path_info) == len(key)
+                and not path_info[len(key)] == separator
+            ):
+                continue
             key_l = len(key)
             path_info = value + path_info[key_l:]
             break
@@ -1165,14 +1166,16 @@ class WSGIRequest(object):
 
         # in case the provided list of rewrite tuples is not valid or
         # is empty the path info is returned with no changes applied
-        if not rewrite: return path_info
+        if not rewrite:
+            return path_info
 
         # iterates over the complete set of rewrite tuples and verifies
         # if the current path info value start with the prefix and if
         # that the case removed such prefix from the path and prepends
         # the requested suffix instead
         for key, value in rewrite:
-            if not path_info.startswith(key): continue
+            if not path_info.startswith(key):
+                continue
             key_l = len(key)
             path_info = value + path_info[key_l:]
             break
@@ -1217,14 +1220,14 @@ class WSGIRequest(object):
             # splitted value and then sets both of them in
             # the headers map (as expected by specification)
             header_name = header_splitted[:division_index].strip()
-            header_value = header_splitted[division_index + 1:].strip()
+            header_value = header_splitted[division_index + 1 :].strip()
             header_name = header_name.decode(self.content_type_charset)
             header_value = header_value.decode(self.content_type_charset)
             headers_map[header_name] = header_value
 
         # retrieves the contents from the multipart then uses them
         # to return the headers map and the contents as a tuple
-        contents = self.multipart[end_header_index + 4:end_index - 2]
+        contents = self.multipart[end_header_index + 4 : end_index - 2]
         return (headers_map, contents)
 
     def _parse_content_disposition(self, headers_map):
@@ -1260,9 +1263,15 @@ class WSGIRequest(object):
             # strips and split the content disposition attribute around
             # the separator token (for key and value) and then retrieves
             # the length of the result for verification
-            content_disposition_attribute_stripped = content_disposition_attribute.strip()
-            content_disposition_attribute_splitted = content_disposition_attribute_stripped.split("=")
-            content_disposition_attribute_splitted_length = len(content_disposition_attribute_splitted)
+            content_disposition_attribute_stripped = (
+                content_disposition_attribute.strip()
+            )
+            content_disposition_attribute_splitted = (
+                content_disposition_attribute_stripped.split("=")
+            )
+            content_disposition_attribute_splitted_length = len(
+                content_disposition_attribute_splitted
+            )
 
             # in case the length is two, it's a "normal" key value
             # pair based attribute case
@@ -1271,7 +1280,7 @@ class WSGIRequest(object):
                 # the value from the string items and sets the
                 # key and value association in the map
                 key, value = content_disposition_attribute_splitted
-                value_stripped = value.strip("\"")
+                value_stripped = value.strip('"')
                 content_disposition_map[key] = value_stripped
 
             # in case the length is one the current attribute refers
@@ -1286,15 +1295,17 @@ class WSGIRequest(object):
             # be raised indicating the error
             else:
                 raise exceptions.WSGIRuntimeException(
-                    "invalid content disposition value in multipart value: " +
-                    content_disposition_attribute_stripped
+                    "invalid content disposition value in multipart value: "
+                    + content_disposition_attribute_stripped
                 )
 
         # returns the content disposition map, containing the
         # complete set of headers for the content disposition
         return content_disposition_map
 
-    def _execute_background_thread(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def _execute_background_thread(
+        self, callable, retries=0, timeout=0.0, timestamp=None
+    ):
         """
         Simple implementation of the background execution of
         a callable for the WSGI request using a thread.
@@ -1316,5 +1327,5 @@ class WSGIRequest(object):
         first execution of the callable.
         """
 
-        thread = threading.Thread(target = callable)
+        thread = threading.Thread(target=callable)
         thread.start()

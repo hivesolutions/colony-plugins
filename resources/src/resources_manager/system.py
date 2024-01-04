@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -99,6 +90,7 @@ TRUE_VALUE = "true"
 
 FALSE_VALUE = "false"
 """ The false value """
+
 
 class ResourcesManager(colony.System):
     """
@@ -234,7 +226,9 @@ class ResourcesManager(colony.System):
         manager_path = plugin_manager.get_manager_path()
 
         # registers the internal resources
-        self.register_resource(COLONY_VALUE, MANAGER_PATH_VALUE, STRING_TYPE, manager_path)
+        self.register_resource(
+            COLONY_VALUE, MANAGER_PATH_VALUE, STRING_TYPE, manager_path
+        )
 
     def load_base_resources(self):
         """
@@ -266,7 +260,9 @@ class ResourcesManager(colony.System):
 
         # retrieves the plugin configuration paths from the resources manager plugin
         # sets the extra paths flag to retrieve all the configuration paths
-        configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(plugin_id, True)
+        configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(
+            plugin_id, True
+        )
 
         # iterates over all the configuration paths
         # to construct the full configuration path and
@@ -274,7 +270,9 @@ class ResourcesManager(colony.System):
         for configuration_path in configuration_paths:
             # constructs the full configuration path, from the
             # base configuration path and the relative configuration path
-            full_configuration_path = os.path.join(configuration_path, CONFIGURATION_PATH)
+            full_configuration_path = os.path.join(
+                configuration_path, CONFIGURATION_PATH
+            )
 
             # loads the configuration resources for the entry directory
             # (this is a recursive loading strategy)
@@ -287,10 +285,14 @@ class ResourcesManager(colony.System):
         """
 
         # iterates over all the resources through their file paths
-        for resource_file_path, resources_list in colony.legacy.items(self.file_path_resources_list_map):
+        for resource_file_path, resources_list in colony.legacy.items(
+            self.file_path_resources_list_map
+        ):
             # retrieves the file path and the full resource path and then
             # uses them to unregister the resources
-            file_path, full_resources_path = self.file_path_file_information_map[resource_file_path]
+            file_path, full_resources_path = self.file_path_file_information_map[
+                resource_file_path
+            ]
             self.unregister_resources(resources_list, file_path, full_resources_path)
 
     def parse_file(self, file_path, full_resources_path):
@@ -339,7 +341,9 @@ class ResourcesManager(colony.System):
         pending_plugin_resources_map = {}
 
         # iterates over all the (plugin) resources and associated plugin ids
-        for resource, plugin_id in colony.legacy.items(self.pending_plugin_resources_map):
+        for resource, plugin_id in colony.legacy.items(
+            self.pending_plugin_resources_map
+        ):
             # tries to retrieve the configuration plugin using the plugin id
             configuration_plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
@@ -385,11 +389,18 @@ class ResourcesManager(colony.System):
             # path file information map
             file_path_normalized = colony.normalize_path(file_path)
             self.file_path_resources_list_map[file_path_normalized] = resources_list
-            self.file_path_file_information_map[file_path_normalized] = (file_path, full_resources_path)
+            self.file_path_file_information_map[file_path_normalized] = (
+                file_path,
+                full_resources_path,
+            )
 
             # creates the validation list from the list
             # resource (filters the validations)
-            validation_list = [value for value in resources_list if value.__class__ == parser.Validation]
+            validation_list = [
+                value
+                for value in resources_list
+                if value.__class__ == parser.Validation
+            ]
 
             # iterates over all the validation in the validation
             # list (to process the validation)
@@ -426,11 +437,17 @@ class ResourcesManager(colony.System):
 
             # creates the plugin configuration list from the list
             # resource (filters the plugin configurations)
-            plugin_configuration_list = [value for value in resources_list if value.__class__ == parser.PluginConfiguration]
+            plugin_configuration_list = [
+                value
+                for value in resources_list
+                if value.__class__ == parser.PluginConfiguration
+            ]
 
             # creates the base resources list from the list
             # resource (filters the resources)
-            base_resources_list = [value for value in resources_list if value.__class__ == parser.Resource]
+            base_resources_list = [
+                value for value in resources_list if value.__class__ == parser.Resource
+            ]
 
             # iterates over all the resources in the plugin configuration list
             for plugin_configuration in plugin_configuration_list:
@@ -438,13 +455,19 @@ class ResourcesManager(colony.System):
                 plugin_configuration_plugin_id = plugin_configuration.plugin_id
 
                 # retrieves the plugin configuration resources list
-                plugin_configuration_resources_list = plugin_configuration.resources_list
+                plugin_configuration_resources_list = (
+                    plugin_configuration.resources_list
+                )
 
                 # sets the plugin configuration resources list in the plugin id configuration resources list map
-                self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
+                self.plugin_id_configuration_resources_list_map[
+                    plugin_configuration_plugin_id
+                ] = plugin_configuration_resources_list
 
                 # tries to retrieve the configuration plugin using the plugin id
-                configuration_plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
+                configuration_plugin = plugin_manager._get_plugin_by_id(
+                    plugin_configuration_plugin_id
+                )
 
                 # in case the configuration plugin is not found
                 # or in case it's not loaded (nothing is done)
@@ -453,27 +476,38 @@ class ResourcesManager(colony.System):
                     continue
 
                 # iterates over all the plugin configuration resources
-                for plugin_configuration_resource in plugin_configuration_resources_list:
+                for (
+                    plugin_configuration_resource
+                ) in plugin_configuration_resources_list:
                     # retrieves the plugin configuration resource name
-                    plugin_configuration_resource_name = plugin_configuration_resource.name
+                    plugin_configuration_resource_name = (
+                        plugin_configuration_resource.name
+                    )
 
                     # in case the plugin configuration resource has
                     # been correctly parsed
                     if plugin_configuration_resource.parsed:
                         # sets the plugin configuration resource as configuration property in the configuration plugin
-                        configuration_plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
+                        configuration_plugin.set_configuration_property(
+                            plugin_configuration_resource_name,
+                            plugin_configuration_resource,
+                        )
                     # otherwise the resource is still pending a correct
                     # parse the setting of the configuration must be delayed
                     else:
                         # sets the plugin configuration resource in the pending plugin resources
                         # map associated with the plugin configuration plugin id
-                        self.pending_plugin_resources_map[plugin_configuration_resource] = plugin_configuration_plugin_id
+                        self.pending_plugin_resources_map[
+                            plugin_configuration_resource
+                        ] = plugin_configuration_plugin_id
 
             # iterates over all the resources in the base resources list
             for resource in base_resources_list:
                 # registers the resource for the given namespace,
                 # name type and data
-                self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
+                self.register_resource(
+                    resource.namespace, resource.name, resource.type, resource.data
+                )
         finally:
             # releases the resources lock
             self.resources_lock.release()
@@ -496,7 +530,11 @@ class ResourcesManager(colony.System):
 
             # creates the validation list from the list
             # resource (filters the validations)
-            validation_list = [value for value in resources_list if value.__class__ == parser.Validation]
+            validation_list = [
+                value
+                for value in resources_list
+                if value.__class__ == parser.Validation
+            ]
 
             # iterates over all the validation in the validation
             # list (to process the validation)
@@ -511,11 +549,17 @@ class ResourcesManager(colony.System):
 
             # creates the plugin configuration list from the list
             # resource (filters the plugin configurations)
-            plugin_configuration_list = [value for value in resources_list if value.__class__ == parser.PluginConfiguration]
+            plugin_configuration_list = [
+                value
+                for value in resources_list
+                if value.__class__ == parser.PluginConfiguration
+            ]
 
             # creates the base resources list from the list
             # resource (filters the resources)
-            base_resources_list = [value for value in resources_list if value.__class__ == parser.Resource]
+            base_resources_list = [
+                value for value in resources_list if value.__class__ == parser.Resource
+            ]
 
             # iterates over all the resources in the plugin configuration list
             for plugin_configuration in plugin_configuration_list:
@@ -523,18 +567,27 @@ class ResourcesManager(colony.System):
                 plugin_configuration_plugin_id = plugin_configuration.plugin_id
 
                 # retrieves the plugin configuration resources list
-                plugin_configuration_resources_list = plugin_configuration.resources_list
+                plugin_configuration_resources_list = (
+                    plugin_configuration.resources_list
+                )
 
                 # unsets the plugin configuration resources list from
                 # the plugin id configuration resources list map
-                del self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id]
+                del self.plugin_id_configuration_resources_list_map[
+                    plugin_configuration_plugin_id
+                ]
 
                 # iterates over all the plugin configuration resources to remove them
                 # from the pending plugin resources map
-                for plugin_configuration_resource in plugin_configuration_resources_list:
+                for (
+                    plugin_configuration_resource
+                ) in plugin_configuration_resources_list:
                     # in case the plugin configuration resource does not exists
                     # in the pending plugin resources map (no need to remove it)
-                    if not plugin_configuration_resource in self.pending_plugin_resources_map:
+                    if (
+                        not plugin_configuration_resource
+                        in self.pending_plugin_resources_map
+                    ):
                         # continues the loop
                         continue
 
@@ -543,7 +596,9 @@ class ResourcesManager(colony.System):
                     del self.pending_plugin_resources_map[plugin_configuration_resource]
 
                 # tries to retrieve the configuration plugin using the plugin id
-                configuration_plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
+                configuration_plugin = plugin_manager._get_plugin_by_id(
+                    plugin_configuration_plugin_id
+                )
 
                 # in case the configuration plugin is not found
                 # or in case it's not loaded (nothing is done)
@@ -552,18 +607,26 @@ class ResourcesManager(colony.System):
                     continue
 
                 # iterates over all the plugin configuration resources
-                for plugin_configuration_resource in plugin_configuration_resources_list:
+                for (
+                    plugin_configuration_resource
+                ) in plugin_configuration_resources_list:
                     # retrieves the plugin configuration resource name
-                    plugin_configuration_resource_name = plugin_configuration_resource.name
+                    plugin_configuration_resource_name = (
+                        plugin_configuration_resource.name
+                    )
 
                     # unsets the plugin configuration resource in the configuration plugin
-                    configuration_plugin.unset_configuration_property(plugin_configuration_resource_name)
+                    configuration_plugin.unset_configuration_property(
+                        plugin_configuration_resource_name
+                    )
 
             # iterates over all the resources in the base resources list
             for resource in base_resources_list:
                 # creates a new (composite) resource from the given
                 # (base) resource information
-                _resource = Resource(resource.namespace, resource.name, resource.type, resource.data)
+                _resource = Resource(
+                    resource.namespace, resource.name, resource.type, resource.data
+                )
 
                 # retrieves the resource id and the unregisters
                 # the resource using the given resource id
@@ -592,7 +655,9 @@ class ResourcesManager(colony.System):
             return
 
         # retrieves the plugin configuration resources list
-        plugin_configuration_resources_list = self.plugin_id_configuration_resources_list_map[plugin_id]
+        plugin_configuration_resources_list = (
+            self.plugin_id_configuration_resources_list_map[plugin_id]
+        )
 
         # iterates over all the plugin configuration resources so that
         # it's possible to registers them as configuration properties
@@ -623,7 +688,9 @@ class ResourcesManager(colony.System):
             return
 
         # retrieves the plugin configuration resources list
-        plugin_configuration_resources_list = self.plugin_id_configuration_resources_list_map[plugin_id]
+        plugin_configuration_resources_list = (
+            self.plugin_id_configuration_resources_list_map[plugin_id]
+        )
 
         # iterates over all the plugin configuration resources
         for plugin_configuration_resource in plugin_configuration_resources_list:
@@ -788,7 +855,11 @@ class ResourcesManager(colony.System):
 
             # in case no resource is found in resources manager
             # a runtime error is raised
-            if not resource: raise RuntimeError("resource variable '%s' not found in resources manager" % variable_name)
+            if not resource:
+                raise RuntimeError(
+                    "resource variable '%s' not found in resources manager"
+                    % variable_name
+                )
 
             # retrieves the resource data
             resource_data = resource.data
@@ -961,11 +1032,18 @@ class ResourcesManager(colony.System):
         equals_expression_second_operand = equals_expression.second_operand
 
         # retrieves the operand values
-        equals_expression_first_operand_value = self.process_operand(equals_expression_first_operand)
-        equals_expression_second_operand_value = self.process_operand(equals_expression_second_operand)
+        equals_expression_first_operand_value = self.process_operand(
+            equals_expression_first_operand
+        )
+        equals_expression_second_operand_value = self.process_operand(
+            equals_expression_second_operand
+        )
 
         # calculates the equals value
-        equals_value = equals_expression_first_operand_value == equals_expression_second_operand_value
+        equals_value = (
+            equals_expression_first_operand_value
+            == equals_expression_second_operand_value
+        )
 
         # returns the equals value
         return equals_value
@@ -989,7 +1067,9 @@ class ResourcesManager(colony.System):
         # returns the operand data
         return operand_data
 
-    def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
+    def register_resource(
+        self, resource_namespace, resource_name, resource_type, resource_data
+    ):
         """
         Registers a resource in the resources manager.
 
@@ -1008,7 +1088,9 @@ class ResourcesManager(colony.System):
 
         try:
             # creates a new resource with the given information
-            resource = Resource(resource_namespace, resource_name, resource_type, resource_data)
+            resource = Resource(
+                resource_namespace, resource_name, resource_type, resource_data
+            )
 
             # retrieves the resource id
             resource_id = resource.get_id()
@@ -1043,7 +1125,9 @@ class ResourcesManager(colony.System):
                 current_namespace += namespace
                 if not current_namespace in self.resource_namespace_resources_list_map:
                     self.resource_namespace_resources_list_map[current_namespace] = []
-                self.resource_namespace_resources_list_map[current_namespace].append(resource)
+                self.resource_namespace_resources_list_map[current_namespace].append(
+                    resource
+                )
 
             # invalidates the real string value cache
             self._invalidate_real_string_value_cache()
@@ -1081,8 +1165,12 @@ class ResourcesManager(colony.System):
             old_resource_type = old_resource.get_type()
 
             # removes the "old" resource from the name and type resources list maps
-            self.resource_name_resources_list_map[old_resource_name].remove(old_resource)
-            self.resource_type_resources_list_map[old_resource_type].remove(old_resource)
+            self.resource_name_resources_list_map[old_resource_name].remove(
+                old_resource
+            )
+            self.resource_type_resources_list_map[old_resource_type].remove(
+                old_resource
+            )
 
             # retrieves the "old" resource namespace list value
             namespace_values_list = old_resource_namespace.get_list_value()
@@ -1104,7 +1192,9 @@ class ResourcesManager(colony.System):
                 current_namespace += namespace_value
 
                 # removes from the "old" resource from the namespace resources list map
-                self.resource_namespace_resources_list_map[current_namespace].remove(old_resource)
+                self.resource_namespace_resources_list_map[current_namespace].remove(
+                    old_resource
+                )
 
             # invalidates the real string value cache
             self._invalidate_real_string_value_cache()
@@ -1139,7 +1229,10 @@ class ResourcesManager(colony.System):
 
         # in case the length of the resources name is greater or equal than the resources suffix length
         # and the last item of the resources name item is the same as the resources suffix value
-        is_resource_name = len(resource_name) >= RESOURCES_SUFFIX_LENGTH and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
+        is_resource_name = (
+            len(resource_name) >= RESOURCES_SUFFIX_LENGTH
+            and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
+        )
 
         # returns the result of the is resource
         # name test
@@ -1159,7 +1252,9 @@ class ResourcesManager(colony.System):
         # in case the resource does not exist in the resource id resource map
         return self.resource_id_resource_map.get(resource_id, None)
 
-    def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
+    def get_resources(
+        self, resource_namespace=None, resource_name=None, resource_type=None
+    ):
         """
         Retrieves the resources for the given resource namespace, resource name and resource type.
         The given values are not mandatory and work as a filter.
@@ -1173,7 +1268,11 @@ class ResourcesManager(colony.System):
         """
 
         # in case none of the filters are defined
-        if resource_namespace == None and resource_name == None and resource_type == None:
+        if (
+            resource_namespace == None
+            and resource_name == None
+            and resource_type == None
+        ):
             # returns all the values in the resource id resource map
             return colony.legacy.values(self.resource_id_resource_map)
         # in case the namespace and the name are defined
@@ -1188,14 +1287,18 @@ class ResourcesManager(colony.System):
             # in case only the namespace is defined
             if resource_type == None and resource_name == None:
                 # returns the resources for the namespace
-                return self.resource_namespace_resources_list_map.get(resource_namespace, [])
+                return self.resource_namespace_resources_list_map.get(
+                    resource_namespace, []
+                )
             # in case the type is defined
             elif not resource_type == None and resource_name == None:
                 resources_list = []
                 return_list = []
 
                 if resource_namespace in self.resource_namespace_resources_list_map:
-                    resources_list = self.resource_namespace_resources_list_map[resource_namespace]
+                    resources_list = self.resource_namespace_resources_list_map[
+                        resource_namespace
+                    ]
 
                 for resource in resources_list:
                     if resource.get_type() == resource_type:
@@ -1214,7 +1317,9 @@ class ResourcesManager(colony.System):
                 return_list = []
 
                 if resource_type in self.resource_type_resources_list_map:
-                    resources_list = self.resource_type_resources_list_map[resource_type]
+                    resources_list = self.resource_type_resources_list_map[
+                        resource_type
+                    ]
 
                 for resource in resources_list:
                     if resource.get_name() == resource_name:
@@ -1245,12 +1350,17 @@ class ResourcesManager(colony.System):
 
         # retrieves the resource namespace resources list map and sorts
         # the items (allows a better view)
-        resource_namespace_resources_list_map_items = colony.legacy.items(self.resource_namespace_resources_list_map)
+        resource_namespace_resources_list_map_items = colony.legacy.items(
+            self.resource_namespace_resources_list_map
+        )
         resource_namespace_resources_list_map_items.sort()
 
         # iterates over all the resources lists in the resource namespace
         # resources list map, to creates the resources manager base information
-        for _resource_namespace, resources_list in resource_namespace_resources_list_map_items:
+        for (
+            _resource_namespace,
+            resources_list,
+        ) in resource_namespace_resources_list_map_items:
             # iterates over all the resources in the resources
             # list to create the resources manager base information
             for resource in resources_list:
@@ -1263,7 +1373,12 @@ class ResourcesManager(colony.System):
 
                 # in case the resource is of a type that may be visually
                 # representable
-                if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
+                if resource_type in (
+                    STRING_TYPE,
+                    BOOLEAN_TYPE,
+                    INTEGER_TYPE,
+                    FLOAT_TYPE,
+                ):
                     resource_value = colony.legacy.UNICODE(resource.data)
                 # otherwise it's not possible to represent the resource
                 # visually
@@ -1276,23 +1391,14 @@ class ResourcesManager(colony.System):
                 # base information
                 resources_manager_base_information[resource_name] = (
                     resource_type,
-                    resource_value
+                    resource_value,
                 )
 
         # defines the resources manager base item columns
         resources_manager_base_item_columns = [
-            {
-                "type" : "name",
-                "value" : "Name"
-            },
-            {
-                "type" : "value",
-                "value" : "Type"
-            },
-            {
-                "type" : "value",
-                "value" : "Value"
-            }
+            {"type": "name", "value": "Name"},
+            {"type": "value", "value": "Type"},
+            {"type": "value", "value": "Value"},
         ]
 
         # creates the resources manager base item
@@ -1308,12 +1414,17 @@ class ResourcesManager(colony.System):
 
         # retrieves the plugin id configuration resources list map and sorts
         # the items (allows a better view)
-        plugin_id_configuration_resources_list_map_items = colony.legacy.items(self.plugin_id_configuration_resources_list_map)
+        plugin_id_configuration_resources_list_map_items = colony.legacy.items(
+            self.plugin_id_configuration_resources_list_map
+        )
         plugin_id_configuration_resources_list_map_items.sort()
 
         # iterates over all the resources lists in the resource namespace
         # resources list map, to creates the resources manager plugins information
-        for plugin_id, resources_list in plugin_id_configuration_resources_list_map_items:
+        for (
+            plugin_id,
+            resources_list,
+        ) in plugin_id_configuration_resources_list_map_items:
             # iterates over all the resources in the resources
             # list to create the resources manager plugins information
             for resource in resources_list:
@@ -1327,7 +1438,12 @@ class ResourcesManager(colony.System):
 
                 # in case the resource is of a type that may be visually
                 # representable
-                if resource_type in (STRING_TYPE, BOOLEAN_TYPE, INTEGER_TYPE, FLOAT_TYPE):
+                if resource_type in (
+                    STRING_TYPE,
+                    BOOLEAN_TYPE,
+                    INTEGER_TYPE,
+                    FLOAT_TYPE,
+                ):
                     resource_value = colony.legacy.UNICODE(resource.data)
                 # otherwise it's not possible to represent the resource
                 # visually
@@ -1340,23 +1456,14 @@ class ResourcesManager(colony.System):
                 # plugins information
                 resources_manager_plugins_information[resource_name] = (
                     resource_type,
-                    resource_value
+                    resource_value,
                 )
 
         # defines the resources manager plugins item columns
         resources_manager_plugins_item_columns = [
-            {
-                "type" : "name",
-                "value" : "Plugin Identifier"
-            },
-            {
-                "type" : "value",
-                "value" : "Type"
-            },
-            {
-                "type" : "value",
-                "value" : "Value"
-            }
+            {"type": "name", "value": "Plugin Identifier"},
+            {"type": "value", "value": "Type"},
+            {"type": "value", "value": "Value"},
         ]
 
         # creates the resources manager plugins item
@@ -1364,7 +1471,9 @@ class ResourcesManager(colony.System):
 
         # sets the resources manager plugins values
         resources_manager_plugins_item["type"] = "map"
-        resources_manager_plugins_item["columns"] = resources_manager_plugins_item_columns
+        resources_manager_plugins_item[
+            "columns"
+        ] = resources_manager_plugins_item_columns
         resources_manager_plugins_item["values"] = resources_manager_plugins_information
 
         # creates the system information (item)
@@ -1374,7 +1483,7 @@ class ResourcesManager(colony.System):
         system_information["name"] = "Resource Manager"
         system_information["items"] = [
             resources_manager_base_item,
-            resources_manager_plugins_item
+            resources_manager_plugins_item,
         ]
 
         # returns the system information
@@ -1383,7 +1492,9 @@ class ResourcesManager(colony.System):
     def load_resources_parser_plugin(self, resources_parser_plugin):
         resources_parser_name = resources_parser_plugin.get_resources_parser_name()
 
-        self.resources_parser_plugins_map[resources_parser_name] = resources_parser_plugin
+        self.resources_parser_plugins_map[
+            resources_parser_name
+        ] = resources_parser_plugin
 
         self.update_pending_parses()
 
@@ -1443,6 +1554,7 @@ class ResourcesManager(colony.System):
 
         # clears the string value real string value map
         self.string_value_real_string_value_map.clear()
+
 
 class Resource(object):
     """
@@ -1604,6 +1716,7 @@ class Resource(object):
 
         self.parsed = parsed
 
+
 class Namespace(object):
     """
     Class to describe a neutral structure for a namespace.
@@ -1612,7 +1725,7 @@ class Namespace(object):
     list_value = []
     """ The value of the namespace described as a list """
 
-    def __init__(self, string_value = None):
+    def __init__(self, string_value=None):
         """
         Constructor of the class.
 

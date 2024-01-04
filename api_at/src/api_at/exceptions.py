@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class APIATException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class APIATException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class ATAPIError(APIATException):
     """
@@ -62,7 +55,7 @@ class ATAPIError(APIATException):
     describe the issue in detail, the data type of this
     attribute is dynamic and can be a dictionary or a string """
 
-    def __init__(self, message, error_code = None, details = None):
+    def __init__(self, message, error_code=None, details=None):
         """
         Constructor of the class.
 
@@ -89,12 +82,15 @@ class ATAPIError(APIATException):
         :return: The string representation of the class.
         """
 
-        return "AT API error (%d) - %s" % (self.error_code, self.message) if\
-            self.error_code else "AT API error - %s" % self.message
+        return (
+            "AT API error (%d) - %s" % (self.error_code, self.message)
+            if self.error_code
+            else "AT API error - %s" % self.message
+        )
+
 
 class ATVersionError(APIATException):
-
-    def __init__(self, version = None):
+    def __init__(self, version=None):
         """
         Constructor of the class.
 
@@ -114,5 +110,8 @@ class ATVersionError(APIATException):
         :return: The string representation of the class.
         """
 
-        return "AT Version error - %d" % self.version if\
-            self.version else "AT Version error"
+        return (
+            "AT Version error - %d" % self.version
+            if self.version
+            else "AT Version error"
+        )

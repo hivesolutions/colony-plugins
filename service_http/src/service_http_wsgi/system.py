@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -141,6 +132,7 @@ DEFAULT_MODULE_NAME = "server"
 DEFAULT_APPLICATION_NAME = "application"
 """ The default application name """
 
+
 class ServiceHTTPWSGI(colony.System):
     """
     The service HTTP WSGI (handler) class.
@@ -198,7 +190,9 @@ class ServiceHTTPWSGI(colony.System):
             # retrieves the content type and then sets it under
             # the current request object in usage, note that the
             # default content type is used in case it's not defined
-            content_type = response_headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
+            content_type = response_headers_map.get(
+                CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE
+            )
             request.content_type = content_type
 
             # returns the default write method
@@ -232,10 +226,15 @@ class ServiceHTTPWSGI(colony.System):
         request_connection_port = request_service_connection.connection_port
 
         # retrieves the request content type
-        request_content_type = request.get_header(CONTENT_TYPE_HEADER_VALUE) or DEFAULT_APPLICATION_CONTENT_TYPE
+        request_content_type = (
+            request.get_header(CONTENT_TYPE_HEADER_VALUE)
+            or DEFAULT_APPLICATION_CONTENT_TYPE
+        )
 
         # retrieves the request content length
-        request_content_length = request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        request_content_length = (
+            request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        )
 
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
@@ -246,7 +245,9 @@ class ServiceHTTPWSGI(colony.System):
         # retrieves the real base directory, resolving it using
         # both the resources manager and the plugin manager (this is quite
         # an expensive operation)
-        real_base_directory = self.plugin.resources_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = (
+            self.plugin.resources_manager_plugin.get_real_string_value(base_directory)
+        )
         real_base_directory = self.plugin.manager.resolve_file_path(real_base_directory)
 
         # processes the base directory path
@@ -256,7 +257,9 @@ class ServiceHTTPWSGI(colony.System):
         module_name = request.properties.get(MODULE_NAME_VALUE, DEFAULT_MODULE_NAME)
 
         # retrieves the application name
-        application_name = request.properties.get(APPLICATION_NAME_VALUE, DEFAULT_APPLICATION_NAME)
+        application_name = request.properties.get(
+            APPLICATION_NAME_VALUE, DEFAULT_APPLICATION_NAME
+        )
 
         # imports the script module
         script_module = __import__(module_name)
@@ -272,9 +275,7 @@ class ServiceHTTPWSGI(colony.System):
         environment_map[COLONY_PLUGIN_MANAGER_VALUE] = plugin_manager
 
         # define the WSGI version
-        wsgi_version = (
-            1, 0
-        )
+        wsgi_version = (1, 0)
 
         # sets the WSGI attributes in the environment map
         environment_map[WSGI_INPUT_VALUE] = request

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class BusinessHelperPlugin(colony.Plugin):
     """
@@ -49,28 +41,23 @@ class BusinessHelperPlugin(colony.Plugin):
     description = "Business Helper Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "business_helper"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["business_helper"]
     capabilities_allowed = [
         "entity",
         "entity_bundle",
         "business_logic",
-        "business_logic_bundle"
+        "business_logic_bundle",
     ]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager")
     ]
-    main_modules = [
-        "business_helper"
-    ]
+    main_modules = ["business_helper"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import business_helper
+
         self.system = business_helper.BusinessHelper(self)
 
     @colony.load_allowed
@@ -82,19 +69,10 @@ class BusinessHelperPlugin(colony.Plugin):
         colony.Plugin.unload_allowed(self, plugin, capability)
 
     def import_class_module(
-        self,
-        class_module_name,
-        globals,
-        locals,
-        global_values,
-        base_directory_path
+        self, class_module_name, globals, locals, global_values, base_directory_path
     ):
         return self.system.import_class_module(
-            class_module_name,
-            globals,
-            locals,
-            global_values,
-            base_directory_path
+            class_module_name, globals, locals, global_values, base_directory_path
         )
 
     def import_class_module_target(
@@ -104,7 +82,7 @@ class BusinessHelperPlugin(colony.Plugin):
         locals,
         global_values,
         base_directory_path,
-        target_module_name
+        target_module_name,
     ):
         return self.system.import_class_module(
             class_module_name,
@@ -112,7 +90,7 @@ class BusinessHelperPlugin(colony.Plugin):
             locals,
             global_values,
             base_directory_path,
-            target_module_name
+            target_module_name,
         )
 
     def import_class_module_extra(
@@ -124,7 +102,7 @@ class BusinessHelperPlugin(colony.Plugin):
         base_directory_path,
         target_module_name,
         extra_symbols_map,
-        extra_globals_map
+        extra_globals_map,
     ):
         return self.system.import_class_module(
             class_module_name,
@@ -134,7 +112,7 @@ class BusinessHelperPlugin(colony.Plugin):
             base_directory_path,
             target_module_name,
             extra_symbols_map,
-            extra_globals_map
+            extra_globals_map,
         )
 
     def generate_bundle_map(self, bundle_classes):

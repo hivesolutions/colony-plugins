@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -135,11 +126,14 @@ else:
     EPOLL_SUPPORT = False
 
 if EPOLL_SUPPORT:
-    NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
+    NEW_VALUE_MASK = (
+        select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP
+    )  # @UndefinedVariable
     """ The new value received mask value """
 
-    REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
+    REGISTER_MASK = NEW_VALUE_MASK  # @UndefinedVariable
     """ The register mask value """
+
 
 class AbstractService(object):
     """
@@ -224,7 +218,7 @@ class AbstractService(object):
     service_execution_thread = None
     """ The service execution thread """
 
-    def __init__(self, service_utils, service_utils_plugin, parameters = {}):
+    def __init__(self, service_utils, service_utils_plugin, parameters={}):
         """
         Constructor of the class.
 
@@ -241,7 +235,9 @@ class AbstractService(object):
 
         self.service_type = parameters.get("type", DEFAULT_TYPE)
         self.service_plugin = parameters.get("service_plugin", None)
-        self.service_handling_task_class = parameters.get("service_handling_task_class", None)
+        self.service_handling_task_class = parameters.get(
+            "service_handling_task_class", None
+        )
         self.end_points = parameters.get("end_points", [])
         self.socket_provider = parameters.get("socket_provider", None)
         self.bind_host = parameters.get("bind_host", BIND_HOST)
@@ -251,8 +247,12 @@ class AbstractService(object):
         self.service_configuration = parameters.get("service_configuration", {})
         self.extra_parameters = parameters.get("extra_parameters", {})
         self.pool_configuration = parameters.get("pool_configuration", {})
-        self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
-        self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
+        self.client_connection_timeout = parameters.get(
+            "client_connection_timeout", CLIENT_CONNECTION_TIMEOUT
+        )
+        self.connection_timeout = parameters.get(
+            "connection_timeout", CONNECTION_TIMEOUT
+        )
         self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
         self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
 
@@ -272,7 +272,7 @@ class AbstractService(object):
                 self.socket_provider,
                 self.bind_host,
                 self.port,
-                self.socket_parameters
+                self.socket_parameters,
             )
 
             # adds the end point
@@ -307,7 +307,10 @@ class AbstractService(object):
         except BaseException as exception:
             # prints a warning message message and then
             # sets the service connection active flag as false
-            self.service_plugin.warning("Runtime problem: %s, while starting the service" % colony.legacy.UNICODE(exception))
+            self.service_plugin.warning(
+                "Runtime problem: %s, while starting the service"
+                % colony.legacy.UNICODE(exception)
+            )
             self.service_connection_active = False
         finally:
             # disables the service sockets
@@ -358,10 +361,18 @@ class AbstractService(object):
         pool_name = self.pool_configuration.get("name", POOL_NAME)
         pool_description = self.pool_configuration.get("description", POOL_DESCRIPTION)
         number_threads = self.pool_configuration.get("number_threads", NUMBER_THREADS)
-        scheduling_algorithm = self.pool_configuration.get("scheduling_algorithm", SCHEDULING_ALGORITHM)
-        maximum_number_threads = self.pool_configuration.get("maximum_number_threads", MAXIMUM_NUMBER_THREADS)
-        maximum_number_works_thread = self.pool_configuration.get("maximum_number_works_thread", MAXIMUM_NUMBER_WORKS_THREAD)
-        work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
+        scheduling_algorithm = self.pool_configuration.get(
+            "scheduling_algorithm", SCHEDULING_ALGORITHM
+        )
+        maximum_number_threads = self.pool_configuration.get(
+            "maximum_number_threads", MAXIMUM_NUMBER_THREADS
+        )
+        maximum_number_works_thread = self.pool_configuration.get(
+            "maximum_number_works_thread", MAXIMUM_NUMBER_WORKS_THREAD
+        )
+        work_scheduling_algorithm = self.pool_configuration.get(
+            "work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM
+        )
 
         # retrieves the current service handler class
         service_handler_class = self._get_service_handler_class()
@@ -376,11 +387,21 @@ class AbstractService(object):
             self.response_timeout,
             self.chunk_size,
             self.service_handling_task_class,
-            self.extra_parameters
+            self.extra_parameters,
         )
 
         # creates the service client pool
-        self.service_client_pool = work_pool_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
+        self.service_client_pool = work_pool_plugin.create_new_work_pool(
+            pool_name,
+            pool_description,
+            service_handler_class,
+            service_connection_handler_arguments,
+            number_threads,
+            scheduling_algorithm,
+            maximum_number_threads,
+            maximum_number_works_thread,
+            work_scheduling_algorithm,
+        )
 
         # start the service client pool
         self.service_client_pool.start_pool()
@@ -402,28 +423,36 @@ class AbstractService(object):
             # in case the socket provider is defined
             if socket_provider:
                 # retrieves the socket provider plugins map
-                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
+                socket_provider_plugins_map = (
+                    self.service_utils.socket_provider_plugins_map
+                )
 
                 # in case the socket provider is available in the socket
                 # provider plugins map
                 if socket_provider in socket_provider_plugins_map:
                     # retrieves the socket provider plugin from the socket provider plugins map
-                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
+                    socket_provider_plugin = socket_provider_plugins_map[
+                        socket_provider
+                    ]
 
                     # the parameters for the socket provider
                     parameters = {
-                        SERVER_SIDE_VALUE : True,
-                        DO_HANDSHAKE_ON_CONNECT_VALUE : False
+                        SERVER_SIDE_VALUE: True,
+                        DO_HANDSHAKE_ON_CONNECT_VALUE: False,
                     }
 
                     # copies the socket parameters to the parameters map
                     colony.map_copy(socket_parameters, parameters)
 
                     # creates a new service socket with the socket provider plugin
-                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                    service_socket = socket_provider_plugin.provide_socket_parameters(
+                        parameters
+                    )
                 else:
                     # raises the socket provider not found exception
-                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+                    raise exceptions.SocketProviderNotFound(
+                        "socket provider %s not found" % socket_provider
+                    )
             else:
                 # creates the service socket
                 service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -495,7 +524,9 @@ class AbstractService(object):
                     return None
 
                 # selects the values
-                selected_values = select.select(self.service_sockets, [], [], self.client_connection_timeout)
+                selected_values = select.select(
+                    self.service_sockets, [], [], self.client_connection_timeout
+                )
 
             # retrieves the selected values read
             selected_values_read = selected_values[0]
@@ -505,7 +536,10 @@ class AbstractService(object):
         except Exception as exception:
             # prints info message about connection and then
             # returns an invalid value
-            self.service_utils_plugin.info("The socket is not valid for selection of the pool: " + colony.legacy.UNICODE(exception))
+            self.service_utils_plugin.info(
+                "The socket is not valid for selection of the pool: "
+                + colony.legacy.UNICODE(exception)
+            )
             return None
 
     def _accept_service_socket(self, service_socket):
@@ -537,7 +571,9 @@ class AbstractService(object):
             self.service_accepting_thread.add_service_tuple(service_tuple)
         except Exception as exception:
             # prints an error message about the problem accepting the socket
-            self.service_utils_plugin.error("Error accepting service tuple: " + colony.legacy.UNICODE(exception))
+            self.service_utils_plugin.error(
+                "Error accepting service tuple: " + colony.legacy.UNICODE(exception)
+            )
 
     def _read_service_socket(self, service_socket):
         """
@@ -562,7 +598,9 @@ class AbstractService(object):
             self._insert_data_pool(service_data, service_socket, service_address, port)
         except Exception as exception:
             # prints an error message about the problem reading from socket
-            self.service_utils_plugin.error("Error reading from socket: " + colony.legacy.UNICODE(exception))
+            self.service_utils_plugin.error(
+                "Error reading from socket: " + colony.legacy.UNICODE(exception)
+            )
 
     def _activate_service_sockets(self):
         """
@@ -578,10 +616,7 @@ class AbstractService(object):
             service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
             # defines the bind parameters
-            bind_parameters = (
-                bind_host,
-                port
-            )
+            bind_parameters = (bind_host, port)
 
             # binds the service socket
             service_socket.bind(bind_parameters)
@@ -617,11 +652,7 @@ class AbstractService(object):
         """
 
         # creates the work reference tuple
-        work_reference = (
-            service_connection,
-            service_address,
-            port
-        )
+        work_reference = (service_connection, service_address, port)
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
@@ -644,12 +675,7 @@ class AbstractService(object):
         """
 
         # creates the work reference tuple
-        work_reference = (
-            service_data,
-            service_socket,
-            service_address,
-            port
-        )
+        work_reference = (service_data, service_socket, service_address, port)
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
@@ -698,6 +724,7 @@ class AbstractService(object):
         # and execution (background) threads
         self.service_accepting_thread.join()
         self.service_execution_thread.join()
+
 
 class AbstractServiceConnectionHandler(object):
     """
@@ -762,7 +789,7 @@ class AbstractServiceConnectionHandler(object):
         response_timeout,
         chunk_size,
         client_service_class,
-        extra_parameters
+        extra_parameters,
     ):
         """
         Constructor of the class.
@@ -807,7 +834,7 @@ class AbstractServiceConnectionHandler(object):
             self,
             service_configuration,
             exceptions.ServiceUtilsException,
-            extra_parameters
+            extra_parameters,
         )
 
     def start(self):
@@ -834,10 +861,7 @@ class AbstractServiceConnectionHandler(object):
         self.wake_file.setblocking(0)
 
         # defines the bind parameters
-        bind_parameters = (
-            LOCAL_HOST,
-            self.wake_file_port
-        )
+        bind_parameters = (LOCAL_HOST, self.wake_file_port)
 
         # binds to the current host
         self.wake_file.bind(bind_parameters)
@@ -849,14 +873,16 @@ class AbstractServiceConnectionHandler(object):
         self.service_connection_sockets_list.append(self.wake_file)
 
         # sets the wake file in the connection socket file descriptor connection socket map
-        self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor] = self.wake_file
+        self.connection_socket_file_descriptor_connection_socket_map[
+            wake_file_descriptor
+        ] = self.wake_file
 
     def __start_epoll(self):
         # retrieves the wake file descriptor
         wake_file_descriptor = self.wake_file.fileno()
 
         # creates a new epoll object
-        self.epoll = select.epoll() #@UndefinedVariable
+        self.epoll = select.epoll()  # @UndefinedVariable
 
         # register the wake file in the epoll
         self.epoll.register(wake_file_descriptor, REGISTER_MASK)
@@ -872,7 +898,9 @@ class AbstractServiceConnectionHandler(object):
         self.service_connection_sockets_list.remove(self.wake_file)
 
         # removes the wake file from the connection socket file descriptor connection socket map
-        self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor]
+        self.connection_socket_file_descriptor_connection_socket_map[
+            wake_file_descriptor
+        ]
 
     def __stop_epoll(self):
         # retrieves the wake file descriptor
@@ -942,7 +970,10 @@ class AbstractServiceConnectionHandler(object):
             self.add_connection(connection_socket, connection_address, connection_port)
         except Exception as exception:
             # prints an error for not being able to add connection
-            self.service.service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % colony.legacy.UNICODE(exception))
+            self.service.service_utils_plugin.error(
+                "Problem while adding connection to service connection handler: %s"
+                % colony.legacy.UNICODE(exception)
+            )
 
     def work_removed(self, work_reference):
         """
@@ -961,7 +992,10 @@ class AbstractServiceConnectionHandler(object):
             self.remove_connection_socket(connection_socket)
         except Exception as exception:
             # prints an error for not being able to remove connection
-            self.service.service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % colony.legacy.UNICODE(exception))
+            self.service.service_utils_plugin.error(
+                "Problem while removing connection from service connection handler: %s"
+                % colony.legacy.UNICODE(exception)
+            )
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
@@ -981,12 +1015,26 @@ class AbstractServiceConnectionHandler(object):
         # the service connections map
         if connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + colony.legacy.UNICODE(connection_socket))
+            raise exceptions.ConnectionChangeFailure(
+                "trying to add duplicate socket: "
+                + colony.legacy.UNICODE(connection_socket)
+            )
 
         # creates the new service connection and sets the service execution thread
         # on the service connection (for callable execution)
-        service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.request_timeout, self.response_timeout, self.chunk_size)
-        service_connection.service_execution_thread = self.service.service_execution_thread
+        service_connection = ServiceConnection(
+            self.service_plugin,
+            self,
+            connection_socket,
+            connection_address,
+            connection_port,
+            self.request_timeout,
+            self.response_timeout,
+            self.chunk_size,
+        )
+        service_connection.service_execution_thread = (
+            self.service.service_execution_thread
+        )
 
         # opens the service connection
         service_connection.open()
@@ -1005,14 +1053,20 @@ class AbstractServiceConnectionHandler(object):
 
         # sets the connection socket in the connection socket file descriptor
         # connection socket map
-        self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor] = connection_socket
+        self.connection_socket_file_descriptor_connection_socket_map[
+            connection_socket_file_descriptor
+        ] = connection_socket
 
         # sets the connection socket file descriptor in the connection socket connection
         # socket file descriptor map
-        self.connection_socket_connection_socket_file_descriptor_map[connection_socket] = connection_socket_file_descriptor
+        self.connection_socket_connection_socket_file_descriptor_map[
+            connection_socket
+        ] = connection_socket_file_descriptor
 
         if EPOLL_SUPPORT:
-            self.__add_connection_epoll(connection_socket, connection_address, connection_port)
+            self.__add_connection_epoll(
+                connection_socket, connection_address, connection_port
+            )
 
         # sets the initial cancel timeout
         service_connection.cancel(self.connection_timeout)
@@ -1038,10 +1092,15 @@ class AbstractServiceConnectionHandler(object):
         # the service connections map
         if not connection_socket in self.service_connections_map:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + colony.legacy.UNICODE(connection_socket))
+            raise exceptions.ConnectionChangeFailure(
+                "trying to remove inexistent scoket: "
+                + colony.legacy.UNICODE(connection_socket)
+            )
 
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
+        connection_socket_file_descriptor = (
+            self.__get_connection_socket_file_descriptor(connection_socket)
+        )
 
         # handles the closed service connection
         self.client_service.handle_closed(service_connection)
@@ -1063,11 +1122,15 @@ class AbstractServiceConnectionHandler(object):
 
         # removes the connection socket from the connection socket file descriptor
         # connection socket map
-        del self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor]
+        del self.connection_socket_file_descriptor_connection_socket_map[
+            connection_socket_file_descriptor
+        ]
 
         # removes the connection socket file descriptor from the connection socket connection
         # socket file descriptor map
-        del self.connection_socket_connection_socket_file_descriptor_map[connection_socket]
+        del self.connection_socket_connection_socket_file_descriptor_map[
+            connection_socket
+        ]
 
     def remove_connection_socket(self, connection_socket):
         """
@@ -1100,13 +1163,16 @@ class AbstractServiceConnectionHandler(object):
         # iterates over all the service connections
         for service_connection in self.service_connections_list:
             # in case there is a cancel time defined and there is a timeout
-            if service_connection.cancel_time and service_connection.cancel_time < current_clock:
+            if (
+                service_connection.cancel_time
+                and service_connection.cancel_time < current_clock
+            ):
                 # retrieves the connection tuple and then
                 # removes the ready service connection (via remove work)
                 connection_tuple = service_connection.get_connection_tuple()
                 self.remove_work(connection_tuple)
 
-    def poll_connections(self, poll_timeout = POLL_TIMEOUT):
+    def poll_connections(self, poll_timeout=POLL_TIMEOUT):
         """
         Polls the current connection to check
         if any contains new information to be read.
@@ -1140,10 +1206,15 @@ class AbstractServiceConnectionHandler(object):
 
             try:
                 # handles the current request, retrieving the return value
-                return_value = self.client_service.handle_request(ready_service_connection)
+                return_value = self.client_service.handle_request(
+                    ready_service_connection
+                )
             except Exception as exception:
                 # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
+                self.service_plugin.error(
+                    "Problem while handling the request: "
+                    + colony.legacy.UNICODE(exception)
+                )
 
                 # sets the return value to false, to close the connection
                 return_value = False
@@ -1169,26 +1240,36 @@ class AbstractServiceConnectionHandler(object):
         # sends a "dummy" message to the wake "file" (via communication channel)
         self.wake_file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.wake_file_port))
 
-    def __add_connection_epoll(self, connection_socket, connection_address, connection_port):
+    def __add_connection_epoll(
+        self, connection_socket, connection_address, connection_port
+    ):
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
+        connection_socket_file_descriptor = (
+            self.__get_connection_socket_file_descriptor(connection_socket)
+        )
 
         # creates the lambda function that registers the connection socket in the epoll
-        callable = lambda: self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
+        callable = lambda: self.epoll.register(
+            connection_socket_file_descriptor, REGISTER_MASK
+        )
 
         try:
             # executes the callable with retry support
             colony.execute_retries(callable)
         except Exception as exception:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("problem adding epoll connection: " + colony.legacy.UNICODE(exception))
+            raise exceptions.ConnectionChangeFailure(
+                "problem adding epoll connection: " + colony.legacy.UNICODE(exception)
+            )
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
         connection_socket = service_connection.get_base_connection_socket()
 
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
+        connection_socket_file_descriptor = (
+            self.__get_connection_socket_file_descriptor(connection_socket)
+        )
 
         # creates the lambda function that unregisters the connection socket from the epoll
         callable = lambda: self.epoll.unregister(connection_socket_file_descriptor)
@@ -1198,7 +1279,9 @@ class AbstractServiceConnectionHandler(object):
             colony.execute_retries(callable)
         except Exception as exception:
             # raises the connection change failure exception
-            raise exceptions.ConnectionChangeFailure("problem removing epoll connection: " + colony.legacy.UNICODE(exception))
+            raise exceptions.ConnectionChangeFailure(
+                "problem removing epoll connection: " + colony.legacy.UNICODE(exception)
+            )
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
@@ -1207,7 +1290,9 @@ class AbstractServiceConnectionHandler(object):
             return []
 
         # runs the select in the connection socket, with timeout
-        selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
+        selected_values = select.select(
+            self.service_connection_sockets_list, [], [], poll_timeout
+        )
 
         # retrieves the selected values for read
         selected_values_read = selected_values[0]
@@ -1241,7 +1326,11 @@ class AbstractServiceConnectionHandler(object):
                 continue
 
             # retrieves the connection socket, using the connection socket file descriptor
-            connection_socket = self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor]
+            connection_socket = (
+                self.connection_socket_file_descriptor_connection_socket_map[
+                    connection_socket_file_descriptor
+                ]
+            )
 
             # adds the connection socket to the selected
             # values for read list
@@ -1281,10 +1370,15 @@ class AbstractServiceConnectionHandler(object):
             connection_socket_file_descriptor = connection_socket.fileno()
         except Exception:
             # retrieves the connection socket file descriptor from the map
-            connection_socket_file_descriptor = self.connection_socket_connection_socket_file_descriptor_map[connection_socket]
+            connection_socket_file_descriptor = (
+                self.connection_socket_connection_socket_file_descriptor_map[
+                    connection_socket
+                ]
+            )
 
         # returns the connection socket file descriptor
         return connection_socket_file_descriptor
+
 
 class AbstractServiceConnectionlessHandler(object):
     """
@@ -1334,7 +1428,7 @@ class AbstractServiceConnectionlessHandler(object):
         response_timeout,
         chunk_size,
         client_service_class,
-        extra_parameters
+        extra_parameters,
     ):
         """
         Constructor of the class.
@@ -1376,7 +1470,7 @@ class AbstractServiceConnectionlessHandler(object):
             self,
             service_configuration,
             exceptions.ServiceUtilsException,
-            extra_parameters
+            extra_parameters,
         )
 
     def start(self):
@@ -1430,10 +1524,17 @@ class AbstractServiceConnectionlessHandler(object):
 
         # unpacks the work reference retrieving the connection data, socket,
         # address and port
-        connection_data, connection_socket, connection_address, connection_port = work_reference
+        (
+            connection_data,
+            connection_socket,
+            connection_address,
+            connection_port,
+        ) = work_reference
 
         # adds the connection to the current service connectionless handler
-        self.add_connection(connection_data, connection_socket, connection_address, connection_port)
+        self.add_connection(
+            connection_data, connection_socket, connection_address, connection_port
+        )
 
     def work_removed(self, work_reference):
         """
@@ -1445,12 +1546,19 @@ class AbstractServiceConnectionlessHandler(object):
 
         # unpacks the work reference retrieving the connection data, socket,
         # address and port
-        _connection_data, connection_socket, connection_address, _connection_port = work_reference
+        (
+            _connection_data,
+            connection_socket,
+            connection_address,
+            _connection_port,
+        ) = work_reference
 
         # removes the connection using the socket and address as reference
         self.remove_connection_socket_address(connection_socket, connection_address)
 
-    def add_connection(self, connection_data, connection_socket, connection_address, connection_port):
+    def add_connection(
+        self, connection_data, connection_socket, connection_address, connection_port
+    ):
         """
         Adds a new connection to the service connection handler.
 
@@ -1477,15 +1585,14 @@ class AbstractServiceConnectionlessHandler(object):
             connection_data,
             self.request_timeout,
             self.response_timeout,
-            self.chunk_size
+            self.chunk_size,
         )
-        service_connection.service_execution_thread = self.service.service_execution_thread
+        service_connection.service_execution_thread = (
+            self.service.service_execution_thread
+        )
 
         # creates the connection tuple
-        connection_tuple = (
-            connection_socket,
-            connection_address
-        )
+        connection_tuple = (connection_socket, connection_address)
 
         # adds the service connection to the service connections list
         self.service_connections_list.append(service_connection)
@@ -1514,10 +1621,7 @@ class AbstractServiceConnectionlessHandler(object):
         connection_address = service_connection.get_connection_address()
 
         # creates the connection tuple
-        connection_tuple = (
-            connection_socket,
-            connection_address
-        )
+        connection_tuple = (connection_socket, connection_address)
 
         # handles the closed service connection
         self.client_service.handle_closed(service_connection)
@@ -1541,10 +1645,7 @@ class AbstractServiceConnectionlessHandler(object):
         """
 
         # creates the connection tuple
-        connection_tuple = (
-            connection_socket,
-            connection_address
-        )
+        connection_tuple = (connection_socket, connection_address)
 
         # retrieves the service connection from the service connections map
         service_connection = self.service_connections_map[connection_tuple]
@@ -1570,13 +1671,17 @@ class AbstractServiceConnectionlessHandler(object):
                 self.client_service.handle_request(service_connection)
             except Exception as exception:
                 # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + colony.legacy.UNICODE(exception))
+                self.service_plugin.error(
+                    "Problem while handling the request: "
+                    + colony.legacy.UNICODE(exception)
+                )
 
             # retrieves the connection tuple
             connection_tuple = service_connection.get_connection_tuple()
 
             # removes the ready service connection (via remove work)
             self.remove_work(connection_tuple)
+
 
 class ServiceConnection(object):
     """
@@ -1644,7 +1749,17 @@ class ServiceConnection(object):
     _write_lock = None
     """ The write lock """
 
-    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size):
+    def __init__(
+        self,
+        service_plugin,
+        service_connection_handler,
+        connection_socket,
+        connection_address,
+        connection_port,
+        connection_request_timeout,
+        connection_response_timeout,
+        connection_chunk_size,
+    ):
         """
         Constructor of the class.
 
@@ -1719,7 +1834,9 @@ class ServiceConnection(object):
         self._call_connection_closed_handlers()
 
         # prints debug message about connection
-        self.service_plugin.debug("Disconnected from: %s" % str(self.connection_address))
+        self.service_plugin.debug(
+            "Disconnected from: %s" % str(self.connection_address)
+        )
 
     def cancel(self, delta_time):
         """
@@ -1753,18 +1870,24 @@ class ServiceConnection(object):
         # in case the upgrader handler is not found in the handler plugins map
         if not socket_upgrader in socket_upgrader_plugins_map:
             # raises the socket upgrader not found exception
-            raise exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+            raise exceptions.SocketUpgraderNotFound(
+                "socket upgrader %s not found" % self.socket_upgrader
+            )
 
         # retrieves the socket upgrader plugin
-        socket_upgrader_plugin = service_utils.socket_upgrader_plugins_map[socket_upgrader]
+        socket_upgrader_plugin = service_utils.socket_upgrader_plugins_map[
+            socket_upgrader
+        ]
 
         # upgrades the current connection socket using the socket upgrader plugin
-        self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
+        self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(
+            self.connection_socket, parameters
+        )
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def execute_background(self, callable, retries=0, timeout=0.0, timestamp=None):
         """
         Executes the given callable object in a background
         thread.
@@ -1786,13 +1909,10 @@ class ServiceConnection(object):
 
         # adds the callable to the service execution thread
         self.service_execution_thread.add_callable(
-            callable,
-            retries = retries,
-            timeout = timeout,
-            timestamp = timestamp
+            callable, retries=retries, timeout=timeout, timestamp=timestamp
         )
 
-    def receive(self, request_timeout = None, chunk_size = None, retries = RECEIVE_RETRIES):
+    def receive(self, request_timeout=None, chunk_size=None, retries=RECEIVE_RETRIES):
         """
         Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -1820,7 +1940,9 @@ class ServiceConnection(object):
         # returns the return value
         return return_value
 
-    def send(self, message, response_timeout = None, retries = SEND_RETRIES, write_front = False):
+    def send(
+        self, message, response_timeout=None, retries=SEND_RETRIES, write_front=False
+    ):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -1982,11 +2104,7 @@ class ServiceConnection(object):
         :return: A tuple representing the connection.
         """
 
-        return (
-            self._connection_socket,
-            self.connection_address,
-            self.connection_port
-        )
+        return (self._connection_socket, self.connection_address, self.connection_port)
 
     def get_connection_socket(self):
         """
@@ -2035,7 +2153,9 @@ class ServiceConnection(object):
         """
 
         # retrieves the request timeout
-        request_timeout = request_timeout and request_timeout or self.connection_request_timeout
+        request_timeout = (
+            request_timeout and request_timeout or self.connection_request_timeout
+        )
 
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
@@ -2070,7 +2190,9 @@ class ServiceConnection(object):
         while True:
             try:
                 # runs the select in the connection socket, with timeout
-                selected_values = select.select([self.connection_socket], [], [], request_timeout)
+                selected_values = select.select(
+                    [self.connection_socket], [], [], request_timeout
+                )
             except Exception:
                 # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
@@ -2113,12 +2235,16 @@ class ServiceConnection(object):
                 # raised
                 else:
                     # processes the exception
-                    if hasattr(self.connection_socket, PROCESS_EXCEPTION_VALUE) and self.connection_socket.process_exception(exception):
+                    if hasattr(
+                        self.connection_socket, PROCESS_EXCEPTION_VALUE
+                    ) and self.connection_socket.process_exception(exception):
                         # continues the loop
                         continue
 
                     # raises the client request timeout exception
-                    raise exceptions.ClientRequestTimeout("problem receiving data: " + colony.legacy.UNICODE(exception))
+                    raise exceptions.ClientRequestTimeout(
+                        "problem receiving data: " + colony.legacy.UNICODE(exception)
+                    )
 
             # breaks the loop
             break
@@ -2129,7 +2255,7 @@ class ServiceConnection(object):
         # returns the data
         return data
 
-    def _send(self, message, response_timeout = None, retries = SEND_RETRIES):
+    def _send(self, message, response_timeout=None, retries=SEND_RETRIES):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -2145,7 +2271,9 @@ class ServiceConnection(object):
         """
 
         # retrieves the response timeout
-        response_timeout = response_timeout and response_timeout or self.connection_response_timeout
+        response_timeout = (
+            response_timeout and response_timeout or self.connection_response_timeout
+        )
 
         # retrieves the number of bytes in the message
         number_bytes = len(message)
@@ -2154,7 +2282,9 @@ class ServiceConnection(object):
         while True:
             try:
                 # runs the select in the connection socket, with timeout
-                selected_values = select.select([], [self.connection_socket], [], response_timeout)
+                selected_values = select.select(
+                    [], [self.connection_socket], [], response_timeout
+                )
             except Exception:
                 # raises the request closed exception
                 raise exceptions.RequestClosed("invalid socket")
@@ -2178,7 +2308,9 @@ class ServiceConnection(object):
                 # raised
                 else:
                     # raises the client response timeout exception
-                    raise exceptions.ServerResponseTimeout("problem sending data: " + colony.legacy.UNICODE(exception))
+                    raise exceptions.ServerResponseTimeout(
+                        "problem sending data: " + colony.legacy.UNICODE(exception)
+                    )
 
             # decrements the number of bytes sent
             number_bytes -= number_bytes_sent
@@ -2190,7 +2322,7 @@ class ServiceConnection(object):
                 break
             else:
                 # creates the new message
-                message = message[number_bytes * -1:]
+                message = message[number_bytes * -1 :]
 
     def _call_connection_opened_handlers(self):
         """
@@ -2212,6 +2344,7 @@ class ServiceConnection(object):
             # calls the connection closed handler
             connection_closed_handler(self)
 
+
 class ServiceConnectionless(ServiceConnection):
     """
     The service connection for information
@@ -2221,7 +2354,18 @@ class ServiceConnectionless(ServiceConnection):
     connection_data = None
     """ The connection data """
 
-    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_data, connection_request_timeout, connection_response_timeout, connection_chunk_size):
+    def __init__(
+        self,
+        service_plugin,
+        service_connection_handler,
+        connection_socket,
+        connection_address,
+        connection_port,
+        connection_data,
+        connection_request_timeout,
+        connection_response_timeout,
+        connection_chunk_size,
+    ):
         """
         Constructor of the class.
 
@@ -2254,7 +2398,7 @@ class ServiceConnectionless(ServiceConnection):
             connection_port,
             connection_request_timeout,
             connection_response_timeout,
-            connection_chunk_size
+            connection_chunk_size,
         )
 
         self.connection_data = connection_data
@@ -2306,5 +2450,5 @@ class ServiceConnectionless(ServiceConnection):
             self.connection_data,
             self.connection_socket,
             self.connection_address,
-            self.connection_port
+            self.connection_port,
         )

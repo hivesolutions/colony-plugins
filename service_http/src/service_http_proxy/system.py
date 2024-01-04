@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -113,18 +104,15 @@ CONTENT_LENGTH_LOWER_VALUE = "Content-length"
 HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
 """ The HTTP protocol prefix value """
 
-REMOVAL_HEADERS = (
-    HOST_VALUE,
-)
+REMOVAL_HEADERS = (HOST_VALUE,)
 """ The removal headers list """
 
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transfer encoding value """
 
-REMOVAL_RESPONSE_HEADERS = (
-    TRANSFER_ENCODING_VALUE,
-)
+REMOVAL_RESPONSE_HEADERS = (TRANSFER_ENCODING_VALUE,)
 """ The removal response headers list """
+
 
 class ServiceHTTPProxy(colony.System):
     """
@@ -147,18 +135,18 @@ class ServiceHTTPProxy(colony.System):
         colony.System.__init__(self, plugin)
 
         self.request_handler_methods_map = {
-            FORWARD_VALUE : self.handle_forward_request,
-            REVERSE_VALUE : self.handle_reverse_request
+            FORWARD_VALUE: self.handle_forward_request,
+            REVERSE_VALUE: self.handle_reverse_request,
         }
 
         self.forward_handler_methods_map = {
-            SYNC_VALUE : self._handle_forward_request_sync,
-            ASYNC_VALUE : self._handle_forward_request_async
+            SYNC_VALUE: self._handle_forward_request_sync,
+            ASYNC_VALUE: self._handle_forward_request_async,
         }
 
         self.reverse_handler_methods_map = {
-            SYNC_VALUE : self._handle_reverse_request_sync,
-            ASYNC_VALUE : self._handle_reverse_request_async
+            SYNC_VALUE: self._handle_reverse_request_sync,
+            ASYNC_VALUE: self._handle_reverse_request_async,
         }
 
     def load_handler(self):
@@ -173,7 +161,7 @@ class ServiceHTTPProxy(colony.System):
         self.http_clients_pool = element_pool_manager_plugin.create_new_element_pool(
             self._create_http_client,
             self._destroy_http_client,
-            DEFAULT_ELEMENT_POOL_SIZE
+            DEFAULT_ELEMENT_POOL_SIZE,
         )
 
         # starts the HTTP clients pool
@@ -236,16 +224,22 @@ class ServiceHTTPProxy(colony.System):
 
         # retrieves the proxy service type
         # (type of handling strategy)
-        proxy_service_type = request.properties.get(PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE)
+        proxy_service_type = request.properties.get(
+            PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE
+        )
 
         # retrieves the forward handler method
-        forward_handler_method = self.forward_handler_methods_map.get(proxy_service_type, None)
+        forward_handler_method = self.forward_handler_methods_map.get(
+            proxy_service_type, None
+        )
 
         # in case the forward handler method is not
         # defined (invalid proxy type)
         if not forward_handler_method:
             # raises an invalid HTTP proxy runtime exception
-            raise exceptions.HTTPProxyRuntimeException("invalid proxy service type (for forward proxy)")
+            raise exceptions.HTTPProxyRuntimeException(
+                "invalid proxy service type (for forward proxy)"
+            )
 
         # calls the forward handler method
         forward_handler_method(request)
@@ -282,18 +276,21 @@ class ServiceHTTPProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client:
+            raise exceptions.HTTPClientUnavailableException(
+                "HTTP clients pool depleted", 503
+            )
 
         try:
             # fetches the contents from the URL
             http_response = http_client.fetch_url(
                 complete_path,
-                method = request.operation_type,
-                parameters = request_attributes_map,
-                headers = request_headers,
-                content_type_charset = DEFAULT_CHARSET,
-                encode_path = True,
-                contents = request_contents
+                method=request.operation_type,
+                parameters=request_attributes_map,
+                headers=request_headers,
+                content_type_charset=DEFAULT_CHARSET,
+                encode_path=True,
+                contents=request_contents,
             )
         finally:
             # puts the HTTP client back into the HTTP clients pool
@@ -355,24 +352,29 @@ class ServiceHTTPProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client:
+            raise exceptions.HTTPClientUnavailableException(
+                "HTTP clients pool depleted", 503
+            )
 
         try:
             # fetches the contents from the URL
             http_response_generator = http_client.fetch_url(
                 complete_path,
-                method = request.operation_type,
-                parameters = request_attributes_map,
-                headers = request_headers,
-                content_type_charset = DEFAULT_CHARSET,
-                encode_path = True,
-                contents = request_contents,
-                save_message = False,
-                yield_response = True
+                method=request.operation_type,
+                parameters=request_attributes_map,
+                headers=request_headers,
+                content_type_charset=DEFAULT_CHARSET,
+                encode_path=True,
+                contents=request_contents,
+                save_message=False,
+                yield_response=True,
             )
 
             # tries to retrieve the generator value for the headers
-            generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
+            generator_value = self._get_generator_value(
+                http_response_generator, HEADERS_VALUE
+            )
 
             # unpacks the generator value into the value type
             # and the HTTP response
@@ -414,7 +416,9 @@ class ServiceHTTPProxy(colony.System):
 
             # creates the chunk handler to be used to send the proxy response
             # this is way it's possible to progressively send the message from the
-            chunk_handler = ChunkHandler(http_response_generator, http_response_size, close_handler)
+            chunk_handler = ChunkHandler(
+                http_response_generator, http_response_size, close_handler
+            )
 
             # sets the request as mediated
             request.mediated = True
@@ -449,16 +453,22 @@ class ServiceHTTPProxy(colony.System):
 
         # retrieves the proxy service type
         # (type of handling strategy)
-        proxy_service_type = request.properties.get(PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE)
+        proxy_service_type = request.properties.get(
+            PROXY_SERVICE_TYPE_VALUE, DEFAULT_PROXY_SERVICE_TYPE
+        )
 
         # retrieves the reverse handler method
-        reverse_handler_method = self.reverse_handler_methods_map.get(proxy_service_type, None)
+        reverse_handler_method = self.reverse_handler_methods_map.get(
+            proxy_service_type, None
+        )
 
         # in case the reverse handler method is not
         # defined (invalid proxy type)
         if not reverse_handler_method:
             # raises an invalid HTTP proxy runtime exception
-            raise exceptions.HTTPProxyRuntimeException("invalid proxy service type (for reverse proxy)")
+            raise exceptions.HTTPProxyRuntimeException(
+                "invalid proxy service type (for reverse proxy)"
+            )
 
         # calls the reverse handler method
         reverse_handler_method(request)
@@ -499,18 +509,21 @@ class ServiceHTTPProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client:
+            raise exceptions.HTTPClientUnavailableException(
+                "HTTP clients pool depleted", 503
+            )
 
         try:
             # fetches the contents from the URL
             http_response = http_client.fetch_url(
                 complete_path,
-                method = request.operation_type,
-                parameters = request_attributes_map,
-                headers = request_headers,
-                content_type_charset = DEFAULT_CHARSET,
-                encode_path = True,
-                contents = request_contents
+                method=request.operation_type,
+                parameters=request_attributes_map,
+                headers=request_headers,
+                content_type_charset=DEFAULT_CHARSET,
+                encode_path=True,
+                contents=request_contents,
             )
         finally:
             # puts the HTTP client back into the HTTP clients pool
@@ -526,7 +539,9 @@ class ServiceHTTPProxy(colony.System):
         data = http_response.received_message
 
         # creates the headers map from the HTTP response
-        headers_map = self._create_headers_map(request, http_response, REMOVAL_RESPONSE_HEADERS)
+        headers_map = self._create_headers_map(
+            request, http_response, REMOVAL_RESPONSE_HEADERS
+        )
 
         # sets the request status code
         request.status_code = status_code
@@ -576,24 +591,29 @@ class ServiceHTTPProxy(colony.System):
 
         # in case no HTTP client is available an HTTP client
         # unavailable exception is raised
-        if not http_client: raise exceptions.HTTPClientUnavailableException("HTTP clients pool depleted", 503)
+        if not http_client:
+            raise exceptions.HTTPClientUnavailableException(
+                "HTTP clients pool depleted", 503
+            )
 
         try:
             # fetches the contents from the URL
             http_response_generator = http_client.fetch_url(
                 complete_path,
-                method = request.operation_type,
-                parameters = request_attributes_map,
-                headers = request_headers,
-                content_type_charset = DEFAULT_CHARSET,
-                encode_path = True,
-                contents = request_contents,
-                save_message = False,
-                yield_response = True
+                method=request.operation_type,
+                parameters=request_attributes_map,
+                headers=request_headers,
+                content_type_charset=DEFAULT_CHARSET,
+                encode_path=True,
+                contents=request_contents,
+                save_message=False,
+                yield_response=True,
             )
 
             # tries to retrieve the generator value for the headers
-            generator_value = self._get_generator_value(http_response_generator, HEADERS_VALUE)
+            generator_value = self._get_generator_value(
+                http_response_generator, HEADERS_VALUE
+            )
 
             # unpacks the generator value into the value type
             # and the HTTP response
@@ -635,7 +655,9 @@ class ServiceHTTPProxy(colony.System):
 
             # creates the chunk handler to be used to send the proxy response
             # this is way it's possible to progressively send the message from the
-            chunk_handler = ChunkHandler(http_response_generator, http_response_size, close_handler)
+            chunk_handler = ChunkHandler(
+                http_response_generator, http_response_size, close_handler
+            )
 
             # sets the request as mediated
             request.mediated = True
@@ -695,7 +717,7 @@ class ServiceHTTPProxy(colony.System):
         # returns the request headers
         return request_headers
 
-    def _create_headers_map(self, request, http_response, removal_response_headers = ()):
+    def _create_headers_map(self, request, http_response, removal_response_headers=()):
         # retrieves the URL parser plugin
         url_parser_plugin = self.plugin.url_parser_plugin
 
@@ -722,7 +744,9 @@ class ServiceHTTPProxy(colony.System):
             location = headers_map[LOCATION_VALUE]
 
             # retrieves the proxy target
-            proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
+            proxy_target = request.properties.get(
+                PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET
+            )
 
             # creates the handler path from the handler base path
             # or from the handler path (depending on the valid one)
@@ -733,7 +757,9 @@ class ServiceHTTPProxy(colony.System):
 
             # in case the location starts with the HTTP prefix or
             # with the HTTPS prefix (absolute path)
-            if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(HTTPS_PREFIX_VALUE):
+            if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(
+                HTTPS_PREFIX_VALUE
+            ):
                 # replaces the proxy target for the handler path
                 location = location.replace(proxy_target, handler_path)
             # in case the location starts with a slash (relative to host path)
@@ -756,7 +782,9 @@ class ServiceHTTPProxy(colony.System):
 
         # retrieves the protocol version number from the protocol
         # version string
-        protocol_version_number = request.protocol_version.strip(HTTP_PROTOCOL_PREFIX_VALUE)
+        protocol_version_number = request.protocol_version.strip(
+            HTTP_PROTOCOL_PREFIX_VALUE
+        )
 
         # retrieves the host value from the request
         host = request.headers_map.get(HOST_VALUE, DEFAULT_HOST_VALUE)
@@ -765,7 +793,9 @@ class ServiceHTTPProxy(colony.System):
         server_identifier = request.get_server_identifier()
 
         # sets the via header in the headers map
-        headers_map[VIA_VALUE] = protocol_version_number + " " + host + " (" + server_identifier + ")"
+        headers_map[VIA_VALUE] = (
+            protocol_version_number + " " + host + " (" + server_identifier + ")"
+        )
 
         # returns the headers map
         return headers_map
@@ -840,6 +870,7 @@ class ServiceHTTPProxy(colony.System):
         # returns the value
         return value
 
+
 class ChunkHandler(object):
     """
     The chunk handler class.
@@ -891,7 +922,7 @@ class ChunkHandler(object):
 
         return self.http_response_size
 
-    def get_chunk(self, chunk_size = CHUNK_SIZE):
+    def get_chunk(self, chunk_size=CHUNK_SIZE):
         """
         Retrieves the a chunk with the given size.
 
@@ -924,7 +955,8 @@ class ChunkHandler(object):
 
             # in case an invalid value
             # was retrieved must return it
-            if not value: return value
+            if not value:
+                return value
 
             # retrieves the type of the value
             # in order to check if it's valid
@@ -932,14 +964,16 @@ class ChunkHandler(object):
 
             # in case the value is not of type tuple
             # (not important for now) continues loop
-            if not value_type == tuple: continue
+            if not value_type == tuple:
+                continue
 
             # retrieves the value type
             _type = value[0]
 
             # in case the type is message
             # data must break the loop
-            if _type == MESSAGE_DATA_VALUE: break
+            if _type == MESSAGE_DATA_VALUE:
+                break
 
         # retrieves the message data
         # value (buffer)

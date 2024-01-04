@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceHTTPCGIException(colony.ColonyException):
     """
@@ -46,6 +38,7 @@ class ServiceHTTPCGIException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RequestNotHandled(ServiceHTTPCGIException):
     """
@@ -73,6 +66,7 @@ class RequestNotHandled(ServiceHTTPCGIException):
 
         return "Request Not handled - %s" % self.message
 
+
 class CGIScriptError(ServiceHTTPCGIException):
     """
     The CGI script error class.
@@ -99,6 +93,7 @@ class CGIScriptError(ServiceHTTPCGIException):
 
         return "CGI script error - %s" % self.message
 
+
 class InvalidCGIData(ServiceHTTPCGIException):
     """
     The invalid CGI data class.
@@ -124,6 +119,7 @@ class InvalidCGIData(ServiceHTTPCGIException):
         """
 
         return "Invalid CGI data - %s" % self.message
+
 
 class InvalidCGIHeader(ServiceHTTPCGIException):
     """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -53,12 +44,13 @@ POST_METHOD_VALUE = "POST"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
+
 class APIYadis(colony.System):
     """
     The API Yadis class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -80,8 +72,10 @@ class APIYadis(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         yadis_client = YadisClient(client_http_plugin, yadis_structure)
-        if open_client: yadis_client.open()
+        if open_client:
+            yadis_client.open()
         return yadis_client
+
 
 class YadisClient(object):
     """
@@ -97,7 +91,7 @@ class YadisClient(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, client_http_plugin = None, yadis_structure = None):
+    def __init__(self, client_http_plugin=None, yadis_structure=None):
         """
         Constructor of the class.
 
@@ -127,7 +121,7 @@ class YadisClient(object):
             # closes the HTTP client
             self.http_client.close({})
 
-    def generate_yadis_structure(self, provider_url, set_structure = True):
+    def generate_yadis_structure(self, provider_url, set_structure=True):
         """
         Generates a new Yadis structure, for the given parameters.
 
@@ -140,7 +134,8 @@ class YadisClient(object):
 
         # in case the structure is meant to be set
         # sets the structure in the current instance
-        if set_structure: self.set_yadis_structure(yadis_structure)
+        if set_structure:
+            self.set_yadis_structure(yadis_structure)
 
         # returns the Yadis structure
         return yadis_structure
@@ -220,7 +215,7 @@ class YadisClient(object):
         # returns the built URL
         return url
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -243,7 +238,9 @@ class YadisClient(object):
         http_client = self._get_http_client()
 
         # fetches the URL retrieving the HTTP response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the HTTP response
         contents = http_response.received_message
@@ -263,9 +260,7 @@ class YadisClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
@@ -275,6 +270,7 @@ class YadisClient(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class YadisStructure(object):
     """
@@ -313,6 +309,7 @@ class YadisStructure(object):
         """
 
         self.provider_url = provider_url
+
 
 class YadisResourceDescriptor(object):
     """

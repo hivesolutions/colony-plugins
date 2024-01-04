@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -47,6 +38,7 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/x-bencode"
 """ The mime type """
 
+
 class Bencode(colony.System):
     """
     Provides functions to interact with bencode,
@@ -60,7 +52,7 @@ class Bencode(colony.System):
     def loads(self, bencode_string):
         return serializer.loads(bencode_string)
 
-    def load_file(self, bencode_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, bencode_file, encoding=DEFAULT_ENCODING):
         # reads the bencode file
         bencode_file_contents = bencode_file.read()
 

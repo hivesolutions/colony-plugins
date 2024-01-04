@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -86,12 +77,13 @@ BASE_SANDBOX_WEB_SECURE_URL = "https://www.sandbox.paypal.com/webscr"
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
 
+
 class APIPaypal(colony.System):
     """
     The API PayPal class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -114,8 +106,10 @@ class APIPaypal(colony.System):
         # it in case it's required and returns the generated
         # client to the caller method
         paypal_client = PaypalClient(client_http_plugin, paypal_structure, test_mode)
-        if open_client: paypal_client.open()
+        if open_client:
+            paypal_client.open()
         return paypal_client
+
 
 class PaypalClient(object):
     """
@@ -159,7 +153,7 @@ class PaypalClient(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, client_http_plugin = None, paypal_structure = None, test_mode = False):
+    def __init__(self, client_http_plugin=None, paypal_structure=None, test_mode=False):
         """
         Constructor of the class.
 
@@ -190,9 +184,17 @@ class PaypalClient(object):
 
         # in case an HTTP client is defined closes it
         # (flushing its internal structures
-        if self.http_client: self.http_client.close({})
+        if self.http_client:
+            self.http_client.close({})
 
-    def generate_paypal_structure(self, username, password, signature, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_paypal_structure(
+        self,
+        username,
+        password,
+        signature,
+        api_version=DEFAULT_API_VERSION,
+        set_structure=True,
+    ):
         """
         Generates the PayPal structure for the given arguments.
 
@@ -216,12 +218,15 @@ class PaypalClient(object):
 
         # in case the structure is meant to be set
         # sets it accordingly (in the current object)
-        if set_structure: self.set_paypal_structure(paypal_structure)
+        if set_structure:
+            self.set_paypal_structure(paypal_structure)
 
         # returns the PayPal structure
         return paypal_structure
 
-    def do_direct_payment(self, ip_address, amount, card, payer, address, order = None, shipping_address = {}):
+    def do_direct_payment(
+        self, ip_address, amount, card, payer, address, order=None, shipping_address={}
+    ):
         """
         Directly performs payment by issuing a request to PayPal with the specified information.
 
@@ -248,7 +253,9 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -271,11 +278,16 @@ class PaypalClient(object):
 
         # sets the payment details in the parameters map
         parameters["AMT"] = "%.2f" % amount
-        if "currency" in order: parameters["CURRENCYCODE"] = order["currency"]
-        if "item" in order: parameters["ITEMAMT"] = "%.2f" % order["item"]
-        if "shipping" in order: parameters["SHIPPINGAMT"] = "%.2f" % order["shipping"]
-        if "tax" in order: parameters["TAXAMT"] = "%.2f" % order["tax"]
-        if "invoice_number" in order: parameters["INVNUM"] = order["invoice_number"]
+        if "currency" in order:
+            parameters["CURRENCYCODE"] = order["currency"]
+        if "item" in order:
+            parameters["ITEMAMT"] = "%.2f" % order["item"]
+        if "shipping" in order:
+            parameters["SHIPPINGAMT"] = "%.2f" % order["shipping"]
+        if "tax" in order:
+            parameters["TAXAMT"] = "%.2f" % order["tax"]
+        if "invoice_number" in order:
+            parameters["INVNUM"] = order["invoice_number"]
 
         # calculates the number of order lines
         number_order_lines = len(order_lines)
@@ -286,25 +298,36 @@ class PaypalClient(object):
             order_line = order_lines[order_line_index]
 
             # sets the order line attributes in the parameters
-            if "name" in order_line: parameters["L_NAME%d" % order_line_index] = order_line["name"]
-            if "description" in order_line: parameters["L_DESC%d" % order_line_index] = order_line["description"]
-            if "amount" in order_line: parameters["L_AMT%d" % order_line_index] = "%.2f" % order_line["amount"]
-            if "code" in order_line: parameters["L_NUMBER%d" % order_line_index] = order_line["code"]
-            if "quantity" in order_line: parameters["L_QTY%d" % order_line_index] = order_line["quantity"]
-            if "tax" in order_line: parameters["L_TAXAMT%d" % order_line_index] = "%.2f" % order_line["tax"]
+            if "name" in order_line:
+                parameters["L_NAME%d" % order_line_index] = order_line["name"]
+            if "description" in order_line:
+                parameters["L_DESC%d" % order_line_index] = order_line["description"]
+            if "amount" in order_line:
+                parameters["L_AMT%d" % order_line_index] = "%.2f" % order_line["amount"]
+            if "code" in order_line:
+                parameters["L_NUMBER%d" % order_line_index] = order_line["code"]
+            if "quantity" in order_line:
+                parameters["L_QTY%d" % order_line_index] = order_line["quantity"]
+            if "tax" in order_line:
+                parameters["L_TAXAMT%d" % order_line_index] = "%.2f" % order_line["tax"]
 
         # sets the card structure values in the parameters map
         parameters["ACCT"] = card["number"]
         parameters["EXPDATE"] = card["expiration"]
-        if "type" in card: parameters["CREDITCARDTYPE"] = card["type"]
-        if "cvv2" in card: parameters["CVV2"] = card["cvv2"]
-        if "start_date" in card: parameters["STARTDATE"] = card["start_date"]
-        if "issue_number" in card: parameters["ISSUENUMBER"] = card["issue_number"]
+        if "type" in card:
+            parameters["CREDITCARDTYPE"] = card["type"]
+        if "cvv2" in card:
+            parameters["CVV2"] = card["cvv2"]
+        if "start_date" in card:
+            parameters["STARTDATE"] = card["start_date"]
+        if "issue_number" in card:
+            parameters["ISSUENUMBER"] = card["issue_number"]
 
         # sets the buyer structure values in the parameters map
         parameters["FIRSTNAME"] = payer["first_name"]
         parameters["LASTNAME"] = payer["last_name"]
-        if "email" in payer: parameters["EMAIL"] = payer["email"]
+        if "email" in payer:
+            parameters["EMAIL"] = payer["email"]
 
         # sets the address structure values in the parameters map
         parameters["STREET"] = address["street"]
@@ -312,7 +335,8 @@ class PaypalClient(object):
         parameters["STATE"] = address["state"]
         parameters["COUNTRYCODE"] = address["country"]
         parameters["ZIP"] = address["zip_code"]
-        if "phone_number" in address: parameters["SHIPTOPHONENUM"] = address["phone_number"]
+        if "phone_number" in address:
+            parameters["SHIPTOPHONENUM"] = address["phone_number"]
 
         # sets the shipping address structure values in the parameters map
         if shipping_address:
@@ -322,7 +346,8 @@ class PaypalClient(object):
             parameters["SHIPTOSTATE"] = shipping_address["state"]
             parameters["SHIPTOZIP"] = shipping_address["zip_code"]
             parameters["SHIPTOCOUNTRY"] = shipping_address["country"]
-            if "phone_number" in shipping_address: parameters["SHIPTOPHONENUM"] = shipping_address["phone_number"]
+            if "phone_number" in shipping_address:
+                parameters["SHIPTOPHONENUM"] = shipping_address["phone_number"]
 
         # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
@@ -348,12 +373,12 @@ class PaypalClient(object):
     def refund_transaction(
         self,
         transaction_id,
-        refund_type = REFUND_TYPE_FULL,
-        refund_source = REFUND_SOURCE_INSTANT,
-        amount = None,
-        currency_code = None,
-        refund_item_details = None,
-        note = None
+        refund_type=REFUND_TYPE_FULL,
+        refund_source=REFUND_SOURCE_INSTANT,
+        amount=None,
+        currency_code=None,
+        refund_item_details=None,
+        note=None,
     ):
         """
         Refunds the specified transaction, with the specified amount and refund source.
@@ -387,7 +412,9 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -401,10 +428,14 @@ class PaypalClient(object):
         parameters["TRANSACTIONID"] = transaction_id
         parameters["REFUNDTYPE"] = refund_type
         parameters["REFUNDSOURCE"] = refund_source
-        if amount: parameters["AMT"] = "%.2f" % amount
-        if currency_code: parameters["CURRENCYCODE"] = currency_code
-        if refund_item_details: parameters["REFUNDITEMDETAILS"] = refund_item_details
-        if note: parameters["NOTE"] = note
+        if amount:
+            parameters["AMT"] = "%.2f" % amount
+        if currency_code:
+            parameters["CURRENCYCODE"] = currency_code
+        if refund_item_details:
+            parameters["REFUNDITEMDETAILS"] = refund_item_details
+        if note:
+            parameters["NOTE"] = note
 
         # fetches the retrieval URL with the given parameters retrieving
         # the resulting key value pairs to be decoded and then parses
@@ -437,7 +468,9 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -474,7 +507,9 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -517,15 +552,28 @@ class PaypalClient(object):
         # returning false in case it fails since this operation is
         # supposed to succeed in case the credentials are valid,
         # otherwise returns true in case it succeeds
-        try: self.get_balance()
-        except Exception: return False
-        else: return True
+        try:
+            self.get_balance()
+        except Exception:
+            return False
+        else:
+            return True
 
-    def set_express_checkout(self, amount, return_url, cancel_url, currency = "EUR", payment_action = "Sale", items = []):
+    def set_express_checkout(
+        self,
+        amount,
+        return_url,
+        cancel_url,
+        currency="EUR",
+        payment_action="Sale",
+        items=[],
+    ):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -586,7 +634,9 @@ class PaypalClient(object):
         # sets the retrieval URL (using the sandbox URL in
         # case the test mode is active), this is always the
         # same value the command control is on the parameters
-        retrieval_url = BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        retrieval_url = (
+            BASE_SANDBOX_REST_SECURE_URL if self.test_mode else BASE_REST_SECURE_URL
+        )
 
         # start the parameters map
         parameters = {}
@@ -643,7 +693,7 @@ class PaypalClient(object):
         parameters["SIGNATURE"] = self.paypal_structure.signature
         parameters["VERSION"] = self.paypal_structure.api_version
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -659,17 +709,15 @@ class PaypalClient(object):
 
         # in case parameters is not defined
         # creates a new parameters map
-        if not parameters: parameters = {}
+        if not parameters:
+            parameters = {}
 
         # retrieves the HTTP client
         http_client = self._get_http_client()
 
         # fetches the URL retrieving the HTTP response
         http_response = http_client.fetch_url(
-            url,
-            method,
-            parameters,
-            content_type_charset = DEFAULT_CHARSET
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
         )
 
         # retrieves the contents from the HTTP response
@@ -713,7 +761,8 @@ class PaypalClient(object):
         # retrieves the message value and returns immediately
         # in case it's not defined (no error in request)
         message = data.get("L_SHORTMESSAGE0", None)
-        if not message: return
+        if not message:
+            return
 
         # tries to retrieve the long message to be used for more
         # in depth diagnostics of the problem
@@ -765,23 +814,20 @@ class PaypalClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
 
             # defines the open parameters
-            open_parameters = {
-                REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT
-            }
+            open_parameters = {REQUEST_TIMEOUT_VALUE: DEFAULT_REQUEST_TIMEOUT}
 
             # opens the HTTP client
             self.http_client.open(open_parameters)
 
         # returns the HTTP client
         return self.http_client
+
 
 class PaypalStructure(object):
     """
@@ -808,7 +854,7 @@ class PaypalStructure(object):
     transaction_id = None
     """ The current transaction id value used in the session """
 
-    def __init__(self, username, password, signature, api_version = DEFAULT_API_VERSION):
+    def __init__(self, username, password, signature, api_version=DEFAULT_API_VERSION):
         """
         Constructor of the class.
 

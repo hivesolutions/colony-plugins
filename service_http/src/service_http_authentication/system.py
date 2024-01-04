@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -49,6 +40,7 @@ AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
+
 
 class ServiceHTTPAuthentication(colony.System):
     """
@@ -99,7 +91,9 @@ class ServiceHTTPAuthentication(colony.System):
         authentication_plugin = self.plugin.authentication_plugin
 
         # authenticates the user with the authentication plugin retrieving the result
-        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_result = authentication_plugin.authenticate_user(
+            username, password, authentication_handler, arguments
+        )
 
         # returns the authentication result
         return authentication_result

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -63,6 +54,7 @@ RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 """ The relative paths regex """
+
 
 class MVCFileHandler(object):
     """
@@ -117,7 +109,9 @@ class MVCFileHandler(object):
 
         # verifies that the resource has been modified and in case it's
         # not returns immediately changing the request to not modified
-        is_modified = request.verify_resource_modification(modified_timestamp, etag_value)
+        is_modified = request.verify_resource_modification(
+            modified_timestamp, etag_value
+        )
         if not is_modified:
             # sets the request mime type and the not modified status
             # code indicating that the resource is the same and there's
@@ -160,8 +154,10 @@ class MVCFileHandler(object):
             # reads the complete set of file contents closing
             # the file afterwards to avoid any problem, then
             # writes those same contents to the request
-            try: file_contents = file.read()
-            finally: file.close()
+            try:
+                file_contents = file.read()
+            finally:
+                file.close()
             request.write(file_contents, 1, False)
 
         return True
@@ -215,6 +211,7 @@ class MVCFileHandler(object):
 
         # returns the escaped path
         return escaped_path
+
 
 class ChunkHandler(object):
     """
@@ -286,7 +283,7 @@ class ChunkHandler(object):
 
         return self.file_size
 
-    def get_chunk(self, chunk_size = CHUNK_SIZE):
+    def get_chunk(self, chunk_size=CHUNK_SIZE):
         """
         Retrieves the a chunk with the given size.
 
@@ -312,7 +309,8 @@ class ChunkHandler(object):
 
         # in case the chunk handler is already closed
         # returns immediately, no need to re-close it
-        if self._closed: return
+        if self._closed:
+            return
 
         # sets the closed flag
         self._closed = True

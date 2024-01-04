@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,20 +22,12 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
+
 
 class Handler(object):
     """
@@ -58,12 +50,14 @@ class Handler(object):
         # in case it's not a map returns immediately, plain messages
         # are not "filterable"
         message_t = type(message)
-        if not message_t == dict: return message
+        if not message_t == dict:
+            return message
 
         # iterates over the complete set of filters registered in the
         # handler and runs them in the message, retrieving the filtered
         # message as the new message
-        for filter in self.filters: message = filter(message)
+        for filter in self.filters:
+            message = filter(message)
         return message
 
     def plain_filter(self, message):

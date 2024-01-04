@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -45,6 +36,7 @@ from . import exceptions
 TEST_IMAGE_PATH = "printing_manager/resources/test_logo.png"
 """ The test image relative path """
 
+
 class PrintingManager(colony.System):
     """
     The printing manager class.
@@ -57,7 +49,7 @@ class PrintingManager(colony.System):
         colony.System.__init__(self, plugin)
         self.printing_plugins_map = {}
 
-    def print_test(self, printing_options = {}):
+    def print_test(self, printing_options={}):
         # retrieves the printing plugin for the given
         # printing options
         printing_plugin = self._get_printing_plugin(printing_options)
@@ -65,7 +57,7 @@ class PrintingManager(colony.System):
         # prints the test in the printing plugin
         printing_plugin.print_test(printing_options)
 
-    def print_test_image(self, printing_options = {}):
+    def print_test_image(self, printing_options={}):
         # retrieves the plugin manager
         plugin_manager = self.plugin.manager
 
@@ -82,7 +74,7 @@ class PrintingManager(colony.System):
         # prints the test image in the printing plugin
         printing_plugin.print_test_image(image_path, printing_options)
 
-    def print_printing_language(self, printing_language_string, printing_options = {}):
+    def print_printing_language(self, printing_language_string, printing_options={}):
         # creates a new printing language parser
         _parser = parser.PrintingLanguageParser()
 
@@ -137,9 +129,10 @@ class PrintingManager(colony.System):
         # in case no printing plugin is selected, there's no candidate
         # for the requested type of printing and so an exception must
         # be raised indicating such problem
-        if not printing_plugin: raise exceptions.PrintingPluginNotAvailable(
-            "the required printer is not available or no printers are available"
-        )
+        if not printing_plugin:
+            raise exceptions.PrintingPluginNotAvailable(
+                "the required printer is not available or no printers are available"
+            )
 
         # returns the printing plugin
         return printing_plugin

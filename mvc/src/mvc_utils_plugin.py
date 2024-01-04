@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class MVCUtilsPlugin(colony.Plugin):
     """
@@ -49,95 +41,67 @@ class MVCUtilsPlugin(colony.Plugin):
     description = "The plugin that offers the top-level abstractions for MVC processing"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc.utils"
-    ]
-    capabilities_allowed = [
-        "template_engine"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["mvc.utils"]
+    capabilities_allowed = ["template_engine"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.template_engine"),
         colony.PluginDependency("pt.hive.colony.plugins.data.entity.manager"),
         colony.PluginDependency("pt.hive.colony.plugins.data.file.manager"),
         colony.PluginDependency("pt.hive.colony.plugins.business.helper"),
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
-    main_modules = [
-        "mvc_utils"
-    ]
+    main_modules = ["mvc_utils"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mvc_utils
+
         self.system = mvc_utils.MVCUtils(self)
 
-    def assign_models(
-        self,
-        system_instance,
-        plugin_instance,
-        entity_manager_arguments
-    ):
+    def assign_models(self, system_instance, plugin_instance, entity_manager_arguments):
         return self.system.create_models(
             system_instance,
             plugin_instance,
-            entity_manager_arguments = entity_manager_arguments
+            entity_manager_arguments=entity_manager_arguments,
         )
 
-    def unassign_models(
-        self,
-        system_instance,
-        entity_manager_arguments
-    ):
+    def unassign_models(self, system_instance, entity_manager_arguments):
         return self.system.destroy_models(
-            system_instance,
-            entity_manager_arguments = entity_manager_arguments
+            system_instance, entity_manager_arguments=entity_manager_arguments
         )
 
     def assign_controllers(
-        self,
-        system_instance,
-        plugin_instance,
-        entity_manager_arguments = {}
+        self, system_instance, plugin_instance, entity_manager_arguments={}
     ):
         return self.system.create_controllers(
             system_instance,
             plugin_instance,
-            entity_manager_arguments = entity_manager_arguments
+            entity_manager_arguments=entity_manager_arguments,
         )
 
     def unassign_controllers(self, system_instance):
         return self.system.destroy_controllers(system_instance)
 
     def assign_models_controllers(
-        self,
-        system_instance,
-        plugin_instance,
-        entity_manager_arguments = {}
+        self, system_instance, plugin_instance, entity_manager_arguments={}
     ):
         self.system.create_models(
             system_instance,
             plugin_instance,
-            entity_manager_arguments = entity_manager_arguments
+            entity_manager_arguments=entity_manager_arguments,
         )
         self.system.create_controllers(
             system_instance,
             plugin_instance,
-            entity_manager_arguments = entity_manager_arguments
+            entity_manager_arguments=entity_manager_arguments,
         )
         return True
 
-    def unassign_models_controllers(
-        self,
-        system_instance,
-        entity_manager_arguments = {}
-    ):
+    def unassign_models_controllers(self, system_instance, entity_manager_arguments={}):
         self.system.destroy_models(
-            system_instance,
-            entity_manager_arguments = entity_manager_arguments
+            system_instance, entity_manager_arguments=entity_manager_arguments
         )
         self.system.destroy_controllers(system_instance)
         return True
@@ -164,7 +128,7 @@ class MVCUtilsPlugin(colony.Plugin):
     def generate_patterns(self, patterns, controller, prefix_name):
         return self.system.generate_patterns(patterns, controller, prefix_name)
 
-    def generate_entity_manager_arguments(self, plugin, base = None, parameters = {}):
+    def generate_entity_manager_arguments(self, plugin, base=None, parameters={}):
         return self.system.generate_entity_manager_arguments(plugin, base, parameters)
 
     def manager_arguments(self, *args, **kwargs):

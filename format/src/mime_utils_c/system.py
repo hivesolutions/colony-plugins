@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,16 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -61,13 +52,16 @@ DEFAULT_MIME_TYPE = "application/octet-stream"
 """ The default mime type for an attachment based part, to be
 used in connection with the base 64 (transfer) encoding """
 
+
 class MimeUtils(colony.System):
     """
     The mime utils class, responsible for the management
     of extra functions related with the mime standard.
     """
 
-    def add_mime_message_attachment_contents(self, mime_message, contents, file_name, mime_type = None):
+    def add_mime_message_attachment_contents(
+        self, mime_message, contents, file_name, mime_type=None
+    ):
         # retrieves the mime plugin
         mime_plugin = self.plugin.mime_plugin
 
@@ -81,18 +75,22 @@ class MimeUtils(colony.System):
         mime_type = mime_type or DEFAULT_MIME_TYPE
 
         # creates the content type from the mime type and the file name
-        content_type = mime_type + ";name=\"" + file_name + "\""
+        content_type = mime_type + ';name="' + file_name + '"'
 
         # sets the mime message attachment part headers
         mime_message_attachment_part.write_base_64(contents)
         mime_message_attachment_part.set_header(CONTENT_TYPE_VALUE, content_type)
-        mime_message_attachment_part.set_header(CONTENT_TRANSFER_ENCODING_VALUE, BASE64_VALUE)
+        mime_message_attachment_part.set_header(
+            CONTENT_TRANSFER_ENCODING_VALUE, BASE64_VALUE
+        )
         mime_message_attachment_part.set_header(CONTENT_ID_VALUE, content_id)
 
         # adds the mime message attachment part to the mime message
         mime_message.add_part(mime_message_attachment_part)
 
-    def add_mime_message_contents(self, mime_message, contents_path, content_extensions, recursive = True):
+    def add_mime_message_contents(
+        self, mime_message, contents_path, content_extensions, recursive=True
+    ):
         # lists the directory, retrieving the directory entries
         directory_entries = os.listdir(contents_path)
 
@@ -108,7 +106,9 @@ class MimeUtils(colony.System):
             # in case the content path refers a directory
             if recursive and os.path.isdir(content_path):
                 # adds the directory contents
-                self.add_mime_message_contents(mime_message, content_path, content_extensions, recursive)
+                self.add_mime_message_contents(
+                    mime_message, content_path, content_extensions, recursive
+                )
             elif content_extension in content_extensions:
                 # adds the content to the mime message
                 self._add_mime_message_content(mime_message, content_path)
@@ -142,7 +142,9 @@ class MimeUtils(colony.System):
 
             # sets the mime message content part headers
             mime_message_content_part.set_header(CONTENT_TYPE_VALUE, content_type)
-            mime_message_content_part.set_header(CONTENT_TRANSFER_ENCODING_VALUE, BASE64_VALUE)
+            mime_message_content_part.set_header(
+                CONTENT_TRANSFER_ENCODING_VALUE, BASE64_VALUE
+            )
             mime_message_content_part.set_header(CONTENT_ID_VALUE, content_id)
 
             # adds the mime message content part to the mime message

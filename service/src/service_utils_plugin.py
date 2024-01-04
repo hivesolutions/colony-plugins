@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Colony Framework
-# Copyright (c) 2008-2023 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Colony Framework.
 #
@@ -22,22 +22,14 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__version__ = "1.0.0"
-""" The version of the module """
-
-__revision__ = "$LastChangedRevision$"
-""" The revision number of the module """
-
-__date__ = "$LastChangedDate$"
-""" The last change date of the module """
-
-__copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import colony
+
 
 class ServiceUtilsPlugin(colony.Plugin):
     """
@@ -52,23 +44,16 @@ class ServiceUtilsPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities_allowed = [
-        "threads",
-        "socket_provider",
-        "socket_upgrader"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.work.pool")
-    ]
-    main_modules = [
-        "service_utils"
-    ]
+    capabilities_allowed = ["threads", "socket_provider", "socket_upgrader"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.work.pool")]
+    main_modules = ["service_utils"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_utils
+
         self.system = service_utils.ServiceUtils(self)
 
     @colony.load_allowed
